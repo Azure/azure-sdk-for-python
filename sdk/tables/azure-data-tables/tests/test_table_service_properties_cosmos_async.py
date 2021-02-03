@@ -199,15 +199,6 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
     # --Test cases for errors ---------------------------------------
     @CosmosPreparer()
-    async def test_retention_no_days_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Assert
-        pytest.raises(ValueError,
-                          RetentionPolicy,
-                          True, None)
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @CosmosPreparer()
     async def test_too_many_cors_rules_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -233,3 +224,11 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
             await tsc.set_service_properties(None, None, minute_metrics)
         if self.is_live:
             sleep(SLEEP_DELAY)
+
+
+class TestTableUnitTest(TableTestCase):
+
+    @pytest.mark.asyncio
+    async def test_retention_no_days_async(self):
+        # Assert
+        pytest.raises(ValueError, RetentionPolicy, True, None)

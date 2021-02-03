@@ -197,13 +197,6 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
 
     # --Test cases for errors ---------------------------------------
     @TablesPreparer()
-    async def test_retention_no_days_async(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Assert
-        pytest.raises(ValueError,
-                          RetentionPolicy,
-                          True, None)
-
-    @TablesPreparer()
     async def test_too_many_cors_rules_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
@@ -225,3 +218,13 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         # Assert
         with pytest.raises(HttpResponseError):
             await tsc.set_service_properties(None, None, minute_metrics)
+
+
+class TestTableUnitTest(TableTestCase):
+
+    @pytest.mark.asyncio
+    async def test_retention_no_days_async(self):
+        # Assert
+        pytest.raises(ValueError,
+                          RetentionPolicy,
+                          True, None)
