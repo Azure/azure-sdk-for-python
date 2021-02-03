@@ -107,6 +107,31 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
                 Use data_base64 only if you are sending bytes, and use data otherwise.")
 
     @classmethod
+    def from_dict(cls, event, **kwargs):
+        # type: (Dict, Any) -> CloudEvent
+        """
+        Returns the deserialized CloudEvent object when a dict is provided.
+
+        :param event: The dict representation of the event which needs to be deserialized.
+        :type event: dict
+
+        :rtype: CloudEvent
+        """
+        return cls(
+        id=event.pop("id", None),
+        source=event.pop("source", None),
+        type=event.pop("type", None),
+        specversion=event.pop("specversion", None),
+        data=event.pop("data", None) or event.pop("data_base64", None),
+        time=event.pop("time", None),
+        dataschema=event.pop("dataschema", None),
+        datacontenttype=event.pop("datacontenttype", None),
+        subject=event.pop("subject", None),
+        extensions=event,
+        **kwargs
+        )
+
+    @classmethod
     def _from_generated(cls, cloud_event, **kwargs):
         # type: (Union[str, Dict, bytes], Any) -> CloudEvent
         generated = InternalCloudEvent.deserialize(cloud_event)
@@ -228,3 +253,26 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
         kwargs.setdefault('data_version', data_version)
 
         super(EventGridEvent, self).__init__(**kwargs)
+
+    @classmethod
+    def from_dict(cls, event, **kwargs):
+        # type: (Dict, Any) -> EventGridEvent
+        """
+        Returns the deserialized EventGridEvent object when a dict is provided.
+
+        :param event: The dict representation of the event which needs to be deserialized.
+        :type event: dict
+
+        :rtype: EventGridEvent
+        """
+        return cls(
+        id=event.get("id", None),
+        subject=event.get("subject", None),
+        topic=event.get("topic", None),
+        data_version=event.get("dataVersion", None),
+        data=event.get("data", None),
+        event_time=event.get("eventTime", None),
+        event_type=event.get("eventType", None),
+        metadata_version=event.get("metadataVersion", None),
+        **kwargs
+        )
