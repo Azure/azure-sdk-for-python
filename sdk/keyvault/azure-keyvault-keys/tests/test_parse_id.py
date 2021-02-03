@@ -3,17 +3,19 @@
 # Licensed under the MIT License.
 # -------------------------------------
 from azure.keyvault.keys import KeyClient, parse_key_vault_key_id
-from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+from devtools_testutils import PowerShellPreparer
 
-from _shared.preparer import KeyVaultClientPreparer
 from _shared.test_case import KeyVaultTestCase
 
 
 class TestParseId(KeyVaultTestCase):
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @KeyVaultClientPreparer(KeyClient)
-    def test_parse_key_id_with_version(self, client):
+    def create_client(self, vault_uri, **kwargs):
+        credential = self.get_credential(KeyClient)
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
+
+    @PowerShellPreparer("keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
+    def test_parse_key_id_with_version(self, azure_keyvault_url):
+        client = self.create_client(azure_keyvault_url)
         key_name = self.get_resource_name("key")
         # create key
         created_key = client.create_rsa_key(key_name)
