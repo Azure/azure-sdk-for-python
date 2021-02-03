@@ -50,9 +50,6 @@ TEST_TABLE_PREFIX = 'pytablesync'
 
 class StorageTableTest(AzureTestCase, TableTestCase):
 
-    def __init__(self, *args, **kwargs):
-        super(StorageTableTest, self).__init__(*args, **kwargs)
-
     # --Helpers-----------------------------------------------------------------
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
         table_name = self.get_resource_name(prefix)
