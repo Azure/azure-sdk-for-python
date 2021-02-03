@@ -45,7 +45,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                     upper=5.0
                                 )
@@ -108,7 +108,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Down",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                 )
                             )
@@ -170,7 +170,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Up",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     upper=5.0,
                                 )
                             )
@@ -337,7 +337,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                     upper=5.0
                                 )
@@ -391,7 +391,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Down",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                 )
                             )
@@ -444,7 +444,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Up",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     upper=5.0,
                                 )
                             )
@@ -544,7 +544,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                     upper=5.0
                                 )
@@ -600,7 +600,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Down",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                 )
                             )
@@ -655,7 +655,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Up",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     upper=5.0,
                                 )
                             )
@@ -763,7 +763,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                     upper=5.0
                                 )
@@ -873,7 +873,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         lower=1
                     )
 
-                updated = await self.admin_client.update_alert_configuration(alert_config)
+                await self.admin_client.update_alert_configuration(alert_config)
+                updated = await self.admin_client.get_alert_configuration(alert_config.id)
 
                 self.assertEqual(updated.name, "update")
                 self.assertEqual(updated.description, "update description")
@@ -895,7 +896,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config, data_feed, detection_config = await self._create_alert_config_for_update("alertupdate")
-                updated = await self.admin_client.update_alert_configuration(
+                await self.admin_client.update_alert_configuration(
                     alert_config.id,
                     name="update",
                     description="update description",
@@ -914,7 +915,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                     upper=5.0
                                 ),
@@ -958,7 +959,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         )
                     ]
                 )
-
+                updated = await self.admin_client.get_alert_configuration(alert_config.id)
                 self.assertEqual(updated.name, "update")
                 self.assertEqual(updated.description, "update description")
                 self.assertEqual(updated.cross_metrics_operator, "OR")
@@ -987,7 +988,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 alert_config.metric_alert_configurations[1].alert_conditions.metric_boundary_condition = None
                 alert_config.metric_alert_configurations[2].alert_conditions.metric_boundary_condition = None
 
-                updated = await self.admin_client.update_alert_configuration(
+                await self.admin_client.update_alert_configuration(
                     alert_config,
                     cross_metrics_operator="OR",
                     metric_alert_configurations=[
@@ -1004,7 +1005,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             alert_conditions=MetricAnomalyAlertConditions(
                                 metric_boundary_condition=MetricBoundaryCondition(
                                     direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
+                                    companion_metric_id=data_feed.metric_ids['cost'],
                                     lower=1.0,
                                     upper=5.0
                                 ),
@@ -1048,7 +1049,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         )
                     ]
                 )
-
+                updated = await self.admin_client.get_alert_configuration(alert_config.id)
                 self.assertEqual(updated.name, "updateMe")
                 self.assertEqual(updated.description, "updateMe")
                 self.assertEqual(updated.cross_metrics_operator, "OR")
@@ -1069,7 +1070,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config, data_feed, detection_config = await self._create_alert_config_for_update("alertupdate")
-                updated = await self.admin_client.update_alert_configuration(
+                await self.admin_client.update_alert_configuration(
                     alert_config.id,
                     name="reset",
                     description="",  # can't pass None currently, bug says description is required
@@ -1088,7 +1089,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         )
                     ]
                 )
-
+                updated = await self.admin_client.get_alert_configuration(alert_config.id)
                 self.assertEqual(updated.name, "reset")
                 self.assertEqual(updated.description, "")
                 self.assertEqual(updated.cross_metrics_operator, None)

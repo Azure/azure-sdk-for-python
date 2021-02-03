@@ -284,8 +284,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
             password='nodesdk')
 
         certificate = 'SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7'
-        response = self.mgmt_batch_client.certificate.begin_create(resource_group.name, batch_account.name, certificate, parameters)
-        self.assertIsInstance(response.result(), models.Certificate)
+        response = self.mgmt_batch_client.certificate.create(resource_group.name, batch_account.name, certificate, parameters)
+        self.assertIsInstance(response, models.Certificate)
 
         # Test List Certificates
         certs = self.mgmt_batch_client.certificate.list_by_batch_account(resource_group.name, batch_account.name)
@@ -343,9 +343,9 @@ class MgmtBatchTest(AzureMgmtTestCase):
                 )
             )
         )
-        response = self.mgmt_batch_client.pool.begin_create(
+        response = self.mgmt_batch_client.pool.create(
             resource_group.name, batch_account.name, paas_pool, parameters)
-        self.assertIsInstance(response.result(), models.Pool)
+        self.assertIsInstance(response, models.Pool)
 
         # Test create IAAS pool
         iaas_pool = "test_iaas_pool"
@@ -371,9 +371,9 @@ class MgmtBatchTest(AzureMgmtTestCase):
             )
         )
 
-        response = self.mgmt_batch_client.pool.begin_create(
+        response = self.mgmt_batch_client.pool.create(
             resource_group.name, batch_account.name, iaas_pool, parameters)
-        self.assertIsInstance(response.result(), models.Pool)
+        self.assertIsInstance(response, models.Pool)
 
         # Test list pools
         pools = self.mgmt_batch_client.pool.list_by_batch_account(resource_group.name, batch_account.name)

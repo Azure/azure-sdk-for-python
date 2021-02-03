@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import functools
+from typing import Optional
 
 try:
     from urllib.parse import urlparse, quote
@@ -17,12 +17,12 @@ from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._serialize import convert_dfs_url_to_blob_url
-from ._models import LocationMode, FileSystemProperties, PublicAccess
-from ._list_paths_helper import PathPropertiesPaged
+from ._models import LocationMode, FileSystemProperties, PublicAccess, FileProperties, DirectoryProperties
 from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import AzureDataLakeStorageRESTAPI
+from ._deserialize import deserialize_path_properties
 
 
 class FileSystemClient(StorageAccountHostsMixin):
@@ -247,6 +247,31 @@ class FileSystemClient(StorageAccountHostsMixin):
                                                        public_access=public_access,
                                                        **kwargs)
 
+    def _rename_file_system(self, new_name, **kwargs):
+        # type: (str, **Any) -> FileSystemClient
+        """Renames a filesystem.
+
+        Operation is successful only if the source filesystem exists.
+
+        :param str new_name:
+            The new filesystem name the user wants to rename to.
+        :keyword lease:
+            Specify this to perform only if the lease ID given
+            matches the active lease ID of the source filesystem.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        """
+        self._container_client._rename_container(new_name, **kwargs)   # pylint: disable=protected-access
+        renamed_file_system = FileSystemClient(
+                "{}://{}".format(self.scheme, self.primary_hostname), file_system_name=new_name,
+                credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
+                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+                key_resolver_function=self.key_resolver_function)
+        return renamed_file_system
+
     def delete_file_system(self, **kwargs):
         # type: (Any) -> None
         """Marks the specified file system for deletion.
@@ -463,14 +488,13 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: List the paths in the file system.
         """
         timeout = kwargs.pop('timeout', None)
-        command = functools.partial(
-            self._client.file_system.list_paths,
+        return self._client.file_system.list_paths(
+            recursive=recursive,
+            max_results=max_results,
             path=path,
             timeout=timeout,
+            cls=deserialize_path_properties,
             **kwargs)
-        return ItemPaged(
-            command, recursive, path=path, max_results=max_results,
-            page_iterator_class=PathPropertiesPaged, **kwargs)
 
     def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
                          metadata=None,  # type: Optional[Dict[str, str]]
@@ -738,9 +762,9 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: Getting the directory client to interact with a specific directory.
         """
         try:
-            directory_name = directory.name
+            directory_name = directory.get('name')
         except AttributeError:
-            directory_name = directory
+            directory_name = str(directory)
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
@@ -778,9 +802,9 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: Getting the file client to interact with a specific file.
         """
         try:
-            file_path = file_path.name
+            file_path = file_path.get('name')
         except AttributeError:
-            pass
+            file_path = str(file_path)
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access

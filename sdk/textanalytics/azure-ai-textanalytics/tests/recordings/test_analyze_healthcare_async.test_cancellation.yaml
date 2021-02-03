@@ -15,20 +15,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 79d719a0-4694-46da-9970-72a82345349b
-      date: Thu, 19 Nov 2020 21:31:39 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/106c0a8d-d12f-4cb2-8e49-83192d718441
+      apim-request-id: 6e02b244-9673-4fc1-8818-8f8a1d163515
+      date: Wed, 27 Jan 2021 02:28:19 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/fb1f9ae7-73a0-44a8-bdee-647c4f15e174
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '196'
+      x-envoy-upstream-service-time: '168'
     status:
       code: 202
       message: Accepted
@@ -39,44 +39,44 @@ interactions:
       Accept:
       - application/json, text/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: DELETE
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/106c0a8d-d12f-4cb2-8e49-83192d718441
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/fb1f9ae7-73a0-44a8-bdee-647c4f15e174
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 096c59d2-2369-45c9-bc8e-3da81adf6418
-      date: Thu, 19 Nov 2020 21:31:39 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/106c0a8d-d12f-4cb2-8e49-83192d718441
+      apim-request-id: 6f8c86a1-0f63-4683-b3a8-9ff346734158
+      date: Wed, 27 Jan 2021 02:28:19 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/fb1f9ae7-73a0-44a8-bdee-647c4f15e174
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '12'
+      x-envoy-upstream-service-time: '11'
     status:
       code: 202
       message: Accepted
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/health/jobs/106c0a8d-d12f-4cb2-8e49-83192d718441
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/health/jobs/fb1f9ae7-73a0-44a8-bdee-647c4f15e174
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/106c0a8d-d12f-4cb2-8e49-83192d718441
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/fb1f9ae7-73a0-44a8-bdee-647c4f15e174
   response:
     body:
-      string: '{"jobId":"106c0a8d-d12f-4cb2-8e49-83192d718441","lastUpdateDateTime":"2020-11-19T21:31:40Z","createdDateTime":"2020-11-19T21:31:40Z","expirationDateTime":"2020-11-20T21:31:40Z","status":"cancelled","errors":[]}'
+      string: '{"jobId":"fb1f9ae7-73a0-44a8-bdee-647c4f15e174","lastUpdateDateTime":"2021-01-27T02:28:19Z","createdDateTime":"2021-01-27T02:28:19Z","expirationDateTime":"2021-01-28T02:28:19Z","status":"cancelled","errors":[]}'
     headers:
-      apim-request-id: 39f63106-1d6e-4e3b-873d-96c14ba5defc
+      apim-request-id: c7b449f3-ff2c-456a-8c54-30b98db0dec7
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:31:45 GMT
+      date: Wed, 27 Jan 2021 02:28:24 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '7'
+      x-envoy-upstream-service-time: '8'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/106c0a8d-d12f-4cb2-8e49-83192d718441
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/fb1f9ae7-73a0-44a8-bdee-647c4f15e174
 version: 1

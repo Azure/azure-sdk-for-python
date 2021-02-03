@@ -12,15 +12,17 @@ from azure.communication.administration import (
     NumberUpdateCapabilities,
     CreateSearchOptions
 )
+from azure.core.credentials import AccessToken
 from phone_number_helper import PhoneNumberUriReplacer
 from phone_number_testcase import PhoneNumberCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor
+from _shared.utils import create_token_credential
+from azure.communication.administration._shared.utils import parse_connection_str
 
 SKIP_PHONE_NUMBER_TESTS = True
 PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
 
 class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
-
     def setUp(self):
         super(PhoneNumberAdministrationClientTest, self).setUp()
         self.recording_processors.extend([
@@ -124,6 +126,15 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
             self.phonenumber_to_release = "phonenumber_to_release"
             self.capabilities_id = "capabilities_id"
             self.release_id = "release_id"
+
+    @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
+    def test_list_all_phone_numbers_from_managed_identity(self):
+        endpoint, access_key = parse_connection_str(self.connection_str)
+        credential = create_token_credential()
+        phone_number_client = PhoneNumberAdministrationClient(endpoint, credential)
+        pages = phone_number_client.list_all_phone_numbers()
+        assert pages.next()
 
     @pytest.mark.live_test_only
     @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)

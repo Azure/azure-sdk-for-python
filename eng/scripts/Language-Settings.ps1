@@ -55,6 +55,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
 
   $pkgId = $matches["package"]
+  $docsReadMeName = $pkgId -replace "^azure-" , ""
   $pkgVersion = $matches["versionstring"]
 
   $workFolder = "$workingDirectory$($pkg.Basename)"
@@ -85,6 +86,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
     Deployable     = $forceCreate -or !(IsPythonPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
+    DocsReadMeName = $docsReadMeName
   }
 }
 
@@ -226,4 +228,18 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
   }
   pip install -r "$EngDir/versioning/requirements.txt" -q -I
   python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceDirectory --release-date $ReleaseDate
+}
+
+function GetExistingPackageVersions ($PackageName, $GroupId=$null)
+{
+  try
+  {
+    $existingVersion = Invoke-RestMethod -Method GET -Uri "https://pypi.python.org/pypi/${PackageName}/json"
+    return ($existingVersion.releases | Get-Member -MemberType NoteProperty).Name
+  }
+  catch
+  {
+    LogError "Failed to retrieve package versions. `n$_"
+    return $null
+  }
 }

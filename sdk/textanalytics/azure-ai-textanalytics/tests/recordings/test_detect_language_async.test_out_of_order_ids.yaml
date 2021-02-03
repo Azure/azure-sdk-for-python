@@ -12,25 +12,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/languages?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"56","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"warnings":[]},{"id":"0","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"warnings":[]},{"id":"19","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"warnings":[]},{"id":"1","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"warnings":[]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2020-09-01"}'
     headers:
-      apim-request-id: 386a13d0-beaf-444d-beb7-9eff045d31eb
+      apim-request-id: 57be6540-6c41-403b-b787-ebd840842144
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=4
-      date: Thu, 19 Nov 2020 21:25:12 GMT
+      date: Wed, 27 Jan 2021 02:22:03 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '7'
+      x-envoy-upstream-service-time: '6'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.2/languages?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/languages?showStats=false
 version: 1

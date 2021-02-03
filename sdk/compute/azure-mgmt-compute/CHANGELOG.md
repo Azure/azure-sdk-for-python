@@ -1,5 +1,14 @@
 # Release History
 
+## 18.2.0 (2021-02-02)
+
+**Features**
+
+  - Added operation group CloudServicesUpdateDomainOperations
+  - Added operation group CloudServiceRolesOperations
+  - Added operation group CloudServiceRoleInstancesOperations
+  - Added operation group CloudServicesOperations
+
 ## 18.1.0 (2021-01-19)
 
 **Features**

@@ -9,7 +9,7 @@ import os
 from datetime import datetime
 from msrest.serialization import TZ_UTC
 
-from azure.communication.administration import CommunicationIdentityClient
+from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat.aio import (
     ChatClient,
     CommunicationTokenCredential,
@@ -18,7 +18,7 @@ from azure.communication.chat.aio import (
 from azure.communication.chat import (
     ChatThreadMember
 )
-from azure.communication.administration._shared.utils import parse_connection_str
+from azure.communication.identity._shared.utils import parse_connection_str
 from azure_devtools.scenario_tests import RecordingProcessor
 from helper import URIIdentityReplacer
 from chat_e2e_helper import ChatURIReplacer

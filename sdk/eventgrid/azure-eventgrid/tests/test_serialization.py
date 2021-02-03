@@ -15,8 +15,8 @@ import datetime as dt
 from devtools_testutils import AzureMgmtTestCase
 from msrest.serialization import UTC
 from azure.eventgrid import CloudEvent, EventGridEvent
-from azure.eventgrid import systemevents
 from azure.eventgrid._generated import models as internal_models
+from azure.eventgrid import SystemEventNames
 from _mocks import (
     cloud_storage_dict,
     cloud_storage_string,
@@ -102,13 +102,6 @@ class EventGridSerializationTests(AzureMgmtTestCase):
             expected['data_base64'] = encoded
             assert expected['data_base64'] == json['data_base64']
             assert 'data' not in json
-    
-    def test_models_exist_in_namespace(self):
-        exposed = dir(systemevents)
-        generated = dir(internal_models)
-
-        diff = {m for m in list(set(generated) - set(exposed)) if not m.startswith('_')}
-        assert diff == {'CloudEvent', 'EventGridEvent'}
 
     def test_event_grid_event_raises_on_no_data(self):
         with pytest.raises(TypeError):
@@ -117,3 +110,10 @@ class EventGridSerializationTests(AzureMgmtTestCase):
                     event_type="Sample.EventGrid.Event",
                     data_version="2.0"
                     )
+
+    def test_import_from_sytem_events(self):
+        var = SystemEventNames.ACSChatMemberAddedToThreadWithUserEventName 
+        assert var == "Microsoft.Communication.ChatMemberAddedToThreadWithUser"
+        assert SystemEventNames.KeyVaultKeyNearExpiryEventName == "Microsoft.KeyVault.KeyNearExpiry"
+        var = SystemEventNames.ServiceBusActiveMessagesAvailableWithNoListenersEventName
+        assert var == "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners"

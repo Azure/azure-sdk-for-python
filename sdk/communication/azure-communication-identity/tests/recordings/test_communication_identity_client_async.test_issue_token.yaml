@@ -1,0 +1,66 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 29 Jan 2021 22:35:42 GMT
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"identity": {"id": "sanitized"}}'
+    headers:
+      api-supported-versions: 2020-07-20-preview2, 2021-03-07
+      content-type: application/json; charset=utf-8
+      date: Fri, 29 Jan 2021 22:35:41 GMT
+      ms-cv: d5Ncfb9TeEWiZ8EGWkToTw.0
+      strict-transport-security: max-age=2592000
+      transfer-encoding: chunked
+      x-processing-time: 205ms
+    status:
+      code: 201
+      message: Created
+    url: https://communicationdo2ohmwsm52.communication.azure.com/identities?api-version=2021-03-07
+- request:
+    body: '{"scopes": ["chat"]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '20'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 29 Jan 2021 22:35:42 GMT
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+  response:
+    body:
+      string: '{"token": "sanitized", "expiresOn": "2021-01-30T22:35:41.2292482+00:00"}'
+    headers:
+      api-supported-versions: 2020-07-20-preview2, 2021-03-07
+      content-type: application/json; charset=utf-8
+      date: Fri, 29 Jan 2021 22:35:42 GMT
+      ms-cv: DoX6Mm/9pkqFtpHOKzWiAg.0
+      strict-transport-security: max-age=2592000
+      transfer-encoding: chunked
+      x-processing-time: 215ms
+    status:
+      code: 200
+      message: OK
+    url: https://communicationdo2ohmwsm52.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+version: 1

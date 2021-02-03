@@ -16,20 +16,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 61e20a1c-4df2-4769-ba71-4053a452819c
-      date: Thu, 19 Nov 2020 21:19:29 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+      apim-request-id: 5fb78f4e-500e-46c3-870d-d4ae62f8d88c
+      date: Wed, 27 Jan 2021 02:13:41 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '354'
+      x-envoy-upstream-service-time: '24'
     status:
       code: 202
       message: Accepted
@@ -38,362 +38,17 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
   response:
     body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: e6c4c441-9506-4ed7-b486-7b90650c72bd
+      apim-request-id: fd6be3e5-31c0-49d3-8c3d-7c11fc698b33
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:19:34 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '128'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: ddb49020-d27c-465d-bedd-8c9c3d132112
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:19:39 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '127'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: f1a613c5-d4ff-4680-a55f-e7f2844dadb0
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:19:44 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '109'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: eecc7307-15fd-446d-9561-0268876475fc
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:19:49 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '112'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: c70c58d1-895d-441e-a304-1a183f69e821
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:19:55 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '138'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: c1df6002-a87e-4153-ba14-af25a45e81e6
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:20:00 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '114'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 78a7b6d0-184e-4d5c-bedd-a89368f99be5
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:20:05 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '101'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 4f13ca7d-2a66-48ab-a29b-0e64eea7e1f5
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:20:10 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '105'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 479b05ef-36a6-4778-9f7a-c8ee38ec4b1a
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:20:15 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '119'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 396f6a23-b81a-4999-ae24-42bf8f27b7ce
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:20:20 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '105'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 0136ad45-caef-48ce-8218-e7a9d14b1feb
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:20:26 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '111'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 65f25f64-3279-41c8-916d-ef82d103fdaf
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:20:31 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '112'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 57d9bd39-6442-4734-ae98-c7d7a51c184c
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:20:36 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '129'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 273c3b69-196c-43f4-823f-03993719549e
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:20:42 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '207'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: a18366d9-1198-4fd6-8fde-7760478e4ab0
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:20:47 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '139'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 79b667cd-0805-41d9-a1ac-c22683dfd58e
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:20:52 GMT
+      date: Wed, 27 Jan 2021 02:13:46 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -401,68 +56,45 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
   response:
     body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: f7f57138-c46a-4de8-905c-0017669f9476
+      apim-request-id: 126ffe70-3724-409d-a7d5-bb5715252837
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:20:57 GMT
+      date: Wed, 27 Jan 2021 02:13:51 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '140'
+      x-envoy-upstream-service-time: '156'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
   response:
     body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: afbb3485-91e6-40fc-9a0f-2001e58aea3f
+      apim-request-id: 7985205a-29f2-47bc-843f-b876c614eb71
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:21:03 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '179'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
-  response:
-    body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
-        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 805f299b-1dd8-4d7a-b19b-37c6636ff446
-      content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:21:08 GMT
+      date: Wed, 27 Jan 2021 02:13:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -470,91 +102,229 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
   response:
     body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: 1d11b8f8-e7ff-4401-afea-07e91e2832be
+      apim-request-id: db5f95aa-ac71-4761-96e6-3164e67f7ac6
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:21:13 GMT
+      date: Wed, 27 Jan 2021 02:14:02 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '141'
+      x-envoy-upstream-service-time: '202'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
   response:
     body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: b63936f6-a0da-46e4-bd43-c92ab490c7d2
+      apim-request-id: a73bdb18-b885-4aad-b376-508095ff6f53
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:21:18 GMT
+      date: Wed, 27 Jan 2021 02:14:08 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '138'
+      x-envoy-upstream-service-time: '788'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
   response:
     body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: 474e1251-6eb4-4b6a-896d-8eca2ac37eb2
+      apim-request-id: 0c5fd25a-e7ba-4d87-8252-d9e212817e49
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:21:23 GMT
+      date: Wed, 27 Jan 2021 02:14:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '159'
+      x-envoy-upstream-service-time: '171'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
   response:
     body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: 870404e9-aa0e-4392-82ea-98a752f6d132
+      apim-request-id: 16684950-6130-4cd3-b496-6331af0fe22e
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:21:28 GMT
+      date: Wed, 27 Jan 2021 02:14:18 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '112'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: de618117-012b-4881-bf22-79a24498841c
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:14:24 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '113'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 3cbc8a3c-a0e0-4c4b-922f-11e7cb3a9a1f
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:14:29 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '114'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 57660d73-2f42-4440-9ffb-243b7c06616f
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:14:34 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '113'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: f597e693-2842-4189-ae34-29ea73c194cf
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:14:40 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '168'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 9a5ae5fb-f06c-4b88-93ce-5822447a3711
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:14:45 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '127'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 5bd92dff-e3d0-4c11-8312-1186890abefd
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:14:50 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -562,54 +332,284 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
   response:
     body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: cdcd53ae-c8d3-4dc0-8dd0-d627b7e3bf5d
+      apim-request-id: bb9e5eb9-c8fa-4e14-b1f2-d23dee52b3b9
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:21:34 GMT
+      date: Wed, 27 Jan 2021 02:14:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '149'
+      x-envoy-upstream-service-time: '118'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
   response:
     body:
-      string: '{"jobId":"63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000","lastUpdateDateTime":"2020-11-19T21:19:29Z","createdDateTime":"2020-11-19T21:19:28Z","expirationDateTime":"2020-11-20T21:19:28Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:19:29Z"},"completed":3,"failed":0,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"redactedText":"I
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: d54e46d0-626a-4665-ab70-7369f20bd98b
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:15:01 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '107'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: fa3cab1c-0139-4898-bb8a-dbea234fd778
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:15:06 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '132'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 036ce108-81a9-4ca8-a884-cf97f89073c3
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:15:10 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '166'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 9fb39b2e-c922-49b9-ad91-039991e4697a
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:15:16 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '153'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 6388cc70-3f2a-45ab-b7a2-ac82959e1c37
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:15:22 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '142'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: a5a1e803-bdaa-4662-a750-f8ae4a17d093
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:15:27 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '118'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: bc6dde3f-ad88-4d68-8607-db816b142fb7
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:15:32 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '125'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 59fcfc9b-712e-440b-8597-33dde14a916c
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:15:37 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '136'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 4b0d97a7-387f-4297-bbdc-b054d63f4e29
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:15:42 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '177'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 2a9e7e82-3933-4e4f-b703-485922defd7b
+      content-type: application/json; charset=utf-8
+      date: Wed, 27 Jan 2021 02:15:48 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '118'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
+  response:
+    body:
+      string: '{"jobId":"6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000","lastUpdateDateTime":"2021-01-27T02:13:42Z","createdDateTime":"2021-01-27T02:13:42Z","expirationDateTime":"2021-01-28T02:13:42Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:13:42Z"},"completed":3,"failed":0,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"redactedText":"I
         will go to the park.","id":"1","entities":[],"warnings":[]},{"redactedText":"I
         did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]},{"redactedText":"The
-        restaurant had really good food.","id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:19:29.5180937Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+        restaurant had really good food.","id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:13:42.3583006Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: 1b9474a1-06b5-47f4-838e-8a818d3c72b9
+      apim-request-id: 2312a210-9ee1-426d-afc7-10d32072b372
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:21:40 GMT
+      date: Wed, 27 Jan 2021 02:15:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '197'
+      x-envoy-upstream-service-time: '173'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/63735c8f-9ef9-4e8b-ab27-2a20797904fc_637413408000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6e915908-3bcf-452d-8fba-31846f007fea_637473024000000000
 version: 1

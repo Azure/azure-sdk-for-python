@@ -267,12 +267,12 @@ async def sample_update_alert_config_async(alert_config):
     alert_config.metric_alert_configurations.append(additional_alert)
 
     async with client:
-        updated = await client.update_alert_configuration(
+        await client.update_alert_configuration(
             alert_config,
             cross_metrics_operator="OR",
             description="updated alert config"
         )
-
+        updated = await client.get_alert_configuration(alert_config.id)
         print("Updated alert name: {}".format(updated.name))
         print("Updated alert description: {}".format(updated.description))
         print("Updated cross metrics operator: {}".format(updated.cross_metrics_operator))

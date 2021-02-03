@@ -20,7 +20,7 @@ from . import _constants as constants
 if TYPE_CHECKING:
     from datetime import datetime
 
-def generate_shared_access_signature(endpoint, shared_access_key, expiration_date_utc, **kwargs):
+def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     # type: (str, str, datetime, Any) -> str
     """ Helper method to generate shared access signature given hostname, key, and expiration date.
         :param str endpoint: The topic endpoint to send the events to.
@@ -90,6 +90,14 @@ def _is_cloud_event(event):
     required = ('id', 'source', 'specversion', 'type')
     try:
         return all([_ in event for _ in required]) and event['specversion'] == "1.0"
+    except TypeError:
+        return False
+
+def _is_eventgrid_event(event):
+    # type: (Any) -> bool
+    required = ('subject', 'event_type', 'data', 'data_version', 'id', 'event_time')
+    try:
+        return all([prop in event for prop in required])
     except TypeError:
         return False
 

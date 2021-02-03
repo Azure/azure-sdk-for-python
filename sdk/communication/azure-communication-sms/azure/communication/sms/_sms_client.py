@@ -93,8 +93,8 @@ class SmsClient(object):
         send_sms_options = kwargs.pop('send_sms_options', None)
 
         request = SendMessageRequest(
-            from_property=from_phone_number,
-            to=to_phone_numbers,
+            from_property=from_phone_number.phone_number,
+            to=[p.phone_number for p in to_phone_numbers],
             message=message,
             send_sms_options=send_sms_options,
             **kwargs)

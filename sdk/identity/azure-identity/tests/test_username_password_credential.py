@@ -11,6 +11,7 @@ from helpers import (
     build_aad_response,
     build_id_token,
     get_discovery_response,
+    id_token_claims,
     mock_response,
     Request,
     validating_transport,
@@ -145,3 +146,46 @@ def test_authenticate():
     # credential should have a cached access token for the scope passed to authenticate
     token = credential.get_token(scope)
     assert token.token == access_token
+
+
+def test_client_capabilities():
+    """the credential should configure MSAL for capability CP1 (ability to handle claims challenges)"""
+
+    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
+    credential = UsernamePasswordCredential("client-id", "username", "password", transport=transport)
+
+    with patch("msal.PublicClientApplication") as PublicClientApplication:
+        credential._get_app()
+
+    assert PublicClientApplication.call_count == 1
+    _, kwargs = PublicClientApplication.call_args
+    assert kwargs["client_capabilities"] == ["CP1"]
+
+
+def test_claims_challenge():
+    """get_token should pass any claims challenge to MSAL token acquisition APIs"""
+
+    msal_acquire_token_result = dict(
+        build_aad_response(access_token="**", id_token=build_id_token()),
+        id_token_claims=id_token_claims("issuer", "subject", "audience", upn="upn"),
+    )
+    expected_claims = '{"access_token": {"essential": "true"}'
+
+    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
+    credential = UsernamePasswordCredential("client-id", "username", "password", transport=transport)
+    with patch.object(UsernamePasswordCredential, "_get_app") as get_mock_app:
+        msal_app = get_mock_app()
+        msal_app.acquire_token_by_username_password.return_value = msal_acquire_token_result
+        credential.get_token("scope", claims=expected_claims)
+
+        assert msal_app.acquire_token_by_username_password.call_count == 1
+        args, kwargs = msal_app.acquire_token_by_username_password.call_args
+        assert kwargs["claims_challenge"] == expected_claims
+
+        msal_app.get_accounts.return_value = [{"home_account_id": credential._auth_record.home_account_id}]
+        msal_app.acquire_token_silent_with_error.return_value = msal_acquire_token_result
+        credential.get_token("scope", claims=expected_claims)
+
+        assert msal_app.acquire_token_silent_with_error.call_count == 1
+        args, kwargs = msal_app.acquire_token_silent_with_error.call_args
+        assert kwargs["claims_challenge"] == expected_claims
