@@ -67,10 +67,10 @@ def parse_connection_string(conn_str):
     :type conn_str: str
     :rtype: ~azure.servicebus.ServiceBusConnectionStringProperties
     """
-    namespace, policy, key, entity, signature = _parse_conn_str(conn_str)[:-1]
-    endpoint = "sb://" + namespace + "/"
+    fully_qualified_namespace, policy, key, entity, signature = _parse_conn_str(conn_str, True)[:-1]
+    endpoint = "sb://" + fully_qualified_namespace + "/"
     props = {
-        "fully_qualified_namespace": namespace,
+        "fully_qualified_namespace": fully_qualified_namespace,
         "endpoint": endpoint,
         "entity_path": entity,
         "shared_access_signature": signature,
