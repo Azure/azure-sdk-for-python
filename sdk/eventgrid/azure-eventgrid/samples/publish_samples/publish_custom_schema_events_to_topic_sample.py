@@ -33,12 +33,12 @@ def publish_event():
     client = EventGridPublisherClient(endpoint, credential)
 
     custom_schema_event = {
-        "custom_event_type":"Contoso.Items.ItemReceived",
-        "data":{
-            "itemSku": "Contoso Item SKU #2"
-        },
-        "custom_subject":"Door1",
-        "custom_data_version":"2.0"
+        "custom_subject": "sample",
+        "custom_EventType": "sample.event",
+        "customDataVersion": "2.0",
+        "customId": uuid.uuid4(),
+        "customEventTime": dt.datetime.now(UTC()).isoformat(),
+        "customData": "sample data"
     }
 
     # publish events
