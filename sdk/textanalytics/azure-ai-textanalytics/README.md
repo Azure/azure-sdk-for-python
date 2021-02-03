@@ -633,7 +633,7 @@ Common scenarios
 - Extract key phrases: [sample_extract_key_phrases.py][extract_key_phrases_sample] ([async version][extract_key_phrases_sample_async])
 - Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
 - Healthcare Analysis: [sample_analyze_healthcare.py][analyze_healthcare_sample] ([async version][analyze_healthcare_sample_async])
-- Batch Analysis: [sample_anayze.py][analyze_sample] ([async version][analyze_sample_async])
+- Batch Analysis: [sample_analyze_batch_actions.py][analyze_sample] ([async version][analyze_sample_async])
 
 Advanced scenarios
 
@@ -723,8 +723,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [recognize_pii_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
 [analyze_healthcare_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare.py
 [analyze_healthcare_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_async.py
-[analyze_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze.py
-[analyze_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_async.py
+[analyze_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_batch_actions.py
+[analyze_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_batch_actions_async.py
 [opinion_mining_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment_with_opinion_mining.py
 [opinion_mining_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_with_opinion_mining_async.py
 [cla]: https://cla.microsoft.com

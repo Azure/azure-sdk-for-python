@@ -791,7 +791,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_analyze.py
+            .. literalinclude:: ../samples/sample_analyze_batch_actions.py
                 :start-after: [START analyze]
                 :end-before: [END analyze]
                 :language: python

@@ -780,7 +780,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_analyze_async.py
+            .. literalinclude:: ../samples/async_samples/sample_analyze_batch_actions_async.py
                 :start-after: [START analyze_async]
                 :end-before: [END analyze_async]
                 :language: python

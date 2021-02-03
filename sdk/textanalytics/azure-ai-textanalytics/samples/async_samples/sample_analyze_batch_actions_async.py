@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_asynct.py
+FILE: sample_analyze_batch_actions_async.py
 
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which consists of a variety
@@ -15,7 +15,7 @@ DESCRIPTION:
     or Key Phrase Extraction.  The response will contain results from each of the individual actions specified in the request.
 
 USAGE:
-    python sample_analyze_async.py
+    python sample_analyze_batch_actions_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
