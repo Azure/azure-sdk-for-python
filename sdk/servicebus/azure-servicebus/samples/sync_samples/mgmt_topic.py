@@ -17,10 +17,12 @@ Example to show managing topic entities under a ServiceBus Namespace, including
 # pylint: disable=C0111
 
 import os
+import uuid
 from azure.servicebus.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-TOPIC_NAME = "sb_mgmt_demo_topic"
+TOPIC_NAME = "sb_mgmt_topic" + str(uuid.uuid4())
+
 
 
 def create_topic(servicebus_mgmt_client):
