@@ -36,7 +36,7 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
         )
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    def test_communication_link_notif_hub(self, resource_group):
+    def test_communication_link_notif_hubA(self, resource_group):
         GROUP_NAME = resource_group.name
         namespace_name = self.get_resource_name("test-namespace-for-comm")
         notification_hub_name = self.get_resource_name("test-notification-hub-for-comm")
