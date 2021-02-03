@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_healthcare.py
+FILE: sample_analyze_healthcare_entities.py
 
 DESCRIPTION:
     This sample demonstrates how to detect healthcare entities in a batch of documents.
@@ -15,7 +15,7 @@ DESCRIPTION:
     data source.  Relations between entities will also be included in the response.
 
 USAGE:
-    python sample_analyze_healthcare.py
+    python sample_analyze_healthcare_entities.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -26,10 +26,10 @@ USAGE:
 import os
 
 
-class AnalyzeHealthcareSample(object):
+class AnalyzeHealthcareEntitiesSample(object):
 
-    def analyze_healthcare(self):
-        # [START analyze_healthcare]
+    def analyze_healthcare_entities(self):
+        # [START analyze_healthcare_entities]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -45,12 +45,12 @@ class AnalyzeHealthcareSample(object):
             "Subject is taking 100mg of ibuprofen twice daily"
         ]
 
-        poller = text_analytics_client.begin_analyze_healthcare(documents, show_stats=True)
+        poller = text_analytics_client.begin_analyze_healthcare_entities(documents, show_stats=True)
         result = poller.result()
 
         docs = [doc for doc in result if not doc.is_error]
 
-        print("Results of Healthcare Analysis:")
+        print("Results of Healthcare Entities Analysis:")
         for idx, doc in enumerate(docs):
             for entity in doc.entities:
                 print("Entity: {}".format(entity.text))
@@ -58,11 +58,11 @@ class AnalyzeHealthcareSample(object):
                 print("...Subcategory: {}".format(entity.subcategory))
                 print("...Offset: {}".format(entity.offset))
                 print("...Confidence score: {}".format(entity.confidence_score))
-                if entity.links is not None:
-                    print("...Links:")
-                    for link in entity.links:
-                        print("......ID: {}".format(link.id))
-                        print("......Data source: {}".format(link.data_source))
+                if entity.data_sources is not None:
+                    print("...Data Sources:")
+                    for data_source in entity.data_sources:
+                        print("......Entity ID: {}".format(data_source.entity_id))
+                        print("......Name: {}".format(data_source.name))
             for relation in doc.relations:
                 print("Relation:")
                 print("...Source: {}".format(relation.source.text))
@@ -71,8 +71,8 @@ class AnalyzeHealthcareSample(object):
                 print("...Bidirectional: {}".format(relation.is_bidirectional))
             print("------------------------------------------")
 
-        # [END analyze_health]
+        # [END analyze_healthcare_entities]
 
 if __name__ == "__main__":
-    sample = AnalyzeHealthcareSample()
-    sample.analyze_healthcare()
+    sample = AnalyzeHealthcareEntitiesSample()
+    sample.analyze_healthcare_entities()

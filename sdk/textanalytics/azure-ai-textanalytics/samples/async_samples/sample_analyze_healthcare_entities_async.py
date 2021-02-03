@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_healthcare_async.py
+FILE: sample_analyze_healthcare_entities_async.py
 
 DESCRIPTION:
     This sample demonstrates how to detect healthcare entities in a batch of documents.
@@ -15,7 +15,7 @@ DESCRIPTION:
     data source.  Relations between entities will also be included in the response.
 
 USAGE:
-    python sample_analyze_healthcare_async.py
+    python sample_analyze_healthcare_entities_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -27,10 +27,10 @@ import os
 import asyncio
 
 
-class AnalyzeHealthcareSampleAsync(object):
+class AnalyzeHealthcareEntitiesSampleAsync(object):
 
-    async def analyze_healthcare_async(self):
-        # [START analyze_healthcare_async]
+    async def analyze_healthcare_entities_async(self):
+        # [START analyze_healthcare_entities_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -47,11 +47,11 @@ class AnalyzeHealthcareSampleAsync(object):
         ]
 
         async with text_analytics_client:
-            poller = await text_analytics_client.begin_analyze_healthcare(documents)
+            poller = await text_analytics_client.begin_analyze_healthcare_entities(documents)
             result = await poller.result()
             docs = [doc async for doc in result if not doc.is_error]
 
-        print("Results of Healthcare Analysis:")
+        print("Results of Healthcare Entities Analysis:")
         for idx, doc in enumerate(docs):
             print("Document text: {}\n".format(documents[idx]))
             for entity in doc.entities:
@@ -60,11 +60,11 @@ class AnalyzeHealthcareSampleAsync(object):
                 print("...Subcategory: {}".format(entity.subcategory))
                 print("...Offset: {}".format(entity.offset))
                 print("...Confidence score: {}".format(entity.confidence_score))
-                if entity.links is not None:
-                    print("...Links:")
-                    for link in entity.links:
-                        print("......ID: {}".format(link.id))
-                        print("......Data source: {}".format(link.data_source))
+                if entity.data_sources is not None:
+                    print("...Data Sources:")
+                    for data_source in entity.data_sources:
+                        print("......Entity ID: {}".format(data_source.entity_id))
+                        print("......Name: {}".format(data_source.name))
             for relation in doc.relations:
                 print("Relation:")
                 print("...Source: {}".format(relation.source.text))
@@ -73,12 +73,12 @@ class AnalyzeHealthcareSampleAsync(object):
                 print("...Bidirectional: {}".format(relation.is_bidirectional))
             print("------------------------------------------")
 
-        # [END analyze_healthcare_async]
+        # [END analyze_healthcare_entities_async]
 
 
 async def main():
-    sample = AnalyzeHealthcareSampleAsync()
-    await sample.analyze_healthcare_async()
+    sample = AnalyzeHealthcareEntitiesSampleAsync()
+    await sample.analyze_healthcare_entities_async()
 
 
 if __name__ == '__main__':

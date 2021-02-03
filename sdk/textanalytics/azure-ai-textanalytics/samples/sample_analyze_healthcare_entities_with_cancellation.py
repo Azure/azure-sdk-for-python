@@ -7,17 +7,16 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_health_with_cancellation.py
+FILE: sample_analyze_healthcare_entities_with_cancellation.py
 
 DESCRIPTION:
-    This sample demonstrates how to cancel a Health job after it's been started.
+    This sample demonstrates how to cancel a Healthcare Entities Analysis job after it's been started.
     Since the Health API is currently only available in a gated preview, you need
     to have your subscription on the service's allow list. More information
     here: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview.
 
-
 USAGE:
-    python sample_health_with_cancellation.py
+    python sample_analyze_healthcare_entities_with_cancellation.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -26,14 +25,14 @@ USAGE:
 
 
 import os
-import asyncio
 
-class HealthWithCancellationSampleAsync(object):
 
-    async def health_with_cancellation_async(self):
-        # [START health_with_cancellation_async]
+class AnalyzeHealthcareEntitiesWithCancellationSample(object):
+
+    def analyze_healthcare_entities_with_cancellation(self):
+        # [START analyze_healthcare_entities_with_cancellation]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics.aio import TextAnalyticsClient
+        from azure.ai.textanalytics import TextAnalyticsClient
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
@@ -59,22 +58,15 @@ class HealthWithCancellationSampleAsync(object):
             for revascularization with open heart surgery."
         ]
 
-        async with text_analytics_client:
-            poller = await text_analytics_client.begin_analyze_healthcare(documents)
-            poller = await text_analytics_client.begin_cancel_analyze_healthcare(poller)
+        poller = text_analytics_client.begin_analyze_healthcare_entities(documents)
+        cancellation_poller = text_analytics_client.begin_cancel_analyze_healthcare_entities(poller)
+        cancellation_poller.wait()
 
-        await poller.wait()
-
-        # [END health_with_cancellation_async]
+        # [END analyze_healthcare_entities_with_cancellation]
 
 
-async def main():
-    sample = HealthWithCancellationSampleAsync()
-    await sample.health_with_cancellation_async()
-
-
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+if __name__ == "__main__":
+    sample = AnalyzeHealthcareEntitiesWithCancellationSample()
+    sample.analyze_healthcare_entities_with_cancellation()
 
 

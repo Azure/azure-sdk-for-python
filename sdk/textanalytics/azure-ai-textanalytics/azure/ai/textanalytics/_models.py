@@ -386,8 +386,8 @@ class HealthcareEntity(DictMixin):
         :ivar int offset: The Healthcare entity text offset from the start of the document.
         :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
             entity.
-        :ivar links: A collection of entity references in known data sources.
-        :vartype links: list[~azure.ai.textanalytics.HealthcareEntityLink]
+        :ivar data_sources: A collection of entity references in known data sources.
+        :vartype links: list[~azure.ai.textanalytics.HealthcareEntityDataSource]
     """
 
     def __init__(self, **kwargs):
@@ -396,7 +396,7 @@ class HealthcareEntity(DictMixin):
         self.subcategory = kwargs.get("subcategory", None)
         self.offset = kwargs.get("offset", None)
         self.confidence_score = kwargs.get("confidence_score", None)
-        self.links = kwargs.get("links", [])
+        self.data_sources = kwargs.get("data_sources", [])
 
     @classmethod
     def _from_generated(cls, healthcare_entity):
@@ -406,20 +406,20 @@ class HealthcareEntity(DictMixin):
             subcategory=healthcare_entity.subcategory,
             offset=healthcare_entity.offset,
             confidence_score=healthcare_entity.confidence_score,
-            links=[
-                HealthcareEntityLink(id=l.id, data_source=l.data_source) for l in healthcare_entity.links
+            data_sources=[
+                HealthcareEntityDataSource(entity_id=l.id, name=l.data_source) for l in healthcare_entity.links
             ] if healthcare_entity.links else None
         )
 
     def __repr__(self):
         return "HealthcareEntity(text={}, category={}, subcategory={}, offset={}, confidence_score={},\
-        links={})".format(
+        data_sources={})".format(
             self.text,
             self.category,
             self.subcategory,
             self.offset,
             self.confidence_score,
-            repr(self.links)
+            repr(self.data_sources)
         )[:1024]
 
 
@@ -461,20 +461,20 @@ class HealthcareRelation(DictMixin):
         )[:1024]
 
 
-class HealthcareEntityLink(DictMixin):
+class HealthcareEntityDataSource(DictMixin):
     """
-    HealthcareEntityLink contains information representing an entity reference in a known data source.
+    HealthcareEntityDataSource contains information representing an entity reference in a known data source.
 
-    :ivar str id: ID of the entity in the given source catalog.
-    :ivar str data_source: The entity catalog from where the entity was identified, such as UMLS, CHV, MSH, etc.
+    :ivar str entity_id: ID of the entity in the given source catalog.
+    :ivar str name: The name of the entity catalog from where the entity was identified, such as UMLS, CHV, MSH, etc.
     """
 
     def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.data_source = kwargs.get("data_source", None)
+        self.entity_id = kwargs.get("entity_id", None)
+        self.name = kwargs.get("name", None)
 
     def __repr__(self):
-        return "HealthcareEntityLink(id={}, data_source={})".format(self.id, self.data_source)[:1024]
+        return "HealthcareEntityDataSource(entity_id={}, name={})".format(self.entity_id, self.name)[:1024]
 
 
 class TextAnalyticsError(DictMixin):
