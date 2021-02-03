@@ -1,6 +1,3 @@
-import json
-
-
 # storage cloud event
 cloud_storage_dict = {
     "id":"a0517898-9fa4-4e70-b4a3-afda1dd68672",
@@ -21,20 +18,28 @@ cloud_storage_dict = {
     "time":"2020-08-07T01:11:49.765846Z",
     "specversion":"1.0"
 }
-cloud_storage_string = json.dumps(cloud_storage_dict)
-cloud_storage_bytes = cloud_storage_string.encode("utf-8")
 
 # custom cloud event
-cloud_custom_dict = {
+cloud_custom_dict_base64 = {
+    "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+    "source":"https://egtest.dev/cloudcustomevent",
+    "data_base64":'Y2xvdWRldmVudA==',
+    "type":"Azure.Sdk.Sample",
+    "time":"2020-08-07T02:06:08.11969Z",
+    "specversion":"1.0"
+}
+
+cloud_custom_dict_with_extensions = {
     "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
     "source":"https://egtest.dev/cloudcustomevent",
     "data":{"team": "event grid squad"},
     "type":"Azure.Sdk.Sample",
     "time":"2020-08-07T02:06:08.11969Z",
-    "specversion":"1.0"
+    "specversion":"1.0",
+    "ext1": "example",
+    "ext2": "example2"
 }
-cloud_custom_string = json.dumps(cloud_custom_dict)
-cloud_custom_bytes = cloud_custom_string.encode("utf-8")
+
 
 # storage eg event
 eg_storage_dict = {
@@ -58,20 +63,3 @@ eg_storage_dict = {
     "eventTime":"2020-08-07T02:28:23.867525Z",
     "topic":"/subscriptions/faa080af-c1d8-40ad-9cce-e1a450ca5b57/resourceGroups/t-swpill-test/providers/Microsoft.EventGrid/topics/eventgridegsub"
 }
-
-eg_storage_string = json.dumps(eg_storage_dict)
-eg_storage_bytes = eg_storage_string.encode("utf-8")
-
-# custom eg event
-eg_custom_dict = {
-    "id":"3a30afef-b604-4b67-973e-7dfff7e178a7",
-    "subject":"Test EG Custom Event",
-    "data":{"team":"event grid squad"},
-    "eventType":"Azure.Sdk.Sample",
-    "dataVersion":"2.0",
-    "metadataVersion":"1",
-    "eventTime":"2020-08-07T02:19:05.16916Z",
-    "topic":"/subscriptions/f8aa80ae-d1c8-60ad-9bce-e1a850ba5b67/resourceGroups/sample-resource-group-test/providers/Microsoft.EventGrid/topics/egtopicsamplesub"
-}
-eg_custom_string = json.dumps(eg_custom_dict)
-eg_custom_bytes = eg_custom_string.encode("utf-8")

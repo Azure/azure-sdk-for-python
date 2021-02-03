@@ -110,3 +110,12 @@ def _eventgrid_data_typecheck(event):
     if isinstance(data, six.binary_type):
         raise TypeError("Data in EventGridEvent cannot be bytes. Please refer to"\
             "https://docs.microsoft.com/en-us/azure/event-grid/event-schema")
+
+def _decode(content):
+    try:
+        return base64.b64decode(content.encode('utf-8'))
+    except (ValueError, TypeError) as error:
+        # ValueError for Python 3, TypeError for Python 2
+        raise ValueError(
+            message="Data is not valid base 64.",
+            error=error)

@@ -2,6 +2,9 @@
 
 ## 2.0.0b5 (Unreleased)
 
+  **Features**
+  - `CloudEvent` and `EventGridEvent` now have a `from_dict` method which deserializes a dict representation into corresponding object.
+
   **Breaking Changes**
   - `EventGridSharedAccessSignatureCredential` is deprecated in favor of `AzureSasCredential`.
   - `azure.eventgrid.models` namespace along with all the models in it are now removed. `azure.eventgrid.SystemEventNames` can be used to get the event model type mapping.

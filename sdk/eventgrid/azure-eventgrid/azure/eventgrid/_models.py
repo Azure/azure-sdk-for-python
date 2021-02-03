@@ -9,6 +9,7 @@ import uuid
 import json
 import six
 from msrest.serialization import UTC
+from ._helpers import _decode
 from ._generated.models import EventGridEvent as InternalEventGridEvent, CloudEvent as InternalCloudEvent
 
 
@@ -122,7 +123,7 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
         source=event.pop("source", None),
         type=event.pop("type", None),
         specversion=event.pop("specversion", None),
-        data=event.pop("data", None) or event.pop("data_base64", None),
+        data=event.pop("data", None) or _decode(event.pop("data_base64", None)),
         time=event.pop("time", None),
         dataschema=event.pop("dataschema", None),
         datacontenttype=event.pop("datacontenttype", None),
