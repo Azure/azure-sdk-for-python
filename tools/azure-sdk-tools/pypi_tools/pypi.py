@@ -43,7 +43,7 @@ class PyPIClient:
         for version in version_set:
             requires_python = self.project_release(package_name, version)["info"]["requires_python"]
             if requires_python:
-                if parse('.'.join(map(str, sys.version_info[:3]))) in SpecifierSet(requires_python):
+                if Version('.'.join(map(str, sys.version_info[:3]))) in SpecifierSet(requires_python):
                     results.append(version)
             else:
                 results.append(version)
