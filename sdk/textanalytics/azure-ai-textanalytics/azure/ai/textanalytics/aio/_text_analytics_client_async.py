@@ -740,7 +740,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         actions,  # type: List[Union[RecognizeEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction]]
         **kwargs  # type: Any
     ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeBatchActionsResult]]
-        """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
+        """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -751,7 +751,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
         :param actions: A heterogeneous list of actions to perform on the inputted documents.
-            Each task object encapsulates the parameters used for the particular task type.
+            Each action object encapsulates the parameters used for the particular action type.
             The outputted action results will be in the same order you inputted your actions.
             Can not put duplicate actions into list.
         :type actions:

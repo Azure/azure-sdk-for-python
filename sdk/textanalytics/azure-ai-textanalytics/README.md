@@ -519,7 +519,7 @@ poller = text_analytics_client.begin_analyze_batch_actions(
     ]
 )
 
-# returns batch actions results in the same order as the inputted tasks
+# returns batch actions results in the same order as the inputted actions
 result = poller.result()
 
 first_action_result = next(result)

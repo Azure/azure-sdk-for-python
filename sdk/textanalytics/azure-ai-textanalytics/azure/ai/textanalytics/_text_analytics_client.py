@@ -762,7 +762,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
         :param actions: A heterogeneous list of actions to perform on the inputted documents.
-            Each task object encapsulates the parameters used for the particular task type.
+            Each action object encapsulates the parameters used for the particular action type.
             The outputted action results will be in the same order you inputted your actions.
             Can not put duplicate actions into list.
         :type actions:
