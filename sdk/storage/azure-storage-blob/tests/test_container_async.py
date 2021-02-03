@@ -174,6 +174,75 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_container(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        old_name1 = self._get_container_reference(prefix="oldcontainer1")
+        old_name2 = self._get_container_reference(prefix="oldcontainer2")
+        new_name = self._get_container_reference(prefix="newcontainer")
+        container1 = bsc.get_container_client(old_name1)
+        container2 = bsc.get_container_client(old_name2)
+
+        await container1.create_container()
+        await container2.create_container()
+
+        new_container = await bsc._rename_container(name=old_name1, new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await bsc._rename_container(name=old_name2, new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await container1.get_container_properties()
+        with self.assertRaises(HttpResponseError):
+            await bsc._rename_container(name="badcontainer", new_name="container")
+        props = await new_container.get_container_properties()
+        self.assertEqual(new_name, props.name)
+
+    @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_container_with_container_client(
+            self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        old_name1 = self._get_container_reference(prefix="oldcontainer1")
+        old_name2 = self._get_container_reference(prefix="oldcontainer2")
+        new_name = self._get_container_reference(prefix="newcontainer")
+        bad_name = self._get_container_reference(prefix="badcontainer")
+        container1 = bsc.get_container_client(old_name1)
+        container2 = bsc.get_container_client(old_name2)
+        bad_container = bsc.get_container_client(bad_name)
+
+        await container1.create_container()
+        await container2.create_container()
+
+        new_container = await container1._rename_container(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await container2._rename_container(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await container1.get_container_properties()
+        with self.assertRaises(HttpResponseError):
+            await bad_container._rename_container(name="badcontainer", new_name="container")
+        new_container_props = await new_container.get_container_properties()
+        self.assertEqual(new_name, new_container_props.name)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_container_with_source_lease(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        old_name = self._get_container_reference(prefix="old")
+        new_name = self._get_container_reference(prefix="new")
+        container = bsc.get_container_client(old_name)
+        await container.create_container()
+        container_lease_id = await container.acquire_lease()
+        with self.assertRaises(HttpResponseError):
+            await bsc._rename_container(name=old_name, new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            await bsc._rename_container(name=old_name, new_name=new_name, lease="bad_id")
+        new_container = await bsc._rename_container(name=old_name, new_name=new_name, lease=container_lease_id)
+        props = await new_container.get_container_properties()
+        self.assertEqual(new_name, props.name)
+
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_unicode_create_container_unicode_name(self, resource_group, location, storage_account, storage_account_key):
@@ -1189,6 +1258,45 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             await blob_client1.get_blob_properties(),
             'blob2',
             'blob3',
+        ))
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_batch_blobs_with_container_sas(
+            self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container_name = self._get_container_reference("testcont")
+        sas_token = generate_container_sas(
+            storage_account.name,
+            container_name,
+            account_key=storage_account_key,
+            permission=ContainerSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        container_client = bsc.get_container_client(container_name)
+        await container_client.create_container()
+        container = ContainerClient.from_container_url(container_client.url, credential=sas_token)
+        data = b'hello world'
+
+        try:
+            blob_client1 = container.get_blob_client('blob1')
+            await blob_client1.upload_blob(data)
+            await container.get_blob_client('blob2').upload_blob(data)
+            await container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        response = await self._to_list(await container.delete_blobs(
+            await blob_client1.get_blob_properties(),
+            'blob2',
+            'blob3'
         ))
         assert len(response) == 3
         assert response[0].status_code == 202
