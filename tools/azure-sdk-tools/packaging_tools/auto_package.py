@@ -47,8 +47,6 @@ def change_log_generate(package_name):
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
         data = json.load(reader)
-    if not data:
-        return
 
     sdk_folder = '.'
     result = {

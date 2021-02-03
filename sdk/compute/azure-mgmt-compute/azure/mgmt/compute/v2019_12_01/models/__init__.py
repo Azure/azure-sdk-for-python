@@ -147,6 +147,7 @@ try:
     from ._models_py3 import UpgradePolicy
     from ._models_py3 import Usage
     from ._models_py3 import UsageName
+    from ._models_py3 import UserArtifactManage
     from ._models_py3 import UserArtifactSource
     from ._models_py3 import UserAssignedIdentitiesValue
     from ._models_py3 import VMScaleSetConvertToSinglePlacementGroupInput
@@ -365,6 +366,7 @@ except (SyntaxError, ImportError):
     from ._models import UpgradePolicy  # type: ignore
     from ._models import Usage  # type: ignore
     from ._models import UsageName  # type: ignore
+    from ._models import UserArtifactManage  # type: ignore
     from ._models import UserArtifactSource  # type: ignore
     from ._models import UserAssignedIdentitiesValue  # type: ignore
     from ._models import VMScaleSetConvertToSinglePlacementGroupInput  # type: ignore
@@ -629,6 +631,7 @@ __all__ = [
     'UpgradePolicy',
     'Usage',
     'UsageName',
+    'UserArtifactManage',
     'UserArtifactSource',
     'UserAssignedIdentitiesValue',
     'VMScaleSetConvertToSinglePlacementGroupInput',
