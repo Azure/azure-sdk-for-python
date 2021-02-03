@@ -65,31 +65,13 @@ cloud_event = {
 |---|---|---|
 |`EventGridClient(credentials)`|`EventGridPublisherClient(endpoint, credential)`|[Sample for client construction](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs5_publish_events_using_cloud_events_1.0_schema.py)|
 
-* Additionally, we now have an `EventGridDeserializer` that should be used to deserialize the events. This class is used only to decode data into a `CloudEvent` or an `EventGridEvent`. Hence, there are no credentials required to construct this as shown below.
-
-```Python
-from azure.eventgrid import EventGridDeserializer
-
-eg_consumer = EventGridDeserializer()
-```
-
 ### Publishing Events
 
-The `publish_events` API is replaced with `send` in v2.0. Additionally, `send` API accepts `CloudEvent`, `CustomEvent` along with `EventGridEvent`
+The `publish_events` API is replaced with `send` in v2.0. Additionally, `send` API accepts `CloudEvent`, `EventGridEvent` along with their dict representations.
 
 | In v1.3 | Equivalent in v2.0 | Sample |
 |---|---|---|
 |`EventGridClient(credentials).publish_events(topic_hostname, events)`|`EventGridPublisherClient(endpoint, credential).send(events)`|[Sample for client construction](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs5_publish_events_using_cloud_events_1.0_schema.py)|
-
-### Consuming Events
-
-In v2.0, `EventGridDeserializer` can be used to decode both Cloud Events and EventGrid Events. Please find the samples [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples/consume_samples) to see detailed examples of the consumer.
-
-```Python
-EventGridDeserializer().deserialize_cloud_events(cloud_event_dict)
-
-EventGridDeserializer().deserialize_eventgrid_events(eventgrid_event_dict)
-```
 
 ## Additional samples
 
