@@ -135,6 +135,69 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_rename_container(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        old_name1 = self._get_container_reference(prefix="oldcontainer1")
+        old_name2 = self._get_container_reference(prefix="oldcontainer2")
+        new_name = self._get_container_reference(prefix="newcontainer")
+        container1 = bsc.get_container_client(old_name1)
+        container2 = bsc.get_container_client(old_name2)
+
+        container1.create_container()
+        container2.create_container()
+
+        new_container = bsc._rename_container(name=old_name1, new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            bsc._rename_container(name=old_name2, new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            container1.get_container_properties()
+        with self.assertRaises(HttpResponseError):
+            bsc._rename_container(name="badcontainer", new_name="container")
+        self.assertEqual(new_name, new_container.get_container_properties().name)
+
+    @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
+    @GlobalStorageAccountPreparer()
+    def test_rename_container_with_container_client(
+            self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        old_name1 = self._get_container_reference(prefix="oldcontainer1")
+        old_name2 = self._get_container_reference(prefix="oldcontainer2")
+        new_name = self._get_container_reference(prefix="newcontainer")
+        bad_name = self._get_container_reference(prefix="badcontainer")
+        container1 = bsc.get_container_client(old_name1)
+        container2 = bsc.get_container_client(old_name2)
+        bad_container = bsc.get_container_client(bad_name)
+
+        container1.create_container()
+        container2.create_container()
+
+        new_container = container1._rename_container(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            container2._rename_container(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            container1.get_container_properties()
+        with self.assertRaises(HttpResponseError):
+            bad_container._rename_container(name="badcontainer", new_name="container")
+        self.assertEqual(new_name, new_container.get_container_properties().name)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_rename_container_with_source_lease(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        old_name = self._get_container_reference(prefix="old")
+        new_name = self._get_container_reference(prefix="new")
+        container = bsc.get_container_client(old_name)
+        container.create_container()
+        container_lease_id = container.acquire_lease()
+        with self.assertRaises(HttpResponseError):
+            bsc._rename_container(name=old_name, new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            bsc._rename_container(name=old_name, new_name=new_name, lease="bad_id")
+        new_container = bsc._rename_container(name=old_name, new_name=new_name, lease=container_lease_id)
+        self.assertEqual(new_name, new_container.get_container_properties().name)
+
     @GlobalStorageAccountPreparer()
     def test_unicode_create_container_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
@@ -145,8 +208,6 @@ class StorageContainerTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             # not supported - container name must be alphanumeric, lowercase
             container.create_container()
-
-        # Assert
 
     @GlobalStorageAccountPreparer()
     def test_list_containers(self, resource_group, location, storage_account, storage_account_key):
@@ -735,7 +796,6 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_undelete_container(self, resource_group, location, storage_account, storage_account_key):
         # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-        pytest.skip('This will be added back along with STG74 features')
 
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container_client = self._create_container(bsc)
@@ -765,7 +825,6 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_restore_to_existing_container(self, resource_group, location, storage_account, storage_account_key):
         # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-        pytest.skip('This will be added back along with STG74 features')
 
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         # get an existing container
@@ -793,7 +852,6 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_restore_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-        pytest.skip('This will be added back along with STG74 features')
         token = generate_account_sas(
             storage_account.name,
             storage_account_key,
@@ -1137,6 +1195,45 @@ class StorageContainerTest(StorageTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
+    @pytest.mark.live_test_only
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_batch_blobs_with_container_sas(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container_name = self._get_container_reference()
+        sas_token = generate_container_sas(
+            storage_account.name,
+            container_name,
+            account_key=storage_account_key,
+            permission=ContainerSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        container_client = bsc.get_container_client(container_name)
+        container_client.create_container()
+        container = ContainerClient.from_container_url(container_client.url, credential=sas_token)
+        data = b'hello world'
+
+        try:
+            blob_client1 = container.get_blob_client('blob1')
+            blob_client1.upload_blob(data)
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        response = container.delete_blobs(
+            blob_client1.get_blob_properties(),
+            'blob2',
+            'blob3',
+        )
+        response = list(response)
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
@@ -1262,7 +1359,7 @@ class StorageContainerTest(StorageTestCase):
     def test_delete_blobs_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
-        container = self._create_container(bsc)
+        container = self._create_container(bsc, prefix="test")
         data = b'hello world'
 
         try:
