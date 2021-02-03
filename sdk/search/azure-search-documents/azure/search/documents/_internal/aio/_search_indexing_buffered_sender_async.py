@@ -34,10 +34,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     :type index_name: str
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword bool auto_flush: if the auto flush mode is on. Default to True.
     :keyword int auto_flush_interval: how many max seconds if between 2 flushes. This only takes effect
-        when auto_flush is on. Default to 60 seconds. If a non-positive number is set, it will be default
-        to 86400s (1 day)
+        when auto_flush is on. Default to 60 seconds.
     :keyword int initial_batch_action_count: The initial number of actions to group into a batch when
         tuning the behavior of the sender. The default value is 512.
     :keyword int max_retries_per_action: The number of times to retry a failed document. The default value is 3.
