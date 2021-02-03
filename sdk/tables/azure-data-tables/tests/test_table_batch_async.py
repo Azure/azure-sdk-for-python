@@ -13,6 +13,8 @@ from datetime import datetime
 from dateutil.tz import tzutc
 import sys
 
+from devtools_testutils import AzureTestCase
+
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceExistsError,
@@ -37,7 +39,7 @@ from preparers import TablesPreparer
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
-class StorageTableBatchTest(TableTestCase):
+class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
     async def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key):
         self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)

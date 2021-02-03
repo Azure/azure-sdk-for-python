@@ -8,6 +8,8 @@
 import time
 import pytest
 
+from devtools_testutils import AzureTestCase
+
 from azure.core.exceptions import HttpResponseError
 
 from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
@@ -19,7 +21,7 @@ from preparers import TablesPreparer
 # ------------------------------------------------------------------------------
 
 
-class TableServicePropertiesTest(TableTestCase):
+class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None

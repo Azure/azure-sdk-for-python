@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 import pytest
 
+from devtools_testutils import AzureTestCase
+
 from azure.data.tables.aio import TableServiceClient
 
 from _shared.testcase import TableTestCase, SLEEP_DELAY
@@ -19,7 +21,7 @@ SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceS
                          '></StorageServiceStats> '
 
 # --Test Class -----------------------------------------------------------------
-class TableServiceStatsTest(TableTestCase):
+class TableServiceStatsTest(AzureTestCase, TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
         assert stats is not None

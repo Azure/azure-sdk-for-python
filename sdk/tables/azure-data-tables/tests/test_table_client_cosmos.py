@@ -8,6 +8,8 @@ import platform
 from time import sleep
 import sys
 
+from devtools_testutils import AzureTestCase
+
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
 
@@ -27,7 +29,7 @@ _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
 
-class StorageTableClientTest(TableTestCase):
+class StorageTableClientTest(AzureTestCase, TableTestCase):
     def setUp(self):
         super(StorageTableClientTest, self).setUp()
         self.sas_token = self.generate_sas_token()

@@ -14,6 +14,8 @@ from enum import Enum
 from math import isnan
 import uuid
 
+from devtools_testutils import AzureTestCase
+
 from azure.data.tables import (
     TableServiceClient,
     TableClient,
@@ -39,7 +41,7 @@ from preparers import TablesPreparer
 
 # ------------------------------------------------------------------------------
 
-class StorageTableEntityTest(TableTestCase):
+class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='table'):
         self.table_name = self.get_resource_name('uttable')

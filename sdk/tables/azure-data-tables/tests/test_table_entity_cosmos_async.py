@@ -15,6 +15,8 @@ from math import isnan
 from time import sleep
 import uuid
 
+from devtools_testutils import AzureTestCase
+
 from azure.data.tables import (
     generate_table_sas,
     TableEntity,
@@ -39,7 +41,7 @@ from preparers import CosmosPreparer
 # TODO: change to `with table_client as client:` to close sessions
 # ------------------------------------------------------------------------------
 
-class StorageTableEntityTest(TableTestCase):
+class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     async def _set_up(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         account_url = self.account_url(tables_cosmos_account_name, "cosmos")

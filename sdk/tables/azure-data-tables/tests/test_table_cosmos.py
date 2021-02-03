@@ -15,6 +15,8 @@ from datetime import (
     timedelta,
 )
 
+from devtools_testutils import AzureTestCase
+
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -48,7 +50,7 @@ from preparers import CosmosPreparer
 TEST_TABLE_PREFIX = 'pytablesync'
 # ------------------------------------------------------------------------------
 
-class StorageTableTest(TableTestCase):
+class StorageTableTest(AzureTestCase, TableTestCase):
 
     # --Helpers-----------------------------------------------------------------
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):

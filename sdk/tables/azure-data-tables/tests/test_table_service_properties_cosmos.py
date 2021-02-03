@@ -8,6 +8,8 @@
 import time
 import pytest
 
+from devtools_testutils import AzureTestCase
+
 from azure.core.exceptions import HttpResponseError
 
 from azure.data.tables import TableServiceClient
@@ -17,7 +19,7 @@ from _shared.testcase import TableTestCase
 from preparers import CosmosPreparer
 # ------------------------------------------------------------------------------
 
-class TableServicePropertiesTest(TableTestCase):
+class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None

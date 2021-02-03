@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 
 import pytest
 
+from devtools_testutils import AzureTestCase
+
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 from azure.data.tables import (
     AccessPolicy,
@@ -24,7 +26,7 @@ TEST_TABLE_PREFIX = 'pytableasync'
 
 # ------------------------------------------------------------------------------
 
-class TableTestAsync(AsyncTableTestCase):
+class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
         table_name = self.get_resource_name(prefix)

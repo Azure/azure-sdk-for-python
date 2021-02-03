@@ -9,30 +9,20 @@ from contextlib import contextmanager
 import os
 import time
 from datetime import datetime, timedelta
-
-import zlib
-import sys
 import string
 import random
-import re
 import logging
-from devtools_testutils import AzureTestCase
-from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
-
-from azure.core.credentials import AccessToken
-
-from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 import pytest
 
+from devtools_testutils import AzureTestCase
+from azure.core.credentials import AccessToken
+from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
 SLEEP_DELAY = 30
+
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -45,27 +35,10 @@ class FakeTokenCredential(object):
         return self.token
 
 
-class XMSRequestIDBody(RecordingProcessor):
-    """This process is used for Storage batch call only, to avoid the echo policy.
-    """
-    def process_response(self, response):
-        content_type = None
-        for key, value in response.get('headers', {}).items():
-            if key.lower() == 'content-type':
-                content_type = (value[0] if isinstance(value, list) else value).lower()
-                break
+class TableTestCase(object):
 
-        if content_type and 'multipart/mixed' in content_type:
-            response['body']['string'] = re.sub(b"x-ms-client-request-id: [a-f0-9-]+\r\n", b"", response['body']['string'])
-
-        return response
-
-
-class TableTestCase(AzureTestCase):
-
-    def __init__(self, *args, **kwargs):
-        super(TableTestCase, self).__init__(*args, **kwargs)
-        # self.replay_processors.append(XMSRequestIDBody()) # this one might be needed, need to test in live setting
+    # def __init__(self, *args, **kwargs):
+    #     super(TableTestCase, self).__init__(*args, **kwargs)
 
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
