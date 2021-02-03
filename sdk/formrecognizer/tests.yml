@@ -32,7 +32,6 @@ stages:
             TestTimeoutInMinutes: 200
             TestSamples: true
             Location: '${{cloud.value.Location}}'
-            ResourceGroupLocation: '${{cloud.value.Location}}'
             # This is a specific request from the formrecognizer service team
             # their claim is that the full matrix ends up stress-testing their service.
             # As such, the canary test runs should run on a reduced matrix.
