@@ -752,6 +752,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
             InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
             ElasticsearchDataFeed]
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -823,6 +824,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :paramtype cross_metrics_operator: str or
             ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
         :keyword str description: Anomaly alert configuration description.
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -891,6 +893,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword series_detection_conditions: detection configuration for specific series.
         :paramtype series_detection_conditions:
             list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -959,6 +962,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword str certificate_key: client certificate. Only should be passed to update WebNotificationHook.
         :keyword str certificate_password: client certificate password. Only should be passed to update
             WebNotificationHook.
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
