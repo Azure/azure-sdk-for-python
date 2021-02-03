@@ -11,7 +11,7 @@ from functools import partial
 
 from azure.core.polling import AsyncPollingMethod
 
-from .._phonenumber._generated.models import (
+from .._generated.models import (
     PhoneNumberReservation,
     PhoneNumberRelease
 )

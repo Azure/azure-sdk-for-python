@@ -5,8 +5,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-from azure.communication.administration.aio import PhoneNumberAdministrationClient
-from azure.communication.administration import (
+from azure.communication.phonenumber.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumber import (
     PstnConfiguration,
     NumberUpdateCapabilities,
     CreateSearchOptions

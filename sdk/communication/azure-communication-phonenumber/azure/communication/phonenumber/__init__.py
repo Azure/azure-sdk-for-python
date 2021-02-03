@@ -7,7 +7,7 @@
 from ._phone_number_administration_client import PhoneNumberAdministrationClient
 from ._polling import ReservePhoneNumberPolling, PurchaseReservationPolling, ReleasePhoneNumberPolling
 
-from ._phonenumber._generated.models import (
+from ._generated.models import (
     AcquiredPhoneNumber,
     AcquiredPhoneNumbers,
     AreaCodes,

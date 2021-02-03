@@ -6,7 +6,7 @@
 # ------------------------------------
 from typing import Dict
 
-from azure.communication.administration._phonenumber._generated.models import ReleaseStatus, CreateSearchOptions
+from azure.communication.phonenumber._generated.models import ReleaseStatus, CreateSearchOptions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -17,10 +17,10 @@ from ._polling_async import ReleasePhoneNumberPollingAsync, \
     ReservePhoneNumberPollingAsync, \
     PurchaseReservationPollingAsync
 
-from .._phonenumber._generated.aio._phone_number_administration_service_async\
+from .._generated.aio._phone_number_administration_service \
     import PhoneNumberAdministrationService as PhoneNumberAdministrationClientGen
 
-from .._phonenumber._generated.models import (
+from .._generated.models import (
     AcquiredPhoneNumbers,
     AreaCodes,
     LocationOptionsResponse,

@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 import pytest
 import os
-from azure.communication.administration import (
+from azure.communication.phonenumber import (
     PhoneNumberAdministrationClient,
     PstnConfiguration,
     NumberUpdateCapabilities,
@@ -16,7 +16,7 @@ from phone_number_helper import PhoneNumberUriReplacer
 from phone_number_testcase import PhoneNumberCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor
 
-SKIP_PHONE_NUMBER_TESTS = True
+SKIP_PHONE_NUMBER_TESTS = False
 PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
 
 class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):

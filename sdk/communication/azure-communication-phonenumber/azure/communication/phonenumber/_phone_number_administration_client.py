@@ -4,16 +4,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.communication.administration._phonenumber._generated.models import ReleaseStatus, CreateSearchOptions
+from azure.communication.phonenumber._generated.models import ReleaseStatus, CreateSearchOptions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from ._polling import ReleasePhoneNumberPolling, ReservePhoneNumberPolling, PurchaseReservationPolling
 
-from ._phonenumber._generated._phone_number_administration_service\
+from ._generated._phone_number_administration_service\
     import PhoneNumberAdministrationService as PhoneNumberAdministrationClientGen
 
-from ._phonenumber._generated.models import (
+from ._generated.models import (
     AcquiredPhoneNumbers,
     AreaCodes,
     LocationOptionsResponse,

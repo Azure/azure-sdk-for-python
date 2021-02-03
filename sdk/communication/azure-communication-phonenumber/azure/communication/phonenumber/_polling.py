@@ -13,7 +13,7 @@ import pickle
 from azure.core.polling import (
     PollingMethod
 )
-from ._phonenumber._generated.models import (
+from ._generated.models import (
     PhoneNumberReservation,
     PhoneNumberRelease
 )
