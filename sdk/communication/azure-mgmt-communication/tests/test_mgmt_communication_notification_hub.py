@@ -35,7 +35,6 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
             azure.mgmt.notificationhubs.NotificationHubsManagementClient
         )
 
-    @pytest.mark.skipif(DISABLE_MGMT_TESTS, reason=DISABLE_REASON)
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_communication_link_notif_hub(self, resource_group):
         GROUP_NAME = resource_group.name

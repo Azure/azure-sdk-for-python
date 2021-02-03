@@ -29,7 +29,6 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
             azure.mgmt.communication.CommunicationServiceManagementClient
         )
 
-    @pytest.mark.skipif(DISABLE_MGMT_TESTS, reason=DISABLE_REASON)
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_communication_list_by_subscription(self, resource_group):
         GROUP_NAME = resource_group.name
@@ -63,7 +62,6 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
                 resource_found = True
         self.assertTrue(resource_found)
 
-    @pytest.mark.skipif(DISABLE_MGMT_TESTS, reason=DISABLE_REASON)
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_communication_list_by_rg(self, resource_group):
         GROUP_NAME = resource_group.name
