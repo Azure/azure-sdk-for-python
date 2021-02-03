@@ -716,7 +716,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        show_opinion_mining = kwargs.pop("show_opinion_mining", True)
+        show_opinion_mining = kwargs.pop("show_opinion_mining", None)
 
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
