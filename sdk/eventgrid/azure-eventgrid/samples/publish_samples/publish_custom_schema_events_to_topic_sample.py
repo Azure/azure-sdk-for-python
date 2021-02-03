@@ -33,8 +33,8 @@ def publish_event():
     client = EventGridPublisherClient(endpoint, credential)
 
     custom_schema_event = {
-        "custom_subject": "sample",
-        "custom_EventType": "sample.event",
+        "customSubject": "sample",
+        "customEventType": "sample.event",
         "customDataVersion": "2.0",
         "customId": uuid.uuid4(),
         "customEventTime": dt.datetime.now(UTC()).isoformat(),
