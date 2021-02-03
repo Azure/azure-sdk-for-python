@@ -11,7 +11,7 @@ FILE: sample_analyze_batch_actions_async.py
 
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which consists of a variety
-    of text analysis actions, such as Entity Recognition, PII Entity Recognition, Entity Linking, Sentiment Analysis,
+    of text analysis actions, such as Entity Recognition, PII Entity Recognition,
     or Key Phrase Extraction.  The response will contain results from each of the individual actions specified in the request.
 
 USAGE:

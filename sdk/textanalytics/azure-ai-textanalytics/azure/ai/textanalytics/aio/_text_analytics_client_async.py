@@ -753,7 +753,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param actions: A heterogeneous list of actions to perform on the inputted documents.
             Each action object encapsulates the parameters used for the particular action type.
             The outputted action results will be in the same order you inputted your actions.
-            Can not put duplicate actions into list.
+            Duplicate actions in list not supported.
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
@@ -769,13 +769,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             object to return a pageable heterogeneous list of the action results in the order
             the actions were sent in this method.
         :rtype:
-            AsyncLROPoller[AsyncItemPaged[]
-                list[
-                    ~azure.ai.textanalytics.RecognizeEntitiesActionResult or
-                    ~azure.ai.textanalytics.RecognizePiiEntitiesActionResult or
-                    ~azure.ai.textanalytics.ExtractKeyPhrasesActionResult
-                ]
-            ]]
+            ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.AnalyzeBatchActionsResult]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:

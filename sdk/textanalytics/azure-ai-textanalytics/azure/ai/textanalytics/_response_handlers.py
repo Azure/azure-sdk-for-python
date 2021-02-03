@@ -273,7 +273,7 @@ def analyze_paged_result(doc_id_order, task_order, analyze_status_callback, _, o
         functools.partial(lro_get_next_page, analyze_status_callback, obj, show_stats=show_stats),
         functools.partial(analyze_extract_page_data, doc_id_order, task_order, response_headers),
         statistics=TextDocumentBatchStatistics._from_generated(obj.statistics) \
-            if show_stats and obj.statistics is not None else None # pylint: disable=protected-access
+            if (show_stats and obj.statistics) else None # pylint: disable=protected-access
     )
 
 def _get_deserialize():

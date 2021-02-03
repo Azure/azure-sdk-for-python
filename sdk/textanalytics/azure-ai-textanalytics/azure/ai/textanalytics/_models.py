@@ -1172,7 +1172,7 @@ class AnalyzeBatchActionsType(str, Enum):
     EXTRACT_KEY_PHRASES = "extract_key_phrases"  #: Key Phrase Extraction action.
 
 class AnalyzeBatchActionsResult(DictMixin):
-    """RecognizeEntitiesActionResult contains the results of a recognize entities action
+    """AnalyzeBatchActionsResult contains the results of a recognize entities action
     on a list of documents. Returned by `begin_analyze_batch_actions`
 
     :ivar document_results: A list of objects containing results for all Entity Recognition actions
@@ -1206,12 +1206,13 @@ class RecognizeEntitiesAction(DictMixin):
 
     If you just want to recognize entities in a list of documents, and not perform a batch
     of long running actions on the input of documents, call method `recognize_entities` instead
-    of interfacting with this model.
+    of interfacing with this model.
 
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar str string_index_type: Specifies the method used to interpret string offsets.
-        Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
-        For additional information see https://aka.ms/text-analytics-offsets
+    :keyword str model_version: The model version to use for the analysis.
+    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
     """
 
     def __init__(self, **kwargs):
@@ -1237,14 +1238,15 @@ class RecognizePiiEntitiesAction(DictMixin):
 
     If you just want to recognize pii entities in a list of documents, and not perform a batch
     of long running actions on the input of documents, call method `recognize_pii_entities` instead
-    of interfacting with this model.
+    of interfacing with this model.
 
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar str domain_filter: An optional string to set the PII domain to include only a
+    :keyword str model_version: The model version to use for the analysis.
+    :keyword str domain_filter: An optional string to set the PII domain to include only a
     subset of the PII entity categories. Possible values include 'PHI' or None.
-    :ivar str string_index_type: Specifies the method used to interpret string offsets.
-        Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
-        For additional information see https://aka.ms/text-analytics-offsets
+    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
     """
 
     def __init__(self, **kwargs):
@@ -1272,9 +1274,9 @@ class ExtractKeyPhrasesAction(DictMixin):
 
     If you just want to extract key phrases from a list of documents, and not perform a batch
     of long running actions on the input of documents, call method `extract_key_phrases` instead
-    of interfacting with this model.
+    of interfacing with this model.
 
-    :ivar str model_version: The model version to use for the analysis.
+    :keyword str model_version: The model version to use for the analysis.
     """
 
     def __init__(self, **kwargs):
