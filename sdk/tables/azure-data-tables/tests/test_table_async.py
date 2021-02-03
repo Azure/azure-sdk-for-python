@@ -13,10 +13,10 @@ from azure.data.tables import (
     TableSasPermissions,
     ResourceTypes,
     AccountSasPermissions,
-    TableItem
+    TableItem,
+    generate_account_sas
 )
 from azure.data.tables.aio import TableServiceClient, TableClient
-from azure.data.tables._table_shared_access_signature import generate_account_sas
 
 from _shared.asynctestcase import AsyncTableTestCase
 from preparers import TablesPreparer

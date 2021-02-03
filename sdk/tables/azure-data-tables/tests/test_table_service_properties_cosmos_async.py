@@ -10,15 +10,16 @@ from time import sleep
 
 from devtools_testutils import AzureTestCase
 
-from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
+from azure.data.tables import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
 from azure.data.tables.aio import TableServiceClient
 from azure.core.exceptions import HttpResponseError
 
-from _shared.testcase import TableTestCase, SLEEP_DELAY
+from _shared.testcase import SLEEP_DELAY
+from _shared.asynctestcase import AsyncTableTestCase
 from preparers import CosmosPreparer
 # ------------------------------------------------------------------------------
 
-class TableServicePropertiesTest(AzureTestCase, TableTestCase):
+class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None
@@ -226,7 +227,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
             sleep(SLEEP_DELAY)
 
 
-class TestTableUnitTest(TableTestCase):
+class TestTableUnitTest(AsyncTableTestCase):
 
     @pytest.mark.asyncio
     async def test_retention_no_days_async(self):

@@ -33,14 +33,15 @@ from azure.data.tables import (
 )
 from azure.data.tables.aio import TableServiceClient
 
-from _shared.testcase import TableTestCase, SLEEP_DELAY
+from _shared.testcase import SLEEP_DELAY
+from _shared.asynctestcase import AsyncTableTestCase
 from preparers import CosmosPreparer
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
-class StorageTableBatchTest(AzureTestCase, TableTestCase):
+class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
     async def _set_up(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         self.ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)

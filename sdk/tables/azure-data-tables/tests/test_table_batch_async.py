@@ -32,14 +32,14 @@ from azure.data.tables import (
     BatchErrorException
 )
 
-from _shared.testcase import TableTestCase
+from _shared.asynctestcase import AsyncTableTestCase
 from preparers import TablesPreparer
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
-class StorageTableBatchTest(AzureTestCase, TableTestCase):
+class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
     async def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key):
         self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)

@@ -10,7 +10,6 @@ import os
 import time
 from datetime import datetime, timedelta
 import string
-import random
 import logging
 
 import pytest
@@ -36,9 +35,6 @@ class FakeTokenCredential(object):
 
 
 class TableTestCase(object):
-
-    # def __init__(self, *args, **kwargs):
-    #     super(TableTestCase, self).__init__(*args, **kwargs)
 
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"

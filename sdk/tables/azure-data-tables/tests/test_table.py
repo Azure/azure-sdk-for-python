@@ -25,10 +25,9 @@ from azure.data.tables import (
     TableAnalyticsLogging,
     Metrics,
     TableServiceClient,
-    TableItem
+    TableItem,
+    generate_account_sas
 )
-from azure.data.tables._authentication import SharedKeyCredentialPolicy
-from azure.data.tables._table_shared_access_signature import generate_account_sas
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     HeadersPolicy,

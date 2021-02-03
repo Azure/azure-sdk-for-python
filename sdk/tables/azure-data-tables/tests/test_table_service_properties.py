@@ -10,8 +10,13 @@ import pytest
 
 from devtools_testutils import AzureTestCase
 
-from azure.data.tables import TableServiceClient
-from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
+from azure.data.tables import (
+    TableServiceClient,
+    TableAnalyticsLogging,
+    Metrics,
+    RetentionPolicy,
+    CorsRule
+)
 from azure.core.exceptions import HttpResponseError
 
 from _shared.testcase import TableTestCase

@@ -11,7 +11,7 @@ import sys
 from devtools_testutils import AzureTestCase
 
 from azure.data.tables import TableServiceClient, TableClient
-from azure.data.tables._version import VERSION
+from azure.data.tables import __version__ as  VERSION
 
 from _shared.testcase import (
     TableTestCase,

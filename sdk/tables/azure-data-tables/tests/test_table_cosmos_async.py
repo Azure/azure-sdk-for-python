@@ -9,18 +9,17 @@ import pytest
 from devtools_testutils import AzureTestCase
 
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError, HttpResponseError
-from _shared.asynctestcase import AsyncTableTestCase
-from _shared.testcase import SLEEP_DELAY
-
 from azure.data.tables import (
     AccessPolicy,
     TableSasPermissions,
     ResourceTypes,
-    AccountSasPermissions
+    AccountSasPermissions,
+    generate_account_sas
 )
 from azure.data.tables.aio import TableServiceClient
-from azure.data.tables._table_shared_access_signature import generate_account_sas
 
+from _shared.asynctestcase import AsyncTableTestCase
+from _shared.testcase import SLEEP_DELAY
 from preparers import CosmosPreparer
 
 TEST_TABLE_PREFIX = 'pytableasync'

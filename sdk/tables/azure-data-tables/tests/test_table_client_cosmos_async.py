@@ -10,7 +10,7 @@ from time import sleep
 from devtools_testutils import AzureTestCase
 
 from azure.data.tables.aio import TableServiceClient, TableClient
-from azure.data.tables._version import VERSION
+from azure.data.tables import __version__ as VERSION
 
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import SLEEP_DELAY
