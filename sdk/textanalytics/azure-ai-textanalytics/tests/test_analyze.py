@@ -103,7 +103,6 @@ class TestAnalyze(TextAnalyticsTest):
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.confidence_score)
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_all_successful_passing_string_pii_entities_task(self, client):
@@ -166,7 +165,6 @@ class TestAnalyze(TextAnalyticsTest):
         # TODO: reproduce a warnings scenario for implementation
         pass
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_output_same_order_as_input_multiple_tasks(self, client):
@@ -403,7 +401,6 @@ class TestAnalyze(TextAnalyticsTest):
     #         for doc in action_result.document_results:
     #             self.assertFalse(doc.is_error)
 
-    # @pytest.mark.playback_test_only
     # @GlobalTextAnalyticsAccountPreparer()
     # @TextAnalyticsClientPreparer(client_kwargs={
     #     "default_language": "en"

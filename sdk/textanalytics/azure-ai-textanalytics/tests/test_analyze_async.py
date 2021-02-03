@@ -122,7 +122,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     self.assertIsNotNone(entity.offset)
                     self.assertIsNotNone(entity.confidence_score)
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_all_successful_passing_string_pii_entities_task(self, client):
@@ -387,7 +386,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
     ### TODO: Commenting out language tests. Right now analyze only supports language 'en', so no point to these tests yet
 
-    # @pytest.mark.playback_test_only
     # @GlobalTextAnalyticsAccountPreparer()
     # @TextAnalyticsClientPreparer()
     # async def test_whole_batch_language_hint(self, client):
