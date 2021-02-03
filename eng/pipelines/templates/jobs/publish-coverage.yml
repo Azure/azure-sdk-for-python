@@ -8,9 +8,6 @@ parameters:
   - name: DependsOn
     type: string
     default: ''
-  - name: RunCoverage
-    type: boolean
-    default: true
 
 
 jobs:
@@ -29,7 +26,7 @@ jobs:
           New-Item -Path $(Build.SourcesDirectory) -Name "_all_coverage_files" -ItemType "directory"
         displayName: 'Create all coverages directory'
         continueOnError: false
-        condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+        condition: succeededOrFailed()
 
       - task: DownloadPipelineArtifact@2
         inputs:
@@ -66,7 +63,7 @@ jobs:
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish Code Coverage to DevOps'
         continueOnError: true
-        condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+        condition: succeededOrFailed()
         inputs:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
