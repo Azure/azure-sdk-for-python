@@ -1,59 +1,5 @@
 interactions:
 - request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: POST
-    uri: https://vaultname.vault.azure.net/keys/key0/create?api-version=7.1
-  response:
-    body:
-      string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
-        or PoP token."}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '87'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 29 Jul 2020 16:13:23 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      www-authenticate:
-      - Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
-        resource="https://vault.azure.net"
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - westus
-      x-ms-keyvault-service-version:
-      - 1.1.10.0
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 401
-      message: Unauthorized
-- request:
     body: '{"kty": "RSA"}'
     headers:
       Accept:
@@ -67,37 +13,35 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key0/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey0b3510bf8/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key0/e2434c9fae5f4a5cac9d6dc2b7628027","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xFkceKuIhwuTG5BZgLFu2gQ6-hyXqvU5gYxlJfJibvv-WfiKHDqm96BZ-4hLY-AXL9fFlUnr0Vz09o9MNT8imeNeT3F2cXMk8R2fssTdVtg4BDIAO3fUwhVA_prtLVQDqIUZZowaNl6HWs9zXAFgkY28oQR6tLARRX_6xOOt5ZKrBPC6pF6nigQSbGRTOBSvK2-llfrLsYsTxnAvOr-MeuDQbdQ7sItBrMOtICIHefKlixAk3VZfnDW9vUuKuS4JfdWihW-WEv5fIIlwwGmVo7eFk_czY6VeS1fZcJpA7-oENk96Vp7mR1IsA_myKzZoUBdtHMlBOp78GY4TeiIODw","e":"AQAB"},"attributes":{"enabled":true,"created":1596039204,"updated":1596039204,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey0b3510bf8/ecf14662f865475cb69b659dac5b6045","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wVSRCLykDX8oJn6YDfgYbZWYN8nvZmAm1dqbsZoqPDhexW0seG1fZNl7psQ_MvAMnE83qyaEuVFOFYFKeq2XoKrzaGM3gpI9M75mYPCZh2UtupY91SlxIcTv2niie9opnRFMQ3Y1eIR36KvCc2V_97IvImTTUQBJiheY8n-s79NShimW86ZKofN8OHVxJN85lSyUUMfS61znDqFuPOZp098yQy1YOs9Od7_1tAKhePXYRcgq1KTBzZ6hSO1iYmCsi_ui5Inpe3YasVJA9KJH9P93dQ0UL7jg24gcremOgeQbLBceENOghO4eopjHdSROWGE6h-GDcJxFNvSVhGlHwQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612320271,"updated":1612320271,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '684'
+      - '688'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Jul 2020 16:13:24 GMT
+      - Wed, 03 Feb 2021 02:44:32 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus
+      - westus2
       x-ms-keyvault-service-version:
-      - 1.1.10.0
+      - 1.2.139.0
       x-powered-by:
       - ASP.NET
     status:
@@ -117,37 +61,35 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key1/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey1b3510bf8/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key1/85ba3a1e5c9243b1bc99e64b28da8985","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"oheYNc-YPmBjGaICxsSCVSwkX6jp0PuCNdwzQxpLJ2xE69WCmVFWq9lMVx4QdcfD3vR1tOf6BjlUhcerhm48PeAm2j0vAQlfl2bp1DESbNl6r2xy1o8QYVyhAJmqVedM5jCGmutpzPKU8ZYsqRSUiK5JrYqRCghycayS3rG7-mJGeJYCGSse4uLK20nRqj5ziGUxfFd03Vvy8w4dssoKuvepZW3yy_eA_Ywc-xXqEYAyqIAwa9GcYFO_SzQw50oxKQwO0zLStnpaGMbP8GbQWxrBU07oXVQr2QNtjNXoSJnIKBOITRKpDKOdVgg-AlLLygQR-1wSuLVt1Wojafkf0w","e":"AQAB"},"attributes":{"enabled":true,"created":1596039204,"updated":1596039204,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey1b3510bf8/749d2ec41bbb4aea800225c168887121","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wFV5pEgUHbLUoACkyY2TXdAs6Fj-oDh5fz_YfwxIc5Uf6FrxfrwbTMb3MoZmZG33ozmDFQ7V1Fvl8Ku2MyhaJ7Rp9BXyaO86OutobjRdW15c_045t37eK-xGnx44LPad1YPx3hiSJIqW6eeGUXH7GnuEwDvd5WWDXEQwJkml1zwEyak7i5HLtG-aO31z4FW3oku0VsC2tm_aknqM1Vl56nb_NiBDsiSJZVmc1eaUEpUW_YsCSb5OheEyatffijHArv3yRxi6u0WMOWp3kE_BXJk8DEWLfpclWLaABkFAPjFTU97vZ4b_NvQMBIQTqNSt0tRxeJur9cFxjqcWdUT4uQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612320272,"updated":1612320272,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '684'
+      - '688'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Jul 2020 16:13:24 GMT
+      - Wed, 03 Feb 2021 02:44:32 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus
+      - westus2
       x-ms-keyvault-service-version:
-      - 1.1.10.0
+      - 1.2.139.0
       x-powered-by:
       - ASP.NET
     status:
@@ -167,37 +109,35 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key2/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey2b3510bf8/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key2/bfc839b1dc094949bc3608ae38be5f0b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"zlP2ovD011aluJpcB4JiUUpbWw8X7-srlgqgUDV9QNK1xvUVoe8scsFg1OFcERNnXi84qVa2jix9ZefECpYUNso8QfpqtBYD95nCK14YF94stcsaCQY0kuiDoW7lyOaL2xnNYhO11B1dDFdMcNXC_EECQ9KqlT19c0oVXoENHfgRQySY3eHeNwf1Ojvgbr_5DTv82oKe_Qap_iBMj0Dn6g9syqHgam4__m4nhWzRF0iAXwNAeFISwuLBA7nR7wRZd_IY7Nvptoc4VBLhDK_f4aHGD0KIrWc8boJsMAx4Ubt4DEfN9HWLz-zbGwORjrklk5BsBlB-sYdK4l38cMnnOQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039205,"updated":1596039205,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey2b3510bf8/aabb0a63141449eca26945a614085e41","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"3N-hWCkwXGHLwmK_cvAfGt0GN2On_rWO3uSzIGjUjVtGg0F9hhxDDrRdoaNX-gmO_nFV3IYIBrEGB-2t3wD-i_JJHVPjcp2ZIS1no5CD4aa5j3ESAdRHSg530u-hKe1jN2DHPcl73Kgg_ETL1SUWab77YxV6hnuyWVdGNs71ad4SZ0vU4CVIOXnEWbZ7GA88g_RYj3oROV1DIQXACNY_KTalui7WQ6WJ6Py8GVkANC08FR9HWwc87lwm0M-CsMh_TF-WWgkEWs6h0Br4Vm4uU2HjlY4jjSf0FaNvKvrmJny4qmgBWeCCbUu05GeDydI2C-CNdqw6wNXoMJLGjelWuQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612320272,"updated":1612320272,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '684'
+      - '688'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Jul 2020 16:13:24 GMT
+      - Wed, 03 Feb 2021 02:44:32 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus
+      - westus2
       x-ms-keyvault-service-version:
-      - 1.1.10.0
+      - 1.2.139.0
       x-powered-by:
       - ASP.NET
     status:
@@ -217,37 +157,35 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key3/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey3b3510bf8/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key3/40da907ddda64b4894e1a287d53c1586","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pnkYYA4iNz4y2sBR_0w-gV8nk8YrEBx8OetjVluU_aup7nkXIKXUNCgVfGvyE53s7U6t3rdDAfwj9EhC_UNHD6XGZzGpNud52dLmnuJ_E94hBh4xujYd90rXh4OTh4v6Yzyb_9cwH-F-8ZpRAQBKjkalJiTV5lekyD0nTUv0KjMchIUnETkr3vyOWFWMo-eBzgYexFCvLnkZa1VYGOxKFD4tOmNLD33-jh_fgTyq_DX6-Lyo4pStAb-QBkRcGLxJyjl277TegFESfTF7Mb7uqYbt0E8AcuxAHez1VmfjkFLUCZj3bzGma2ePlDQ3SKVGH1tFnEoW48buIHzoBgbIWQ","e":"AQAB"},"attributes":{"enabled":true,"created":1596039205,"updated":1596039205,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey3b3510bf8/c1686854d31e48ae94f13f09907a453d","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"-Vms9DRyA8dBqJJU8BYJIT2MWGc0MKRxWgEhm6F8VvZmLhOYkI9IoOpT8C_BgczNf0U4DpObfrOSkMjFJN-2Q9vsB5t3lSSFztQK2AY-vjxaKYxN8scfySMOzhJUG23Xvb8VlS_AW32GQ_Q9hK_aiqe__itxRMjK6l55RMmvKK6UlZcZrfEGnWSMmu2RjXlZEV9HEqRbqQk9rVXT-g6f-vq7qvWaAqQzAPWjUqsiF202iOzV5NuwS_Q9KrDXwHALJWmryx06utfEk1fXoeKmXATN7ORO0VVtU8F9VN7_j-bpghUpiC36cCehZxYOH4Z5p67FW0-9AVumQDRfXn33kQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612320272,"updated":1612320272,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '684'
+      - '688'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Jul 2020 16:13:25 GMT
+      - Wed, 03 Feb 2021 02:44:32 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus
+      - westus2
       x-ms-keyvault-service-version:
-      - 1.1.10.0
+      - 1.2.139.0
       x-powered-by:
       - ASP.NET
     status:
@@ -267,37 +205,35 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key4/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey4b3510bf8/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key4/0af341bf26a44767ae53f98da597b9ca","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xZMAO-4sapjiIdTdaeZLOuQr3JafcHEDK_bIlfcj33NtXKnSMuuZIaPShYvwtduFdwg6hjWh9hySoC6_FCMlJyfKY3XJtu1Fd7FyWuvPZDnR25CtdMu3gTvE8_EHJ37wkiNU8HJX_3w8tCX0XDGHiVl--S3NyAQ5yyjfBSjdAlWVveTzSgSNXyx2MYBMp3GxXhSNSeZNT7dowjE7vFuzZ0u-Zoup_JYnREqbGeM8reEczGegnGGy8q45wiqM92o2GQ64lV1T7K7V5VtxoLshm7xOJsl80fjunZACtusVhMIElDgIQ0OoDyT443grRVDdYtv3nWNjqQD_oZq1JOd9lw","e":"AQAB"},"attributes":{"enabled":true,"created":1596039205,"updated":1596039205,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey4b3510bf8/3f5822281f0a41ffb077bc93afdb66e6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1o2d8mdYhBozv-ScNGmKykoQUmviM4lB_Wg7g48m7UMxA1juneZrDg3kGtwyi3UWmRIVY0mLix8_Eh_fwsRLkJGXMqm2tHpzad3T_aWuUrM0TARs6zt3QP7aMhLTyCGu8hLEO6M-kMqTa60NMHgxfg0wmPgCHhOPTH1SIhwYqPOfgt3k8OQeJLbDqZWaU0N3lls4oMUl4giIZUvhW9sCWD8isV0iJYcYQsLqDlbIu9JHgdV7TO0fyobN5Yu06uVnFzoA8ejKwrh7p04K2VfmLhD66S_Sz6RTy_HL9Hrq8xhZ03-dwlQP9awdg1c-EJLUrk8Hirvs58AlCtd2AosTEQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612320272,"updated":1612320272,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '684'
+      - '688'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Jul 2020 16:13:25 GMT
+      - Wed, 03 Feb 2021 02:44:32 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus
+      - westus2
       x-ms-keyvault-service-version:
-      - 1.1.10.0
+      - 1.2.139.0
       x-powered-by:
       - ASP.NET
     status:
@@ -317,37 +253,35 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key5/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey5b3510bf8/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key5/a6a5541c89554958a15e712b25c604db","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ltMk4o2FH3YinyEN1X0pR-i18cfcLNYp2mrwQFaYeYV63xaYVEPvmDY2m3qQoByuHHAp1Xdi2Z3kAoUMaPplwEfDvVTjj8GZsfhRMgqP-k8VJXWrkJ8DuJxoetz_8pWSqyMm7nP4DJERvkQWKqyIVpYhIZQDA4ikqIg6QKolVzeEw6c_WpmIsJ2LleN0BwgaFOuzsI8ZXGjHKknRSUfkMTPjKNuv4eCyGBQfPTKOwWTkkzTXP1DpLGLZNMbFHTbJv0d7jZfdxJCVTEvj88czpiXn7Qv8wrVTQ9_F3vEdf8tBX4I1Cq0bd0f10mk6a-p7aCvyXCXNF9Dx9dhIVCeECw","e":"AQAB"},"attributes":{"enabled":true,"created":1596039205,"updated":1596039205,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey5b3510bf8/28a7f722f0764f1388ab42ce662a169b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"5xA35_yDhUlwNqVGOrF4FR1w2S2HXUDDC5AlNGOVYmckzEntG3fnis6jWQDNihL6kCkj8m9i-biBB20e_rLS_pikOVQ0RfERZR9Si8O058hqCY29S-tep3ZtGANrJIHYOGjEW5uqAOieCXNsHBC-OQL0wOeM2GYDsIT5ZCo0ogDS2GdF-KmavaaeKd4bj6iF1iXkgcR3DQbEFZ1ZJ8lbLMM8twLsw_pVTISTF-mA6EZnJ-JEIXpvUHoCW_LTafgPEFHKRnveauy7qO8Ce8SUSVVz-0yJdDx6SR4gOWC6v2laMXSx37UCbh07fEkTGbDVLYWW0vxP60dORHSgiVuEAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612320272,"updated":1612320272,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '684'
+      - '688'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Jul 2020 16:13:25 GMT
+      - Wed, 03 Feb 2021 02:44:32 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus
+      - westus2
       x-ms-keyvault-service-version:
-      - 1.1.10.0
+      - 1.2.139.0
       x-powered-by:
       - ASP.NET
     status:
@@ -367,37 +301,35 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/key6/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey6b3510bf8/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/key6/11b8a2b6a0154b6dae512c4f2e75d347","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yMnYFxQ5ko7yYTwhd77YJbNDCGY60DO2peuSpoC1rcltxJrrFGtn3NURikc9Wt_DHe7zW_YfbcWCTt0NxrAHrkja9jedVUAr7zqlX3ldDp3v0TGXdWbCCyGf7DLsa-L4q4AndyVfe7H-Rb9jwll3yPmiqnYf2vs8qk-VBtWw-A-QJIUl8PPd5nLovfnOSFH2vCzRKJmd7AKmHn9BDRPju3NIj9j3fyf1LLIUKIX5Hyz-UDkk7syxvyTzOQt69O13FRTYFWedrIsgRVmz3BS41YwGRoPeyI6mi8LQMCX1I5JoTRlSkagz1V7r33mza-Qpt-Pf4OSxhZAiZH3m59P-Ww","e":"AQAB"},"attributes":{"enabled":true,"created":1596039206,"updated":1596039206,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey6b3510bf8/3492672cb3c44b5bbe0d94ff1ea2407f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tfVBGEh9zUJXzI_1ltEgTsUFPgfB9_kA5Afi68x0Z9HQMAEisfWgLzpcWAQ-4QEeml7X0bgRTDQVKsN1BzFjZPa5MSuxX-AN9__7Xs8wj01lEgMWSMxkwAA6EMPnTJpDXMnJuSJGGSlG4xXaBhSzEA-ge-wybiFsKkfjaCkOJjlhh9nuz4fi3jWUjr4RR9709_rmwfPqxgSWd35dc6rXbuDAWhybRHuHN4ikJJE9USDTP_aLn4VW4-9b2pyA_N2HPIIHX1LWJi3DsonVOIkEyWvE1-VSlrXh9JVL7pWe9LQ3SW7DGzqpmu8xgHiJEdPoz1nKdk6XKTtvRcBRa_xkvQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612320273,"updated":1612320273,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '684'
+      - '688'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Jul 2020 16:13:25 GMT
+      - Wed, 03 Feb 2021 02:44:33 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus
+      - westus2
       x-ms-keyvault-service-version:
-      - 1.1.10.0
+      - 1.2.139.0
       x-powered-by:
       - ASP.NET
     status:
@@ -413,37 +345,36 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/keys?maxresults=6&api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys?api-version=7.1&maxresults=6
   response:
     body:
-      string: '{"value":[{"kid":"https://vaultname.vault.azure.net/keys/key0","attributes":{"enabled":true,"created":1596039204,"updated":1596039204,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/key1","attributes":{"enabled":true,"created":1596039204,"updated":1596039204,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/key2","attributes":{"enabled":true,"created":1596039205,"updated":1596039205,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/key3","attributes":{"enabled":true,"created":1596039205,"updated":1596039205,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/key4","attributes":{"enabled":true,"created":1596039205,"updated":1596039205,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/key5","attributes":{"enabled":true,"created":1596039205,"updated":1596039205,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/keys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE3MiFNREF3TURBNElXdGxlUzlMUlZrMklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0&maxresults=6"}'
+      string: '{"value":[{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-ec-key51c4108d","attributes":{"enabled":true,"created":1612320258,"updated":1612320258,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"purpose":"unit
+        test","test name":"CreateECKeyTest"}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-P-256-ec-key51c4108d","attributes":{"enabled":true,"created":1612320258,"updated":1612320258,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestimport-test-key51c4108d","attributes":{"enabled":true,"created":1612320258,"updated":1612320258,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey0b3510bf8","attributes":{"enabled":true,"created":1612320271,"updated":1612320271,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey1b3510bf8","attributes":{"enabled":true,"created":1612320272,"updated":1612320272,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/keys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1qRXhNRFF4TkVOR0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0&maxresults=6"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1486'
+      - '1414'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Jul 2020 16:13:25 GMT
+      - Wed, 03 Feb 2021 02:44:33 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus
+      - westus2
       x-ms-keyvault-service-version:
-      - 1.1.10.0
+      - 1.2.139.0
       x-powered-by:
       - ASP.NET
     status:
@@ -459,37 +390,79 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/keys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE3MiFNREF3TURBNElXdGxlUzlMUlZrMklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0&maxresults=6
+    uri: https://vaultname.vault.azure.net/keys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1qRXhNRFF4TkVOR0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0&maxresults=6
   response:
     body:
-      string: '{"value":[{"kid":"https://vaultname.vault.azure.net/keys/key6","attributes":{"enabled":true,"created":1596039206,"updated":1596039206,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":null}'
+      string: '{"value":[{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey2b3510bf8","attributes":{"enabled":true,"created":1612320272,"updated":1612320272,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey3b3510bf8","attributes":{"enabled":true,"created":1612320272,"updated":1612320272,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey4b3510bf8","attributes":{"enabled":true,"created":1612320272,"updated":1612320272,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey5b3510bf8","attributes":{"enabled":true,"created":1612320272,"updated":1612320272,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey6b3510bf8","attributes":{"enabled":true,"created":1612320273,"updated":1612320273,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkeybak2e80e6d","attributes":{"enabled":true,"created":1612320240,"updated":1612320240,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/keys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDAhTURBd01ETXdJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpRMUpaVUZRNE9UbEZNVEZFUkNFd01EQXdNamdoT1RrNU9TMHhNaTB6TVZReU16bzFPVG8xT1M0NU9UazVPVGs1V2lFLSIsIlRhcmdldExvY2F0aW9uIjowfQ&maxresults=6"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '229'
+      - '1536'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Jul 2020 16:13:26 GMT
+      - Wed, 03 Feb 2021 02:44:33 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus
+      - westus2
       x-ms-keyvault-service-version:
-      - 1.1.10.0
+      - 1.2.139.0
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/keys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDAhTURBd01ETXdJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpRMUpaVUZRNE9UbEZNVEZFUkNFd01EQXdNamdoT1RrNU9TMHhNaTB6TVZReU16bzFPVG8xT1M0NU9UazVPVGs1V2lFLSIsIlRhcmdldExvY2F0aW9uIjowfQ&maxresults=6
+  response:
+    body:
+      string: '{"value":[],"nextLink":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '28'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Feb 2021 02:44:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus2
+      x-ms-keyvault-service-version:
+      - 1.2.139.0
       x-powered-by:
       - ASP.NET
     status:
