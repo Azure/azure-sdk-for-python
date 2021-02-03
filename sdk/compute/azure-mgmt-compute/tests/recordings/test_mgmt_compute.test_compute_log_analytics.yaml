@@ -1,0 +1,92 @@
+interactions:
+- request:
+    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-02-01T03:00:30.912225Z",
+      "toTime": "2021-02-03T03:00:30.912232Z", "groupByResourceName": true, "intervalLength":
+      "SixtyMins"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '178'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-compute/18.2.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/logAnalytics/apiAccess/getRequestRateByInterval?api-version=2020-06-01
+  response:
+    body:
+      string: '{"error":{"code":"SubscriptionNotFound","message":"The subscription
+        ''00000000-0000-0000-0000-000000000000'' could not be found."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '129'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Feb 2021 03:00:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - gateway
+    status:
+      code: 404
+      message: Not Found
+- request:
+    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-02-01T03:00:31.833854Z",
+      "toTime": "2021-02-03T03:00:31.833871Z", "groupByOperationName": true, "groupByResourceName":
+      false}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '178'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-compute/18.2.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/logAnalytics/apiAccess/getThrottledRequests?api-version=2020-06-01
+  response:
+    body:
+      string: '{"error":{"code":"SubscriptionNotFound","message":"The subscription
+        ''00000000-0000-0000-0000-000000000000'' could not be found."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '129'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Feb 2021 03:00:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - gateway
+    status:
+      code: 404
+      message: Not Found
+version: 1
