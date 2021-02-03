@@ -60,7 +60,7 @@ Information about the key concepts on Event Grid, see [Concepts in Azure Event G
 
 ### EventGridPublisherClient
 `EventGridPublisherClient` provides operations to send event data to topic hostname specified during client initialization.
-Either a list or a single instance of CloudEvent/EventGridEvent can be sent. Alternatively, a list or a single instance of the dict representation of CloudEvent/EventGridEvent or a Custom Schema can also be published.
+CloudEvents and EventGridEvents can be sent either as a single event or a list of respective typed objects or their equivalent dict representations. To send a custom schema, a dict representation can be used. Please have a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples) for detailed examples.
 
 ## Examples
 
