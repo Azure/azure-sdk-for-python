@@ -65,8 +65,7 @@ class TableTestCase(AzureTestCase):
 
     def __init__(self, *args, **kwargs):
         super(TableTestCase, self).__init__(*args, **kwargs)
-        self.replay_processors.append(XMSRequestIDBody())
-        self._RESOURCE_GROUP = None,
+        # self.replay_processors.append(XMSRequestIDBody()) # this one might be needed, need to test in live setting
 
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
@@ -90,86 +89,9 @@ class TableTestCase(AzureTestCase):
             if endpoint_type == "cosmos":
                 return "https://{}.table.cosmos.azure.com".format(account)
 
-
-    def configure_logging(self):
-        try:
-            enable_logging = self.get_settings_value("ENABLE_LOGGING")
-        except AzureTestError:
-            enable_logging = True  # That's the default value in fake settings
-
-        self.enable_logging() if enable_logging else self.disable_logging()
-
-    def enable_logging(self):
-        handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-        self.logger.handlers = [handler]
-        self.logger.setLevel(logging.INFO)
-        self.logger.propagate = True
-        self.logger.disabled = False
-
-    def disable_logging(self):
-        self.logger.propagate = False
-        self.logger.disabled = True
-        self.logger.handlers = []
-
     def sleep(self, seconds):
         if self.is_live:
             time.sleep(seconds)
-
-    def get_random_bytes(self, size):
-        # recordings don't like random stuff. making this more
-        # deterministic.
-        return b'a'*size
-
-    def get_random_text_data(self, size):
-        '''Returns random unicode text data exceeding the size threshold for
-        chunking blob upload.'''
-        checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xffffffff
-        rand = random.Random(checksum)
-        text = u''
-        words = [u'hello', u'world', u'python', u'啊齄丂狛狜']
-        while (len(text) < size):
-            index = int(rand.random()*(len(words) - 1))
-            text = text + u' ' + words[index]
-
-        return text
-
-    @staticmethod
-    def _set_test_proxy(service, settings):
-        if settings.USE_PROXY:
-            service.set_proxy(
-                settings.PROXY_HOST,
-                settings.PROXY_PORT,
-                settings.PROXY_USER,
-                settings.PROXY_PASSWORD,
-            )
-
-    def assertNamedItemInContainer(self, container, item_name, msg=None):
-        def _is_string(obj):
-            if sys.version_info >= (3,):
-                return isinstance(obj, str)
-            else:
-                return isinstance(obj, basestring)
-        for item in container:
-            if _is_string(item):
-                if item == item_name:
-                    return
-            elif item.name == item_name:
-                return
-            elif hasattr(item, 'snapshot') and item.snapshot == item_name:
-                return
-
-
-        standardMsg = '{0} not found in {1}'.format(
-            repr(item_name), [str(c) for c in container])
-        self.fail(self._formatMessage(msg, standardMsg))
-
-    def assertNamedItemNotInContainer(self, container, item_name, msg=None):
-        for item in container:
-            if item.name == item_name:
-                standardMsg = '{0} unexpectedly found in {1}'.format(
-                    repr(item_name), repr(container))
-                self.fail(self._formatMessage(msg, standardMsg))
 
     def generate_oauth_token(self):
         if self.is_live:

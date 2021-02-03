@@ -9,8 +9,6 @@ from azure.core.credentials import AccessToken
 
 from .testcase import TableTestCase
 
-LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
-
 class AsyncFakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
