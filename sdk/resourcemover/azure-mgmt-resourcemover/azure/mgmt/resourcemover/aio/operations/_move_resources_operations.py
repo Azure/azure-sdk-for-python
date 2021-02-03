@@ -9,14 +9,14 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class MoveResourcesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,7 +49,7 @@ class MoveResourcesOperations:
         move_collection_name: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.MoveResourceCollection"]:
+    ) -> AsyncIterable["_models.MoveResourceCollection"]:
         """Lists the Move Resources in the move collection.
 
         :param resource_group_name: The Resource Group Name.
@@ -57,22 +57,25 @@ class MoveResourcesOperations:
         :param move_collection_name: The Move Collection Name.
         :type move_collection_name: str
         :param filter: The filter to apply on the operation. For example, you can use
-     $filter=Properties/ProvisioningState eq 'Succeeded'.
+         $filter=Properties/ProvisioningState eq 'Succeeded'.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MoveResourceCollection or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~resource_mover_service_api.models.MoveResourceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MoveResourceCollection"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MoveResourceCollection"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -125,14 +128,17 @@ class MoveResourcesOperations:
         resource_group_name: str,
         move_collection_name: str,
         move_resource_name: str,
-        body: Optional["models.MoveResource"] = None,
+        body: Optional["_models.MoveResource"] = None,
         **kwargs
-    ) -> Optional["models.MoveResource"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.MoveResource"]]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+    ) -> Optional["_models.MoveResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MoveResource"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._create_initial.metadata['url']  # type: ignore
@@ -151,7 +157,7 @@ class MoveResourcesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if body is not None:
@@ -160,7 +166,6 @@ class MoveResourcesOperations:
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -183,9 +188,9 @@ class MoveResourcesOperations:
         resource_group_name: str,
         move_collection_name: str,
         move_resource_name: str,
-        body: Optional["models.MoveResource"] = None,
+        body: Optional["_models.MoveResource"] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.MoveResource"]:
+    ) -> AsyncLROPoller["_models.MoveResource"]:
         """Creates or updates a Move Resource in the move collection.
 
         :param resource_group_name: The Resource Group Name.
@@ -207,7 +212,7 @@ class MoveResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MoveResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MoveResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -233,7 +238,14 @@ class MoveResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'moveCollectionName': self._serialize.url("move_collection_name", move_collection_name, 'str'),
+            'moveResourceName': self._serialize.url("move_resource_name", move_resource_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -253,11 +265,14 @@ class MoveResourcesOperations:
         move_collection_name: str,
         move_resource_name: str,
         **kwargs
-    ) -> Optional["models.OperationStatus"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatus"]]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+    ) -> Optional["_models.OperationStatus"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatus"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -275,7 +290,7 @@ class MoveResourcesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -301,7 +316,7 @@ class MoveResourcesOperations:
         move_collection_name: str,
         move_resource_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.OperationStatus"]:
+    ) -> AsyncLROPoller["_models.OperationStatus"]:
         """Deletes a Move Resource from the move collection.
 
         :param resource_group_name: The Resource Group Name.
@@ -321,7 +336,7 @@ class MoveResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -346,7 +361,14 @@ class MoveResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'moveCollectionName': self._serialize.url("move_collection_name", move_collection_name, 'str'),
+            'moveResourceName': self._serialize.url("move_resource_name", move_resource_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -366,7 +388,7 @@ class MoveResourcesOperations:
         move_collection_name: str,
         move_resource_name: str,
         **kwargs
-    ) -> "models.MoveResource":
+    ) -> "_models.MoveResource":
         """Gets the Move Resource.
 
         :param resource_group_name: The Resource Group Name.
@@ -380,10 +402,13 @@ class MoveResourcesOperations:
         :rtype: ~resource_mover_service_api.models.MoveResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MoveResource"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MoveResource"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -401,7 +426,7 @@ class MoveResourcesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)

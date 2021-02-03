@@ -74,7 +74,7 @@ class ResourceSettings(msrest.serialization.Model):
     """Gets or sets the resource settings.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AvailabilitySetResourceSettings, VirtualMachineResourceSettings, LoadBalancerResourceSettings, NetworkInterfaceResourceSettings, NetworkSecurityGroupResourceSettings, PublicIPAddressResourceSettings, VirtualNetworkResourceSettings, SqlServerResourceSettings, SqlDatabaseResourceSettings, SqlElasticPoolResourceSettings, MoveResourcePropertiesSourceResourceSettings, ResourceGroupResourceSettings.
+    sub-classes are: AvailabilitySetResourceSettings, DiskEncryptionSetResourceSettings, VirtualMachineResourceSettings, KeyVaultResourceSettings, LoadBalancerResourceSettings, NetworkInterfaceResourceSettings, NetworkSecurityGroupResourceSettings, PublicIPAddressResourceSettings, VirtualNetworkResourceSettings, SqlServerResourceSettings, SqlDatabaseResourceSettings, SqlElasticPoolResourceSettings, ResourceGroupResourceSettings.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -96,7 +96,7 @@ class ResourceSettings(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'resource_type': {'Microsoft.Compute/availabilitySets': 'AvailabilitySetResourceSettings', 'Microsoft.Compute/virtualMachines': 'VirtualMachineResourceSettings', 'Microsoft.Network/loadBalancers': 'LoadBalancerResourceSettings', 'Microsoft.Network/networkInterfaces': 'NetworkInterfaceResourceSettings', 'Microsoft.Network/networkSecurityGroups': 'NetworkSecurityGroupResourceSettings', 'Microsoft.Network/publicIPAddresses': 'PublicIPAddressResourceSettings', 'Microsoft.Network/virtualNetworks': 'VirtualNetworkResourceSettings', 'Microsoft.Sql/servers': 'SqlServerResourceSettings', 'Microsoft.Sql/servers/databases': 'SqlDatabaseResourceSettings', 'Microsoft.Sql/servers/elasticPools': 'SqlElasticPoolResourceSettings', 'MoveResourceProperties-sourceResourceSettings': 'MoveResourcePropertiesSourceResourceSettings', 'resourceGroups': 'ResourceGroupResourceSettings'}
+        'resource_type': {'Microsoft.Compute/availabilitySets': 'AvailabilitySetResourceSettings', 'Microsoft.Compute/diskEncryptionSets': 'DiskEncryptionSetResourceSettings', 'Microsoft.Compute/virtualMachines': 'VirtualMachineResourceSettings', 'Microsoft.KeyVault/vaults': 'KeyVaultResourceSettings', 'Microsoft.Network/loadBalancers': 'LoadBalancerResourceSettings', 'Microsoft.Network/networkInterfaces': 'NetworkInterfaceResourceSettings', 'Microsoft.Network/networkSecurityGroups': 'NetworkSecurityGroupResourceSettings', 'Microsoft.Network/publicIPAddresses': 'PublicIPAddressResourceSettings', 'Microsoft.Network/virtualNetworks': 'VirtualNetworkResourceSettings', 'Microsoft.Sql/servers': 'SqlServerResourceSettings', 'Microsoft.Sql/servers/databases': 'SqlDatabaseResourceSettings', 'Microsoft.Sql/servers/elasticPools': 'SqlElasticPoolResourceSettings', 'resourceGroups': 'ResourceGroupResourceSettings'}
     }
 
     def __init__(
@@ -106,7 +106,7 @@ class ResourceSettings(msrest.serialization.Model):
         **kwargs
     ):
         super(ResourceSettings, self).__init__(**kwargs)
-        self.resource_type: Optional[str] = None
+        self.resource_type = None  # type: Optional[str]
         self.target_resource_name = target_resource_name
 
 
@@ -149,7 +149,7 @@ class AvailabilitySetResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(AvailabilitySetResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Compute/availabilitySets'
+        self.resource_type = 'Microsoft.Compute/availabilitySets'  # type: str
         self.fault_domain = fault_domain
         self.update_domain = update_domain
 
@@ -180,6 +180,40 @@ class AzureResourceReference(msrest.serialization.Model):
     ):
         super(AzureResourceReference, self).__init__(**kwargs)
         self.source_arm_resource_id = source_arm_resource_id
+
+
+class BulkRemoveRequest(msrest.serialization.Model):
+    """Defines the request body for bulk remove of move resources operation.
+
+    :param validate_only: Gets or sets a value indicating whether the operation needs to only run
+     pre-requisite.
+    :type validate_only: bool
+    :param move_resources: Gets or sets the list of resource Id's, by default it accepts move
+     resource id's unless the input type is switched via moveResourceInputType property.
+    :type move_resources: list[str]
+    :param move_resource_input_type: Defines the move resource input type. Possible values include:
+     "MoveResourceId", "MoveResourceSourceId".
+    :type move_resource_input_type: str or ~resource_mover_service_api.models.MoveResourceInputType
+    """
+
+    _attribute_map = {
+        'validate_only': {'key': 'validateOnly', 'type': 'bool'},
+        'move_resources': {'key': 'moveResources', 'type': '[str]'},
+        'move_resource_input_type': {'key': 'moveResourceInputType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        validate_only: Optional[bool] = None,
+        move_resources: Optional[List[str]] = None,
+        move_resource_input_type: Optional[Union[str, "MoveResourceInputType"]] = None,
+        **kwargs
+    ):
+        super(BulkRemoveRequest, self).__init__(**kwargs)
+        self.validate_only = validate_only
+        self.move_resources = move_resources
+        self.move_resource_input_type = move_resource_input_type
 
 
 class CloudErrorBody(msrest.serialization.Model):
@@ -301,6 +335,38 @@ class DiscardRequest(msrest.serialization.Model):
         self.move_resource_input_type = move_resource_input_type
 
 
+class DiskEncryptionSetResourceSettings(ResourceSettings):
+    """Defines the disk encryption set resource settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param resource_type: Required. The resource type. For example, the value can be
+     Microsoft.Compute/virtualMachines.Constant filled by server.
+    :type resource_type: str
+    :param target_resource_name: Required. Gets or sets the target Resource name.
+    :type target_resource_name: str
+    """
+
+    _validation = {
+        'resource_type': {'required': True},
+        'target_resource_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'target_resource_name': {'key': 'targetResourceName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_resource_name: str,
+        **kwargs
+    ):
+        super(DiskEncryptionSetResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
+        self.resource_type = 'Microsoft.Compute/diskEncryptionSets'  # type: str
+
+
 class Display(msrest.serialization.Model):
     """Contains the localized display information for this particular operation / action. These
 value will be used by several clients for
@@ -404,14 +470,14 @@ class JobStatus(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar job_name: Defines the job name. Default value: "InitialSync".
-    :vartype job_name: str
+    :ivar job_name: Defines the job name. Possible values include: "InitialSync".
+    :vartype job_name: str or ~resource_mover_service_api.models.JobName
     :ivar job_progress: Gets or sets the monitoring job percentage.
     :vartype job_progress: str
     """
 
     _validation = {
-        'job_name': {'readonly': True, 'constant': True},
+        'job_name': {'readonly': True},
         'job_progress': {'readonly': True},
     }
 
@@ -420,8 +486,6 @@ class JobStatus(msrest.serialization.Model):
         'job_progress': {'key': 'jobProgress', 'type': 'str'},
     }
 
-    job_name = "InitialSync"
-
     def __init__(
         self,
         **kwargs
@@ -429,6 +493,38 @@ class JobStatus(msrest.serialization.Model):
         super(JobStatus, self).__init__(**kwargs)
         self.job_name = None
         self.job_progress = None
+
+
+class KeyVaultResourceSettings(ResourceSettings):
+    """Defines the key vault resource settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param resource_type: Required. The resource type. For example, the value can be
+     Microsoft.Compute/virtualMachines.Constant filled by server.
+    :type resource_type: str
+    :param target_resource_name: Required. Gets or sets the target Resource name.
+    :type target_resource_name: str
+    """
+
+    _validation = {
+        'resource_type': {'required': True},
+        'target_resource_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'target_resource_name': {'key': 'targetResourceName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_resource_name: str,
+        **kwargs
+    ):
+        super(KeyVaultResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
+        self.resource_type = 'Microsoft.KeyVault/vaults'  # type: str
 
 
 class LBBackendAddressPoolResourceSettings(msrest.serialization.Model):
@@ -639,7 +735,7 @@ class LoadBalancerResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(LoadBalancerResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Network/loadBalancers'
+        self.resource_type = 'Microsoft.Network/loadBalancers'  # type: str
         self.sku = sku
         self.frontend_ip_configurations = frontend_ip_configurations
         self.backend_address_pools = backend_address_pools
@@ -679,6 +775,8 @@ class MoveCollection(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :ivar etag: The etag of the resource.
+    :vartype etag: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param location: The geo-location where the resource lives.
@@ -693,12 +791,14 @@ class MoveCollection(msrest.serialization.Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'Identity'},
@@ -718,6 +818,7 @@ class MoveCollection(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
+        self.etag = None
         self.tags = tags
         self.location = location
         self.identity = identity
@@ -738,18 +839,22 @@ class MoveCollectionProperties(msrest.serialization.Model):
     :ivar provisioning_state: Defines the provisioning states. Possible values include:
      "Succeeded", "Updating", "Creating", "Failed".
     :vartype provisioning_state: str or ~resource_mover_service_api.models.ProvisioningState
+    :ivar errors: Defines the move collection errors.
+    :vartype errors: ~resource_mover_service_api.models.MoveResourceError
     """
 
     _validation = {
         'source_region': {'required': True},
         'target_region': {'required': True},
         'provisioning_state': {'readonly': True},
+        'errors': {'readonly': True},
     }
 
     _attribute_map = {
         'source_region': {'key': 'sourceRegion', 'type': 'str'},
         'target_region': {'key': 'targetRegion', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'errors': {'key': 'errors', 'type': 'MoveResourceError'},
     }
 
     def __init__(
@@ -763,6 +868,48 @@ class MoveCollectionProperties(msrest.serialization.Model):
         self.source_region = source_region
         self.target_region = target_region
         self.provisioning_state = None
+        self.errors = None
+
+
+class MoveResourceError(msrest.serialization.Model):
+    """An error response from the azure resource mover service.
+
+    :param properties: The move resource error body.
+    :type properties: ~resource_mover_service_api.models.MoveResourceErrorBody
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'MoveResourceErrorBody'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["MoveResourceErrorBody"] = None,
+        **kwargs
+    ):
+        super(MoveResourceError, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class MoveCollectionPropertiesErrors(MoveResourceError):
+    """Defines the move collection errors.
+
+    :param properties: The move resource error body.
+    :type properties: ~resource_mover_service_api.models.MoveResourceErrorBody
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'MoveResourceErrorBody'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["MoveResourceErrorBody"] = None,
+        **kwargs
+    ):
+        super(MoveCollectionPropertiesErrors, self).__init__(properties=properties, **kwargs)
 
 
 class MoveCollectionResultList(msrest.serialization.Model):
@@ -860,15 +1007,28 @@ class MoveResource(msrest.serialization.Model):
 class MoveResourceCollection(msrest.serialization.Model):
     """Defines the collection of move resources.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :param value: Gets the list of move resources.
     :type value: list[~resource_mover_service_api.models.MoveResource]
     :param next_link: Gets the value of  next link.
     :type next_link: str
+    :param summary_collection: Gets or sets the list of summary items and the field on which
+     summary is done.
+    :type summary_collection: ~resource_mover_service_api.models.SummaryCollection
+    :ivar total_count: Gets the total count.
+    :vartype total_count: long
     """
+
+    _validation = {
+        'total_count': {'readonly': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[MoveResource]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'summary_collection': {'key': 'summaryCollection', 'type': 'SummaryCollection'},
+        'total_count': {'key': 'totalCount', 'type': 'long'},
     }
 
     def __init__(
@@ -876,11 +1036,14 @@ class MoveResourceCollection(msrest.serialization.Model):
         *,
         value: Optional[List["MoveResource"]] = None,
         next_link: Optional[str] = None,
+        summary_collection: Optional["SummaryCollection"] = None,
         **kwargs
     ):
         super(MoveResourceCollection, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+        self.summary_collection = summary_collection
+        self.total_count = None
 
 
 class MoveResourceDependency(msrest.serialization.Model):
@@ -962,27 +1125,6 @@ class MoveResourceDependencyOverride(msrest.serialization.Model):
         super(MoveResourceDependencyOverride, self).__init__(**kwargs)
         self.id = id
         self.target_id = target_id
-
-
-class MoveResourceError(msrest.serialization.Model):
-    """An error response from the azure resource mover service.
-
-    :param properties: The move resource error body.
-    :type properties: ~resource_mover_service_api.models.MoveResourceErrorBody
-    """
-
-    _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'MoveResourceErrorBody'},
-    }
-
-    def __init__(
-        self,
-        *,
-        properties: Optional["MoveResourceErrorBody"] = None,
-        **kwargs
-    ):
-        super(MoveResourceError, self).__init__(**kwargs)
-        self.properties = properties
 
 
 class MoveResourceErrorBody(msrest.serialization.Model):
@@ -1097,6 +1239,9 @@ class MoveResourceProperties(msrest.serialization.Model):
     :param depends_on_overrides: Gets or sets the move resource dependencies overrides.
     :type depends_on_overrides:
      list[~resource_mover_service_api.models.MoveResourceDependencyOverride]
+    :ivar is_resolve_required: Gets a value indicating whether the resolve action is required over
+     the move collection.
+    :vartype is_resolve_required: bool
     :ivar errors: Defines the move resource errors.
     :vartype errors: ~resource_mover_service_api.models.MoveResourceError
     """
@@ -1108,6 +1253,7 @@ class MoveResourceProperties(msrest.serialization.Model):
         'source_resource_settings': {'readonly': True},
         'move_status': {'readonly': True},
         'depends_on': {'readonly': True},
+        'is_resolve_required': {'readonly': True},
         'errors': {'readonly': True},
     }
 
@@ -1121,6 +1267,7 @@ class MoveResourceProperties(msrest.serialization.Model):
         'move_status': {'key': 'moveStatus', 'type': 'MoveResourceStatus'},
         'depends_on': {'key': 'dependsOn', 'type': '[MoveResourceDependency]'},
         'depends_on_overrides': {'key': 'dependsOnOverrides', 'type': '[MoveResourceDependencyOverride]'},
+        'is_resolve_required': {'key': 'isResolveRequired', 'type': 'bool'},
         'errors': {'key': 'errors', 'type': 'MoveResourceError'},
     }
 
@@ -1143,6 +1290,7 @@ class MoveResourceProperties(msrest.serialization.Model):
         self.move_status = None
         self.depends_on = None
         self.depends_on_overrides = depends_on_overrides
+        self.is_resolve_required = None
         self.errors = None
 
 
@@ -1174,26 +1322,23 @@ class MoveResourceStatus(msrest.serialization.Model):
     :ivar move_state: Defines the MoveResource states. Possible values include:
      "AssignmentPending", "PreparePending", "PrepareInProgress", "PrepareFailed", "MovePending",
      "MoveInProgress", "MoveFailed", "DiscardInProgress", "DiscardFailed", "CommitPending",
-     "CommitInProgress", "CommitFailed", "Committed".
+     "CommitInProgress", "CommitFailed", "Committed", "DeleteSourcePending",
+     "ResourceMoveCompleted".
     :vartype move_state: str or ~resource_mover_service_api.models.MoveState
     :param job_status: Defines the job status.
     :type job_status: ~resource_mover_service_api.models.JobStatus
     :param errors: An error response from the azure resource mover service.
     :type errors: ~resource_mover_service_api.models.MoveResourceError
-    :ivar target_id: Gets the Target ARM Id of the resource.
-    :vartype target_id: str
     """
 
     _validation = {
         'move_state': {'readonly': True},
-        'target_id': {'readonly': True},
     }
 
     _attribute_map = {
         'move_state': {'key': 'moveState', 'type': 'str'},
         'job_status': {'key': 'jobStatus', 'type': 'JobStatus'},
         'errors': {'key': 'errors', 'type': 'MoveResourceError'},
-        'target_id': {'key': 'targetId', 'type': 'str'},
     }
 
     def __init__(
@@ -1207,7 +1352,6 @@ class MoveResourceStatus(msrest.serialization.Model):
         self.move_state = None
         self.job_status = job_status
         self.errors = errors
-        self.target_id = None
 
 
 class MoveResourcePropertiesMoveStatus(MoveResourceStatus):
@@ -1218,26 +1362,23 @@ class MoveResourcePropertiesMoveStatus(MoveResourceStatus):
     :ivar move_state: Defines the MoveResource states. Possible values include:
      "AssignmentPending", "PreparePending", "PrepareInProgress", "PrepareFailed", "MovePending",
      "MoveInProgress", "MoveFailed", "DiscardInProgress", "DiscardFailed", "CommitPending",
-     "CommitInProgress", "CommitFailed", "Committed".
+     "CommitInProgress", "CommitFailed", "Committed", "DeleteSourcePending",
+     "ResourceMoveCompleted".
     :vartype move_state: str or ~resource_mover_service_api.models.MoveState
     :param job_status: Defines the job status.
     :type job_status: ~resource_mover_service_api.models.JobStatus
     :param errors: An error response from the azure resource mover service.
     :type errors: ~resource_mover_service_api.models.MoveResourceError
-    :ivar target_id: Gets the Target ARM Id of the resource.
-    :vartype target_id: str
     """
 
     _validation = {
         'move_state': {'readonly': True},
-        'target_id': {'readonly': True},
     }
 
     _attribute_map = {
         'move_state': {'key': 'moveState', 'type': 'str'},
         'job_status': {'key': 'jobStatus', 'type': 'JobStatus'},
         'errors': {'key': 'errors', 'type': 'MoveResourceError'},
-        'target_id': {'key': 'targetId', 'type': 'str'},
     }
 
     def __init__(
@@ -1248,38 +1389,6 @@ class MoveResourcePropertiesMoveStatus(MoveResourceStatus):
         **kwargs
     ):
         super(MoveResourcePropertiesMoveStatus, self).__init__(job_status=job_status, errors=errors, **kwargs)
-
-
-class MoveResourcePropertiesSourceResourceSettings(ResourceSettings):
-    """Gets or sets the source resource settings.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param resource_type: Required. The resource type. For example, the value can be
-     Microsoft.Compute/virtualMachines.Constant filled by server.
-    :type resource_type: str
-    :param target_resource_name: Required. Gets or sets the target Resource name.
-    :type target_resource_name: str
-    """
-
-    _validation = {
-        'resource_type': {'required': True},
-        'target_resource_name': {'required': True},
-    }
-
-    _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'target_resource_name': {'key': 'targetResourceName', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        target_resource_name: str,
-        **kwargs
-    ):
-        super(MoveResourcePropertiesSourceResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'MoveResourceProperties-sourceResourceSettings'
 
 
 class NetworkInterfaceResourceSettings(ResourceSettings):
@@ -1321,7 +1430,7 @@ class NetworkInterfaceResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(NetworkInterfaceResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Network/networkInterfaces'
+        self.resource_type = 'Microsoft.Network/networkInterfaces'  # type: str
         self.ip_configurations = ip_configurations
         self.enable_accelerated_networking = enable_accelerated_networking
 
@@ -1359,7 +1468,7 @@ class NetworkSecurityGroupResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(NetworkSecurityGroupResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Network/networkSecurityGroups'
+        self.resource_type = 'Microsoft.Network/networkSecurityGroups'  # type: str
         self.security_rules = security_rules
 
 
@@ -1381,6 +1490,10 @@ class NicIpConfigurationResourceSettings(msrest.serialization.Model):
      backend address pools.
     :type load_balancer_backend_address_pools:
      list[~resource_mover_service_api.models.ProxyResourceReference]
+    :param load_balancer_nat_rules: Gets or sets the references of the load balancer NAT rules.
+    :type load_balancer_nat_rules: list[~resource_mover_service_api.models.ProxyResourceReference]
+    :param public_ip: Defines reference to an Azure resource.
+    :type public_ip: ~resource_mover_service_api.models.AzureResourceReference
     """
 
     _attribute_map = {
@@ -1390,6 +1503,8 @@ class NicIpConfigurationResourceSettings(msrest.serialization.Model):
         'subnet': {'key': 'subnet', 'type': 'ProxyResourceReference'},
         'primary': {'key': 'primary', 'type': 'bool'},
         'load_balancer_backend_address_pools': {'key': 'loadBalancerBackendAddressPools', 'type': '[ProxyResourceReference]'},
+        'load_balancer_nat_rules': {'key': 'loadBalancerNatRules', 'type': '[ProxyResourceReference]'},
+        'public_ip': {'key': 'publicIp', 'type': 'AzureResourceReference'},
     }
 
     def __init__(
@@ -1401,6 +1516,8 @@ class NicIpConfigurationResourceSettings(msrest.serialization.Model):
         subnet: Optional["ProxyResourceReference"] = None,
         primary: Optional[bool] = None,
         load_balancer_backend_address_pools: Optional[List["ProxyResourceReference"]] = None,
+        load_balancer_nat_rules: Optional[List["ProxyResourceReference"]] = None,
+        public_ip: Optional["AzureResourceReference"] = None,
         **kwargs
     ):
         super(NicIpConfigurationResourceSettings, self).__init__(**kwargs)
@@ -1410,6 +1527,35 @@ class NicIpConfigurationResourceSettings(msrest.serialization.Model):
         self.subnet = subnet
         self.primary = primary
         self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
+        self.load_balancer_nat_rules = load_balancer_nat_rules
+        self.public_ip = public_ip
+
+
+class NsgReference(AzureResourceReference):
+    """Defines reference to NSG.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param source_arm_resource_id: Required. Gets the ARM resource ID of the tracked resource being
+     referenced.
+    :type source_arm_resource_id: str
+    """
+
+    _validation = {
+        'source_arm_resource_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'source_arm_resource_id': {'key': 'sourceArmResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_arm_resource_id: str,
+        **kwargs
+    ):
+        super(NsgReference, self).__init__(source_arm_resource_id=source_arm_resource_id, **kwargs)
 
 
 class NsgSecurityRule(msrest.serialization.Model):
@@ -1550,6 +1696,8 @@ class OperationsDiscovery(msrest.serialization.Model):
        operation (e.g. a localized name for the resource provider + any special
        considerations like PII release).
     :type name: str
+    :param is_data_action: Indicates whether the operation is a data action.
+    :type is_data_action: bool
     :param display: Contains the localized display information for this particular operation /
      action. These
      value will be used by several clients for
@@ -1568,6 +1716,7 @@ class OperationsDiscovery(msrest.serialization.Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'display': {'key': 'display', 'type': 'Display'},
         'origin': {'key': 'origin', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'object'},
@@ -1577,6 +1726,7 @@ class OperationsDiscovery(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
+        is_data_action: Optional[bool] = None,
         display: Optional["Display"] = None,
         origin: Optional[str] = None,
         properties: Optional[object] = None,
@@ -1584,6 +1734,7 @@ class OperationsDiscovery(msrest.serialization.Model):
     ):
         super(OperationsDiscovery, self).__init__(**kwargs)
         self.name = name
+        self.is_data_action = is_data_action
         self.display = display
         self.origin = origin
         self.properties = properties
@@ -1763,8 +1914,8 @@ class PublicIPAddressResourceSettings(ResourceSettings):
     :type target_resource_name: str
     :param domain_name_label: Gets or sets the domain name label.
     :type domain_name_label: str
-    :param f_qdn: Gets or sets the fully qualified domain name.
-    :type f_qdn: str
+    :param fqdn: Gets or sets the fully qualified domain name.
+    :type fqdn: str
     :param public_ip_allocation_method: Gets or sets public IP allocation method.
     :type public_ip_allocation_method: str
     :param sku: Gets or sets public IP sku.
@@ -1782,7 +1933,7 @@ class PublicIPAddressResourceSettings(ResourceSettings):
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'target_resource_name': {'key': 'targetResourceName', 'type': 'str'},
         'domain_name_label': {'key': 'domainNameLabel', 'type': 'str'},
-        'f_qdn': {'key': 'fQDN', 'type': 'str'},
+        'fqdn': {'key': 'fqdn', 'type': 'str'},
         'public_ip_allocation_method': {'key': 'publicIpAllocationMethod', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'str'},
         'zones': {'key': 'zones', 'type': 'str'},
@@ -1793,19 +1944,68 @@ class PublicIPAddressResourceSettings(ResourceSettings):
         *,
         target_resource_name: str,
         domain_name_label: Optional[str] = None,
-        f_qdn: Optional[str] = None,
+        fqdn: Optional[str] = None,
         public_ip_allocation_method: Optional[str] = None,
         sku: Optional[str] = None,
         zones: Optional[str] = None,
         **kwargs
     ):
         super(PublicIPAddressResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Network/publicIPAddresses'
+        self.resource_type = 'Microsoft.Network/publicIPAddresses'  # type: str
         self.domain_name_label = domain_name_label
-        self.f_qdn = f_qdn
+        self.fqdn = fqdn
         self.public_ip_allocation_method = public_ip_allocation_method
         self.sku = sku
         self.zones = zones
+
+
+class PublicIpReference(AzureResourceReference):
+    """Defines reference to a public IP.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param source_arm_resource_id: Required. Gets the ARM resource ID of the tracked resource being
+     referenced.
+    :type source_arm_resource_id: str
+    """
+
+    _validation = {
+        'source_arm_resource_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'source_arm_resource_id': {'key': 'sourceArmResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_arm_resource_id: str,
+        **kwargs
+    ):
+        super(PublicIpReference, self).__init__(source_arm_resource_id=source_arm_resource_id, **kwargs)
+
+
+class RequiredForResourcesCollection(msrest.serialization.Model):
+    """Required for resources collection.
+
+    :param source_ids: Gets or sets the list of source Ids for which the input resource is
+     required.
+    :type source_ids: list[str]
+    """
+
+    _attribute_map = {
+        'source_ids': {'key': 'sourceIds', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_ids: Optional[List[str]] = None,
+        **kwargs
+    ):
+        super(RequiredForResourcesCollection, self).__init__(**kwargs)
+        self.source_ids = source_ids
 
 
 class ResourceGroupResourceSettings(ResourceSettings):
@@ -1837,7 +2037,7 @@ class ResourceGroupResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(ResourceGroupResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'resourceGroups'
+        self.resource_type = 'resourceGroups'  # type: str
 
 
 class ResourceMoveRequest(msrest.serialization.Model):
@@ -1914,7 +2114,7 @@ class SqlDatabaseResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(SqlDatabaseResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Sql/servers/databases'
+        self.resource_type = 'Microsoft.Sql/servers/databases'  # type: str
         self.zone_redundant = zone_redundant
 
 
@@ -1952,7 +2152,7 @@ class SqlElasticPoolResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(SqlElasticPoolResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Sql/servers/elasticPools'
+        self.resource_type = 'Microsoft.Sql/servers/elasticPools'  # type: str
         self.zone_redundant = zone_redundant
 
 
@@ -1985,7 +2185,7 @@ class SqlServerResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(SqlServerResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Sql/servers'
+        self.resource_type = 'Microsoft.Sql/servers'  # type: str
 
 
 class SubnetReference(ProxyResourceReference):
@@ -2026,11 +2226,14 @@ class SubnetResourceSettings(msrest.serialization.Model):
     :type name: str
     :param address_prefix: Gets or sets address prefix for the subnet.
     :type address_prefix: str
+    :param network_security_group: Defines reference to an Azure resource.
+    :type network_security_group: ~resource_mover_service_api.models.AzureResourceReference
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'address_prefix': {'key': 'addressPrefix', 'type': 'str'},
+        'network_security_group': {'key': 'networkSecurityGroup', 'type': 'AzureResourceReference'},
     }
 
     def __init__(
@@ -2038,11 +2241,107 @@ class SubnetResourceSettings(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         address_prefix: Optional[str] = None,
+        network_security_group: Optional["AzureResourceReference"] = None,
         **kwargs
     ):
         super(SubnetResourceSettings, self).__init__(**kwargs)
         self.name = name
         self.address_prefix = address_prefix
+        self.network_security_group = network_security_group
+
+
+class Summary(msrest.serialization.Model):
+    """Summary item.
+
+    :param count: Gets the count.
+    :type count: int
+    :param item: Gets the item.
+    :type item: str
+    """
+
+    _attribute_map = {
+        'count': {'key': 'count', 'type': 'int'},
+        'item': {'key': 'item', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        count: Optional[int] = None,
+        item: Optional[str] = None,
+        **kwargs
+    ):
+        super(Summary, self).__init__(**kwargs)
+        self.count = count
+        self.item = item
+
+
+class SummaryCollection(msrest.serialization.Model):
+    """Summary Collection.
+
+    :param field_name: Gets or sets the field name on which summary is done.
+    :type field_name: str
+    :param summary: Gets or sets the list of summary items.
+    :type summary: list[~resource_mover_service_api.models.Summary]
+    """
+
+    _attribute_map = {
+        'field_name': {'key': 'fieldName', 'type': 'str'},
+        'summary': {'key': 'summary', 'type': '[Summary]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        field_name: Optional[str] = None,
+        summary: Optional[List["Summary"]] = None,
+        **kwargs
+    ):
+        super(SummaryCollection, self).__init__(**kwargs)
+        self.field_name = field_name
+        self.summary = summary
+
+
+class UnresolvedDependenciesFilter(msrest.serialization.Model):
+    """Unresolved dependencies contract.
+
+    :param properties:
+    :type properties: ~resource_mover_service_api.models.UnresolvedDependenciesFilterProperties
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'UnresolvedDependenciesFilterProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["UnresolvedDependenciesFilterProperties"] = None,
+        **kwargs
+    ):
+        super(UnresolvedDependenciesFilter, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class UnresolvedDependenciesFilterProperties(msrest.serialization.Model):
+    """UnresolvedDependenciesFilterProperties.
+
+    :param count: The count of the resource.
+    :type count: int
+    """
+
+    _attribute_map = {
+        'count': {'key': 'count', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        count: Optional[int] = None,
+        **kwargs
+    ):
+        super(UnresolvedDependenciesFilterProperties, self).__init__(**kwargs)
+        self.count = count
 
 
 class UnresolvedDependency(msrest.serialization.Model):
@@ -2074,15 +2373,29 @@ class UnresolvedDependency(msrest.serialization.Model):
 class UnresolvedDependencyCollection(msrest.serialization.Model):
     """Unresolved dependency collection.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :param value: Gets or sets the list of unresolved dependencies.
     :type value: list[~resource_mover_service_api.models.UnresolvedDependency]
     :param next_link: Gets or sets the value of  next link.
     :type next_link: str
+    :ivar summary_collection: Gets or sets the list of summary items and the field on which summary
+     is done.
+    :vartype summary_collection: ~resource_mover_service_api.models.SummaryCollection
+    :ivar total_count: Gets the total count.
+    :vartype total_count: long
     """
+
+    _validation = {
+        'summary_collection': {'readonly': True},
+        'total_count': {'readonly': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[UnresolvedDependency]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'summary_collection': {'key': 'summaryCollection', 'type': 'SummaryCollection'},
+        'total_count': {'key': 'totalCount', 'type': 'long'},
     }
 
     def __init__(
@@ -2095,6 +2408,8 @@ class UnresolvedDependencyCollection(msrest.serialization.Model):
         super(UnresolvedDependencyCollection, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+        self.summary_collection = None
+        self.total_count = None
 
 
 class UpdateMoveCollectionRequest(msrest.serialization.Model):
@@ -2167,7 +2482,7 @@ class VirtualMachineResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(VirtualMachineResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Compute/virtualMachines'
+        self.resource_type = 'Microsoft.Compute/virtualMachines'  # type: str
         self.target_availability_zone = target_availability_zone
         self.target_vm_size = target_vm_size
         self.target_availability_set_id = target_availability_set_id
@@ -2221,7 +2536,7 @@ class VirtualNetworkResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(VirtualNetworkResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Network/virtualNetworks'
+        self.resource_type = 'Microsoft.Network/virtualNetworks'  # type: str
         self.enable_ddos_protection = enable_ddos_protection
         self.address_space = address_space
         self.dns_servers = dns_servers
