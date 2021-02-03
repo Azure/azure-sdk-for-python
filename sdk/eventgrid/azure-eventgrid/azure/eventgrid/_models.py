@@ -39,12 +39,12 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     cannot be present at the same time.
 
     :param source: Required. Identifies the context in which an event happened. The combination of id and source must
-        be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
+     be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
     :type source: str
     :param type: Required. Type of event related to the originating occurrence.
     :type type: str
-    :keyword data: Optional. Event data specific to the event type. Only one of the `data` or `data_base64` argument must be present.
-        If data is of bytes type, we'll send it as data_base64 in the outgoing request.
+    :keyword data: Optional. Event data specific to the event type. Only one of the `data` or `data_base64`
+     argument must be present. If data is of bytes type, we'll send it as data_base64 in the outgoing request.
     :type data: object
     :keyword time: Optional. The time (in UTC) the event was generated, in RFC3339 format.
     :type time: ~datetime.datetime
@@ -61,10 +61,11 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :type id: Optional[str]
     :keyword data_base64: Optional. Event data specific to the event type if the data is of bytes type.
-     Only data of bytes type is accepted by `data-base64` and only one of the `data` or `data_base64` argument must be present.
+     Only data of bytes type is accepted by `data-base64` and only one of the `data` or `data_base64` argument
+     must be present.
     :type data_base64: bytes
     :ivar source: Identifies the context in which an event happened. The combination of id and source must
-        be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
+     be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
     :vartype source: str
     :ivar data: Event data specific to the event type.
     :vartype data: object
@@ -162,13 +163,13 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     :param data: Required. Event data specific to the event type.
     :type data: object
     :param data_version: Required. The schema version of the data object.
-        If not provided, will be stamped with an empty value.
+     If not provided, will be stamped with an empty value.
     :type data_version: str
     :keyword topic: Optional. The resource path of the event source. If not provided, Event Grid will
-        stamp onto the event.
+     stamp onto the event.
     :type topic: str
     :keyword metadata_version: Optional. The schema version of the event metadata. If provided,
-        must match Event Grid Schema exactly. If not provided, EventGrid will stamp onto event.
+     must match Event Grid Schema exactly. If not provided, EventGrid will stamp onto event.
     :type metadata_version: str
     :keyword id: Optional. An identifier for the event. In not provided, a random UUID will be generated and used.
     :type id: Optional[str]
