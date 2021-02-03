@@ -6,7 +6,6 @@ stages:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-keys
       JobName: Test_Keys
-      dependsOn: []
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
@@ -20,7 +19,6 @@ stages:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-secrets
       JobName: Test_Secrets
-      dependsOn: []
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
@@ -34,7 +32,6 @@ stages:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-certificates
       JobName: Test_Certificates
-      dependsOn: []
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
