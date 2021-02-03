@@ -17,11 +17,6 @@ from msrest.serialization import UTC
 from azure.eventgrid import CloudEvent, EventGridEvent
 from azure.eventgrid._generated import models as internal_models
 from azure.eventgrid import SystemEventNames
-from _mocks import (
-    cloud_storage_dict,
-    cloud_storage_string,
-    cloud_storage_bytes,
-    )
 
 class EventGridSerializationTests(AzureMgmtTestCase):
 
