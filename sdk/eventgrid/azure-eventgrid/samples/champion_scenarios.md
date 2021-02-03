@@ -37,7 +37,7 @@ client = EventGridPublisherClient(endpoint, credential)
 
 ## Send Scenarios
 
-### Send a Single EventGridEvent as a strongly typed object
+### Send a single EventGridEvent as a strongly typed object
 
 ```Python
 import os
@@ -62,7 +62,7 @@ event = EventGridEvent(
 client.send(event)
 ```
 
-### Send a Single CloudEvent as a strongly typed object
+### Send a single CloudEvent as a strongly typed object
 
 ```Python
 import os
@@ -264,7 +264,6 @@ from azure.eventgrid import CloudEvent
 from azure.storage.queue import QueueServiceClient, BinaryBase64DecodePolicy
 import os
 import json
-from base64 import b64decode
 
 # all types of CloudEvents below produce same DeserializedEvent
 connection_str = os.environ['STORAGE_QUEUE_CONN_STR']
@@ -330,4 +329,3 @@ for event in deserialized_dict_events:
     print(event.data)
     print(type(event))
 ```
-

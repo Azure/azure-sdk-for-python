@@ -43,8 +43,7 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     :type source: str
     :param type: Required. Type of event related to the originating occurrence.
     :type type: str
-    :keyword data: Optional. Event data specific to the event type. This cannot be provided along with
-        data_base64.
+    :keyword data: Optional. Event data specific to the event type. Only one of the `data` or `data_base64` argument must be present.
     :type data: object
     :keyword time: Optional. The time (in UTC) the event was generated, in RFC3339 format.
     :type time: ~datetime.datetime
@@ -60,16 +59,15 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     :keyword id: Optional. An identifier for the event. The combination of id and source must be
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :type id: Optional[str]
-    :keyword data_base64: Event data specific to the event type if the data is bytes. This must
-        be provided only when data is not provided and data is of bytes type.
+    :keyword data_base64: Optional. Event data specific to the event type if the data is of bytes type.
+     Only data of bytes type is accepted by `data-base64` and only one of the `data` or `data_base64` argument must be present.
     :type data_base64: bytes
     :ivar source: Identifies the context in which an event happened. The combination of id and source must
         be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
     :vartype source: str
     :ivar data: Event data specific to the event type.
     :vartype data: object
-    :ivar data_base64: Event data specific to the event type if the data is bytes. This must
-        be provided only when data is not provided and data is of bytes type.
+    :ivar data_base64: Event data specific to the event type if the data is of bytes type.
     :vartype data_base64: bytes
     :ivar type: Type of event related to the originating occurrence.
     :vartype type: str
