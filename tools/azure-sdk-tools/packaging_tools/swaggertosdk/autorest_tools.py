@@ -4,7 +4,6 @@ import os.path
 from pathlib import Path
 import shutil
 import subprocess
-import io
 
 _LOGGER = logging.getLogger(__name__)
 
