@@ -171,31 +171,6 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
         assert length ==  len(transaction.results)
         assert length ==  len(transaction.requests)
 
-    #--Test cases for batch ---------------------------------------------
-    def test_inferred_types(self):
-        # Arrange
-        # Act
-        entity = TableEntity()
-        entity.PartitionKey = '003'
-        entity.RowKey = 'batch_all_operations_together-1'
-        entity.test = EntityProperty(True)
-        entity.test2 = EntityProperty(b'abcdef')
-        entity.test3 = EntityProperty(u'c9da6455-213d-42c9-9a79-3e9149a57833')
-        entity.test4 = EntityProperty(datetime(1973, 10, 4, tzinfo=tzutc()))
-        entity.test5 = EntityProperty(u"stringystring")
-        entity.test6 = EntityProperty(3.14159)
-        entity.test7 = EntityProperty(100)
-        entity.test8 = EntityProperty(2 ** 33, EdmType.INT64)
-
-        # Assert
-        assert entity.test.type ==  EdmType.BOOLEAN
-        assert entity.test2.type ==  EdmType.BINARY
-        assert entity.test3.type ==  EdmType.GUID
-        assert entity.test4.type ==  EdmType.DATETIME
-        assert entity.test5.type ==  EdmType.STRING
-        assert entity.test6.type ==  EdmType.DOUBLE
-        assert entity.test7.type ==  EdmType.INT32
-        assert entity.test8.type ==  EdmType.INT64
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
@@ -875,3 +850,31 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
         finally:
             self._tear_down()
+
+class TestTableUnitTest(TableTestCase):
+
+    #--Test cases for batch ---------------------------------------------
+    def test_inferred_types(self):
+        # Arrange
+        # Act
+        entity = TableEntity()
+        entity.PartitionKey = '003'
+        entity.RowKey = 'batch_all_operations_together-1'
+        entity.test = EntityProperty(True)
+        entity.test2 = EntityProperty(b'abcdef')
+        entity.test3 = EntityProperty(u'c9da6455-213d-42c9-9a79-3e9149a57833')
+        entity.test4 = EntityProperty(datetime(1973, 10, 4, tzinfo=tzutc()))
+        entity.test5 = EntityProperty(u"stringystring")
+        entity.test6 = EntityProperty(3.14159)
+        entity.test7 = EntityProperty(100)
+        entity.test8 = EntityProperty(2 ** 33, EdmType.INT64)
+
+        # Assert
+        assert entity.test.type ==  EdmType.BOOLEAN
+        assert entity.test2.type ==  EdmType.BINARY
+        assert entity.test3.type ==  EdmType.GUID
+        assert entity.test4.type ==  EdmType.DATETIME
+        assert entity.test5.type ==  EdmType.STRING
+        assert entity.test6.type ==  EdmType.DOUBLE
+        assert entity.test7.type ==  EdmType.INT32
+        assert entity.test8.type ==  EdmType.INT64

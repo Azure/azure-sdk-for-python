@@ -632,47 +632,6 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("Not sure this is how the batching should operate, will consult w/ Anna")
-    @TablesPreparer()
-    async def test_batch_reuse(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Arrange
-        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
-        try:
-            table2 = self._get_table_reference('table2')
-            table2.create_table()
-
-            # Act
-            entity = TableEntity()
-            entity.PartitionKey = '003'
-            entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(True)
-            entity.test2 = 'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
-
-            batch = self.table.create_batch()
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-2'
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-3'
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-4'
-            batch.create_entity(entity)
-
-            await self.table.send_batch(batch)
-            with pytest.raises(HttpResponseError):
-                resp = await table2.send_batch(batch)
-
-            # Assert
-            entities = self.table.query_entities("PartitionKey eq '003'")
-            length = 0
-            async for e in entities:
-                length += 1
-            assert 5 ==  length
-        finally:
-            await self._tear_down()
-
     # @pytest.mark.skip("This does not throw an error, but it should")
     @TablesPreparer()
     async def test_batch_same_row_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):

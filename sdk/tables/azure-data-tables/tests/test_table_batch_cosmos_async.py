@@ -732,29 +732,6 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("Cannot fake cosmos credential")
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
-    async def test_new_invalid_key(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        invalid_key = tables_primary_cosmos_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
-        key_list = list(tables_primary_cosmos_account_key)
-
-        key_list[-6:] = list("0000==")
-        invalid_key = ''.join(key_list)
-
-        self.ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "table"), invalid_key)
-        self.table_name = self.get_resource_name('uttable')
-        self.table = self.ts.get_table_client(self.table_name)
-
-        entity = self._create_random_entity_dict('001', 'batch_negative_1')
-
-        batch = self.table.create_batch()
-        batch.create_entity(entity)
-
-        with pytest.raises(ClientAuthenticationError):
-            resp = await self.table.send_batch(batch)
-
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     async def test_new_delete_nonexistent_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
