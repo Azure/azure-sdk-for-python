@@ -14,6 +14,7 @@ from azure.communication.phonenumber import (
 from phone_number_helper import PhoneNumberUriReplacer
 from phone_number_testcase_async import AsyncPhoneNumberCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor
+from _shared.utils import create_token_credential
 import os
 
 SKIP_PHONE_NUMBER_TESTS = True
@@ -126,6 +127,20 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
             self.capabilities_id = "capabilities_id"
             self.release_id = "release_id"
 
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
+    @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
+    async def test_list_all_phone_numbers_from_managed_identity(self):
+        endpoint, access_key = parse_connection_str(self.connection_str)
+        credential = create_token_credential()
+        phone_number_client = PhoneNumberAdministrationClient(endpoint, credential)
+        async with phone_number_client:
+            pages = phone_number_client.list_all_phone_numbers()
+            items = []
+            async for item in pages:
+                items.append(item)
+        assert len(items) > 0
+        
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
