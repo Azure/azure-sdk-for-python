@@ -107,6 +107,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :param int timeout: time out setting. Default is 86400s (one day)
         :return: True if there are errors. Else False
         :rtype: bool
+        :raises ~azure.core.exceptions.ServiceResponseTimeoutError:
         """
         has_error = False
         begin_time = int(time.time())
@@ -114,6 +115,10 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
+                if self._on_error:
+                    actions = self._index_documents_batch.dequeue_actions()
+                    for action in actions:
+                        self._on_error(action)
                 raise ServiceResponseTimeoutError("Service response time out")
             result = self._process(timeout=remaining, raise_error=False)
             if result:
