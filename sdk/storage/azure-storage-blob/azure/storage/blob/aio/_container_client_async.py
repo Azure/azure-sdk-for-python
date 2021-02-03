@@ -170,6 +170,40 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
+    async def _rename_container(self, new_name, **kwargs):
+        # type: (str, **Any) -> ContainerClient
+        """Renames a container.
+
+        Operation is successful only if the source container exists.
+
+        :param str new_name:
+            The new container name the user wants to rename to.
+        :keyword lease:
+            Specify this to perform only if the lease ID given
+            matches the active lease ID of the source container.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.blob.ContainerClient
+        """
+        lease = kwargs.pop('lease', None)
+        try:
+            kwargs['source_lease_id'] = lease.id  # type: str
+        except AttributeError:
+            kwargs['source_lease_id'] = lease
+        try:
+            renamed_container = ContainerClient(
+                "{}://{}".format(self.scheme, self.primary_hostname), container_name=new_name,
+                credential=self.credential, api_version=self.api_version, _configuration=self._config,
+                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+                key_resolver_function=self.key_resolver_function)
+            await renamed_container._client.container.rename(self.container_name, **kwargs)   # pylint: disable = protected-access
+            return renamed_container
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
     async def delete_container(
             self, **kwargs):
         # type: (Any) -> None

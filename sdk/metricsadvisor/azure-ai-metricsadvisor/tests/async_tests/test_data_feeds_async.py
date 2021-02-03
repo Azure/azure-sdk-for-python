@@ -892,7 +892,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 data_feed.source.connection_string = "updated"
                 data_feed.source.query = "get data"
 
-                updated = await self.admin_client.update_data_feed(data_feed)
+                await self.admin_client.update_data_feed(data_feed)
+                updated = await self.admin_client.get_data_feed(data_feed.id)
                 self.assertEqual(updated.name, "update")
                 self.assertEqual(updated.options.data_feed_description, "updated")
                 self.assertEqual(updated.schema.timestamp_column, "time")
@@ -923,7 +924,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             data_feed = await self._create_data_feed_for_update("update")
             try:
-                updated = await self.admin_client.update_data_feed(
+                await self.admin_client.update_data_feed(
                     data_feed.id,
                     name="update",
                     data_feed_description="updated",
@@ -948,6 +949,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         query="get data"
                     )
                 )
+                updated = await self.admin_client.get_data_feed(data_feed.id)
                 self.assertEqual(updated.name, "update")
                 self.assertEqual(updated.options.data_feed_description, "updated")
                 self.assertEqual(updated.schema.timestamp_column, "time")
@@ -999,7 +1001,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 data_feed.source.connection_string = "don't update me"
                 data_feed.source.query = "don't update me"
 
-                updated = await self.admin_client.update_data_feed(
+                await self.admin_client.update_data_feed(
                     data_feed,
                     timestamp_column="time",
                     ingestion_begin_time=datetime.datetime(2020, 12, 10),
@@ -1022,6 +1024,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         query="get data"
                     )
                 )
+                updated = await self.admin_client.get_data_feed(data_feed.id)
                 self.assertEqual(updated.name, "updateMe")
                 self.assertEqual(updated.options.data_feed_description, "updateMe")
                 self.assertEqual(updated.schema.timestamp_column, "time")
@@ -1052,7 +1055,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             data_feed = await self._create_data_feed_for_update("update")
             try:
-                updated = await self.admin_client.update_data_feed(
+                await self.admin_client.update_data_feed(
                     data_feed.id,
                     name="update",
                     data_feed_description=None,
@@ -1072,6 +1075,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     status=None,
                     action_link_template=None,
                 )
+                updated = await self.admin_client.get_data_feed(data_feed.id)
                 self.assertEqual(updated.name, "update")
                 # self.assertEqual(updated.options.data_feed_description, "")  # doesn't currently clear
                 # self.assertEqual(updated.schema.timestamp_column, "")  # doesn't currently clear

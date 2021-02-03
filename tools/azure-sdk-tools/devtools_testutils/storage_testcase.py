@@ -8,7 +8,12 @@ import logging
 import os
 from time import sleep
 
-from azure.core.exceptions import ResourceExistsError
+# let this import fail, this package is used intentionally without the presence of azure-core
+try:
+    from azure.core.exceptions import ResourceExistsError
+except:
+    pass
+
 from azure.mgmt.storage import StorageManagementClient
 from azure.mgmt.storage.models import StorageAccount, Endpoints
 

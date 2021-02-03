@@ -312,6 +312,7 @@ def create_code_coverage_params(parsed_args, package_name):
     else:
         current_package_name = package_name.replace("-", ".")
         coverage_args.append("--cov={}".format(current_package_name))
+        coverage_args.append("--cov-append")
         logging.info(
             "Code coverage is enabled for package {0}, pytest arguements: {1}".format(
                 current_package_name, coverage_args
@@ -458,6 +459,6 @@ def get_installed_packages(paths = None):
     # WorkingSet returns installed packages in given path
     # working_set returns installed packages in default path
     # if paths is set then find installed packages from given paths
-    ws = WorkingSet(paths) if paths else working_set  
+    ws = WorkingSet(paths) if paths else working_set
     return ["{0}=={1}".format(p.project_name, p.version) for p in ws]
 
