@@ -7,7 +7,6 @@
 from __future__ import division
 from contextlib import contextmanager
 import os
-import time
 from datetime import datetime, timedelta
 import string
 import logging
@@ -57,20 +56,6 @@ class TableTestCase(object):
                 return 'https://{}.{}.core.windows.net'.format(account, endpoint_type)
             if endpoint_type == "cosmos":
                 return "https://{}.table.cosmos.azure.com".format(account)
-
-    def sleep(self, seconds):
-        if self.is_live:
-            time.sleep(seconds)
-
-    def generate_oauth_token(self):
-        if self.is_live:
-            from azure.identity import ClientSecretCredential
-            return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
-            )
-        return self.generate_fake_token()
 
     def generate_sas_token(self):
         fake_key = 'a'*30 + 'b'*30

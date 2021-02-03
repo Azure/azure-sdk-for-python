@@ -21,16 +21,6 @@ class AsyncFakeTokenCredential(object):
 
 
 class AsyncTableTestCase(TableTestCase):
-    @staticmethod
-    def generate_oauth_token(self):
-        if self.is_live:
-            from azure.identity.aio import ClientSecretCredential
-            return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
-            )
-        return self.generate_fake_token()
 
     def generate_fake_token(self):
         return AsyncFakeTokenCredential()
