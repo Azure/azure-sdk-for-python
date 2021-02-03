@@ -82,7 +82,6 @@ class TestSearchBatchingClientAsync(object):
     async def test_callback_error(self):
         async def mock_fail_index_documents(actions, timeout=86400):
             if len(actions) > 0:
-                print("There is something wrong")
                 result = IndexingResult()
                 result.key = actions[0].additional_properties.get('id')
                 result.status_code = 400
@@ -105,7 +104,6 @@ class TestSearchBatchingClientAsync(object):
     async def test_callback_error_on_timeout(self):
         async def mock_fail_index_documents(actions, timeout=86400):
             if len(actions) > 0:
-                print("There is something wrong")
                 result = IndexingResult()
                 result.key = actions[0].additional_properties.get('id')
                 result.status_code = 400
@@ -130,7 +128,6 @@ class TestSearchBatchingClientAsync(object):
     async def test_callback_progress(self):
         async def mock_successful_index_documents(actions, timeout=86400):
             if len(actions) > 0:
-                print("There is something wrong")
                 result = IndexingResult()
                 result.key = actions[0].additional_properties.get('id')
                 result.status_code = 200
