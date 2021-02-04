@@ -231,7 +231,9 @@ async def test_prefers_app_service_2017_09_01():
         assert token.expires_on == expires_on
 
 
-@pytest.mark.skip("2019-08-01 support was removed due to https://github.com/Azure/azure-sdk-for-python/issues/14670. This test should be enabled when that support is added back.")
+@pytest.mark.skip(
+    "2019-08-01 support was removed due to https://github.com/Azure/azure-sdk-for-python/issues/14670. This test should be enabled when that support is added back."
+)
 @pytest.mark.asyncio
 async def test_app_service_2019_08_01():
     """App Service 2019-08-01: IDENTITY_ENDPOINT, IDENTITY_HEADER set"""
@@ -354,11 +356,7 @@ async def test_app_service_user_assigned_identity():
                 base_url=endpoint,
                 method="GET",
                 required_headers={"secret": secret, "User-Agent": USER_AGENT},
-                required_params={
-                    "api-version": "2017-09-01",
-                    "resource": scope,
-                    param_name: param_value,
-                },
+                required_params={"api-version": "2017-09-01", "resource": scope, param_name: param_value},
             ),
         ],
         responses=[
@@ -405,11 +403,7 @@ async def test_client_id_none():
         if request.data:
             assert "client_id" not in request.body  # Cloud Shell
         return mock_response(
-            json_payload=(
-                build_aad_response(
-                    access_token=expected_access_token, expires_on="42", resource=scope
-                )
-            )
+            json_payload=(build_aad_response(access_token=expected_access_token, expires_on="42", resource=scope))
         )
 
     with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, {}, clear=True):
@@ -622,11 +616,8 @@ async def test_azure_arc(tmpdir):
     )
 
     with mock.patch(
-            "os.environ",
-            {
-                EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint,
-                EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint,
-            },
+        "os.environ",
+        {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
     ):
         token = await ManagedIdentityCredential(transport=transport).get_token(scope)
         assert token.token == access_token
@@ -637,11 +628,11 @@ async def test_azure_arc(tmpdir):
 async def test_azure_arc_client_id():
     """Azure Arc doesn't support user-assigned managed identity"""
     with mock.patch(
-            "os.environ",
-            {
-                EnvironmentVariables.IDENTITY_ENDPOINT: "http://localhost:42/token",
-                EnvironmentVariables.IMDS_ENDPOINT: "http://localhost:42",
-            }
+        "os.environ",
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: "http://localhost:42/token",
+            EnvironmentVariables.IMDS_ENDPOINT: "http://localhost:42",
+        },
     ):
         credential = ManagedIdentityCredential(client_id="some-guid")
 
