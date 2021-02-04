@@ -3,7 +3,13 @@
 ## 5.1.0b5 (Unreleased)
 
 **New Features**
-- No longer need to specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when calling `begin_analyze` and `begin_analyze_healthcare`. `begin_analyze_healthcare` is still in gated preview though.
+- Renamed `begin_analyze_healthcare` to `begin_analyze_healthcare_entities`.
+- Renamed `AnalyzeHealthcareResult` to `AnalyzeHealthcareEntitiesResult` and `AnalyzeHealthcareResultItem` to `AnalyzeHealthcareEntitiesResultItem`.
+- Renamed `HealthcareEntityLink` to `HealthcareEntityDataSource` and renamed its properties `id` to `entity_id` and `data_source` to `name`.
+- Moved the cancellation logic for the Analyze Healthcare Entities service from 
+the service client to the poller object returned from `begin_analyze_healthcare_entities`.
+- Exposed Analyze Healthcare Entities operation metadata on the poller object returned from `begin_analyze_healthcare_entities`.
+- No longer need to specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when calling `begin_analyze` and `begin_analyze_healthcare_entities`. `begin_analyze_healthcare_entities` is still in gated preview though.
 
 
 ## 5.1.0b4 (2021-01-12)

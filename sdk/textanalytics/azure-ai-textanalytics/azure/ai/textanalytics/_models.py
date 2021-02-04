@@ -386,7 +386,7 @@ class HealthcareEntity(DictMixin):
         :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
             entity.
         :ivar data_sources: A collection of entity references in known data sources.
-        :vartype links: list[~azure.ai.textanalytics.HealthcareEntityDataSource]
+        :vartype data_sources: list[~azure.ai.textanalytics.HealthcareEntityDataSource]
     """
 
     def __init__(self, **kwargs):
