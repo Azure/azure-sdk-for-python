@@ -60,16 +60,19 @@ class AccountKeys(Model):
 class Resource(Model):
     """Resource.
 
+    Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -93,19 +96,21 @@ class Resource(Model):
 
 
 class AzureEntityResource(Resource):
-    """The resource model definition for a Azure Resource Manager resource with an
-    etag.
+    """Entity Resource.
+
+    The resource model definition for an Azure Resource Manager resource with
+    an etag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -163,10 +168,8 @@ class CheckNameAvailabilityResponse(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name_available: Required. if name Available. Possible values
-     include: 'true', 'false'
-    :type name_available: str or
-     ~azure.mgmt.mixedreality.models.NameAvailability
+    :param name_available: Required. if name Available
+    :type name_available: bool
     :param reason: Resource Name To Verify. Possible values include:
      'Invalid', 'AlreadyExists'
     :type reason: str or ~azure.mgmt.mixedreality.models.NameUnavailableReason
@@ -179,7 +182,7 @@ class CheckNameAvailabilityResponse(Model):
     }
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'str'},
+        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
         'reason': {'key': 'reason', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
     }
@@ -194,7 +197,7 @@ class CheckNameAvailabilityResponse(Model):
 class CloudError(Model):
     """An Error response.
 
-    :param error:
+    :param error: An Error response.
     :type error: ~azure.mgmt.mixedreality.models.CloudErrorBody
     """
 
@@ -282,6 +285,95 @@ class Identity(Model):
         self.type = kwargs.get('type', None)
 
 
+class LogSpecification(Model):
+    """Specifications of the Log for Azure Monitoring.
+
+    :param name: Name of the log
+    :type name: str
+    :param display_name: Localized friendly display name of the log
+    :type display_name: str
+    :param blob_duration: Blob duration of the log
+    :type blob_duration: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LogSpecification, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.blob_duration = kwargs.get('blob_duration', None)
+
+
+class MetricDimension(Model):
+    """Specifications of the Dimension of metrics.
+
+    :param name: Name of the dimension
+    :type name: str
+    :param display_name: Localized friendly display name of the dimension
+    :type display_name: str
+    :param internal_name: Internal name of the dimension.
+    :type internal_name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'internal_name': {'key': 'internalName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MetricDimension, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.internal_name = kwargs.get('internal_name', None)
+
+
+class MetricSpecification(Model):
+    """Specifications of the Metrics for Azure Monitoring.
+
+    :param name: Name of the metric
+    :type name: str
+    :param display_name: Localized friendly display name of the metric
+    :type display_name: str
+    :param display_description: Localized friendly description of the metric
+    :type display_description: str
+    :param unit: Unit that makes sense for the metric
+    :type unit: str
+    :param aggregation_type: Only provide one value for this field. Valid
+     values: Average, Minimum, Maximum, Total, Count.
+    :type aggregation_type: str
+    :param internal_metric_name: Internal metric name.
+    :type internal_metric_name: str
+    :param dimensions: Dimensions of the metric
+    :type dimensions: list[~azure.mgmt.mixedreality.models.MetricDimension]
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'internal_metric_name': {'key': 'internalMetricName', 'type': 'str'},
+        'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MetricSpecification, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.display_description = kwargs.get('display_description', None)
+        self.unit = kwargs.get('unit', None)
+        self.aggregation_type = kwargs.get('aggregation_type', None)
+        self.internal_metric_name = kwargs.get('internal_metric_name', None)
+        self.dimensions = kwargs.get('dimensions', None)
+
+
 class Operation(Model):
     """REST API operation.
 
@@ -289,17 +381,29 @@ class Operation(Model):
     :type name: str
     :param display: The object that represents the operation.
     :type display: ~azure.mgmt.mixedreality.models.OperationDisplay
+    :param is_data_action: Whether or not this is a data plane operation
+    :type is_data_action: bool
+    :param origin: The origin
+    :type origin: str
+    :param properties: Properties of the operation
+    :type properties: ~azure.mgmt.mixedreality.models.OperationProperties
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'OperationProperties'},
     }
 
     def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.display = kwargs.get('display', None)
+        self.is_data_action = kwargs.get('is_data_action', None)
+        self.origin = kwargs.get('origin', None)
+        self.properties = kwargs.get('properties', None)
 
 
 class OperationDisplay(Model):
@@ -338,6 +442,23 @@ class OperationDisplay(Model):
         self.resource = kwargs.get('resource', None)
         self.operation = kwargs.get('operation', None)
         self.description = kwargs.get('description', None)
+
+
+class OperationProperties(Model):
+    """Operation properties.
+
+    :param service_specification: Service specification.
+    :type service_specification:
+     ~azure.mgmt.mixedreality.models.ServiceSpecification
+    """
+
+    _attribute_map = {
+        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OperationProperties, self).__init__(**kwargs)
+        self.service_specification = kwargs.get('service_specification', None)
 
 
 class Plan(Model):
@@ -386,19 +507,21 @@ class Plan(Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+    """Proxy Resource.
+
+    The resource model definition for a Azure Resource Manager proxy resource.
+    It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -419,20 +542,23 @@ class ProxyResource(Resource):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -469,26 +595,36 @@ class RemoteRenderingAccount(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives
     :type location: str
-    :param identity:
-    :type identity:
-     ~azure.mgmt.mixedreality.models.RemoteRenderingAccountIdentity
+    :param storage_account_name: The name of the storage account associated
+     with this accountId
+    :type storage_account_name: str
     :ivar account_id: unique id of certain account.
     :vartype account_id: str
     :ivar account_domain: Correspond domain name of certain Spatial Anchors
      Account
     :vartype account_domain: str
+    :param identity: The identity associated with this account
+    :type identity: ~azure.mgmt.mixedreality.models.Identity
+    :param plan: The plan associated with this account
+    :type plan: ~azure.mgmt.mixedreality.models.Identity
+    :param sku: The sku associated with this account
+    :type sku: ~azure.mgmt.mixedreality.models.Sku
+    :param kind: The kind of account, if supported
+    :type kind: ~azure.mgmt.mixedreality.models.Sku
+    :param system_data: System metadata for this account
+    :type system_data: ~azure.mgmt.mixedreality.models.SystemData
     """
 
     _validation = {
@@ -506,45 +642,26 @@ class RemoteRenderingAccount(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'RemoteRenderingAccountIdentity'},
+        'storage_account_name': {'key': 'properties.storageAccountName', 'type': 'str'},
         'account_id': {'key': 'properties.accountId', 'type': 'str'},
         'account_domain': {'key': 'properties.accountDomain', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
+        'plan': {'key': 'plan', 'type': 'Identity'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'kind': {'key': 'kind', 'type': 'Sku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(self, **kwargs):
         super(RemoteRenderingAccount, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
+        self.storage_account_name = kwargs.get('storage_account_name', None)
         self.account_id = None
         self.account_domain = None
-
-
-class RemoteRenderingAccountIdentity(Identity):
-    """RemoteRenderingAccountIdentity.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar principal_id: The principal ID of resource identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
-    :vartype tenant_id: str
-    :param type: The identity type. Possible values include: 'SystemAssigned'
-    :type type: str or ~azure.mgmt.mixedreality.models.ResourceIdentityType
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'ResourceIdentityType'},
-    }
-
-    def __init__(self, **kwargs):
-        super(RemoteRenderingAccountIdentity, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
+        self.plan = kwargs.get('plan', None)
+        self.sku = kwargs.get('sku', None)
+        self.kind = kwargs.get('kind', None)
+        self.system_data = kwargs.get('system_data', None)
 
 
 class ResourceModelWithAllowedPropertySet(Model):
@@ -555,19 +672,19 @@ class ResourceModelWithAllowedPropertySet(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts..
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param location: The geo-location where the resource lives
     :type location: str
-    :param managed_by: The  fully qualified resource ID of the resource that
+    :param managed_by: The fully qualified resource ID of the resource that
      manages this resource. Indicates if this resource is managed by another
-     azure resource. If this is present, complete mode deployment will not
+     Azure resource. If this is present, complete mode deployment will not
      delete the resource if it is removed from the template since it is managed
      by another resource.
     :type managed_by: str
@@ -787,6 +904,29 @@ class ResourceModelWithAllowedPropertySetSku(Sku):
         super(ResourceModelWithAllowedPropertySetSku, self).__init__(**kwargs)
 
 
+class ServiceSpecification(Model):
+    """Service specification payload.
+
+    :param log_specifications: Specifications of the Log for Azure Monitoring
+    :type log_specifications:
+     list[~azure.mgmt.mixedreality.models.LogSpecification]
+    :param metric_specifications: Specifications of the Metrics for Azure
+     Monitoring
+    :type metric_specifications:
+     list[~azure.mgmt.mixedreality.models.MetricSpecification]
+    """
+
+    _attribute_map = {
+        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
+        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServiceSpecification, self).__init__(**kwargs)
+        self.log_specifications = kwargs.get('log_specifications', None)
+        self.metric_specifications = kwargs.get('metric_specifications', None)
+
+
 class SpatialAnchorsAccount(TrackedResource):
     """SpatialAnchorsAccount Response.
 
@@ -795,23 +935,36 @@ class SpatialAnchorsAccount(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives
     :type location: str
+    :param storage_account_name: The name of the storage account associated
+     with this accountId
+    :type storage_account_name: str
     :ivar account_id: unique id of certain account.
     :vartype account_id: str
     :ivar account_domain: Correspond domain name of certain Spatial Anchors
      Account
     :vartype account_domain: str
+    :param identity: The identity associated with this account
+    :type identity: ~azure.mgmt.mixedreality.models.Identity
+    :param plan: The plan associated with this account
+    :type plan: ~azure.mgmt.mixedreality.models.Identity
+    :param sku: The sku associated with this account
+    :type sku: ~azure.mgmt.mixedreality.models.Sku
+    :param kind: The kind of account, if supported
+    :type kind: ~azure.mgmt.mixedreality.models.Sku
+    :param system_data: System metadata for this account
+    :type system_data: ~azure.mgmt.mixedreality.models.SystemData
     """
 
     _validation = {
@@ -829,11 +982,65 @@ class SpatialAnchorsAccount(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'storage_account_name': {'key': 'properties.storageAccountName', 'type': 'str'},
         'account_id': {'key': 'properties.accountId', 'type': 'str'},
         'account_domain': {'key': 'properties.accountDomain', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
+        'plan': {'key': 'plan', 'type': 'Identity'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'kind': {'key': 'kind', 'type': 'Sku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(self, **kwargs):
         super(SpatialAnchorsAccount, self).__init__(**kwargs)
+        self.storage_account_name = kwargs.get('storage_account_name', None)
         self.account_id = None
         self.account_domain = None
+        self.identity = kwargs.get('identity', None)
+        self.plan = kwargs.get('plan', None)
+        self.sku = kwargs.get('sku', None)
+        self.kind = kwargs.get('kind', None)
+        self.system_data = kwargs.get('system_data', None)
+
+
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or
+     ~azure.mgmt.mixedreality.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.mixedreality.models.CreatedByType
+    :param last_modified_at: The type of identity that last modified the
+     resource.
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)

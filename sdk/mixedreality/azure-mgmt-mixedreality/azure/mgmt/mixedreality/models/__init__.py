@@ -16,19 +16,24 @@ try:
     from ._models_py3 import CheckNameAvailabilityRequest
     from ._models_py3 import CheckNameAvailabilityResponse
     from ._models_py3 import Identity
+    from ._models_py3 import LogSpecification
+    from ._models_py3 import MetricDimension
+    from ._models_py3 import MetricSpecification
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationProperties
     from ._models_py3 import Plan
     from ._models_py3 import ProxyResource
     from ._models_py3 import RemoteRenderingAccount
-    from ._models_py3 import RemoteRenderingAccountIdentity
     from ._models_py3 import Resource
     from ._models_py3 import ResourceModelWithAllowedPropertySet
     from ._models_py3 import ResourceModelWithAllowedPropertySetIdentity
     from ._models_py3 import ResourceModelWithAllowedPropertySetPlan
     from ._models_py3 import ResourceModelWithAllowedPropertySetSku
+    from ._models_py3 import ServiceSpecification
     from ._models_py3 import Sku
     from ._models_py3 import SpatialAnchorsAccount
+    from ._models_py3 import SystemData
     from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
     from ._models import AccountKeyRegenerateRequest
@@ -37,28 +42,33 @@ except (SyntaxError, ImportError):
     from ._models import CheckNameAvailabilityRequest
     from ._models import CheckNameAvailabilityResponse
     from ._models import Identity
+    from ._models import LogSpecification
+    from ._models import MetricDimension
+    from ._models import MetricSpecification
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import OperationProperties
     from ._models import Plan
     from ._models import ProxyResource
     from ._models import RemoteRenderingAccount
-    from ._models import RemoteRenderingAccountIdentity
     from ._models import Resource
     from ._models import ResourceModelWithAllowedPropertySet
     from ._models import ResourceModelWithAllowedPropertySetIdentity
     from ._models import ResourceModelWithAllowedPropertySetPlan
     from ._models import ResourceModelWithAllowedPropertySetSku
+    from ._models import ServiceSpecification
     from ._models import Sku
     from ._models import SpatialAnchorsAccount
+    from ._models import SystemData
     from ._models import TrackedResource
 from ._paged_models import OperationPaged
 from ._paged_models import RemoteRenderingAccountPaged
 from ._paged_models import SpatialAnchorsAccountPaged
 from ._mixed_reality_client_enums import (
-    NameAvailability,
     NameUnavailableReason,
-    SkuTier,
     ResourceIdentityType,
+    SkuTier,
+    CreatedByType,
 )
 
 __all__ = [
@@ -68,25 +78,30 @@ __all__ = [
     'CheckNameAvailabilityRequest',
     'CheckNameAvailabilityResponse',
     'Identity',
+    'LogSpecification',
+    'MetricDimension',
+    'MetricSpecification',
     'Operation',
     'OperationDisplay',
+    'OperationProperties',
     'Plan',
     'ProxyResource',
     'RemoteRenderingAccount',
-    'RemoteRenderingAccountIdentity',
     'Resource',
     'ResourceModelWithAllowedPropertySet',
     'ResourceModelWithAllowedPropertySetIdentity',
     'ResourceModelWithAllowedPropertySetPlan',
     'ResourceModelWithAllowedPropertySetSku',
+    'ServiceSpecification',
     'Sku',
     'SpatialAnchorsAccount',
+    'SystemData',
     'TrackedResource',
     'OperationPaged',
     'SpatialAnchorsAccountPaged',
     'RemoteRenderingAccountPaged',
-    'NameAvailability',
     'NameUnavailableReason',
-    'SkuTier',
     'ResourceIdentityType',
+    'SkuTier',
+    'CreatedByType',
 ]
