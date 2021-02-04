@@ -53,6 +53,13 @@ steps:
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
 
+  - task: PublishPipelineArtifact@1
+    condition: failed()
+    displayName: Publish Tox Logs
+    inputs:
+      targetPath: '$(Build.SourcesDirectory)/_tox_logs'
+      artifactType: 'pipeline'
+
   - ${{ parameters.AfterTestSteps }}
 
   - pwsh: |

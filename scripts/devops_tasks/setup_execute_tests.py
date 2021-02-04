@@ -165,6 +165,34 @@ def run_tests(targeted_packages, test_output_location, test_res, parsed_args):
         exit(1)
 
 
+def collect_log_files():
+    # collect all the log files into one place for publishing in case of tox failure
+    test_envs = ["whl", "sdist", "depends", "latestdependency", "mindependency"]
+
+    log_directory = os.path.join(root_dir, "_tox_logs")
+    try:
+        os.mkdir(log_directory)
+    except FileExistsError:
+        pass
+
+    for test_env in test_envs:
+        log_files = os.path.join(root_dir, ".tox", test_env, "log")
+
+        if os.path.exists(log_files):
+            temp_dir = os.path.join(log_directory, test_env)
+            print("TEMPDIR: ", temp_dir)
+            try:
+                os.mkdir(log_directory)
+            except FileExistsError:
+                pass
+
+            for filename in os.listdir(temp_dir):
+                print("LOG FILE: ", filename)
+                if filename.endswith(".log"):
+                    file_location = os.pth.join(temp_dir, filename)
+                    shutil.move(file_location, temp_dir)
+
+
 def execute_global_install_and_test(
     parsed_args, targeted_packages, extended_pytest_args
 ):
@@ -307,3 +335,5 @@ if __name__ == "__main__":
         execute_global_install_and_test(args, targeted_packages, extended_pytest_args)
     else:
         prep_and_run_tox(targeted_packages, args, extended_pytest_args)
+
+    collect_log_files()
