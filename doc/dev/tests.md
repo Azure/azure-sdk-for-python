@@ -123,7 +123,7 @@ A quick description of the five commands above:
 * samples: runs all of the samples in the `samples` directory and verifies they are working correctly
 
 ## `devtools_testutils` Package
-The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the `AzureTestCase` object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history) and authenticating clients for test methods.
+The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the [`AzureTestCase`](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L98-L345) object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history) and authenticating clients for test methods.
 
 ## Writing New Tests
 SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-for-python/tools/azure-devtools/src/azure_devtools`](https://pypi.org/project/azure-devtools/). `scenario_tests` is a general, mostly abstracted framework which provides several useful features for writing SDK tests, ie:
