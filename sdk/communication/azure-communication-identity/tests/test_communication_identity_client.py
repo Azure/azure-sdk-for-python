@@ -56,15 +56,6 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
-    def test_create_user_with_token(self, connection_string):
-        identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
-        user, token_response = identity_client.create_user_with_token(scopes=[CommunicationTokenScope.CHAT])
-
-        assert user.identifier is not None
-        assert token_response.token is not None
-
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @CommunicationServicePreparer()
     def test_issue_token_from_managed_identity(self, connection_string):
         endpoint, access_key = parse_connection_str(connection_string)
         from devtools_testutils import is_live
