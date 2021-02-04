@@ -426,9 +426,9 @@ For more information, please refer to [Schema Registry SDK][schemaregistry_repo]
 ### Building uAMQP wheel from source
 
 `azure-eventhub` depends on the [uAMQP](https://pypi.org/project/uamqp/) for the AMQP protocol implementation.
-uAMQP wheels are provided for most major operating systems which will be installed automatically when installing `azure-eventhub`.
+uAMQP wheels are provided for most major operating systems and will be installed automatically when installing `azure-eventhub`.
 
-If you're running on a platform that uAMQP wheels are not provided, please follow
+If you're running on a platform for which uAMQP wheels are not provided, please follow
  the [uAMQP Installation](https://github.com/Azure/azure-uamqp-python#installation) guidance to install from source.
 
 ### Provide Feedback
