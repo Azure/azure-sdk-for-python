@@ -7,15 +7,15 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_text.py
+FILE: sample_analyze_batch_actions_async.py
 
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which consists of a variety
-    of text analysis tasks, such as Entity Recognition, PII Entity Recognition, Entity Linking, Sentiment Analysis,
-    or Key Phrase Extraction.  The response will contain results from each of the individual tasks specified in the request.
+    of text analysis actions, such as Entity Recognition, PII Entity Recognition,
+    or Key Phrase Extraction.  The response will contain results from each of the individual actions specified in the request.
 
 USAGE:
-    python sample_analyze_text.py
+    python sample_analyze_batch_actions_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -32,9 +32,12 @@ class AnalyzeSampleAsync(object):
         # [START analyze_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import EntitiesRecognitionTask, \
-            PiiEntitiesRecognitionTask, \
-            KeyPhraseExtractionTask
+        from azure.ai.textanalytics import (
+            RecognizeEntitiesAction,
+            RecognizePiiEntitiesAction,
+            ExtractKeyPhrasesAction,
+            AnalyzeBatchActionsType
+        )
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
@@ -54,22 +57,28 @@ class AnalyzeSampleAsync(object):
         ]
 
         async with text_analytics_client:
-            poller = await text_analytics_client.begin_analyze(
+            poller = await text_analytics_client.begin_analyze_batch_actions(
                 documents,
                 display_name="Sample Text Analysis",
-                entities_recognition_tasks=[EntitiesRecognitionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
+                actions=[
+                    RecognizeEntitiesAction(),
+                    RecognizePiiEntitiesAction(),
+                    ExtractKeyPhrasesAction()
+                ]
             )
 
             result = await poller.result()
 
-            async for page in result:
-                for task in page.entities_recognition_results:
-                    print("Results of Entities Recognition task:")
-
-                    docs = [doc for doc in task.results if not doc.is_error]
-                    for idx, doc in enumerate(docs):
+            async for action_result in result:
+                if action_result.is_error:
+                    raise ValueError(
+                        "Action has failed with message: {}".format(
+                            action_result.error.message
+                        )
+                    )
+                if action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES:
+                    print("Results of Entities Recognition action:")
+                    for idx, doc in enumerate(action_result.document_results):
                         print("\nDocument text: {}".format(documents[idx]))
                         for entity in doc.entities:
                             print("Entity: {}".format(entity.text))
@@ -78,11 +87,9 @@ class AnalyzeSampleAsync(object):
                             print("...Offset: {}".format(entity.offset))
                         print("------------------------------------------")
 
-                for task in page.pii_entities_recognition_results:
-                    print("Results of PII Entities Recognition task:")
-
-                    docs = [doc for doc in task.results if not doc.is_error]
-                    for idx, doc in enumerate(docs):
+                if action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES:
+                    print("Results of PII Entities Recognition action:")
+                    for idx, doc in enumerate(action_result.document_results):
                         print("Document text: {}".format(documents[idx]))
                         for entity in doc.entities:
                             print("Entity: {}".format(entity.text))
@@ -90,11 +97,9 @@ class AnalyzeSampleAsync(object):
                             print("Confidence Score: {}\n".format(entity.confidence_score))
                         print("------------------------------------------")
 
-                for task in page.key_phrase_extraction_results:
-                    print("Results of Key Phrase Extraction task:")
-
-                    docs = [doc for doc in task.results if not doc.is_error]
-                    for idx, doc in enumerate(docs):
+                if action_result.action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES:
+                    print("Results of Key Phrase Extraction action:")
+                    for idx, doc in enumerate(action_result.document_results):
                         print("Document text: {}\n".format(documents[idx]))
                         print("Key Phrases: {}\n".format(doc.key_phrases))
                         print("------------------------------------------")

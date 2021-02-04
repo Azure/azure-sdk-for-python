@@ -89,7 +89,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('EntitiesResult', pipeline_response)
@@ -165,7 +165,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('EntityLinkingResult', pipeline_response)
@@ -241,7 +241,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyPhraseResult', pipeline_response)
@@ -318,7 +318,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('LanguageResult', pipeline_response)
@@ -395,7 +395,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SentimentResponse', pipeline_response)

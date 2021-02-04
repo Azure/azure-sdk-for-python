@@ -19,7 +19,7 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
-from ._request_handlers import _validate_input, _check_string_index_type_arg
+from ._request_handlers import _validate_input, _determine_action_type, _check_string_index_type_arg
 from ._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -32,7 +32,14 @@ from ._response_handlers import (
     analyze_paged_result,
     _get_deserialize
 )
-from ._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsLROPollingMethod
+
+from ._models import AnalyzeBatchActionsType
+
+from ._lro import (
+    TextAnalyticsOperationResourcePolling,
+    TextAnalyticsLROPollingMethod,
+    AnalyzeBatchActionsLROPollingMethod,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -46,11 +53,11 @@ if TYPE_CHECKING:
         AnalyzeSentimentResult,
         DocumentError,
         RecognizePiiEntitiesResult,
-        EntitiesRecognitionTask,
-        PiiEntitiesRecognitionTask,
-        KeyPhraseExtractionTask,
+        RecognizeEntitiesAction,
+        RecognizePiiEntitiesAction,
+        ExtractKeyPhrasesAction,
         AnalyzeHealthcareResultItem,
-        TextAnalysisResult
+        AnalyzeBatchActionsResult,
     )
 
 
@@ -289,7 +296,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
-            I.e., if set to 'PHI', will only return entities in the Protected Healthcare Information domain.
+            I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -722,13 +729,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    def _analyze_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
+    def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
         analyze_result = self._deserialize(
             self._client.models(api_version="v3.1-preview.3").AnalyzeJobState, # pylint: disable=protected-access
             raw_response
         )
         return analyze_paged_result(
             doc_id_order,
+            task_order,
             self._client.analyze_status,
             raw_response,
             analyze_result,
@@ -737,15 +745,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
-    def begin_analyze(  # type: ignore
+    def begin_analyze_batch_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        entities_recognition_tasks=None,  # type: List[EntitiesRecognitionTask]
-        pii_entities_recognition_tasks=None,  # type: List[PiiEntitiesRecognitionTask]
-        key_phrase_extraction_tasks=None,  # type: List[KeyPhraseExtractionTask]
+        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction]]
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[TextAnalysisResult]]
-        """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
+    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeBatchActionsResult]]
+        """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -755,11 +761,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
-        :param tasks: A list of tasks to include in the analysis.  Each task object encapsulates the parameters
-            used for the particular task type.
-        :type tasks: list[Union[~azure.ai.textanalytics.EntitiesRecognitionTask,
-            ~azure.ai.textanalytics.PiiEntitiesRecognitionTask, ~azure.ai.textanalytics.EntityLinkingTask,
-            ~azure.ai.textanalytics.KeyPhraseExtractionTask, ~azure.ai.textanalytics.SentimentAnalysisTask]]
+        :param actions: A heterogeneous list of actions to perform on the inputted documents.
+            Each action object encapsulates the parameters used for the particular action type.
+            The outputted action results will be in the same order you inputted your actions.
+            Duplicate actions in list not supported.
+        :type actions:
+            list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -770,18 +777,22 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 30 seconds.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return an instance of TextAnalysisResult.
+            object to return a pageable heterogeneous list of the action results in the order
+            the actions were sent in this method.
+        :rtype:
+            ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.AnalyzeBatchActionsResult]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_analyze.py
+            .. literalinclude:: ../samples/sample_analyze_batch_actions.py
                 :start-after: [START analyze]
                 :end-before: [END analyze]
                 :language: python
                 :dedent: 8
                 :caption: Start a long-running operation to perform a variety of text analysis
-                    tasks over a batch of documents.
+                    actions over a batch of documents.
         """
 
         display_name = kwargs.pop("display_name", None)
@@ -795,18 +806,22 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         continuation_token = kwargs.pop("continuation_token", None)
 
         doc_id_order = [doc.get("id") for doc in docs.documents]
+        task_order = [_determine_action_type(action) for action in actions]
 
         try:
             analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
                 entity_recognition_tasks=[
-                    t.to_generated() for t in entities_recognition_tasks
-                ] if entities_recognition_tasks else [],
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES]
+                ],
                 entity_recognition_pii_tasks=[
-                    t.to_generated() for t in pii_entities_recognition_tasks
-                ] if pii_entities_recognition_tasks else [],
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES]
+                ],
                 key_phrase_extraction_tasks=[
-                    t.to_generated() for t in key_phrase_extraction_tasks
-                ] if key_phrase_extraction_tasks else []
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
+                ]
             )
             analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
                 display_name=display_name,
@@ -815,8 +830,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             )
             return self._client.begin_analyze(
                 body=analyze_body,
-                cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, show_stats=show_stats)),
-                polling=TextAnalyticsLROPollingMethod(
+                cls=kwargs.pop("cls", partial(
+                    self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats
+                )),
+                polling=AnalyzeBatchActionsLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
@@ -829,7 +846,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
-                    "'begin_analyze' endpoint is only available for API version v3.1-preview.3"
+                    "'begin_analyze_batch_actions' endpoint is only available for API version v3.1-preview.3"
                 )
             raise error
 
