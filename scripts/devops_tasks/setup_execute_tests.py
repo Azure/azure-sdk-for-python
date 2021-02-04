@@ -180,15 +180,15 @@ def collect_log_files():
 
         if os.path.exists(log_files):
             temp_dir = os.path.join(log_directory, test_env)
-            print("TEMPDIR: ", temp_dir)
+            logging.info("TEMPDIR: ", temp_dir)
             try:
                 os.mkdir(log_directory)
             except FileExistsError:
                 pass
 
             for filename in os.listdir(temp_dir):
-                print("LOG FILE: ", filename)
                 if filename.endswith(".log"):
+                    logging.info("LOG FILE: ", filename)
                     file_location = os.pth.join(temp_dir, filename)
                     shutil.move(file_location, temp_dir)
 
