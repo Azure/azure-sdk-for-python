@@ -16,7 +16,7 @@ from devtools_testutils import AzureMgmtTestCase
 from msrest.serialization import UTC
 from azure.eventgrid import CloudEvent, EventGridEvent
 from azure.eventgrid._generated import models as internal_models
-from azure.eventgrid import SystemEventMappings
+from azure.eventgrid import SystemEventNames
 from _mocks import (
     cloud_storage_dict,
     cloud_storage_string,
@@ -112,8 +112,8 @@ class EventGridSerializationTests(AzureMgmtTestCase):
                     )
 
     def test_import_from_sytem_events(self):
-        var = SystemEventMappings.ACSChatMemberAddedToThreadWithUserEventName 
+        var = SystemEventNames.ACSChatMemberAddedToThreadWithUserEventName 
         assert var == "Microsoft.Communication.ChatMemberAddedToThreadWithUser"
-        assert SystemEventMappings.KeyVaultKeyNearExpiryEventName == "Microsoft.KeyVault.KeyNearExpiry"
-        var = SystemEventMappings.ServiceBusActiveMessagesAvailableWithNoListenersEventName
+        assert SystemEventNames.KeyVaultKeyNearExpiryEventName == "Microsoft.KeyVault.KeyNearExpiry"
+        var = SystemEventNames.ServiceBusActiveMessagesAvailableWithNoListenersEventName
         assert var == "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners"

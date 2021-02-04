@@ -1,7 +1,13 @@
 # Release History
 
 ## 1.5.1 (Unreleased)
+### Changed
+- Raised minimum msal version to 1.7.0
+- Raised minimum six version to 1.12.0
 
+### Added
+- `InteractiveBrowserCredential` uses PKCE internally to protect authorization
+  codes
 
 ## 1.5.0 (2020-11-11)
 ### Breaking Changes

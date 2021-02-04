@@ -24,10 +24,27 @@ pip install azure-communication-administration
 # You can find your endpoint and access token from your resource in the Azure Portal
 import os
 from azure.communication.administration import PhoneNumberAdministrationClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
+
+# To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have your
+# AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
+phone_number_administration_client = PhoneNumberAdministrationClient(endpoint, DefaultAzureCredential())
+
+```
+### Initializing Phone Number Client Using Connection String
+Connection string authentication is also available for Phone Number Client.
+
+```python
+# You can find your endpoint and access token from your resource in the Azure Portal
+import os
+from azure.communication.administration import PhoneNumberAdministrationClient
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
 ```
+
 ### Phone plans overview
 
 Phone plans come in two types; Geographic and Toll-Free. Geographic phone plans are phone plans associated with a location, whose phone numbers' area codes are associated with the area code of a geographic location. Toll-Free phone plans are phone plans not associated location. For example, in the US, toll-free numbers can come with area codes such as 800 or 888.

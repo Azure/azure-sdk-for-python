@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import socket
-import uuid
 import webbrowser
 
 from six.moves.urllib_parse import urlparse
@@ -21,14 +20,15 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, List, Mapping
+    from typing import Any
 
 
 class InteractiveBrowserCredential(InteractiveCredential):
     """Opens a browser to interactively authenticate a user.
 
     :func:`~get_token` opens a browser to a login URL provided by Azure Active Directory and authenticates a user
-    there with the authorization code flow. Azure Active Directory documentation describes this flow in more detail:
+    there with the authorization code flow, using PKCE (Proof Key for Code Exchange) internally to protect the code.
+    Azure Active Directory documentation describes the authentication flow in more detail:
     https://docs.microsoft.com/azure/active-directory/develop/v1-protocols-oauth-code
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
@@ -94,14 +94,15 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
         # get the url the user must visit to authenticate
         scopes = list(scopes)  # type: ignore
-        request_state = str(uuid.uuid4())
+        claims = kwargs.get("claims")
         app = self._get_app()
-        auth_url = app.get_authorization_request_url(
-            scopes, redirect_uri=redirect_uri, state=request_state, prompt="select_account", **kwargs
+        flow = app.initiate_auth_code_flow(
+            scopes, redirect_uri=redirect_uri, prompt="select_account", claims_challenge=claims
         )
+        if "auth_uri" not in flow:
+            raise CredentialUnavailableError("Failed to begin authentication flow")
 
-        # open browser to that url
-        if not webbrowser.open(auth_url):
+        if not webbrowser.open(flow["auth_uri"]):
             raise CredentialUnavailableError(message="Failed to open a browser")
 
         # block until the server times out or receives the post-authentication redirect
@@ -112,30 +113,4 @@ class InteractiveBrowserCredential(InteractiveCredential):
             )
 
         # redeem the authorization code for a token
-        code = self._parse_response(request_state, response)
-        return app.acquire_token_by_authorization_code(code, scopes=scopes, redirect_uri=redirect_uri, **kwargs)
-
-    @staticmethod
-    def _parse_response(request_state, response):
-        # type: (str, Mapping[str, Any]) -> List[str]
-        """Validates ``response`` and returns the authorization code it contains, if authentication succeeded.
-
-        Raises :class:`azure.core.exceptions.ClientAuthenticationError`, if authentication failed or ``response`` is
-        malformed.
-        """
-
-        if "error" in response:
-            message = "Authentication failed: {}".format(response.get("error_description") or response["error"])
-            raise ClientAuthenticationError(message=message)
-        if "code" not in response:
-            # a response with no error or code is malformed; we don't know what to do with it
-            message = "Authentication server didn't send an authorization code"
-            raise ClientAuthenticationError(message=message)
-
-        # response must include the state sent in the auth request
-        if "state" not in response:
-            raise ClientAuthenticationError(message="Authentication response doesn't include OAuth state")
-        if response["state"][0] != request_state:
-            raise ClientAuthenticationError(message="Authentication response's OAuth state doesn't match the request's")
-
-        return response["code"]
+        return app.acquire_token_by_auth_code_flow(flow, response, scopes=scopes, claims_challenge=claims)
