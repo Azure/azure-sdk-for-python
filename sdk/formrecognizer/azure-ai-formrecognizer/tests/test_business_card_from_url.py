@@ -12,6 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
+from azure.ai.formrecognizer._models import RecognizedBusinessCard
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 from testcase import GlobalClientPreparer as _GlobalClientPreparer
@@ -80,7 +81,7 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result)
+            extracted_business_card = prepare_prebuilt_models(analyze_result, RecognizedBusinessCard)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -114,7 +115,7 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result)
+            extracted_business_card = prepare_prebuilt_models(analyze_result, RecognizedBusinessCard)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -149,7 +150,7 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result)
+            extracted_business_card = prepare_prebuilt_models(analyze_result, RecognizedBusinessCard)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -184,18 +185,10 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
     def test_business_card_jpg(self, client):
         poller = client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
 
-        business_cards = poller.result()
+        result = poller.result()
+        self.assertEqual(len(result), 1)
+        business_card = result[0]
         # check dict values
-        for business_card in business_cards:
-            print("Contact Names:")
-            for contact_name in business_card.fields.contact_names.value:
-                print("...FirstName: {} has confidence {}".format(contact_name.value['FirstName'].value, contact_name.value['FirstName'].confidence))
-                print("...LastName: {} has confidence {}".format(contact_name.value['LastName'].value, contact_name.value['LastName'].confidence))
-            for dept in business_card.fields.departments.value:
-                print("Departments: {} has confidence {}".format(dept.value, dept.confidence))
-            for email in business_card.fields.emails.value:
-                print("Emails: {} has confidence {}".format(email.value, email.confidence))
-
         self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
         self.assertEqual(business_card.fields.get("ContactNames").value[0].value_data.page_number, 1)
         self.assertEqual(business_card.fields.get("ContactNames").value[0].value['FirstName'].value, 'Avery')

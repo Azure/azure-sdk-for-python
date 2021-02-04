@@ -12,6 +12,7 @@ from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
+from azure.ai.formrecognizer._models import RecognizedReceipt
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion
 from testcase import GlobalFormRecognizerAccountPreparer
@@ -163,7 +164,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_prebuilt_models(analyze_result)
+            extracted_receipt = prepare_prebuilt_models(analyze_result, RecognizedReceipt)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 
@@ -202,7 +203,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_prebuilt_models(analyze_result)
+            extracted_receipt = prepare_prebuilt_models(analyze_result, RecognizedReceipt)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 
@@ -350,7 +351,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_prebuilt_models(analyze_result)
+            extracted_receipt = prepare_prebuilt_models(analyze_result, RecognizedReceipt)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 

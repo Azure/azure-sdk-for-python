@@ -1101,7 +1101,6 @@ class TextStyle(object):
         return "TextStyle(name={}, confidence={})".format(self.name, self.confidence)
 
 
-
 class SelectionMarkFormField(FormField):
     def __init__(self, **kwargs):
         super(SelectionMarkFormField, self).__init__(**kwargs)
@@ -1113,10 +1112,12 @@ class DateFormField(FormField):
         super(DateFormField, self).__init__(**kwargs)
         self.value_type = "date"
 
+
 class TimeFormField(FormField):
     def __init__(self, **kwargs):
         super(TimeFormField, self).__init__(**kwargs)
         self.value_type = "time"
+
 
 class StringFormField(FormField):
     def __init__(self, **kwargs):
@@ -1129,10 +1130,12 @@ class IntegerFormField(FormField):
         super(IntegerFormField, self).__init__(**kwargs)
         self.value_type = "integer"
 
+
 class FloatFormField(FormField):
     def __init__(self, **kwargs):
         super(FloatFormField, self).__init__(**kwargs)
         self.value_type = "float"
+
 
 class DictionaryFormField(FormField):
     def __init__(self, **kwargs):
@@ -1141,6 +1144,7 @@ class DictionaryFormField(FormField):
         if self.value is None:
             self.value = {}
 
+
 class ListFormField(FormField):
     def __init__(self, **kwargs):
         super(ListFormField, self).__init__(**kwargs)
@@ -1148,31 +1152,43 @@ class ListFormField(FormField):
         if self.value is None:
             self.value = []
 
+
 class PhoneNumberFormField(FormField):
     def __init__(self, **kwargs):
         super(PhoneNumberFormField, self).__init__(**kwargs)
         self.value_type = "phoneNumber"
 
 
-class BusinessCardFields(dict):
+class RecognizedBusinessCardFields(dict):
 
     def __init__(self, **kwargs):
-        super(BusinessCardFields, self).__init__(**kwargs)
+        super(RecognizedBusinessCardFields, self).__init__(**kwargs)
+        contact_names = self.get("ContactNames", None)
+        company_names = self.get("CompanyNames", None)
+        departments = self.get("Departments", None)
+        job_titles = self.get("JobTitles", None)
+        emails = self.get("Emails", None)
+        websites = self.get("Websites", None)
+        addresses = self.get("Addresses", None)
+        mobile_phones = self.get("MobilePhones", None)
+        faxes = self.get("Faxes", None)
+        work_phones = self.get("WorkPhones", None)
+        other_phones = self.get("OtherPhones", None)
 
-        self.contact_names = ListFormField(**self.get("ContactNames", {}).__dict__)
-        self.company_names = ListFormField(**self.get("CompanyNames", {}).__dict__)
-        self.departments = ListFormField(**self.get("Departments", {}).__dict__)
-        self.job_titles = ListFormField(**self.get("JobTitles", {}).__dict__)
-        self.emails = ListFormField(**self.get("Emails", {}).__dict__)
-        self.websites = ListFormField(**self.get("Websites", {}).__dict__)
-        self.addresses = ListFormField(**self.get("Addresses", {}).__dict__)
-        self.mobile_phones = ListFormField(**self.get("MobilePhones", {}).__dict__)
-        # self.faxes = ListFormField(**self.get("Faxes", {}).__dict__)
-        # self.work_phones = ListFormField(**self.get("WorkPhones", {}).__dict__)
-        # self.other_phones = ListFormField(**self.get("OtherPhones", {}).__dict__)
+        self.contact_names = ListFormField(**contact_names.__dict__ if contact_names else {})
+        self.company_names = ListFormField(**company_names.__dict__ if company_names else {})
+        self.departments = ListFormField(**departments.__dict__ if departments else {})
+        self.job_titles = ListFormField(**job_titles.__dict__ if job_titles else {})
+        self.emails = ListFormField(**emails.__dict__ if emails else {})
+        self.websites = ListFormField(**websites.__dict__ if websites else {})
+        self.addresses = ListFormField(**addresses.__dict__ if addresses else {})
+        self.mobile_phones = ListFormField(**mobile_phones.__dict__ if mobile_phones else {})
+        self.faxes = ListFormField(**faxes.__dict__ if faxes else {})
+        self.work_phones = ListFormField(**work_phones.__dict__ if work_phones else {})
+        self.other_phones = ListFormField(**other_phones.__dict__ if other_phones else {})
 
 
-class BusinessCard(RecognizedForm):
+class RecognizedBusinessCard(RecognizedForm):
     """Represents a form that has been recognized by a trained or prebuilt model.
 
     :ivar str form_type:
@@ -1198,11 +1214,191 @@ class BusinessCard(RecognizedForm):
         The *form_type_confidence* and *model_id* properties
     """
     def __init__(self, **kwargs):
-        super(BusinessCard, self).__init__(**kwargs)
-        self.fields = BusinessCardFields(**kwargs.get("fields"))
+        super(RecognizedBusinessCard, self).__init__(**kwargs)
+        self.fields = RecognizedBusinessCardFields(**kwargs.get("fields") or {})
 
     def __repr__(self):
         return "BusinessCard(form_type={}, fields={}, page_range={}, pages={}, form_type_confidence={}, " \
+               "model_id={})" \
+            .format(
+                self.form_type,
+                repr(self.fields),
+                repr(self.page_range),
+                repr(self.pages),
+                self.form_type_confidence,
+                self.model_id
+            )[:1024]
+
+
+class RecognizedInvoiceFields(dict):
+
+    def __init__(self, **kwargs):
+        super(RecognizedInvoiceFields, self).__init__(**kwargs)
+        customer_name = self.get("CustomerName", None)
+        customer_id = self.get("CustomerId", None)
+        purchase_order = self.get("PurchaseOrder", None)
+        invoice_id = self.get("InvoiceId", None)
+        invoice_date = self.get("InvoiceDate", None)
+        due_date = self.get("DueDate", None)
+        vendor_name = self.get("VendorName", None)
+        vendor_address = self.get("VendorAddress", None)
+        vendor_address_recipient = self.get("VendorAddressRecipient", None)
+        customer_address = self.get("CustomerAddress", None)
+        customer_address_recipient = self.get("CustomerAddressRecipient", None)
+        billing_address = self.get("BillingAddress", None)
+        billing_address_recipient = self.get("BillingAddressRecipient", None)
+        shipping_address = self.get("ShippingAddress", None)
+        shipping_address_recipient = self.get("ShippingAddressRecipient", None)
+        sub_total = self.get("SubTotal", None)
+        total_tax = self.get("TotalTax", None)
+        invoice_total = self.get("InvoiceTotal", None)
+        previous_unpaid_balance = self.get("PreviousUnpaidBalance", None)
+        amount_due = self.get("AmountDue", None)
+        service_start_date = self.get("ServiceStartDate", None)
+        service_end_date = self.get("ServiceEndDate", None)
+        service_address = self.get("ServiceAddress", None)
+        service_address_recipient = self.get("ServiceAddressRecipient", None)
+        remittance_address = self.get("RemittanceAddress", None)
+        remittance_address_recipient = self.get("RemittanceAddressRecipient", None)
+
+        self.customer_name = StringFormField(**customer_name.__dict__ if customer_name else {})
+        self.customer_id = StringFormField(**customer_id.__dict__ if customer_id else {})
+        self.purchase_order = StringFormField(**purchase_order.__dict__ if purchase_order else {})
+        self.invoice_id = StringFormField(**invoice_id.__dict__ if invoice_id else {})
+        self.invoice_date = DateFormField(**invoice_date.__dict__ if invoice_date else {})
+        self.due_date = DateFormField(**due_date.__dict__ if due_date else {})
+        self.vendor_name = StringFormField(**vendor_name.__dict__ if vendor_name else {})
+        self.vendor_address = StringFormField(**vendor_address.__dict__ if vendor_address else {})
+        self.vendor_address_recipient = \
+            StringFormField(**vendor_address_recipient.__dict__ if vendor_address_recipient else {})
+        self.customer_address = StringFormField(**customer_address.__dict__ if customer_address else {})
+        self.customer_address_recipient = \
+            StringFormField(**customer_address_recipient.__dict__ if customer_address_recipient else {})
+        self.billing_address = StringFormField(**billing_address.__dict__ if billing_address else {})
+        self.billing_address_recipient = \
+            StringFormField(**billing_address_recipient.__dict__ if billing_address_recipient else {})
+        self.shipping_address = StringFormField(**shipping_address.__dict__ if shipping_address else {})
+        self.shipping_address_recipient = \
+            StringFormField(**shipping_address_recipient.__dict__ if shipping_address_recipient else {})
+        self.sub_total = FloatFormField(**sub_total.__dict__ if sub_total else {})
+        self.total_tax = FloatFormField(**total_tax.__dict__ if total_tax else {})
+        self.invoice_total = FloatFormField(**invoice_total.__dict__ if invoice_total else {})
+        self.previous_unpaid_balance = \
+            FloatFormField(**previous_unpaid_balance.__dict__ if previous_unpaid_balance else {})
+        self.amount_due = FloatFormField(**amount_due.__dict__ if amount_due else {})
+        self.service_start_date = DateFormField(**service_start_date.__dict__ if service_start_date else {})
+        self.service_end_date = DateFormField(**service_end_date.__dict__ if service_end_date else {})
+        self.service_address = StringFormField(**service_address.__dict__ if service_address else {})
+        self.service_address_recipient = \
+            StringFormField(**service_address_recipient.__dict__ if service_address_recipient else {})
+        self.remittance_address = StringFormField(**remittance_address.__dict__ if remittance_address else {})
+        self.remittance_address_recipient = \
+            StringFormField(**remittance_address_recipient.__dict__ if remittance_address_recipient else {})
+
+
+class RecognizedInvoice(RecognizedForm):
+    """Represents a form that has been recognized by a trained or prebuilt model.
+
+    :ivar str form_type:
+        The type of form the model identified the submitted form to be.
+    :ivar str form_type_confidence:
+        Confidence of the type of form the model identified the submitted form to be.
+    :ivar str model_id:
+        Model identifier of model used to analyze form if not using a prebuilt
+        model.
+    :ivar fields:
+        A dictionary of the fields found on the form. The fields dictionary
+        keys are the `name` of the field. For models trained with labels,
+        this is the training-time label of the field. For models trained
+        without labels, a unique name is generated for each field.
+    :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
+    :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
+        The first and last page number of the input form.
+    :ivar list[~azure.ai.formrecognizer.FormPage] pages:
+        A list of pages recognized from the input document. Contains lines,
+        words, selection marks, tables and page metadata.
+
+    .. versionadded:: v2.1-preview
+        The *form_type_confidence* and *model_id* properties
+    """
+    def __init__(self, **kwargs):
+        super(RecognizedInvoice, self).__init__(**kwargs)
+        self.fields = RecognizedInvoiceFields(**kwargs.get("fields") or {})
+
+    def __repr__(self):
+        return "RecognizedInvoice(form_type={}, fields={}, page_range={}, pages={}, form_type_confidence={}, " \
+               "model_id={})" \
+            .format(
+                self.form_type,
+                repr(self.fields),
+                repr(self.page_range),
+                repr(self.pages),
+                self.form_type_confidence,
+                self.model_id
+            )[:1024]
+
+
+class RecognizedReceiptFields(dict):
+
+    def __init__(self, **kwargs):
+        super(RecognizedReceiptFields, self).__init__(**kwargs)
+        receipt_type = self.get("ReceiptType", None)
+        merchant_name = self.get("MerchantName", None)
+        merchant_phone_number = self.get("MerchantPhoneNumber", None)
+        merchant_address = self.get("MerchantAddress", None)
+        transaction_date = self.get("TransactionDate", None)
+        transaction_time = self.get("TransactionTime", None)
+        total = self.get("Total", None)
+        sub_total = self.get("Subtotal", None)
+        tax = self.get("Tax", None)
+        tip = self.get("Tip", None)
+        receipt_items = self.get("Items", None)
+
+        self.receipt_type = StringFormField(**receipt_type.__dict__ if receipt_type else {})
+        self.merchant_name = StringFormField(**merchant_name.__dict__ if merchant_name else {})
+        self.merchant_phone_number = \
+            PhoneNumberFormField(**merchant_phone_number.__dict__ if merchant_phone_number else {})
+        self.merchant_address = StringFormField(**merchant_address.__dict__ if merchant_address else {})
+        self.transaction_date = DateFormField(**transaction_date.__dict__ if transaction_date else {})
+        self.transaction_time = TimeFormField(**transaction_time.__dict__ if transaction_time else {})
+        self.total = FloatFormField(**total.__dict__ if total else {})
+        self.sub_total = FloatFormField(**sub_total.__dict__ if sub_total else {})
+        self.tax = FloatFormField(**tax.__dict__ if tax else {})
+        self.tip = FloatFormField(**tip.__dict__ if tip else {})
+        self.receipt_items = ListFormField(**receipt_items.__dict__ if receipt_items else {})
+
+
+class RecognizedReceipt(RecognizedForm):
+    """Represents a form that has been recognized by a trained or prebuilt model.
+
+    :ivar str form_type:
+        The type of form the model identified the submitted form to be.
+    :ivar str form_type_confidence:
+        Confidence of the type of form the model identified the submitted form to be.
+    :ivar str model_id:
+        Model identifier of model used to analyze form if not using a prebuilt
+        model.
+    :ivar fields:
+        A dictionary of the fields found on the form. The fields dictionary
+        keys are the `name` of the field. For models trained with labels,
+        this is the training-time label of the field. For models trained
+        without labels, a unique name is generated for each field.
+    :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
+    :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
+        The first and last page number of the input form.
+    :ivar list[~azure.ai.formrecognizer.FormPage] pages:
+        A list of pages recognized from the input document. Contains lines,
+        words, selection marks, tables and page metadata.
+
+    .. versionadded:: v2.1-preview
+        The *form_type_confidence* and *model_id* properties
+    """
+    def __init__(self, **kwargs):
+        super(RecognizedReceipt, self).__init__(**kwargs)
+        self.fields = RecognizedReceiptFields(**kwargs.get("fields") or {})
+
+    def __repr__(self):
+        return "RecognizedReceipt(form_type={}, fields={}, page_range={}, pages={}, form_type_confidence={}, " \
                "model_id={})" \
             .format(
                 self.form_type,

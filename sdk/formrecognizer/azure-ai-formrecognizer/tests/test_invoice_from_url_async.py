@@ -12,6 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
+from azure.ai.formrecognizer._models import RecognizedInvoice
 from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from asynctestcase import AsyncFormRecognizerTest
@@ -89,7 +90,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_invoice = prepare_prebuilt_models(analyze_result)
+            extracted_invoice = prepare_prebuilt_models(analyze_result, RecognizedInvoice)
             responses.append(analyze_result)
             responses.append(extracted_invoice)
 
@@ -125,7 +126,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_invoice = prepare_prebuilt_models(analyze_result)
+            extracted_invoice = prepare_prebuilt_models(analyze_result, RecognizedInvoice)
             responses.append(analyze_result)
             responses.append(extracted_invoice)
 
@@ -161,7 +162,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_invoice = prepare_prebuilt_models(analyze_result)
+            extracted_invoice = prepare_prebuilt_models(analyze_result, RecognizedInvoice)
             responses.append(analyze_result)
             responses.append(extracted_invoice)
 

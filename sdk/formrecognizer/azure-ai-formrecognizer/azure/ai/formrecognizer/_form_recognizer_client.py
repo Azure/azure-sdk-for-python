@@ -25,6 +25,11 @@ from ._helpers import get_content_type
 from ._api_versions import FormRecognizerApiVersion
 from ._form_base_client import FormRecognizerClientBase
 from ._polling import AnalyzePolling
+from ._models import (
+    RecognizedReceipt,
+    RecognizedBusinessCard,
+    RecognizedInvoice
+)
 if TYPE_CHECKING:
     from azure.core.polling import LROPoller
     from ._models import FormPage, RecognizedForm
@@ -65,9 +70,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             :caption: Creating the FormRecognizerClient with a token credential.
     """
 
-    def _prebuilt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
-        return prepare_prebuilt_models(analyze_result)
+    def _prebuilt_callback(self, response, prebuilt_type):
+        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, response)
+        return prepare_prebuilt_models(analyze_result, prebuilt_type)
 
     @distributed_trace
     def begin_recognize_receipts(self, receipt, **kwargs):
@@ -115,7 +120,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         include_field_elements = kwargs.pop("include_field_elements", False)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
-        cls = kwargs.pop("cls", self._prebuilt_callback)
+        cls = kwargs.pop("cls", lambda response, _, headers: self._prebuilt_callback(response, RecognizedReceipt))
         if content_type is None and kwargs.get("continuation_token", None) is None:
             content_type = get_content_type(receipt)
 
@@ -174,7 +179,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         """
         locale = kwargs.pop("locale", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
-        cls = kwargs.pop("cls", self._prebuilt_callback)
+        cls = kwargs.pop("cls", lambda response, _, headers: self._prebuilt_callback(response, RecognizedReceipt))
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -250,7 +255,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 file_stream=business_card,
                 content_type=content_type,
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", self._prebuilt_callback),
+                cls=kwargs.pop(
+                    "cls", lambda response, _, headers: self._prebuilt_callback(response, RecognizedBusinessCard)
+                ),
                 polling=True,
                 **kwargs
             )
@@ -300,7 +307,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             return self._client.begin_analyze_business_card_async(  # type: ignore
                 file_stream={"source": business_card_url},
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", self._prebuilt_callback),
+                cls=kwargs.pop(
+                    "cls", lambda response, _, headers: self._prebuilt_callback(response, RecognizedBusinessCard)
+                ),
                 polling=True,
                 **kwargs
             )
@@ -370,7 +379,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 file_stream=invoice,
                 content_type=content_type,
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", self._prebuilt_callback),
+                cls=kwargs.pop(
+                    "cls", lambda response, _, headers: self._prebuilt_callback(response, RecognizedInvoice)
+                ),
                 polling=True,
                 **kwargs
             )
@@ -418,7 +429,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             return self._client.begin_analyze_invoice_async(  # type: ignore
                 file_stream={"source": invoice_url},
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", self._prebuilt_callback),
+                cls=kwargs.pop(
+                    "cls", lambda response, _, headers: self._prebuilt_callback(response, RecognizedInvoice)
+                ),
                 polling=True,
                 **kwargs
             )

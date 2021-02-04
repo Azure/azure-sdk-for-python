@@ -12,6 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
+from azure.ai.formrecognizer._models import RecognizedBusinessCard
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 from testcase import GlobalClientPreparer as _GlobalClientPreparer
@@ -140,7 +141,7 @@ class TestBusinessCard(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result)
+            extracted_business_card = prepare_prebuilt_models(analyze_result, RecognizedBusinessCard)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -177,7 +178,7 @@ class TestBusinessCard(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result)
+            extracted_business_card = prepare_prebuilt_models(analyze_result, RecognizedBusinessCard)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -215,7 +216,7 @@ class TestBusinessCard(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result)
+            extracted_business_card = prepare_prebuilt_models(analyze_result, RecognizedBusinessCard)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
