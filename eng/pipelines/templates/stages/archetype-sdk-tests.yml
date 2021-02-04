@@ -2,6 +2,12 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: ''
+  - name: PreSteps
+    type: object
+    default: []
+  - name: PostSteps
+    type: object
+    default: []
   - name: EnvVars
     type: object
     default: {}
@@ -47,68 +53,90 @@ parameters:
   - name: Location
     type: string
     default: ''
-  - name: Matrix
+  - name: Clouds
+    type: string
+    default: 'Public'
+  - name: CloudConfig
     type: object
     default:
-      Linux_Python35:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
-        PythonVersion: '3.5'
-        CoverageArg: '--disablecov'
-      MacOs_Python37:
-        Pool: Azure Pipelines
-        OSVmImage: 'macOS-10.15'
-        PythonVersion: '3.7'
-        CoverageArg: '--disablecov'
-      Windows_Python27:
-        Pool: azsdk-pool-mms-win-2019-general
-        OSVmImage: MMS2019
-        PythonVersion: '2.7'
-        CoverageArg: '--disablecov'
-      Linux_PyPy3:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
-        PythonVersion: 'pypy3'
-        CoverageArg: '--disablecov'
-      Linux_Python39:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
-        PythonVersion: '3.9'
-        CoverageArg: ''
-  - name: CloudConfigurations
-    type: object
-    default:
-      AzureCloud:
+      Public:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-
+      Preview:
+        SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+      Canary:
+        SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        Location: 'centraluseuap'
+      UsGov:
+        SubscriptionConfiguration: $(sub-config-gov-test-resources)
+      China:
+        SubscriptionConfiguration: $(sub-config-cn-test-resources)
+  - name: MatrixConfigs
+    type: object
+    default:
+      - Name: Python_live_test_base
+        Path: eng/pipelines/templates/stages/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
+  - name: AdditionalMatrixConfigs
+    type: object
+    default: []
+  - name: MatrixFilters
+    type: object
+    default: []
+  - name: PlatformPreSteps
+    type: object
+    default: []
+  - name: PlatformPostSteps
+    type: object
+    default: []
 
 stages:
-  - stage: Live_${{ parameters.JobName }}
-    jobs:
-    - template: ../jobs/archetype-sdk-tests.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        EnvVars: ${{ parameters.EnvVars }}
-        MaxParallel: ${{ parameters.MaxParallel }}
-        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
-        AfterTestSteps: ${{ parameters.AfterTestSteps }}
-        AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        InjectedPackages: ${{ parameters.InjectedPackages }}
-        BuildDocs: ${{ parameters.BuildDocs }}
-        JobName: ${{ parameters.JobName }}
-        AllocateResourceGroup: ${{ parameters.AllocateResourceGroup }}
-        DeployArmTemplate: ${{ parameters.DeployArmTemplate }}
-        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-        TestSamples: ${{ parameters.TestSamples }}
-        Location: ${{ parameters.Location }}
-        Matrix: ${{ parameters.Matrix }}
-        CloudConfigurations: ${{ parameters.CloudConfigurations }}
+- ${{ each cloud in parameters.CloudConfig }}:
+  # TODO: re-enable tests-weekly allow filter once sovereign cloud live tests are stable: https://github.com/Azure/azure-sdk/issues/2074
+  # Run all clouds by default for weekly test pipeline, except for clouds specifically unsupported by the calling pipeline
+  # - ${{ if or(contains(parameters.Clouds, cloud.key), contains(variables['Build.DefinitionName'], 'tests-weekly')) }}:
+  - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), eq(cloud.key, 'Canary'))) }}:
+    - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
+      - stage: ${{ cloud.key }}
+        dependsOn: []
+        jobs:
+        - template: /eng/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+          parameters:
+            AdditionalParameters:
+              ServiceDirectory: ${{ parameters.ServiceDirectory }}
+              PreSteps:
+                - ${{ parameters.PlatformPreSteps }}
+                - ${{ parameters.PreSteps }}
+              PostSteps:
+                - ${{ parameters.PlatformPostSteps }}
+                - ${{ parameters.PostSteps }}
+              EnvVars: ${{ parameters.EnvVars }}
+              MaxParallel: ${{ parameters.MaxParallel }}
+              BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+              AfterTestSteps: ${{ parameters.AfterTestSteps }}
+              AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+              BuildTargetingString: ${{ parameters.BuildTargetingString }}
+              TestMarkArgument: ${{ parameters.TestMarkArgument }}
+              InjectedPackages: ${{ parameters.InjectedPackages }}
+              BuildDocs: ${{ parameters.BuildDocs }}
+              AllocateResourceGroup: ${{ parameters.AllocateResourceGroup }}
+              DeployArmTemplate: ${{ parameters.DeployArmTemplate }}
+              TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+              TestSamples: ${{ parameters.TestSamples }}
+            MatrixConfigs:
+              # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
+              - ${{ each config in parameters.MatrixConfigs }}:
+                -  ${{ config }}
+              - ${{ each config in parameters.AdditionalMatrixConfigs }}:
+                -  ${{ config }}
+            MatrixFilters: ${{ parameters.MatrixFilters }}
+            CloudConfig:
+              SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
+              Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
+              Cloud: ${{ cloud.key }}
 
-
-  - stage: Publish_Coverage_${{ parameters.JobName }}
-    jobs:
-    - template: ../jobs/publish-coverage.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+- stage: Publish_Coverage_${{ parameters.JobName }}
+  jobs:
+  - template: ../jobs/publish-coverage.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}

@@ -3,48 +3,25 @@ parameters:
   InjectedPackages: ''
 
 stages:
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+  - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       AllocateResourceGroup: 'false'
-      BuildTargetingString: azure-storage-blob
       JobName: Test_Blob
       ServiceDirectory: storage
       EnvVars: ${{ parameters.EnvVars }}
       InjectedPackages: ${{ parameters.InjectedPackages }}
+      MatrixConfigs:
+        - Name: Storage_live_test
+          Path: eng/pipelines/templates/stages/platform-matrix.json
+          Selection: sparse
+          GenerateMultiple:
+            - BuildTargetingString: "azure-storage-blob"
+            - BuildTargetingString: "azure-storage-blob-changefeed"
+            - BuildTargetingString: "azure-storage-queue"
+            - BuildTargetingString: "azure-storage-file-datalake"
 
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
-    parameters:
-      AllocateResourceGroup: 'false'
-      BuildTargetingString: azure-storage-blob-changefeed
-      JobName: Test_Blob_ChangeFeed
-      ServiceDirectory: storage
-      EnvVars: ${{ parameters.EnvVars }}
-      InjectedPackages: ${{ parameters.InjectedPackages }}
-
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
-    parameters:
-      AllocateResourceGroup: 'false'
-      BuildTargetingString: azure-storage-queue
-      JobName: Test_Queue
-      ServiceDirectory: storage
-      EnvVars: ${{ parameters.EnvVars }}
-      InjectedPackages: ${{ parameters.InjectedPackages }}
-
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
-    parameters:
-      AllocateResourceGroup: 'false'
-      MaxParallel: 1
-      BuildTargetingString: azure-storage-file-datalake
-      JobName: Test_Datalake
-      ServiceDirectory: storage
-      EnvVars: ${{ parameters.EnvVars }}
-      InjectedPackages: ${{ parameters.InjectedPackages }}
-
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
-    parameters:
-      AllocateResourceGroup: 'false'
-      BuildTargetingString: azure-storage-file-share
-      JobName: Test_FileShares
-      ServiceDirectory: storage
-      EnvVars: ${{ parameters.EnvVars }}
-      InjectedPackages: ${{ parameters.InjectedPackages }}
+        - Name: Storage_blob_changefeed_live_test
+          Path: eng/pipelines/templates/stages/platform-matrix.json
+          Selection: sparse
+          Transform: |
+            $_.parameters["BuildTargetingString"] = "azure-storage-blob-changefeed"

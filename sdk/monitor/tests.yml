@@ -1,7 +1,7 @@
 trigger: none
 
 stages:
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+  - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: monitor
       TestTimeoutInMinutes: 300
@@ -12,19 +12,8 @@ stages:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
         AZURE_TEST_RUN_LIVE: 'true'
-      Matrix:
-        Linux_Python35:
-          Pool: azsdk-pool-mms-ubuntu-1804-general
-          OSVmImage: MMSUbuntu18.04
-          PythonVersion: '3.5'
-          CoverageArg: '--disablecov'
-        MacOs_Python37:
-          Pool: Azure Pipelines
-          OSVmImage: 'macOS-10.15'
-          PythonVersion: '3.7'
-          CoverageArg: '--disablecov'
-        Linux_Python39:
-          Pool: azsdk-pool-mms-ubuntu-1804-general
-          OSVmImage: MMSUbuntu18.04
-          PythonVersion: '3.9'
-          CoverageArg: ''
+      MatrixConfigs:
+        - Name: Monitor_live_test
+          Path: sdk/monitor/platform-matrix.json
+          Selection: sparse
+          GenerateVMJobs: true

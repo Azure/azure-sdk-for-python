@@ -1,0 +1,16 @@
+{
+  "displayNames": {
+    "git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev": "msal"
+  },
+  "include": [
+    {
+      "Agent": {
+        "ubuntu-18.04": { "OSVmImage": "MMSUbuntu18.04", "Pool": "azsdk-pool-mms-ubuntu-1804-general" }
+      },
+      "PythonVersion": "3.5",
+      "CoverageArg": "",
+      "RunForPR": false,
+      "InjectedPackages": "git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev"
+    }
+  ]
+}
