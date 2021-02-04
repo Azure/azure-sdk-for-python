@@ -1217,7 +1217,7 @@ class AnalyzeBatchActionsError(DictMixin):
 
     def __repr__(self):
         return "AnalyzeBatchActionsError(error={}, is_error={}".format(
-            self.error, self.is_error
+            repr(self.error), self.is_error
         )
 
     @classmethod
