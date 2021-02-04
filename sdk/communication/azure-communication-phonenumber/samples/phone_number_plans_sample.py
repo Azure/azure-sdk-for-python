@@ -20,7 +20,7 @@ USAGE:
 """
 
 import os
-from azure.communication.administration import (
+from azure.communication.phonenumber import (
     PhoneNumberAdministrationClient
 )
 

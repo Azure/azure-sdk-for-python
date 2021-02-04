@@ -22,7 +22,7 @@ USAGE:
 
 import os
 import asyncio
-from azure.communication.administration.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumber.aio import PhoneNumberAdministrationClient
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE', "US")
