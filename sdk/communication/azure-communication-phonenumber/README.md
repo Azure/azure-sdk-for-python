@@ -172,7 +172,7 @@ The Phone Number Administration client will raise exceptions defined in [Azure C
 # Next steps
 ## More sample code
 
-Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-administration/samples) directory for detailed examples of how to use this library.
+Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-phonenumber/samples) directory for detailed examples of how to use this library.
 
 ## Provide Feedback
 
