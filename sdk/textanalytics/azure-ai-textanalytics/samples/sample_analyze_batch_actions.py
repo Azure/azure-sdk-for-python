@@ -67,7 +67,6 @@ class AnalyzeSample(object):
         )
 
         result = poller.result()
-        raise ValueError(list(result))
         action_results = [action_result for action_result in list(result) if not action_result.is_error]
 
         first_action_result = action_results[0]

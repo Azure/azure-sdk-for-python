@@ -70,6 +70,12 @@ class AnalyzeSampleAsync(object):
             result = await poller.result()
 
             async for action_result in result:
+                if action_result.is_error:
+                    raise ValueError(
+                        "Action has failed with message: {}".format(
+                            action_result.error.message
+                        )
+                    )
                 if action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES:
                     print("Results of Entities Recognition action:")
                     for idx, doc in enumerate(action_result.document_results):
