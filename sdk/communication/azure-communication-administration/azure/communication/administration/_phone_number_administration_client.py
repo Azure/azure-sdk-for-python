@@ -31,7 +31,8 @@ from ._phonenumber._generated.models import (
     UpdatePhoneNumberCapabilitiesResponse
 )
 
-from ._shared.utils import parse_connection_str, get_authentication_policy
+from ._shared.utils import parse_connection_str
+from ._shared.policy import HMACCredentialsPolicy
 from ._version import SDK_MONIKER
 
 class PhoneNumberAdministrationClient(object):
@@ -63,7 +64,7 @@ class PhoneNumberAdministrationClient(object):
         self._endpoint = endpoint
         self._phone_number_administration_client = PhoneNumberAdministrationClientGen(
             self._endpoint,
-            authentication_policy=get_authentication_policy(endpoint, credential),
+            authentication_policy=HMACCredentialsPolicy(endpoint, credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
