@@ -21,7 +21,7 @@ class TestCryptoExamples(KeyVaultTestCase):
         kwargs["match_body"] = False
         super(TestCryptoExamples, self).__init__(*args, **kwargs)
 
-    def create_client(self, vault_uri, **kwargs):
+    def create_key_client(self, vault_uri, **kwargs):
         credential = self.get_credential(KeyClient, is_async=True)
         return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
 
@@ -32,7 +32,7 @@ class TestCryptoExamples(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     async def test_encrypt_decrypt_async(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+        key_client = self.create_key_client(azure_keyvault_url)
         credential = self.get_crypto_client_credential()
         key_name = self.get_resource_name("crypto-test-encrypt-key")
         await key_client.create_rsa_key(key_name)
@@ -68,7 +68,7 @@ class TestCryptoExamples(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     async def test_wrap_unwrap_async(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+        key_client = self.create_key_client(azure_keyvault_url)
         credential = self.get_crypto_client_credential()
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = await key_client.create_rsa_key(key_name)
@@ -94,7 +94,7 @@ class TestCryptoExamples(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     async def test_sign_verify_async(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+        key_client = self.create_key_client(azure_keyvault_url)
         credential = self.get_crypto_client_credential()
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = await key_client.create_rsa_key(key_name)
