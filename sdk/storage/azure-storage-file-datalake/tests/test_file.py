@@ -530,7 +530,9 @@ class FileTest(StorageTestCase):
             with self.assertRaises(HttpResponseError):
                 file_client.append_data(b"abcd", 0, 4)
 
-    def test_account_sas_raises_if_sas_already_in_uri(self):
+    @DataLakePreparer()
+    def test_account_sas_raises_if_sas_already_in_uri(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         with self.assertRaises(ValueError):
             DataLakeFileClient(self.dsc.url + "?sig=foo", self.file_system_name, "foo", credential=AzureSasCredential("?foo=bar"))
 
