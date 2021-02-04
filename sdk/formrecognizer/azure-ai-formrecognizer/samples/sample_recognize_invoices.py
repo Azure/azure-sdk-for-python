@@ -30,7 +30,7 @@ class RecognizeInvoiceSample(object):
 
     def recognize_invoice(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "./sample_forms/forms/Invoice_1.pdf"))
+                                                            "..", "./sample_forms/forms/sample_invoice.jpg"))
 
         # [START recognize_invoices]
         from azure.core.credentials import AzureKeyCredential
