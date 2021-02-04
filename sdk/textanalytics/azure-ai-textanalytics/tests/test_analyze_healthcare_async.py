@@ -727,10 +727,15 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         async with client:
             poller = await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
-            cancellation_poller = await client.begin_cancel_analyze_healthcare_entities(poller, polling_interval=self._interval())
+            
+            try:
+                cancellation_poller = await poller.cancel()
 
-            if cancellation_poller is not None:
-                self.assertIsNone(await cancellation_poller.result())
+            except Warning:
+                pass # expected if the operation was already in a terminal state.
+
+            else:
+                assert await cancellation_poller.result() is None
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

@@ -40,7 +40,6 @@ from .._models import (
     AnalyzeSentimentResult,
     DocumentError,
     RecognizePiiEntitiesResult,
-    AnalyzeHealthcareEntitiesResultItem,
     EntitiesRecognitionTask,
     PiiEntitiesRecognitionTask,
     KeyPhraseExtractionTask,
@@ -49,7 +48,8 @@ from .._models import (
 from .._lro import TextAnalyticsOperationResourcePolling
 from .._async_lro import (
     AnalyzeHealthcareEntitiesAsyncLROPollingMethod,
-    AnalyzeHealthcareEntitiesAsyncLROPoller
+    AnalyzeHealthcareEntitiesAsyncLROPoller,
+    TextAnalyticsAsyncLROPollingMethod
 )
 
 if TYPE_CHECKING:
@@ -605,7 +605,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeHealthcareEntitiesAsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareResultItem]]
+    ):  # type: (...) -> AnalyzeHealthcareEntitiesAsyncLROPoller
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -677,47 +677,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     "'begin_analyze_healthcare_entities' endpoint is only available for API version v3.1-preview and up"
                 )
             raise error
-
-        except HttpResponseError as error:
-            process_http_response_error(error)
-
-    async def begin_cancel_analyze_healthcare_entities( # type: ignore
-        self,
-        analyze_healthcare_entities_poller,  # type: AnalyzeHealthcareEntitiesAsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareResultItem]]
-        **kwargs
-    ):
-        # type: (...) -> AsyncLROPoller[None]
-        """Cancel an existing health operation.
-
-        :param poller: The LRO poller object associated with the health operation.
-        :return: An instance of an LROPoller that returns None.
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_health_with_cancellation_async.py
-                :start-after: [START health_with_cancellation_async]
-                :end-before: [END health_with_cancellation_async]
-                :language: python
-                :dedent: 8
-                :caption: Cancel an existing health operation.
-        """
-        polling_interval = kwargs.pop("polling_interval", 5)
-
-        terminal_states = ["cancelled", "cancelling", "failed", "succeeded", "partiallyCompleted", "rejected"]
-        await analyze_healthcare_entities_poller._polling_method.update_status()
-
-        if analyze_healthcare_entities_poller._polling_method.status() in terminal_states:
-            print("Operation with ID '%s' is already in a terminal state and cannot be cancelled." \
-                % analyze_healthcare_entities_poller.id)
-            return
-
-        try:
-            return await self._client.begin_cancel_health_job(
-                analyze_healthcare_entities_poller.id,
-                polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
-            )
 
         except HttpResponseError as error:
             process_http_response_error(error)

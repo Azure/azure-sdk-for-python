@@ -605,10 +605,15 @@ class TestHealth(TextAnalyticsTest):
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
 
         poller = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
-        cancellation_poller = client.begin_cancel_analyze_healthcare_entities(poller, polling_interval=self._interval())
 
-        if cancellation_poller is not None:
-            self.assertIsNone(cancellation_poller.result())
+        try:
+            cancellation_poller = poller.cancel()
+
+        except Warning:
+            pass # expected if the operation was already in a terminal state.
+
+        else:
+            assert cancellation_poller.result() is None
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

@@ -141,5 +141,47 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller):
     def id(self):
         return self._polling_method.id
 
+    def cancel(  # type: ignore
+        self,
+        **kwargs
+    ):  # type: (...) -> LROPoller[None]
+        """Cancel the operation currently being polled.
 
+        :keyword int polling_interval: The polling interval to use to poll the cancellation status.
+            The default value is 5 seconds.
+        :return: Returns an instance of an LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises: Warning when the operation has already reached a terminal state.
 
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_analyze_healthcare_entities_with_cancellation.py
+                :start-after: [START analyze_healthcare_entities_with_cancellation]
+                :end-before: [END analyze_healthcare_entities_with_cancellation]
+                :language: python
+                :dedent: 8
+                :caption: Cancel an existing health operation.
+        """
+        polling_interval = kwargs.pop("polling_interval", 5)
+
+        terminal_states = ["cancelled", "cancelling", "failed", "succeeded", "partiallyCompleted", "rejected"]
+
+        try:
+            # Join the thread so we no longer have to wait for a result from it.
+            getattr(self, "_thread").join()
+
+            # Get a final status update.
+            getattr(self._polling_method, "update_status")()
+
+            if self._polling_method.status() in terminal_states:
+                raise Warning("Operation with ID '%s' is already in a terminal state and cannot be cancelled." \
+                    % self.id)
+
+            return getattr(self._polling_method, "_client").begin_cancel_health_job(
+                self.id,
+                polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
+            )
+
+        except HttpResponseError as error:
+            from ._response_handlers import process_http_response_error
+            process_http_response_error(error)

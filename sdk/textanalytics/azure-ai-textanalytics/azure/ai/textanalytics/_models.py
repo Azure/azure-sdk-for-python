@@ -5,7 +5,6 @@
 # ------------------------------------
 import re
 from enum import Enum
-from six.moves.urllib.parse import urlparse
 from ._generated.models import (
     LanguageInput,
     MultiLanguageInput,

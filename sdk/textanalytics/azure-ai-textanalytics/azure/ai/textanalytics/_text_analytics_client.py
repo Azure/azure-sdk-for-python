@@ -13,7 +13,6 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 from functools import partial
-from six.moves.urllib.parse import urlparse
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -54,7 +53,8 @@ if TYPE_CHECKING:
         EntitiesRecognitionTask,
         PiiEntitiesRecognitionTask,
         KeyPhraseExtractionTask,
-        TextAnalysisResult
+        TextAnalysisResult,
+        AnalyzeHealthcareEntitiesResultItem
     )
 
 
@@ -448,7 +448,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[AnalyzeHealthcareResultItem]]
+    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -519,57 +519,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
                     "'begin_analyze_healthcare_entities' method is only available for API version \
-                    v3.1-preview.3 and up."
-                )
-            raise error
-
-        except HttpResponseError as error:
-            process_http_response_error(error)
-
-    def begin_cancel_analyze_healthcare_entities(  # type: ignore
-        self,
-        analyze_healthcare_entities_poller, # type: AnalyzeHealthcareEntitiesLROPoller[ItemPaged[AnalyzeHealthcareResultItem]]
-        **kwargs
-    ):
-        # type: (...) -> Union[None, LROPoller[None]]
-        """Cancel an existing health operation.
-
-        :param analyze_healthcare_entities_poller: The poller for the operation to cancel.
-        :return: If the operation is already in a terminal state returns None, otherwise returns an instance
-            of an LROPoller that returns None.
-        :rtype: Union[None, ~azure.core.polling.LROPoller[None]]
-        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_health_with_cancellation.py
-                :start-after: [START health_with_cancellation]
-                :end-before: [END health_with_cancellation]
-                :language: python
-                :dedent: 8
-                :caption: Cancel an existing health operation.
-        """
-        polling_interval = kwargs.pop("polling_interval", 5)
-
-        terminal_states = ["cancelled", "cancelling", "failed", "succeeded", "partiallyCompleted", "rejected"]
-        analyze_healthcare_entities_poller._thread.join() # Join so we no longer have to await the result of this poller
-        analyze_healthcare_entities_poller._polling_method.update_status()
-
-        if analyze_healthcare_entities_poller._polling_method.status() in terminal_states:
-            print("Operation with ID '%s' is already in a terminal state and cannot be cancelled." \
-                % analyze_healthcare_entities_poller.id)
-            return
-
-        try:
-            return self._client.begin_cancel_health_job(
-                analyze_healthcare_entities_poller.id,
-                polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
-            )
-
-        except ValueError as error:
-            if "API version v3.0 does not have operation 'begin_cancel_health_job'" in str(error):
-                raise ValueError(
-                    "'begin_cancel_analyze_healthcare_entities' method is only available for API version \
                     v3.1-preview.3 and up."
                 )
             raise error
@@ -676,7 +625,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             will have property `mined_opinions` containing the result of this analysis. Only available for
             API version v3.1-preview and up.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.  Possible values are
-            'UnicodeCodePoint', 'TextElements_v8', or 'Utf16CodeUnit'.  The default value is 'UnicodeCodePoint'.  
+            'UnicodeCodePoint', 'TextElements_v8', or 'Utf16CodeUnit'.  The default value is 'UnicodeCodePoint'.
             Only available for API version v3.1-preview and up.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
