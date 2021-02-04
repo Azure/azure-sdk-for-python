@@ -1,6 +1,6 @@
 # Azure Text Analytics client library for Python
 
-Text Analytics is a cloud-based service that provides advanced natural language processing over raw text, and includes six main functions:
+Text Analytics is a cloud-based service that provides advanced natural language processing over raw text, and includes the following main functions:
 
 - Sentiment Analysis
 - Named Entity Recognition
