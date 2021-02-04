@@ -50,7 +50,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def _parse_conn_str(conn_str, check_case=False):
-    # type: (str) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
+    # type: (str, Optional[bool]) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
@@ -110,7 +110,7 @@ def _parse_conn_str(conn_str, check_case=False):
     if not parsed.netloc:
         raise ValueError("Invalid Endpoint on the Connection String.")
     host = cast(str, parsed.netloc)
-        
+
     if any([shared_access_key, shared_access_key_name]) and not all(
         [shared_access_key, shared_access_key_name]
     ):
