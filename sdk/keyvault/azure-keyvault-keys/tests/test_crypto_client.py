@@ -197,7 +197,8 @@ class CryptoClientTests(KeyVaultTestCase):
         key = key_client.create_rsa_key(key_name, size=4096)
         crypto_client = self.create_crypto_client(key)
 
-        for encrypt_algorithm in EncryptionAlgorithm:
+        rsa_encrypt_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("RSA")]
+        for encrypt_algorithm in rsa_encrypt_algorithms:
             result = crypto_client.encrypt(encrypt_algorithm, self.plaintext)
             self.assertEqual(result.key_id, key.id)
 
@@ -212,7 +213,7 @@ class CryptoClientTests(KeyVaultTestCase):
         key = key_client.create_rsa_key(key_name, size=4096)
         crypto_client = self.create_crypto_client(key)
 
-        for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.value.startswith("RSA")):
+        for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")):
             result = crypto_client.wrap_key(wrap_algorithm, self.plaintext)
             self.assertEqual(result.key_id, key.id)
 
