@@ -14,6 +14,9 @@ try:
     from ._models_py3 import ComponentPurgeResponse
     from ._models_py3 import ComponentPurgeStatusResponse
     from ._models_py3 import ComponentsResource
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import PrivateLinkScopedResource
     from ._models_py3 import TagsResource
 except (SyntaxError, ImportError):
@@ -24,6 +27,9 @@ except (SyntaxError, ImportError):
     from ._models import ComponentPurgeResponse  # type: ignore
     from ._models import ComponentPurgeStatusResponse  # type: ignore
     from ._models import ComponentsResource  # type: ignore
+    from ._models import ErrorAdditionalInfo  # type: ignore
+    from ._models import ErrorDetail  # type: ignore
+    from ._models import ErrorResponse  # type: ignore
     from ._models import PrivateLinkScopedResource  # type: ignore
     from ._models import TagsResource  # type: ignore
 
@@ -44,6 +50,9 @@ __all__ = [
     'ComponentPurgeResponse',
     'ComponentPurgeStatusResponse',
     'ComponentsResource',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse',
     'PrivateLinkScopedResource',
     'TagsResource',
     'ApplicationType',
