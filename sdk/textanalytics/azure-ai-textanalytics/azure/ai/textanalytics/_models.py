@@ -740,6 +740,12 @@ class DocumentError(DictMixin):
 class DetectLanguageInput(LanguageInput):
     """The input document to be analyzed for detecting language.
 
+    :keyword str id: Unique, non-empty document identifier.
+    :keyword str text: The input text to process.
+    :keyword str country_hint: A country hint to help better detect
+     the language of the text. Accepts two letter country codes
+     specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
+     in the string "none" to not use a country_hint.
     :ivar id: Required. Unique, non-empty document identifier.
     :vartype id: str
     :ivar text: Required. The input text to process.
@@ -869,7 +875,12 @@ class LinkedEntityMatch(DictMixin):
 class TextDocumentInput(DictMixin, MultiLanguageInput):
     """The input document to be analyzed by the service.
 
-    :ivar id: Required. A unique, non-empty document identifier.
+    :keyword str id: Unique, non-empty document identifier.
+    :keyword str text: The input text to process.
+    :keyword str language: This is the 2 letter ISO 639-1 representation
+     of a language. For example, use "en" for English; "es" for Spanish etc. If
+     not set, uses "en" for English as default.
+    :ivar id: Required. Unique, non-empty document identifier.
     :vartype id: str
     :ivar text: Required. The input text to process.
     :vartype text: str
