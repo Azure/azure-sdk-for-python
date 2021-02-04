@@ -68,7 +68,7 @@ class DictMixin(object):
 
 class PiiEntityDomainType(str, Enum):
     """The different domains of PII entities that users can filter by"""
-    PROTECTED_HEALTH_INFORMATION = "PHI"  # See https://aka.ms/tanerpii for more information.
+    PROTECTED_HEALTH_INFORMATION = "phi"  # See https://aka.ms/tanerpii for more information.
 
 
 class DetectedLanguage(DictMixin):
@@ -1268,7 +1268,7 @@ class RecognizePiiEntitiesAction(DictMixin):
 
     :keyword str model_version: The model version to use for the analysis.
     :keyword str domain_filter: An optional string to set the PII domain to include only a
-    subset of the PII entity categories. Possible values include 'PHI' or None.
+    subset of the PII entity categories. Possible values include 'phi' or None.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information

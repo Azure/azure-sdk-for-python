@@ -31,10 +31,13 @@ class AnalyzeSample(object):
     def analyze(self):
         # [START analyze]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import TextAnalyticsClient, \
-            RecognizeEntitiesAction, \
-            RecognizePiiEntitiesAction, \
-            ExtractKeyPhrasesAction
+        from azure.ai.textanalytics import (
+            TextAnalyticsClient,
+            RecognizeEntitiesAction,
+            RecognizePiiEntitiesAction,
+            ExtractKeyPhrasesAction,
+            PiiEntityDomainType,
+        )
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
@@ -58,14 +61,16 @@ class AnalyzeSample(object):
             display_name="Sample Text Analysis",
             actions=[
                 RecognizeEntitiesAction(),
-                RecognizePiiEntitiesAction(),
+                RecognizePiiEntitiesAction(domain_filter=PiiEntityDomainType.PHI),
                 ExtractKeyPhrasesAction()
             ],
         )
 
         result = poller.result()
+        raise ValueError(list(result))
+        action_results = [action_result for action_result in list(result) if not action_result.is_error]
 
-        first_action_result = next(result)
+        first_action_result = action_results[0]
         print("Results of Entities Recognition action:")
         docs = [doc for doc in first_action_result.document_results if not doc.is_error]
 
@@ -78,7 +83,7 @@ class AnalyzeSample(object):
                 print("...Offset: {}".format(entity.offset))
             print("------------------------------------------")
 
-        second_action_result = next(result)
+        second_action_result = action_results[1]
         print("Results of PII Entities Recognition action:")
         docs = [doc for doc in second_action_result.document_results if not doc.is_error]
 
@@ -90,7 +95,7 @@ class AnalyzeSample(object):
                 print("Confidence Score: {}\n".format(entity.confidence_score))
             print("------------------------------------------")
 
-        third_action_result = next(result)
+        third_action_result = action_results[2]
         print("Results of Key Phrase Extraction action:")
         docs = [doc for doc in third_action_result.document_results if not doc.is_error]
 

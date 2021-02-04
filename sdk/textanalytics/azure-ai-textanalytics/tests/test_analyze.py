@@ -179,9 +179,9 @@ class TestAnalyze(TextAnalyticsTest):
         response = client.begin_analyze_batch_actions(
             docs,
             actions=[
-                RecognizeEntitiesAction(),
-                ExtractKeyPhrasesAction(),
                 RecognizePiiEntitiesAction(),
+                ExtractKeyPhrasesAction(),
+                RecognizePiiEntitiesAction(model_version="bad"),
             ],
             polling_interval=self._interval(),
         ).result()
@@ -191,14 +191,15 @@ class TestAnalyze(TextAnalyticsTest):
         assert len(action_results) == 3
         action_result = action_results[0]
 
-        assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+        assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
         assert action_results[1].action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
-        assert action_results[2].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
-        assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
+        assert action_results[2].is_error
+        assert all([action_result for action_result in action_results if not action_result.is_error and len(action_result.document_results) == len(docs)])
 
         for action_result in action_results:
-            for idx, doc in enumerate(action_result.document_results):
-                self.assertEqual(str(idx + 1), doc.id)
+            if not action_result.is_error:
+                for idx, doc in enumerate(action_result.document_results):
+                    self.assertEqual(str(idx + 1), doc.id)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -288,12 +289,12 @@ class TestAnalyze(TextAnalyticsTest):
         action_results = list(response)
         assert len(action_results) == 3
 
-        assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+        assert action_results[0].is_error
         assert action_results[1].action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
         assert action_results[2].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
 
+        action_results = [r for r in action_results if not r.is_error]
         assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
-        assert all([doc for doc in action_results[0].document_results if doc.is_error])
 
         in_order = ["56", "0", "19", "1"]
 
