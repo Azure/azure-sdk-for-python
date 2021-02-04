@@ -7,6 +7,7 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 * Personally Identifiable Information (PII) Entity Recognition
 * Language Detection
 * Key Phrase Extraction
+* Batch Analysis
 * Healthcare Analysis (Gated Preview)
 
 [Source code][source_code] | [Package (PyPI)][TA_pypi] | [API reference documentation][TA_ref_docs]| [Product documentation][TA_product_documentation] | [Samples][TA_samples]
