@@ -84,7 +84,7 @@ def process_requirement(req, dependency_type):
 
     # get available versions on PyPI
     client = PyPIClient()
-    versions = [str(v) for v in client.get_ordered_versions(pkg_name)]
+    versions = [str(v) for v in client.get_ordered_versions(pkg_name, True)]
     logging.info("Versions available on PyPI for %s: %s", pkg_name, versions)
 
     if pkg_name in MINIMUM_VERSION_SUPPORTED_OVERRIDE:
