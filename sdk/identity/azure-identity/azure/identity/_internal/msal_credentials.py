@@ -57,14 +57,15 @@ class MsalCredential(ABC):
         # type: () -> msal.ClientApplication
         pass
 
-    def _create_app(self, cls):
-        # type: (Type[msal.ClientApplication]) -> msal.ClientApplication
+    def _create_app(self, cls, **kwargs):
+        # type: (Type[msal.ClientApplication], **Any) -> msal.ClientApplication
         app = cls(
             client_id=self._client_id,
             client_credential=self._client_credential,
             authority="{}/{}".format(self._authority, self._tenant_id),
             token_cache=self._cache,
             http_client=self._client,
+            **kwargs
         )
 
         return app

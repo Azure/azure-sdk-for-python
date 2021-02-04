@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2021-02-09)
 
 **New Features**
 
@@ -10,6 +10,8 @@
 **Breaking Changes**
 
 - `list_dimension_values` has been renamed to `list_anomaly_dimension_values`
+- update methods now return None
+- Updated DataFeed.metric_ids to be a dict rather than a list
 
 **Hotfixes**
 

@@ -24,9 +24,10 @@ Caller must provide one of the following:
 - Added `MicrosoftTeamsUserIdentifier`
 
 ##### `IdentityClient`
-- Added support for Azure Active Directory authentication for the Identity client
+- Added support for Azure Active Directory authentication
 
-
+#### `PhoneNumberAdministrationClient`
+- Added support for Azure Active Directory authentication
 ## 1.0.0b3 (2020-11-16)
 
 ### Breaking Changes
