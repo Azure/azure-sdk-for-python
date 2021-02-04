@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtesteckeye9470d88/create?api-version=7.1
+    uri: https://vaultname.vault.azure.netkeys/livekvtesteckeye9470d88/create?api-version=7.1
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Feb 2021 02:50:31 GMT
+      - Thu, 04 Feb 2021 23:40:34 GMT
       expires:
       - '-1'
       pragma:
@@ -43,7 +43,7 @@ interactions:
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus2
+      - northeurope
       x-ms-keyvault-service-version:
       - 1.2.139.0
       x-powered-by:
@@ -67,19 +67,19 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtesteckeye9470d88/create?api-version=7.1
+    uri: https://vaultname.vault.azure.netkeys/livekvtesteckeye9470d88/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtesteckeye9470d88/929de9d2527147bfbb322fe8350bc061","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"w9u0HSdKV5pbVS7LFYghkXD6ZyxyDqSpqXw9mr7J6W8","y":"bp0EhhEUChVeSG9Uj52I-U79jP9Eu3cHS_qIwsvOkVQ"},"attributes":{"enabled":true,"created":1612320632,"updated":1612320632,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtesteckeye9470d88/3ac7e3352f75437e9821c38abb207775","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"h8Xq3FJ3UGBt9-bhudvDdQ2OrUaS3KENYCN4YPJeh1s","y":"LKtXsr3P-SVkqoaNzqs23oAyxQeQIUE9dQ-4HV0z5SU"},"attributes":{"enabled":true,"created":1612482035,"updated":1612482035,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '400'
+      - '402'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Feb 2021 02:50:32 GMT
+      - Thu, 04 Feb 2021 23:40:35 GMT
       expires:
       - '-1'
       pragma:
@@ -91,7 +91,7 @@ interactions:
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus2
+      - northeurope
       x-ms-keyvault-service-version:
       - 1.2.139.0
       x-powered-by:
@@ -111,19 +111,19 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/keys/livekvtesteckeye9470d88/929de9d2527147bfbb322fe8350bc061?api-version=7.1
+    uri: https://vaultname.vault.azure.netkeys/livekvtesteckeye9470d88/3ac7e3352f75437e9821c38abb207775?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtesteckeye9470d88/929de9d2527147bfbb322fe8350bc061","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"w9u0HSdKV5pbVS7LFYghkXD6ZyxyDqSpqXw9mr7J6W8","y":"bp0EhhEUChVeSG9Uj52I-U79jP9Eu3cHS_qIwsvOkVQ"},"attributes":{"enabled":true,"created":1612320632,"updated":1612320632,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtesteckeye9470d88/3ac7e3352f75437e9821c38abb207775","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"h8Xq3FJ3UGBt9-bhudvDdQ2OrUaS3KENYCN4YPJeh1s","y":"LKtXsr3P-SVkqoaNzqs23oAyxQeQIUE9dQ-4HV0z5SU"},"attributes":{"enabled":true,"created":1612482035,"updated":1612482035,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '400'
+      - '402'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Feb 2021 02:50:33 GMT
+      - Thu, 04 Feb 2021 23:40:36 GMT
       expires:
       - '-1'
       pragma:
@@ -135,7 +135,7 @@ interactions:
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus2
+      - northeurope
       x-ms-keyvault-service-version:
       - 1.2.139.0
       x-powered-by:
