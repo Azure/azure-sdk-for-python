@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 class ApiVersion(str, Enum):
     """Key Vault API versions supported by this package"""
 
+    V7_2_preview = "7.2-preview"
     #: this is the default version
     V7_1 = "7.1"
     V7_0 = "7.0"
