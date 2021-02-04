@@ -81,9 +81,11 @@ class MixedRealityStsClient(object):
 
     @distributed_trace
     def get_token(self, **kwargs):
-        # type: (Any) -> AccessToken
+        # type: (Any) -> azure.core.credentials.AccessToken
         """
         Retrieve a token from the STS service for the specified account identifier asynchronously.
+        :return: Instance of azure.core.credentials.AccessToken - token and expiry date of it
+        :rtype: ~azure.core.credentials.AccessToken
         """
         token_request_options = TokenRequestOptions()
         token_request_options.client_request_id = _generate_cv_base()

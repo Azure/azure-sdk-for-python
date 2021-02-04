@@ -13,7 +13,7 @@ except ImportError:
 # pylint: disable=unused-import,ungrouped-imports
 from typing import Any, Union
 
-from azure.core.credentials import AccessToken, AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
@@ -25,6 +25,7 @@ from ..shared.aio._mixedreality_account_key_credential import MixedRealityAccoun
 from ..utils import _convert_to_access_token, _generate_cv_base
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -84,9 +85,11 @@ class MixedRealityStsClient(object):
             **kwargs)
 
     @distributed_trace_async
-    async def get_token(self, **kwargs) -> AccessToken:
+    async def get_token(self, **kwargs) -> "AccessToken":
         """
         Retrieve a token from the STS service for the specified account identifier asynchronously.
+        :return: Instance of azure.core.credentials.AccessToken - token and expiry date of it
+        :rtype: :class:`azure.core.credentials.AccessToken`
         """
         token_request_options = TokenRequestOptions()
         token_request_options.client_request_id=_generate_cv_base()
