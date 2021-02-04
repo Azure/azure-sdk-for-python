@@ -20,16 +20,16 @@ interactions:
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
   response:
     body:
-      string: '{"error":{"code":"InvalidArgument","message":"Request contains duplicated
-        Ids. Make sure each document has a unique Id."}}'
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innerError":{"code":"InvalidDocument","message":"Request
+        contains duplicated Ids. Make sure each document has a unique Id."}}}'
     headers:
-      apim-request-id: 1dcc0ac5-2fab-4a10-a8af-ce0f2ceec9e7
+      apim-request-id: c4e8cb79-b323-4060-b860-4340efed8861
       content-type: application/json; charset=utf-8
-      date: Wed, 27 Jan 2021 02:16:48 GMT
+      date: Tue, 02 Feb 2021 04:30:40 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4'
+      x-envoy-upstream-service-time: '7'
     status:
       code: 400
       message: Bad Request

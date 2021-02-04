@@ -61,12 +61,12 @@ steps:
         Get-Content $_
       }
     displayName: 'Show .coverage files'
-    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
 
   - task: PublishPipelineArtifact@1
     displayName: 'Publish .coverage files'
     continueOnError: true
-    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
     inputs:
       targetPath: '$(Build.SourcesDirectory)/_coverage'
       artifactType: 'pipeline'
