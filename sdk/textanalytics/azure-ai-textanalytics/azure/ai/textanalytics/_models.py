@@ -435,8 +435,8 @@ class HealthcareEntity(DictMixin):
         )
 
     def __repr__(self):
-        return "HealthcareEntity(text={}, category={}, subcategory={}, length={}, offset={}, \
-        confidence_score={}, links={})".format(
+        return "HealthcareEntity(text={}, category={}, subcategory={}, length={}, offset={}, "\
+        "confidence_score={}, links={})".format(
             self.text,
             self.category,
             self.subcategory,
@@ -1127,8 +1127,8 @@ class AspectSentiment(DictMixin):
         )
 
     def __repr__(self):
-        return "AspectSentiment(text={}, sentiment={}, confidence_scores={}, \
-            length={}, offset={})".format(
+        return "AspectSentiment(text={}, sentiment={}, confidence_scores={}, "\
+        "length={}, offset={})".format(
             self.text,
             self.sentiment,
             repr(self.confidence_scores),
@@ -1182,8 +1182,8 @@ class OpinionSentiment(DictMixin):
 
     def __repr__(self):
         return (
-            "OpinionSentiment(text={}, sentiment={}, confidence_scores={}, length={}, offset={}, \
-            is_negated={})".format(
+            "OpinionSentiment(text={}, sentiment={}, confidence_scores={}, length={}, offset={}, "\
+            "is_negated={})".format(
                 self.text,
                 self.sentiment,
                 repr(self.confidence_scores),
