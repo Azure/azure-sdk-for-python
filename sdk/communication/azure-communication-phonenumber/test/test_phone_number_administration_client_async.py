@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 import pytest
 from azure.communication.phonenumber.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumber._shared.utils import parse_connection_str
 from azure.communication.phonenumber import (
     PstnConfiguration,
     NumberUpdateCapabilities,
