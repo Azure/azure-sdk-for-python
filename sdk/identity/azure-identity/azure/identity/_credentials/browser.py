@@ -93,9 +93,8 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
         # get the url the user must visit to authenticate
         scopes = list(scopes)  # type: ignore
-        app = self._get_app()
-
         claims = kwargs.get("claims")
+        app = self._get_app()
         flow = app.initiate_auth_code_flow(
             scopes, redirect_uri=redirect_uri, prompt="select_account", claims_challenge=claims
         )
