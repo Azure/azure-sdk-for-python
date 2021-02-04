@@ -240,7 +240,6 @@ class KeyVaultKeyTest(KeyVaultTestCase):
 
         # delete key
         await client.delete_key(created_bundle.name)
-        # can add test case to see if we do get_deleted should return error
 
         # purge key
         await client.purge_deleted_key(created_bundle.name)
