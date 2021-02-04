@@ -74,6 +74,7 @@ class AnalyzeSample(object):
                         print("Entity: {}".format(entity.text))
                         print("...Category: {}".format(entity.category))
                         print("...Confidence Score: {}".format(entity.confidence_score))
+                        print("...Length: {}".format(entity.length))
                         print("...Offset: {}".format(entity.offset))
                     print("------------------------------------------")
 
@@ -85,8 +86,10 @@ class AnalyzeSample(object):
                     print("Document text: {}".format(documents[idx]))
                     for entity in doc.entities:
                         print("Entity: {}".format(entity.text))
-                        print("Category: {}".format(entity.category))
-                        print("Confidence Score: {}\n".format(entity.confidence_score))
+                        print("...Category: {}".format(entity.category))
+                        print("...Confidence Score: {}\n".format(entity.confidence_score))
+                        print("...Length: {}".format(entity.length))
+                        print("...Offset: {}".format(entity.offset))
                     print("------------------------------------------")
 
             for task in page.key_phrase_extraction_results:

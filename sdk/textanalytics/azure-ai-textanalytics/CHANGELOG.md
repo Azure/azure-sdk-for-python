@@ -4,7 +4,9 @@
 
 **New Features**
 - No longer need to specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when calling `begin_analyze` and `begin_analyze_healthcare`. `begin_analyze_healthcare` is still in gated preview though.
-
+- Added a new parameter `string_index_type` to the service client methods `begin_analyze_healthcare`, `analyze_sentiment`, `recognize_entities`, `recognize_pii_entities`, and `recognize_linked_entities`.
+- Added property `length` from `CategorizedEntity`, `SentenceSentiment`, `LinkedEntityMatch`, `AspectSentiment`, `OpinionSentiment`, `PiiEntity` and 
+`HealthcareEntity`.
 
 ## 5.1.0b4 (2021-01-12)
 
