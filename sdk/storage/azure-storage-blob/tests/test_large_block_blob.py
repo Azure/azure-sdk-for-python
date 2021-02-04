@@ -29,7 +29,7 @@ from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'largeblob'
-LARGE_BLOB_SIZE = 64 * 1024 * 1024
+LARGE_BLOB_SIZE = 12 * 1024 * 1024
 LARGE_BLOCK_SIZE = 6 * 1024 * 1024
 
 # ------------------------------------------------------------------------------
@@ -44,15 +44,14 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         self.bsc = BlobServiceClient(
             self.account_url(storage_account, "blob"),
             credential=key,
-            max_single_put_size=640*1024*1024)
+            max_single_put_size=32 * 1024,
+            max_block_size=2 * 1024 * 1024,
+            min_large_block_upload_threshold=1 * 1024 * 1024)
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 
         if self.is_live:
-            try:
-                self.bsc.create_container(self.container_name)
-            except:
-                pass
+            self.bsc.create_container(self.container_name)
 
     def _teardown(self, file_name):
         if path.isfile(file_name):
@@ -68,9 +67,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     def _create_blob(self):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = bytearray(urandom(LARGE_BLOB_SIZE))
-        # with open("C:/Users/xiafu/Downloads/junk.csv", 'rb') as stream:
-        blob.upload_blob(data, overwrite=True)
+        blob.upload_blob(b'')
         return blob
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
@@ -84,7 +81,16 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     def test_put_block_bytes_large(self, resource_group, location, storage_account, storage_account_key):
 
         self._setup(storage_account, storage_account_key)
-        self._create_blob()
+        blob = self._create_blob()
+
+        # Act
+        for i in range(5):
+            resp = blob.stage_block(
+                'block {0}'.format(i).encode('utf-8'), urandom(LARGE_BLOCK_SIZE))
+            self.assertIsNotNone(resp)
+            assert 'content_md5' in resp
+            assert 'content_crc64' in resp
+            assert 'request_id' in resp
 
             # Assert
 
