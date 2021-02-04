@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 try:
     from urllib.parse import urlparse
@@ -38,12 +38,16 @@ class MixedRealityStsClient(object):
         The Mixed Reality service account domain.
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential used to access the Mixed Reality service.
+    :param str custom_endpoint:
+        Override the Mixed Reality STS service endpoint.
     """
 
     def __init__(self,
         account_id: str,
         account_domain: str,
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        *,
+        custom_endpoint: Optional[str] = None,
         **kwargs) -> None:
         if not account_id:
             raise ValueError("account_id can not be None")
@@ -62,13 +66,10 @@ class MixedRealityStsClient(object):
 
         self._credential = credential
 
-        endpoint_url = kwargs.pop('endpoint_url', construct_endpoint_url(account_domain))
-
-        try:
-            if not endpoint_url.lower().startswith('http'):
-                endpoint_url = "https://" + endpoint_url
-        except AttributeError:
-            raise ValueError("Host URL must be a string")
+        if custom_endpoint:
+            endpoint_url = custom_endpoint
+        else:
+            endpoint_url = construct_endpoint_url(account_domain)
 
         parsed_url = urlparse(endpoint_url.rstrip('/'))
         if not parsed_url.netloc:

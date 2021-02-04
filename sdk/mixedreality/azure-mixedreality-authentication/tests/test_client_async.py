@@ -55,7 +55,7 @@ class ClientTests(AzureTestCase):
             account_id=self.account_id,
             account_domain=self.account_domain,
             credential=self.key_credential,
-            endpoint_url=custom_endpoint_url)
+            custom_endpoint=custom_endpoint_url)
 
         assert client._endpoint_url == custom_endpoint_url
 
@@ -92,7 +92,7 @@ class ClientTests(AzureTestCase):
                 account_id=self.account_id,
                 account_domain=self.account_domain,
                 credential=self.key_credential,
-                endpoint_url="#")
+                custom_endpoint="#")
 
     @AzureTestCase.await_prepared_test
     async def test_get_token(self):
