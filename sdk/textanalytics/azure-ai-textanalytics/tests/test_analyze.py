@@ -553,11 +553,12 @@ class TestAnalyze(TextAnalyticsTest):
         ).result()
 
         action_results = list(response)
-        assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
-
-        for action_result in action_results:
-            # This is not the optimal way to represent this failure.  We are discussing a solution with the service team.
-            assert all(doc for doc in action_result.document_results if doc.is_error)
+        assert action_results[0].is_error == False
+        assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+        assert action_results[1].is_error == True
+        assert action_results[1].error.code == "InvalidRequest"
+        assert action_results[2].is_error == True
+        assert action_results[2].error.code == "InvalidRequest"
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

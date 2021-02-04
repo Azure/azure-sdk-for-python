@@ -42,6 +42,7 @@ from ._models import (
     AnalyzeBatchActionsResult,
     RequestStatistics,
     AnalyzeBatchActionsType,
+    AnalyzeBatchActionsError,
 )
 from._paging import AnalyzeHealthcareResult
 
@@ -83,6 +84,7 @@ __all__ = [
     'AnalyzeBatchActionsResult',
     'RequestStatistics',
     'AnalyzeBatchActionsType',
+    "AnalyzeBatchActionsError",
 ]
 
 __version__ = VERSION

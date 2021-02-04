@@ -1171,6 +1171,7 @@ class AnalyzeBatchActionsType(str, Enum):
     RECOGNIZE_PII_ENTITIES = "recognize_pii_entities"  #: PII Entities Recognition action.
     EXTRACT_KEY_PHRASES = "extract_key_phrases"  #: Key Phrase Extraction action.
 
+
 class AnalyzeBatchActionsResult(DictMixin):
     """AnalyzeBatchActionsResult contains the results of a recognize entities action
     on a list of documents. Returned by `begin_analyze_batch_actions`
@@ -1199,6 +1200,31 @@ class AnalyzeBatchActionsResult(DictMixin):
                 self.action_type,
                 self.completed_on
             )[:1024]
+
+class AnalyzeBatchActionsError(DictMixin):
+    """AnalyzeBatchActionsError is an error object which represents an an
+    error response for an action.
+
+    :ivar error: The action result error.
+    :vartype error: ~azure.ai.textanalytics.TextAnalyticsError
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always True for an instance of a DocumentError.
+    """
+
+    def __init__(self, **kwargs):
+        self.error = kwargs.get("error")
+        self.is_error = True
+
+    def __repr__(self):
+        return "AnalyzeBatchActionsError(error={}, is_error={}".format(
+            self.error, self.is_error
+        )
+
+    @classmethod
+    def _from_generated(cls, error):
+        return cls(
+            error=TextAnalyticsError(code=error.code, message=error.message, target=error.target)
+        )
 
 
 class RecognizeEntitiesAction(DictMixin):

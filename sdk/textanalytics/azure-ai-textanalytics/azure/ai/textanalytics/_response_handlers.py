@@ -6,6 +6,7 @@
 
 import json
 import functools
+from collections import defaultdict
 from six.moves.urllib.parse import urlparse, parse_qsl
 from azure.core.exceptions import (
     HttpResponseError,
@@ -33,7 +34,9 @@ from ._models import (
     AnalyzeBatchActionsResult,
     RequestStatistics,
     AnalyzeBatchActionsType,
+    AnalyzeBatchActionsError,
     TextDocumentBatchStatistics,
+    _get_indices,
 )
 from ._paging import AnalyzeHealthcareResult, AnalyzeResult
 
@@ -217,23 +220,61 @@ def _num_tasks_in_current_page(returned_tasks_object):
         len(returned_tasks_object.key_phrase_extraction_tasks or [])
     )
 
+def _get_task_type_from_error(error):
+    if "pii" in error.target.lower():
+        return AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+    if "entity" in error.target.lower():
+        return AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+    return AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
+
+def _get_mapped_errors(analyze_job_state):
+    """
+    """
+    mapped_errors = defaultdict(list)
+    if not analyze_job_state.errors:
+        return mapped_errors
+    for error in analyze_job_state.errors:
+        mapped_errors[_get_task_type_from_error(error)].append((_get_error_index(error), error))
+    return mapped_errors
+
+def _get_error_index(error):
+    return _get_indices(error.target)[-1]
+
+def _get_good_result(current_task_type, index_of_task_result, doc_id_order, response_headers, returned_tasks_object):
+    deserialization_callback = _get_deserialization_callback_from_task_type(current_task_type)
+    property_name = _get_property_name_from_task_type(current_task_type)
+    response_task_to_deserialize = getattr(returned_tasks_object, property_name)[index_of_task_result]
+    document_results = deserialization_callback(
+        doc_id_order, response_task_to_deserialize.results, response_headers, lro=True
+    )
+    return AnalyzeBatchActionsResult(
+        document_results=document_results,
+        action_type=current_task_type,
+        completed_on=response_task_to_deserialize.last_update_date_time,
+    )
+
 def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state):
     iter_items = []
+    task_type_to_index = defaultdict(int)  # need to keep track of how many of each type of tasks we've seen
     returned_tasks_object = analyze_job_state.tasks
+    mapped_errors = _get_mapped_errors(analyze_job_state)
     for current_task_type in task_order:
-        deserialization_callback = _get_deserialization_callback_from_task_type(current_task_type)
-        property_name = _get_property_name_from_task_type(current_task_type)
-        response_task_to_deserialize = getattr(returned_tasks_object, property_name).pop(0)
-        document_results = deserialization_callback(
-            doc_id_order, response_task_to_deserialize.results, response_headers, lro=True
-        )
-        iter_items.append(
-            AnalyzeBatchActionsResult(
-                document_results=document_results,
-                action_type=current_task_type,
-                completed_on=response_task_to_deserialize.last_update_date_time,
+        index_of_task_result = task_type_to_index[current_task_type]
+
+        try:
+            # try to deserailize as error. If fails, we know it's good
+            # kind of a weird way to order things, but we can fail when deserializing
+            # the curr response as an error, not when deserializing as a good response.
+
+            current_task_type_errors = mapped_errors[current_task_type]
+            error = next(err for err in current_task_type_errors if err[0] == index_of_task_result)
+            result = AnalyzeBatchActionsError._from_generated(error[1])  # pylint: disable=protected-access
+        except StopIteration:
+            result = _get_good_result(
+                current_task_type, index_of_task_result, doc_id_order, response_headers, returned_tasks_object
             )
-        )
+        iter_items.append(result)
+        task_type_to_index[current_task_type] += 1
     return iter_items
 
 def analyze_extract_page_data(doc_id_order, task_order, response_headers, analyze_job_state):
