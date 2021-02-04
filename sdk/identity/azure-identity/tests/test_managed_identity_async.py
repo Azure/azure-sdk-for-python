@@ -58,6 +58,61 @@ async def test_cloud_shell():
 
 
 @pytest.mark.asyncio
+async def test_azure_ml():
+    """Azure ML: MSI_ENDPOINT, MSI_SECRET set (like App Service 2017-09-01 but with a different response format)"""
+
+    expected_token = AccessToken("****", int(time.time()) + 3600)
+    url = "http://localhost:42/token"
+    secret = "expected-secret"
+    scope = "scope"
+    client_id = "client"
+
+    transport = async_validating_transport(
+        requests=[
+            Request(
+                url,
+                method="GET",
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope},
+            ),
+            Request(
+                url,
+                method="GET",
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope, "clientid": client_id},
+            ),
+        ],
+        responses=[
+            mock_response(
+                json_payload={
+                    "access_token": expected_token.token,
+                    "expires_in": 3600,
+                    "expires_on": expected_token.expires_on,
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            )
+        ]
+        * 2,
+    )
+
+    with mock.patch.dict(
+        MANAGED_IDENTITY_ENVIRON,
+        {EnvironmentVariables.MSI_ENDPOINT: url, EnvironmentVariables.MSI_SECRET: secret},
+        clear=True,
+    ):
+        credential = ManagedIdentityCredential(transport=transport)
+        token = await credential.get_token(scope)
+        assert token.token == expected_token.token
+        assert token.expires_on == expected_token.expires_on
+
+        credential = ManagedIdentityCredential(transport=transport, client_id=client_id)
+        token = await credential.get_token(scope)
+        assert token.token == expected_token.token
+        assert token.expires_on == expected_token.expires_on
+
+
+@pytest.mark.asyncio
 async def test_cloud_shell_user_assigned_identity():
     """Cloud Shell environment: only MSI_ENDPOINT set"""
 
