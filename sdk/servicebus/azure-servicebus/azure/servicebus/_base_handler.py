@@ -59,7 +59,7 @@ def _parse_conn_str(conn_str, check_case=False):
     shared_access_signature_expiry = None  # type: Optional[int]
 
     # split connection string into properties
-    conn_properties = [s.split("=", 1) for s in conn_str.rstrip(";").split(";")]
+    conn_properties = [s.split("=", 1) for s in conn_str.strip().rstrip(";").split(";")]
     if any(len(tup) != 2 for tup in conn_properties):
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict(conn_properties)   # type: ignore
