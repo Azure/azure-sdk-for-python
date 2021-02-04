@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, TYPE_CHECKING
+from typing import cast, TYPE_CHECKING
 import time
 import threading
 
@@ -20,7 +20,7 @@ from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Union
+    from typing import Any, Union, List
     from azure.core.credentials import AzureKeyCredential
 
 class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixin):

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, TYPE_CHECKING
+from typing import cast, TYPE_CHECKING
 import time
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -21,7 +21,7 @@ from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, List
     from azure.core.credentials import AzureKeyCredential
 
 
