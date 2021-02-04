@@ -59,10 +59,10 @@ def _parse_conn_str(conn_str, check_case=False):
     shared_access_signature_expiry = None  # type: Optional[int]
 
     # split connection string into properties
-    conn_settings = [s.split("=", 1) for s in conn_str.rstrip(";").split(";")]
-    if any(len(tup) != 2 for tup in conn_settings):
+    conn_properties = [s.split("=", 1) for s in conn_str.rstrip(";").split(";")]
+    if any(len(tup) != 2 for tup in conn_properties):
         raise ValueError("Connection string is either blank or malformed.")
-    conn_settings = dict(conn_settings)
+    conn_settings = dict(conn_properties)   # type: ignore
 
     # case sensitive check when parsing for connection string properties
     if check_case:
@@ -78,9 +78,8 @@ def _parse_conn_str(conn_str, check_case=False):
             shared_access_signature = value
             try:
                 # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
-                # type: ignore
                 shared_access_signature_expiry = int(
-                    shared_access_signature.split("se=")[1].split("&")[0]
+                    shared_access_signature.split("se=")[1].split("&")[0]   # type: ignore
                 )
             except (
                 IndexError,
@@ -109,7 +108,7 @@ def _parse_conn_str(conn_str, check_case=False):
     parsed = urlparse(endpoint)
     if not parsed.netloc:
         raise ValueError("Invalid Endpoint on the Connection String.")
-    host = cast(str, parsed.netloc)
+    host = cast(str, parsed.netloc.strip())
 
     if any([shared_access_key, shared_access_key_name]) and not all(
         [shared_access_key, shared_access_key_name]
