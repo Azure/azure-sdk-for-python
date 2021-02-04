@@ -229,6 +229,12 @@ class QueryColumnType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TAG = "Tag"
     DIMENSION = "Dimension"
 
+class QueryOperatorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The operator to use for comparison.
+    """
+
+    IN_ENUM = "In"
+
 class RecurrenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The schedule recurrence.
     """
