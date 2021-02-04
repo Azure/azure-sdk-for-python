@@ -33,6 +33,7 @@ build/
 
 # Test results
 TestResults/
+ENV_DIR/
 
 # tox generated artifacts
 test-junit-*.xml

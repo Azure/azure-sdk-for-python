@@ -7,7 +7,6 @@ stages:
     - template: ./templates/jobs/archetype-sdk-client.yml
       parameters:
         ToxEnvParallel: '--tenvparallel'
-        InjectedPackages: $(InjectedPackages)
         BuildTargetingString: $(BuildTargetingString)
         BuildDocs: false
         TestTimeoutInMinutes: 300

@@ -827,7 +827,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             data_feed.source.connection_string = "updated"
             data_feed.source.query = "get data"
 
-            updated = self.admin_client.update_data_feed(data_feed)
+            self.admin_client.update_data_feed(data_feed)
+            updated = self.admin_client.get_data_feed(data_feed.id)
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.options.data_feed_description, "updated")
             self.assertEqual(updated.schema.timestamp_column, "time")
@@ -857,7 +858,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
         data_feed = self._create_data_feed_for_update("update")
         try:
-            updated = self.admin_client.update_data_feed(
+            self.admin_client.update_data_feed(
                 data_feed.id,
                 name="update",
                 data_feed_description="updated",
@@ -882,6 +883,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     query="get data"
                 )
             )
+            updated = self.admin_client.get_data_feed(data_feed.id)
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.options.data_feed_description, "updated")
             self.assertEqual(updated.schema.timestamp_column, "time")
@@ -932,7 +934,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             data_feed.source.connection_string = "don't update me"
             data_feed.source.query = "don't update me"
 
-            updated = self.admin_client.update_data_feed(
+            self.admin_client.update_data_feed(
                 data_feed,
                 timestamp_column="time",
                 ingestion_begin_time=datetime.datetime(2020, 12, 10),
@@ -955,6 +957,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     query="get data"
                 )
             )
+            updated = self.admin_client.get_data_feed(data_feed.id)
             self.assertEqual(updated.name, "updateMe")
             self.assertEqual(updated.options.data_feed_description, "updateMe")
             self.assertEqual(updated.schema.timestamp_column, "time")
@@ -984,7 +987,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
         data_feed = self._create_data_feed_for_update("update")
         try:
-            updated = self.admin_client.update_data_feed(
+            self.admin_client.update_data_feed(
                 data_feed.id,
                 name="update",
                 data_feed_description=None,
@@ -1004,6 +1007,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 status=None,
                 action_link_template=None,
             )
+            updated = self.admin_client.get_data_feed(data_feed.id)
             self.assertEqual(updated.name, "update")
             # self.assertEqual(updated.options.data_feed_description, "")  # doesn't currently clear
             # self.assertEqual(updated.schema.timestamp_column, "")  # doesn't currently clear

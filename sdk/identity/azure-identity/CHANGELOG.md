@@ -1,7 +1,13 @@
 # Release History
 
 ## 1.5.1 (Unreleased)
+### Changed
+- Raised minimum msal version to 1.7.0
+- Raised minimum six version to 1.12.0
+
 ### Added
+- `InteractiveBrowserCredential` uses PKCE internally to protect authorization
+  codes
 - `CertificateCredential` can load a certificate from bytes instead of a file
   path. To provide a certificate as bytes, use the keyword argument
   `certificate_bytes` instead of `certificate_path`, for example:

@@ -31,7 +31,7 @@ def build_packages(targeted_packages, distribution_directory, is_dev_build=False
         print("Generating Package Using Python {}".format(sys.version))
         run_check_call(
             [
-                "python",
+                sys.executable,
                 build_packing_script_location,
                 "--dest",
                 distribution_directory,

@@ -1,0 +1,25 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/phonenumbers?locale=en-US&skip=0&take=100&api-version=2020-07-20-preview1
+  response:
+    body:
+      string: '{"phoneNumbers": "sanitized", "nextLink": null}'
+    headers:
+      content-type: application/json; charset=utf-8
+      date: Thu, 28 Jan 2021 18:49:47 GMT
+      ms-cv: jqpEP/JsFUKDau9Y0tMhbw.0
+      request-context: appId=
+      transfer-encoding: chunked
+      x-processing-time: 765ms
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.communication.azure.com/administration/phonenumbers/phonenumbers?locale=en-US&skip=0&take=100&api-version=2020-07-20-preview1
+version: 1

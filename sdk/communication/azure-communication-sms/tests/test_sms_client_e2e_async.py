@@ -71,8 +71,8 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
         async with sms_client:
             # calling send() with sms values
             sms_response = await sms_client.send(
-                from_phone_number=PhoneNumber(self.phone_number),
-                to_phone_numbers=[PhoneNumber(self.phone_number)],
+                from_phone_number=PhoneNumberIdentifier(self.phone_number),
+                to_phone_numbers=[PhoneNumberIdentifier(self.phone_number)],
                 message="Hello World via SMS",
                 send_sms_options=SendSmsOptions(enable_delivery_report=True))  # optional property
 
