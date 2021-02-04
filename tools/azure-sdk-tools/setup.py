@@ -21,7 +21,8 @@ DEPENDENCIES = [
     'pyopenssl',
     'azure-mgmt-resource',
     'azure-mgmt-storage',
-    'azure-mgmt-keyvault'
+    'azure-mgmt-keyvault',
+    'python-dotenv'
 ]
 
 setup(
