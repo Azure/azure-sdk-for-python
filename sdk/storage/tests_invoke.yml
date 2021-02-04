@@ -33,7 +33,7 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       AllocateResourceGroup: 'false'
-      MaxParallel: 1
+      DeployArmTemplate: true
       BuildTargetingString: azure-storage-file-datalake
       JobName: Test_Datalake
       ServiceDirectory: storage

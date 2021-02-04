@@ -5,6 +5,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import division
+
+import functools
 from contextlib import contextmanager
 import copy
 import inspect
@@ -24,6 +26,9 @@ import sys
 import random
 import logging
 
+from azure_devtools.scenario_tests import RecordingProcessor
+from devtools_testutils import AzureTestCase, PowerShellPreparer
+
 try:
     from cStringIO import StringIO      # Python 2
 except ImportError:
@@ -40,6 +45,12 @@ except ImportError:
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
+
+DataLakePreparer = functools.partial(
+    PowerShellPreparer, "storage",
+    datalake_storage_account_name="storagename",
+    datalake_storage_account_key="NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg=="
+)
 
 class TestMode(object):
     none = 'None'.lower() # this will be for unit test, no need for any recordings
@@ -71,34 +82,44 @@ class FakeTokenCredential(object):
         return self.token
 
 
-class StorageTestCase(unittest.TestCase):
+class XMSRequestIDBody(RecordingProcessor):
+    """This process is used for Storage batch call only, to avoid the echo policy.
+    """
+    def process_response(self, response):
+        content_type = None
+        for key, value in response.get('headers', {}).items():
+            if key.lower() == 'content-type':
+                content_type = (value[0] if isinstance(value, list) else value).lower()
+                break
 
-    def setUp(self):
-        self.working_folder = os.path.dirname(__file__)
+        if content_type and 'multipart/mixed' in content_type:
+            response['body']['string'] = re.sub(b"x-ms-client-request-id: [a-f0-9-]+\r\n", b"", response['body']['string'])
 
-        self.settings = settings
-        self.fake_settings = fake_settings
+        return response
 
-        if settings is None:
-            self.test_mode = os.getenv('TEST_MODE') or TestMode.playback
-        else:
-            self.test_mode = self.settings.TEST_MODE.lower() or TestMode.playback
+class StorageTestCase(AzureTestCase):
 
-        if self.test_mode == TestMode.playback or (self.settings is None and self.test_mode.lower() == TestMode.run_live_no_record):
-            self.settings = self.fake_settings
+    def __init__(self, *args, **kwargs):
+        super(StorageTestCase, self).__init__(*args, **kwargs)
+        self.replay_processors.append(XMSRequestIDBody())
+        self._RESOURCE_GROUP = None,
 
-        # example of qualified test name:
-        # test_mgmt_network.test_public_ip_addresses
-        _, filename = os.path.split(inspect.getsourcefile(type(self)))
-        name, _ = os.path.splitext(filename)
-        self.qualified_test_name = '{0}.{1}'.format(
-            name,
-            self._testMethodName,
-        )
-
-        self.logger = logging.getLogger('azure.storage')
-        # enable logging if desired
-        self.configure_logging()
+    # def setUp(self):
+    #     self.working_folder = os.path.dirname(__file__)
+    #     self.test_mode = TestMode.record if self.is_live else TestMode.playback
+    #
+    #     # example of qualified test name:
+    #     # test_mgmt_network.test_public_ip_addresses
+    #     _, filename = os.path.split(inspect.getsourcefile(type(self)))
+    #     name, _ = os.path.splitext(filename)
+    #     self.qualified_test_name = '{0}.{1}'.format(
+    #         name,
+    #         self._testMethodName,
+    #     )
+    #
+    #     self.logger = logging.getLogger('azure.storage')
+    #     # enable logging if desired
+    #     self.configure_logging()
 
     def configure_logging(self):
         self.enable_logging() if self.settings.ENABLE_LOGGING else self.disable_logging()
@@ -120,8 +141,8 @@ class StorageTestCase(unittest.TestCase):
         if not self.is_playback():
             time.sleep(seconds)
 
-    def is_playback(self):
-        return self.test_mode == TestMode.playback
+    # def is_playback(self):
+    #     return not self.is_live
 
     def get_resource_name(self, prefix=''):
         # Append a suffix to the name, based on the fully qualified test name
@@ -129,25 +150,15 @@ class StorageTestCase(unittest.TestCase):
         # resource names, but each test will get the same name on repeat runs,
         # which is needed for playback.
         # Most resource names have a length limit, so we use a crc32
-        if self.test_mode.lower() == TestMode.run_live_no_record.lower():
-            return prefix + str(uuid.uuid4()).replace('-', '')
-        else:
-            checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xffffffff
-            name = '{}{}'.format(prefix, hex(checksum)[2:])
-            if name.endswith('L'):
-                name = name[:-1]
-            return name
+
+        checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xffffffff
+        name = '{}{}'.format(prefix, hex(checksum)[2:])
+        if name.endswith('L'):
+            name = name[:-1]
+        return name
 
     def get_random_bytes(self, size):
-        if self.test_mode.lower() == TestMode.run_live_no_record.lower():
-            rand = random.Random()
-        else:
-            checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xffffffff
-            rand = random.Random(checksum)
-        result = bytearray(size)
-        for i in range(size):
-            result[i] = int(rand.random()*255)  # random() is consistent between python 2 and 3
-        return bytes(result)
+        return b'a'*size
 
     def get_random_text_data(self, size):
         '''Returns random unicode text data exceeding the size threshold for
@@ -172,72 +183,21 @@ class StorageTestCase(unittest.TestCase):
                 settings.PROXY_PASSWORD,
             )
 
-    def _get_shared_key_credential(self):
+    def _get_shared_key_credential(self, account_name, account_key):
         return {
-            "account_name": self.settings.STORAGE_DATA_LAKE_ACCOUNT_NAME,
-            "account_key": self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY
+            "account_name": account_name,
+            "account_key": account_key
         }
 
-    def _get_account_url(self):
-        return "{}://{}.dfs.core.windows.net".format(
-            self.settings.PROTOCOL,
-            self.settings.STORAGE_DATA_LAKE_ACCOUNT_NAME
+    def _get_account_url(self, account_name):
+        return "https://{}.dfs.core.windows.net".format(
+            account_name
         )
 
     def _get_oauth_account_url(self):
-        return "{}://{}.blob.core.windows.net".format(
-            self.settings.PROTOCOL,
-            self.settings.STORAGE_DATA_LAKE_ACCOUNT_NAME
+        return "https://{}.blob.core.windows.net".format(
+            "emilydevtest"
         )
-
-    def _create_storage_service(self, service_class, settings, **kwargs):
-        if settings.CONNECTION_STRING:
-            service = service_class.from_connection_string(settings.CONNECTION_STRING, **kwargs)
-        else:
-            url = self._get_account_url()
-            credential = self._get_shared_key_credential()
-            service = service_class(url, credential=credential, **kwargs)
-        return service
-
-    # for blob storage account
-    def _create_storage_service_for_blob_storage_account(self, service_class, settings):
-        if hasattr(settings, 'BLOB_CONNECTION_STRING') and settings.BLOB_CONNECTION_STRING != "":
-            service = service_class(connection_string=settings.BLOB_CONNECTION_STRING)
-        elif hasattr(settings, 'BLOB_STORAGE_ACCOUNT_NAME') and settings.BLOB_STORAGE_ACCOUNT_NAME != "":
-            service = service_class(
-                settings.BLOB_STORAGE_ACCOUNT_NAME,
-                settings.BLOB_STORAGE_ACCOUNT_KEY,
-                protocol=settings.PROTOCOL,
-            )
-        else:
-            raise SkipTest('BLOB_CONNECTION_STRING or BLOB_STORAGE_ACCOUNT_NAME must be populated to run this test')
-
-    def _create_premium_storage_service(self, service_class, settings):
-        if hasattr(settings, 'PREMIUM_CONNECTION_STRING') and settings.PREMIUM_CONNECTION_STRING != "":
-            service = service_class(connection_string=settings.PREMIUM_CONNECTION_STRING)
-        elif hasattr(settings, 'PREMIUM_STORAGE_ACCOUNT_NAME') and settings.PREMIUM_STORAGE_ACCOUNT_NAME != "":
-            service = service_class(
-                settings.PREMIUM_STORAGE_ACCOUNT_NAME,
-                settings.PREMIUM_STORAGE_ACCOUNT_KEY,
-                protocol=settings.PROTOCOL,
-            )
-        else:
-            raise SkipTest('PREMIUM_CONNECTION_STRING or PREMIUM_STORAGE_ACCOUNT_NAME must be populated to run this test')
-
-        self._set_test_proxy(service, settings)
-        return service
-
-    def _create_remote_storage_service(self, service_class, settings):
-        if settings.REMOTE_STORAGE_ACCOUNT_NAME and settings.REMOTE_STORAGE_ACCOUNT_KEY:
-            service = service_class(
-                settings.REMOTE_STORAGE_ACCOUNT_NAME,
-                settings.REMOTE_STORAGE_ACCOUNT_KEY,
-                protocol=settings.PROTOCOL,
-            )
-        else:
-            print("REMOTE_STORAGE_ACCOUNT_NAME and REMOTE_STORAGE_ACCOUNT_KEY not set in test settings file.")
-        self._set_test_proxy(service, settings)
-        return service
 
     def assertNamedItemInContainer(self, container, item_name, msg=None):
         def _is_string(obj):
@@ -266,26 +226,26 @@ class StorageTestCase(unittest.TestCase):
                     repr(item_name), repr(container))
                 self.fail(self._formatMessage(msg, standardMsg))
 
-    def recording(self):
-        if TestMode.need_recording_file(self.test_mode):
-            cassette_name = '{0}.yaml'.format(self.qualified_test_name)
-
-            my_vcr = vcr.VCR(
-                before_record_request = self._scrub_sensitive_request_info,
-                before_record_response = self._scrub_sensitive_response_info,
-                record_mode = 'none' if TestMode.is_playback(self.test_mode) else 'all'
-            )
-
-            self.assertIsNotNone(self.working_folder)
-            return my_vcr.use_cassette(
-                os.path.join(self.working_folder, 'recordings', cassette_name),
-                filter_headers=['authorization'],
-            )
-        else:
-            @contextmanager
-            def _nop_context_manager():
-                yield
-            return _nop_context_manager()
+    # def recording(self):
+    #     if TestMode.need_recording_file(self.test_mode):
+    #         cassette_name = '{0}.yaml'.format(self.qualified_test_name)
+    #
+    #         my_vcr = vcr.VCR(
+    #             before_record_request = self._scrub_sensitive_request_info,
+    #             before_record_response = self._scrub_sensitive_response_info,
+    #             record_mode = 'none' if TestMode.is_playback(self.test_mode) else 'all'
+    #         )
+    #
+    #         self.assertIsNotNone(self.working_folder)
+    #         return my_vcr.use_cassette(
+    #             os.path.join(self.working_folder, 'recordings', cassette_name),
+    #             filter_headers=['authorization'],
+    #         )
+    #     else:
+    #         @contextmanager
+    #         def _nop_context_manager():
+    #             yield
+    #         return _nop_context_manager()
 
     def _scrub_sensitive_request_info(self, request):
         if not TestMode.is_playback(self.test_mode):
@@ -389,31 +349,25 @@ class StorageTestCase(unittest.TestCase):
         return self.settings.IS_SERVER_SIDE_FILE_ENCRYPTION_ENABLED
 
     def generate_oauth_token(self):
-        from azure.identity import ClientSecretCredential
-
-        return ClientSecretCredential(
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-        )
+        if self.is_live:
+            from azure.identity import ClientSecretCredential
+            return ClientSecretCredential(
+                self.get_settings_value("TENANT_ID"),
+                self.get_settings_value("CLIENT_ID"),
+                self.get_settings_value("CLIENT_SECRET"),
+            )
+        return self.generate_fake_token()
 
     def generate_fake_token(self):
         return FakeTokenCredential()
 
-    def generate_async_oauth_token(self):
-        from azure.identity.aio import ClientSecretCredential
-        return ClientSecretCredential(
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-        )
 
-def record(test):
-    def recording_test(self):
-        with self.recording():
-            test(self)
-    recording_test.__name__ = test.__name__
-    return recording_test
+# def record(test):
+#     def recording_test(self):
+#         with self.recording():
+#             test(self)
+#     recording_test.__name__ = test.__name__
+#     return recording_test
 
 
 def not_for_emulator(test):
