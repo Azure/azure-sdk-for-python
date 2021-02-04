@@ -6,7 +6,7 @@ from __future__ import print_function
 import functools
 import time
 
-from azure.keyvault.keys import KeyClient
+from azure.keyvault.keys import KeyClient, KeyType
 from devtools_testutils import PowerShellPreparer
 
 from _shared.test_case import KeyVaultTestCase
@@ -52,7 +52,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a key with optional arguments
-        key = key_client.create_key(key_name, "RSA-HSM", expires_on=expires_on)
+        key = key_client.create_key(key_name, KeyType.rsa_hsm, expires_on=expires_on)
 
         print(key.name)
         print(key.id)

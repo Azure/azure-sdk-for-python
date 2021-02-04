@@ -5,6 +5,7 @@
 import asyncio
 import functools
 
+from azure.keyvault.keys import KeyType
 from azure.keyvault.keys.aio import KeyClient
 from devtools_testutils import PowerShellPreparer
 
@@ -54,7 +55,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # create a key with optional arguments
         key = await key_client.create_key(
-            key_name, "RSA", size=key_size, key_operations=key_ops, expires_on=expires_on
+            key_name, KeyType.rsa, size=key_size, key_operations=key_ops, expires_on=expires_on
         )
 
         print(key.id)
