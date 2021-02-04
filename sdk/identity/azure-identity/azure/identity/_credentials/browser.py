@@ -27,7 +27,8 @@ class InteractiveBrowserCredential(InteractiveCredential):
     """Opens a browser to interactively authenticate a user.
 
     :func:`~get_token` opens a browser to a login URL provided by Azure Active Directory and authenticates a user
-    there with the authorization code flow. Azure Active Directory documentation describes this flow in more detail:
+    there with the authorization code flow, using PKCE (Proof Key for Code Exchange) internally to protect the code.
+    Azure Active Directory documentation describes the authentication flow in more detail:
     https://docs.microsoft.com/azure/active-directory/develop/v1-protocols-oauth-code
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
