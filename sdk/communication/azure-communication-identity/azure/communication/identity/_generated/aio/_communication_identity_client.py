@@ -21,7 +21,7 @@ class CommunicationIdentityClient(object):
 
     :ivar communication_identity: CommunicationIdentityOperations operations
     :vartype communication_identity: azure.communication.identity.aio.operations.CommunicationIdentityOperations
-    :param endpoint: The communication resource, for example https://my-resource.communication.azure.com.
+    :param endpoint: Auth and Identity endpoint.
     :type endpoint: str
     """
 
@@ -36,7 +36,6 @@ class CommunicationIdentityClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.communication_identity = CommunicationIdentityOperations(

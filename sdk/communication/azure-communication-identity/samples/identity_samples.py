@@ -9,13 +9,11 @@
 """
 FILE: identity_sample.py
 DESCRIPTION:
-    These samples demonstrate creating a user, issuing a token, revoking a token and deleting a user.
+    These samples demonstrate identity client samples.
 
     ///authenticating a client via a connection string
 USAGE:
     python identity_samples.py
-    Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
 """
 import os
 
@@ -26,13 +24,10 @@ class CommunicationIdentityClientSamples(object):
         self.endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
         self.client_id = os.getenv('AZURE_CLIENT_ID')
         self.client_secret = os.getenv('AZURE_CLIENT_SECRET')
-        self.tenant_id = os.getenv('AZURE_TENANT_ID')
+        self.tenant_id = os.getnenv('AZURE_TENANT_ID')
 
     def issue_token(self):
-        from azure.communication.identity import (
-            CommunicationIdentityClient,
-            CommunicationTokenScope
-        )
+        from azure.communication.identity import CommunicationIdentityClient
 
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
@@ -40,15 +35,11 @@ class CommunicationIdentityClientSamples(object):
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
-        print("Issuing token for: " + user.identifier)
-        tokenresponse = identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
-        print("Token issued with value: " + tokenresponse.token)
-
+        tokenresponse = identity_client.issue_token(user, scopes=["chat"])
+        print(tokenresponse)
+    
     def revoke_tokens(self):
-        from azure.communication.identity import (
-            CommunicationIdentityClient,
-            CommunicationTokenScope
-        )
+        from azure.communication.identity import CommunicationIdentityClient
 
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
@@ -56,10 +47,9 @@ class CommunicationIdentityClientSamples(object):
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
-        tokenresponse = identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
-        print("Revoking token: " + tokenresponse.token)
+        tokenresponse = identity_client.issue_token(user, scopes=["chat"])
         identity_client.revoke_tokens(user)
-        print(tokenresponse.token + " revoked successfully")
+        print(tokenresponse)
 
     def create_user(self):
         from azure.communication.identity import CommunicationIdentityClient
@@ -69,25 +59,9 @@ class CommunicationIdentityClientSamples(object):
             identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
-        print("Creating new user")
         user = identity_client.create_user()
-        print("User created with id:" + user.identifier)
-
-    def create_user_with_token(self):
-        from azure.communication.identity import (
-            CommunicationIdentityClient,
-            CommunicationTokenScope
-        )
-        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
-            from azure.identity import DefaultAzureCredential
-            identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
-        else:
-            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
-        print("Creating new user with token")
-        user, tokenresponse = identity_client.create_user_with_token(scopes=[CommunicationTokenScope.CHAT])
-        print("User created with id:" + user.identifier)
-        print("Token issued with value: " + tokenresponse.token)
-
+        print(user.identifier)
+    
     def delete_user(self):
         from azure.communication.identity import CommunicationIdentityClient
 
@@ -97,14 +71,11 @@ class CommunicationIdentityClientSamples(object):
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
-        print("Deleting user: " + user.identifier)
         identity_client.delete_user(user)
-        print(user.identifier + " deleted")
 
 if __name__ == '__main__':
     sample = CommunicationIdentityClientSamples()
     sample.create_user()
-    sample.create_user_with_token()
+    sample.delete_user()
     sample.issue_token()
     sample.revoke_tokens()
-    sample.delete_user()
