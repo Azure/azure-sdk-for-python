@@ -41,7 +41,7 @@ class CryptoClientTests(KeyVaultTestCase):
 
     plaintext = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
 
-    def create_client(self, vault_uri, **kwargs):
+    def create_key_client(self, vault_uri, **kwargs):
         credential = self.get_credential(KeyClient)
         return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
 
@@ -101,7 +101,7 @@ class CryptoClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_ec_key_id(self, azure_keyvault_url, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
-        key_client = self.create_client(azure_keyvault_url)
+        key_client = self.create_key_client(azure_keyvault_url)
         key = key_client.create_ec_key(self.get_resource_name("eckey"))
 
         crypto_client = self.create_crypto_client(key.id)
@@ -116,7 +116,7 @@ class CryptoClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_rsa_key_id(self, azure_keyvault_url, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
-        key_client = self.create_client(azure_keyvault_url)
+        key_client = self.create_key_client(azure_keyvault_url)
         key = key_client.create_rsa_key(self.get_resource_name("rsakey"))
 
         crypto_client = self.create_crypto_client(key.id)
@@ -132,7 +132,7 @@ class CryptoClientTests(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     def test_encrypt_and_decrypt(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url, permissions=NO_GET)
+        key_client = self.create_key_client(azure_keyvault_url, permissions=NO_GET)
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = self._import_test_key(key_client, key_name)
@@ -148,7 +148,7 @@ class CryptoClientTests(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     def test_sign_and_verify(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url, permissions=NO_GET)
+        key_client = self.create_key_client(azure_keyvault_url, permissions=NO_GET)
         key_name = self.get_resource_name("keysign")
 
         md = hashlib.sha256()
@@ -168,7 +168,7 @@ class CryptoClientTests(KeyVaultTestCase):
 
     @KeyVaultPreparer()
     def test_wrap_and_unwrap(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url, permissions=NO_GET)
+        key_client = self.create_key_client(azure_keyvault_url, permissions=NO_GET)
         key_name = self.get_resource_name("keywrap")
 
         created_key = key_client.create_key(key_name, "RSA")
@@ -186,7 +186,7 @@ class CryptoClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_encrypt_local(self, azure_keyvault_url, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
-        key_client = self.create_client(azure_keyvault_url)
+        key_client = self.create_key_client(azure_keyvault_url)
         key_name = self.get_resource_name("encrypt-local")
         key = key_client.create_rsa_key(key_name, size=4096)
         crypto_client = self.create_crypto_client(key)
@@ -201,7 +201,7 @@ class CryptoClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_wrap_local(self, azure_keyvault_url, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
-        key_client = self.create_client(azure_keyvault_url)
+        key_client = self.create_key_client(azure_keyvault_url)
         key_name = self.get_resource_name("wrap-local")
         key = key_client.create_rsa_key(key_name, size=4096)
         crypto_client = self.create_crypto_client(key)
@@ -216,7 +216,7 @@ class CryptoClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_rsa_verify_local(self, azure_keyvault_url, **kwargs):
         """Sign with Key Vault, verify locally"""
-        key_client = self.create_client(azure_keyvault_url)
+        key_client = self.create_key_client(azure_keyvault_url)
         for size in (2048, 3072, 4096):
             key_name = self.get_resource_name("rsa-verify-{}".format(size))
             key = key_client.create_rsa_key(key_name, size=size)
@@ -240,7 +240,7 @@ class CryptoClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_ec_verify_local(self, azure_keyvault_url, **kwargs):
         """Sign with Key Vault, verify locally"""
-        key_client = self.create_client(azure_keyvault_url)
+        key_client = self.create_key_client(azure_keyvault_url)
         matrix = {
             KeyCurveName.p_256: (SignatureAlgorithm.es256, hashlib.sha256),
             KeyCurveName.p_256_k: (SignatureAlgorithm.es256_k, hashlib.sha256),
@@ -264,7 +264,7 @@ class CryptoClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     def test_local_validity_period_enforcement(self, azure_keyvault_url, **kwargs):
         """Local crypto operations should respect a key's nbf and exp properties"""
-        key_client = self.create_client(azure_keyvault_url, permissions=NO_GET)
+        key_client = self.create_key_client(azure_keyvault_url, permissions=NO_GET)
         def test_operations(key, expected_error_substrings, encrypt_algorithms, wrap_algorithms):
             crypto_client = self.create_crypto_client(key)
             for algorithm in encrypt_algorithms:
