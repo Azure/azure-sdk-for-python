@@ -19,8 +19,8 @@ USAGE:
 
 import os
 import asyncio
-from azure.communication.phonenumber.aio import PhoneNumberAdministrationClient
-from azure.communication.phonenumber import PstnConfiguration
+from azure.communication.phonenumbers.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumbers import PstnConfiguration
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 phonenumber_to_configure = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_CONFIGURE',

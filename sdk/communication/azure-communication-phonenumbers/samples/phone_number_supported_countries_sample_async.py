@@ -19,7 +19,7 @@ USAGE:
 
 import os
 import asyncio
-from azure.communication.phonenumber.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumbers.aio import PhoneNumberAdministrationClient
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 

@@ -25,8 +25,8 @@ USAGE:
 
 import os
 import asyncio
-from azure.communication.phonenumber.aio import PhoneNumberAdministrationClient
-from azure.communication.phonenumber import CreateSearchOptions
+from azure.communication.phonenumbers.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumbers import CreateSearchOptions
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)

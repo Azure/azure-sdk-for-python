@@ -23,7 +23,7 @@ pip install azure-communication-phonenumber
 ```python
 # You can find your endpoint and access token from your resource in the Azure Portal
 import os
-from azure.communication.phonenumber import PhoneNumbersAdministrationClient
+from azure.communication.phonenumbers import PhoneNumbersAdministrationClient
 from azure.identity import DefaultAzureCredential
 
 endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
@@ -39,7 +39,7 @@ Connection string authentication is also available for Phone Number Client.
 ```python
 # You can find your endpoint and access token from your resource in the Azure Portal
 import os
-from azure.communication.phonenumber import PhoneNumbersAdministrationClient
+from azure.communication.phonenumbers import PhoneNumbersAdministrationClient
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)

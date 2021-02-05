@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-from azure.communication.phonenumber._shared.utils import parse_connection_str
+from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from _shared.testcase import CommunicationTestCase
 
 class PhoneNumberCommunicationTestCase(CommunicationTestCase):

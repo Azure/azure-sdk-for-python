@@ -20,8 +20,8 @@ USAGE:
 
 import asyncio
 import os
-from azure.communication.phonenumber.aio import PhoneNumberAdministrationClient
-from azure.communication.phonenumber import NumberUpdateCapabilities
+from azure.communication.phonenumbers.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumbers import NumberUpdateCapabilities
 
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')

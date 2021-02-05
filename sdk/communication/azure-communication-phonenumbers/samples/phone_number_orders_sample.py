@@ -25,7 +25,7 @@ USAGE:
 
 
 import os
-from azure.communication.phonenumber import (
+from azure.communication.phonenumbers import (
     PhoneNumberAdministrationClient,
     CreateSearchOptions
 )

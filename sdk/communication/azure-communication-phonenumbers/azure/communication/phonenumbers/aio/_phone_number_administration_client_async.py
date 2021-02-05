@@ -6,7 +6,7 @@
 # ------------------------------------
 from typing import Dict
 
-from azure.communication.phonenumber._generated.models import ReleaseStatus, CreateSearchOptions
+from azure.communication.phonenumbers._generated.models import ReleaseStatus, CreateSearchOptions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async

@@ -4,7 +4,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.communication.phonenumber._generated.models import ReleaseStatus, CreateSearchOptions
+from azure.communication.phonenumbers._generated.models import ReleaseStatus, CreateSearchOptions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
