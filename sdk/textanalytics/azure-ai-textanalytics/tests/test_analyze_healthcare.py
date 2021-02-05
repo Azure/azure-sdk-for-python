@@ -607,7 +607,7 @@ class TestHealth(TextAnalyticsTest):
                 self.assertIsNotNone(doc.statistics)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     def test_cancellation(self, client):
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
@@ -616,11 +616,10 @@ class TestHealth(TextAnalyticsTest):
 
         try:
             cancellation_poller = poller.cancel()
+            cancellation_poller.wait()
 
         except HttpResponseError:
             pass # expected if the operation was already in a terminal state.
-
-        cancellation_poller.wait()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
