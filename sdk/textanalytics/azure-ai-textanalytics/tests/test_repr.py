@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import datetime
 from azure.ai.textanalytics import _models
 from azure.ai.textanalytics._generated.v3_1_preview_3 import models as _generated_models
 
@@ -212,6 +213,55 @@ def sentence_sentiment(sentiment_confidence_scores, mined_opinion):
     assert repr(model) == model_repr
     return model, model_repr
 
+@pytest.fixture
+def recognize_pii_entities_result(pii_entity, text_analytics_warning, text_document_statistics):
+    model = _models.RecognizePiiEntitiesResult(
+        id="1",
+        entities=[pii_entity[0]],
+        redacted_text="***********",
+        warnings=[text_analytics_warning[0]],
+        statistics=text_document_statistics[0],
+        is_error=False
+    )
+    model_repr = "RecognizePiiEntitiesResult(id=1, entities=[{}], redacted_text=***********, warnings=[{}], " \
+    "statistics={}, is_error=False)".format(
+        pii_entity[1], text_analytics_warning[1], text_document_statistics[1]
+    )
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def recognize_entities_result(categorized_entity, text_analytics_warning, text_document_statistics):
+    model = _models.RecognizeEntitiesResult(
+        id="1",
+        entities=[categorized_entity[0]],
+        warnings=[text_analytics_warning[0]],
+        statistics=text_document_statistics[0],
+        is_error=False
+    )
+    model_repr = "RecognizeEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, is_error=False)".format(
+        categorized_entity[1], text_analytics_warning[1], text_document_statistics[1]
+    )
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def extract_key_phrases_result(text_analytics_warning, text_document_statistics):
+    model = _models.ExtractKeyPhrasesResult(
+        id="1",
+        key_phrases=["dog", "cat", "bird"],
+        warnings=[text_analytics_warning[0]],
+        statistics=text_document_statistics[0],
+        is_error=False
+    )
+    model_repr = "ExtractKeyPhrasesResult(id=1, key_phrases=['dog', 'cat', 'bird'], warnings=[{}], statistics={}, is_error=False)".format(
+        text_analytics_warning[1], text_document_statistics[1]
+    )
+
+    assert repr(model) == model_repr
+    return model, model_repr
 
 class TestRepr():
     def test_text_document_input(self):
@@ -272,36 +322,6 @@ class TestRepr():
 
         assert repr(model) == model_repr
 
-    def test_recognize_entities_result(self, categorized_entity, text_analytics_warning, text_document_statistics):
-        model = _models.RecognizeEntitiesResult(
-            id="1",
-            entities=[categorized_entity[0]],
-            warnings=[text_analytics_warning[0]],
-            statistics=text_document_statistics[0],
-            is_error=False
-        )
-        model_repr = "RecognizeEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, is_error=False)".format(
-            categorized_entity[1], text_analytics_warning[1], text_document_statistics[1]
-        )
-
-        assert repr(model) == model_repr
-
-    def test_recognize_pii_entities_result(self, pii_entity, text_analytics_warning, text_document_statistics):
-        model = _models.RecognizePiiEntitiesResult(
-            id="1",
-            entities=[pii_entity[0]],
-            redacted_text="***********",
-            warnings=[text_analytics_warning[0]],
-            statistics=text_document_statistics[0],
-            is_error=False
-        )
-        model_repr = "RecognizePiiEntitiesResult(id=1, entities=[{}], redacted_text=***********, warnings=[{}], " \
-        "statistics={}, is_error=False)".format(
-            pii_entity[1], text_analytics_warning[1], text_document_statistics[1]
-        )
-
-        assert repr(model) == model_repr
-
     def test_recognized_linked_entites_result(self, linked_entity, text_analytics_warning, text_document_statistics):
         model = _models.RecognizeLinkedEntitiesResult(
             id="1",
@@ -312,20 +332,6 @@ class TestRepr():
         )
         model_repr = "RecognizeLinkedEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, is_error=False)".format(
             linked_entity[1], text_analytics_warning[1], text_document_statistics[1]
-        )
-
-        assert repr(model) == model_repr
-
-    def test_extract_key_phrases_result(self, text_analytics_warning, text_document_statistics):
-        model = _models.ExtractKeyPhrasesResult(
-            id="1",
-            key_phrases=["dog", "cat", "bird"],
-            warnings=[text_analytics_warning[0]],
-            statistics=text_document_statistics[0],
-            is_error=False
-        )
-        model_repr = "ExtractKeyPhrasesResult(id=1, key_phrases=['dog', 'cat', 'bird'], warnings=[{}], statistics={}, is_error=False)".format(
-            text_analytics_warning[1], text_document_statistics[1]
         )
 
         assert repr(model) == model_repr
@@ -366,3 +372,51 @@ class TestRepr():
         error = _models.TextAnalyticsError._from_generated(generated_error)
         assert error.code == "UnsupportedLanguageCode"
         assert error.message == "Supplied language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant"
+
+    def test_analyze_batch_actions_result_recognize_entities(self, recognize_entities_result):
+        model = _models.AnalyzeBatchActionsResult(
+            document_results=[recognize_entities_result[0]],
+            is_error=False,
+            action_type=_models.AnalyzeBatchActionsType.RECOGNIZE_ENTITIES,
+            completed_on=datetime.datetime(1, 1, 1)
+        )
+
+        model_repr = (
+            "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={})".format(
+                recognize_entities_result[1], False, "recognize_entities", datetime.datetime(1, 1, 1)
+            )
+        )
+
+        assert repr(model) == model_repr
+
+    def test_analyze_batch_actions_result_recognize_pii_entities(self, recognize_pii_entities_result):
+        model = _models.AnalyzeBatchActionsResult(
+            document_results=[recognize_pii_entities_result[0]],
+            is_error=False,
+            action_type=_models.AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES,
+            completed_on=datetime.datetime(1, 1, 1)
+        )
+
+        model_repr = (
+            "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={})".format(
+                recognize_pii_entities_result[1], False, "recognize_pii_entities", datetime.datetime(1, 1, 1)
+            )
+        )
+
+        assert repr(model) == model_repr
+
+    def test_analyze_batch_actions_result_extract_key_phrases(self, extract_key_phrases_result):
+        model = _models.AnalyzeBatchActionsResult(
+            document_results=[extract_key_phrases_result[0]],
+            is_error=False,
+            action_type=_models.AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES,
+            completed_on=datetime.datetime(1, 1, 1)
+        )
+
+        model_repr = (
+            "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={})".format(
+                extract_key_phrases_result[1], False, "extract_key_phrases", datetime.datetime(1, 1, 1)
+            )
+        )
+
+        assert repr(model) == model_repr

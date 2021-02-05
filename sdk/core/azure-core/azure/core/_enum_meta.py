@@ -24,22 +24,38 @@
 #
 # --------------------------------------------------------------------------
 
-from ._version import VERSION
-__version__ = VERSION
-
-from ._pipeline_client import PipelineClient
-from ._match_conditions import MatchConditions
-from ._enum_meta import CaseInsensitiveEnumMeta
+from enum import EnumMeta
 
 
-__all__ = [
-    "PipelineClient",
-    "MatchConditions",
-    "CaseInsensitiveEnumMeta"
-]
+class CaseInsensitiveEnumMeta(EnumMeta):
+    """Enum metaclass to allow for interoperability with case-insensitive strings.
 
-try:
-    from ._pipeline_client_async import AsyncPipelineClient #pylint: disable=unused-import
-    __all__.extend(["AsyncPipelineClient"])
-except (ImportError, SyntaxError): # Python <= 3.5
-    pass
+    Consuming this metaclass in an SDK should be done in the following manner:
+
+    .. code-block:: python
+
+        from enum import Enum
+        from six import with_metaclass
+        from azure.core import CaseInsensitiveEnumMeta
+
+        class MyCustomEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+            FOO = 'foo'
+            BAR = 'bar'
+
+    """
+
+    def __getitem__(cls, name):
+        # disabling pylint bc of pylint bug https://github.com/PyCQA/astroid/issues/713
+        return super(CaseInsensitiveEnumMeta, cls).__getitem__(name.upper())  # pylint: disable=no-value-for-parameter
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
