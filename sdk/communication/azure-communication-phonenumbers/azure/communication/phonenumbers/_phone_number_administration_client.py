@@ -11,7 +11,7 @@ from azure.core.polling import LROPoller
 from ._polling import ReleasePhoneNumberPolling, ReservePhoneNumberPolling, PurchaseReservationPolling
 
 from ._generated._phone_number_administration_service\
-    import PhoneNumberAdministrationService as PhoneNumberAdministrationClientGen
+    import PhoneNumberAdministrationService as PhoneNumbersAdministrationClientGen
 
 from ._generated.models import (
     AcquiredPhoneNumbers,
@@ -61,7 +61,7 @@ class PhoneNumbersAdministrationClient(object):
                 "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
-        self._phone_number_administration_client = PhoneNumberAdministrationClientGen(
+        self._phone_number_administration_client = PhoneNumbersAdministrationClientGen(
             self._endpoint,
             authentication_policy=get_authentication_policy(endpoint, credential),
             sdk_moniker=SDK_MONIKER,

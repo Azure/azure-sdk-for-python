@@ -20,11 +20,11 @@ USAGE:
 
 import os
 from azure.communication.phonenumbers import (
-    PhoneNumberAdministrationClient
+    PhoneNumbersAdministrationClient
 )
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE', "US")
 phone_plan_id_area_codes = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_ID_AREA_CODES', "phone-plan-id")
 

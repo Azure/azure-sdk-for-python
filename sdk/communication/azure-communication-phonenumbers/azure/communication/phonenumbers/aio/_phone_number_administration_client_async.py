@@ -18,7 +18,7 @@ from ._polling_async import ReleasePhoneNumberPollingAsync, \
     PurchaseReservationPollingAsync
 
 from .._generated.aio._phone_number_administration_service \
-    import PhoneNumberAdministrationService as PhoneNumberAdministrationClientGen
+    import PhoneNumberAdministrationService as PhoneNumbersAdministrationClientGen
 
 from .._generated.models import (
     AcquiredPhoneNumbers,
@@ -40,7 +40,7 @@ from .._generated.models import (
 
 from .._shared.utils import parse_connection_str, get_authentication_policy
 
-class PhoneNumberAdministrationClient(object):
+class PhoneNumbersAdministrationClient(object):
     """Azure Communication Services Phone Number Management client.
 
     :param str endpoint:
@@ -67,7 +67,7 @@ class PhoneNumberAdministrationClient(object):
                 "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
-        self._phone_number_administration_client = PhoneNumberAdministrationClientGen(
+        self._phone_number_administration_client = PhoneNumbersAdministrationClientGen(
             self._endpoint,
             authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
             sdk_moniker=SDK_MONIKER,
@@ -77,7 +77,7 @@ class PhoneNumberAdministrationClient(object):
     def from_connection_string(
             cls, conn_str,  # type: str
             **kwargs  # type: Any
-    ):  # type: (...) -> PhoneNumberAdministrationClient
+    ):  # type: (...) -> PhoneNumbersAdministrationClient
         """Create PhoneNumbersAdministrationClient from a Connection String.
 
         :param str conn_str:

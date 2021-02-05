@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-from azure.communication.phonenumbers.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumbers.aio import PhoneNumbersAdministrationClient
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from azure.communication.phonenumbers import (
     PstnConfiguration,
@@ -21,10 +21,10 @@ import os
 SKIP_PHONE_NUMBER_TESTS = True
 PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
 
-class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTestCase):
+class PhoneNumbersAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTestCase):
 
     def setUp(self):
-        super(PhoneNumberAdministrationClientTestAsync, self).setUp()
+        super(PhoneNumbersAdministrationClientTestAsync, self).setUp()
         self.recording_processors.extend([
             BodyReplacerProcessor(
                 keys=["id", "token", "capabilitiesUpdateId", "phoneNumber", "phonePlanIds",
@@ -34,7 +34,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
             ),
             PhoneNumberUriReplacer(),
             ResponseReplacerProcessor(keys=[self._resource_name])])
-        self._phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(
+        self._phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(
             self.connection_str)
         if self.is_live:
             self.country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE')
@@ -134,7 +134,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
     async def test_list_all_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
-        phone_number_client = PhoneNumberAdministrationClient(endpoint, credential)
+        phone_number_client = PhoneNumbersAdministrationClient(endpoint, credential)
         async with phone_number_client:
             pages = phone_number_client.list_all_phone_numbers()
             items = []

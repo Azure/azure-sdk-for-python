@@ -19,7 +19,7 @@ USAGE:
 
 import os
 import asyncio
-from azure.communication.phonenumbers.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumbers.aio import PhoneNumbersAdministrationClient
 from azure.communication.phonenumbers import PstnConfiguration
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
@@ -29,7 +29,7 @@ phonenumber_to_configure = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_P
 
 async def get_number_configuration():
     # [START get_number_configuration]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
         phone_number_configuration_response = await phone_number_administration_client.get_number_configuration(
             phone_number=phonenumber_to_configure
@@ -41,7 +41,7 @@ async def get_number_configuration():
 
 async def configure_number():
     # [START configure_number]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     pstn_config = PstnConfiguration(
         callback_url="https://callbackurl",
         application_id="ApplicationId"

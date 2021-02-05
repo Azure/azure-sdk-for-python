@@ -25,11 +25,11 @@ USAGE:
 
 import os
 import asyncio
-from azure.communication.phonenumbers.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumbers.aio import PhoneNumbersAdministrationClient
 from azure.communication.phonenumbers import CreateSearchOptions
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 release_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RELEASE_ID', "release-id")
 reservation_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RESERVATION_ID', "reservation-id")
 area_code_for_reservation = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_AREA_CODE_FOR_RESERVATION', "area-code")
@@ -42,7 +42,7 @@ reservation_id_to_cancel = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_R
 
 async def get_release_by_id():
     # [START get_release_by_id]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
         phone_number_release_response = await phone_number_administration_client.get_release_by_id(
             release_id=release_id
@@ -54,7 +54,7 @@ async def get_release_by_id():
 
 async def list_all_releases():
     # [START list_all_releases]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
         releases_response = phone_number_administration_client.list_all_releases()
         print('releases_response:')
@@ -65,7 +65,7 @@ async def list_all_releases():
 
 async def get_reservation_by_id():
     # [START get_reservation_by_id]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
         phone_number_reservation_response = await phone_number_administration_client.get_reservation_by_id(
             reservation_id=reservation_id
@@ -78,7 +78,7 @@ async def get_reservation_by_id():
 
 async def begin_reserve_phone_numbers():
     # [START begin_reserve_phone_numbers]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     reservationOptions = CreateSearchOptions(
         area_code=area_code_for_reservation,
         description="testreservation20200014",
@@ -101,7 +101,7 @@ async def begin_reserve_phone_numbers():
 
 async def cancel_reservation():
     # [START cancel_reservation]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
         await phone_number_administration_client.cancel_reservation(
             reservation_id=reservation_id_to_cancel
@@ -111,7 +111,7 @@ async def cancel_reservation():
 
 async def begin_purchase_reservation():
     # [START begin_purchase_reservation]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
         await phone_number_administration_client.begin_purchase_reservation(
             reservation_id=reservation_id_to_purchase

@@ -26,12 +26,12 @@ USAGE:
 
 import os
 from azure.communication.phonenumbers import (
-    PhoneNumberAdministrationClient,
+    PhoneNumbersAdministrationClient,
     CreateSearchOptions
 )
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 release_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RELEASE_ID', "release-id")
 reservation_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RESERVATION_ID', "reservation-id")
 area_code_for_reservation = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_AREA_CODE_FOR_RESERVATION', "area-code")

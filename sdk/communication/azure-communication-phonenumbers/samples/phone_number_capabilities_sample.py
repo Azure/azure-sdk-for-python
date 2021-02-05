@@ -20,12 +20,12 @@ USAGE:
 
 import os
 from azure.communication.phonenumbers import (
-    PhoneNumberAdministrationClient,
+    PhoneNumbersAdministrationClient,
     NumberUpdateCapabilities
 )
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 capabilities_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_CAPABILITIES_ID', "capabilities-id")
 phonenumber_for_capabilities = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_FOR_CAPABILITIES', "+17771234567")
 

@@ -20,7 +20,7 @@ USAGE:
 
 import os
 import asyncio
-from azure.communication.phonenumbers.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumbers.aio import PhoneNumbersAdministrationClient
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE', "US")
@@ -29,7 +29,7 @@ phone_plan_id_area_codes = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_P
 
 async def get_all_area_codes():
     # [START get_all_area_codes]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(
         connection_str)
     async with phone_number_administration_client:
         all_area_codes = await phone_number_administration_client.get_all_area_codes(

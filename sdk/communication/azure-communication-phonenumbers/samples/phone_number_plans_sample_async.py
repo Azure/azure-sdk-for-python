@@ -22,7 +22,7 @@ USAGE:
 
 import os
 import asyncio
-from azure.communication.phonenumbers.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumbers.aio import PhoneNumbersAdministrationClient
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE', "US")
@@ -32,7 +32,7 @@ phone_plan_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_I
 
 async def list_phone_plan_groups():
     # [START list_phone_plan_groups]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
         phone_plan_groups_response = phone_number_administration_client.list_phone_plan_groups(
             country_code=country_code
@@ -45,7 +45,7 @@ async def list_phone_plan_groups():
 
 async def list_phone_plans():
     # [START list_phone_plans]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
         phone_plans_response = phone_number_administration_client.list_phone_plans(
             country_code=country_code,
@@ -59,7 +59,7 @@ async def list_phone_plans():
 
 async def get_phone_plan_location_options():
     # [START get_phone_plan_location_options]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
         location_options_response = await phone_number_administration_client.get_phone_plan_location_options(
             country_code=country_code,

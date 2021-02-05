@@ -19,14 +19,14 @@ USAGE:
 
 import os
 import asyncio
-from azure.communication.phonenumbers.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumbers.aio import PhoneNumbersAdministrationClient
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 
 
 async def list_all_supported_countries():
     # [START list_all_supported_countries]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
         supported_countries = phone_number_administration_client.list_all_supported_countries()
         print('supported_countries:')

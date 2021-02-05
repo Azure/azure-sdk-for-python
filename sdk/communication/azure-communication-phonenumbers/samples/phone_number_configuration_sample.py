@@ -20,12 +20,12 @@ USAGE:
 
 import os
 from azure.communication.phonenumbers import (
-    PhoneNumberAdministrationClient,
+    PhoneNumbersAdministrationClient,
     PstnConfiguration
 )
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 phonenumber_to_configure = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_CONFIGURE',
                                                   "phonenumber_to_configure")
 

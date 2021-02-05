@@ -20,7 +20,7 @@ USAGE:
 
 import asyncio
 import os
-from azure.communication.phonenumbers.aio import PhoneNumberAdministrationClient
+from azure.communication.phonenumbers.aio import PhoneNumbersAdministrationClient
 from azure.communication.phonenumbers import NumberUpdateCapabilities
 
 
@@ -32,7 +32,7 @@ phonenumber_for_capabilities = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBE
 
 async def list_all_phone_numbers():
     # [START list_all_phone_numbers]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
         list_all_phone_numbers_response = phone_number_administration_client.list_all_phone_numbers()
         print('list_all_phone_numbers_response:')
@@ -43,7 +43,7 @@ async def list_all_phone_numbers():
 
 async def get_capabilities_update():
     # [START get_capabilities_update]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
         capabilities_response = await phone_number_administration_client.get_capabilities_update(
             capabilities_update_id=capabilities_id
@@ -55,7 +55,7 @@ async def get_capabilities_update():
 
 async def update_capabilities():
     # [START update_capabilities]
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
     update = NumberUpdateCapabilities(add=iter(["InboundCalling"]))
 
     phone_number_capabilities_update = {
