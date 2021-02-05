@@ -414,6 +414,35 @@ class FileSystemTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_paths_recursively_async())
 
+    async def _test_list_paths_pages_correctly(self):
+        # Arrange
+        file_system = await self._create_file_system(file_system_prefix="filesystem")
+        for i in range(0, 6):
+            await file_system.create_directory("dir1{}".format(i))
+        for i in range(0, 6):
+            await file_system.create_file("file{}".format(i))
+
+        generator = file_system.get_paths(max_results=6, upn=True).by_page()
+        paths1 = []
+        async for path in await generator.__anext__():
+            paths1.append(path)
+        paths2 = []
+        async for path in await generator.__anext__():
+            paths2.append(path)
+
+        with self.assertRaises(StopAsyncIteration):
+            paths3 = []
+            async for path in await generator.__anext__():
+                paths3.append(path)
+
+        self.assertEqual(len(paths1), 6)
+        self.assertEqual(len(paths2), 6)
+
+    @record
+    def test_list_paths_pages_correctly(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_list_paths_pages_correctly())
+
     async def _test_create_directory_from_file_system_client_async(self):
         # Arrange
         file_system = await self._create_file_system()

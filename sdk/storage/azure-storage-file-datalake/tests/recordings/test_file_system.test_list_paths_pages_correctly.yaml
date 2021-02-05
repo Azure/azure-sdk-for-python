@@ -1,0 +1,666 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 1fbc8c32-67f0-11eb-b5d4-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:18 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/fse78613f1?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      ETag:
+      - '"0x8D8CA14042A5040"'
+      Last-Modified:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - d03a4b53-801e-00a5-20fc-fb9c26000000
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 200750f0-67f0-11eb-b9a4-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/fse78613f1/dir10?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Feb 2021 20:24:18 GMT
+      ETag:
+      - '"0x8D8CA14047AFA72"'
+      Last-Modified:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a49902ee-a01f-0024-5dfc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 203ccb5b-67f0-11eb-b63e-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/fse78613f1/dir11?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Feb 2021 20:24:18 GMT
+      ETag:
+      - '"0x8D8CA140486F905"'
+      Last-Modified:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a49902f2-a01f-0024-61fc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 2048e0fa-67f0-11eb-b77b-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/fse78613f1/dir12?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Feb 2021 20:24:18 GMT
+      ETag:
+      - '"0x8D8CA14049273B5"'
+      Last-Modified:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a49902f8-a01f-0024-66fc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 2054c7e8-67f0-11eb-84e6-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/fse78613f1/dir13?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      ETag:
+      - '"0x8D8CA1404B6BF36"'
+      Last-Modified:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a49902fc-a01f-0024-6afc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 2078465b-67f0-11eb-b197-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/fse78613f1/dir14?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      ETag:
+      - '"0x8D8CA1404F1FFA6"'
+      Last-Modified:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a499030b-a01f-0024-79fc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 20b3cb12-67f0-11eb-b5bb-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/fse78613f1/dir15?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      ETag:
+      - '"0x8D8CA140506BC33"'
+      Last-Modified:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a499030d-a01f-0024-7bfc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 20c7ef5d-67f0-11eb-9225-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/fse78613f1/file0?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      ETag:
+      - '"0x8D8CA1405188C83"'
+      Last-Modified:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a499030e-a01f-0024-7cfc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 20d9ba67-67f0-11eb-a53e-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/fse78613f1/file1?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Feb 2021 20:24:19 GMT
+      ETag:
+      - '"0x8D8CA1405282122"'
+      Last-Modified:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a499030f-a01f-0024-7dfc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 20e94abc-67f0-11eb-a538-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/fse78613f1/file2?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      ETag:
+      - '"0x8D8CA140536EF48"'
+      Last-Modified:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a4990310-a01f-0024-7efc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 20f831dc-67f0-11eb-9a1e-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/fse78613f1/file3?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      ETag:
+      - '"0x8D8CA140546153C"'
+      Last-Modified:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a4990312-a01f-0024-80fc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 21081057-67f0-11eb-82ec-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/fse78613f1/file4?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      ETag:
+      - '"0x8D8CA140555048B"'
+      Last-Modified:
+      - Fri, 05 Feb 2021 20:24:21 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a4990315-a01f-0024-03fc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 21167277-67f0-11eb-ac9a-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/fse78613f1/file5?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Feb 2021 20:24:20 GMT
+      ETag:
+      - '"0x8D8CA14057077F7"'
+      Last-Modified:
+      - Fri, 05 Feb 2021 20:24:21 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a4990319-a01f-0024-07fc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 2131c2a9-67f0-11eb-9c33-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:21 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: GET
+    uri: https://storagename.dfs.core.windows.net/fse78613f1?resource=filesystem&recursive=true&maxResults=6&upn=true
+  response:
+    body:
+      string: '{"paths":[{"contentLength":"0","creationTime":"132570302596250226","etag":"0x8D8CA14047AFA72","group":"$superuser","isDirectory":"true","lastModified":"Fri,
+        05 Feb 2021 20:24:19 GMT","name":"dir10","owner":"$superuser","permissions":"rwxr-x---"},{"contentLength":"0","creationTime":"132570302597036293","etag":"0x8D8CA140486F905","group":"$superuser","isDirectory":"true","lastModified":"Fri,
+        05 Feb 2021 20:24:19 GMT","name":"dir11","owner":"$superuser","permissions":"rwxr-x---"},{"contentLength":"0","creationTime":"132570302597788597","etag":"0x8D8CA14049273B5","group":"$superuser","isDirectory":"true","lastModified":"Fri,
+        05 Feb 2021 20:24:19 GMT","name":"dir12","owner":"$superuser","permissions":"rwxr-x---"},{"contentLength":"0","creationTime":"132570302600167222","etag":"0x8D8CA1404B6BF36","group":"$superuser","isDirectory":"true","lastModified":"Fri,
+        05 Feb 2021 20:24:20 GMT","name":"dir13","owner":"$superuser","permissions":"rwxr-x---"},{"contentLength":"0","creationTime":"132570302604050342","etag":"0x8D8CA1404F1FFA6","group":"$superuser","isDirectory":"true","lastModified":"Fri,
+        05 Feb 2021 20:24:20 GMT","name":"dir14","owner":"$superuser","permissions":"rwxr-x---"},{"contentLength":"0","creationTime":"132570302605409331","etag":"0x8D8CA140506BC33","group":"$superuser","isDirectory":"true","lastModified":"Fri,
+        05 Feb 2021 20:24:20 GMT","name":"dir15","owner":"$superuser","permissions":"rwxr-x---"}]}
+
+        '
+    headers:
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Fri, 05 Feb 2021 20:24:22 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-continuation:
+      - VBam9ozP+fC/0PYBGE0YSC9zZWFucHJvZGhpZXJhcmNoaWNhbAEwMUQ1MkI4MzIyMTJGODBBL2ZzZTc4NjEzZjEBMDFENkZCRkNFMUIzQTBGQi9maWxlMBYAAAA=
+      x-ms-request-id:
+      - a4990320-a01f-0024-0efc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 22a3fd13-67f0-11eb-be94-c8348e5fffbc
+      x-ms-date:
+      - Fri, 05 Feb 2021 20:24:23 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: GET
+    uri: https://storagename.dfs.core.windows.net/fse78613f1?resource=filesystem&continuation=VBam9ozP%2BfC%2F0PYBGE0YSC9zZWFucHJvZGhpZXJhcmNoaWNhbAEwMUQ1MkI4MzIyMTJGODBBL2ZzZTc4NjEzZjEBMDFENkZCRkNFMUIzQTBGQi9maWxlMBYAAAA%3D&recursive=true&maxResults=6&upn=true
+  response:
+    body:
+      string: '{"paths":[{"contentLength":"0","creationTime":"132570302606576771","etag":"0x8D8CA1405188C83","group":"$superuser","lastModified":"Fri,
+        05 Feb 2021 20:24:20 GMT","name":"file0","owner":"$superuser","permissions":"rw-r-----"},{"contentLength":"0","creationTime":"132570302607597858","etag":"0x8D8CA1405282122","group":"$superuser","lastModified":"Fri,
+        05 Feb 2021 20:24:20 GMT","name":"file1","owner":"$superuser","permissions":"rw-r-----"},{"contentLength":"0","creationTime":"132570302608568136","etag":"0x8D8CA140536EF48","group":"$superuser","lastModified":"Fri,
+        05 Feb 2021 20:24:20 GMT","name":"file2","owner":"$superuser","permissions":"rw-r-----"},{"contentLength":"0","creationTime":"132570302609560892","etag":"0x8D8CA140546153C","group":"$superuser","lastModified":"Fri,
+        05 Feb 2021 20:24:20 GMT","name":"file3","owner":"$superuser","permissions":"rw-r-----"},{"contentLength":"0","creationTime":"132570302610539659","etag":"0x8D8CA140555048B","group":"$superuser","lastModified":"Fri,
+        05 Feb 2021 20:24:21 GMT","name":"file4","owner":"$superuser","permissions":"rw-r-----"},{"contentLength":"0","creationTime":"132570302612338679","etag":"0x8D8CA14057077F7","group":"$superuser","lastModified":"Fri,
+        05 Feb 2021 20:24:21 GMT","name":"file5","owner":"$superuser","permissions":"rw-r-----"}]}
+
+        '
+    headers:
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Fri, 05 Feb 2021 20:24:22 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-request-id:
+      - a4990368-a01f-0024-56fc-fb3cfc000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 200
+      message: OK
+version: 1
