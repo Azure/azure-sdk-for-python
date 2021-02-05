@@ -54,7 +54,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         assignment = await self._client.role_assignments.create(
             vault_base_url=self._vault_url,
             scope=role_scope,
-            role_assignment_name=kwargs.pop("role_assignment_name", None) or uuid4(),
+            role_assignment_name=kwargs.pop("role_assignment_name", None) or str(uuid4()),
             parameters=create_parameters,
             **kwargs
         )
@@ -156,7 +156,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         definition = await self._client.role_definitions.create_or_update(
             vault_base_url=self._vault_url,
             scope=role_scope,
-            role_definition_name=kwargs.pop("role_definition_name", None) or uuid4(),
+            role_definition_name=kwargs.pop("role_definition_name", None) or str(uuid4()),
             parameters=parameters,
             **kwargs
         )
