@@ -51,7 +51,7 @@ class BodyReplacerProcessor(RecordingProcessor):
     
     def _replace_keys(self, body):
         def _replace_recursively(dictionary):
-            if type(dictionary) != dict:
+            if not isinstance(dictionary, dict):
                 return
             for key in dictionary:
                 if key in self._keys:
