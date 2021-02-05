@@ -7,6 +7,7 @@ import functools
 import time
 
 from azure.keyvault.keys import KeyClient, KeyType
+from azure.keyvault.keys._shared import HttpChallengeCache
 from devtools_testutils import PowerShellPreparer
 
 from _shared.test_case import KeyVaultTestCase
@@ -37,6 +38,11 @@ def test_create_key_client():
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
+    def tearDown(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        super(TestExamplesKeyVault, self).tearDown()
+
     def create_client(self, vault_uri, **kwargs):
         credential = self.get_credential(KeyClient)
         return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)

@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestrsa-key-name22bc0f24/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name22bc0f24/create?api-version=7.1
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 01:30:10 GMT
+      date: Fri, 05 Feb 2021 09:45:15 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -47,15 +47,15 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestrsa-key-name22bc0f24/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name22bc0f24/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestrsa-key-name22bc0f24/a771b7921ebb4a65aac0fd8f5e44b9a6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pFeMJwbZTBe89nReOVNKDERLv1PLwzBUplnCWCLzr2qDo2RcLqSoq2vOJucAmkHusVNflCgaN1idEDYYRPOUgDZopL8AE5asFbrp_oJVK1Xn92_l990kfMPn5xFbdetfibjDNk7QmGVAbY3ftncKXvM9irSPuvkdXfR795ZgGsdSfGqMS-M7LP6YIdVc0GIyTYgN6w5abw-JOl_QDivZaahWunbBuxf1TbewbZSQ1LngWR8QpmQqrAD0U6jSvnE5SAiGGeSZfoGwG4voj8zX35w8q0QkLgtoLY__GDIZgNRzVz8bjIuXtN4sWnAhLAY4K4U3-NDzZQ3bOsZTCfveOQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612488611,"updated":1612488611,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name22bc0f24/66ea8314ce5b46fd9a9610a0b2e5e5f1","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yr4fmkb-Tmf27uPnukHR_C-GxWkG9OTUfV14tv86-0XdtG0mWzwnNTgP_6nKTMkuXw_NiSgCuazaGIJ_bWX0mgGCdYDy4CrEZ47T6O84ctKt-CHzDf4CEgqpGG2hpSLye2Q2UTxT3GN9g9nXb8zwjmEgaJqQcvEGkAeI1Ib-shdBN4DMJAvFj8okzTE5pomNcE2xmPUXOxvmIRSgTw_ETdoozz4UZml4DJh5gCdMcH9CyhbjXPEfbGOiCaDfmWjSIfApIt8NGFvv4GOBIjQqrbxoHMDkfuzvvq9CDdFEBI8t5VNpnFy2fokUIrqhOWra5WZ67O1yjkfI5rJ1RUoBgQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612518315,"updated":1612518315,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '698'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 01:30:11 GMT
+      date: Fri, 05 Feb 2021 09:45:15 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
