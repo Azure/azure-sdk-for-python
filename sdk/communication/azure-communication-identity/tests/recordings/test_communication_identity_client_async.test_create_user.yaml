@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 05 Feb 2021 04:21:13 GMT
+      - Fri, 29 Jan 2021 22:29:58 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -22,13 +22,13 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 04:21:13 GMT
-      ms-cv: tWBWJWGdO02z4Netvx4DCA.0
+      date: Fri, 29 Jan 2021 22:29:57 GMT
+      ms-cv: 1YYCfhRcFkym4hrqBRGZFQ.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-processing-time: 19ms
     status:
       code: 201
       message: Created
-    url: https://communicationa7rrgfgb4kt.communication.azure.com/identities?api-version=2021-03-07
+    url: https://communicationasqoly6jb4x.communication.azure.com/identities?api-version=2021-03-07
 version: 1

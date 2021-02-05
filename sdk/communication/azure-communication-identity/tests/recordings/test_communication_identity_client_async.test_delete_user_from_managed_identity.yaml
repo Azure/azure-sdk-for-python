@@ -18,13 +18,35 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 04:25:51 GMT
-      ms-cv: 5EDSBt98dEmGVNXv3rXnCg.0
+      date: Fri, 29 Jan 2021 22:34:32 GMT
+      ms-cv: M4o3j8QviU6dfW/2cZS4ug.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 176ms
+      x-processing-time: 242ms
     status:
       code: 201
       message: Created
-    url: https://communication7jlwelb67pp.communication.azure.com/identities?api-version=2021-03-07
+    url: https://communicationvfxjz4kgs5q.communication.azure.com/identities?api-version=2021-03-07
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized?api-version=2021-03-07
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions: 2020-07-20-preview2, 2021-03-07
+      date: Fri, 29 Jan 2021 22:34:33 GMT
+      ms-cv: 4NslPsnjL0iQ1CODgbz7TA.0
+      strict-transport-security: max-age=2592000
+      x-processing-time: 676ms
+    status:
+      code: 204
+      message: No Content
+    url: https://communicationvfxjz4kgs5q.communication.azure.com/identities/sanitized?api-version=2021-03-07
 version: 1
