@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+    from typing import Any
 
 
 class DecryptResult:
@@ -31,22 +32,21 @@ class EncryptResult:
     :param algorithm: The encryption algorithm used
     :type algorithm: ~azure.keyvault.keys.crypto.EncryptionAlgorithm
     :param bytes ciphertext: The encrypted bytes
-    :param bytes iv: Initialization vector for symmetric algorithms
-    :param bytes authentication_tag: The tag to authenticate when performing decryption with an authenticated algorithm
-    :param bytes additional_authenticated_data: Additional data to authenticate but not encrypt/decrypt when using an
+    :keyword bytes iv: Initialization vector for symmetric algorithms
+    :keyword bytes authentication_tag: The tag to authenticate when performing decryption with an authenticated
+        algorithm
+    :keyword bytes additional_authenticated_data: Additional data to authenticate but not encrypt/decrypt when using an
         authenticated algorithm
     """
 
-    def __init__(
-        self, key_id, algorithm, ciphertext, iv=None, authentication_tag=None, additional_authenticated_data=None
-    ):
-        # type: (str, EncryptionAlgorithm, bytes, bytes, bytes, bytes) -> None
+    def __init__(self, key_id, algorithm, ciphertext, **kwargs):
+        # type: (str, EncryptionAlgorithm, bytes, **Any) -> None
         self.key_id = key_id
         self.algorithm = algorithm
         self.ciphertext = ciphertext
-        self.iv = iv
-        self.tag = authentication_tag
-        self.aad = additional_authenticated_data
+        self.iv = kwargs.pop("iv", None)
+        self.tag = kwargs.pop("authentication_tag", None)
+        self.aad = kwargs.pop("additional_authenticated_data", None)
 
 
 class SignResult:
