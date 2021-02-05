@@ -56,7 +56,6 @@ class AnalyzeHealthcareSample(object):
                 print("Entity: {}".format(entity.text))
                 print("...Category: {}".format(entity.category))
                 print("...Subcategory: {}".format(entity.subcategory))
-                print("...Length: {}".format(entity.length))
                 print("...Offset: {}".format(entity.offset))
                 print("...Confidence score: {}".format(entity.confidence_score))
                 if entity.links is not None:
