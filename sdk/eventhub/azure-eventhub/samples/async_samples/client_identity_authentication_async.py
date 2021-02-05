@@ -60,6 +60,7 @@ async def run():
                     # New EventDataBatch object can be created here to send more data.
                     break
             await producer.send_batch(event_data_batch)
+    await credential.close()
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(run())

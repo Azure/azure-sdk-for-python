@@ -25,7 +25,30 @@ IGNORED_SAMPLES = {
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",
         "consume_cloud_events_from_service_bus_queue.py",
-        "consume_cloud_events_from_storage_queue.py"]
+        "consume_cloud_events_from_storage_queue.py"],
+    "azure-eventhub": [
+        "authenticate_with_sas_token.py",
+        "proxy.py",
+        "receive_batch_with_checkpoint.py",
+        "recv.py",
+        "recv_track_last_enqueued_event_prop.py",
+        "recv_with_checkpoint_by_event_count.py",
+        "recv_with_checkpoint_by_time_interval.py",
+        "recv_with_checkpoint_store.py",
+        "recv_with_custom_starting_position.py",
+        "sample_code_eventhub.py",
+        "authenticate_with_sas_token_async.py",
+        "iot_hub_connection_string_receive_async.py",
+        "proxy_async.py",
+        "receive_batch_with_checkpoint_async.py",
+        "recv_async.py",
+        "recv_track_last_enqueued_event_prop_async.py",
+        "recv_with_checkpoint_by_event_count_async.py",
+        "recv_with_checkpoint_by_time_interval_async.py",
+        "recv_with_checkpoint_store_async.py",
+        "recv_with_custom_starting_position_async.py",
+        "sample_code_eventhub_async.py"
+    ]
 }
 
 
