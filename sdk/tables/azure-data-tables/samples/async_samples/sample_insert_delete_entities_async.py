@@ -21,22 +21,33 @@ USAGE:
 """
 
 import os
+from time import sleep
 import asyncio
+from dotenv import find_dotenv, load_dotenv
 
 class InsertDeleteEntity(object):
-    connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
-    access_key = os.getenv("AZURE_TABLES_KEY")
-    account_url = os.getenv("AZURE_TABLES_ACCOUNT_URL")
-    account_name = os.getenv("AZURE_TABLES_ACCOUNT_NAME")
-    table_name = "OfficeSupplies"
 
-    entity = {
-        'PartitionKey': 'color',
-        'RowKey': 'brand',
-        'text': 'Marker',
-        'color': 'Purple',
-        'price': '5'
-    }
+    def __init__(self):
+        load_dotenv(find_dotenv())
+        # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
+        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            self.account_name,
+            self.access_key,
+            self.endpoint
+        )
+        self.table_name = "InsertDeleteAsync"
+
+        self.entity = {
+            'PartitionKey': 'color',
+            'RowKey': 'brand',
+            'text': 'Marker',
+            'color': 'Purple',
+            'price': '5'
+        }
 
     async def create_entity(self):
         from azure.data.tables.aio import TableClient
@@ -83,12 +94,24 @@ class InsertDeleteEntity(object):
                 print("Entity does not exists")
         # [END delete_entity]
 
+    async def clean_up(self):
+        from azure.data.tables.aio import TableServiceClient
+        tsc = TableServiceClient.from_connection_string(self.connection_string)
+        async with tsc:
+            async for table in tsc.list_tables():
+                await tsc.delete_table(table.table_name)
+
+            print("Cleaned up")
+
 
 async def main():
     ide = InsertDeleteEntity()
     await ide.create_entity()
     await ide.delete_entity()
+    await ide.clean_up()
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+

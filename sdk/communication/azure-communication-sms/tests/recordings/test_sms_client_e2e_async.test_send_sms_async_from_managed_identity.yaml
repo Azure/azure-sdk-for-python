@@ -1,0 +1,29 @@
+interactions:
+- request:
+    body: '{"from": "sanitized", "to": "sanitized", "message": "Hello World via SMS",
+      "sendSmsOptions": {"enableDeliveryReport": true}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '132'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-sms/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://sanitized.communication.azure.com/sms?api-version=2020-07-20-preview1
+  response:
+    body: '{"messageId": "sanitized"}'
+    headers:
+      content-type: application/json; charset=utf-8
+      date: Wed, 20 Jan 2021 18:11:27 GMT
+      ms-cv: 2alAVqPXy0O98kSmG+jzFA.0
+      request-context: appId=
+      transfer-encoding: chunked
+      x-processing-time: 827ms
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.communication.azure.com/sms?api-version=2020-07-20-preview1
+version: 1

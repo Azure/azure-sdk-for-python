@@ -15,7 +15,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
@@ -23,11 +23,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - a663f9ac-00f4-4ff3-86a9-bcd1c8bd05fa
+      - 1ecc5bec-85ee-4785-80d0-32cd4602a7a6
       date:
-      - Thu, 19 Nov 2020 21:31:32 GMT
+      - Wed, 27 Jan 2021 02:28:13 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/aef1668c-46b9-4753-9e41-b421f6ecf3cf
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/375fe974-f8e0-4b4d-b8be-20ec5c9d9233
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -35,7 +35,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '79'
+      - '132'
     status:
       code: 202
       message: Accepted
@@ -49,19 +49,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/aef1668c-46b9-4753-9e41-b421f6ecf3cf
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/375fe974-f8e0-4b4d-b8be-20ec5c9d9233
   response:
     body:
-      string: '{"jobId":"aef1668c-46b9-4753-9e41-b421f6ecf3cf","lastUpdateDateTime":"2020-11-19T21:31:37Z","createdDateTime":"2020-11-19T21:31:33Z","expirationDateTime":"2020-11-20T21:31:33Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","entities":[{"offset":17,"length":3,"text":"cat","category":"TreatmentName","confidenceScore":0.74,"isNegated":false,"links":[{"dataSource":"UMLS","id":"C0280589"},{"dataSource":"CHV","id":"0000027342"},{"dataSource":"NCI","id":"C10277"},{"dataSource":"PDQ","id":"CDR0000040974"}]},{"offset":28,"length":12,"text":"veterinarian","category":"HealthcareProfession","confidenceScore":0.99,"isNegated":false}],"relations":[],"warnings":[]},{"id":"2","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+      string: '{"jobId":"375fe974-f8e0-4b4d-b8be-20ec5c9d9233","lastUpdateDateTime":"2021-01-27T02:28:16Z","createdDateTime":"2021-01-27T02:28:13Z","expirationDateTime":"2021-01-28T02:28:13Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","entities":[{"offset":17,"length":3,"text":"cat","category":"TreatmentName","confidenceScore":0.74,"isNegated":false,"links":[{"dataSource":"UMLS","id":"C0280589"},{"dataSource":"CHV","id":"0000027342"},{"dataSource":"NCI","id":"C10277"},{"dataSource":"PDQ","id":"CDR0000040974"}]},{"offset":28,"length":12,"text":"veterinarian","category":"HealthcareProfession","confidenceScore":0.99,"isNegated":false}],"relations":[],"warnings":[]},{"id":"2","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
     headers:
       apim-request-id:
-      - fbb2337e-c2f4-438c-aee0-9853c095e64e
+      - a13d573f-dc09-4751-a5f5-aca863ce869a
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 19 Nov 2020 21:31:37 GMT
+      - Wed, 27 Jan 2021 02:28:19 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -69,7 +69,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '36'
+      - '47'
     status:
       code: 200
       message: OK

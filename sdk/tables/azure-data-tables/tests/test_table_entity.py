@@ -14,6 +14,8 @@ from enum import Enum
 from math import isnan
 import uuid
 
+from devtools_testutils import AzureTestCase
+
 from azure.data.tables import (
     TableServiceClient,
     TableClient,
@@ -39,7 +41,7 @@ from preparers import TablesPreparer
 
 # ------------------------------------------------------------------------------
 
-class StorageTableEntityTest(TableTestCase):
+class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='table'):
         self.table_name = self.get_resource_name('uttable')
@@ -109,6 +111,32 @@ class StorageTableEntityTest(TableTestCase):
             pk = pk if pk is not None else self.get_resource_name('pk')
             rk = rk if rk is not None else self.get_resource_name('rk')
         return pk, rk
+
+    def _insert_two_opposite_entities(self, pk=None, rk=None):
+        entity1 = self._create_random_entity_dict()
+        resp = self.table.create_entity(entity1)
+
+        partition, row = self._create_pk_rk(pk, rk)
+        properties = {
+            'PartitionKey': partition + u'1',
+            'RowKey': row + u'1',
+            'age': 49,
+            'sex': u'female',
+            'married': False,
+            'deceased': True,
+            'optional': None,
+            'ratio': 5.2,
+            'evenratio': 6.0,
+            'large': 39999011,
+            'Birthday': datetime(1993, 4, 1, tzinfo=tzutc()),
+            'birthday': datetime(1990, 4, 1, tzinfo=tzutc()),
+            'binary': b'binary-binary',
+            'other': EntityProperty(value=40, type=EdmType.INT32),
+            'clsid': uuid.UUID('c8da6455-213e-42d9-9b79-3f9149a57833')
+        }
+        entity = TableEntity(**properties)
+        self.table.create_entity(entity)
+        return entity1, resp
 
     def _create_random_entity_dict(self, pk=None, rk=None):
         """
@@ -317,36 +345,137 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            entity = self._insert_random_entity()
+            entity, _ = self._insert_two_opposite_entities()
 
             # Act
-            # resp = self.table.create_item(entity)
-            resp = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': 'True'})
+            entities = self.table.query_entities(
+                filter="married eq @my_param",
+                parameters={'my_param': entity['married']}
+            )
 
-            # Assert  --- Does this mean insert returns nothing?
-            assert resp is not None
+            assert entities is not None
+            length = 0
+            for e in entities:
+                self._assert_default_entity(e)
+                length += 1
+
+            assert length == 1
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/15554")
     @TablesPreparer()
     def test_query_user_filter_multiple_params(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            entity, _ = self._insert_random_entity()
+            entity, _ = self._insert_two_opposite_entities()
 
             # Act
             parameters = {
-                'my_param': 'True',
+                'my_param': True,
                 'rk': entity['RowKey']
             }
             entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
 
-            # Assert  --- Does this mean insert returns nothing?
+            length = 0
             assert entities is not None
             for entity in entities:
                 self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_integers(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': 40,
+            }
+            entities = self.table.query_entities(filter="age lt @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_floats(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['ratio'] + 1,
+            }
+            entities = self.table.query_entities(filter="ratio lt @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_datetimes(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['birthday'],
+            }
+            entities = self.table.query_entities(filter="birthday eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_guids(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['clsid']
+            }
+            entities = self.table.query_entities(filter="clsid eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
         finally:
             self._tear_down()
 
@@ -382,7 +511,6 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act
-            # resp = self.table.create_item(entity)
             resp = self.table.create_entity(entity=entity)
 
             # Assert
@@ -550,7 +678,6 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             with pytest.raises(ValueError):
-                # resp = self.table.create_item(entity)
                 resp = self.table.create_entity(entity=entity)
             # Assert
         finally:
@@ -1325,7 +1452,10 @@ class StorageTableEntityTest(TableTestCase):
                     base_entity['PartitionKey'] += str(i)
                 base_entity['RowKey'] += str(i)
                 base_entity['value'] = i
-                self.table.create_entity(base_entity)
+                try:
+                    self.table.create_entity(base_entity)
+                except ResourceExistsError:
+                    pass
 
             query_filter = u"PartitionKey eq 'pk'"
 

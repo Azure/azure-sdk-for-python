@@ -1,0 +1,43 @@
+interactions:
+- request:
+    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-10-21T00:00:00.000Z",
+      "series": [{"dimension": {"dimension_name": "Los Angeles"}}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '132'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/series/query
+  response:
+    body:
+      string: '{"value":[{"series":{"dimension":{"dimension_name":"Los Angeles"}},"timestampList":[],"valueList":[],"isAnomalyList":[],"periodList":[],"expectedValueList":[],"lowerBoundaryList":[],"upperBoundaryList":[]}]}'
+    headers:
+      apim-request-id:
+      - 6fcbf1b6-26b6-414e-a344-c6148843893a
+      content-length:
+      - '197'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 Jan 2021 01:01:45 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '198'
+      x-request-id:
+      - 6fcbf1b6-26b6-414e-a344-c6148843893a
+    status:
+      code: 200
+      message: OK
+version: 1

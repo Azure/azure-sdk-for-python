@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class OrganizationOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class OrganizationOperations:
     def list_by_subscription(
         self,
         **kwargs
-    ) -> AsyncIterable["models.OrganizationResourceListResult"]:
+    ) -> AsyncIterable["_models.OrganizationResourceListResult"]:
         """List all organizations under the specified subscription.
 
         List all organizations under the specified subscription.
@@ -56,12 +56,12 @@ class OrganizationOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.confluent.models.OrganizationResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OrganizationResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OrganizationResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01-preview"
+        api_version = "2020-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -101,7 +101,7 @@ class OrganizationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+                error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -116,7 +116,7 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.OrganizationResourceListResult"]:
+    ) -> AsyncIterable["_models.OrganizationResourceListResult"]:
         """List all Organizations under the specified resource group.
 
         List all Organizations under the specified resource group.
@@ -128,12 +128,12 @@ class OrganizationOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.confluent.models.OrganizationResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OrganizationResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OrganizationResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01-preview"
+        api_version = "2020-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -174,7 +174,7 @@ class OrganizationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+                error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -190,7 +190,7 @@ class OrganizationOperations:
         resource_group_name: str,
         organization_name: str,
         **kwargs
-    ) -> "models.OrganizationResource":
+    ) -> "_models.OrganizationResource":
         """Get the properties of a specific Organization resource.
 
         Get the properties of a specific Organization resource.
@@ -204,12 +204,12 @@ class OrganizationOperations:
         :rtype: ~azure.mgmt.confluent.models.OrganizationResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OrganizationResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OrganizationResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01-preview"
+        api_version = "2020-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -235,7 +235,7 @@ class OrganizationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('OrganizationResource', pipeline_response)
@@ -250,15 +250,15 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Optional["models.OrganizationResource"] = None,
+        body: Optional["_models.OrganizationResource"] = None,
         **kwargs
-    ) -> "models.OrganizationResource":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OrganizationResource"]
+    ) -> "_models.OrganizationResource":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OrganizationResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01-preview"
+        api_version = "2020-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -292,7 +292,7 @@ class OrganizationOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -311,9 +311,9 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Optional["models.OrganizationResource"] = None,
+        body: Optional["_models.OrganizationResource"] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.OrganizationResource"]:
+    ) -> AsyncLROPoller["_models.OrganizationResource"]:
         """Create Organization resource.
 
         Create Organization resource.
@@ -335,7 +335,7 @@ class OrganizationOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OrganizationResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OrganizationResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -360,7 +360,13 @@ class OrganizationOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'organizationName': self._serialize.url("organization_name", organization_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -378,9 +384,9 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        body: Optional["_models.OrganizationResourceUpdate"] = None,
         **kwargs
-    ) -> "models.OrganizationResource":
+    ) -> "_models.OrganizationResource":
         """Update Organization resource.
 
         Update Organization resource.
@@ -389,21 +395,19 @@ class OrganizationOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name.
         :type organization_name: str
-        :param tags: ARM resource tags.
-        :type tags: dict[str, str]
+        :param body: Updated Organization resource.
+        :type body: ~azure.mgmt.confluent.models.OrganizationResourceUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OrganizationResource, or the result of cls(response)
         :rtype: ~azure.mgmt.confluent.models.OrganizationResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OrganizationResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OrganizationResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _body = models.OrganizationResourceUpdate(tags=tags)
-        api_version = "2020-03-01-preview"
+        api_version = "2020-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -426,8 +430,8 @@ class OrganizationOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if _body is not None:
-            body_content = self._serialize.body(_body, 'OrganizationResourceUpdate')
+        if body is not None:
+            body_content = self._serialize.body(body, 'OrganizationResourceUpdate')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -437,7 +441,7 @@ class OrganizationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('OrganizationResource', pipeline_response)
@@ -459,7 +463,7 @@ class OrganizationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01-preview"
+        api_version = "2020-03-01"
         accept = "application/json"
 
         # Construct URL
@@ -485,7 +489,7 @@ class OrganizationOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -539,7 +543,13 @@ class OrganizationOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'organizationName': self._serialize.url("organization_name", organization_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

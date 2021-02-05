@@ -279,7 +279,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
 
 
 class StorageRequestHook(SansIOHTTPPolicy):
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs):
         self._request_callback = kwargs.get("raw_request_hook")
         super(StorageRequestHook, self).__init__()
 
@@ -293,7 +293,7 @@ class StorageRequestHook(SansIOHTTPPolicy):
 
 
 class StorageResponseHook(HTTPPolicy):
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs):
         self._response_callback = kwargs.get("raw_response_hook")
         super(StorageResponseHook, self).__init__()
 
@@ -485,7 +485,7 @@ class TablesRetryPolicy(RetryPolicy):
     def configure_retries(
         self, request
     ):  # pylint: disable=no-self-use, arguments-differ
-        # type: (...)-> dict
+        # type: (...) -> Dict[Any, Any]
         """
         :param Any request:
         :param kwargs:
@@ -532,7 +532,7 @@ class TablesRetryPolicy(RetryPolicy):
 
     def increment(
         self, settings, request, response=None, error=None, **kwargs
-    ):  # pylint:disable=unused-argument, arguments-differ
+    ):  # pylint: disable=unused-argument, arguments-differ
         # type: (...)->None
         """Increment the retry counters.
 

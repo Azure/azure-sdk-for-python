@@ -36,11 +36,13 @@ from ._models import (
     HealthcareEntity,
     HealthcareRelation,
     HealthcareEntityLink,
-    EntitiesRecognitionTask,
-    PiiEntitiesRecognitionTask,
-    KeyPhraseExtractionTask,
-    TextAnalysisResult,
-    RequestStatistics
+    RecognizeEntitiesAction,
+    RecognizePiiEntitiesAction,
+    ExtractKeyPhrasesAction,
+    AnalyzeBatchActionsResult,
+    RequestStatistics,
+    AnalyzeBatchActionsType,
+    AnalyzeBatchActionsError,
 )
 from._paging import AnalyzeHealthcareResult
 
@@ -76,11 +78,13 @@ __all__ = [
     'HealthcareEntity',
     'HealthcareRelation',
     'HealthcareEntityLink',
-    'EntitiesRecognitionTask',
-    'PiiEntitiesRecognitionTask',
-    'KeyPhraseExtractionTask',
-    'TextAnalysisResult',
-    'RequestStatistics'
+    'RecognizeEntitiesAction',
+    'RecognizePiiEntitiesAction',
+    'ExtractKeyPhrasesAction',
+    'AnalyzeBatchActionsResult',
+    'RequestStatistics',
+    'AnalyzeBatchActionsType',
+    "AnalyzeBatchActionsError",
 ]
 
 __version__ = VERSION

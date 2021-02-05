@@ -1,6 +1,6 @@
 trigger: none
 
-jobs:
+stages:
   - template: ./tests_invoke.yml
     parameters:
       InjectedPackages: $(InjectedPackages)

@@ -33,7 +33,7 @@ This table shows the relationship between SDK versions and supported API version
 |SDK version|Supported API version of service
 |-|-
 |3.0.0 - Latest GA release (can be installed by removing the `--pre` flag)| 2.0
-|3.1.0b1 - Latest release (beta)| 2.0, 2.1-preview
+|3.1.0b2 - Latest release (beta)| 2.0, 2.1-preview
 
 
 #### Create a Form Recognizer resource

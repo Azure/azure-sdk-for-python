@@ -7,6 +7,7 @@ import unittest
 import pytest
 import platform
 
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import AzureError
 from azure.storage.blob import (
     VERSION,
@@ -99,6 +100,34 @@ class StorageClientTest(StorageTestCase):
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.blob.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
+
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_sas_credential(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        sas_credential = AzureSasCredential(self.sas_token)
+
+        for service_type in SERVICES:
+            # Act
+            service = service_type(
+                self.account_url(storage_account, "blob"), credential=sas_credential, container_name='foo', blob_name='bar')
+
+            # Assert
+            self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertTrue(service.url.startswith('https://' + storage_account.name + '.blob.core.windows.net'))
+            self.assertFalse(service.url.endswith(self.sas_token))
+            self.assertEqual(service.credential, sas_credential)
+
+    @GlobalStorageAccountPreparer()
+    def test_create_service_with_sas_credential_url_raises_if_sas_is_in_uri(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        sas_credential = AzureSasCredential(self.sas_token)
+
+        for service_type in SERVICES:
+            # Act
+            with self.assertRaises(ValueError):
+                service = service_type(
+                    self.account_url(storage_account, "blob") + "?sig=foo", credential=sas_credential, container_name='foo', blob_name='bar')
 
     @GlobalStorageAccountPreparer()
     def test_create_service_with_token(self, resource_group, location, storage_account, storage_account_key):
@@ -449,6 +478,7 @@ class StorageClientTest(StorageTestCase):
         blob_client = BlobClient.from_blob_url(blob_emulator_url)
         self.assertEqual(blob_client.container_name, "containername")
         self.assertEqual(blob_client.blob_name, "dir1/sub000/2010_Unit150_Ivan097_img0003.jpg")
+        self.assertEqual(blob_client.url, blob_emulator_url)
 
     def test_create_client_for_emulator(self):
         container_client = ContainerClient(

@@ -41,7 +41,7 @@ class HealthWithCancellationSampleAsync(object):
         text_analytics_client = TextAnalyticsClient(
             endpoint=endpoint,
             credential=AzureKeyCredential(key),
-            api_version="v3.1-preview.3")
+        )
 
         documents = [
             "RECORD #333582770390100 | MH | 85986313 | | 054351 | 2/14/2001 12:00:00 AM | \

@@ -8,16 +8,23 @@
 import time
 import pytest
 
+from devtools_testutils import AzureTestCase
+
 from azure.core.exceptions import HttpResponseError
 
-from azure.data.tables import TableServiceClient
-from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
+from azure.data.tables import (
+    TableServiceClient,
+    TableAnalyticsLogging,
+    Metrics,
+    RetentionPolicy,
+    CorsRule
+)
 
 from _shared.testcase import TableTestCase
 from preparers import CosmosPreparer
 # ------------------------------------------------------------------------------
 
-class TableServicePropertiesTest(TableTestCase):
+class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None
@@ -95,10 +102,10 @@ class TableServicePropertiesTest(TableTestCase):
     # --Test cases per service ---------------------------------------
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
     @CosmosPreparer()
-    def test_table_service_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_table_service_properties(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(tables_storage_account_name, "cosmos")
-        tsc = TableServiceClient(url, tables_primary_storage_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
         # Act
         resp = tsc.set_service_properties(
             analytics_logging=TableAnalyticsLogging(),
@@ -115,10 +122,10 @@ class TableServicePropertiesTest(TableTestCase):
     # --Test cases per feature ---------------------------------------
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
     @CosmosPreparer()
-    def test_set_logging(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_set_logging(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(tables_storage_account_name, "cosmos")
-        tsc = TableServiceClient(url, tables_primary_storage_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
         logging = TableAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -132,10 +139,10 @@ class TableServicePropertiesTest(TableTestCase):
 
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
     @CosmosPreparer()
-    def test_set_hour_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_set_hour_metrics(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(tables_storage_account_name, "cosmos")
-        tsc = TableServiceClient(url, tables_primary_storage_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -149,10 +156,10 @@ class TableServicePropertiesTest(TableTestCase):
 
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
     @CosmosPreparer()
-    def test_set_minute_metrics(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_set_minute_metrics(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(tables_storage_account_name, "cosmos")
-        tsc = TableServiceClient(url, tables_primary_storage_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -167,10 +174,10 @@ class TableServicePropertiesTest(TableTestCase):
 
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
     @CosmosPreparer()
-    def test_set_cors(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_set_cors(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(tables_storage_account_name, "cosmos")
-        tsc = TableServiceClient(url, tables_primary_storage_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -199,19 +206,9 @@ class TableServicePropertiesTest(TableTestCase):
     # --Test cases for errors ---------------------------------------
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
     @CosmosPreparer()
-    def test_retention_no_days(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Assert
-        pytest.raises(ValueError,
-                          RetentionPolicy,
-                          True, None)
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-    @CosmosPreparer()
-    def test_too_many_cors_rules(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_too_many_cors_rules(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "cosmos"), tables_primary_storage_account_key)
+        tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
@@ -224,9 +221,9 @@ class TableServicePropertiesTest(TableTestCase):
 
     @pytest.mark.skip("Cosmos Tables does not yet support service properties")
     @CosmosPreparer()
-    def test_retention_too_long(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_retention_too_long(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "cosmos"), tables_primary_storage_account_key)
+        tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 
@@ -236,3 +233,10 @@ class TableServicePropertiesTest(TableTestCase):
                           None, None, minute_metrics)
         if self.is_live:
             sleep(SLEEP_DELAY)
+
+
+class TestTableUnitTest(TableTestCase):
+
+    def test_retention_no_days(self):
+        # Assert
+        pytest.raises(ValueError, RetentionPolicy, True, None)

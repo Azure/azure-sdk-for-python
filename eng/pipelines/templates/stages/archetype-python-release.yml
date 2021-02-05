@@ -2,6 +2,7 @@ parameters:
   Artifacts: []
   TestPipeline: false
   ArtifactName: 'not-specified'
+  ServiceDirectory: 'not-specified'
   DependsOn: Build
   DocArtifact: 'documentation'
   DevFeedName: 'public/azure-sdk-for-python'
@@ -22,7 +23,8 @@ stages:
             environment: github
 
             pool:
-              vmImage: ubuntu-18.04
+              name: azsdk-pool-mms-ubuntu-1804-general
+              vmImage: MMSUbuntu18.04
 
             strategy:
               runOnce:
@@ -46,7 +48,7 @@ stages:
                           ForRelease: true
                     - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                       parameters:
-                        SourceFolder: ${{parameters.ArtifactName}} 
+                        SourceFolder: ${{parameters.ArtifactName}}
                         TargetFolder: ${{artifact.safeName}}
                         PackageName: ${{artifact.name}}
                     - pwsh: |
@@ -69,7 +71,8 @@ stages:
               dependsOn: TagRepository
 
               pool:
-                vmImage: ubuntu-18.04
+                name: azsdk-pool-mms-ubuntu-1804-general
+                vmImage: MMSUbuntu18.04
 
               strategy:
                 runOnce:
@@ -82,7 +85,7 @@ stages:
 
                       - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                         parameters:
-                          SourceFolder: ${{parameters.ArtifactName}} 
+                          SourceFolder: ${{parameters.ArtifactName}}
                           TargetFolder: ${{artifact.safeName}}
                           PackageName: ${{artifact.name}}
 
@@ -127,7 +130,8 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                vmImage: windows-2019
+                name: azsdk-pool-mms-win-2019-general
+                vmImage: MMS2019
 
               strategy:
                 runOnce:
@@ -162,7 +166,8 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                vmImage: ubuntu-18.04
+                name: azsdk-pool-mms-ubuntu-1804-general
+                vmImage: MMSUbuntu18.04
 
               variables:
                 CIConfigs: "{'targets':[{'path_to_config':'ci-configs/packages-preview.json','Mode':'Preview','content_folder':'docs-ref-services/preview'},{'path_to_config':'ci-configs/packages-latest.json','mode':'Latest','content_folder':'docs-ref-services/latest'}]}"
@@ -174,7 +179,7 @@ stages:
                       - checkout: self
                       - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                         parameters:
-                          SourceFolder: ${{parameters.ArtifactName}} 
+                          SourceFolder: ${{parameters.ArtifactName}}
                           TargetFolder: ${{artifact.safeName}}
                           PackageName: ${{artifact.name}}
                       - pwsh: |
@@ -199,7 +204,7 @@ stages:
                           ArtifactName: ${{artifact.name}}
                           Language: 'python'
                           ServiceDirectory: ${{ parameters.ServiceDirectory }}
-                          DocRepoDestinationPath: 'docs-ref-services/' 
+                          DocRepoDestinationPath: 'docs-ref-services/'
                           GHReviewersVariable: 'OwningGHUser'
                           CIConfigs: $(CIConfigs)
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
@@ -212,7 +217,8 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                vmImage: ubuntu-18.04
+                name: azsdk-pool-mms-ubuntu-1804-general
+                vmImage: MMSUbuntu18.04
 
               strategy:
                 runOnce:
@@ -227,7 +233,7 @@ stages:
                         displayName: Increment package version
                         inputs:
                           scriptPath: 'eng/versioning/version_increment.py'
-                          arguments: '--package-name ${{ artifact.name }}'
+                          arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
                           RepoName: azure-sdk-for-python
@@ -236,14 +242,26 @@ stages:
                           PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
 
+  - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
+    - stage: SmokeTest_Release_Packages
+      displayName: Smoke Test Release Packages
+      jobs:
+        - template: /eng/pipelines/templates/jobs/smoke-test.yml
+          parameters:
+            Daily: false
+            ArtifactName: ${{ parameters.ArtifactName }}
+            Artifacts: ${{ parameters.Artifacts }}
+
   - stage: Integration
     dependsOn: ${{parameters.DependsOn}}
+    condition: succeededOrFailed('${{parameters.DependsOn}}')
     jobs:
     - job: PublishPackages
       displayName: "Publish package to daily feed"
       condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
       pool:
-        vmImage: ubuntu-18.04
+        name: azsdk-pool-mms-ubuntu-1804-general
+        vmImage: MMSUbuntu18.04
       steps:
       - checkout: none
       - download: current
@@ -271,7 +289,7 @@ stages:
               Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
 
               $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}} | Measure-Object).Count
-              if ($fileCount -eq 0) { 
+              if ($fileCount -eq 0) {
                 Write-Host "No alpha packages for ${{artifact.safeName}} to publish."
                 exit 0
               }
@@ -280,4 +298,4 @@ stages:
               echo "Uploaded whl to devops feed $(DevFeedName)"
               twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*a*.zip
               echo "Uploaded sdist to devops feed $(DevFeedName)"
-            displayName: 'Publish ${{artifact.name}} alpha package'       
+            displayName: 'Publish ${{artifact.name}} alpha package'

@@ -14,9 +14,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 09 Oct 2020 23:20:19 GMT
+      - Wed, 20 Jan 2021 18:11:23 GMT
       User-Agent:
-      - azsdk-python-communication-sms/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-sms/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -27,13 +27,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 23:20:19 GMT
+      - Wed, 20 Jan 2021 18:11:24 GMT
       ms-cv:
-      - JCf4xQXQEkS2Tix1X3WyhA.0
+      - 1y4+o6OmR0ulV50uPXHoEw.0
+      request-context:
+      - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 1071ms
+      - 484ms
     status:
       code: 200
       message: OK

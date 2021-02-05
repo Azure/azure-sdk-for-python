@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 
 from azure.common import AzureHttpError, AzureConflictHttpError
 from azure.mgmt.servicebus.models import AccessRights
-from azure.servicebus import ServiceBusClient, ServiceBusSender
+from azure.servicebus import ServiceBusClient, ServiceBusSender, ServiceBusReceiver
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus._common.message import ServiceBusMessage, ServiceBusReceivedMessage
 from azure.servicebus.exceptions import (
@@ -152,14 +152,21 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         
         client = ServiceBusClient.from_connection_string(servicebus_queue_authorization_rule_connection_string)
         with client:
-            # Validate that the wrong queue with the right credentials fails.
+            # Validate that the wrong sender/receiver queues with the right credentials fail.
             with pytest.raises(ValueError):
                 with client.get_queue_sender(wrong_queue.name) as sender:
                     sender.send_messages(ServiceBusMessage("test"))
 
-            # But that the correct one works.
+            with pytest.raises(ValueError):
+                with client.get_queue_receiver(wrong_queue.name) as receiver:
+                    messages =  receiver.receive_messages(max_message_count=1, max_wait_time=1)
+
+            # But that the correct ones work.
             with client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(ServiceBusMessage("test")) 
+
+            with client.get_queue_receiver(servicebus_queue.name) as receiver:
+               messages =  receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
             # Now do the same but with direct connstr initialization.
             with pytest.raises(ValueError):
@@ -167,13 +174,26 @@ class ServiceBusClientTests(AzureMgmtTestCase):
                     servicebus_queue_authorization_rule_connection_string,
                     queue_name=wrong_queue.name,
                 ) as sender:
-                    sender.send_messages(ServiceBusMessage("test"))
+                        sender.send_messages(ServiceBusMessage("test"))
+
+            with pytest.raises(ValueError):
+                with ServiceBusReceiver._from_connection_string(
+                    servicebus_queue_authorization_rule_connection_string,
+                    queue_name=wrong_queue.name,
+                ) as receiver:
+                    messages =  receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
             with ServiceBusSender._from_connection_string(
                 servicebus_queue_authorization_rule_connection_string,
                 queue_name=servicebus_queue.name,
             ) as sender:
                 sender.send_messages(ServiceBusMessage("test"))
+
+            with ServiceBusReceiver._from_connection_string(
+                servicebus_queue_authorization_rule_connection_string,
+                queue_name=servicebus_queue.name,
+            ) as receiver:
+                messages =  receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

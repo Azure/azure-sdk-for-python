@@ -1,0 +1,7 @@
+include *.md
+include azure/__init__.py
+include azure/opentelemetry/__init__.py
+include azure/opentelemetry/exporter/__init__.py
+include LICENSE.txt
+recursive-include tests *.py
+recursive-include samples *.py *.md

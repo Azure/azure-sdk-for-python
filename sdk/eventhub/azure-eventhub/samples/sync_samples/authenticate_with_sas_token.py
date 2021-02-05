@@ -34,6 +34,9 @@ def generate_sas_token(uri, sas_name, sas_value, token_ttl):
     signature = url_parse_quote(base64.b64encode(signed_hmac_sha256.digest()))
     return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}'.format(uri, signature, expiry, sas_name)
 
+def on_event(context, event):
+    print(context.partition_id, ":", event)
+
 
 class CustomizedSASCredential(object):
     def __init__(self, token, expiry):
@@ -77,6 +80,6 @@ consumer_client = EventHubConsumerClient(
 
 with consumer_client:
     consumer_client.receive(
-        lambda pc, event: print(pc.partition_id, ":", event),
+        on_event,
         starting_position=-1
     )

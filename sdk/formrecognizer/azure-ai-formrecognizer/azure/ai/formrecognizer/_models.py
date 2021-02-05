@@ -414,7 +414,7 @@ class FormLine(FormElement):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormLine, this is "line".
-    :ivar appearance: Text appearance properties.
+    :ivar appearance: An object representing the appearance of the line.
     :vartype appearance: ~azure.ai.formrecognizer.Appearance
 
     .. versionadded:: v2.1-preview
@@ -428,7 +428,7 @@ class FormLine(FormElement):
 
     @classmethod
     def _from_generated(cls, line, page):
-        line_appearance = line.appearance if hasattr(line, "appearance") else None
+        line_appearance = TextAppearance._from_generated(line.appearance) if hasattr(line, "appearance") else None
         return cls(
             text=line.text,
             bounding_box=get_bounding_box(line),
@@ -1056,3 +1056,46 @@ class CustomFormModelProperties(object):
 
     def __repr__(self):
         return "CustomFormModelProperties(is_composed_model={})".format(self.is_composed_model)
+
+
+class TextAppearance(object):
+    """An object representing the appearance of the text line.
+
+    :param style: An object representing the style of the text line.
+    :type style: ~azure.ai.formrecognizer.TextStyle
+    """
+
+    def __init__(self, **kwargs):
+        self.style = kwargs.get('style', None)
+
+    @classmethod
+    def _from_generated(cls, appearance):
+        if appearance is None:
+            return appearance
+        return cls(
+            style=TextStyle(
+                name=appearance.style.name,
+                confidence=appearance.style.confidence
+            )
+        )
+
+    def __repr__(self):
+        return "TextAppearance(style={})".format(repr(self.style))
+
+
+class TextStyle(object):
+    """An object representing the style of the text line.
+
+    :param name: The text line style name.
+        Possible values include: "other", "handwriting".
+    :type name: str
+    :param confidence: The confidence of text line style.
+    :type confidence: float
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name', None)
+        self.confidence = kwargs.get('confidence', None)
+
+    def __repr__(self):
+        return "TextStyle(name={}, confidence={})".format(self.name, self.confidence)

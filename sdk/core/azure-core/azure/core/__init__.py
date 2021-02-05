@@ -29,11 +29,13 @@ __version__ = VERSION
 
 from ._pipeline_client import PipelineClient
 from ._match_conditions import MatchConditions
+from ._enum_meta import CaseInsensitiveEnumMeta
 
 
 __all__ = [
     "PipelineClient",
-    "MatchConditions"
+    "MatchConditions",
+    "CaseInsensitiveEnumMeta"
 ]
 
 try:

@@ -125,20 +125,20 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
         def callback_v2_0(raw_response):
             model = self._deserialize(self._generated_models.Model, raw_response)
-            return CustomFormModel._from_generated(model, api_version=self.api_version)
+            return CustomFormModel._from_generated(model, api_version=self._api_version)
 
         def callback_v2_1(raw_response, _, headers):  # pylint: disable=unused-argument
             model = self._deserialize(self._generated_models.Model, raw_response)
-            return CustomFormModel._from_generated(model, api_version=self.api_version)
+            return CustomFormModel._from_generated(model, api_version=self._api_version)
 
         cls = kwargs.pop("cls", None)
         model_name = kwargs.pop("model_name", None)
-        if model_name and self.api_version == "2.0":
+        if model_name and self._api_version == "2.0":
             raise ValueError("'model_name' is only available for API version V2_1_PREVIEW and up")
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
-        if self.api_version == "2.0":
+        if self._api_version == "2.0":
             deserialization_callback = cls if cls else callback_v2_0
             if continuation_token:
                 return AsyncLROPoller.from_continuation_token(
@@ -238,7 +238,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         """
         return self._client.list_custom_models(  # type: ignore
             cls=kwargs.pop("cls", lambda objs:
-            [CustomFormModelInfo._from_generated(x, api_version=self.api_version) for x in objs]),
+            [CustomFormModelInfo._from_generated(x, api_version=self._api_version) for x in objs]),
             **kwargs
         )
 
@@ -291,7 +291,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         )
         if hasattr(response, "composed_train_results") and response.composed_train_results:
             return CustomFormModel._from_generated_composed(response)
-        return CustomFormModel._from_generated(response, api_version=self.api_version)
+        return CustomFormModel._from_generated(response, api_version=self._api_version)
 
     @distributed_trace_async
     async def get_copy_authorization(
@@ -378,12 +378,12 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
             copy_operation = self._deserialize(self._generated_models.CopyOperationResult, raw_response)
             model_id = copy_operation.copy_result.model_id if hasattr(copy_operation, "copy_result") else None
             if model_id:
-                return CustomFormModelInfo._from_generated(copy_operation, model_id, api_version=self.api_version)
+                return CustomFormModelInfo._from_generated(copy_operation, model_id, api_version=self._api_version)
             if target:
                 return CustomFormModelInfo._from_generated(
-                    copy_operation, target["model_id"], api_version=self.api_version
+                    copy_operation, target["model_id"], api_version=self._api_version
                 )
-            return CustomFormModelInfo._from_generated(copy_operation, None, api_version=self.api_version)
+            return CustomFormModelInfo._from_generated(copy_operation, None, api_version=self._api_version)
 
         return await self._client.begin_copy_custom_model(  # type: ignore
             model_id=model_id,
@@ -476,7 +476,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
             endpoint=self._endpoint,
             credential=self._credential,
             pipeline=_pipeline,
-            api_version=self.api_version,
+            api_version=self._api_version,
             **kwargs
         )
         # need to share config, but can't pass as a keyword into client

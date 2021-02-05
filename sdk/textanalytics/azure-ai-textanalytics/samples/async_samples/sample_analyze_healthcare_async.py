@@ -38,9 +38,9 @@ class AnalyzeHealthcareSampleAsync(object):
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
         text_analytics_client = TextAnalyticsClient(
-            endpoint=endpoint, 
+            endpoint=endpoint,
             credential=AzureKeyCredential(key),
-            api_version="v3.1-preview.3")
+        )
 
         documents = [
             "Subject is taking 100mg of ibuprofen twice daily"

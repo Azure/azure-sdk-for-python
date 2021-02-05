@@ -61,9 +61,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         authenticated with a SAS token.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
@@ -521,8 +523,39 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             **kwargs)
 
     @distributed_trace_async
+    async def _rename_container(self, name, new_name, **kwargs):
+        # type: (str, str, **Any) -> ContainerClient
+        """Renames a container.
+
+        Operation is successful only if the source container exists.
+
+        :param str name:
+            The name of the container to rename.
+        :param str new_name:
+            The new container name the user wants to rename to.
+        :keyword lease:
+            Specify this to perform only if the lease ID given
+            matches the active lease ID of the source container.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.blob.ContainerClient
+        """
+        renamed_container = self.get_container_client(new_name)
+        lease = kwargs.pop('lease', None)
+        try:
+            kwargs['source_lease_id'] = lease.id  # type: str
+        except AttributeError:
+            kwargs['source_lease_id'] = lease
+        try:
+            await renamed_container._client.container.rename(name, **kwargs)   # pylint: disable = protected-access
+            return renamed_container
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
     async def undelete_container(self, deleted_container_name, deleted_container_version, **kwargs):
-        # type: (str, str, str, **Any) -> ContainerClient
+        # type: (str, str, **Any) -> ContainerClient
         """Restores soft-deleted container.
 
         Operation will only be successful if used within the specified number of days

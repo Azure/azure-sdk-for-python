@@ -20,6 +20,14 @@ logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
+IGNORED_SAMPLES = {
+    "azure-eventgrid": [
+        "__init__.py",
+        "consume_cloud_events_from_eventhub.py",
+        "consume_cloud_events_from_service_bus_queue.py",
+        "consume_cloud_events_from_storage_queue.py"]
+}
+
 
 def run_samples(targeted_package):
     logging.info("running samples for {}".format(targeted_package))
@@ -27,10 +35,11 @@ def run_samples(targeted_package):
     samples_errors = []
     sample_paths = []
     samples_dir_path = os.path.abspath(os.path.join(targeted_package, "samples"))
+    package_name = os.path.basename(targeted_package)
 
     for path, subdirs, files in os.walk(samples_dir_path):
         for name in files:
-            if fnmatch(name, "*.py"):
+            if fnmatch(name, "*.py") and name not in IGNORED_SAMPLES.get(package_name, []):
                 sample_paths.append(os.path.abspath(os.path.join(path, name)))
 
     if not sample_paths:

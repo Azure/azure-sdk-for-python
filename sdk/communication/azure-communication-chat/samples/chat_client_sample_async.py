@@ -27,7 +27,7 @@ import asyncio
 
 
 class ChatClientSamplesAsync(object):
-    from azure.communication.administration import CommunicationIdentityClient
+    from azure.communication.identity import CommunicationIdentityClient
     connection_string = os.environ.get("AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING", None)
     if not connection_string:
         raise ValueError("Set AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING env before run this sample.")
@@ -45,26 +45,36 @@ class ChatClientSamplesAsync(object):
 
     def create_chat_client(self):
         # [START create_chat_client]
-        from azure.communication.chat.aio import ChatClient, CommunicationUserCredential
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
         # [END create_chat_client]
         print("chat_client created")
 
     async def create_thread_async(self):
         from datetime import datetime
-        from azure.communication.chat.aio import ChatClient, CommunicationUserCredential
-        from azure.communication.chat import ChatThreadMember, CommunicationUser
+        from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        from azure.communication.chat import ChatThreadParticipant, CommunicationUserIdentifier
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
         async with chat_client:
             # [START create_thread]
             topic = "test topic"
-            members = [ChatThreadMember(
+            participants = [ChatThreadParticipant(
                 user=self.user,
                 display_name='name',
                 share_history_time=datetime.utcnow()
             )]
-            chat_thread_client = await chat_client.create_chat_thread(topic, members)
+            # creates a new chat_thread everytime
+            chat_thread_client = await chat_client.create_chat_thread(topic, participants)
+
+            # creates a new chat_thread if not exists
+            repeatability_request_id = 'b66d6031-fdcc-41df-8306-e524c9f226b8'  # unique identifier
+            chat_thread_client_w_repeatability_id = await chat_client.create_chat_thread(topic,
+                                                                                         participants,
+                                                                                         repeatability_request_id)
             # [END create_thread]
 
             self._thread_id = chat_thread_client.thread_id
@@ -72,18 +82,20 @@ class ChatClientSamplesAsync(object):
 
     def get_chat_thread_client(self):
         # [START get_chat_thread_client]
-        from azure.communication.chat.aio import ChatClient, CommunicationUserCredential
+        from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
         chat_thread_client = chat_client.get_chat_thread_client(self._thread_id)
         # [END get_chat_thread_client]
 
         print("chat_thread_client created with thread id: ", chat_thread_client.thread_id)
 
     async def get_thread_async(self):
-        from azure.communication.chat.aio import ChatClient, CommunicationUserCredential
+        from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
         async with chat_client:
             # [START get_thread]
             chat_thread = await chat_client.get_chat_thread(self._thread_id)
@@ -91,9 +103,10 @@ class ChatClientSamplesAsync(object):
             print("get_thread succeeded, thread id: " + chat_thread.id + ", thread topic: " + chat_thread.topic)
 
     async def list_threads_async(self):
-        from azure.communication.chat.aio import ChatClient, CommunicationUserCredential
+        from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
         async with chat_client:
             # [START list_threads]
             from datetime import datetime, timedelta
@@ -107,9 +120,10 @@ class ChatClientSamplesAsync(object):
             # [END list_threads]
 
     async def delete_thread_async(self):
-        from azure.communication.chat.aio import ChatClient, CommunicationUserCredential
+        from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
         async with chat_client:
             # [START delete_thread]
             await chat_client.delete_chat_thread(self._thread_id)

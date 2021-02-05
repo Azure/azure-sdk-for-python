@@ -9,7 +9,7 @@
 import sys
 import asyncio
 from azure.communication.sms import (
-    SendSmsOptions, PhoneNumber
+    SendSmsOptions, PhoneNumberIdentifier
 )
 from azure.communication.sms.aio import SmsClient
 sys.path.append("..")
@@ -34,8 +34,8 @@ class SmsSamples(object):
             try:
                 # calling send() with constructed request object
                 smsresponse = await sms_client.send(
-                    from_phone_number=PhoneNumber("<leased-phone-number>"),
-                    to_phone_numbers=[PhoneNumber("<to-phone-number>")],
+                    from_phone_number=PhoneNumberIdentifier("<leased-phone-number>"),
+                    to_phone_numbers=[PhoneNumberIdentifier("<to-phone-number>")],
                     message="Hello World via SMS",
                     send_sms_options=SendSmsOptions(enable_delivery_report=True)) # optional property
             except Exception:

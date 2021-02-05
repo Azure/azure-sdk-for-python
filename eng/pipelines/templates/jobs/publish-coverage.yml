@@ -1,0 +1,67 @@
+parameters:
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: Artifacts
+    type: object
+    default: []
+  - name: DependsOn
+    type: string
+    default: ''
+
+
+jobs:
+  - job: Publish_Code_Coverage
+    pool:
+      name: azsdk-pool-mms-ubuntu-1804-general
+      vmImage: MMSUbuntu18.04
+
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.7'
+
+      # Download all existing artifacts (most of the time, it's whatever was uploaded before)
+      - pwsh: |
+          New-Item -Path $(Build.SourcesDirectory) -Name "_all_coverage_files" -ItemType "directory"
+        displayName: 'Create all coverages directory'
+        continueOnError: false
+        condition: succeededOrFailed()
+
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          source: current
+          path: '$(Build.SourcesDirectory)/_all_coverage_files'
+
+      - script: |
+          pip install -r eng/ci_tools.txt
+          pip freeze
+        displayName: 'Prep Environment'
+
+      - pwsh: |
+          Get-ChildItem -Recurse .\_all_coverage_files\ |
+          ForEach-Object {
+            If (Test-Path $_ -PathType Leaf) {
+              Get-Content $_
+            }
+          }
+        displayName: Show all coverage files
+
+      - task: PythonScript@0
+        displayName: 'Create Coverage Report'
+        inputs:
+          scriptPath: 'scripts/devops_tasks/create_coverage.py'
+
+      - pwsh: |
+          Get-Content $(Build.SourcesDirectory)\.coverage
+          Get-Content $(Build.SourcesDirectory)\coverage.xml
+        continueOnError: true
+        displayName: Show .coverage and coverage.xml file
+
+      - task: PublishCodeCoverageResults@1
+        displayName: 'Publish Code Coverage to DevOps'
+        continueOnError: true
+        condition: succeededOrFailed()
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
