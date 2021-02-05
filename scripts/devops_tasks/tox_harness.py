@@ -274,29 +274,39 @@ def replace_dev_reqs(file, pkg_root):
         f.write("\n".join(adjusted_req_lines))
 
 
-
-def collect_log_files():
-    logging.info("Collecting log files")
+def collect_log_files(working_dir):
+    logging.info("Collecting log files from {}".format(working_dir))
     # collect all the log files into one place for publishing in case of tox failure
     test_envs = ["whl", "sdist", "depends", "latestdependency", "mindependency"]
 
-    log_directory = os.path.join(root_dir, "_tox_logs")
+    log_directory = os.path.join(
+        root_dir, "_tox_logs"
+    )
+
     try:
         os.mkdir(log_directory)
     except Exception: # Throws different errors in py2 and py3
-        logging.info("Could not create '{}' directory".format(log_directory))
-        return
+        logging.info("'{}' directory already exists".format(log_directory))
+
+    log_directory = os.path.join(
+        log_directory, sys.version.split()[0]
+    )
+
+    try:
+        os.mkdir(log_directory)
+    except Exception: # Throws different errors in py2 and py3
+        logging.info("'{}' directory already exists".format(log_directory))
 
     for test_env in test_envs:
-        log_files = os.path.join(root_dir, ".tox", test_env, "log")
+        log_files = os.path.join(working_dir, ".tox", test_env, "log")
 
         if os.path.exists(log_files):
             temp_dir = os.path.join(log_directory, test_env)
             logging.info("TEMPDIR: ", temp_dir)
             try:
-                os.mkdir(log_directory)
+                os.mkdir(temp_dir)
             except Exception: # Throws different errors in py2 and py3
-                logging.info("Could not create '{}' directory".format(log_directory))
+                logging.info("Could not create '{}' directory".format(temp_dir))
                 return
 
             for filename in os.listdir(temp_dir):
@@ -326,7 +336,7 @@ def execute_tox_serial(tox_command_tuples):
         if result is not None and result != 0:
             return_code = result
 
-        collect_log_files()
+        collect_log_files(cmd_tuple[1])
 
         if in_ci():
             shutil.rmtree(tox_dir)
