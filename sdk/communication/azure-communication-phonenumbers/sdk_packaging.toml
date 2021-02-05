@@ -1,6 +1,6 @@
 [packaging]
 auto_update = false
-package_name = "azure-communication-phonenumber"
+package_name = "azure-communication-phonenumbers"
 package_pprint_name = "Communication Phone Number"
 package_doc_id = ""
 is_stable = false

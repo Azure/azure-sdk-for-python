@@ -13,7 +13,7 @@ Azure Communication Phone Number client package is used to administer Phone Numb
 Install the Azure Communication Phone Number client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-communication-phonenumber
+pip install azure-communication-phonenumbers
 ```
 
 # Key concepts

@@ -176,10 +176,10 @@ opentelemetry-sdk==0.16b1
 #override azure-eventgrid msrest>=0.6.19
 #override azure-communication-chat msrest>=0.6.0
 #override azure-communication-sms msrest>=0.6.0
-#override azure-communication-phonenumber msrest>=0.6.0
+#override azure-communication-phonenumbers msrest>=0.6.0
 #override azure-communication-chat azure-core<2.0.0,>=1.9.0
 #override azure-communication-sms azure-core<2.0.0,>=1.9.0
-#override azure-communication-phonenumber azure-core<2.0.0,>=1.9.0
+#override azure-communication-phonenumbers azure-core<2.0.0,>=1.9.0
 #override azure-communication-identity azure-core<2.0.0,>=1.9.0
 #override azure-mgmt-communication azure-core<2.0.0,>=1.9.0
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.6.0
