@@ -220,8 +220,15 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
         for r in relations_result:
             _, source_idx = _get_indices(r.source)
             _, target_idx = _get_indices(r.target)
+
             if entities[source_idx] not in relation_dict.keys():
                 relation_dict[entities[source_idx]] = {}
+
+            if entities[target_idx] not in relation_dict.keys():
+                relation_dict[entities[target_idx]] = {}
+
+            if r.relation_type.lower() == "bidirectional":
+                relation_dict[entities[target_idx]][entities[source_idx]] = r.relation_type
 
             relation_dict[entities[source_idx]][entities[target_idx]] = r.relation_type
 
