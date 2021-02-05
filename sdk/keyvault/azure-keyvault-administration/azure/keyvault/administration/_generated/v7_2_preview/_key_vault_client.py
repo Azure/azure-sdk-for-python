@@ -8,14 +8,12 @@
 
 from typing import TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
-
-    from azure.core.credentials import TokenCredential
 
 from ._configuration import KeyVaultClientConfiguration
 from .operations import RoleDefinitionsOperations
@@ -31,20 +29,17 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
     :vartype role_definitions: azure.keyvault.v7_2.operations.RoleDefinitionsOperations
     :ivar role_assignments: RoleAssignmentsOperations operations
     :vartype role_assignments: azure.keyvault.v7_2.operations.RoleAssignmentsOperations
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         base_url = '{vaultBaseUrl}'
-        self._config = KeyVaultClientConfiguration(credential, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = KeyVaultClientConfiguration(**kwargs)
+        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

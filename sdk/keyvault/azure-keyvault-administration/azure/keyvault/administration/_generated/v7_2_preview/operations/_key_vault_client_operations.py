@@ -12,8 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.mgmt.core.exceptions import ARMErrorFormat
-from azure.mgmt.core.polling.arm_polling import ARMPolling
+from azure.core.polling.base_polling import LROBasePolling
 
 from .. import models as _models
 
@@ -71,7 +70,7 @@ class KeyVaultClientOperationsMixin(object):
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
@@ -101,7 +100,7 @@ class KeyVaultClientOperationsMixin(object):
         :type azure_storage_blob_container_uri: ~azure.keyvault.v7_2.models.SASTokenParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
@@ -109,7 +108,7 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_2.models.FullBackupOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FullBackupOperation"]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -142,7 +141,7 @@ class KeyVaultClientOperationsMixin(object):
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -205,7 +204,7 @@ class KeyVaultClientOperationsMixin(object):
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('FullBackupOperation', pipeline_response)
 
@@ -260,7 +259,7 @@ class KeyVaultClientOperationsMixin(object):
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
@@ -290,7 +289,7 @@ class KeyVaultClientOperationsMixin(object):
         :type restore_blob_details: ~azure.keyvault.v7_2.models.RestoreOperationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
@@ -298,7 +297,7 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_2.models.RestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestoreOperation"]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -331,7 +330,7 @@ class KeyVaultClientOperationsMixin(object):
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
         }
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -394,7 +393,7 @@ class KeyVaultClientOperationsMixin(object):
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('RestoreOperation', pipeline_response)
 
@@ -451,7 +450,7 @@ class KeyVaultClientOperationsMixin(object):
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
@@ -484,7 +483,7 @@ class KeyVaultClientOperationsMixin(object):
         :type restore_blob_details: ~azure.keyvault.v7_2.models.SelectiveKeyRestoreOperationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
@@ -492,7 +491,7 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_2.models.SelectiveKeyRestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SelectiveKeyRestoreOperation"]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -527,7 +526,7 @@ class KeyVaultClientOperationsMixin(object):
             'keyName': self._serialize.url("key_name", key_name, 'str'),
         }
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

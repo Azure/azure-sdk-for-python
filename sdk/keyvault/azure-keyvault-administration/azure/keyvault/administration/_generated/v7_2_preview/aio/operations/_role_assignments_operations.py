@@ -12,7 +12,6 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 
@@ -93,7 +92,7 @@ class RoleAssignmentsOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('RoleAssignment', pipeline_response)
 
@@ -164,7 +163,7 @@ class RoleAssignmentsOperations:
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('RoleAssignment', pipeline_response)
 
@@ -226,7 +225,7 @@ class RoleAssignmentsOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('RoleAssignment', pipeline_response)
 
@@ -313,7 +312,7 @@ class RoleAssignmentsOperations:
             if response.status_code not in [200]:
                 error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
