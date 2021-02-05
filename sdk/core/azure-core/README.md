@@ -145,7 +145,6 @@ When calling the methods, some properties can be configured by passing in as kwa
 | connection_cert | Client-side certificates. You can specify a local cert to use as client side certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths. |
 | proxies | Dictionary mapping protocol or protocol and hostname to the URL of the proxy. |
 | cookies | Dict or CookieJar object to send with the `Request`. |
-| stream | whether to immediately download the response content. Defaults to `False`. |
 | connection_data_block_size | The block size of data sent over the connection. Defaults to `4096` bytes. |
 
 ### Async transport
