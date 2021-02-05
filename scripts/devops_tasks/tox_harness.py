@@ -283,8 +283,9 @@ def collect_log_files():
     log_directory = os.path.join(root_dir, "_tox_logs")
     try:
         os.mkdir(log_directory)
-    except Exception: # Throws different erros in py2 and py3
-        pass
+    except Exception: # Throws different errors in py2 and py3
+        logging.info("Could not create '{}' directory".format(log_directory))
+        return
 
     for test_env in test_envs:
         log_files = os.path.join(root_dir, ".tox", test_env, "log")
@@ -294,14 +295,17 @@ def collect_log_files():
             logging.info("TEMPDIR: ", temp_dir)
             try:
                 os.mkdir(log_directory)
-            except Exception: # Throws different erros in py2 and py3
-                pass
+            except Exception: # Throws different errors in py2 and py3
+                logging.info("Could not create '{}' directory".format(log_directory))
+                return
 
             for filename in os.listdir(temp_dir):
                 if filename.endswith(".log"):
                     logging.info("LOG FILE: ", filename)
                     file_location = os.pth.join(temp_dir, filename)
                     shutil.move(file_location, temp_dir)
+        else:
+            logging.info("Could not find {} directory".format(log_files))
 
 
 def execute_tox_serial(tox_command_tuples):
@@ -309,6 +313,7 @@ def execute_tox_serial(tox_command_tuples):
 
     for index, cmd_tuple in enumerate(tox_command_tuples):
         tox_dir = os.path.abspath(os.path.join(cmd_tuple[1], "./.tox/"))
+        logging.info("tox_dir: {}".format(tox_dir))
 
         logging.info(
             "Running tox for {}. {} of {}.".format(
