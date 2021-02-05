@@ -56,7 +56,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
 
     async def get_count(self):
         # type: () -> float
-        """Return the count of results if `include_total_result_count` was
+        """Return the count of results if `include_total_count` was
         set for the query.
 
         """
