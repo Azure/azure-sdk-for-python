@@ -114,6 +114,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         self._local_provider = NoLocalCryptography()
         self._initialized = False
+        self._local_only = kwargs.pop("local_only", False)
 
         super(CryptographyClient, self).__init__(vault_url=self._key_id.vault_url, credential=credential, **kwargs)
 
@@ -126,6 +127,16 @@ class CryptographyClient(KeyVaultClientBase):
         """
         return self._key_id.source_id
 
+    @classmethod
+    def from_jkw(cls, key_id, jwk):
+        # type: (str, dict) -> CryptographyClient
+        """Creates a client that can only perform cryptographic operations locally.
+
+        :param str key_id: the full identifier of an Azure Key Vault key with a version.
+        :param dict jwk: the key's cryptographic material, as a dictionary.
+        """
+        return cls(KeyVaultKey(key_id, jwk), object, local_only=True)
+
     @distributed_trace
     def _initialize(self, **kwargs):
         # type: (**Any) -> None
@@ -133,7 +144,7 @@ class CryptographyClient(KeyVaultClientBase):
             return
 
         # try to get the key material, if we don't have it and aren't forbidden to do so
-        if not (self._key or self._keys_get_forbidden):
+        if not (self._key or self._keys_get_forbidden or self._local_only):
             try:
                 key_bundle = self._client.get_key(
                     self._key_id.vault_url, self._key_id.name, self._key_id.version, **kwargs
@@ -180,11 +191,13 @@ class CryptographyClient(KeyVaultClientBase):
         _validate_arguments(operation=KeyOperation.encrypt, algorithm=algorithm, iv=iv, aad=aad)
         self._initialize(**kwargs)
 
-        if self._local_provider.supports(KeyOperation.encrypt, algorithm):
+        if self._local_provider.supports(KeyOperation.encrypt, algorithm) or self._local_only:
             raise_if_time_invalid(self._key)
             try:
                 return self._local_provider.encrypt(algorithm, plaintext)
             except Exception as ex:  # pylint:disable=broad-except
+                if self._local_only:
+                    raise
                 _LOGGER.warning("Local encrypt operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
 
         operation_result = self._client.encrypt(
@@ -235,10 +248,12 @@ class CryptographyClient(KeyVaultClientBase):
         _validate_arguments(operation=KeyOperation.decrypt, algorithm=algorithm, iv=iv, tag=tag, aad=aad)
         self._initialize(**kwargs)
 
-        if self._local_provider.supports(KeyOperation.decrypt, algorithm):
+        if self._local_provider.supports(KeyOperation.decrypt, algorithm) or self._local_only:
             try:
                 return self._local_provider.decrypt(algorithm, ciphertext)
             except Exception as ex:  # pylint:disable=broad-except
+                if self._local_only:
+                    raise
                 _LOGGER.warning("Local decrypt operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
 
         operation_result = self._client.decrypt(
@@ -271,11 +286,13 @@ class CryptographyClient(KeyVaultClientBase):
             :dedent: 8
         """
         self._initialize(**kwargs)
-        if self._local_provider.supports(KeyOperation.wrap_key, algorithm):
+        if self._local_provider.supports(KeyOperation.wrap_key, algorithm) or self._local_only:
             raise_if_time_invalid(self._key)
             try:
                 return self._local_provider.wrap_key(algorithm, key)
             except Exception as ex:  # pylint:disable=broad-except
+                if self._local_only:
+                    raise
                 _LOGGER.warning("Local wrap operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
 
         operation_result = self._client.wrap_key(
@@ -306,10 +323,12 @@ class CryptographyClient(KeyVaultClientBase):
             :dedent: 8
         """
         self._initialize(**kwargs)
-        if self._local_provider.supports(KeyOperation.unwrap_key, algorithm):
+        if self._local_provider.supports(KeyOperation.unwrap_key, algorithm) or self._local_only:
             try:
                 return self._local_provider.unwrap_key(algorithm, encrypted_key)
             except Exception as ex:  # pylint:disable=broad-except
+                if self._local_only:
+                    raise
                 _LOGGER.warning("Local unwrap operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
 
         operation_result = self._client.unwrap_key(
@@ -339,11 +358,13 @@ class CryptographyClient(KeyVaultClientBase):
             :dedent: 8
         """
         self._initialize(**kwargs)
-        if self._local_provider.supports(KeyOperation.sign, algorithm):
+        if self._local_provider.supports(KeyOperation.sign, algorithm) or self._local_only:
             raise_if_time_invalid(self._key)
             try:
                 return self._local_provider.sign(algorithm, digest)
             except Exception as ex:  # pylint:disable=broad-except
+                if self._local_only:
+                    raise
                 _LOGGER.warning("Local sign operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
 
         operation_result = self._client.sign(
@@ -376,10 +397,12 @@ class CryptographyClient(KeyVaultClientBase):
             :dedent: 8
         """
         self._initialize(**kwargs)
-        if self._local_provider.supports(KeyOperation.verify, algorithm):
+        if self._local_provider.supports(KeyOperation.verify, algorithm) or self._local_only:
             try:
                 return self._local_provider.verify(algorithm, digest, signature)
             except Exception as ex:  # pylint:disable=broad-except
+                if self._local_only:
+                    raise
                 _LOGGER.warning("Local verify operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
 
         operation_result = self._client.verify(
