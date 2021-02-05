@@ -176,7 +176,6 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
         except KeyError:
             raise AttributeError(name)
 
-
 class CommunicationCloudEnvironmentModel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The cloud that the identifier belongs to.
     """
@@ -185,6 +184,14 @@ class CommunicationCloudEnvironmentModel(with_metaclass(_CaseInsensitiveEnumMeta
     DOD = "dod"
     GCCH = "gcch"
 
+class CommunicationCloudEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """
+    The cloud enviornment that the identifier belongs to
+    """
+
+    Public = "PUBLIC"
+    Dod = "DOD"
+    Gcch = "GCCH"
 
 class MicrosoftTeamsUserIdentifier(object):
     """
