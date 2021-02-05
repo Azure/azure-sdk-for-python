@@ -32,10 +32,9 @@ from ._models import (
     RecognizePiiEntitiesResult,
     PiiEntity,
     PiiEntityDomainType,
-    AnalyzeHealthcareResultItem,
+    AnalyzeHealthcareEntitiesResultItem,
     HealthcareEntity,
-    HealthcareRelation,
-    HealthcareEntityLink,
+    HealthcareEntityDataSource,
     RecognizeEntitiesAction,
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
@@ -44,7 +43,7 @@ from ._models import (
     AnalyzeBatchActionsType,
     AnalyzeBatchActionsError,
 )
-from._paging import AnalyzeHealthcareResult
+from ._paging import AnalyzeHealthcareEntitiesResult
 
 __all__ = [
     'TextAnalyticsApiVersion',
@@ -73,11 +72,10 @@ __all__ = [
     'RecognizePiiEntitiesResult',
     'PiiEntity',
     'PiiEntityDomainType',
-    'AnalyzeHealthcareResultItem',
-    'AnalyzeHealthcareResult',
+    'AnalyzeHealthcareEntitiesResultItem',
+    'AnalyzeHealthcareEntitiesResult',
     'HealthcareEntity',
-    'HealthcareRelation',
-    'HealthcareEntityLink',
+    'HealthcareEntityDataSource',
     'RecognizeEntitiesAction',
     'RecognizePiiEntitiesAction',
     'ExtractKeyPhrasesAction',

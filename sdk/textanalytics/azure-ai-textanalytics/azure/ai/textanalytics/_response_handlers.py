@@ -30,7 +30,7 @@ from ._models import (
     TextAnalyticsWarning,
     RecognizePiiEntitiesResult,
     PiiEntity,
-    AnalyzeHealthcareResultItem,
+    AnalyzeHealthcareEntitiesResultItem,
     AnalyzeBatchActionsResult,
     RequestStatistics,
     AnalyzeBatchActionsType,
@@ -38,7 +38,7 @@ from ._models import (
     TextDocumentBatchStatistics,
     _get_indices,
 )
-from ._paging import AnalyzeHealthcareResult, AnalyzeResult
+from ._paging import AnalyzeHealthcareEntitiesResult, AnalyzeResult
 
 class CSODataV4Format(ODataV4Format):
 
@@ -192,7 +192,7 @@ def pii_entities_result(entity, results, *args, **kwargs):  # pylint: disable=un
 
 @prepare_result
 def healthcare_result(health_result, results, *args, **kwargs): # pylint: disable=unused-argument
-    return AnalyzeHealthcareResultItem._from_generated(health_result) # pylint: disable=protected-access
+    return AnalyzeHealthcareEntitiesResultItem._from_generated(health_result) # pylint: disable=protected-access
 
 
 def healthcare_extract_page_data(doc_id_order, obj, response_headers, health_job_state): # pylint: disable=unused-argument
@@ -302,7 +302,7 @@ def lro_get_next_page(lro_status_callback, first_page, continuation_token, show_
 
 
 def healthcare_paged_result(doc_id_order, health_status_callback, _, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
-    return AnalyzeHealthcareResult(
+    return AnalyzeHealthcareEntitiesResult(
         functools.partial(lro_get_next_page, health_status_callback, obj, show_stats=show_stats),
         functools.partial(healthcare_extract_page_data, doc_id_order, obj, response_headers),
         model_version=obj.results.model_version,
