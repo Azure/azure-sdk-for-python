@@ -4,6 +4,36 @@ interactions:
     headers:
       Accept:
       - application/json
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2-preview
+  response:
+    body:
+      string: OK
+    headers:
+      cache-control: no-cache
+      content-length: '2'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer authorization="https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://managedhsm.azure.net"
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20210128-1-4c3070d1-develop
+      x-ms-server-latency: '0'
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
       User-Agent:
       - azsdk-python-keyvault-administration/4.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
@@ -29,14 +59,14 @@ interactions:
       x-ms-build-version: 1.0.20210128-1-4c3070d1-develop
       x-ms-keyvault-network-info: addr=174.127.232.53
       x-ms-keyvault-region: northeurope
-      x-ms-server-latency: '0'
+      x-ms-server-latency: '1'
     status:
       code: 200
       message: OK
     url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2-preview
 - request:
-    body: '{"properties": {"roleName": "role-named15f1369", "permissions": [{"dataActions":
-      ["Microsoft.KeyVault/managedHsm/keys/read/action"]}], "description": "test"}}'
+    body: '{"properties": {"roleName": "role-named15f1369", "description": "test",
+      "permissions": [{"dataActions": ["Microsoft.KeyVault/managedHsm/keys/read/action"]}]}}'
     headers:
       Accept:
       - application/json
@@ -61,14 +91,13 @@ interactions:
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: addr=174.127.232.53
       x-ms-keyvault-region: northeurope
-      x-ms-server-latency: '55'
+      x-ms-server-latency: '65'
     status:
       code: 201
       message: Created
-    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/69be4ec0-b611-4807-8a98-ecc71a76d07a?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/09cac7da-ce29-4fb2-958e-7f60c658ed6d?api-version=7.2-preview
 - request:
-    body: '{"properties": {"permissions": [{"notDataActions": ["Microsoft.KeyVault/managedHsm/keys/read/action"],
-      "dataActions": []}]}}'
+    body: '{"properties": {"permissions": [{"dataActions": [], "notDataActions": ["Microsoft.KeyVault/managedHsm/keys/read/action"]}]}}'
     headers:
       Accept:
       - application/json
@@ -93,11 +122,11 @@ interactions:
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: addr=174.127.232.53
       x-ms-keyvault-region: northeurope
-      x-ms-server-latency: '57'
+      x-ms-server-latency: '48'
     status:
       code: 201
       message: Created
-    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/69be4ec0-b611-4807-8a98-ecc71a76d07a?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/09cac7da-ce29-4fb2-958e-7f60c658ed6d?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -160,7 +189,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/69be4ec0-b611-4807-8a98-ecc71a76d07a?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/09cac7da-ce29-4fb2-958e-7f60c658ed6d?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -183,11 +212,11 @@ interactions:
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: addr=174.127.232.53
       x-ms-keyvault-region: northeurope
-      x-ms-server-latency: '52'
+      x-ms-server-latency: '48'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/69be4ec0-b611-4807-8a98-ecc71a76d07a?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/09cac7da-ce29-4fb2-958e-7f60c658ed6d?api-version=7.2-preview
 - request:
     body: null
     headers:

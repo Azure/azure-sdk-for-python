@@ -9,6 +9,7 @@ import time
 from azure.core.credentials import AccessToken
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope, KeyVaultPermission, KeyVaultDataAction
+from azure.keyvault.administration._internal import HttpChallengeCache
 import pytest
 from six.moves.urllib_parse import urlparse
 
@@ -27,6 +28,11 @@ class AccessControlTests(KeyVaultTestCase):
             playback = urlparse(self.managed_hsm["playback_url"])
             self.scrubber.register_name_pair(real.netloc, playback.netloc)
         super(AccessControlTests, self).setUp(*args, **kwargs)
+
+    def tearDown(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        super(AccessControlTests, self).tearDown()
 
     @property
     def credential(self):
