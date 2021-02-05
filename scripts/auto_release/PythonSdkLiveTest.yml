@@ -37,147 +37,39 @@ jobs:
         output_path=$(pwd)/venv-sdk
 
         # import env variable
+        export AZURE_TEST_RUN_LIVE=true
+        export TENANT_ID=$(ENV_TENANT_ID)
+        export CLIENT_ID=$(ENV_CLIENT_ID)
+        export CLIENT_SECRET=$(ENV_CLIENT_SECRET)
+        export SUBSCRIPTION_ID=$(ENV_SUBSCRIPTION_ID)
+        export AZURE_TENANT_ID=$(ENV_TENANT_ID)
+        export AZURE_CLIENT_ID=$(ENV_CLIENT_ID)
+        export AZURE_CLIENT_SECRET=$(ENV_CLIENT_SECRET)
+        export AZURE_SUBSCRIPTION_ID=$(ENV_SUBSCRIPTION_ID)
 
-
-        # create branch
+        # run
         cd azure-sdk-for-python
         python /home/vsts/work/1/s/scripts/auto_release/main.py "$(BASE_BRANCH)" "$script_path" "$output_path"
 
-        #
-        sed -n '6p' filename     打印文件的第6行
+        # judge
+        if [ ! -f "$output_path/output.txt" ]; then
+          exit 1
+        fi
 
+        # create PR
+        new_branch = `sed -n '1p' $output_path/output.txt`
+        target_branch = `sed -n '2p' $output_path/output.txt`
+        curl \
+          --user "anything:$(USR_TOKEN)" \
+          -d "{\
+                  \"title\":\"[AutoRelease_Python] $new_branch\",\
+                  \"body\":\"Please Add the link issue\",\
+                  \"head\":\"$(USR_NAME):$new_branch\",\
+                  \"base\":\"$target_branch\"\
+              }" \
+              $(REPO)/pulls
 
-#        # Whether commit changes
-#        if [[ "$(USER_USERNAME)" != "" && "$(USER_TOKEN)" != "" ]]; then
-#          REPO="$(USER_REPO)"
-#          # Pass username and token so that we can commit changes
-#          git clone -b $(USER_BRANCH) ${REPO:0:8}$(USER_USERNAME):$(USER_TOKEN)@${REPO:8}
-#          git clone https://github.com/Azure/azure-cli-extensions.git
-#        else
-#          git clone -b $(USER_BRANCH) $(USER_REPO)
-#          git clone https://github.com/Azure/azure-cli-extensions.git
-#        fi
-#
-#        python -m venv env
-#        source env/bin/activate
-#        pip install azdev
-#        # git clone https://github.com/Azure/azure-cli-dev-tools.git
-#        # git clone -b fix https://github.com/qwordy/azure-cli-dev-tools.git
-#        # pip install -e azure-cli-dev-tools
-#        pip install pytest-json-report
-#        pip install pytest-html
-#        pip install pytest-rerunfailures
-#
-#        azdev setup -c azure-cli -r azure-cli-extensions
-#
-#        # Remove ext- prefix
-#        FinalTarget="$(Target)"
-#        if [[ "${FinalTarget}" =~ ^ext-.* ]]; then
-#          echo "It is an extention"
-#          echo $(Target)
-#          FinalTarget=${FinalTarget:4}
-#          azdev extension add ${FinalTarget}
-#        fi
-#        echo ${FinalTarget}
-#
-#        az -v
-#        # az login --service-principal --username $(APP_ID) --password $(PASSWORD) --tenant $(TENANT_ID)
-#        az login -u azureclitest@azuresdkteam.onmicrosoft.com -p $(AZURECLITESTPASSWORD)
-#        az account set -s 0b1f6471-1bf0-4dda-aec3-cb9272f09590
-#
-#        # Clean resources
-#        python /home/vsts/work/1/s/scripts/live_test/clean_policy.py
-#
-#        # Whether commit changes
-#        if [[ "$(USER_USERNAME)" != "" && "$(USER_TOKEN)" != "" ]]; then
-#          echo "Commit mode"
-#          azdev test ${FinalTarget} --no-exitfirst -a "-n $(USER_PARALLELISM)"
-#          azdev test ${FinalTarget} --live --lf --xml-path test_results.parallel.xml --no-exitfirst -a "-n $(USER_PARALLELISM) --json-report --json-report-summary --json-report-file=$(Target).report.parallel.json --html=$(Target).report.parallel.html --self-contained-html --reruns 3 --capture=sys"
-#        else
-#          echo "Normal mode"
-#          # Sequential
-#          azdev test ${FinalTarget} $(USER_LIVE) --mark serial --xml-path test_results.sequential.xml --no-exitfirst -a "-n 1 --json-report --json-report-summary --json-report-file=$(Target).report.sequential.json --html=$(Target).report.sequential.html --self-contained-html --reruns 3 --capture=sys"
-#          # Parallel
-#          azdev test ${FinalTarget} $(USER_LIVE) --mark "not serial" --xml-path test_results.parallel.xml --no-exitfirst -a "-n $(USER_PARALLELISM) --json-report --json-report-summary --json-report-file=$(Target).report.parallel.json --html=$(Target).report.parallel.html --self-contained-html --reruns 3 --capture=sys"
-#        fi
-
-#        pwd
-#        ls
-#        # Whether commit changes
-#        if [[ "$(USER_USERNAME)" != "" && "$(USER_TOKEN)" != "" ]]; then
-#          cd azure-cli
-#          git status
-#          git add .
-#          git commit -m "Upload recording files"
-#          git push origin $(USER_BRANCH)
-#        fi
-#
-#      condition: and(succeededOrFailed(), eq(variables.Match, '1'))
-#    - task: PublishTestResults@2
-#      condition: and(succeededOrFailed(), eq(variables.Match, '1'))
-#      inputs:
-#        testResultsFiles: '/home/vsts/work/1/test_results.*.xml'
-#        testRunTitle: 'Azure CLI live test results of $(Target)'
-#        mergeTestResults: true
-#        # testResultsFormat: 'JUnit'
-#    - task: PublishBuildArtifacts@1
-#      condition: and(succeededOrFailed(), eq(variables.Match, '1'))
-#      inputs:
-#        PathtoPublish: '/home/vsts/work/1/$(Target).report.sequential.json'
-#        ArtifactName: '$(Target).report.sequential.json'
-#        publishLocation: 'Container'
-#    - task: PublishBuildArtifacts@1
-#      condition: and(succeededOrFailed(), eq(variables.Match, '1'))
-#      inputs:
-#        PathtoPublish: '/home/vsts/work/1/$(Target).report.sequential.html'
-#        ArtifactName: '$(Target).report.sequential.html'
-#        publishLocation: 'Container'
-#    - task: PublishBuildArtifacts@1
-#      condition: and(succeededOrFailed(), eq(variables.Match, '1'))
-#      inputs:
-#        PathtoPublish: '/home/vsts/work/1/$(Target).report.parallel.json'
-#        ArtifactName: '$(Target).report.parallel.json'
-#        publishLocation: 'Container'
-#    - task: PublishBuildArtifacts@1
-#      condition: and(succeededOrFailed(), eq(variables.Match, '1'))
-#      inputs:
-#        PathtoPublish: '/home/vsts/work/1/$(Target).report.parallel.html'
-#        ArtifactName: '$(Target).report.parallel.html'
-#        publishLocation: 'Container'
-#
-#- job: SendEmail
-#  displayName: Send email
-#  timeoutInMinutes: 180
-#  dependsOn: LiveTestPython38
-#  condition: succeededOrFailed()
-#  steps:
-#    - task: UsePythonVersion@0
-#      inputs:
-#        versionSpec: '3.8'
-#        addToPath: true
-#        architecture: 'x64'
-#    - task: DownloadBuildArtifacts@0
-#      inputs:
-#        buildType: 'current'
-#        downloadType: 'specific'
-#        downloadPath: '$(System.ArtifactsDirectory)'
-#    - bash: |
-#        echo $(System.ArtifactsDirectory)
-#        ls $(System.ArtifactsDirectory)
-#        pwd
-#        commit_id=`git ls-remote https://github.com/Azure/azure-cli.git HEAD`
-#        pip install sendgrid
-#        pip install mysql-connector-python
-#        pip install requests
-#        # pip install certifi
-#        # Send notification
-#        az -v
-#        az login -u azureclitest@azuresdkteam.onmicrosoft.com -p $(AZURECLITESTPASSWORD)
-#        az account set -s 0b1f6471-1bf0-4dda-aec3-cb9272f09590
-#        python /home/vsts/work/1/s/scripts/live_test/sendemail.py "$(SENDGRID_KEY)" "$(Build.BuildId)" "$(USER_REPO)" "$(USER_BRANCH)" "$(USER_TARGET)" "$(USER_LIVE)" "$(System.ArtifactsDirectory)" "$(Build.RequestedForEmail)" "$(ACCOUNT_KEY)" "$commit_id" "$(DB_PWD)"
-#        # python /home/vsts/work/1/s/scripts/live_test/upload.py "$(System.ArtifactsDirectory)" "$(ACCOUNT_KEY)" "$(USER_LIVE)"
-#        # Clean resources
-#        if [[ "$(USER_LIVE)" == "--live" && "$(USER_TARGET)" == "" ]]; then
-#          python /home/vsts/work/1/s/scripts/live_test/clean.py
-#        fi
-#
+        # if test failed, still push and crete PR. But pipeline failed to remind user
+        if [ -f "$output_path/live_test_fail.txt" ]; then
+          exit 1
+        fi

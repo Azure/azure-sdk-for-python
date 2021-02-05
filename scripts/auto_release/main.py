@@ -120,7 +120,7 @@ def edit_version(add_content):
 
 
 def edit_changelog(add_content):
-    path = f'/sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
+    path = f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
     with open(f'{path}/CHANGELOG.md', 'r') as file_in:
         list_in = file_in.readlines()
     list_out = [list_in[0], '\n']
@@ -135,11 +135,11 @@ def edit_changelog(add_content):
 
 def print_changelog(add_content):
     for line in add_content:
-        my_print('[CHANGELOG] ' + line)
+        print('[CHANGELOG] ' + line)
 
 
 def edit_file_setup():
-    path = f'/sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
+    path = f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
     with open(f'{path}/setup.py', 'r') as file_in:
         list_in = file_in.readlines()
     for i in range(0, len(list_in)):
@@ -198,7 +198,7 @@ def edit_first_release():
 
 
 def edit_file():
-    from pypi_tools.pypi import PyPIClient
+    from pypi import PyPIClient
     client = PyPIClient()
     try:
         client.get_ordered_versions(f'azure-mgmt-{SERVICE_NAME}')
@@ -225,7 +225,7 @@ def build_wheel():
     path = os.getcwd()
     setup_path = f'{path}/sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
     print_check(f'cd {setup_path} && python setup.py bdist_wheel')
-    print_check('cd path')
+    print_check(f'cd {path}')
 
 
 def test_env_init():
@@ -239,8 +239,13 @@ def run_live_test():
     test_env_init()
     print_exec(f'python scripts/dev_setup.py -p azure-mgmt-{SERVICE_NAME}')
     # run live test
-    print_exec(f'pytest -s sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}/')
-    my_print('live test run done !!!')
+    try:
+        print_check(f'pytest -s sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}/')
+    except:
+        my_print('some test failed, please fix it locally')
+        print_check(f'touch {OUT_PATH}/live_test_fail.txt')
+    else:
+        my_print('live test run done !!!')
 
 
 def del_useless_file():
@@ -301,16 +306,18 @@ def judge_sdk_folder():
 def git_remote_add():
     global TRACK, NEW_BRANCH
     # init git
+    print_exec('git checkout . && git clean -fd && git reset --hard HEAD ')
     print_exec('git remote add autosdk https://github.com/AzureSDKAutomation/azure-sdk-for-python.git')
-    print_check(f'get fetch autosdk {BRANCH_BASE}')
-    print_check(f'get checkout autosdk/{BRANCH_BASE}')
+    print_check(f'git fetch autosdk {BRANCH_BASE}')
+    print_check(f'git checkout autosdk/{BRANCH_BASE}')
 
 
 def create_branch():
     global NEW_BRANCH
     # create new branch
-    date = time.localtime(time.time())
-    NEW_BRANCH = 't{}-{}-{}-{:02d}-{:02d}'.format(TRACK, SERVICE_NAME, date.tm_year, date.tm_mon, date.tm_mday)
+    t = time.time()
+    d = time.localtime(t)
+    NEW_BRANCH = 't{}-{}-{}-{:02d}-{:02d}-{}'.format(TRACK, SERVICE_NAME, d.tm_year, d.tm_mon, d.tm_mday, str(t)[-6:])
     print_exec(f'git checkout -b {NEW_BRANCH}')
 
 
@@ -329,10 +336,10 @@ def main():
     del_useless_file()
     edit_file()
     check_pprint_name()
-    commit_file()
+    # commit_file()
     run_live_test()
     build_wheel()
-    commit_test()
+    # commit_test()
 
 
 if __name__ == '__main__':
@@ -361,4 +368,5 @@ if __name__ == '__main__':
     except sp.CalledProcessError as e:
         my_print(e)
     else:
-        print_exec(f'touch {OUT_PATH}/output.txt')
+        with open(f'{OUT_PATH}/output.txt', 'w') as file_out:
+            file_out.writelines([f'{NEW_BRANCH}\n', "master" if TRACK == '2' else 'release/v3'])
