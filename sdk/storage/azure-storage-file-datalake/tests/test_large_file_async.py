@@ -92,6 +92,7 @@ class LargeFileTest(StorageTestCase):
         self.assertEqual(self.payload_dropping_policy.append_sizes[0], LARGEST_BLOCK_SIZE)
 
     @pytest.mark.live_test_only
+    @DataLakePreparer()
     async def test_upload_large_stream_without_network(self, datalake_storage_account_name, datalake_storage_account_key):
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self.get_resource_name(TEST_DIRECTORY_PREFIX)
