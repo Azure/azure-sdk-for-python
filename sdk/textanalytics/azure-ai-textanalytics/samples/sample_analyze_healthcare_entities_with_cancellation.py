@@ -7,16 +7,16 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_health_with_cancellation.py
+FILE: sample_analyze_healthcare_entities_with_cancellation.py
 
 DESCRIPTION:
-    This sample demonstrates how to cancel a Health job after it's been started.
+    This sample demonstrates how to cancel a Healthcare Entities Analysis job after it's been started.
     Since the Health API is currently only available in a gated preview, you need
     to have your subscription on the service's allow list. More information
     here: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview.
 
 USAGE:
-    python sample_health_with_cancellation.py
+    python sample_analyze_healthcare_entities_with_cancellation.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -25,12 +25,13 @@ USAGE:
 
 
 import os
+from azure.core.exceptions import HttpResponseError
 
 
-class HealthWithCancellationSample(object):
+class AnalyzeHealthcareEntitiesWithCancellationSample(object):
 
-    def health_with_cancellation(self):
-        # [START health_with_cancellation]
+    def analyze_healthcare_entities_with_cancellation(self):
+        # [START analyze_healthcare_entities_with_cancellation]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -58,15 +59,24 @@ class HealthWithCancellationSample(object):
             for revascularization with open heart surgery."
         ]
 
-        poller = text_analytics_client.begin_analyze_healthcare(documents)
-        text_analytics_client.begin_cancel_analyze_healthcare(poller)
-        poller.wait()
+        poller = text_analytics_client.begin_analyze_healthcare_entities(documents)
+        
+        try:
+            cancellation_poller = poller.cancel()
+            cancellation_poller.wait()
+        
+        except HttpResponseError as e:
+            # If the operation has already reached a terminal state it cannot be cancelled.
+            print(e)
 
-        # [END health_with_cancellation]
+        else:
+            print("Healthcare entities analysis was successfully cancelled.")
+
+        # [END analyze_healthcare_entities_with_cancellation]
 
 
 if __name__ == "__main__":
-    sample = HealthWithCancellationSample()
-    sample.health_with_cancellation()
+    sample = AnalyzeHealthcareEntitiesWithCancellationSample()
+    sample.analyze_healthcare_entities_with_cancellation()
 
 

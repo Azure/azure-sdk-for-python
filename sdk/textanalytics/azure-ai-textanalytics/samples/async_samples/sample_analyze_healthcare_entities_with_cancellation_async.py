@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_health_with_cancellation.py
+FILE: sample_analyze_healthcare_entities_with_cancellation.py
 
 DESCRIPTION:
     This sample demonstrates how to cancel a Health job after it's been started.
@@ -17,7 +17,7 @@ DESCRIPTION:
 
 
 USAGE:
-    python sample_health_with_cancellation.py
+    python sample_analyze_healthcare_entities_with_cancellation.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -27,11 +27,13 @@ USAGE:
 
 import os
 import asyncio
+from azure.core.exceptions import HttpResponseError
 
-class HealthWithCancellationSampleAsync(object):
 
-    async def health_with_cancellation_async(self):
-        # [START health_with_cancellation_async]
+class AnalyzeHealthcareEntitiesWithCancellationSampleAsync(object):
+
+    async def analyze_healthcare_entities_with_cancellation_async(self):
+        # [START analyze_healthcare_entities_with_cancellation_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -60,17 +62,25 @@ class HealthWithCancellationSampleAsync(object):
         ]
 
         async with text_analytics_client:
-            poller = await text_analytics_client.begin_analyze_healthcare(documents)
-            poller = await text_analytics_client.begin_cancel_analyze_healthcare(poller)
+            poller = await text_analytics_client.begin_analyze_healthcare_entities(documents)
+            
+            try:
+                cancellation_poller = await poller.cancel()
+                await cancellation_poller.wait()
+            
+            except HttpResponseError as e:
+                # If the operation has already reached a terminal state it cannot be cancelled.
+                print(e)
 
-        await poller.wait()
+            else:
+                print("Healthcare entities analysis was successfully cancelled.")
 
-        # [END health_with_cancellation_async]
+        # [END analyze_healthcare_entities_with_cancellation_async]
 
 
 async def main():
-    sample = HealthWithCancellationSampleAsync()
-    await sample.health_with_cancellation_async()
+    sample = AnalyzeHealthcareEntitiesWithCancellationSampleAsync()
+    await sample.analyze_healthcare_entities_with_cancellation_async()
 
 
 if __name__ == '__main__':

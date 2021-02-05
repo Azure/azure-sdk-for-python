@@ -182,9 +182,9 @@ class RecognizePiiEntitiesResult(DictMixin):
             )[:1024]
 
 
-class AnalyzeHealthcareResultItem(DictMixin):
+class AnalyzeHealthcareEntitiesResultItem(DictMixin):
     """
-    AnalyzeHealthcareResultItem contains the Healthcare entities and relations from a
+    AnalyzeHealthcareEntitiesResultItem contains the Healthcare entities and relations from a
     particular document.
 
     :ivar str id: Unique, non-empty document identifier that matches the
@@ -204,41 +204,56 @@ class AnalyzeHealthcareResultItem(DictMixin):
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a AnalyzeHealthcareResult.
+        results. Always False for an instance of a AnalyzeHealthcareEntitiesResultItem.
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
-        self.relations = kwargs.get("relations", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
+    @staticmethod
+    def _update_related_entities(entities, relations_result):
+        relation_dict = {}
+        for r in relations_result:
+            _, source_idx = _get_indices(r.source)
+            _, target_idx = _get_indices(r.target)
+
+            if entities[source_idx] not in relation_dict.keys():
+                relation_dict[entities[source_idx]] = {}
+
+            if entities[target_idx] not in relation_dict.keys():
+                relation_dict[entities[target_idx]] = {}
+
+            if r.bidirectional:
+                relation_dict[entities[target_idx]][entities[source_idx]] = r.relation_type
+
+            relation_dict[entities[source_idx]][entities[target_idx]] = r.relation_type
+
+        for entity in entities:
+            if entity in relation_dict.keys():
+                entity.related_entities.update(relation_dict[entity])
+
     @classmethod
     def _from_generated(cls, healthcare_result):
         entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities] # pylint: disable=protected-access
-        relations = []
         if healthcare_result.relations:
-            for r in healthcare_result.relations:
-                _, source_idx = _get_indices(r.source)
-                _, target_idx = _get_indices(r.target)
-                relations.append(HealthcareRelation._from_generated(r, entities[source_idx], entities[target_idx])) # pylint: disable=protected-access
+            cls._update_related_entities(entities, healthcare_result.relations)
 
         return cls(
             id=healthcare_result.id,
             entities=entities,
-            relations=relations,
             warnings=healthcare_result.warnings,
             statistics=healthcare_result.statistics
         )
 
     def __repr__(self):
-        return "AnalyzeHealthcareResultItem(id={}, entities={}, relations={}, warnings={}, statistics={}, \
+        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, warnings={}, statistics={}, \
         is_error={})".format(
             self.id,
             self.entities,
-            self.relations,
             self.warnings,
             self.statistics,
             self.is_error
@@ -406,9 +421,9 @@ class HealthcareEntity(DictMixin):
         This value depends on the value of the `string_index_type` parameter specified
         in the original request, which is UnicodeCodePoints by default.
     :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
-            entity.
-    :ivar links: A collection of entity references in known data sources.
-    :vartype links: list[~azure.ai.textanalytics.HealthcareEntityLink]
+        entity.
+    :ivar data_sources: A collection of entity references in known data sources.
+    :vartype data_sources: list[~azure.ai.textanalytics.HealthcareEntityDataSource]
     """
 
     def __init__(self, **kwargs):
@@ -418,7 +433,8 @@ class HealthcareEntity(DictMixin):
         self.length = kwargs.get("length", None)
         self.offset = kwargs.get("offset", None)
         self.confidence_score = kwargs.get("confidence_score", None)
-        self.links = kwargs.get("links", [])
+        self.data_sources = kwargs.get("data_sources", [])
+        self.related_entities = {}
 
     @classmethod
     def _from_generated(cls, healthcare_entity):
@@ -429,76 +445,42 @@ class HealthcareEntity(DictMixin):
             length=healthcare_entity.length,
             offset=healthcare_entity.offset,
             confidence_score=healthcare_entity.confidence_score,
-            links=[
-                HealthcareEntityLink(id=l.id, data_source=l.data_source) for l in healthcare_entity.links
+            data_sources=[
+                HealthcareEntityDataSource(entity_id=l.id, name=l.data_source) for l in healthcare_entity.links
             ] if healthcare_entity.links else None
         )
 
+    def __hash__(self):
+        return hash(repr(self))
+
     def __repr__(self):
-        return "HealthcareEntity(text={}, category={}, subcategory={}, length={}, offset={}, "\
-        "confidence_score={}, links={})".format(
+        return "HealthcareEntity(text={}, category={}, subcategory={}, length={}, offset={}, confidence_score={}, "\
+        "data_sources={}, related_entities={})".format(
             self.text,
             self.category,
             self.subcategory,
             self.length,
             self.offset,
             self.confidence_score,
-            repr(self.links)
+            repr(self.data_sources),
+            repr(self.related_entities)
         )[:1024]
 
 
-class HealthcareRelation(DictMixin):
+class HealthcareEntityDataSource(DictMixin):
     """
-    HealthcareRelation contains information describing a relationship between two entities found in text.
+    HealthcareEntityDataSource contains information representing an entity reference in a known data source.
 
-    :ivar str type: The type of relation, such as DosageOfMedication or FrequencyOfMedication, etc.
-    :ivar bool is_bidirectional: Boolean value indicating that the relationship between the two entities is
-        bidirectional.  If true the relation between the entities is bidirectional, otherwise directionality
-        is source to target.
-    :ivar source: A reference to an extracted Healthcare entity representing the source of the relation.
-    :vartype source: ~azure.ai.textanalytics.HealthcareEntity
-    :ivar target: A reference to an extracted Healthcare entity representing the target of the relation.
-    :vartype target: ~azure.ai.textanalytics.HealthcareEntity
+    :ivar str entity_id: ID of the entity in the given source catalog.
+    :ivar str name: The name of the entity catalog from where the entity was identified, such as UMLS, CHV, MSH, etc.
     """
 
     def __init__(self, **kwargs):
-        self.relation_type = kwargs.get("relation_type", None)
-        self.is_bidirectional = kwargs.get("is_bidirectional", None)
-        self.source = kwargs.get("source", None)
-        self.target = kwargs.get("target", None)
-
-    @classmethod
-    def _from_generated(cls, healthcare_relation, source_entity, target_entity):
-        return cls(
-            relation_type=healthcare_relation.relation_type,
-            is_bidirectional=healthcare_relation.bidirectional,
-            source=source_entity,
-            target=target_entity
-        )
+        self.entity_id = kwargs.get("entity_id", None)
+        self.name = kwargs.get("name", None)
 
     def __repr__(self):
-        return "HealthcareRelation(relation_type={}, is_bidirectional={}, source={}, target={})".format(
-            self.relation_type,
-            self.is_bidirectional,
-            repr(self.source),
-            repr(self.target)
-        )[:1024]
-
-
-class HealthcareEntityLink(DictMixin):
-    """
-    HealthcareEntityLink contains information representing an entity reference in a known data source.
-
-    :ivar str id: ID of the entity in the given source catalog.
-    :ivar str data_source: The entity catalog from where the entity was identified, such as UMLS, CHV, MSH, etc.
-    """
-
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.data_source = kwargs.get("data_source", None)
-
-    def __repr__(self):
-        return "HealthcareEntityLink(id={}, data_source={})".format(self.id, self.data_source)[:1024]
+        return "HealthcareEntityDataSource(entity_id={}, name={})".format(self.entity_id, self.name)[:1024]
 
 
 class TextAnalyticsError(DictMixin):
