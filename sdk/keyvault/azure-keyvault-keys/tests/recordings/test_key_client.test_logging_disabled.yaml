@@ -1,6 +1,58 @@
 interactions:
 - request:
-    body: '{"kty": "RSA", "key_size": 2048}'
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.netkeys/livekvtestrsa-key-name20a00f12/create?api-version=7.1
+  response:
+    body:
+      string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
+        or PoP token."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '87'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 05 Feb 2021 01:23:15 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      www-authenticate:
+      - Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://vault.azure.net"
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - northeurope
+      x-ms-keyvault-service-version:
+      - 1.2.139.0
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: '{"key_size": 2048, "kty": "RSA"}'
     headers:
       Accept:
       - application/json
@@ -15,19 +67,19 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12/create?api-version=7.1
+    uri: https://vaultname.vault.azure.netkeys/livekvtestrsa-key-name20a00f12/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12/5e1d35eabac645ef9505c76927b86ddb","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ysjd-rjeGxZXJ8GBZLDfPLXoYtT3YIA7ayedCo-FI0VPcSS5lQ3NeESbMhK0qYoax-JN5zmi904C6m_4Bd1wnXa3-GLiZnHjsWZ9hKoFTJAMtrOvuLEuydlX_N-WZktffv7fl_BFIidGAvb8epIqs6LFhH5UKbp8ocZA3tF0tcveYy01RaHwf5wjLjKT0eUhnfi_ZoLo_HbdoIVw1H_bJ1EMd7XGTgghlMPADQWTvpInfGBcLPjexl0xk75txwxUp4xH-n5KVYjH2mFmmLBuPMIlD7hzM0-MfzmFYqwTj-yaNo5KXJjn2KcmJfnXBm8o9oFvrrkXJ0bUwwAlqFS6gQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612320314,"updated":1612320314,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestrsa-key-name20a00f12/800136d288654ce799be3795d487582c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xBYRz3jwyzxB_VWkNvzITVHZ1HozEsvUxIuMNjOnCgxITvL7k92GWdi6JOrXwbtO9azsj9NWcNcF1_dxYrgdf5IsHR3X7T--ccjZuFazjUXDPxtfN9ZLJ7Iw_h1HR-lUkZA8irGTUBazDFijxa_GgsteHzowjGDpz2fDY5eaBDLz-J_D-vQmdDiz8WUk5D6E1TEM7CeWkPInt9GOl1yL5__hn-0Xu1Dwiv6XQpjLnllDSAsaQVaGgX7VxTy7hm_ws_wBx47lra_vkyP4UrrtZ3nOk1aeU7LGvhbl2r2sheMFMbumBI2mYt41XCT2EoXr69D7pyMd8u40Fmif2QhdJQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612488197,"updated":1612488197,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '696'
+      - '698'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Feb 2021 02:45:14 GMT
+      - Fri, 05 Feb 2021 01:23:16 GMT
       expires:
       - '-1'
       pragma:
@@ -39,7 +91,7 @@ interactions:
       x-ms-keyvault-network-info:
       - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus2
+      - northeurope
       x-ms-keyvault-service-version:
       - 1.2.139.0
       x-powered-by:

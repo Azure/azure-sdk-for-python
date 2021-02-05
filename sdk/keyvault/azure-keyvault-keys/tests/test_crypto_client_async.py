@@ -14,6 +14,7 @@ from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyVaultKey
 from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys.crypto.aio import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+from azure.keyvault.keys._shared import HttpChallengeCache
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import PowerShellPreparer
 import pytest
@@ -35,6 +36,11 @@ NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 class CryptoClientTests(KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, match_body=False, custom_request_matchers=[json_attribute_matcher], **kwargs)
+
+    def tearDown(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        super(CryptoClientTests, self).tearDown()
 
     plaintext = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
 

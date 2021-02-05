@@ -6,6 +6,7 @@ import functools
 
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys.crypto import CryptographyClient
+from azure.keyvault.keys._shared import HttpChallengeCache
 from devtools_testutils import PowerShellPreparer
 
 from _shared.test_case import KeyVaultTestCase
@@ -21,6 +22,11 @@ class TestCryptoExamples(KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         kwargs["match_body"] = False
         super(TestCryptoExamples, self).__init__(*args, **kwargs)
+
+    def tearDown(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        super(TestCryptoExamples, self).tearDown()
 
     def create_key_client(self, vault_uri, **kwargs):
         credential = self.get_credential(KeyClient)
