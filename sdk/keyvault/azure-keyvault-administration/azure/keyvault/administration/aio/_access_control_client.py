@@ -46,6 +46,9 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :type role_assignment_name: str or uuid.UUID
         :rtype: KeyVaultRoleAssignment
         """
+        role_assignment_name_provided = kwargs.pop("role_assignment_name", None)
+        role_assignment_name = str(role_assignment_name_provided) if role_assignment_name_provided else str(uuid4())
+
         create_parameters = self._client.role_assignments.models.RoleAssignmentCreateParameters(
             properties=self._client.role_assignments.models.RoleAssignmentProperties(
                 principal_id=principal_id, role_definition_id=str(role_definition_id)
@@ -54,7 +57,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         assignment = await self._client.role_assignments.create(
             vault_base_url=self._vault_url,
             scope=role_scope,
-            role_assignment_name=kwargs.pop("role_assignment_name", None) or str(uuid4()),
+            role_assignment_name=role_assignment_name,
             parameters=create_parameters,
             **kwargs
         )
@@ -136,6 +139,9 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :returns: The created or updated role definition
         :rtype: KeyVaultRoleDefinition
         """
+        role_definition_name_provided = kwargs.pop("role_definition_name", None)
+        role_definition_name = str(role_definition_name_provided) if role_definition_name_provided else str(uuid4())
+
         permissions = [
             self._client.role_definitions.models.Permission(
                 actions=p.allowed_actions,
@@ -156,7 +162,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         definition = await self._client.role_definitions.create_or_update(
             vault_base_url=self._vault_url,
             scope=role_scope,
-            role_definition_name=kwargs.pop("role_definition_name", None) or str(uuid4()),
+            role_definition_name=role_definition_name,
             parameters=parameters,
             **kwargs
         )
