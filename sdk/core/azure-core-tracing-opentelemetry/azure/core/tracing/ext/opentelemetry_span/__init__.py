@@ -203,7 +203,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :param headers: A key value pair dictionary
         :type headers: dict
         """
-        ctx = extract(DictGetter, headers)
+        ctx = extract(DictGetter(), headers)
         span_ctx = get_span_from_context(ctx).get_span_context()
         current_span = cls.get_current_span()
         current_span.links.append(Link(span_ctx, attributes))
