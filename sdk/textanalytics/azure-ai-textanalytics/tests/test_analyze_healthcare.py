@@ -620,8 +620,7 @@ class TestHealth(TextAnalyticsTest):
         except HttpResponseError:
             pass # expected if the operation was already in a terminal state.
 
-        else:
-            assert cancellation_poller.result() is None
+        cancellation_poller.wait()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

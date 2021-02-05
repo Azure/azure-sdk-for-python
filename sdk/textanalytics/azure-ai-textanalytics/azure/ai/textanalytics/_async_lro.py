@@ -153,6 +153,7 @@ class AnalyzeHealthcareEntitiesAsyncLROPoller(AsyncLROPoller[PollingReturnType])
                 :caption: Cancel an existing health operation.
         """
         polling_interval = kwargs.pop("polling_interval", 5)
+        await self._polling_method.update_status()
 
         try:
             return await getattr(self._polling_method, "_text_analytics_client").begin_cancel_health_job(

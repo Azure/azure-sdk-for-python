@@ -77,7 +77,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         async with client:
             result = await (await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
 
-        self.assertIsNone(response.statistics) # show_stats=False by default
+        self.assertIsNone(result.statistics) # show_stats=False by default
 
         response = []
         async for r in result:
@@ -746,8 +746,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             except HttpResponseError:
                 pass # expected if the operation was already in a terminal state.
 
-            else:
-                assert await cancellation_poller.result() is None
+            cancellation_poller.wait()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

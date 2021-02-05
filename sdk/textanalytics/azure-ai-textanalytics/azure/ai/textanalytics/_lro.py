@@ -170,6 +170,9 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller):
             # Join the thread so we no longer have to wait for a result from it.
             getattr(self, "_thread").join()
 
+            # Get a final status update.
+            getattr(self._polling_method, "update_status")()
+
             return getattr(self._polling_method, "_text_analytics_client").begin_cancel_health_job(
                 self.id,
                 polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
@@ -178,7 +181,6 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller):
         except HttpResponseError as error:
             from ._response_handlers import process_http_response_error
             process_http_response_error(error)
-
 
 class AnalyzeBatchActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 
