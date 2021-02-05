@@ -2,18 +2,20 @@
 
 * [Usage in a pipeline](#usage-in-a-pipeline)
 * [Matrix config file syntax](#matrix-config-file-syntax)
-   * [Fields](#fields)
-	  * [matrix](#matrix)
-	  * [include](#include)
-	  * [exclude](#exclude)
-	  * [displayNames](#displaynames)
+ * [Fields](#fields)
+	* [matrix](#matrix)
+	* [include](#include)
+	* [exclude](#exclude)
+	* [displayNames](#displaynames)
+	* [$IMPORT](#import)
 * [Matrix Generation behavior](#matrix-generation-behavior)
-  * [all](#all)
-  * [sparse](#sparse)
-  * [include/exclude](#includeexclude)
-  * [displayNames](#displaynames-1)
-  * [Filters](#filters)
-  * [Under the hood](#under-the-hood)
+	* [all](#all)
+	* [sparse](#sparse)
+	* [include/exclude](#includeexclude)
+	* [displayNames](#displaynames-1)
+	* [Filters](#filters)
+	* [NonSparseParameters](#nonsparseparameters)
+	* [Under the hood](#under-the-hood)
 * [Testing](#testing)
 
 
@@ -38,6 +40,7 @@ jobs:
       - Name: base_product_matrix
         Path: /eng/pipelines/matrix.json
         Selection: sparse
+		NonSparseParameters: <csv of parameter names for which all combinations should be included>
 		GenerateVMJobs: true
       - Name: sdk_specific_matrix
         Path: /sdk/foobar/matrix.json
@@ -144,6 +147,24 @@ readable value here. For example:
 }
 ```
 
+#### $IMPORT
+
+Matrix configs can also import another matrix config. The effect of this is the imported matrix will be generated,
+and then the importing config will be combined with that matrix (as if each entry of the imported matrix was a parameter).
+To import a matrix, add a parameter with the key `$IMPORT`:
+
+```
+"matrix": {
+  "$IMPORT": "path/to/matrix.json",
+  "JavaVersion": [ "1.8", "1.11" ]
+}
+```
+
+Importing can be useful, for example, in cases where there is a shared base matrix, but there is a need to run it
+once for each instance of a language version.
+
+Includes and excludes for the importing matrix will still get processed after the imported matrix is combined with the base matrix.
+
 ## Matrix Generation behavior
 
 #### all
@@ -241,6 +262,38 @@ named "ExcludedKey", a framework variable containing either "461" or "5.0", and 
   -DisplayNameFilter ".*windows.*" `
   -Filters @("ExcludedKey=^$", "framework=(461|5\.0)", "SupportedClouds=^$|.*Public.*")
 ```
+
+#### NonSparseParameters
+
+Sometimes it may be necessary to generate a sparse matrix, but keep the full combination of a few parameters. The
+NonSparseParameters argument allows for more fine-grained control of matrix generation. For example:
+
+```
+./Create-JobMatrix.ps1 `
+  -ConfigPath /path/to/matrix.json `
+  -Selection sparse `
+  -NonSparseParameters @("JavaTestVersion")
+```
+
+Given a matrix like below with `JavaTestVersion` marked as a non-sparse parameter:
+
+```
+{
+  "matrix": {
+    "Agent": {
+      "windows-2019": { "OSVmImage": "MMS2019", "Pool": "azsdk-pool-mms-win-2019-general" },
+      "ubuntu-1804": { "OSVmImage": "MMSUbuntu18.04", "Pool": "azsdk-pool-mms-ubuntu-1804-general" },
+      "macOS-10.15": { "OSVmImage": "macOS-10.15", "Pool": "Azure Pipelines" }
+    },
+    "JavaTestVersion": [ "1.8", "1.11" ],
+    "AZURE_TEST_HTTP_CLIENTS": "netty",
+    "ArmTemplateParameters": [ "@{endpointType='storage'}", "@{endpointType='cosmos'}" ]
+  }
+}
+```
+
+A matrix with 6 entries will be generated: A sparse matrix of Agent, AZURE_TEST_HTTP_CLIENTS and ArmTemplateParameters
+(3 total entries) will be multipled by the two `JavaTestVersion` parameters `1.8` and `1.11`.
 
 #### Under the hood
 
