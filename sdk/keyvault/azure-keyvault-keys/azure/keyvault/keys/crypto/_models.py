@@ -8,144 +8,129 @@ if TYPE_CHECKING:
     from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 
 
-class AlgorithmWithEncryptParameters():
-    """An encryption algorithm, including parameters applicable to using it for encryption.
+class EncryptionAlgorithmConfiguration():
+    """An encryption algorithm, including parameters applicable to using it for encryption or decryption.
     """
 
-    def __init__(self, algorithm, plaintext, **kwargs):
+    def __init__(self, algorithm, **kwargs):
         self.algorithm = algorithm
-        self.plaintext = plaintext
         self.iv = kwargs.pop("iv", None)
+        self.authentication_tag = kwargs.pop("authentication_tag", None)
         self.additional_authenticated_data = kwargs.pop("additional_authenticated_data", None)
 
     @classmethod
-    def rsa_oaep(cls, plaintext):
-        return cls(EncryptionAlgorithm.rsa_oaep, plaintext)
+    def rsa_oaep_encrypt(cls):
+        return cls(EncryptionAlgorithm.rsa_oaep)
 
     @classmethod
-    def rsa_oaep_256(cls, plaintext):
-        return cls(EncryptionAlgorithm.rsa_oaep_256, plaintext)
+    def rsa_oaep_256_encrypt(cls):
+        return cls(EncryptionAlgorithm.rsa_oaep_256)
 
     @classmethod
-    def rsa1_5(cls, plaintext):
-        return cls(EncryptionAlgorithm.rsa1_5, plaintext)
+    def rsa1_5_encrypt(cls):
+        return cls(EncryptionAlgorithm.rsa1_5)
 
     @classmethod
-    def a128_gcm(cls, plaintext, additional_authentication_data=None):
+    def a128_gcm_encrypt(cls, additional_authenticated_data=None):
         return cls(
-            EncryptionAlgorithm.a128_gcm, plaintext, additional_authentication_data=additional_authentication_data
+            EncryptionAlgorithm.a128_gcm, additional_authenticated_data=additional_authenticated_data
         )
 
     @classmethod
-    def a192_gcm(cls, plaintext, additional_authentication_data=None):
+    def a192_gcm_encrypt(cls, additional_authenticated_data=None):
         return cls(
-            EncryptionAlgorithm.a192_gcm, plaintext, additional_authentication_data=additional_authentication_data
+            EncryptionAlgorithm.a192_gcm, additional_authenticated_data=additional_authenticated_data
         )
 
     @classmethod
-    def a256_gcm(cls, plaintext, additional_authentication_data=None):
+    def a256_gcm_encrypt(cls, additional_authenticated_data=None):
         return cls(
-            EncryptionAlgorithm.a256_gcm, plaintext, additional_authentication_data=additional_authentication_data
+            EncryptionAlgorithm.a256_gcm, additional_authenticated_data=additional_authenticated_data
         )
 
     @classmethod
-    def a128_cbc(cls, plaintext, iv=None):
-        return cls(EncryptionAlgorithm.a128_cbc, plaintext, iv=iv)
+    def a128_cbc_encrypt(cls, iv=None):
+        return cls(EncryptionAlgorithm.a128_cbc, iv=iv)
 
     @classmethod
-    def a192_cbc(cls, plaintext, iv=None):
-        return cls(EncryptionAlgorithm.a192_cbc, plaintext, iv=iv)
+    def a192_cbc_encrypt(cls, iv=None):
+        return cls(EncryptionAlgorithm.a192_cbc, iv=iv)
 
     @classmethod
-    def a256_cbc(cls, plaintext, iv=None):
-        return cls(EncryptionAlgorithm.a256_cbc, plaintext, iv=iv)
+    def a256_cbc_encrypt(cls, iv=None):
+        return cls(EncryptionAlgorithm.a256_cbc, iv=iv)
 
     @classmethod
-    def a128_cbcpad(cls, plaintext, iv=None):
-        return cls(EncryptionAlgorithm.a128_cbcpad, plaintext, iv=iv)
+    def a128_cbcpad_encrypt(cls, iv=None):
+        return cls(EncryptionAlgorithm.a128_cbcpad, iv=iv)
 
     @classmethod
-    def a192_cbcpad(cls, plaintext, iv=None):
-        return cls(EncryptionAlgorithm.a192_cbcpad, plaintext, iv=iv)
+    def a192_cbcpad_encrypt(cls, iv=None):
+        return cls(EncryptionAlgorithm.a192_cbcpad, iv=iv)
 
     @classmethod
-    def a256_cbcpad(cls, plaintext, iv=None):
-        return cls(EncryptionAlgorithm.a256_cbcpad, plaintext, iv=iv)
-
-
-class AlgorithmWithDecryptParameters():
-    """An encryption algorithm, including parameters applicable to using it for decryption.
-    """
-
-    def __init__(self, algorithm, cyphertext, **kwargs):
-        self.algorithm = algorithm
-        self.cyphertext = cyphertext
-        self.iv = kwargs.pop("iv", None)
-        self.authenticated_tag = kwargs.pop("authenticated_tag", None)
-        self.additional_authenticated_data = kwargs.pop("additional_authenticated_data", None)
+    def a256_cbcpad_encrypt(cls, iv=None):
+        return cls(EncryptionAlgorithm.a256_cbcpad, iv=iv)
 
     @classmethod
-    def rsa_oaep(cls, cyphertext):
-        return cls(EncryptionAlgorithm.rsa_oaep, cyphertext)
+    def rsa_oaep_decrypt(cls):
+        return cls(EncryptionAlgorithm.rsa_oaep)
 
     @classmethod
-    def rsa_oaep_256(cls, cyphertext):
-        return cls(EncryptionAlgorithm.rsa_oaep_256, cyphertext)
+    def rsa_oaep_256_decrypt(cls):
+        return cls(EncryptionAlgorithm.rsa_oaep_256)
 
     @classmethod
-    def rsa1_5(cls, cyphertext):
-        return cls(EncryptionAlgorithm.rsa1_5, cyphertext)
+    def rsa1_5_decrypt(cls):
+        return cls(EncryptionAlgorithm.rsa1_5)
 
     @classmethod
-    def a128_gcm(cls, cyphertext, authentication_tag=None, additional_authentication_data=None):
+    def a128_gcm_decrypt(cls, authentication_tag=None, additional_authenticated_data=None):
         return cls(
             EncryptionAlgorithm.a128_gcm,
-            cyphertext,
             authentication_tag=authentication_tag,
-            additional_authentication_data=additional_authentication_data
+            additional_authenticated_data=additional_authenticated_data
         )
 
     @classmethod
-    def a192_gcm(cls, cyphertext, authentication_tag=None, additional_authentication_data=None):
+    def a192_gcm_decrypt(cls, authentication_tag=None, additional_authenticated_data=None):
         return cls(
             EncryptionAlgorithm.a192_gcm,
-            cyphertext,
             authentication_tag=authentication_tag,
-            additional_authentication_data=additional_authentication_data
+            additional_authenticated_data=additional_authenticated_data
         )
 
     @classmethod
-    def a256_gcm(cls, cyphertext, authentication_tag=None, additional_authentication_data=None):
+    def a256_gcm_decrypt(cls, authentication_tag=None, additional_authenticated_data=None):
         return cls(
             EncryptionAlgorithm.a256_gcm,
-            cyphertext,
             authentication_tag=authentication_tag,
-            additional_authentication_data=additional_authentication_data
+            additional_authenticated_data=additional_authenticated_data
         )
 
     @classmethod
-    def a128_cbc(cls, cyphertext, iv=None):
-        return cls(EncryptionAlgorithm.a128_cbc, cyphertext, iv=iv)
+    def a128_cbc_decrypt(cls, iv=None):
+        return cls(EncryptionAlgorithm.a128_cbc, iv=iv)
 
     @classmethod
-    def a192_cbc(cls, cyphertext, iv=None):
-        return cls(EncryptionAlgorithm.a192_cbc, cyphertext, iv=iv)
+    def a192_cbc_decrypt(cls, iv=None):
+        return cls(EncryptionAlgorithm.a192_cbc, iv=iv)
 
     @classmethod
-    def a256_cbc(cls, cyphertext, iv=None):
-        return cls(EncryptionAlgorithm.a256_cbc, cyphertext, iv=iv)
+    def a256_cbc_decrypt(cls, iv=None):
+        return cls(EncryptionAlgorithm.a256_cbc, iv=iv)
 
     @classmethod
-    def a128_cbcpad(cls, cyphertext, iv=None):
-        return cls(EncryptionAlgorithm.a128_cbcpad, cyphertext, iv=iv)
+    def a128_cbcpad_decrypt(cls, iv=None):
+        return cls(EncryptionAlgorithm.a128_cbcpad, iv=iv)
 
     @classmethod
-    def a192_cbcpad(cls, cyphertext, iv=None):
-        return cls(EncryptionAlgorithm.a192_cbcpad, cyphertext, iv=iv)
+    def a192_cbcpad_decrypt(cls, iv=None):
+        return cls(EncryptionAlgorithm.a192_cbcpad, iv=iv)
 
     @classmethod
-    def a256_cbcpad(cls, cyphertext, iv=None):
-        return cls(EncryptionAlgorithm.a256_cbcpad, cyphertext, iv=iv)
+    def a256_cbcpad_decrypt(cls, iv=None):
+        return cls(EncryptionAlgorithm.a256_cbcpad, iv=iv)
 
 
 class DecryptResult:
