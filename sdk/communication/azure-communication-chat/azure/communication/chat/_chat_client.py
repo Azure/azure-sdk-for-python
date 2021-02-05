@@ -222,9 +222,8 @@ class ChatClient(object):
 
         :keyword int results_per_page: The maximum number of chat threads returned per page.
         :keyword ~datetime.datetime start_time: The earliest point in time to get chat threads up to.
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ItemPaged[:class:`~azure.communication.chat.ChatThreadInfo`]
-        :rtype: ~azure.core.paging.ItemPaged
+        :return: An iterator like instance of ChatThreadInfo
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.ChatThreadInfo]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

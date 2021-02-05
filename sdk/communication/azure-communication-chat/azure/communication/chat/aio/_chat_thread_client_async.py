@@ -73,8 +73,8 @@ class ChatThreadClient(object):
             endpoint: str,
             credential: CommunicationTokenCredential,
             thread_id: str,
-            **kwargs
-    ) -> None:
+            **kwargs: Any
+    ): # type: (...) -> None
         if not thread_id:
             raise ValueError("thread_id can not be None or empty")
 
@@ -180,14 +180,14 @@ class ChatThreadClient(object):
     @distributed_trace
     def list_read_receipts(
         self,
-        **kwargs
-    ) -> AsyncItemPaged[ChatMessageReadReceipt]:
+        **kwargs: Any
+    ): # type: (...) -> AsyncItemPaged[ChatMessageReadReceipt]
         """Gets read receipts for a thread.
 
         :keyword int results_per_page: The maximum number of chat message read receipts to be returned per page.
         :keyword int skip: Skips chat message read receipts up to a specified position in response.
-        :return: AsyncItemPaged[:class:`~azure.communication.chat.ChatMessageReadReceipt`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :return: An iterator like instance of ChatMessageReadReceipt
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatMessageReadReceipt]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -325,15 +325,15 @@ class ChatThreadClient(object):
     @distributed_trace
     def list_messages(
         self,
-        **kwargs
-    ) -> AsyncItemPaged[ChatMessage]:
+        **kwargs: Any
+    ): # type: (...) -> AsyncItemPaged[ChatMessage]
         """Gets a list of messages from a thread.
 
         :keyword int results_per_page: The maximum number of messages to be returned per page.
         :keyword ~datetime.datetime start_time: The start time where the range query.
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AsyncItemPaged[:class:`~azure.communication.chat.ChatMessage`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :return: An iterator like instance of ChatMessage
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatMessage]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -429,15 +429,15 @@ class ChatThreadClient(object):
     @distributed_trace
     def list_participants(
         self,
-        **kwargs
-    ) -> AsyncItemPaged[ChatThreadParticipant]:
+        **kwargs: Any
+    ): # type: (...) -> AsyncItemPaged[ChatThreadParticipant]
         """Gets the participants of a thread.
 
         :keyword int results_per_page: The maximum number of participants to be returned per page.
         :keyword int skip: Skips participants up to a specified position in response.
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AsyncItemPaged[:class:`~azure.communication.chat.ChatThreadParticipant`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :return: An iterator like instance of ChatThreadParticipant
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatThreadParticipant]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

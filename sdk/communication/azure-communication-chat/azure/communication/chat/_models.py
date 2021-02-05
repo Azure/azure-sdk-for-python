@@ -24,8 +24,10 @@ class ChatThreadParticipant(object):
 
     def __init__(
         self,
-        **kwargs
+        **kwargs # type: Any
     ):
+        # type: (...) -> None
+
         self.user = kwargs['user']
         self.display_name = kwargs.get('display_name', None)
         self.share_history_time = kwargs.get('share_history_time', None)
@@ -80,8 +82,10 @@ class ChatMessage(object):
 
     def __init__(
             self,
-            **kwargs
+            **kwargs # type: Any
     ):
+        # type: (...) -> None
+
         self.id = kwargs['id']
         self.type = kwargs['type']
         self.sequence_id = kwargs['sequence_id']
@@ -134,8 +138,10 @@ class ChatMessageContent(object):
 
     def __init__(
         self,
-        **kwargs
+        **kwargs # type: Any
     ):
+        # type: (...) -> None
+
         self.message = kwargs.get('message', None)
         self.topic = kwargs.get('topic', None)
         self.participants = kwargs.get('participants', None)
@@ -178,8 +184,9 @@ class ChatThread(object):
 
     def __init__(
         self,
-        **kwargs
+        **kwargs # type: Any
     ):
+        # type: (...) -> None
         self.id = kwargs['id']
         self.topic = kwargs.get('topic', None)
         self.created_on = kwargs['created_on']
@@ -213,8 +220,9 @@ class ChatMessageReadReceipt(object):
 
     def __init__(
         self,
-        **kwargs
+        **kwargs # type: Any
     ):
+        # type: (...) -> None
         self.sender = kwargs['sender']
         self.chat_message_id = kwargs['chat_message_id']
         self.read_on = kwargs['read_on']
