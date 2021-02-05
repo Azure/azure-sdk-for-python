@@ -670,8 +670,10 @@ class TestAnalyze(TextAnalyticsTest):
         extract_key_phrases_results = []
         recognize_pii_entities_results = []
 
+        action_results = list(result)
+
         # do 2 pages of 3 task results
-        for idx, action_result in enumerate(result):
+        for idx, action_result in enumerate(action_results):
             if idx % 3 == 0:
                 assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
                 recognize_entities_results.append(action_result)
