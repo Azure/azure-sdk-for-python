@@ -44,13 +44,24 @@ class TestHealth(TextAnalyticsTest):
 
         poller = client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval())
         response = poller.result()
-
         self.assertIsNotNone(response.statistics)
+        response = list(response)
 
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
+
+        self.assertEqual(len(response[0].entities), 2)
+        entity1 = list(filter(lambda x: x.text == "high", response[0].entities))[0]
+        entity2 = list(filter(lambda x: x.text == "blood pressure", response[0].entities))[0]
+
+        self.assertEqual(len(entity1.related_entities), 1)
+        related_entity, relation_type = entity1.related_entities.popitem()
+        self.assertEqual(related_entity, entity2)
+        self.assertEqual(relation_type, "ValueOfExamination")
+
+        self.assertEqual(len(entity2.related_entities), 0)
 
     @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
@@ -630,3 +641,22 @@ class TestHealth(TextAnalyticsTest):
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
         self.assertEqual(actual_string_index_type, "TextElements_v8")
         poller.result()
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
+    def test_bidirectional_relation_type(self, client):
+        result = list(client.begin_analyze_healthcare_entities(
+            documents=["The patient was diagnosed with Parkinsons Disease (PD)"]
+        ).result())
+
+        self.assertEqual(len(result[0].entities), 2)
+        entity1 = list(filter(lambda x: x.text == "Parkinsons Disease", result[0].entities))[0]
+        entity2 = list(filter(lambda x: x.text == "PD", result[0].entities))[0]
+
+        related_entity1, relation_type1 = entity1.related_entities.popitem()
+        self.assertEqual(related_entity1, entity2)
+        self.assertEqual(relation_type1, "Abbreviation")
+        related_entity2, relation_type2 = entity2.related_entities.popitem()
+        self.assertEqual(related_entity2, entity1)
+        self.assertEqual(relation_type2, "Abbreviation")
+

@@ -79,10 +79,22 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         self.assertIsNone(response.statistics) # show_stats=False by default
 
-        async for doc in response:
+        response = list([r async for r in response])
+        for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
+
+        self.assertEqual(len(response[0].entities), 2)
+        entity1 = list(filter(lambda x: x.text == "high", response[0].entities))[0]
+        entity2 = list(filter(lambda x: x.text == "blood pressure", response[0].entities))[0]
+
+        self.assertEqual(len(entity1.related_entities), 1)
+        related_entity, relation_type = entity1.related_entities.popitem()
+        self.assertEqual(related_entity, entity2)
+        self.assertEqual(relation_type, "ValueOfExamination")
+
+        self.assertEqual(len(entity2.related_entities), 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -752,3 +764,5 @@ class TestHealth(AsyncTextAnalyticsTest):
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
         self.assertEqual(actual_string_index_type, "TextElements_v8")
         await poller.result()
+
+    
