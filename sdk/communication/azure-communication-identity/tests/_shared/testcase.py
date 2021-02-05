@@ -30,44 +30,62 @@ class ResponseReplacerProcessor(RecordingProcessor):
 
         return response
 
-class BodyReplacerProcessor(RecordingProcessor):
-    """Sanitize the sensitive info inside request or response bodies"""
+class IdentityReplacer(RecordingProcessor):
+    """Replace the identity id in a request/response body."""
 
-    def __init__(self, keys=None, replacement="sanitized"):
+    def __init__(self, replacement='sanitized'):
         self._replacement = replacement
-        self._keys = keys if keys else []
 
     def process_request(self, request):
         if is_text_payload(request) and request.body:
-            request.body = self._replace_keys(request.body.decode()).encode()
-
+            request.body = self._replace_ids(request.body.decode()).encode()
         return request
 
     def process_response(self, response):
         if is_text_payload(response) and response['body']['string']:
-            response['body']['string'] = self._replace_keys(response['body']['string'])
-
-        return response
+            response['body']['string'] = self._replace_ids(response['body']['string'])
+            return response
     
-    def _replace_keys(self, body):
-        def _replace_recursively(dictionary):
-            if type(dictionary) != dict:
-                return
-            for key in dictionary:
-                if key in self._keys:
-                    dictionary[key] = self._replacement
-                else:
-                    _replace_recursively(dictionary[key])
-
+    def _replace_ids(self, body):
         import json
         try:
             body = json.loads(body)
-            _replace_recursively(body)
-
+            if 'identity' in body:
+                body['identity']['id'] = self._replacement
+            elif 'id' in body:
+                body['id'] = self._replacement
         except (KeyError, ValueError):
             return body
 
         return json.dumps(body)
+
+class AccessTokenReplacer(RecordingProcessor):
+    """Replace the access token in a request/response body."""
+
+    def __init__(self, replacement='redacted'):
+        self._replacement = replacement
+
+    def process_request(self, request):
+        import re
+        if is_text_payload(request) and request.body:
+            body = str(request.body.decode())
+            body = re.sub(r'"token": "([0-9a-f-]{36})"', r'"token": 00000000-0000-0000-0000-000000000000', body)
+            request.body = body.encode()
+        return request
+
+    def process_response(self, response):
+        import json
+        try:
+            body = json.loads(response['body']['string'])
+            if 'accessToken' in body:
+                body['accessToken']['token'] = self._replacement
+            elif 'token' in body:
+                body['token'] = self._replacement
+
+            response['body']['string'] = json.dumps(body)
+            return response
+        except (KeyError, ValueError):
+            return response
 
 class CommunicationTestCase(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['x-azure-ref', 'x-ms-content-sha256', 'location']

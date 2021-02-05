@@ -11,7 +11,8 @@ from azure.core.credentials import AccessToken
 from _shared.helper import URIIdentityReplacer
 from _shared.testcase import (
     CommunicationTestCase,
-    BodyReplacerProcessor
+    AccessTokenReplacer,
+    IdentityReplacer
 )
 from devtools_testutils import ResourceGroupPreparer
 from _shared.communication_service_preparer import CommunicationServicePreparer 
@@ -28,7 +29,8 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
     def setUp(self):
         super(CommunicationIdentityClientTest, self).setUp()
         self.recording_processors.extend([
-            BodyReplacerProcessor(keys=["id", "token"]),
+            AccessTokenReplacer(),
+            IdentityReplacer(),
             URIIdentityReplacer()])
     
     @ResourceGroupPreparer(random_name_enabled=True)

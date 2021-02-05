@@ -25,15 +25,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 Jan 2021 22:26:36 GMT
+      - Fri, 05 Feb 2021 04:17:52 GMT
       ms-cv:
-      - sIImdgIO6kSSfNEh18vBHQ.0
+      - aWyFnKUbTUO/KoJS/stI2g.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 203ms
+      - 169ms
     status:
       code: 201
       message: Created
@@ -56,22 +56,22 @@ interactions:
     uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-01-30T22:26:35.9312051+00:00"}'
+      string: '{"token": "redacted", "expiresOn": "2021-02-06T04:17:52.4883943+00:00"}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 Jan 2021 22:26:36 GMT
+      - Fri, 05 Feb 2021 04:17:52 GMT
       ms-cv:
-      - JPBOQWSIBUWpPLVKMVZSTw.0
+      - IC4FJam84Ue3Z/vwYMAorA.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 30ms
+      - 25ms
     status:
       code: 200
       message: OK
