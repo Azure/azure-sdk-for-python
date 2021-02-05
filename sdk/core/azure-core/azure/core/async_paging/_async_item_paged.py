@@ -37,11 +37,6 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
 
         args and kwargs will be passed to the AsyncPageIterator constructor directly,
         except page_iterator_class
-
-        :keyword paging_method: Preferred way of paging. Pass in a sansio paging method, to tell the iterator
-         how to make requests, and deserialize responses. When passing in paging_method, do not pass in
-         callables for get_next and extract_data.
-        :paramtype paging_method: ~azure.core.paging_method.PagingMethodABC
         """
         self._args = args
         self._kwargs = kwargs

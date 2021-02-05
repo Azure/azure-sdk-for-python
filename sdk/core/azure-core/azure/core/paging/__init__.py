@@ -29,21 +29,21 @@ from ._item_paged import ItemPaged
 from ._utils import ResponseType, ReturnType
 
 from ._paging_method import (
-    PagingMethodABC,
-    ContinueWithNextLink,
-    ContinueWithRequestHeader,
-    ContinueWithCallback,
+    _PagingMethodABC,
+    _ContinueWithNextLink,
+    _ContinueWithRequestHeader,
+    _ContinueWithCallback,
 )
 
 
 
 __all__ = [
-    "ContinueWithCallback",
+    "_ContinueWithCallback",
     "ItemPaged",
-    "ContinueWithRequestHeader",
-    "ContinueWithNextLink",
+    "_ContinueWithRequestHeader",
+    "_ContinueWithNextLink",
     "PageIterator",
-    "PagingMethodABC",
+    "_PagingMethodABC",
     "ResponseType",
     "ReturnType",
 ]

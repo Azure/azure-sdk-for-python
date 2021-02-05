@@ -42,11 +42,6 @@ class ItemPaged(Iterator[ReturnType]):
 
         args and kwargs will be passed to the PageIterator constructor directly,
         except page_iterator_class
-
-        :keyword paging_method: Preferred way of paging. Pass in a sansio paging method, to tell the iterator
-         how to make requests, and deserialize responses. When passing in paging_method, do not pass in
-         callables for get_next and extract_data.
-        :paramtype paging_method: ~azure.core.paging_method.PagingMethodABC
         """
         # with the newest version, I want to take in the client, initial request,
         # cb to extract data, and cb to format next link

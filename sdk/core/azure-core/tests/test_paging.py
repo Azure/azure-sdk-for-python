@@ -26,9 +26,9 @@
 from azure.core import PipelineClient
 from azure.core.paging import (
     ItemPaged,
-    ContinueWithNextLink,
-    ContinueWithRequestHeader,
-    ContinueWithCallback,
+    _ContinueWithNextLink,
+    _ContinueWithRequestHeader,
+    _ContinueWithCallback,
     PageIterator,
     ReturnType,
 )
@@ -90,19 +90,19 @@ def paging_method_handler(pipeline_response):
     class _MyPagingMethodHandler(_PagingMethodHandler):
         def __init__(
             self,
-            paging_method,
-            deserialize_output,
-            client,
-            initial_state,
+            _paging_method,
+            _deserialize_output,
+            _client,
+            _initial_state,
             validate_next_request=None,
             raise_on_second_call=False,
             **kwargs
         ):
             super(_MyPagingMethodHandler, self).__init__(
-                paging_method,
-                deserialize_output,
-                client,
-                initial_state,
+                _paging_method,
+                _deserialize_output,
+                _client,
+                _initial_state,
                 **kwargs
             )
             self._num_calls = 0
@@ -165,12 +165,12 @@ class TestPaging(object):
             assert request.url == 'https://baseurl/page2'
 
         item_paged = ItemPaged(
-            deserialize_output=deserialize_output,
-            client=client,
+            _deserialize_output=deserialize_output,
+            _client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
-            initial_state=http_request,
-            paging_method=ContinueWithNextLink(),
-            continuation_token_location="next_link",
+            _initial_state=http_request,
+            _paging_method=_ContinueWithNextLink(),
+            _continuation_token_location="next_link",
             validate_next_request = _validate_next_request_paging_method  # arg added for testing purposes
         )
 
@@ -182,12 +182,12 @@ class TestPaging(object):
             assert request.url == 'https://baseurl/page2'
 
         item_paged = ItemPaged(
-            deserialize_output=deserialize_output,
-            client=client,
+            _deserialize_output=deserialize_output,
+            _client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
-            initial_state=pipeline_response,
-            paging_method=ContinueWithNextLink(),
-            continuation_token_location="next_link",
+            _initial_state=pipeline_response,
+            _paging_method=_ContinueWithNextLink(),
+            _continuation_token_location="next_link",
             validate_next_request = _validate_next_request_paging_method  # arg added for testing purposes
         )
         assert ['value1.0', 'value1.1', 'value2.0', 'value2.1'] == list(item_paged)
@@ -197,12 +197,12 @@ class TestPaging(object):
             assert request.headers['x-ms-header'] == 'page2'
 
         item_paged = ItemPaged(
-            deserialize_output=deserialize_output,
-            client=client,
+            _deserialize_output=deserialize_output,
+            _client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
-            initial_state=http_request,
-            paging_method=ContinueWithRequestHeader(header_name="x-ms-header"),
-            continuation_token_location="next_link",
+            _initial_state=http_request,
+            _paging_method=_ContinueWithRequestHeader(header_name="x-ms-header"),
+            _continuation_token_location="next_link",
             validate_next_request = _validate_header_paging_method  # arg added for testing purposes
         )
 
@@ -221,12 +221,12 @@ class TestPaging(object):
             assert request.url == 'http://nextLinkCont.com'
 
         item_paged = ItemPaged(
-            deserialize_output=deserialize_output,
-            client=client,
+            _deserialize_output=deserialize_output,
+            _client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
-            initial_state=http_request,
-            paging_method=ContinueWithCallback(next_request_callback=_callback),
-            continuation_token_location="next_link",
+            _initial_state=http_request,
+            _paging_method=_ContinueWithCallback(next_request_callback=_callback),
+            _continuation_token_location="next_link",
             validate_next_request = _validate_callback_paging_method  # arg added for testing purposes
         )
         assert ['value1.0', 'value1.1', 'value2.0', 'value2.1'] == list(item_paged)
@@ -234,12 +234,12 @@ class TestPaging(object):
     def test_by_page_paging(self, client, deserialize_output, page_iterator, http_request):
 
         item_paged = ItemPaged(
-            deserialize_output=deserialize_output,
-            client=client,
+            _deserialize_output=deserialize_output,
+            _client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
-            initial_state=http_request,
-            paging_method=ContinueWithNextLink(),
-            continuation_token_location="next_link",
+            _initial_state=http_request,
+            _paging_method=_ContinueWithNextLink(),
+            _continuation_token_location="next_link",
         )
 
         pager = item_paged.by_page()
@@ -257,12 +257,12 @@ class TestPaging(object):
             return ProductResult(next_link=None, value=[])
 
         item_paged = ItemPaged(
-            deserialize_output=deserialize_output,
-            client=client,
+            _deserialize_output=deserialize_output,
+            _client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
-            initial_state=http_request,
-            paging_method=ContinueWithRequestHeader(header_name="x-ms-header"),
-            continuation_token_location="next_link",
+            _initial_state=http_request,
+            _paging_method=_ContinueWithRequestHeader(header_name="x-ms-header"),
+            _continuation_token_location="next_link",
         )
 
         # ProductResult(next_link=None, value=None)
@@ -271,24 +271,24 @@ class TestPaging(object):
 
     def test_print(self, client, deserialize_output, page_iterator, http_request):
         item_paged = ItemPaged(
-            deserialize_output=deserialize_output,
-            client=client,
+            _deserialize_output=deserialize_output,
+            _client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
-            initial_state=http_request,
-            paging_method=ContinueWithRequestHeader(header_name="x-ms-header"),
-            continuation_token_location="next_link",
+            _initial_state=http_request,
+            _paging_method=_ContinueWithRequestHeader(header_name="x-ms-header"),
+            _continuation_token_location="next_link",
         )
         output = repr(item_paged)
         assert output.startswith('<iterator object azure.core.paging.ItemPaged at')
 
     def test_paging_continue_on_error(self, client, deserialize_output, page_iterator, http_request):
         item_paged = ItemPaged(
-            deserialize_output=deserialize_output,
-            client=client,
+            _deserialize_output=deserialize_output,
+            _client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
-            initial_state=http_request,
-            paging_method=ContinueWithRequestHeader(header_name="x-ms-header"),
-            continuation_token_location="next_link",
+            _initial_state=http_request,
+            _paging_method=_ContinueWithRequestHeader(header_name="x-ms-header"),
+            _continuation_token_location="next_link",
             raise_on_second_call=True,  # arg added for testing purposes
         )
 
@@ -304,12 +304,12 @@ class TestPaging(object):
             assert request.url == 'https://baseurl/responseToken'
 
         item_paged = ItemPaged(
-            deserialize_output=deserialize_output,
-            client=client,
+            _deserialize_output=deserialize_output,
+            _client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
-            initial_state=_get_custom_pipeline_response(headers={'x-ms-token': 'responseToken'}),
-            paging_method=ContinueWithNextLink(),
-            continuation_token_location="x-ms-token",
+            _initial_state=_get_custom_pipeline_response(headers={'x-ms-token': 'responseToken'}),
+            _paging_method=_ContinueWithNextLink(),
+            _continuation_token_location="x-ms-token",
             validate_next_request=_validate_next_request_paging_method,  # arg added for testing purposes
         )
 
@@ -321,12 +321,12 @@ class TestPaging(object):
             assert request.headers['x-ms-header'] == 'responseToken'
 
         item_paged = ItemPaged(
-            deserialize_output=deserialize_output,
-            client=client,
+            _deserialize_output=deserialize_output,
+            _client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
-            initial_state=_get_custom_pipeline_response(headers={'x-ms-token': 'responseToken'}),
-            paging_method=ContinueWithRequestHeader(header_name='x-ms-header'),
-            continuation_token_location="x-ms-token",
+            _initial_state=_get_custom_pipeline_response(headers={'x-ms-token': 'responseToken'}),
+            _paging_method=_ContinueWithRequestHeader(header_name='x-ms-header'),
+            _continuation_token_location="x-ms-token",
             validate_next_request=_validate_header_paging_method,  # arg added for testing purposes
         )
         assert ['value1.0', 'value1.1', 'value2.0', 'value2.1'] == list(item_paged)
@@ -337,7 +337,7 @@ class TestPaging(object):
                 return ProductResult(next_link="responseToken;2", value=['value1.0', 'value1.1'])
             return ProductResult(next_link=None, value=['value2.0', 'value2.1'])
 
-        class MyPagingMethod(ContinueWithRequestHeader):
+        class MyPagingMethod(_ContinueWithRequestHeader):
             def __init__(self, header_name):
                 super(MyPagingMethod, self).__init__(header_name=header_name)
                 self._count = None
@@ -353,7 +353,7 @@ class TestPaging(object):
         class PagerWithMetadata(ItemPaged[ReturnType]):
             def __init__(self, *args, **kwargs):
                 super(PagerWithMetadata, self).__init__(*args, **kwargs)
-                self._paging_method = kwargs.pop("paging_method")
+                self._paging_method = kwargs.pop("_paging_method")
 
             def get_count(self):
                 # type: () -> float
@@ -363,12 +363,12 @@ class TestPaging(object):
             assert request.headers['x-ms-header'] == 'responseToken'
 
         item_paged = PagerWithMetadata(
-            deserialize_output=deserialize_output,
-            client=client,
+            _deserialize_output=deserialize_output,
+            _client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
-            initial_state=http_request,
-            paging_method=MyPagingMethod(header_name='x-ms-header'),
-            continuation_token_location="next_link",
+            _initial_state=http_request,
+            _paging_method=MyPagingMethod(header_name='x-ms-header'),
+            _continuation_token_location="next_link",
             validate_next_request = _validate_token_paging_method,  # arg added for testing purposes
         )
 
@@ -381,7 +381,7 @@ class TestPaging(object):
                 return ProductResult(next_link="headerToken,nextLink", value=['value1.0', 'value1.1'])
             return ProductResult(next_link=None, value=['value2.0', 'value2.1'])
 
-        class ContinueWithRequestHeaderAndNextLink(ContinueWithNextLink):
+        class ContinueWithRequestHeaderAndNextLink(_ContinueWithNextLink):
             def __init__(self, header_name):
                 super(ContinueWithRequestHeaderAndNextLink, self).__init__()
                 self._header_name = header_name
@@ -399,12 +399,12 @@ class TestPaging(object):
             assert request.url == "https://baseurl/nextLink"
 
         item_paged = ItemPaged(
-            deserialize_output=deserialize_output,
-            client=client,
+            _deserialize_output=deserialize_output,
+            _client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
-            initial_state=_get_custom_pipeline_response(headers={'x-ms-token': 'responseToken'}),
-            paging_method=ContinueWithRequestHeaderAndNextLink(header_name='x-ms-header'),
-            continuation_token_location="next_link",
+            _initial_state=_get_custom_pipeline_response(headers={'x-ms-token': 'responseToken'}),
+            _paging_method=ContinueWithRequestHeaderAndNextLink(header_name='x-ms-header'),
+            _continuation_token_location="next_link",
             validate_next_request=_validate_next_link_and_header_paging_method,  # arg added for testing purposes
         )
 
@@ -416,12 +416,12 @@ class TestPaging(object):
             return ["changedByCls"] * len(list_of_obj)
 
         item_paged = ItemPaged(
-            deserialize_output=deserialize_output,
-            client=client,
+            _deserialize_output=deserialize_output,
+            _client=client,
             page_iterator_class=page_iterator,  # have to add this arg since I'm overriding PageIterator (vast majority won't use this param)
-            initial_state=http_request,
-            paging_method=ContinueWithNextLink(),
-            continuation_token_location="next_link",
+            _initial_state=http_request,
+            _paging_method=_ContinueWithNextLink(),
+            _continuation_token_location="next_link",
             _cls=cls,
         )
         assert all(obj == "changedByCls" for obj in item_paged)

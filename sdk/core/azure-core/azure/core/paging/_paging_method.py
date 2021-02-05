@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from .._pipeline_client import PipelineClient
 
 @add_metaclass(ABCMeta)
-class PagingMethodABC(object):
+class _PagingMethodABC(object):
 
     @abstractmethod
     def get_next_request(self, continuation_token, initial_request, client):
@@ -107,7 +107,7 @@ class PagingMethodABC(object):
 
         raise NotImplementedError("This method needs to be implemented")
 
-class ContinueWithCallback(PagingMethodABC):
+class _ContinueWithCallback(_PagingMethodABC):
 
     def __init__(self, next_request_callback):
         """Base paging method. Accepts the callback for the next request as an init arg.
@@ -184,7 +184,7 @@ class ContinueWithCallback(PagingMethodABC):
         # check response headers for cont token
         return pipeline_response.http_response.headers.get(continuation_token_location, None)
 
-class ContinueWithNextLink(ContinueWithCallback):
+class _ContinueWithNextLink(_ContinueWithCallback):
 
     def __init__(self, path_format_arguments=None):
         """Most common paging method. Uses the continuation token as the URL for the next call.
@@ -195,7 +195,7 @@ class ContinueWithNextLink(ContinueWithCallback):
             request.url = next_link
             return request
 
-        super(ContinueWithNextLink, self).__init__(
+        super(_ContinueWithNextLink, self).__init__(
             next_request_callback=_next_request_callback
         )
         self._path_format_arguments = path_format_arguments or {}
@@ -214,7 +214,7 @@ class ContinueWithNextLink(ContinueWithCallback):
         """
         return self._next_request_callback(continuation_token, initial_request, client)
 
-class ContinueWithRequestHeader(ContinueWithCallback):
+class _ContinueWithRequestHeader(_ContinueWithCallback):
 
     def __init__(self, header_name):
         """Passes continuation token as a header parameter to next call.
@@ -224,7 +224,7 @@ class ContinueWithRequestHeader(ContinueWithCallback):
             request = initial_request
             request.headers[self._header_name] = continuation_token
             return request
-        super(ContinueWithRequestHeader, self).__init__(
+        super(_ContinueWithRequestHeader, self).__init__(
             next_request_callback=_next_request_callback
         )
 

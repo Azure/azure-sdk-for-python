@@ -37,7 +37,7 @@ if TYPE_CHECKING:
         Optional,
         Tuple,
     )
-    from ._paging_method import PagingMethodABC
+    from ._paging_method import _PagingMethodABC
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -54,12 +54,8 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         :param extract_data: Callable that take an HTTP response and return a tuple continuation token,
          list of ReturnType
         :param str continuation_token: The continuation token needed by get_next
-        :keyword paging_method: Preferred way of paging. Pass in a sansio paging method, to tell the iterator
-         how to make requests, and deserialize responses. When passing in paging_method, do not pass in
-         callables for get_next and extract_data.
-        :paramtype paging_method: ~azure.core.paging_method.PagingMethodABC
         """
-        paging_method = kwargs.pop("paging_method", None)
+        paging_method = kwargs.pop("_paging_method", None)
         if get_next or extract_data:
             if paging_method:
                 raise ValueError(
@@ -71,7 +67,6 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
                     "If you are passing in callbacks (this is legacy), you have to pass in callbacks for both "
                     "get_next and extract_data. We recommend you just pass in a paging method instead though."
                 )
-        self._paging_method = paging_method
         if not extract_data or not get_next:
             handler = _PagingMethodHandler(paging_method, **kwargs)
         self._extract_data = extract_data or handler.extract_data

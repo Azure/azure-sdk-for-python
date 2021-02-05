@@ -39,23 +39,23 @@ _LOGGER = logging.getLogger(__name__)
 class _PagingMethodHandlerBase(object):
     def __init__(
         self,
-        paging_method,
-        deserialize_output,
-        client,
-        initial_state,
+        _paging_method,
+        _deserialize_output,
+        _client,
+        _initial_state,
         **kwargs
     ):
-        self._paging_method = paging_method
-        self._deserialize_output = deserialize_output
-        self._client = client
-        self._initial_state = initial_state
+        self._paging_method = _paging_method
+        self._deserialize_output = _deserialize_output
+        self._client = _client
+        self._initial_state = _initial_state
         self._cls = kwargs.pop("_cls", None)
         self._error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        self._error_map.update(kwargs.pop('error_map', {}))
-        self._item_name = kwargs.pop("item_name", "value")
-        self._continuation_token_location = kwargs.pop("continuation_token_location", None)
+        self._error_map.update(kwargs.pop('_error_map', {}))
+        self._item_name = kwargs.pop("_item_name", "value")
+        self._continuation_token_location = kwargs.pop("_continuation_token_location", None)
         self._operation_config = kwargs
 
     @property
