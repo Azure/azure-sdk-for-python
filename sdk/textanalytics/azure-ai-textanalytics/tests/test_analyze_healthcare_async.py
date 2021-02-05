@@ -765,4 +765,24 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertEqual(actual_string_index_type, "TextElements_v8")
         await poller.result()
 
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
+    async def test_bidirectional_relation_type(self, client):
+        response = await (await client.begin_analyze_healthcare_entities(
+            documents=["The patient was diagnosed with Parkinsons Disease (PD)"]
+        )).result()
+
+        result = [r async for r in response]
+
+        self.assertEqual(len(result[0].entities), 2)
+        entity1 = list(filter(lambda x: x.text == "Parkinsons Disease", result[0].entities))[0]
+        entity2 = list(filter(lambda x: x.text == "PD", result[0].entities))[0]
+
+        related_entity1, relation_type1 = entity1.related_entities.popitem()
+        self.assertEqual(related_entity1, entity2)
+        self.assertEqual(relation_type1, "Abbreviation")
+        related_entity2, relation_type2 = entity2.related_entities.popitem()
+        self.assertEqual(related_entity2, entity1)
+        self.assertEqual(relation_type2, "Abbreviation")
+
     
