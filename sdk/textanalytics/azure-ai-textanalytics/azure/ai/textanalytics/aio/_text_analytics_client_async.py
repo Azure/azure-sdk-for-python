@@ -50,8 +50,7 @@ from .._lro import TextAnalyticsOperationResourcePolling
 from .._async_lro import (
     AnalyzeHealthcareEntitiesAsyncLROPollingMethod,
     AnalyzeHealthcareEntitiesAsyncLROPoller,
-    AsyncAnalyzeBatchActionsLROPollingMethod,
-    TextAnalyticsAsyncLROPollingMethod
+    AsyncAnalyzeBatchActionsLROPollingMethod
 )
 
 if TYPE_CHECKING:
