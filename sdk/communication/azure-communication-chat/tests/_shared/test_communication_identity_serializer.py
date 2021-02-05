@@ -6,7 +6,6 @@
 import unittest
 from azure.communication.chat._shared.communication_identifier_serializer import CommunicationUserIdentifierSerializer
 from azure.communication.chat._shared.models import(
-    CommunicationIdentifierKind,
     CommunicationIdentifierModel,
     CommunicationUserIdentifier,
     CommunicationCloudEnvironment,
