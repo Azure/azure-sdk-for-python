@@ -15,11 +15,14 @@ each action result.
 - Renamed `begin_analyze_healthcare` to `begin_analyze_healthcare_entities`.
 - Renamed `AnalyzeHealthcareResult` to `AnalyzeHealthcareEntitiesResult` and `AnalyzeHealthcareResultItem` to `AnalyzeHealthcareEntitiesResultItem`.
 - Renamed `HealthcareEntityLink` to `HealthcareEntityDataSource` and renamed its properties `id` to `entity_id` and `data_source` to `name`.
+- Removed `relations` from `AnalyzeHealthcareEntitiesResultItem` and added `related_entities` to `HealthcareEntity`.
 - Moved the cancellation logic for the Analyze Healthcare Entities service from 
 the service client to the poller object returned from `begin_analyze_healthcare_entities`.
 - Exposed Analyze Healthcare Entities operation metadata on the poller object returned from `begin_analyze_healthcare_entities`.
 - No longer need to specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when calling `begin_analyze` and `begin_analyze_healthcare_entities`. `begin_analyze_healthcare_entities` is still in gated preview though.
-
+- Added a new parameter `string_index_type` to the service client methods `begin_analyze_healthcare_entities`, `analyze_sentiment`, `recognize_entities`, `recognize_pii_entities`, and `recognize_linked_entities`.
+- Added property `length` to `CategorizedEntity`, `SentenceSentiment`, `LinkedEntityMatch`, `AspectSentiment`, `OpinionSentiment`, `PiiEntity` and
+`HealthcareEntity`.
 
 ## 5.1.0b4 (2021-01-12)
 
