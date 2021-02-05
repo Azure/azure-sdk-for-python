@@ -743,7 +743,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             try:
                 cancellation_poller = await poller.cancel()
                 cancellation_poller.wait()
-                
+
             except HttpResponseError:
                 pass # expected if the operation was already in a terminal state.
 
@@ -774,7 +774,9 @@ class TestHealth(AsyncTextAnalyticsTest):
             documents=["The patient was diagnosed with Parkinsons Disease (PD)"]
         )).result()
 
-        result = [r async for r in response]
+        result = []
+        async for r in response:
+            result.append(r)
 
         self.assertEqual(len(result[0].entities), 2)
         entity1 = list(filter(lambda x: x.text == "Parkinsons Disease", result[0].entities))[0]
