@@ -19,7 +19,7 @@ from _shared.testcase import BodyReplacerProcessor
 from _shared.utils import create_token_credential
 from azure.communication.phonenumber._shared.utils import parse_connection_str
 
-SKIP_PHONE_NUMBER_TESTS = False
+SKIP_PHONE_NUMBER_TESTS = True
 PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
 
 class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
