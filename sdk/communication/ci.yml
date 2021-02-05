@@ -39,5 +39,5 @@ extends:
       safeName: azuremgmtcommunication
     - name: azure_communication_sms
       safeName: azurecommunicationsms
-    - name: azure_communication_phonenumber
-      safeName: azurecommunicationphonenumber
+    - name: azure_communication_phonenumbers
+      safeName: azurecommunicationphonenumbers
