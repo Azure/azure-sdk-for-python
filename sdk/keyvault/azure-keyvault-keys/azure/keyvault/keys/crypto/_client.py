@@ -123,6 +123,7 @@ class CryptographyClient(KeyVaultClientBase):
         :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
             with AES-GCM encryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
+        :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
 
         .. literalinclude:: ../tests/test_examples_crypto.py
             :start-after: [START encrypt]
@@ -132,8 +133,17 @@ class CryptographyClient(KeyVaultClientBase):
             :dedent: 8
         """
         self._initialize(**kwargs)
-        iv = kwargs.pop("iv", None) if "CBC" in algorithm else None
-        aad = kwargs.pop("additional_authenticated_data", None) if "GCM" in algorithm else None
+        iv = kwargs.pop("iv", None)
+        if "CBC" not in algorithm:
+            raise ValueError(
+                "iv should only be provided with AES-CBC algorithms; {} does not accept an iv".format(algorithm)
+            )
+        aad = kwargs.pop("additional_authenticated_data", None)
+        if "GCM" not in algorithm:
+            raise ValueError(
+                "additional_authenticated_data should only be provided with AES-GCM algorithms; {} does not accept an "
+                "aad".format(algorithm)
+            )
 
         if self._local_provider.supports(KeyOperation.encrypt, algorithm):
             raise_if_time_invalid(self._key)
@@ -156,7 +166,7 @@ class CryptographyClient(KeyVaultClientBase):
             ciphertext=operation_result.result,
             iv=operation_result.iv,
             authentication_tag=operation_result.authentication_tag,
-            additional_authenticated_data=operation_result.additional_authenticated_data
+            additional_authenticated_data=operation_result.additional_authenticated_data,
         )
 
     @distributed_trace
@@ -175,6 +185,7 @@ class CryptographyClient(KeyVaultClientBase):
         :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
             with AES-GCM encryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
+        :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
 
         .. literalinclude:: ../tests/test_examples_crypto.py
             :start-after: [START decrypt]
@@ -184,9 +195,24 @@ class CryptographyClient(KeyVaultClientBase):
             :dedent: 8
         """
         self._initialize(**kwargs)
-        iv = kwargs.pop("iv", None) if ("CBC" in algorithm or "GCM" in algorithm) else None
-        tag = kwargs.pop("authentication_tag", None) if "GCM" in algorithm else None
-        aad = kwargs.pop("additional_authenticated_data", None) if "GCM" in algorithm else None
+        iv = kwargs.pop("iv", None)
+        if not ("CBC" in algorithm or "GCM" in algorithm):
+            raise ValueError(
+                "iv should only be provided with AES algorithms; {} does not accept an iv".format(algorithm)
+            )
+        tag = kwargs.pop("authentication_tag", None)
+        if "GCM" not in algorithm:
+            raise ValueError(
+                "authentication_tag should only be provided with AES-GCM algorithms; {} does not accept a tag".format(
+                    algorithm
+                )
+            )
+        aad = kwargs.pop("additional_authenticated_data", None)
+        if "GCM" not in algorithm:
+            raise ValueError(
+                "additional_authenticated_data should only be provided with AES-GCM algorithms; {} does not accept an "
+                "aad".format(algorithm)
+            )
 
         if self._local_provider.supports(KeyOperation.decrypt, algorithm):
             try:
