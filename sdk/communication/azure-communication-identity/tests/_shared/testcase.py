@@ -62,7 +62,7 @@ class IdentityReplacer(RecordingProcessor):
 class AccessTokenReplacer(RecordingProcessor):
     """Replace the access token in a request/response body."""
 
-    def __init__(self, replacement='redacted'):
+    def __init__(self, replacement='sanitized'):
         self._replacement = replacement
 
     def process_request(self, request):
