@@ -188,7 +188,7 @@ opentelemetry-sdk==0.16b1
 #override azure-ai-metricsadvisor msrest>=0.6.12
 #override azure-opentelemetry-exporter-azuremonitor azure-core<2.0.0,>=1.6.0
 #override azure-opentelemetry-exporter-azuremonitor msrest>=0.6.10
-#override azure-core-tracing-opentelemetry opentelemetry-api==0.13b0
+#override azure-core-tracing-opentelemetry opentelemetry-api==0.17b0
 #override azure-identity six>=1.12.0
 #override azure-ai-formrecognizer
 #override azure-ai-metricsadvisor
