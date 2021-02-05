@@ -77,10 +77,11 @@ class _PagingMethodHandlerBase(object):
 
     def _extract_data_helper(self, pipeline_response):
         deserialized = self._deserialize_output(pipeline_response)
-        list_of_elem = self._paging_method.get_list_elements(pipeline_response, deserialized, self._item_name)
-        list_of_elem = self._paging_method.mutate_list(pipeline_response, list_of_elem, self._cls)
+        response = pipeline_response.http_response
+        list_of_elem = self._paging_method.get_list_elements(response, deserialized, self._item_name)
+        list_of_elem = self._paging_method.mutate_list(response, list_of_elem, self._cls)
         continuation_token = self._paging_method.get_continuation_token(
-            pipeline_response, deserialized, self._continuation_token_location
+            response, deserialized, self._continuation_token_location
         )
         return continuation_token, list_of_elem
 

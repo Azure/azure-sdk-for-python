@@ -60,13 +60,13 @@ class _PagingMethodABC(object):
     # extracting data from response
 
     @abstractmethod
-    def get_list_elements(self, pipeline_response, deserialized, item_name="value"):
+    def get_list_elements(self, response, deserialized, item_name="value"):
         # type: (HttpResponse, ResponseType, str) -> Iterable[ReturnType]
         """Extract the list elements from the current page to return to users
 
-        :param pipeline_response: The immediate response returned from the pipeline
-        :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
-        :param object deserialized: The deserialized pipeline_response
+        :param response: The immediate response returned from the pipeline
+        :type response: ~azure.core.pipeline.transport.HttpResponse
+        :param object deserialized: The deserialized response
         :param optional[str] item_name: The property name on the response that houses
          the list elements. Default is `value`.
         :return: The iterable of items extracted out of paging response
@@ -75,12 +75,12 @@ class _PagingMethodABC(object):
         raise NotImplementedError("This method needs to be implemented")
 
     @abstractmethod
-    def mutate_list(self, pipeline_response, list_of_elem, cls=None):
+    def mutate_list(self, response, list_of_elem, cls=None):
         # type: (HttpResponse, Iterable[ReturnType], Optional[Callable]) -> Iterable[ReturnType]
         """Mutate list of elements in current page, i.e. if users passed in a cls calback
 
-        :param pipeline_response: The immediate response returned from the pipeline
-        :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
+        :param response: The immediate response returned from the pipeline
+        :type response: ~azure.core.pipeline.transport.HttpResponse
         :param list[object] list_of_elem: The iterable of items we will return to users
          in a page.
         :param optional[callable] cls: Callback to mutate the list.
@@ -90,14 +90,14 @@ class _PagingMethodABC(object):
         raise NotImplementedError("This method needs to be implemented")
 
     @abstractmethod
-    def get_continuation_token(self, pipeline_response, deserialized, continuation_token_location=None):
+    def get_continuation_token(self, response, deserialized, continuation_token_location=None):
         # type: (HttpResponse, ResponseType, Optional[str]) -> Any
         """Get the continuation token from the current page. This operation returning None signals the end of paging.
         Continuation token can be mutated here as well.
 
-        :param pipeline_response: The immediate response returned from the pipeline
-        :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
-        :param object deserialized: The deserialized pipeline_response
+        :param response: The immediate response returned from the pipeline
+        :type response: ~azure.core.pipeline.transport.HttpResponse
+        :param object deserialized: The deserialized response
         :param optional[str] continuation_token_location: Property name on the response object that houses the
          continuation token. Defaults to `None`, as `None` is an acceptable value for a continuation token location.
          It means that there's no continuation token on the response object.
@@ -131,13 +131,13 @@ class _ContinueWithCallback(_PagingMethodABC):
         """
         return self._next_request_callback(continuation_token)
 
-    def get_list_elements(self, pipeline_response, deserialized, item_name="value"):
+    def get_list_elements(self, response, deserialized, item_name="value"):
         # type: (HttpResponse, ResponseType, str) -> Iterable[ReturnType]
         """Extract the list elements from the current page to return to users
 
-        :param pipeline_response: The immediate response returned from the pipeline
-        :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
-        :param object deserialized: The deserialized pipeline_response
+        :param response: The immediate response returned from the pipeline
+        :type response: ~azure.core.pipeline.transport.HttpResponse
+        :param object deserialized: The deserialized response
         :return: The iterable of items extracted out of paging response
         :rtype: iterable[object]
         """
@@ -150,12 +150,12 @@ class _ContinueWithCallback(_PagingMethodABC):
                 )
             )
 
-    def mutate_list(self, pipeline_response, list_of_elem, cls=None):
+    def mutate_list(self, response, list_of_elem, cls=None):
         # type: (HttpResponse, Iterable[ReturnType], Optional[Callable]) -> Iterable[ReturnType]
         """Mutate list of elements in current page, i.e. if users passed in a cls calback
 
-        :param pipeline_response: The immediate response returned from the pipeline
-        :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
+        :param response: The immediate response returned from the pipeline
+        :type response: ~azure.core.pipeline.transport.HttpResponse
         :param list[object] list_of_elem: The iterable of items we will return to users
          in a page.
         :return: The final list of iterable items we will return to users
@@ -165,13 +165,13 @@ class _ContinueWithCallback(_PagingMethodABC):
             list_of_elem = cls(list_of_elem)
         return iter(list_of_elem)
 
-    def get_continuation_token(self, pipeline_response, deserialized, continuation_token_location=None):
+    def get_continuation_token(self, response, deserialized, continuation_token_location=None):
         # type: (HttpResponse, ResponseType, Optional[str]) -> Any
         """Get the continuation token from the current page. This operation returning None signals the end of paging.
 
-        :param pipeline_response: The immediate response returned from the pipeline
-        :type pipeline_response: ~azure.core.pipeline.transport.HttpResponse
-        :param object deserialized: The deserialized pipeline_response
+        :param response: The immediate response returned from the pipeline
+        :type response: ~azure.core.pipeline.transport.HttpResponse
+        :param object deserialized: The deserialized response
         :return: The continuation token. Can be any value, and will be passed as-is to :func:`get_next_request`.
         :rtype: any
         """
@@ -182,7 +182,7 @@ class _ContinueWithCallback(_PagingMethodABC):
         except AttributeError:
             pass
         # check response headers for cont token
-        return pipeline_response.http_response.headers.get(continuation_token_location, None)
+        return response.headers.get(continuation_token_location, None)
 
 class _ContinueWithNextLink(_ContinueWithCallback):
 
