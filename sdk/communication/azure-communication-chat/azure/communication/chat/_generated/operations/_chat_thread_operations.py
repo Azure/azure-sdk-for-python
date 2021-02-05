@@ -14,7 +14,7 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -23,36 +23,62 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class AzureCommunicationChatServiceOperationsMixin(object):
+class ChatThreadOperations(object):
+    """ChatThreadOperations operations.
+
+    You should not instantiate this class directly. Instead, you should create a Client instance that
+    instantiates it for you and attaches it as an attribute.
+
+    :ivar models: Alias to model classes used in this operation group.
+    :type models: ~azure.communication.chat.models
+    :param client: Client for service requests.
+    :param config: Configuration of service client.
+    :param serializer: An object model serializer.
+    :param deserializer: An object model deserializer.
+    """
+
+    models = _models
+
+    def __init__(self, client, config, serializer, deserializer):
+        self._client = client
+        self._serialize = serializer
+        self._deserialize = deserializer
+        self._config = config
 
     def list_chat_read_receipts(
         self,
         chat_thread_id,  # type: str
+        max_page_size=None,  # type: Optional[int]
+        skip=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ReadReceiptsCollection"]
-        """Gets read receipts for a thread.
+        # type: (...) -> Iterable["_models.ChatMessageReadReceiptsCollection"]
+        """Gets chat message read receipts for a thread.
 
-        Gets read receipts for a thread.
+        Gets chat message read receipts for a thread.
 
-        :param chat_thread_id: Thread id to get the read receipts for.
+        :param chat_thread_id: Thread id to get the chat message read receipts for.
         :type chat_thread_id: str
+        :param max_page_size: The maximum number of chat message read receipts to be returned per page.
+        :type max_page_size: int
+        :param skip: Skips chat message read receipts up to a specified position in response.
+        :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ReadReceiptsCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.models.ReadReceiptsCollection]
+        :return: An iterator like instance of either ChatMessageReadReceiptsCollection or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.models.ChatMessageReadReceiptsCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ReadReceiptsCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChatMessageReadReceiptsCollection"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
+        api_version = "2020-11-01-preview3"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -70,6 +96,10 @@ class AzureCommunicationChatServiceOperationsMixin(object):
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
+                if max_page_size is not None:
+                    query_parameters['maxPageSize'] = self._serialize.query("max_page_size", max_page_size, 'int')
+                if skip is not None:
+                    query_parameters['skip'] = self._serialize.query("skip", skip, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -85,7 +115,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ReadReceiptsCollection', pipeline_response)
+            deserialized = self._deserialize('ChatMessageReadReceiptsCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -106,12 +136,12 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_chat_read_receipts.metadata = {'url': '/chat/threads/{chatThreadId}/readreceipts'}  # type: ignore
+    list_chat_read_receipts.metadata = {'url': '/chat/threads/{chatThreadId}/readReceipts'}  # type: ignore
 
     def send_chat_read_receipt(
         self,
         chat_thread_id,  # type: str
-        body,  # type: "models.SendReadReceiptRequest"
+        send_read_receipt_request,  # type: "_models.SendReadReceiptRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -121,8 +151,8 @@ class AzureCommunicationChatServiceOperationsMixin(object):
 
         :param chat_thread_id: Thread id to send the read receipt event to.
         :type chat_thread_id: str
-        :param body: Read receipt details.
-        :type body: ~azure.communication.chat.models.SendReadReceiptRequest
+        :param send_read_receipt_request: Read receipt details.
+        :type send_read_receipt_request: ~azure.communication.chat.models.SendReadReceiptRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -132,13 +162,13 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
+        api_version = "2020-11-01-preview3"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -160,52 +190,52 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'SendReadReceiptRequest')
+        body_content = self._serialize.body(send_read_receipt_request, 'SendReadReceiptRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    send_chat_read_receipt.metadata = {'url': '/chat/threads/{chatThreadId}/readreceipts'}  # type: ignore
+    send_chat_read_receipt.metadata = {'url': '/chat/threads/{chatThreadId}/readReceipts'}  # type: ignore
 
     def send_chat_message(
         self,
         chat_thread_id,  # type: str
-        body,  # type: "models.SendChatMessageRequest"
+        send_chat_message_request,  # type: "_models.SendChatMessageRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SendChatMessageResult"
+        # type: (...) -> "_models.SendChatMessageResult"
         """Sends a message to a thread.
 
         Sends a message to a thread.
 
         :param chat_thread_id: The thread id to send the message to.
         :type chat_thread_id: str
-        :param body: Details of the message to send.
-        :type body: ~azure.communication.chat.models.SendChatMessageRequest
+        :param send_chat_message_request: Details of the message to send.
+        :type send_chat_message_request: ~azure.communication.chat.models.SendChatMessageRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SendChatMessageResult, or the result of cls(response)
         :rtype: ~azure.communication.chat.models.SendChatMessageResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SendChatMessageResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SendChatMessageResult"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
+        api_version = "2020-11-01-preview3"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -227,7 +257,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'SendChatMessageRequest')
+        body_content = self._serialize.body(send_chat_message_request, 'SendChatMessageRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -252,7 +282,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         start_time=None,  # type: Optional[datetime.datetime]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ChatMessagesCollection"]
+        # type: (...) -> Iterable["_models.ChatMessagesCollection"]
         """Gets a list of messages from a thread.
 
         Gets a list of messages from a thread.
@@ -262,24 +292,24 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         :param max_page_size: The maximum number of messages to be returned per page.
         :type max_page_size: int
         :param start_time: The earliest point in time to get messages up to. The timestamp should be in
-         ISO8601 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+         RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :type start_time: ~datetime.datetime
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ChatMessagesCollection or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.models.ChatMessagesCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ChatMessagesCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChatMessagesCollection"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
+        api_version = "2020-11-01-preview3"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -345,7 +375,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         chat_message_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ChatMessage"
+        # type: (...) -> "_models.ChatMessage"
         """Gets a message by id.
 
         Gets a message by id.
@@ -359,17 +389,17 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         :rtype: ~azure.communication.chat.models.ChatMessage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ChatMessage"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChatMessage"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
+        api_version = "2020-11-01-preview3"
         accept = "application/json"
 
         # Construct URL
@@ -409,7 +439,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         self,
         chat_thread_id,  # type: str
         chat_message_id,  # type: str
-        body,  # type: "models.UpdateChatMessageRequest"
+        update_chat_message_request,  # type: "_models.UpdateChatMessageRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -421,8 +451,8 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         :type chat_thread_id: str
         :param chat_message_id: The message id.
         :type chat_message_id: str
-        :param body: Details of the request to update the message.
-        :type body: ~azure.communication.chat.models.UpdateChatMessageRequest
+        :param update_chat_message_request: Details of the request to update the message.
+        :type update_chat_message_request: ~azure.communication.chat.models.UpdateChatMessageRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -432,14 +462,14 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
-        content_type = kwargs.pop("content_type", "application/json")
+        api_version = "2020-11-01-preview3"
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
         accept = "application/json"
 
         # Construct URL
@@ -461,13 +491,13 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'UpdateChatMessageRequest')
+        body_content = self._serialize.body(update_chat_message_request, 'UpdateChatMessageRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -500,13 +530,13 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
+        api_version = "2020-11-01-preview3"
         accept = "application/json"
 
         # Construct URL
@@ -560,13 +590,13 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
+        api_version = "2020-11-01-preview3"
         accept = "application/json"
 
         # Construct URL
@@ -598,34 +628,40 @@ class AzureCommunicationChatServiceOperationsMixin(object):
 
     send_typing_notification.metadata = {'url': '/chat/threads/{chatThreadId}/typing'}  # type: ignore
 
-    def list_chat_thread_members(
+    def list_chat_participants(
         self,
         chat_thread_id,  # type: str
+        max_page_size=None,  # type: Optional[int]
+        skip=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ChatThreadMembersCollection"]
-        """Gets the members of a thread.
+        # type: (...) -> Iterable["_models.ChatParticipantsCollection"]
+        """Gets the participants of a thread.
 
-        Gets the members of a thread.
+        Gets the participants of a thread.
 
-        :param chat_thread_id: Thread id to get members for.
+        :param chat_thread_id: Thread id to get participants for.
         :type chat_thread_id: str
+        :param max_page_size: The maximum number of participants to be returned per page.
+        :type max_page_size: int
+        :param skip: Skips participants up to a specified position in response.
+        :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ChatThreadMembersCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.models.ChatThreadMembersCollection]
+        :return: An iterator like instance of either ChatParticipantsCollection or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.models.ChatParticipantsCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ChatThreadMembersCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChatParticipantsCollection"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
+        api_version = "2020-11-01-preview3"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -635,7 +671,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_chat_thread_members.metadata['url']  # type: ignore
+                url = self.list_chat_participants.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                     'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
@@ -643,6 +679,10 @@ class AzureCommunicationChatServiceOperationsMixin(object):
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
+                if max_page_size is not None:
+                    query_parameters['maxPageSize'] = self._serialize.query("max_page_size", max_page_size, 'int')
+                if skip is not None:
+                    query_parameters['skip'] = self._serialize.query("skip", skip, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -658,7 +698,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ChatThreadMembersCollection', pipeline_response)
+            deserialized = self._deserialize('ChatParticipantsCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -679,23 +719,23 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_chat_thread_members.metadata = {'url': '/chat/threads/{chatThreadId}/members'}  # type: ignore
+    list_chat_participants.metadata = {'url': '/chat/threads/{chatThreadId}/participants'}  # type: ignore
 
-    def add_chat_thread_members(
+    def remove_chat_participant(
         self,
         chat_thread_id,  # type: str
-        body,  # type: "models.AddChatThreadMembersRequest"
+        chat_participant_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Adds thread members to a thread. If members already exist, no change occurs.
+        """Remove a participant from a thread.
 
-        Adds thread members to a thread. If members already exist, no change occurs.
+        Remove a participant from a thread.
 
-        :param chat_thread_id: Id of the thread to add members to.
+        :param chat_thread_id: Thread id to remove the participant from.
         :type chat_thread_id: str
-        :param body: Thread members to be added to the thread.
-        :type body: ~azure.communication.chat.models.AddChatThreadMembersRequest
+        :param chat_participant_id: Id of the thread participant to remove from the thread.
+        :type chat_participant_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -705,88 +745,21 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
-        content_type = kwargs.pop("content_type", "application/json")
+        api_version = "2020-11-01-preview3"
         accept = "application/json"
 
         # Construct URL
-        url = self.add_chat_thread_members.metadata['url']  # type: ignore
+        url = self.remove_chat_participant.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'AddChatThreadMembersRequest')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [207]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    add_chat_thread_members.metadata = {'url': '/chat/threads/{chatThreadId}/members'}  # type: ignore
-
-    def remove_chat_thread_member(
-        self,
-        chat_thread_id,  # type: str
-        chat_member_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Remove a member from a thread.
-
-        Remove a member from a thread.
-
-        :param chat_thread_id: Thread id to remove the member from.
-        :type chat_thread_id: str
-        :param chat_member_id: Id of the thread member to remove from the thread.
-        :type chat_member_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.remove_chat_thread_member.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
-            'chatMemberId': self._serialize.url("chat_member_id", chat_member_id, 'str'),
+            'chatParticipantId': self._serialize.url("chat_participant_id", chat_participant_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -809,43 +782,47 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    remove_chat_thread_member.metadata = {'url': '/chat/threads/{chatThreadId}/members/{chatMemberId}'}  # type: ignore
+    remove_chat_participant.metadata = {'url': '/chat/threads/{chatThreadId}/participants/{chatParticipantId}'}  # type: ignore
 
-    def create_chat_thread(
+    def add_chat_participants(
         self,
-        body,  # type: "models.CreateChatThreadRequest"
+        chat_thread_id,  # type: str
+        add_chat_participants_request,  # type: "_models.AddChatParticipantsRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.MultiStatusResponse"
-        """Creates a chat thread.
+        # type: (...) -> "_models.AddChatParticipantsResult"
+        """Adds thread participants to a thread. If participants already exist, no change occurs.
 
-        Creates a chat thread.
+        Adds thread participants to a thread. If participants already exist, no change occurs.
 
-        :param body: Request payload for creating a chat thread.
-        :type body: ~azure.communication.chat.models.CreateChatThreadRequest
+        :param chat_thread_id: Id of the thread to add participants to.
+        :type chat_thread_id: str
+        :param add_chat_participants_request: Thread participants to be added to the thread.
+        :type add_chat_participants_request: ~azure.communication.chat.models.AddChatParticipantsRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MultiStatusResponse, or the result of cls(response)
-        :rtype: ~azure.communication.chat.models.MultiStatusResponse
+        :return: AddChatParticipantsResult, or the result of cls(response)
+        :rtype: ~azure.communication.chat.models.AddChatParticipantsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MultiStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AddChatParticipantsResult"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
+        api_version = "2020-11-01-preview3"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.create_chat_thread.metadata['url']  # type: ignore
+        url = self.add_chat_participants.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -859,117 +836,28 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'CreateChatThreadRequest')
+        body_content = self._serialize.body(add_chat_participants_request, 'AddChatParticipantsRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [207]:
+        if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('MultiStatusResponse', pipeline_response)
+        deserialized = self._deserialize('AddChatParticipantsResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_chat_thread.metadata = {'url': '/chat/threads'}  # type: ignore
-
-    def list_chat_threads(
-        self,
-        max_page_size=None,  # type: Optional[int]
-        start_time=None,  # type: Optional[datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.ChatThreadsInfoCollection"]
-        """Gets the list of chat threads of a user.
-
-        Gets the list of chat threads of a user.
-
-        :param max_page_size: The maximum number of chat threads returned per page.
-        :type max_page_size: int
-        :param start_time: The earliest point in time to get chat threads up to. The timestamp should
-         be in ISO8601 format: ``yyyy-MM-ddTHH:mm:ssZ``.
-        :type start_time: ~datetime.datetime
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ChatThreadsInfoCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.models.ChatThreadsInfoCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ChatThreadsInfoCollection"]
-        error_map = {
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
-        accept = "application/json"
-
-        def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-            if not next_link:
-                # Construct URL
-                url = self.list_chat_threads.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                if max_page_size is not None:
-                    query_parameters['maxPageSize'] = self._serialize.query("max_page_size", max_page_size, 'int')
-                if start_time is not None:
-                    query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-                request = self._client.get(url, query_parameters, header_parameters)
-            else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                path_format_arguments = {
-                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize('ChatThreadsInfoCollection', pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_chat_threads.metadata = {'url': '/chat/threads'}  # type: ignore
+    add_chat_participants.metadata = {'url': '/chat/threads/{chatThreadId}/participants/:add'}  # type: ignore
 
     def update_chat_thread(
         self,
         chat_thread_id,  # type: str
-        body,  # type: "models.UpdateChatThreadRequest"
+        update_chat_thread_request,  # type: "_models.UpdateChatThreadRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -979,8 +867,8 @@ class AzureCommunicationChatServiceOperationsMixin(object):
 
         :param chat_thread_id: The id of the thread to update.
         :type chat_thread_id: str
-        :param body: Request payload for updating a chat thread.
-        :type body: ~azure.communication.chat.models.UpdateChatThreadRequest
+        :param update_chat_thread_request: Request payload for updating a chat thread.
+        :type update_chat_thread_request: ~azure.communication.chat.models.UpdateChatThreadRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -990,14 +878,14 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            403: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
-        content_type = kwargs.pop("content_type", "application/json")
+        api_version = "2020-11-01-preview3"
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
         accept = "application/json"
 
         # Construct URL
@@ -1018,130 +906,9 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'UpdateChatThreadRequest')
+        body_content = self._serialize.body(update_chat_thread_request, 'UpdateChatThreadRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    update_chat_thread.metadata = {'url': '/chat/threads/{chatThreadId}'}  # type: ignore
-
-    def get_chat_thread(
-        self,
-        chat_thread_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.ChatThread"
-        """Gets a chat thread.
-
-        Gets a chat thread.
-
-        :param chat_thread_id: Thread id to get.
-        :type chat_thread_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ChatThread, or the result of cls(response)
-        :rtype: ~azure.communication.chat.models.ChatThread
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ChatThread"]
-        error_map = {
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get_chat_thread.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('ChatThread', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get_chat_thread.metadata = {'url': '/chat/threads/{chatThreadId}'}  # type: ignore
-
-    def delete_chat_thread(
-        self,
-        chat_thread_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Deletes a thread.
-
-        Deletes a thread.
-
-        :param chat_thread_id: Thread id to delete.
-        :type chat_thread_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
-            403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-21-preview2"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.delete_chat_thread.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'chatThreadId': self._serialize.url("chat_thread_id", chat_thread_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -1152,4 +919,4 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_chat_thread.metadata = {'url': '/chat/threads/{chatThreadId}'}  # type: ignore
+    update_chat_thread.metadata = {'url': '/chat/threads/{chatThreadId}'}  # type: ignore
