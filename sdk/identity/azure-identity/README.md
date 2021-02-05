@@ -125,6 +125,19 @@ When enabled, `DefaultAzureCredential` falls back to interactively
 authenticating via the system's default web browser when no other credential is
 available.
 
+### Specifying a user assigned managed identity for `DefaultAzureCredential`
+
+Many Azure hosts allow the assignment of a user assigned managed identity. To
+configure `DefaultAzureCredential` to authenticate a user assigned identity,
+use the `managed_identity_client_id` keyword argument:
+
+```py
+credential = DefaultAzureCredential(managed_identity_client_id=client_id)
+```
+
+Alternatively, set the environment variable `AZURE_CLIENT_ID` to the identity's
+client ID.
+
 ### Defining a custom authentication flow with `ChainedTokenCredential`
 
 `DefaultAzureCredential` is generally the quickest way to get started developing
