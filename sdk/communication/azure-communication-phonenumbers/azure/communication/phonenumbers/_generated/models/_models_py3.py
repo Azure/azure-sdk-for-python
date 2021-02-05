@@ -24,20 +24,20 @@ class AcquiredPhoneNumber(msrest.serialization.Model):
     :type phone_number: str
     :param acquired_capabilities: Required. The set of all acquired capabilities of the phone
      number.
-    :type acquired_capabilities: list[str or ~azure.communication.phonenumber.models.Capability]
+    :type acquired_capabilities: list[str or ~azure.communication.phonenumbers.models.Capability]
     :param available_capabilities: Required. The set of all available capabilities that can be
      acquired for this phone number.
-    :type available_capabilities: list[str or ~azure.communication.phonenumber.models.Capability]
+    :type available_capabilities: list[str or ~azure.communication.phonenumbers.models.Capability]
     :param assignment_status: The assignment status of the phone number. Conveys what type of
      entity the number is assigned to. Possible values include: "Unassigned", "Unknown",
      "UserAssigned", "ConferenceAssigned", "FirstPartyAppAssigned", "ThirdPartyAppAssigned".
-    :type assignment_status: str or ~azure.communication.phonenumber.models.AssignmentStatus
+    :type assignment_status: str or ~azure.communication.phonenumbers.models.AssignmentStatus
     :param place_name: The name of the place of the phone number.
     :type place_name: str
     :param activation_state: The activation state of the phone number. Can be "Activated",
      "AssignmentPending", "AssignmentFailed", "UpdatePending", "UpdateFailed". Possible values
      include: "Activated", "AssignmentPending", "AssignmentFailed", "UpdatePending", "UpdateFailed".
-    :type activation_state: str or ~azure.communication.phonenumber.models.ActivationState
+    :type activation_state: str or ~azure.communication.phonenumbers.models.ActivationState
     """
 
     _validation = {
@@ -79,7 +79,7 @@ class AcquiredPhoneNumbers(msrest.serialization.Model):
     """A wrapper of list of phone numbers.
 
     :param phone_numbers: Represents a list of phone numbers.
-    :type phone_numbers: list[~azure.communication.phonenumber.models.AcquiredPhoneNumber]
+    :type phone_numbers: list[~azure.communication.phonenumbers.models.AcquiredPhoneNumber]
     :param next_link: Represents the URL link to the next page.
     :type next_link: str
     """
@@ -174,7 +174,7 @@ class CreateSearchOptions(msrest.serialization.Model):
     :param quantity: The quantity of phone numbers to request.
     :type quantity: int
     :param location_options: The location options of the search.
-    :type location_options: list[~azure.communication.phonenumber.models.LocationOptionsDetails]
+    :type location_options: list[~azure.communication.phonenumbers.models.LocationOptionsDetails]
     """
 
     _validation = {
@@ -271,7 +271,7 @@ class ErrorResponse(msrest.serialization.Model):
     """Represents a service error response.
 
     :param error: Represents a service error response body.
-    :type error: ~azure.communication.phonenumber.models.ErrorBody
+    :type error: ~azure.communication.phonenumbers.models.ErrorBody
     """
 
     _attribute_map = {
@@ -296,7 +296,7 @@ class LocationOptions(msrest.serialization.Model):
     :param label_name: The display name of the location.
     :type label_name: str
     :param options: The underlying location option details.
-    :type options: list[~azure.communication.phonenumber.models.LocationOptionsDetails]
+    :type options: list[~azure.communication.phonenumbers.models.LocationOptionsDetails]
     """
 
     _attribute_map = {
@@ -327,7 +327,7 @@ class LocationOptionsDetails(msrest.serialization.Model):
     :param value: The abbreviated name of the location options.
     :type value: str
     :param location_options: The underlying location options.
-    :type location_options: list[~azure.communication.phonenumber.models.LocationOptions]
+    :type location_options: list[~azure.communication.phonenumbers.models.LocationOptions]
     """
 
     _attribute_map = {
@@ -354,7 +354,7 @@ class LocationOptionsQueries(msrest.serialization.Model):
     """Represents a list of location option queries, used for fetching area codes.
 
     :param location_options: Represents the underlying list of countries.
-    :type location_options: list[~azure.communication.phonenumber.models.LocationOptionsQuery]
+    :type location_options: list[~azure.communication.phonenumbers.models.LocationOptionsQuery]
     """
 
     _attribute_map = {
@@ -403,7 +403,7 @@ class LocationOptionsResponse(msrest.serialization.Model):
     """Represents a wrapper around a list of location options.
 
     :param location_options: Represents a location options.
-    :type location_options: ~azure.communication.phonenumber.models.LocationOptions
+    :type location_options: ~azure.communication.phonenumbers.models.LocationOptions
     """
 
     _attribute_map = {
@@ -426,7 +426,7 @@ class NumberConfiguration(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param pstn_configuration: Required. Definition for pstn number configuration.
-    :type pstn_configuration: ~azure.communication.phonenumber.models.PstnConfiguration
+    :type pstn_configuration: ~azure.communication.phonenumbers.models.PstnConfiguration
     :param phone_number: Required. The phone number to configure.
     :type phone_number: str
     """
@@ -486,7 +486,7 @@ class NumberConfigurationResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param pstn_configuration: Required. Definition for pstn number configuration.
-    :type pstn_configuration: ~azure.communication.phonenumber.models.PstnConfiguration
+    :type pstn_configuration: ~azure.communication.phonenumbers.models.PstnConfiguration
     """
 
     _validation = {
@@ -511,9 +511,9 @@ class NumberUpdateCapabilities(msrest.serialization.Model):
     """Represents an individual number capabilities update request.
 
     :param add: Capabilities to be added to a phone number.
-    :type add: list[str or ~azure.communication.phonenumber.models.Capability]
+    :type add: list[str or ~azure.communication.phonenumbers.models.Capability]
     :param remove: Capabilities to be removed from a phone number.
-    :type remove: list[str or ~azure.communication.phonenumber.models.Capability]
+    :type remove: list[str or ~azure.communication.phonenumbers.models.Capability]
     """
 
     _attribute_map = {
@@ -537,7 +537,7 @@ class PhoneNumberCountries(msrest.serialization.Model):
     """Represents a wrapper around a list of countries.
 
     :param countries: Represents the underlying list of countries.
-    :type countries: list[~azure.communication.phonenumber.models.PhoneNumberCountry]
+    :type countries: list[~azure.communication.phonenumbers.models.PhoneNumberCountry]
     :param next_link: Represents the URL link to the next page.
     :type next_link: str
     """
@@ -596,7 +596,7 @@ class PhoneNumberEntities(msrest.serialization.Model):
     """Represents a list of searches or releases, as part of the response when fetching all searches or releases.
 
     :param entities: The underlying list of entities.
-    :type entities: list[~azure.communication.phonenumber.models.PhoneNumberEntity]
+    :type entities: list[~azure.communication.phonenumbers.models.PhoneNumberEntity]
     :param next_link: Represents the URL link to the next page.
     :type next_link: str
     """
@@ -679,13 +679,13 @@ class PhoneNumberRelease(msrest.serialization.Model):
     :type created_at: ~datetime.datetime
     :param status: The release status. Possible values include: "Pending", "InProgress",
      "Complete", "Failed", "Expired".
-    :type status: str or ~azure.communication.phonenumber.models.ReleaseStatus
+    :type status: str or ~azure.communication.phonenumbers.models.ReleaseStatus
     :param error_message: The underlying error message of a release.
     :type error_message: str
     :param phone_number_release_status_details: The list of phone numbers in the release, mapped to
      its individual statuses.
     :type phone_number_release_status_details: dict[str,
-     ~azure.communication.phonenumber.models.PhoneNumberReleaseDetails]
+     ~azure.communication.phonenumbers.models.PhoneNumberReleaseDetails]
     """
 
     _attribute_map = {
@@ -719,7 +719,7 @@ class PhoneNumberReleaseDetails(msrest.serialization.Model):
 
     :param status: The release status of a phone number. Possible values include: "Pending",
      "Success", "Error", "InProgress".
-    :type status: str or ~azure.communication.phonenumber.models.PhoneNumberReleaseStatus
+    :type status: str or ~azure.communication.phonenumbers.models.PhoneNumberReleaseStatus
     :param error_code: The error code in the case the status is error.
     :type error_code: int
     """
@@ -759,11 +759,11 @@ class PhoneNumberReservation(msrest.serialization.Model):
     :param quantity: The quantity of phone numbers in the search.
     :type quantity: int
     :param location_options: The location options of the search.
-    :type location_options: list[~azure.communication.phonenumber.models.LocationOptionsDetails]
+    :type location_options: list[~azure.communication.phonenumbers.models.LocationOptionsDetails]
     :param status: The status of the search. Possible values include: "Pending", "InProgress",
      "Reserved", "Expired", "Expiring", "Completing", "Refreshing", "Success", "Manual",
      "Cancelled", "Cancelling", "Error", "PurchasePending".
-    :type status: str or ~azure.communication.phonenumber.models.SearchStatus
+    :type status: str or ~azure.communication.phonenumbers.models.SearchStatus
     :param phone_numbers: The list of phone numbers in the search, in the case the status is
      reserved or success.
     :type phone_numbers: list[str]
@@ -831,11 +831,11 @@ class PhonePlan(msrest.serialization.Model):
     :type localized_name: str
     :param location_type: Required. The location type of the phone plan. Possible values include:
      "CivicAddress", "NotRequired", "Selection".
-    :type location_type: str or ~azure.communication.phonenumber.models.LocationType
+    :type location_type: str or ~azure.communication.phonenumbers.models.LocationType
     :param area_codes: The list of available area codes in the phone plan.
     :type area_codes: list[str]
     :param capabilities: Capabilities of the phone plan.
-    :type capabilities: list[str or ~azure.communication.phonenumber.models.Capability]
+    :type capabilities: list[str or ~azure.communication.phonenumbers.models.Capability]
     :param maximum_search_size: The maximum number of phone numbers one can acquire in a search in
      this phone plan.
     :type maximum_search_size: int
@@ -885,15 +885,15 @@ class PhonePlanGroup(msrest.serialization.Model):
     :type phone_plan_group_id: str
     :param phone_number_type: The phone number type of the plan group. Possible values include:
      "Unknown", "Geographic", "TollFree", "Indirect".
-    :type phone_number_type: str or ~azure.communication.phonenumber.models.PhoneNumberType
+    :type phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
     :param localized_name: Required. The name of the plan group.
     :type localized_name: str
     :param localized_description: Required. The description of the plan group.
     :type localized_description: str
     :param carrier_details: Represents carrier details.
-    :type carrier_details: ~azure.communication.phonenumber.models.CarrierDetails
+    :type carrier_details: ~azure.communication.phonenumbers.models.CarrierDetails
     :param rate_information: Represents a wrapper of rate information.
-    :type rate_information: ~azure.communication.phonenumber.models.RateInformation
+    :type rate_information: ~azure.communication.phonenumbers.models.RateInformation
     """
 
     _validation = {
@@ -935,7 +935,7 @@ class PhonePlanGroups(msrest.serialization.Model):
     """Represents a wrapper of list of plan groups.
 
     :param phone_plan_groups: The underlying list of phone plan groups.
-    :type phone_plan_groups: list[~azure.communication.phonenumber.models.PhonePlanGroup]
+    :type phone_plan_groups: list[~azure.communication.phonenumbers.models.PhonePlanGroup]
     :param next_link: Represents the URL link to the next page.
     :type next_link: str
     """
@@ -961,7 +961,7 @@ class PhonePlansResponse(msrest.serialization.Model):
     """Represents a wrapper around a list of countries.
 
     :param phone_plans: Represents the underlying list of phone plans.
-    :type phone_plans: list[~azure.communication.phonenumber.models.PhonePlan]
+    :type phone_plans: list[~azure.communication.phonenumbers.models.PhonePlan]
     :param next_link: Represents the URL link to the next page.
     :type next_link: str
     """
@@ -1021,7 +1021,7 @@ class RateInformation(msrest.serialization.Model):
     :param monthly_rate: The monthly rate of a phone plan group.
     :type monthly_rate: float
     :param currency_type: The currency of a phone plan group. Possible values include: "USD".
-    :type currency_type: str or ~azure.communication.phonenumber.models.CurrencyType
+    :type currency_type: str or ~azure.communication.phonenumbers.models.CurrencyType
     :param rate_error_message: The error code of a phone plan group.
     :type rate_error_message: str
     """
@@ -1108,7 +1108,7 @@ class UpdateNumberCapabilitiesRequest(msrest.serialization.Model):
     :param phone_number_capabilities_update: Required. The map of phone numbers to the capabilities
      update applied to the phone number.
     :type phone_number_capabilities_update: dict[str,
-     ~azure.communication.phonenumber.models.NumberUpdateCapabilities]
+     ~azure.communication.phonenumbers.models.NumberUpdateCapabilities]
     """
 
     _validation = {
@@ -1166,11 +1166,11 @@ class UpdatePhoneNumberCapabilitiesResponse(msrest.serialization.Model):
     :param capabilities_update_status: Status of the capabilities update. Possible values include:
      "Pending", "InProgress", "Complete", "Error".
     :type capabilities_update_status: str or
-     ~azure.communication.phonenumber.models.CapabilitiesUpdateStatus
+     ~azure.communication.phonenumbers.models.CapabilitiesUpdateStatus
     :param phone_number_capabilities_updates: The capabilities update for each of a set of phone
      numbers.
     :type phone_number_capabilities_updates: dict[str,
-     ~azure.communication.phonenumber.models.NumberUpdateCapabilities]
+     ~azure.communication.phonenumbers.models.NumberUpdateCapabilities]
     """
 
     _attribute_map = {
