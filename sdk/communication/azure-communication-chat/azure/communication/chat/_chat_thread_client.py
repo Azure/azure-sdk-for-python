@@ -191,8 +191,8 @@ class ChatThreadClient(object):
         :keyword int results_per_page: The maximum number of chat message read receipts to be returned per page.
         :keyword int skip: Skips chat message read receipts up to a specified position in response.
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ItemPaged[:class:`~azure.communication.chat.ChatMessageReadReceipt`]
-        :rtype: ItemPaged
+        :return: An iterator like instance of ChatMessageReadReceipt
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.ChatMessageReadReceipt]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -341,8 +341,8 @@ class ChatThreadClient(object):
         :keyword int results_per_page: The maximum number of messages to be returned per page.
         :keyword ~datetime.datetime start_time: The start time where the range query.
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ItemPaged[:class:`~azure.communication.chat.ChatMessage`]
-        :rtype: ItemPaged
+        :return: An iterator like instance of ChatMessage
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.ChatMessage]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -448,8 +448,8 @@ class ChatThreadClient(object):
         :keyword int results_per_page: The maximum number of participants to be returned per page.
         :keyword int skip: Skips participants up to a specified position in response.
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ItemPaged[:class:`~azure.communication.chat.ChatThreadParticipant`]
-        :rtype: ItemPaged
+        :return: An iterator like instance of ChatThreadParticipant
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.ChatThreadParticipant]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

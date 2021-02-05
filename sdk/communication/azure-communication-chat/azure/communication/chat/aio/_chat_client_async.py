@@ -61,6 +61,8 @@ class ChatClient(object):
         credential: CommunicationTokenCredential,
         **kwargs: Any
     ) -> None:
+        # type: (...) -> None
+
         if not credential:
             raise ValueError("credential can not be None")
 
@@ -85,9 +87,11 @@ class ChatClient(object):
 
     @distributed_trace
     def get_chat_thread_client(
-        self, thread_id: str,
-        **kwargs: Any
+            self, thread_id: str,
+            **kwargs: Any
     ) -> ChatThreadClient:
+
+        # type: (...) -> ChatThreadClient
         """
         Get ChatThreadClient by providing a thread_id.
 
@@ -123,6 +127,9 @@ class ChatClient(object):
         repeatability_request_id: Optional[str] = None,
         **kwargs
     ) -> ChatThreadClient:
+
+        # type: (...) -> ChatThreadClient
+
         """Creates a chat thread.
 
         :param topic: Required. The thread topic.
@@ -185,7 +192,8 @@ class ChatClient(object):
     async def get_chat_thread(
         self, thread_id: str,
         **kwargs
-    ) -> ChatThread:
+    ) -> ChatThread: # type: (...) -> ChatThread
+
         """Gets a chat thread.
 
         :param thread_id: Required. Thread id to get.
@@ -214,14 +222,14 @@ class ChatClient(object):
     def list_chat_threads(
         self,
         **kwargs: Any
-    ) -> AsyncItemPaged[ChatThreadInfo]:
+    ): # type: (...) -> AsyncItemPaged[ChatThreadInfo]
         """Gets the list of chat threads of a user.
 
         :keyword int results_per_page: The maximum number of chat threads to be returned per page.
         :keyword ~datetime.datetime start_time: The earliest point in time to get chat threads up to.
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AsyncItemPaged[:class:`~azure.communication.chat.ChatThreadInfo`]
-        :rtype: AsyncItemPaged
+        :return: An iterator like instance of ChatThreadInfo
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatThreadInfo]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
