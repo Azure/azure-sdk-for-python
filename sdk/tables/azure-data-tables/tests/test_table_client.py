@@ -405,33 +405,6 @@ class TestTableUnitTests(TableTestCase):
         assert service.table_name ==  'bar'
         assert service.account_name ==  self.tables_storage_account_name
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_closing_pipeline_client(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        for client, url in SERVICES.items():
-            # Act
-            service = client(
-                self.account_url(storage_account, "table"), credential=storage_account_key, table_name='table')
-
-            # Assert
-            with service:
-                assert hasattr(service, 'close')
-                service.close()
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_closing_pipeline_client_simple(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        for client, url in SERVICES.items():
-            # Act
-            service = client(
-                self.account_url(storage_account, "table"), credential=storage_account_key, table_name='table')
-            service.close()
-
-
-class TestTablesUnitTest(object):
-
     def test_create_table_client_with_invalid_name(self):
         # Arrange
         table_url = "https://{}.table.core.windows.net:443/foo".format("test")

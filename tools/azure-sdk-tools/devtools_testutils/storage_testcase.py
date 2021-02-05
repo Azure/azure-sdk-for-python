@@ -51,9 +51,6 @@ class StorageAccountPreparer(AzureMgmtPreparer):
             random_name_enabled=random_name_enabled,
         )
         self.location = location
-        self.parameter_name = parameter_name
-        self.parameter_name_for_location = parameter_name_for_location
-        self.resource_group_parameter_name = resource_group_parameter_name
         self.sku = sku
         self.kind = kind
         self.resource_group_parameter_name = resource_group_parameter_name
