@@ -6,6 +6,8 @@ stages:
       ServiceDirectory: keyvault
       BuildTargetingString: azure-keyvault-keys
       JobName: Test_Keys
+      DeployArmTemplate: true
+      AllocateResourceGroup: true
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
