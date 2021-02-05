@@ -25,6 +25,49 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
+def _validate_arguments(operation, algorithm, **kwargs):
+    """Validates the arguments passed to perform an operation with a provided algorithm.
+
+    :param str operation: the type of operation being requested. Can be "encrypt" or "decrypt"
+    :param EncyptionAlgorithm algorithm: the encryption algorithm to use for the operation
+    :keyword bytes iv: initialization vector
+    :keyword bytes authentication_tag: authentication tag returned from an encryption
+    :keyword bytes additional_authenticated_data: data that is authenticated but not encrypted
+    :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
+    """
+    iv = kwargs.pop("iv", None)
+    tag = kwargs.pop("authentication_tag", None)
+    aad = kwargs.pop("additional_authenticated_data", None)
+
+    if operation == "encrypt":
+        if iv and "CBC" not in algorithm:
+            raise ValueError(
+                "iv should only be provided with AES-CBC algorithms; {} does not accept an iv".format(algorithm)
+            )
+        if aad and "GCM" not in algorithm:
+            raise ValueError(
+                "additional_authenticated_data should only be provided with AES-GCM algorithms; {} does not accept an "
+                "aad".format(algorithm)
+            )
+
+    if operation == "decrypt":
+        if iv and not ("CBC" in algorithm or "GCM" in algorithm):
+            raise ValueError(
+                "iv should only be provided with AES algorithms; {} does not accept an iv".format(algorithm)
+            )
+        if tag and "GCM" not in algorithm:
+            raise ValueError(
+                "authentication_tag should only be provided with AES-GCM algorithms; {} does not accept a tag".format(
+                    algorithm
+                )
+            )
+        if aad and "GCM" not in algorithm:
+            raise ValueError(
+                "additional_authenticated_data should only be provided with AES-GCM algorithms; {} does not accept an "
+                "aad".format(algorithm)
+            )
+
+
 class CryptographyClient(KeyVaultClientBase):
     """Performs cryptographic operations using Azure Key Vault keys.
 
@@ -133,16 +176,11 @@ class CryptographyClient(KeyVaultClientBase):
         """
         self._initialize(**kwargs)
         iv = kwargs.pop("iv", None)
-        if iv and "CBC" not in algorithm:
-            raise ValueError(
-                "iv should only be provided with AES-CBC algorithms; {} does not accept an iv".format(algorithm)
-            )
         aad = kwargs.pop("additional_authenticated_data", None)
-        if aad and "GCM" not in algorithm:
-            raise ValueError(
-                "additional_authenticated_data should only be provided with AES-GCM algorithms; {} does not accept an "
-                "aad".format(algorithm)
-            )
+        try:
+            _validate_arguments(operation="encrypt", algorithm=algorithm, iv=iv, aad=aad)
+        except ValueError:
+            raise
 
         if self._local_provider.supports(KeyOperation.encrypt, algorithm):
             raise_if_time_invalid(self._key)
@@ -195,23 +233,12 @@ class CryptographyClient(KeyVaultClientBase):
         """
         self._initialize(**kwargs)
         iv = kwargs.pop("iv", None)
-        if iv and not ("CBC" in algorithm or "GCM" in algorithm):
-            raise ValueError(
-                "iv should only be provided with AES algorithms; {} does not accept an iv".format(algorithm)
-            )
         tag = kwargs.pop("authentication_tag", None)
-        if tag and "GCM" not in algorithm:
-            raise ValueError(
-                "authentication_tag should only be provided with AES-GCM algorithms; {} does not accept a tag".format(
-                    algorithm
-                )
-            )
         aad = kwargs.pop("additional_authenticated_data", None)
-        if aad and "GCM" not in algorithm:
-            raise ValueError(
-                "additional_authenticated_data should only be provided with AES-GCM algorithms; {} does not accept an "
-                "aad".format(algorithm)
-            )
+        try:
+            _validate_arguments(operation="decrypt", algorithm=algorithm, iv=iv, tag=tag, aad=aad)
+        except ValueError:
+            raise
 
         if self._local_provider.supports(KeyOperation.decrypt, algorithm):
             try:
