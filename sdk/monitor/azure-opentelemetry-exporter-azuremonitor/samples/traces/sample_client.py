@@ -1,5 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+"""
+An example to show an application instrumented with the Opentelemetry requests instrumentations.
+Calls made with the requests library will be automatically tracked and telemetry is exported to 
+application insights with the AzureMonitorTraceExporter.
+"""
 import os
 import requests
 from opentelemetry import trace

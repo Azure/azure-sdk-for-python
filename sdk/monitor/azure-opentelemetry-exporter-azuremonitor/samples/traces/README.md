@@ -64,7 +64,7 @@ $ python sample_server.py
 
 ### Azure Service Bus Send
 
-The following sample assumes that you have setup an Azure Service Bus [namespace](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-quickstart-portal).
+The following sample assumes that you have setup an Azure Service Bus [namespace](https://docs.microsoft.com/azure/service-bus-messaging/service-bus-quickstart-portal).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 * Update `SERVICE_BUS_CONN_STR` environment variable
@@ -83,7 +83,7 @@ $ python sample_servicebus_send.py
 
 ### Azure Service Bus Receive
 
-The following sample assumes that you have setup an Azure Service Bus [namespace](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-quickstart-portal).
+The following sample assumes that you have setup an Azure Service Bus [namespace](https://docs.microsoft.com/azure/service-bus-messaging/service-bus-quickstart-portal).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 * Update `SERVICE_BUS_CONN_STR` environment variable

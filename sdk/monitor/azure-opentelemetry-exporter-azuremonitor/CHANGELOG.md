@@ -2,8 +2,8 @@
 
 ## 1.0.0b3 (Unreleased)
 
-- Add azure servicebus samples
-    ([#15349](https://github.com/Azure/azure-sdk-for-python/pull/15349))
+- Add azure servicebus samples and docstrings to samples
+    ([#16580](https://github.com/Azure/azure-sdk-for-python/pull/16580))
 
 ## 1.0.0b2 (2021-01-13)
 
