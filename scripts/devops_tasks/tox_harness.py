@@ -285,7 +285,7 @@ def collect_log_files(working_dir):
 
     try:
         os.mkdir(log_directory)
-    except Exception: # Throws different errors in py2 and py3
+    except OSError:
         logging.info("'{}' directory already exists".format(log_directory))
 
     log_directory = os.path.join(
@@ -294,7 +294,7 @@ def collect_log_files(working_dir):
 
     try:
         os.mkdir(log_directory)
-    except Exception: # Throws different errors in py2 and py3
+    except OSError:
         logging.info("'{}' directory already exists".format(log_directory))
 
     for test_env in test_envs:
@@ -305,7 +305,7 @@ def collect_log_files(working_dir):
             logging.info("TEMPDIR: {}".format(temp_dir))
             try:
                 os.mkdir(temp_dir)
-            except Exception: # Throws different errors in py2 and py3
+            except OSError:
                 logging.info("Could not create '{}' directory".format(temp_dir))
                 return
 
