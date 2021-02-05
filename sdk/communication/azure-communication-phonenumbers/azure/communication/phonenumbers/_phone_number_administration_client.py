@@ -35,7 +35,7 @@ from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
 
 class PhoneNumbersAdministrationClient(object):
-    """Azure Communication Services Phone Number Management client.
+    """Azure Communication Services Phone Numbers Management client.
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.

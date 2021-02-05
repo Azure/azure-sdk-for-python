@@ -41,7 +41,7 @@ from .._generated.models import (
 from .._shared.utils import parse_connection_str, get_authentication_policy
 
 class PhoneNumbersAdministrationClient(object):
-    """Azure Communication Services Phone Number Management client.
+    """Azure Communication Services Phone Numbers Management client.
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.

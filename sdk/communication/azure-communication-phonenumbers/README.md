@@ -1,8 +1,8 @@
 [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=master)
 
-# Azure Communication  Package client library for Python
+# Azure Communication Phone Numbers Package client library for Python
 
-Azure Communication Phone Number client package is used to administer Phone Numbers. 
+Azure Communication Phone Numbers client package is used to administer Phone Numbers. 
 
 # Getting started
 ### Prerequisites
@@ -10,7 +10,7 @@ Azure Communication Phone Number client package is used to administer Phone Numb
 - You must have an [Azure subscription](https://azure.microsoft.com/free/)
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 ### Install the package
-Install the Azure Communication Phone Number client library for Python with [pip](https://pypi.org/project/pip/):
+Install the Azure Communication Phone Numbers client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
 pip install azure-communication-phonenumbers
@@ -19,7 +19,7 @@ pip install azure-communication-phonenumbers
 # Key concepts
 
 ## CommunicationPhoneNumberClient
-### Initializing Phone Number Client
+### Initializing Phone Numbers Client
 ```python
 # You can find your endpoint and access token from your resource in the Azure Portal
 import os
@@ -33,8 +33,8 @@ endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
 phone_number_administration_client = PhoneNumbersAdministrationClient(endpoint, DefaultAzureCredential())
 
 ```
-### Initializing Phone Number Client Using Connection String
-Connection string authentication is also available for Phone Number Client.
+### Initializing Phone Numbers Client Using Connection String
+Connection string authentication is also available for Phone Numbers Client.
 
 ```python
 # You can find your endpoint and access token from your resource in the Azure Portal
@@ -167,12 +167,12 @@ poller = phone_number_administration_client.begin_purchase_reservation(
 ```
 
 # Troubleshooting
-The Phone Number Administration client will raise exceptions defined in [Azure Core][azure_core].
+The Phone Numbers Administration client will raise exceptions defined in [Azure Core][azure_core].
 
 # Next steps
 ## More sample code
 
-Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-phonenumber/samples) directory for detailed examples of how to use this library.
+Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-phonenumbers/samples) directory for detailed examples of how to use this library.
 
 ## Provide Feedback
 

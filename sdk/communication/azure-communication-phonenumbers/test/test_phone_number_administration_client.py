@@ -20,7 +20,7 @@ from _shared.utils import create_token_credential
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 
 SKIP_PHONE_NUMBER_TESTS = True
-PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
+PHONE_NUMBER_TEST_SKIP_REASON= "Phone Numbers Administration live tests infra not ready yet"
 
 class PhoneNumbersAdministrationClientTest(PhoneNumberCommunicationTestCase):
     def setUp(self):

@@ -19,7 +19,7 @@ from _shared.utils import create_token_credential
 import os
 
 SKIP_PHONE_NUMBER_TESTS = True
-PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
+PHONE_NUMBER_TEST_SKIP_REASON= "Phone Numbers Administration live tests infra not ready yet"
 
 class PhoneNumbersAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTestCase):
 
