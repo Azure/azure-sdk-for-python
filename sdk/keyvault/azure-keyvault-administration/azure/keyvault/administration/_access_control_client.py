@@ -66,7 +66,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :param role_scope: the assignment's scope, for example "/", "/keys", or "/keys/<specific key identifier>"
             :class:`KeyVaultRoleScope` defines common broad scopes. Specify a narrower scope as a string.
         :type role_scope: str or KeyVaultRoleScope
-        :param role_assignment_name: the assignment's name. Must be a UUID.
+        :param role_assignment_name: the assignment's name.
         :type role_assignment_name: str or uuid.UUID
         :returns: the deleted assignment
         :rtype: KeyVaultRoleAssignment
@@ -143,8 +143,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         properties = self._client.role_definitions.models.RoleDefinitionProperties(
             role_name=kwargs.pop("role_name", None),
             description=kwargs.pop("description", None),
-            permissions=permissions,
-            **kwargs
+            permissions=permissions
         )
         parameters = self._client.role_definitions.models.RoleDefinitionCreateParameters(properties=properties)
 
