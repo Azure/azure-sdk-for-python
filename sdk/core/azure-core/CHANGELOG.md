@@ -1,5 +1,11 @@
 # Release History
 
+## 1.12.0b1 (2021-02-08)
+
+### Features
+
+- `BearerTokenCredentialPolicy` handles Continuous Access Evaluation (CAE) challenges
+
 ## 1.11.0 (2021-02-08)
 
 ### Features
