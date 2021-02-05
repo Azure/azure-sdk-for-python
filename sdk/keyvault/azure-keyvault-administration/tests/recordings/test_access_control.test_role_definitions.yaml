@@ -8,49 +8,6 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-keyvault-administration/4.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2-preview
-  response:
-    body:
-      string: OK
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '2'
-      content-security-policy:
-      - default-src 'self'
-      content-type:
-      - application/json; charset=utf-8
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      www-authenticate:
-      - Bearer authorization="https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47",
-        resource="https://managedhsm.azure.net"
-      x-content-type-options:
-      - nosniff
-      x-frame-options:
-      - SAMEORIGIN
-      x-ms-build-version:
-      - 1.0.20210128-1-4c3070d1-develop
-      x-ms-server-latency:
-      - '0'
-    status:
-      code: 401
-      message: Unauthorized
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
       - azsdk-python-keyvault-administration/4.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
@@ -92,8 +49,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"properties": {"description": "test", "roleName": "role-name626010ec",
-      "permissions": [{"dataActions": ["Microsoft.KeyVault/managedHsm/keys/read/action"]}]}}'
+    body: '{"properties": {"roleName": "role-name626010ec", "permissions": [{"dataActions":
+      ["Microsoft.KeyVault/managedHsm/keys/read/action"]}], "description": "test"}}'
     headers:
       Accept:
       - application/json
@@ -132,7 +89,7 @@ interactions:
       x-ms-keyvault-region:
       - northeurope
       x-ms-server-latency:
-      - '57'
+      - '69'
     status:
       code: 201
       message: Created
@@ -176,7 +133,7 @@ interactions:
       x-ms-keyvault-region:
       - northeurope
       x-ms-server-latency:
-      - '49'
+      - '51'
     status:
       code: 201
       message: Created
@@ -225,7 +182,7 @@ interactions:
       x-ms-keyvault-region:
       - northeurope
       x-ms-server-latency:
-      - '0'
+      - '1'
     status:
       code: 200
       message: OK
@@ -309,7 +266,7 @@ interactions:
       x-ms-keyvault-region:
       - northeurope
       x-ms-server-latency:
-      - '50'
+      - '54'
     status:
       code: 200
       message: OK
