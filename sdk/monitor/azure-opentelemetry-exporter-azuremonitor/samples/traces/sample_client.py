@@ -19,6 +19,5 @@ span_processor = BatchExportSpanProcessor(
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
-response = requests.get(url="http://127.0.0.1:8080/")
-
-input("Press any key to exit...")
+with tracer.start_as_current_span("parent"):
+    response = requests.get("https://azure.microsoft.com/", timeout=5)
