@@ -302,7 +302,7 @@ def collect_log_files(working_dir):
 
         if os.path.exists(log_files):
             temp_dir = os.path.join(log_directory, test_env)
-            logging.info("TEMPDIR: ", temp_dir)
+            logging.info("TEMPDIR: {}".format(temp_dir))
             try:
                 os.mkdir(temp_dir)
             except Exception: # Throws different errors in py2 and py3
