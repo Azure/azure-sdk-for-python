@@ -44,7 +44,7 @@ class IdentityReplacer(RecordingProcessor):
     def process_response(self, response):
         if is_text_payload(response) and response['body']['string']:
             response['body']['string'] = self._replace_ids(response['body']['string'])
-            return response
+        return response
     
     def _replace_ids(self, body):
         import json
