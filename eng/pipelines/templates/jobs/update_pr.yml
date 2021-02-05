@@ -21,6 +21,7 @@ steps:
 - script: |
     python3 -m pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=tools/azure-devtools&egg=azure-devtools"
     python3 -m pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=tools/azure-sdk-tools&egg=azure-sdk-tools"
+    python3 -m pip install gitpython
     python3 -m pip list
   displayName: 'Install Azure SDK tools'
 
