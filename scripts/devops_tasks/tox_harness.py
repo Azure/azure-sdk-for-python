@@ -276,13 +276,14 @@ def replace_dev_reqs(file, pkg_root):
 
 
 def collect_log_files():
+    logging.info("Collecting log files")
     # collect all the log files into one place for publishing in case of tox failure
     test_envs = ["whl", "sdist", "depends", "latestdependency", "mindependency"]
 
     log_directory = os.path.join(root_dir, "_tox_logs")
     try:
         os.mkdir(log_directory)
-    except FileExistsError:
+    except Exception: # Throws different erros in py2 and py3
         pass
 
     for test_env in test_envs:
@@ -293,7 +294,7 @@ def collect_log_files():
             logging.info("TEMPDIR: ", temp_dir)
             try:
                 os.mkdir(log_directory)
-            except FileExistsError:
+            except Exception: # Throws different erros in py2 and py3
                 pass
 
             for filename in os.listdir(temp_dir):
