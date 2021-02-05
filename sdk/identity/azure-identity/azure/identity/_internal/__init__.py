@@ -47,7 +47,6 @@ from .aad_client import AadClient
 from .aad_client_base import AadClientBase
 from .auth_code_redirect_handler import AuthCodeRedirectServer
 from .aadclient_certificate import AadClientCertificate
-from .certificate_credential_base import CertificateCredentialBase
 from .client_secret_credential_base import ClientSecretCredentialBase
 from .decorators import wrap_exceptions
 from .interactive import InteractiveCredential
@@ -72,7 +71,6 @@ __all__ = [
     "AadClientBase",
     "AuthCodeRedirectServer",
     "AadClientCertificate",
-    "CertificateCredentialBase",
     "ClientSecretCredentialBase",
     "get_default_authority",
     "InteractiveCredential",

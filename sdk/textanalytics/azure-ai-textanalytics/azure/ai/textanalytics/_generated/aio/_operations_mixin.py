@@ -12,7 +12,9 @@ from msrest import Serializer, Deserializer
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
+# FIXME: have to manually reconfigure import path for multiapi operation mixin
 from ..._async_lro import AnalyzeHealthcareEntitiesAsyncLROPoller, AnalyzeHealthcareEntitiesAsyncLROPollingMethod
+from ..._async_lro import AsyncAnalyzeBatchActionsLROPoller, AsyncAnalyzeBatchActionsLROPollingMethod
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
@@ -69,7 +71,7 @@ class TextAnalyticsClientOperationsMixin(object):
         self,
         body: Optional["_models.AnalyzeBatchInput"] = None,
         **kwargs
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncAnalyzeBatchActionsLROPoller["_models.AnalyzeJobState"]:
         """Submit analysis job.
 
         Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -79,12 +81,12 @@ class TextAnalyticsClientOperationsMixin(object):
         :type body: ~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeBatchInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+        :keyword polling: Pass in True if you'd like the AsyncAnalyzeBatchActionsLROPollingMethod polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncAnalyzeBatchActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
+        :rtype: ~...._async_lro.AsyncAnalyzeBatchActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_analyze')

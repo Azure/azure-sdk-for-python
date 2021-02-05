@@ -8,7 +8,9 @@
 from typing import TYPE_CHECKING
 import warnings
 
+# FIXME: have to manually reconfigure import path for multiapi operation mixin
 from ...._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeHealthcareEntitiesLROPollingMethod
+from ...._lro import AnalyzeBatchActionsLROPoller, AnalyzeBatchActionsLROPollingMethod
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -31,8 +33,8 @@ class TextAnalyticsClientOperationsMixin(object):
         body=None,  # type: Optional["_models.AnalyzeBatchInput"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        # type: (...) -> Optional["_models.AnalyzeJobState"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AnalyzeJobState"]]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -69,16 +71,22 @@ class TextAnalyticsClientOperationsMixin(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('AnalyzeJobState', pipeline_response)
+
+        if response.status_code == 202:
+            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
+        return deserialized
     _analyze_initial.metadata = {'url': '/analyze'}  # type: ignore
 
     def begin_analyze(
@@ -86,7 +94,7 @@ class TextAnalyticsClientOperationsMixin(object):
         body=None,  # type: Optional["_models.AnalyzeBatchInput"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[None]
+        # type: (...) -> AnalyzeBatchActionsLROPoller["_models.AnalyzeJobState"]
         """Submit analysis job.
 
         Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -96,16 +104,16 @@ class TextAnalyticsClientOperationsMixin(object):
         :type body: ~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeBatchInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+        :keyword polling: Pass in True if you'd like the AnalyzeBatchActionsLROPollingMethod polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AnalyzeBatchActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
+        :rtype: ~...._lro.AnalyzeBatchActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeJobState"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -122,25 +130,28 @@ class TextAnalyticsClientOperationsMixin(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('AnalyzeJobState', pipeline_response)
+
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
-        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AnalyzeBatchActionsLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AnalyzeBatchActionsLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AnalyzeBatchActionsLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_analyze.metadata = {'url': '/analyze'}  # type: ignore
 
     def analyze_status(

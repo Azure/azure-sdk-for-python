@@ -2,6 +2,15 @@
 
 ## 5.1.0b5 (Unreleased)
 
+**Breaking Changes**
+
+- Rename `begin_analyze` to `begin_analyze_batch_actions`.
+- Now instead of separate parameters for all of the different types of actions you can pass to `begin_analyze_batch_actions`, we accept one parameter `actions`,
+which is a list of actions you would like performed. The results of the actions are returned in the same order as when inputted.
+- The response object from `begin_analyze_batch_actions` has also changed. Now, after the completion of your long running operation, we return a paged iterable
+of action results, in the same order they've been inputted. The actual document results for each action are included under property `document_results` of
+each action result.
+
 **New Features**
 - Renamed `begin_analyze_healthcare` to `begin_analyze_healthcare_entities`.
 - Renamed `AnalyzeHealthcareResult` to `AnalyzeHealthcareEntitiesResult` and `AnalyzeHealthcareResultItem` to `AnalyzeHealthcareEntitiesResultItem`.

@@ -148,6 +148,20 @@ class MatchConditions(Enum):
     IfMissing = 5
 ```
 
+#### CaseInsensitiveEnumMeta
+
+A metaclass to support case-insensitive enums.
+```python
+from enum import Enum
+from six import with_metaclass
+
+from azure.core import CaseInsensitiveEnumMeta
+
+class MyCustomEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    FOO = 'foo'
+    BAR = 'bar'
+```
+
 ## Contributing
 This project welcomes contributions and suggestions. Most contributions require
 you to agree to a Contributor License Agreement (CLA) declaring that you have

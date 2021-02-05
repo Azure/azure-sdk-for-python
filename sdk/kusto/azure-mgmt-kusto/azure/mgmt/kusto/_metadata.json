@@ -1,15 +1,15 @@
 {
-    "chosen_version": "2019-09-01-preview",
-    "total_api_version_list": ["2019-09-01-preview"],
+    "chosen_version": "2020-09-18",
+    "total_api_version_list": ["2020-09-18"],
     "client": {
-        "name": "ApplicationInsightsManagementClient",
-        "filename": "_application_insights_management_client",
-        "description": "Composite Swagger for Application Insights Management Client.",
+        "name": "KustoManagementClient",
+        "filename": "_kusto_management_client",
+        "description": "The Azure Kusto management API provides a RESTful set of web services that interact with Azure Kusto services to manage your clusters and databases. The API enables you to create, update, and delete clusters and databases.",
         "base_url": "\u0027https://management.azure.com\u0027",
         "custom_base_url": null,
         "azure_arm": true,
-        "has_lro_operations": false,
-        "client_side_validation": false
+        "has_lro_operations": true,
+        "client_side_validation": true
     },
     "global_parameters": {
         "sync": {
@@ -21,7 +21,7 @@
             },
             "subscription_id": {
                 "signature": "subscription_id,  # type: str",
-                "description": "The ID of the target subscription.",
+                "description": "Gets subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
                 "docstring_type": "str",
                 "required": true
             }
@@ -35,7 +35,7 @@
             },
             "subscription_id": {
                 "signature": "subscription_id,  # type: str",
-                "description": "The ID of the target subscription.",
+                "description": "Gets subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
                 "docstring_type": "str",
                 "required": true
             }
@@ -52,9 +52,13 @@
         "credential_key_header_name": null
     },
     "operation_groups": {
-        "queries": "QueriesOperations",
-        "operations": "Operations",
-        "query_packs": "QueryPacksOperations"
+        "clusters": "ClustersOperations",
+        "cluster_principal_assignments": "ClusterPrincipalAssignmentsOperations",
+        "databases": "DatabasesOperations",
+        "database_principal_assignments": "DatabasePrincipalAssignmentsOperations",
+        "attached_database_configurations": "AttachedDatabaseConfigurationsOperations",
+        "data_connections": "DataConnectionsOperations",
+        "operations": "Operations"
     },
     "operation_mixins": {
     },

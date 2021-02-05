@@ -68,7 +68,7 @@ class DictMixin(object):
 
 class PiiEntityDomainType(str, Enum):
     """The different domains of PII entities that users can filter by"""
-    PROTECTED_HEALTH_INFORMATION = "PHI"  # See https://aka.ms/tanerpii for more information.
+    PROTECTED_HEALTH_INFORMATION = "phi"  # See https://aka.ms/tanerpii for more information.
 
 
 class DetectedLanguage(DictMixin):
@@ -210,35 +210,50 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
-        self.relations = kwargs.get("relations", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     @classmethod
     def _from_generated(cls, healthcare_result):
-        entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities] # pylint: disable=protected-access
-        relations = []
+        entities = [
+            HealthcareEntity._from_generated(
+                text=e.text,
+                category=e.category,
+                subcategory=e.subcategory,
+                offset=e.offset,
+                confidence_score=e.confidence_score,
+                data_sources=e.data_sources,
+                related_entities={}
+            ) for e in healthcare_result.entities
+        ] # pylint: disable=protected-access
+
+        relation_map = {}
         if healthcare_result.relations:
             for r in healthcare_result.relations:
                 _, source_idx = _get_indices(r.source)
                 _, target_idx = _get_indices(r.target)
-                relations.append(HealthcareRelation._from_generated(r, entities[source_idx], entities[target_idx])) # pylint: disable=protected-access
+                if entities[source_idx] not in relation_map.keys():
+                    relation_map[entities[source_idx]] = {}
+
+                relation_map[entities[source_idx]][entities[target_idx]] = r.relation_type
+
+        for entity in entities:
+            if entity in relation_map.keys():
+                entity.related_entities.update(relation_map[entity])
 
         return cls(
             id=healthcare_result.id,
             entities=entities,
-            relations=relations,
             warnings=healthcare_result.warnings,
             statistics=healthcare_result.statistics
         )
 
     def __repr__(self):
-        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, relations={}, warnings={}, statistics={}, \
+        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, warnings={}, statistics={}, \
         is_error={})".format(
             self.id,
             self.entities,
-            self.relations,
             self.warnings,
             self.statistics,
             self.is_error
@@ -396,6 +411,7 @@ class HealthcareEntity(DictMixin):
         self.offset = kwargs.get("offset", None)
         self.confidence_score = kwargs.get("confidence_score", None)
         self.data_sources = kwargs.get("data_sources", [])
+        self.related_entities = kwargs.get("related_entities", {})
 
     @classmethod
     def _from_generated(cls, healthcare_entity):
@@ -407,56 +423,20 @@ class HealthcareEntity(DictMixin):
             confidence_score=healthcare_entity.confidence_score,
             data_sources=[
                 HealthcareEntityDataSource(entity_id=l.id, name=l.data_source) for l in healthcare_entity.links
-            ] if healthcare_entity.links else None
+            ] if healthcare_entity.links else None,
+            related_entities=self.related_entities
         )
 
     def __repr__(self):
         return "HealthcareEntity(text={}, category={}, subcategory={}, offset={}, confidence_score={},\
-        data_sources={})".format(
+        data_sources={}, related_entities={})".format(
             self.text,
             self.category,
             self.subcategory,
             self.offset,
             self.confidence_score,
-            repr(self.data_sources)
-        )[:1024]
-
-
-class HealthcareRelation(DictMixin):
-    """
-    HealthcareRelation contains information describing a relationship between two entities found in text.
-
-    :ivar str type: The type of relation, such as DosageOfMedication or FrequencyOfMedication, etc.
-    :ivar bool is_bidirectional: Boolean value indicating that the relationship between the two entities is
-        bidirectional.  If true the relation between the entities is bidirectional, otherwise directionality
-        is source to target.
-    :ivar source: A reference to an extracted Healthcare entity representing the source of the relation.
-    :vartype source: ~azure.ai.textanalytics.HealthcareEntity
-    :ivar target: A reference to an extracted Healthcare entity representing the target of the relation.
-    :vartype target: ~azure.ai.textanalytics.HealthcareEntity
-    """
-
-    def __init__(self, **kwargs):
-        self.relation_type = kwargs.get("relation_type", None)
-        self.is_bidirectional = kwargs.get("is_bidirectional", None)
-        self.source = kwargs.get("source", None)
-        self.target = kwargs.get("target", None)
-
-    @classmethod
-    def _from_generated(cls, healthcare_relation, source_entity, target_entity):
-        return cls(
-            relation_type=healthcare_relation.relation_type,
-            is_bidirectional=healthcare_relation.bidirectional,
-            source=source_entity,
-            target=target_entity
-        )
-
-    def __repr__(self):
-        return "HealthcareRelation(relation_type={}, is_bidirectional={}, source={}, target={})".format(
-            self.relation_type,
-            self.is_bidirectional,
-            repr(self.source),
-            repr(self.target)
+            repr(self.data_sources),
+            repr(self.related_entities)
         )[:1024]
 
 
@@ -1164,13 +1144,81 @@ class SentimentConfidenceScores(DictMixin):
             .format(self.positive, self.neutral, self.negative)[:1024]
 
 
-class EntitiesRecognitionTask(DictMixin):
-    """EntitiesRecognitionTask encapsulates the parameters for starting a long-running Entities Recognition operation.
+class AnalyzeBatchActionsType(str, Enum):
+    """The type of batch action that was applied to the documents
+    """
+    RECOGNIZE_ENTITIES = "recognize_entities"  #: Entities Recognition action.
+    RECOGNIZE_PII_ENTITIES = "recognize_pii_entities"  #: PII Entities Recognition action.
+    EXTRACT_KEY_PHRASES = "extract_key_phrases"  #: Key Phrase Extraction action.
 
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar str string_index_type: Specifies the method used to interpret string offsets.
-        Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
-        For additional information see https://aka.ms/text-analytics-offsets
+
+class AnalyzeBatchActionsResult(DictMixin):
+    """AnalyzeBatchActionsResult contains the results of a recognize entities action
+    on a list of documents. Returned by `begin_analyze_batch_actions`
+
+    :ivar document_results: A list of objects containing results for all Entity Recognition actions
+        included in the analysis.
+    :vartype document_results: list[~azure.ai.textanalytics.RecognizeEntitiesResult]
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        actions. Always False for an instance of a AnalyzeBatchActionsResult.
+    :ivar action_type: The type of batch action this class is a result of.
+    :vartype action_type: str or ~azure.ai.textanalytics.AnalyzeBatchActionsType
+    :ivar ~datetime.datetime completed_on: Date and time (UTC) when the result completed
+        on the service.
+    """
+    def __init__(self, **kwargs):
+        self.document_results = kwargs.get("document_results")
+        self.is_error = False
+        self.action_type = kwargs.get("action_type")
+        self.completed_on = kwargs.get("completed_on")
+
+    def __repr__(self):
+        return "AnalyzeBatchActionsResult(document_results={}, is_error={}, action_type={}, completed_on={})" \
+            .format(
+                repr(self.document_results),
+                self.is_error,
+                self.action_type,
+                self.completed_on
+            )[:1024]
+
+class AnalyzeBatchActionsError(DictMixin):
+    """AnalyzeBatchActionsError is an error object which represents an an
+    error response for an action.
+
+    :ivar error: The action result error.
+    :vartype error: ~azure.ai.textanalytics.TextAnalyticsError
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always True for an instance of a DocumentError.
+    """
+
+    def __init__(self, **kwargs):
+        self.error = kwargs.get("error")
+        self.is_error = True
+
+    def __repr__(self):
+        return "AnalyzeBatchActionsError(error={}, is_error={}".format(
+            repr(self.error), self.is_error
+        )
+
+    @classmethod
+    def _from_generated(cls, error):
+        return cls(
+            error=TextAnalyticsError(code=error.code, message=error.message, target=error.target)
+        )
+
+
+class RecognizeEntitiesAction(DictMixin):
+    """RecognizeEntitiesAction encapsulates the parameters for starting a long-running Entities Recognition operation.
+
+    If you just want to recognize entities in a list of documents, and not perform a batch
+    of long running actions on the input of documents, call method `recognize_entities` instead
+    of interfacing with this model.
+
+    :keyword str model_version: The model version to use for the analysis.
+    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
     """
 
     def __init__(self, **kwargs):
@@ -1178,7 +1226,7 @@ class EntitiesRecognitionTask(DictMixin):
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
 
     def __repr__(self, **kwargs):
-        return "EntitiesRecognitionTask(model_version={}, string_index_type={})" \
+        return "RecognizeEntitiesAction(model_version={}, string_index_type={})" \
             .format(self.model_version, self.string_index_type)[:1024]
 
     def to_generated(self):
@@ -1190,84 +1238,58 @@ class EntitiesRecognitionTask(DictMixin):
         )
 
 
-class EntitiesRecognitionTaskResult(DictMixin):
-    """EntitiesRecognitionTaskResult contains the results of a single Entities Recognition task,
-        including additional task metadata.
+class RecognizePiiEntitiesAction(DictMixin):
+    """RecognizePiiEntitiesAction encapsulates the parameters for starting a long-running PII
+    Entities Recognition operation.
 
-    :ivar str name: The name of the task.
-    :ivar results: The results of the analysis.
-    :vartype results: list[~azure.ai.textanalytics.RecognizeEntitiesResult]
-    """
+    If you just want to recognize pii entities in a list of documents, and not perform a batch
+    of long running actions on the input of documents, call method `recognize_pii_entities` instead
+    of interfacing with this model.
 
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.results = kwargs.get("results", [])
-
-    def __repr__(self, **kwargs):
-        return "EntitiesRecognitionTaskResult(name={}, results={})" \
-            .format(self.name, repr(self.results))[:1024]
-
-
-class PiiEntitiesRecognitionTask(DictMixin):
-    """PiiEntitiesRecognitionTask encapsulates the parameters for starting a
-    long-running PII Entities Recognition operation.
-
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar str domain: An optional string to set the PII domain to include only a
-    subset of the entity categories. Possible values include 'PHI' or None.
-    :ivar str string_index_type: Specifies the method used to interpret string offsets.
-        Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
-        For additional information see https://aka.ms/text-analytics-offsets
+    :keyword str model_version: The model version to use for the analysis.
+    :keyword str domain_filter: An optional string to set the PII domain to include only a
+    subset of the PII entity categories. Possible values include 'phi' or None.
+    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
     """
 
     def __init__(self, **kwargs):
         self.model_version = kwargs.get("model_version", "latest")
-        self.domain = kwargs.get("domain", None)
+        self.domain_filter = kwargs.get("domain_filter", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
 
     def __repr__(self, **kwargs):
-        return "PiiEntitiesRecognitionTask(model_version={}, domain={}, string_index_type={})" \
-            .format(self.model_version, self.domain, self.string_index_type)[:1024]
+        return "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, string_index_type={})" \
+            .format(self.model_version, self.domain_filter, self.string_index_type)[:1024]
 
     def to_generated(self):
         return _v3_1_preview_3_models.PiiTask(
             parameters=_v3_1_preview_3_models.PiiTaskParameters(
                 model_version=self.model_version,
-                domain=self.domain,
+                domain=self.domain_filter,
                 string_index_type=self.string_index_type
             )
         )
 
 
-class PiiEntitiesRecognitionTaskResult(DictMixin):
-    """PiiEntitiesRecognitionTaskResult contains the results of a single PII Entities Recognition task,
-        including additional task metadata.
+class ExtractKeyPhrasesAction(DictMixin):
+    """ExtractKeyPhrasesAction encapsulates the parameters for starting a long-running key phrase
+    extraction operation
 
-    :ivar str name: The name of the task.
-    :ivar results: The results of the analysis.
-    :vartype results: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult]
-    """
+    If you just want to extract key phrases from a list of documents, and not perform a batch
+    of long running actions on the input of documents, call method `extract_key_phrases` instead
+    of interfacing with this model.
 
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.results = kwargs.get("results", [])
-
-    def __repr__(self, **kwargs):
-        return "PiiEntitiesRecognitionTaskResult(name={}, results={})" \
-            .format(self.name, repr(self.results))[:1024]
-
-
-class KeyPhraseExtractionTask(DictMixin):
-    """KeyPhraseExtractionTask encapsulates the parameters for starting a long-running Key Phrase Extraction operation.
-
-    :ivar str model_version: The model version to use for the analysis.
+    :keyword str model_version: The model version to use for the analysis.
     """
 
     def __init__(self, **kwargs):
         self.model_version = kwargs.get("model_version", "latest")
 
     def __repr__(self, **kwargs):
-        return "KeyPhraseExtractionTask(model_version={})" \
+        return "ExtractKeyPhrasesAction(model_version={})" \
             .format(self.model_version)[:1024]
 
     def to_generated(self):
@@ -1276,52 +1298,6 @@ class KeyPhraseExtractionTask(DictMixin):
                 model_version=self.model_version
             )
         )
-
-
-class KeyPhraseExtractionTaskResult(DictMixin):
-    """KeyPhraseExtractionTaskResult contains the results of a single Key Phrase Extraction task, including additional
-        task metadata.
-
-    :ivar str name: The name of the task.
-    :ivar results: The results of the analysis.
-    :vartype results: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult]
-    """
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.results = kwargs.get("results", [])
-
-    def __repr__(self, **kwargs):
-        return "KeyPhraseExtractionTaskResult(name={}, results={})" \
-            .format(self.name, repr(self.results))[:1024]
-
-class TextAnalysisResult(DictMixin):
-    """TextAnalysisResult contains the results of multiple text analyses performed on a batch of documents.
-
-    :ivar entities_recognition_results: A list of objects containing results for all Entity Recognition tasks
-        included in the analysis.
-    :vartype entities_recognition_results: list[~azure.ai.textanalytics.EntitiesRecognitionTaskResult]
-    :ivar pii_entities_recognition_results: A list of objects containing results for all PII Entity Recognition
-        tasks included in the analysis.
-    :vartype pii_entities_recogition_results: list[~azure.ai.textanalytics.PiiEntitiesRecognitionTaskResult]
-    :ivar key_phrase_extraction_results: A list of objects containing results for all Key Phrase Extraction tasks
-        included in the analysis.
-    :vartype key_phrase_extraction_results: list[~azure.ai.textanalytics.KeyPhraseExtractionTaskResult]
-    """
-    def __init__(self, **kwargs):
-        self.entities_recognition_results = kwargs.get("entities_recognition_results", [])
-        self.pii_entities_recognition_results = kwargs.get("pii_entities_recognition_results", [])
-        self.key_phrase_extraction_results = kwargs.get("key_phrase_extraction_results", [])
-
-    def __repr__(self):
-        return "TextAnalysisResult(entities_recognition_results={}, pii_entities_recognition_results={}, \
-            key_phrase_extraction_results={})" \
-            .format(
-                repr(self.entities_recognition_results),
-                repr(self.pii_entities_recognition_results),
-                repr(self.key_phrase_extraction_results)
-            )[:1024]
-
 
 class RequestStatistics(DictMixin):
     def __init__(self, **kwargs):
