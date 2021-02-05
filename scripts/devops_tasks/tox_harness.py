@@ -274,6 +274,35 @@ def replace_dev_reqs(file, pkg_root):
         f.write("\n".join(adjusted_req_lines))
 
 
+
+def collect_log_files():
+    # collect all the log files into one place for publishing in case of tox failure
+    test_envs = ["whl", "sdist", "depends", "latestdependency", "mindependency"]
+
+    log_directory = os.path.join(root_dir, "_tox_logs")
+    try:
+        os.mkdir(log_directory)
+    except FileExistsError:
+        pass
+
+    for test_env in test_envs:
+        log_files = os.path.join(root_dir, ".tox", test_env, "log")
+
+        if os.path.exists(log_files):
+            temp_dir = os.path.join(log_directory, test_env)
+            logging.info("TEMPDIR: ", temp_dir)
+            try:
+                os.mkdir(log_directory)
+            except FileExistsError:
+                pass
+
+            for filename in os.listdir(temp_dir):
+                if filename.endswith(".log"):
+                    logging.info("LOG FILE: ", filename)
+                    file_location = os.pth.join(temp_dir, filename)
+                    shutil.move(file_location, temp_dir)
+
+
 def execute_tox_serial(tox_command_tuples):
     return_code = 0
 
@@ -290,6 +319,8 @@ def execute_tox_serial(tox_command_tuples):
 
         if result is not None and result != 0:
             return_code = result
+
+        collect_log_files()
 
         if in_ci():
             shutil.rmtree(tox_dir)
