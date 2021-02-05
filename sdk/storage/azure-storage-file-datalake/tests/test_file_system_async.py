@@ -591,7 +591,7 @@ class FileSystemTest(StorageTestCase):
 
     async def _test_list_paths_pages_correctly(self):
         # Arrange
-        file_system = await self._create_file_system(file_system_prefix="filesystem")
+        file_system = await self._create_file_system(file_system_prefix="filesystem1")
         for i in range(0, 6):
             await file_system.create_directory("dir1{}".format(i))
         for i in range(0, 6):
