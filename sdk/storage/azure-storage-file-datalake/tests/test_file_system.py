@@ -298,7 +298,7 @@ class FileSystemTest(StorageTestCase):
     @record
     def test_list_paths_pages_correctly(self):
         # Arrange
-        file_system = self._create_file_system(file_system_prefix="fs")
+        file_system = self._create_file_system(file_system_prefix="fs1")
         for i in range(0, 6):
             file_system.create_directory("dir1{}".format(i))
         for i in range(0, 6):
