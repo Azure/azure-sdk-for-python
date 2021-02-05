@@ -607,12 +607,15 @@ class SuppressionContract(Resource):
     :type suppression_id: str
     :param ttl: The duration for which the suppression is valid.
     :type ttl: str
+    :ivar expiration_time_stamp: Gets or sets the expiration time stamp.
+    :vartype expiration_time_stamp: ~datetime.datetime
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'expiration_time_stamp': {'readonly': True},
     }
 
     _attribute_map = {
@@ -621,6 +624,7 @@ class SuppressionContract(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'suppression_id': {'key': 'properties.suppressionId', 'type': 'str'},
         'ttl': {'key': 'properties.ttl', 'type': 'str'},
+        'expiration_time_stamp': {'key': 'properties.expirationTimeStamp', 'type': 'iso-8601'},
     }
 
     def __init__(
@@ -633,6 +637,7 @@ class SuppressionContract(Resource):
         super(SuppressionContract, self).__init__(**kwargs)
         self.suppression_id = suppression_id
         self.ttl = ttl
+        self.expiration_time_stamp = None
 
 
 class SuppressionContractListResult(msrest.serialization.Model):

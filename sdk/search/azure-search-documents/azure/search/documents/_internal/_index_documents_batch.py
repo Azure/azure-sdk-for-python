@@ -132,18 +132,15 @@ class IndexDocumentsBatch(object):
         return result
 
     def enqueue_actions(self, new_actions, **kwargs):  # pylint: disable=unused-argument
-        # type: (List[IndexAction]) -> None
+        # type: (Union[IndexAction, List[IndexAction]]) -> None
         """Enqueue a list of index actions to index.
         """
-        with self._lock:
-            self._actions.extend(new_actions)
-
-    def enqueue_action(self, new_action, **kwargs):  # pylint: disable=unused-argument
-        # type: (IndexAction) -> None
-        """Enqueue a single index action
-        """
-        with self._lock:
-            self._actions.append(new_action)
+        if isinstance(new_actions, IndexAction):
+            with self._lock:
+                self._actions.append(new_actions)
+        else:
+            with self._lock:
+                self._actions.extend(new_actions)
 
     def _extend_batch(self, documents, action_type):
         # type: (List[dict], str) -> List[IndexAction]

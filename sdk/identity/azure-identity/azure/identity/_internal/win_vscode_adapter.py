@@ -39,7 +39,7 @@ class _CREDENTIAL(ct.Structure):
 
 _PCREDENTIAL = ct.POINTER(_CREDENTIAL)
 
-_advapi = ct.WinDLL("advapi32")
+_advapi = ct.WinDLL("advapi32")  # type: ignore
 _advapi.CredReadW.argtypes = [wt.LPCWSTR, wt.DWORD, wt.DWORD, ct.POINTER(_PCREDENTIAL)]
 _advapi.CredReadW.restype = wt.BOOL
 _advapi.CredFree.argtypes = [_PCREDENTIAL]

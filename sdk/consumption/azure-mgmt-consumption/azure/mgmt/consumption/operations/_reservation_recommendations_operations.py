@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ReservationRecommendationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class ReservationRecommendationsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ReservationRecommendationsListResult"]
+        # type: (...) -> Iterable["_models.ReservationRecommendationsListResult"]
         """List of recommendations for purchasing reserved instances.
 
         :param scope: The scope associated with reservation recommendations operations. This includes
@@ -71,10 +71,10 @@ class ReservationRecommendationsOperations(object):
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReservationRecommendationsListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.consumption.models.ReservationRecommendationsListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.consumption.models.ReservationRecommendationsListResultor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ReservationRecommendationsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReservationRecommendationsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -120,8 +120,8 @@ class ReservationRecommendationsOperations(object):
             pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
-            if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+            if response.status_code not in [200, 204]:
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

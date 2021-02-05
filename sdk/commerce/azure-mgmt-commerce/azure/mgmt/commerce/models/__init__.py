@@ -33,7 +33,7 @@ except (SyntaxError, ImportError):
 
 from ._usage_management_client_enums import (
     AggregationGranularity,
-    OfferTermInfoName,
+    OfferTermInfoEnum,
 )
 
 __all__ = [
@@ -49,5 +49,5 @@ __all__ = [
     'UsageAggregation',
     'UsageAggregationListResult',
     'AggregationGranularity',
-    'OfferTermInfoName',
+    'OfferTermInfoEnum',
 ]

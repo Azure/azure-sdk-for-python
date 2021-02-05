@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class TriggersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         **kwargs
-    ) -> AsyncIterable["models.TriggerListResponse"]:
+    ) -> AsyncIterable["_models.TriggerListResponse"]:
         """Lists triggers.
 
         :param resource_group_name: The resource group name.
@@ -60,7 +60,7 @@ class TriggersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datafactory.models.TriggerListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -121,9 +121,9 @@ class TriggersOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        filter_parameters: "models.TriggerFilterParameters",
+        filter_parameters: "_models.TriggerFilterParameters",
         **kwargs
-    ) -> "models.TriggerQueryResponse":
+    ) -> "_models.TriggerQueryResponse":
         """Query triggers.
 
         :param resource_group_name: The resource group name.
@@ -137,7 +137,7 @@ class TriggersOperations:
         :rtype: ~azure.mgmt.datafactory.models.TriggerQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerQueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerQueryResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -188,10 +188,10 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        trigger: "models.TriggerResource",
+        trigger: "_models.TriggerResource",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.TriggerResource":
+    ) -> "_models.TriggerResource":
         """Creates or updates a trigger.
 
         :param resource_group_name: The resource group name.
@@ -210,7 +210,7 @@ class TriggersOperations:
         :rtype: ~azure.mgmt.datafactory.models.TriggerResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -266,7 +266,7 @@ class TriggersOperations:
         trigger_name: str,
         if_none_match: Optional[str] = None,
         **kwargs
-    ) -> Optional["models.TriggerResource"]:
+    ) -> Optional["_models.TriggerResource"]:
         """Gets a trigger.
 
         :param resource_group_name: The resource group name.
@@ -283,7 +283,7 @@ class TriggersOperations:
         :rtype: ~azure.mgmt.datafactory.models.TriggerResource or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggerResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -394,8 +394,8 @@ class TriggersOperations:
         factory_name: str,
         trigger_name: str,
         **kwargs
-    ) -> Optional["models.TriggerSubscriptionOperationStatus"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggerSubscriptionOperationStatus"]]
+    ) -> Optional["_models.TriggerSubscriptionOperationStatus"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerSubscriptionOperationStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -445,7 +445,7 @@ class TriggersOperations:
         factory_name: str,
         trigger_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.TriggerSubscriptionOperationStatus"]:
+    ) -> AsyncLROPoller["_models.TriggerSubscriptionOperationStatus"]:
         """Subscribe event trigger to events.
 
         :param resource_group_name: The resource group name.
@@ -465,7 +465,7 @@ class TriggersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -517,7 +517,7 @@ class TriggersOperations:
         factory_name: str,
         trigger_name: str,
         **kwargs
-    ) -> "models.TriggerSubscriptionOperationStatus":
+    ) -> "_models.TriggerSubscriptionOperationStatus":
         """Get a trigger's event subscription status.
 
         :param resource_group_name: The resource group name.
@@ -531,7 +531,7 @@ class TriggersOperations:
         :rtype: ~azure.mgmt.datafactory.models.TriggerSubscriptionOperationStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -579,8 +579,8 @@ class TriggersOperations:
         factory_name: str,
         trigger_name: str,
         **kwargs
-    ) -> Optional["models.TriggerSubscriptionOperationStatus"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggerSubscriptionOperationStatus"]]
+    ) -> Optional["_models.TriggerSubscriptionOperationStatus"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerSubscriptionOperationStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -630,7 +630,7 @@ class TriggersOperations:
         factory_name: str,
         trigger_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.TriggerSubscriptionOperationStatus"]:
+    ) -> AsyncLROPoller["_models.TriggerSubscriptionOperationStatus"]:
         """Unsubscribe event trigger from events.
 
         :param resource_group_name: The resource group name.
@@ -650,7 +650,7 @@ class TriggersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval

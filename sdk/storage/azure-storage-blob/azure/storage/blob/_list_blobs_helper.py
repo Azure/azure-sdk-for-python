@@ -6,8 +6,9 @@
 # --------------------------------------------------------------------------
 
 from azure.core.paging import PageIterator, ItemPaged
+from azure.core.exceptions import HttpResponseError
 from ._deserialize import get_blob_properties_from_generated_code, parse_tags
-from ._generated.models import StorageErrorException, BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
+from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
 from ._models import BlobProperties, FilteredBlob
 from ._shared.models import DictMixin
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -74,7 +75,7 @@ class BlobPropertiesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
@@ -215,7 +216,7 @@ class FilteredBlobPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):

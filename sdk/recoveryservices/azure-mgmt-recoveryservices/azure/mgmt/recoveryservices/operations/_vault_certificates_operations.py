@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class VaultCertificatesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class VaultCertificatesOperations(object):
         resource_group_name,  # type: str
         vault_name,  # type: str
         certificate_name,  # type: str
-        certificate_request,  # type: "models.CertificateRequest"
+        certificate_request,  # type: "_models.CertificateRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VaultCertificateResponse"
+        # type: (...) -> "_models.VaultCertificateResponse"
         """Uploads a certificate for a resource.
 
         :param resource_group_name: The name of the resource group where the recovery services vault is
@@ -69,7 +69,7 @@ class VaultCertificatesOperations(object):
         :rtype: ~azure.mgmt.recoveryservices.models.VaultCertificateResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VaultCertificateResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VaultCertificateResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

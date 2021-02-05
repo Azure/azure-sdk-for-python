@@ -1,5 +1,11 @@
 # Release History
 
+## 9.0.0 (2020-12-18)
+
+**Features**
+
+  - Model IntegrationServiceEnvironmentProperties has a new parameter encryption_configuration
+
 ## 9.0.0b1 (2020-10-31)
 
 This is beta preview version.

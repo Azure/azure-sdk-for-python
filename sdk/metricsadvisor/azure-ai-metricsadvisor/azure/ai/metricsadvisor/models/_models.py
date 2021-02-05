@@ -339,7 +339,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
     :ivar ingestion_settings: Data feed ingestion settings.
     :vartype ingestion_settings: ~azure.ai.metricsadvisor.models.DataFeedIngestionSettings
     :ivar bool is_admin: Whether the query user is one of data feed administrators or not.
-    :ivar list[str] metric_ids: List of metric ids
+    :ivar dict metric_ids: metric name and metric id dict
     :ivar str name: Data feed name.
     :ivar options: Data feed options
     :vartype options: ~azure.ai.metricsadvisor.models.DataFeedOptions
@@ -404,7 +404,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
                 stop_retry_after=data_feed.stop_retry_after_in_seconds
             ),
             is_admin=data_feed.is_admin,
-            metric_ids=[metric.metric_id for metric in data_feed.metrics],
+            metric_ids={metric.metric_name: metric.metric_id for metric in data_feed.metrics},
             name=data_feed.data_feed_name,
             options=DataFeedOptions(
                 admin_emails=data_feed.admins,

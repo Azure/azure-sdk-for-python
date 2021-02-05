@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class RecommendationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -157,7 +157,7 @@ class RecommendationsOperations(object):
         skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ResourceRecommendationBaseListResult"]
+        # type: (...) -> Iterable["_models.ResourceRecommendationBaseListResult"]
         """Obtains cached recommendations for a subscription. The recommendations are generated or
         computed by invoking generateRecommendations.
 
@@ -176,7 +176,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.advisor.models.ResourceRecommendationBaseListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceRecommendationBaseListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceRecommendationBaseListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -243,7 +243,7 @@ class RecommendationsOperations(object):
         recommendation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ResourceRecommendationBase"
+        # type: (...) -> "_models.ResourceRecommendationBase"
         """Obtains details of a cached recommendation.
 
         :param resource_uri: The fully qualified Azure Resource Manager identifier of the resource to
@@ -256,7 +256,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.mgmt.advisor.models.ResourceRecommendationBase
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceRecommendationBase"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceRecommendationBase"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -270,9 +270,7 @@ class RecommendationsOperations(object):
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
             'recommendationId': self._serialize.url("recommendation_id", recommendation_id, 'str'),
         }
-        print(path_format_arguments)
         url = self._client.format_url(url, **path_format_arguments)
-        print(url)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]

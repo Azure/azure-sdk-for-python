@@ -15,9 +15,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch?api-version=2021-01-01
   response:
     body:
       string: ''
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Oct 2020 06:04:43 GMT
+      - Thu, 28 Jan 2021 08:25:54 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/operationResults/59a87384-8f70-4854-8b2a-07f9623d2005?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/operationResults/ab5d159c-372b-4a4f-b611-73f7e731869f?api-version=2021-01-01
       pragma:
       - no-cache
       server:
@@ -41,7 +41,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
     status:
       code: 202
       message: Accepted
@@ -55,27 +55,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/operationResults/59a87384-8f70-4854-8b2a-07f9623d2005?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/operationResults/ab5d159c-372b-4a4f-b611-73f7e731869f?api-version=2021-01-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch","name":"batch","type":"Microsoft.Batch/batchAccounts","location":"westcentralus","properties":{"accountEndpoint":"batch.westcentralus.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":700,"dedicatedCoreQuotaPerVMFamily":[{"name":"standardAv2Family","coreQuota":100},{"name":"standardDv2Family","coreQuota":100},{"name":"standardDv3Family","coreQuota":100},{"name":"standardEv3Family","coreQuota":50},{"name":"standardDSv2Family","coreQuota":100},{"name":"standardDSv3Family","coreQuota":100},{"name":"standardESv3Family","coreQuota":50},{"name":"standardFFamily","coreQuota":50},{"name":"standardFSFamily","coreQuota":50},{"name":"standardA0_A7Family","coreQuota":0},{"name":"standardA8_A11Family","coreQuota":0},{"name":"standardDFamily","coreQuota":0},{"name":"standardGFamily","coreQuota":0},{"name":"basicAFamily","coreQuota":0},{"name":"standardNVFamily","coreQuota":0},{"name":"standardNVPromoFamily","coreQuota":0},{"name":"standardNCFamily","coreQuota":0},{"name":"standardNCPromoFamily","coreQuota":0},{"name":"standardHFamily","coreQuota":0},{"name":"standardHPromoFamily","coreQuota":0},{"name":"standardMSFamily","coreQuota":0},{"name":"standardDSFamily","coreQuota":0},{"name":"standardGSFamily","coreQuota":0},{"name":"standardLSFamily","coreQuota":0},{"name":"standardLSv2Family","coreQuota":0},{"name":"standardNCSv2Family","coreQuota":0},{"name":"standardNDSFamily","coreQuota":0},{"name":"standardNCSv3Family","coreQuota":0},{"name":"standardFSv2Family","coreQuota":0},{"name":"standardHBSFamily","coreQuota":0},{"name":"standardHCSFamily","coreQuota":0},{"name":"standardNVSv3Family","coreQuota":0},{"name":"standardHBrsv2Family","coreQuota":0},{"name":"standardDAv4Family","coreQuota":0},{"name":"standardDASv4Family","coreQuota":0},{"name":"standardEAv4Family","coreQuota":0},{"name":"standardEASv4Family","coreQuota":0},{"name":"standardDDv4Family","coreQuota":0},{"name":"standardDDSv4Family","coreQuota":0},{"name":"standardEDv4Family","coreQuota":0},{"name":"standardEDSv4Family","coreQuota":0},{"name":"standardMSv2Family","coreQuota":0},{"name":"standardEIv3Family","coreQuota":0},{"name":"standardNVSv4Family","coreQuota":0},{"name":"standardXEISv4Family","coreQuota":0}],"dedicatedCoreQuotaPerVMFamilyEnforced":false,"lowPriorityCoreQuota":500,"poolQuota":100,"activeJobAndJobScheduleQuota":300,"autoStorage":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Storage/storageAccounts/batch","lastKeySync":"2020-10-26T06:04:43.7967081Z"},"poolAllocationMode":"BatchService","publicNetworkAccess":"Enabled","encryption":{"keySource":"Microsoft.Batch"}},"identity":{"type":"None"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch","name":"batch","type":"Microsoft.Batch/batchAccounts","location":"westcentralus","properties":{"accountEndpoint":"batch.westcentralus.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":700,"dedicatedCoreQuotaPerVMFamily":[{"name":"standardAv2Family","coreQuota":100},{"name":"standardDv2Family","coreQuota":100},{"name":"standardDv3Family","coreQuota":100},{"name":"standardEv3Family","coreQuota":50},{"name":"standardDSv2Family","coreQuota":100},{"name":"standardDSv3Family","coreQuota":100},{"name":"standardESv3Family","coreQuota":50},{"name":"standardFFamily","coreQuota":50},{"name":"standardFSFamily","coreQuota":50},{"name":"standardA0_A7Family","coreQuota":0},{"name":"standardA8_A11Family","coreQuota":0},{"name":"standardDFamily","coreQuota":0},{"name":"standardGFamily","coreQuota":0},{"name":"basicAFamily","coreQuota":0},{"name":"standardNVFamily","coreQuota":0},{"name":"standardNVPromoFamily","coreQuota":0},{"name":"standardNCFamily","coreQuota":0},{"name":"standardNCPromoFamily","coreQuota":0},{"name":"standardHFamily","coreQuota":0},{"name":"standardHPromoFamily","coreQuota":0},{"name":"standardMSFamily","coreQuota":0},{"name":"standardDSFamily","coreQuota":0},{"name":"standardGSFamily","coreQuota":0},{"name":"standardLSFamily","coreQuota":0},{"name":"standardLSv2Family","coreQuota":0},{"name":"standardNCSv2Family","coreQuota":0},{"name":"standardNDSFamily","coreQuota":0},{"name":"standardNCSv3Family","coreQuota":0},{"name":"standardFSv2Family","coreQuota":0},{"name":"standardHBSFamily","coreQuota":0},{"name":"standardHCSFamily","coreQuota":0},{"name":"standardNVSv3Family","coreQuota":0},{"name":"standardHBrsv2Family","coreQuota":0},{"name":"standardDAv4Family","coreQuota":0},{"name":"standardDASv4Family","coreQuota":0},{"name":"standardEAv4Family","coreQuota":0},{"name":"standardEASv4Family","coreQuota":0},{"name":"standardDDv4Family","coreQuota":0},{"name":"standardDDSv4Family","coreQuota":0},{"name":"standardEDv4Family","coreQuota":0},{"name":"standardEDSv4Family","coreQuota":0},{"name":"standardMSv2Family","coreQuota":0},{"name":"standardEIv3Family","coreQuota":0},{"name":"standardNVSv4Family","coreQuota":0},{"name":"standardXEIDSv4Family","coreQuota":0}],"dedicatedCoreQuotaPerVMFamilyEnforced":true,"lowPriorityCoreQuota":500,"poolQuota":100,"activeJobAndJobScheduleQuota":300,"autoStorage":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Storage/storageAccounts/batch","lastKeySync":"2021-01-28T08:25:54.4231198Z"},"poolAllocationMode":"BatchService","publicNetworkAccess":"Enabled","encryption":{"keySource":"Microsoft.Batch"}},"identity":{"type":"None"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2943'
+      - '2919'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 06:04:58 GMT
+      - Thu, 28 Jan 2021 08:26:09 GMT
       etag:
-      - '"0x8D87975121970F0"'
+      - '"0x8D8C3665DBF7633"'
       expires:
       - '-1'
       last-modified:
-      - Mon, 26 Oct 2020 06:04:59 GMT
+      - Thu, 28 Jan 2021 08:26:09 GMT
       pragma:
       - no-cache
       server:
@@ -103,9 +103,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/syncAutoStorageKeys?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/syncAutoStorageKeys?api-version=2021-01-01
   response:
     body:
       string: ''
@@ -113,7 +113,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Mon, 26 Oct 2020 06:04:59 GMT
+      - Thu, 28 Jan 2021 08:26:10 GMT
       expires:
       - '-1'
       pragma:
@@ -143,27 +143,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id?api-version=2021-01-01
   response:
     body:
-      string: '{"type":"Microsoft.Batch/batchAccounts/applications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id","name":"my_application_id","etag":"W/\"0x8D879751302B180\"","properties":{"displayName":"my_application_name","allowUpdates":true}}'
+      string: '{"type":"Microsoft.Batch/batchAccounts/applications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id","name":"my_application_id","etag":"W/\"0x8D8C3665E4DEDA4\"","properties":{"displayName":"my_application_name","allowUpdates":true}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '396'
+      - '388'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 06:05:00 GMT
+      - Thu, 28 Jan 2021 08:26:10 GMT
       etag:
-      - W/"0x8D879751302B180"
+      - W/"0x8D8C3665E4DEDA4"
       expires:
       - '-1'
       last-modified:
-      - Mon, 26 Oct 2020 06:05:01 GMT
+      - Thu, 28 Jan 2021 08:26:10 GMT
       pragma:
       - no-cache
       server:
@@ -177,7 +177,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -191,27 +191,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id?api-version=2021-01-01
   response:
     body:
-      string: '{"type":"Microsoft.Batch/batchAccounts/applications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id","name":"my_application_id","etag":"W/\"0x8D879751302B180\"","properties":{"displayName":"my_application_name","allowUpdates":true}}'
+      string: '{"type":"Microsoft.Batch/batchAccounts/applications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id","name":"my_application_id","etag":"W/\"0x8D8C3665E4DEDA4\"","properties":{"displayName":"my_application_name","allowUpdates":true}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '396'
+      - '388'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 06:05:00 GMT
+      - Thu, 28 Jan 2021 08:26:11 GMT
       etag:
-      - W/"0x8D879751302B180"
+      - W/"0x8D8C3665E4DEDA4"
       expires:
       - '-1'
       last-modified:
-      - Mon, 26 Oct 2020 06:05:01 GMT
+      - Thu, 28 Jan 2021 08:26:10 GMT
       pragma:
       - no-cache
       server:
@@ -237,21 +237,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications?api-version=2021-01-01
   response:
     body:
-      string: '{"value":[{"type":"Microsoft.Batch/batchAccounts/applications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id","name":"my_application_id","etag":"W/\"0x8D879751302B180\"","properties":{"displayName":"my_application_name","allowUpdates":true}}]}'
+      string: '{"value":[{"type":"Microsoft.Batch/batchAccounts/applications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id","name":"my_application_id","etag":"W/\"0x8D8C3665E4DEDA4\"","properties":{"displayName":"my_application_name","allowUpdates":true}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '408'
+      - '400'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 06:05:00 GMT
+      - Thu, 28 Jan 2021 08:26:11 GMT
       expires:
       - '-1'
       pragma:
@@ -283,27 +283,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0?api-version=2021-01-01
   response:
     body:
-      string: '{"type":"Microsoft.Batch/batchAccounts/applications/versions","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0","name":"v1.0","etag":"W/\"0x8D8797513E65C9F\"","properties":{"storageUrl":"https://batch.blob.core.windows.net/app-my-application-id-be9b66d456df40fcb78e45c867aa9f79/v1.0?sv=2018-03-28&sr=b&sig=QJpa7Oxzfg39MNTZd4sjK9mLXSHYE%2FKD%2F3b%2BVfbj7HI%3D&st=2020-10-26T06%3A00%3A02Z&se=2020-10-26T10%3A05%3A02Z&sp=rw","storageUrlExpiry":"2020-10-26T10:05:02.5144387Z","state":"Pending"}}'
+      string: '{"type":"Microsoft.Batch/batchAccounts/applications/versions","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0","name":"v1.0","etag":"W/\"0x8D8C3665F1580DC\"","properties":{"storageUrl":"https://batch.blob.core.windows.net/app-my-application-id-60c49603fa2444e392fe687a43ee7246/v1.0?sv=2018-03-28&sr=b&sig=e7yEknR2rc1KC7INgKV%2FuxOcIaVJd2WnBC5XMMKpdCs%3D&st=2021-01-28T08%3A21%3A12Z&se=2021-01-28T12%3A26%3A12Z&sp=rw","storageUrlExpiry":"2021-01-28T12:26:12.2319927Z","state":"Pending"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '675'
+      - '663'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 06:05:01 GMT
+      - Thu, 28 Jan 2021 08:26:11 GMT
       etag:
-      - W/"0x8D8797513E65C9F"
+      - W/"0x8D8C3665F1580DC"
       expires:
       - '-1'
       last-modified:
-      - Mon, 26 Oct 2020 06:05:02 GMT
+      - Thu, 28 Jan 2021 08:26:12 GMT
       pragma:
       - no-cache
       server:
@@ -317,7 +317,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -337,7 +337,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
     method: PUT
-    uri: https://batch.blob.core.windows.net/app-my-application-id-be9b66d456df40fcb78e45c867aa9f79/v1.0?sv=2018-03-28&sr=b&sig=QJpa7Oxzfg39MNTZd4sjK9mLXSHYE%2FKD%2F3b%2BVfbj7HI%3D&st=2020-10-26T06%3A00%3A02Z&se=2020-10-26T10%3A05%3A02Z&sp=rw
+    uri: https://batch.blob.core.windows.net/app-my-application-id-60c49603fa2444e392fe687a43ee7246/v1.0?sv=2018-03-28&sr=b&sig=e7yEknR2rc1KC7INgKV%2FuxOcIaVJd2WnBC5XMMKpdCs%3D&st=2021-01-28T08%3A21%3A12Z&se=2021-01-28T12%3A26%3A12Z&sp=rw
   response:
     body:
       string: ''
@@ -347,11 +347,11 @@ interactions:
       content-md5:
       - sQqNsWTgdUEFt6mb5y4/5Q==
       date:
-      - Mon, 26 Oct 2020 06:05:03 GMT
+      - Thu, 28 Jan 2021 08:26:13 GMT
       etag:
-      - '"0x8D8797514ACD2CA"'
+      - '"0x8D8C3665FD342F7"'
       last-modified:
-      - Mon, 26 Oct 2020 06:05:03 GMT
+      - Thu, 28 Jan 2021 08:26:13 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -375,27 +375,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0/activate?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0/activate?api-version=2021-01-01
   response:
     body:
-      string: '{"type":"Microsoft.Batch/batchAccounts/applications/versions","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0","name":"v1.0","etag":"W/\"0x8D8797514F761B7\"","properties":{"storageUrl":"https://batch.blob.core.windows.net/app-my-application-id-be9b66d456df40fcb78e45c867aa9f79/v1.0?sv=2018-03-28&sr=b&sig=ACOTploL7hPOAKpN1fNddOu%2B%2BXKxxCej8zZW1tjLq0g%3D&st=2020-10-26T06%3A00%3A04Z&se=2020-10-26T10%3A05%3A04Z&sp=rw","storageUrlExpiry":"2020-10-26T10:05:04.3367035Z","state":"Active","format":"zip","lastActivationTime":"2020-10-26T06:05:04.2103161Z"}}'
+      string: '{"type":"Microsoft.Batch/batchAccounts/applications/versions","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0","name":"v1.0","etag":"W/\"0x8D8C3666007FC39\"","properties":{"storageUrl":"https://batch.blob.core.windows.net/app-my-application-id-60c49603fa2444e392fe687a43ee7246/v1.0?sv=2018-03-28&sr=b&sig=4TLEMHp5tooLX2JxXkXy9T%2FFQ3cPNc5rFrMPXuw3RI0%3D&st=2021-01-28T08%3A21%3A13Z&se=2021-01-28T12%3A26%3A13Z&sp=rw","storageUrlExpiry":"2021-01-28T12:26:13.8365722Z","state":"Active","format":"zip","lastActivationTime":"2021-01-28T08:26:13.8089697Z"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '739'
+      - '729'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 06:05:03 GMT
+      - Thu, 28 Jan 2021 08:26:13 GMT
       etag:
-      - W/"0x8D8797514F761B7"
+      - W/"0x8D8C3666007FC39"
       expires:
       - '-1'
       last-modified:
-      - Mon, 26 Oct 2020 06:05:04 GMT
+      - Thu, 28 Jan 2021 08:26:13 GMT
       pragma:
       - no-cache
       server:
@@ -428,27 +428,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id?api-version=2021-01-01
   response:
     body:
-      string: '{"type":"Microsoft.Batch/batchAccounts/applications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id","name":"my_application_id","etag":"W/\"0x8D87975154D5970\"","properties":{"displayName":"my_updated_name","allowUpdates":false,"defaultVersion":"v1.0"}}'
+      string: '{"type":"Microsoft.Batch/batchAccounts/applications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id","name":"my_application_id","etag":"W/\"0x8D8C366604EAF06\"","properties":{"displayName":"my_updated_name","allowUpdates":false,"defaultVersion":"v1.0"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '417'
+      - '409'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 06:05:04 GMT
+      - Thu, 28 Jan 2021 08:26:14 GMT
       etag:
-      - W/"0x8D87975154D5970"
+      - W/"0x8D8C366604EAF06"
       expires:
       - '-1'
       last-modified:
-      - Mon, 26 Oct 2020 06:05:04 GMT
+      - Thu, 28 Jan 2021 08:26:14 GMT
       pragma:
       - no-cache
       server:
@@ -462,7 +462,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1195'
     status:
       code: 200
       message: OK
@@ -476,27 +476,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0?api-version=2021-01-01
   response:
     body:
-      string: '{"type":"Microsoft.Batch/batchAccounts/applications/versions","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0","name":"v1.0","etag":"W/\"0x8D8797514F761B7\"","properties":{"storageUrl":"https://batch.blob.core.windows.net/app-my-application-id-be9b66d456df40fcb78e45c867aa9f79/v1.0?sv=2018-03-28&sr=b&sig=2lDtOB2uYA0VDREJcruJH5PjQTx%2Fy%2BlnOERHMHhgb%2B8%3D&st=2020-10-26T06%3A00%3A05Z&se=2020-10-26T10%3A05%3A05Z&sp=r","storageUrlExpiry":"2020-10-26T10:05:05.2822184Z","state":"Active","format":"zip","lastActivationTime":"2020-10-26T06:05:04.2103161Z"}}'
+      string: '{"type":"Microsoft.Batch/batchAccounts/applications/versions","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0","name":"v1.0","etag":"W/\"0x8D8C3666007FC39\"","properties":{"storageUrl":"https://batch.blob.core.windows.net/app-my-application-id-60c49603fa2444e392fe687a43ee7246/v1.0?sv=2018-03-28&sr=b&sig=TfJAF6CTUOTn6lOsxWhy%2FbwW4%2FuCcTrLDmeh2ELFHr0%3D&st=2021-01-28T08%3A21%3A14Z&se=2021-01-28T12%3A26%3A14Z&sp=r","storageUrlExpiry":"2021-01-28T12:26:14.6933115Z","state":"Active","format":"zip","lastActivationTime":"2021-01-28T08:26:13.8089697Z"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '740'
+      - '730'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 06:05:04 GMT
+      - Thu, 28 Jan 2021 08:26:14 GMT
       etag:
-      - W/"0x8D8797514F761B7"
+      - W/"0x8D8C3666007FC39"
       expires:
       - '-1'
       last-modified:
-      - Mon, 26 Oct 2020 06:05:04 GMT
+      - Thu, 28 Jan 2021 08:26:13 GMT
       pragma:
       - no-cache
       server:
@@ -524,9 +524,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id/versions/v1.0?api-version=2021-01-01
   response:
     body:
       string: ''
@@ -536,7 +536,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Oct 2020 06:05:04 GMT
+      - Thu, 28 Jan 2021 08:26:14 GMT
       expires:
       - '-1'
       pragma:
@@ -564,9 +564,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch/applications/my_application_id?api-version=2021-01-01
   response:
     body:
       string: ''
@@ -576,7 +576,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Oct 2020 06:05:06 GMT
+      - Thu, 28 Jan 2021 08:26:15 GMT
       expires:
       - '-1'
       pragma:
@@ -604,9 +604,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_applications93ef11ff/providers/Microsoft.Batch/batchAccounts/batch?api-version=2021-01-01
   response:
     body:
       string: ''
@@ -616,11 +616,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Oct 2020 06:05:07 GMT
+      - Thu, 28 Jan 2021 08:26:16 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch-3873fe4c-01a4-42d5-839c-534ce90d620d?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch-be02772b-3b47-4914-a255-f8d6e3c3216b?api-version=2021-01-01
       pragma:
       - no-cache
       server:
@@ -644,9 +644,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch-3873fe4c-01a4-42d5-839c-534ce90d620d?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch-be02772b-3b47-4914-a255-f8d6e3c3216b?api-version=2021-01-01
   response:
     body:
       string: ''
@@ -656,7 +656,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Oct 2020 06:05:22 GMT
+      - Thu, 28 Jan 2021 08:26:31 GMT
       expires:
       - '-1'
       pragma:

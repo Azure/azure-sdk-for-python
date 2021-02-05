@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ServiceFabricsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -58,7 +58,7 @@ class ServiceFabricsOperations(object):
         orderby=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ServiceFabricList"]
+        # type: (...) -> Iterable["_models.ServiceFabricList"]
         """List service fabrics in a given user profile.
 
         :param resource_group_name: The name of the resource group.
@@ -81,7 +81,7 @@ class ServiceFabricsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.devtestlabs.models.ServiceFabricList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceFabricList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceFabricList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -156,7 +156,7 @@ class ServiceFabricsOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServiceFabric"
+        # type: (...) -> "_models.ServiceFabric"
         """Get service fabric.
 
         :param resource_group_name: The name of the resource group.
@@ -174,7 +174,7 @@ class ServiceFabricsOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.ServiceFabric
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceFabric"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceFabric"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -225,11 +225,11 @@ class ServiceFabricsOperations(object):
         lab_name,  # type: str
         user_name,  # type: str
         name,  # type: str
-        service_fabric,  # type: "models.ServiceFabric"
+        service_fabric,  # type: "_models.ServiceFabric"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServiceFabric"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceFabric"]
+        # type: (...) -> "_models.ServiceFabric"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceFabric"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -287,10 +287,10 @@ class ServiceFabricsOperations(object):
         lab_name,  # type: str
         user_name,  # type: str
         name,  # type: str
-        service_fabric,  # type: "models.ServiceFabric"
+        service_fabric,  # type: "_models.ServiceFabric"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ServiceFabric"]
+        # type: (...) -> LROPoller["_models.ServiceFabric"]
         """Create or replace an existing service fabric. This operation can take a while to complete.
 
         :param resource_group_name: The name of the resource group.
@@ -314,7 +314,7 @@ class ServiceFabricsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceFabric"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceFabric"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -341,7 +341,15 @@ class ServiceFabricsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'userName': self._serialize.url("user_name", user_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -457,7 +465,15 @@ class ServiceFabricsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'userName': self._serialize.url("user_name", user_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -477,10 +493,10 @@ class ServiceFabricsOperations(object):
         lab_name,  # type: str
         user_name,  # type: str
         name,  # type: str
-        service_fabric,  # type: "models.ServiceFabricFragment"
+        service_fabric,  # type: "_models.ServiceFabricFragment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServiceFabric"
+        # type: (...) -> "_models.ServiceFabric"
         """Allows modifying tags of service fabrics. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -498,7 +514,7 @@ class ServiceFabricsOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.ServiceFabric
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceFabric"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceFabric"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -554,7 +570,7 @@ class ServiceFabricsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ApplicableSchedule"
+        # type: (...) -> "_models.ApplicableSchedule"
         """Lists the applicable start/stop schedules, if any.
 
         :param resource_group_name: The name of the resource group.
@@ -570,7 +586,7 @@ class ServiceFabricsOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.ApplicableSchedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicableSchedule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicableSchedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -715,7 +731,15 @@ class ServiceFabricsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'userName': self._serialize.url("user_name", user_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -831,7 +855,15 @@ class ServiceFabricsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'userName': self._serialize.url("user_name", user_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

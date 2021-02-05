@@ -29,8 +29,8 @@ class FormRecognizerClientBaseAsync(object):
     ) -> None:
         self._endpoint = endpoint
         self._credential = credential
-        self.api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V2_1_PREVIEW)
-        validate_api_version(self.api_version)
+        self._api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V2_1_PREVIEW)
+        validate_api_version(self._api_version)
 
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
@@ -57,12 +57,12 @@ class FormRecognizerClientBaseAsync(object):
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,  # type: ignore
-            api_version=self.api_version,
+            api_version=self._api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             http_logging_policy=http_logging_policy,
             polling_interval=polling_interval,
             **kwargs
         )
-        self._deserialize = _get_deserialize(self.api_version)
-        self._generated_models = self._client.models(self.api_version)
+        self._deserialize = _get_deserialize(self._api_version)
+        self._generated_models = self._client.models(self._api_version)

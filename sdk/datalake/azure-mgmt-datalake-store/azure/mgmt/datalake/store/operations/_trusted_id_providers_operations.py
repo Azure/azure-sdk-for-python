@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class TrustedIdProvidersOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class TrustedIdProvidersOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TrustedIdProviderListResult"]
+        # type: (...) -> Iterable["_models.TrustedIdProviderListResult"]
         """Lists the Data Lake Store trusted identity providers within the specified Data Lake Store
         account.
 
@@ -64,7 +64,7 @@ class TrustedIdProvidersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datalake.store.models.TrustedIdProviderListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TrustedIdProviderListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TrustedIdProviderListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -126,10 +126,10 @@ class TrustedIdProvidersOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         trusted_id_provider_name,  # type: str
-        id_provider,  # type: str
+        parameters,  # type: "_models.CreateOrUpdateTrustedIdProviderParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TrustedIdProvider"
+        # type: (...) -> "_models.TrustedIdProvider"
         """Creates or updates the specified trusted identity provider. During update, the trusted identity
         provider with the specified name will be replaced with this new provider.
 
@@ -140,20 +140,18 @@ class TrustedIdProvidersOperations(object):
         :param trusted_id_provider_name: The name of the trusted identity provider. This is used for
          differentiation of providers in the account.
         :type trusted_id_provider_name: str
-        :param id_provider: The URL of this trusted identity provider.
-        :type id_provider: str
+        :param parameters: Parameters supplied to create or replace the trusted identity provider.
+        :type parameters: ~azure.mgmt.datalake.store.models.CreateOrUpdateTrustedIdProviderParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TrustedIdProvider, or the result of cls(response)
         :rtype: ~azure.mgmt.datalake.store.models.TrustedIdProvider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TrustedIdProvider"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TrustedIdProvider"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.CreateOrUpdateTrustedIdProviderParameters(id_provider=id_provider)
         api_version = "2016-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -178,7 +176,7 @@ class TrustedIdProvidersOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'CreateOrUpdateTrustedIdProviderParameters')
+        body_content = self._serialize.body(parameters, 'CreateOrUpdateTrustedIdProviderParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -203,7 +201,7 @@ class TrustedIdProvidersOperations(object):
         trusted_id_provider_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TrustedIdProvider"
+        # type: (...) -> "_models.TrustedIdProvider"
         """Gets the specified Data Lake Store trusted identity provider.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -217,7 +215,7 @@ class TrustedIdProvidersOperations(object):
         :rtype: ~azure.mgmt.datalake.store.models.TrustedIdProvider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TrustedIdProvider"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TrustedIdProvider"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -264,10 +262,10 @@ class TrustedIdProvidersOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         trusted_id_provider_name,  # type: str
-        id_provider=None,  # type: Optional[str]
+        parameters=None,  # type: Optional["_models.UpdateTrustedIdProviderParameters"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TrustedIdProvider"
+        # type: (...) -> "_models.TrustedIdProvider"
         """Updates the specified trusted identity provider.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -277,20 +275,18 @@ class TrustedIdProvidersOperations(object):
         :param trusted_id_provider_name: The name of the trusted identity provider. This is used for
          differentiation of providers in the account.
         :type trusted_id_provider_name: str
-        :param id_provider: The URL of this trusted identity provider.
-        :type id_provider: str
+        :param parameters: Parameters supplied to update the trusted identity provider.
+        :type parameters: ~azure.mgmt.datalake.store.models.UpdateTrustedIdProviderParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TrustedIdProvider, or the result of cls(response)
         :rtype: ~azure.mgmt.datalake.store.models.TrustedIdProvider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TrustedIdProvider"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TrustedIdProvider"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.UpdateTrustedIdProviderParameters(id_provider=id_provider)
         api_version = "2016-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -315,8 +311,8 @@ class TrustedIdProvidersOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if _parameters is not None:
-            body_content = self._serialize.body(_parameters, 'UpdateTrustedIdProviderParameters')
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'UpdateTrustedIdProviderParameters')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

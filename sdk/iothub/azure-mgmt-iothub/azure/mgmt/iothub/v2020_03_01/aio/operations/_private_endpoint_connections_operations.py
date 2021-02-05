@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -27,14 +27,14 @@ class PrivateEndpointConnectionsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.iothub.v2020_03_01.models
+    :type models: ~azure.mgmt.iothub.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> List["models.PrivateEndpointConnection"]:
+    ) -> List["_models.PrivateEndpointConnection"]:
         """List private endpoint connections.
 
         List private endpoint connection properties.
@@ -58,10 +58,10 @@ class PrivateEndpointConnectionsOperations:
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of PrivateEndpointConnection, or the result of cls(response)
-        :rtype: list[~azure.mgmt.iothub.v2020_03_01.models.PrivateEndpointConnection]
+        :rtype: list[~azure.mgmt.iothub.models.PrivateEndpointConnection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.PrivateEndpointConnection"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.PrivateEndpointConnection"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -92,7 +92,7 @@ class PrivateEndpointConnectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[PrivateEndpointConnection]', pipeline_response)
@@ -109,7 +109,7 @@ class PrivateEndpointConnectionsOperations:
         resource_name: str,
         private_endpoint_connection_name: str,
         **kwargs
-    ) -> "models.PrivateEndpointConnection":
+    ) -> "_models.PrivateEndpointConnection":
         """Get private endpoint connection.
 
         Get private endpoint connection properties.
@@ -122,10 +122,10 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection, or the result of cls(response)
-        :rtype: ~azure.mgmt.iothub.v2020_03_01.models.PrivateEndpointConnection
+        :rtype: ~azure.mgmt.iothub.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -157,7 +157,7 @@ class PrivateEndpointConnectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
@@ -173,10 +173,10 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: "models.PrivateEndpointConnection",
+        private_endpoint_connection: "_models.PrivateEndpointConnection",
         **kwargs
-    ) -> "models.PrivateEndpointConnection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+    ) -> "_models.PrivateEndpointConnection":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -213,7 +213,7 @@ class PrivateEndpointConnectionsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -233,9 +233,9 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: "models.PrivateEndpointConnection",
+        private_endpoint_connection: "_models.PrivateEndpointConnection",
         **kwargs
-    ) -> AsyncLROPoller["models.PrivateEndpointConnection"]:
+    ) -> AsyncLROPoller["_models.PrivateEndpointConnection"]:
         """Update private endpoint connection.
 
         Update the status of a private endpoint connection with the specified name.
@@ -247,7 +247,7 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The private endpoint connection with updated properties.
-        :type private_endpoint_connection: ~azure.mgmt.iothub.v2020_03_01.models.PrivateEndpointConnection
+        :type private_endpoint_connection: ~azure.mgmt.iothub.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -255,11 +255,11 @@ class PrivateEndpointConnectionsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.iothub.v2020_03_01.models.PrivateEndpointConnection]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.iothub.models.PrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -312,8 +312,8 @@ class PrivateEndpointConnectionsOperations:
         resource_name: str,
         private_endpoint_connection_name: str,
         **kwargs
-    ) -> Optional["models.PrivateEndpointConnection"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.PrivateEndpointConnection"]]
+    ) -> Optional["_models.PrivateEndpointConnection"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PrivateEndpointConnection"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -345,7 +345,7 @@ class PrivateEndpointConnectionsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorDetails, response)
+            error = self._deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -367,7 +367,7 @@ class PrivateEndpointConnectionsOperations:
         resource_name: str,
         private_endpoint_connection_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.PrivateEndpointConnection"]:
+    ) -> AsyncLROPoller["_models.PrivateEndpointConnection"]:
         """Delete private endpoint connection.
 
         Delete private endpoint connection with the specified name.
@@ -385,11 +385,11 @@ class PrivateEndpointConnectionsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.iothub.v2020_03_01.models.PrivateEndpointConnection]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.iothub.models.PrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval

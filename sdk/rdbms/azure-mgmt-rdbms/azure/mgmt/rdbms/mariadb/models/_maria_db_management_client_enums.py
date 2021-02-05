@@ -83,6 +83,13 @@ class PublicNetworkAccessEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+class QueryPerformanceInsightResetDataResultState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates result of the operation.
+    """
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+
 class SecurityAlertPolicyName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     DEFAULT = "Default"

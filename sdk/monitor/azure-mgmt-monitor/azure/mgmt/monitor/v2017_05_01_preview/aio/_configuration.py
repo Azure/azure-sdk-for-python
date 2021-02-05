@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class MonitorClientConfiguration(Configuration):
-    """Configuration for MonitorClient.
+class MonitorManagementClientConfiguration(Configuration):
+    """Configuration for MonitorManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -35,12 +35,12 @@ class MonitorClientConfiguration(Configuration):
     ) -> None:
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        super(MonitorClientConfiguration, self).__init__(**kwargs)
+        super(MonitorManagementClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.api_version = "2017-05-01-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'mgmt-eventhub/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'mgmt-monitor/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

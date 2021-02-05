@@ -1,1 +1,1 @@
-TEST_SETTING_FILENAME = 'testsettings_local.cfg'
+TEST_SETTING_FILENAME = "testsettings_local.cfg"

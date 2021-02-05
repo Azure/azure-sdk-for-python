@@ -15,7 +15,7 @@ from .._common.constants import (
     MGMT_RESPONSE_SESSION_STATE,
     MGMT_RESPONSE_RECEIVER_EXPIRATION,
     MGMT_REQUEST_SESSION_ID,
-    MGMT_REQUEST_SESSION_STATE
+    MGMT_REQUEST_SESSION_STATE,
 )
 from .._common import mgmt_handlers
 from .._common.utils import utc_from_timestamp
@@ -66,12 +66,14 @@ class ServiceBusSession(BaseSession):
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._session_id},
             mgmt_handlers.default,
-            timeout=timeout
+            timeout=timeout,
         )
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
         return session_state
 
-    async def set_state(self, state: Union[str, bytes, bytearray], **kwargs: Any) -> None:
+    async def set_state(
+        self, state: Union[str, bytes, bytearray], **kwargs: Any
+    ) -> None:
         """Set the session state.
 
         :param state: The state value.
@@ -93,12 +95,17 @@ class ServiceBusSession(BaseSession):
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
+        state = (
+            state.encode(self._encoding) if isinstance(state, six.text_type) else state
+        )
         return await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self._session_id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
+            {
+                MGMT_REQUEST_SESSION_ID: self._session_id,
+                MGMT_REQUEST_SESSION_STATE: bytearray(state),
+            },
             mgmt_handlers.default,
-            timeout=timeout
+            timeout=timeout,
         )
 
     async def renew_lock(self, **kwargs: Any) -> datetime.datetime:
@@ -134,9 +141,11 @@ class ServiceBusSession(BaseSession):
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._session_id},
             mgmt_handlers.session_lock_renew_op,
-            timeout=timeout
+            timeout=timeout,
         )
-        expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0
-        self._locked_until_utc = utc_from_timestamp(expiry_timestamp)  # type: datetime.datetime
+        expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION] / 1000.0
+        self._locked_until_utc = utc_from_timestamp(
+            expiry_timestamp
+        )  # type: datetime.datetime
 
         return self._locked_until_utc

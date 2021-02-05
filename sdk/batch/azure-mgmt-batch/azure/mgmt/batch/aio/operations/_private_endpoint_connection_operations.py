@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class PrivateEndpointConnectionOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,7 +49,7 @@ class PrivateEndpointConnectionOperations:
         account_name: str,
         maxresults: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.ListPrivateEndpointConnectionsResult"]:
+    ) -> AsyncIterable["_models.ListPrivateEndpointConnectionsResult"]:
         """Lists all of the private endpoint connections in the specified account.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -63,12 +63,12 @@ class PrivateEndpointConnectionOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.batch.models.ListPrivateEndpointConnectionsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListPrivateEndpointConnectionsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListPrivateEndpointConnectionsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -128,7 +128,7 @@ class PrivateEndpointConnectionOperations:
         account_name: str,
         private_endpoint_connection_name: str,
         **kwargs
-    ) -> "models.PrivateEndpointConnection":
+    ) -> "_models.PrivateEndpointConnection":
         """Gets information about the specified private endpoint connection.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -143,12 +143,12 @@ class PrivateEndpointConnectionOperations:
         :rtype: ~azure.mgmt.batch.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -190,16 +190,16 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        parameters: "models.PrivateEndpointConnection",
+        parameters: "_models.PrivateEndpointConnection",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> Optional["models.PrivateEndpointConnection"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.PrivateEndpointConnection"]]
+    ) -> Optional["_models.PrivateEndpointConnection"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PrivateEndpointConnection"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -255,10 +255,10 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        parameters: "models.PrivateEndpointConnection",
+        parameters: "_models.PrivateEndpointConnection",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.PrivateEndpointConnection"]:
+    ) -> AsyncLROPoller["_models.PrivateEndpointConnection"]:
         """Updates the properties of an existing private endpoint connection.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -285,7 +285,7 @@ class PrivateEndpointConnectionOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -312,7 +312,14 @@ class PrivateEndpointConnectionOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
+            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str', max_length=101, min_length=1, pattern=r'^[a-zA-Z0-9_-]+\.?[a-fA-F0-9-]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

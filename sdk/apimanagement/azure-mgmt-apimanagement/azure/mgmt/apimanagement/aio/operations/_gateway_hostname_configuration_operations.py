@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class GatewayHostnameConfigurationOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -50,7 +50,7 @@ class GatewayHostnameConfigurationOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.GatewayHostnameConfigurationCollection"]:
+    ) -> AsyncIterable["_models.GatewayHostnameConfigurationCollection"]:
         """Lists the collection of hostname configurations for the specified gateway.
 
         :param resource_group_name: The name of the resource group.
@@ -74,7 +74,7 @@ class GatewayHostnameConfigurationOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.GatewayHostnameConfigurationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GatewayHostnameConfigurationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GatewayHostnameConfigurationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -128,7 +128,7 @@ class GatewayHostnameConfigurationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -198,7 +198,7 @@ class GatewayHostnameConfigurationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -217,7 +217,7 @@ class GatewayHostnameConfigurationOperations:
         gateway_id: str,
         hc_id: str,
         **kwargs
-    ) -> "models.GatewayHostnameConfigurationContract":
+    ) -> "_models.GatewayHostnameConfigurationContract":
         """Get details of a hostname configuration.
 
         :param resource_group_name: The name of the resource group.
@@ -235,7 +235,7 @@ class GatewayHostnameConfigurationOperations:
         :rtype: ~azure.mgmt.apimanagement.models.GatewayHostnameConfigurationContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GatewayHostnameConfigurationContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GatewayHostnameConfigurationContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -268,7 +268,7 @@ class GatewayHostnameConfigurationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -287,10 +287,10 @@ class GatewayHostnameConfigurationOperations:
         service_name: str,
         gateway_id: str,
         hc_id: str,
-        parameters: "models.GatewayHostnameConfigurationContract",
+        parameters: "_models.GatewayHostnameConfigurationContract",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.GatewayHostnameConfigurationContract":
+    ) -> "_models.GatewayHostnameConfigurationContract":
         """Creates of updates hostname configuration for a Gateway.
 
         :param resource_group_name: The name of the resource group.
@@ -313,7 +313,7 @@ class GatewayHostnameConfigurationOperations:
         :rtype: ~azure.mgmt.apimanagement.models.GatewayHostnameConfigurationContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GatewayHostnameConfigurationContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GatewayHostnameConfigurationContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -353,7 +353,7 @@ class GatewayHostnameConfigurationOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -434,7 +434,7 @@ class GatewayHostnameConfigurationOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

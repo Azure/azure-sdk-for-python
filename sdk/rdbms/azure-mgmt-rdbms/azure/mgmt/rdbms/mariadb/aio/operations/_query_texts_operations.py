@@ -26,7 +26,7 @@ class QueryTextsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -58,7 +58,7 @@ class QueryTextsOperations:
         :type query_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QueryText, or the result of cls(response)
-        :rtype: ~maria_db_management_client.models.QueryText
+        :rtype: ~azure.mgmt.rdbms.mariadb.models.QueryText
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueryText"]
@@ -120,7 +120,7 @@ class QueryTextsOperations:
         :type query_ids: list[str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either QueryTextsResultList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~maria_db_management_client.models.QueryTextsResultList]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mariadb.models.QueryTextsResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueryTextsResultList"]

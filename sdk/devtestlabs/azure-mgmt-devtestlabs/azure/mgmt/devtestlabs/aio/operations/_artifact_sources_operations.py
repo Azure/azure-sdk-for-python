@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ArtifactSourcesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -50,7 +50,7 @@ class ArtifactSourcesOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ArtifactSourceList"]:
+    ) -> AsyncIterable["_models.ArtifactSourceList"]:
         """List artifact sources in a given lab.
 
         :param resource_group_name: The name of the resource group.
@@ -71,7 +71,7 @@ class ArtifactSourcesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devtestlabs.models.ArtifactSourceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ArtifactSourceList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArtifactSourceList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -143,7 +143,7 @@ class ArtifactSourcesOperations:
         name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.ArtifactSource":
+    ) -> "_models.ArtifactSource":
         """Get artifact source.
 
         :param resource_group_name: The name of the resource group.
@@ -159,7 +159,7 @@ class ArtifactSourcesOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.ArtifactSource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ArtifactSource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArtifactSource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -208,9 +208,9 @@ class ArtifactSourcesOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        artifact_source: "models.ArtifactSource",
+        artifact_source: "_models.ArtifactSource",
         **kwargs
-    ) -> "models.ArtifactSource":
+    ) -> "_models.ArtifactSource":
         """Create or replace an existing artifact source.
 
         :param resource_group_name: The name of the resource group.
@@ -226,7 +226,7 @@ class ArtifactSourcesOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.ArtifactSource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ArtifactSource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArtifactSource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -341,9 +341,9 @@ class ArtifactSourcesOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        artifact_source: "models.ArtifactSourceFragment",
+        artifact_source: "_models.ArtifactSourceFragment",
         **kwargs
-    ) -> "models.ArtifactSource":
+    ) -> "_models.ArtifactSource":
         """Allows modifying tags of artifact sources. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -359,7 +359,7 @@ class ArtifactSourcesOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.ArtifactSource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ArtifactSource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArtifactSource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

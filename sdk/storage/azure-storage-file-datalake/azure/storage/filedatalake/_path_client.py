@@ -12,12 +12,11 @@ except ImportError:
 
 import six
 
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob import BlobClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import process_storage_error
-from ._generated import DataLakeStorageClient
-from ._generated.models import StorageErrorException
+from ._generated import AzureDataLakeStorageRESTAPI
 from ._models import LocationMode, DirectoryProperties, AccessControlChangeResult, AccessControlChanges, \
     AccessControlChangeCounters, AccessControlChangeFailure
 from ._serialize import convert_dfs_url_to_blob_url, get_mod_conditions, \
@@ -80,10 +79,13 @@ class PathClient(StorageAccountHostsMixin):
                                          _hosts=datalake_hosts, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
-        self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
-        self._datalake_client_for_blob_operation = DataLakeStorageClient(self._blob_client.url,
-                                                                         file_system_name, path_name,
-                                                                         pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, path=path_name,
+                                                   pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(
+            self._blob_client.url,
+            file_system=file_system_name,
+            path=path_name,
+            pipeline=self._pipeline)
 
     def __exit__(self, *args):
         self._blob_client.close()
@@ -196,7 +198,7 @@ class PathClient(StorageAccountHostsMixin):
             **kwargs)
         try:
             return self._client.path.create(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -247,7 +249,7 @@ class PathClient(StorageAccountHostsMixin):
         options = self._delete_path_options(**kwargs)
         try:
             return self._client.path.delete(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -331,7 +333,7 @@ class PathClient(StorageAccountHostsMixin):
         options = self._set_access_control_options(owner=owner, group=group, permissions=permissions, acl=acl, **kwargs)
         try:
             return self._client.path.set_access_control(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -394,7 +396,7 @@ class PathClient(StorageAccountHostsMixin):
         options = self._get_access_control_options(upn=upn, **kwargs)
         try:
             return self._client.path.get_properties(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -619,7 +621,7 @@ class PathClient(StorageAccountHostsMixin):
                 failure_count=total_failure_count),
                 continuation=last_continuation_token
                 if total_failure_count > 0 and not continue_on_failure else current_continuation_token)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             error.continuation_token = last_continuation_token
             process_storage_error(error)
         except AzureError as error:
@@ -717,7 +719,7 @@ class PathClient(StorageAccountHostsMixin):
             **kwargs)
         try:
             return self._client.path.create(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _get_path_properties(self, **kwargs):

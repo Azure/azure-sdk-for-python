@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class MetricBaselineOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,9 +49,9 @@ class MetricBaselineOperations:
         interval: Optional[datetime.timedelta] = None,
         aggregation: Optional[str] = None,
         sensitivities: Optional[str] = None,
-        result_type: Optional[Union[str, "models.ResultType"]] = None,
+        result_type: Optional[Union[str, "_models.ResultType"]] = None,
         **kwargs
-    ) -> "models.BaselineResponse":
+    ) -> "_models.BaselineResponse":
         """**Gets the baseline values for a specific metric**.
 
         :param resource_uri: The identifier of the resource. It has the following structure:
@@ -78,7 +78,7 @@ class MetricBaselineOperations:
         :rtype: ~$(python-base-namespace).v2017_11_01_preview.models.BaselineResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BaselineResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BaselineResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -118,7 +118,7 @@ class MetricBaselineOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BaselineResponse', pipeline_response)
@@ -132,9 +132,9 @@ class MetricBaselineOperations:
     async def calculate_baseline(
         self,
         resource_uri: str,
-        time_series_information: "models.TimeSeriesInformation",
+        time_series_information: "_models.TimeSeriesInformation",
         **kwargs
-    ) -> "models.CalculateBaselineResponse":
+    ) -> "_models.CalculateBaselineResponse":
         """**Lists the baseline values for a resource**.
 
         :param resource_uri: The identifier of the resource. It has the following structure:
@@ -150,7 +150,7 @@ class MetricBaselineOperations:
         :rtype: ~$(python-base-namespace).v2017_11_01_preview.models.CalculateBaselineResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CalculateBaselineResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CalculateBaselineResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -184,7 +184,7 @@ class MetricBaselineOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CalculateBaselineResponse', pipeline_response)

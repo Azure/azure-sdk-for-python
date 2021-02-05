@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ScheduleOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,9 +46,9 @@ class ScheduleOperations:
         resource_group_name: str,
         automation_account_name: str,
         schedule_name: str,
-        parameters: "models.ScheduleCreateOrUpdateParameters",
+        parameters: "_models.ScheduleCreateOrUpdateParameters",
         **kwargs
-    ) -> Optional["models.Schedule"]:
+    ) -> Optional["_models.Schedule"]:
         """Create a schedule.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -64,7 +64,7 @@ class ScheduleOperations:
         :rtype: ~azure.mgmt.automation.models.Schedule or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Schedule"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Schedule"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -101,7 +101,7 @@ class ScheduleOperations:
 
         if response.status_code not in [200, 201, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -122,9 +122,9 @@ class ScheduleOperations:
         resource_group_name: str,
         automation_account_name: str,
         schedule_name: str,
-        parameters: "models.ScheduleUpdateParameters",
+        parameters: "_models.ScheduleUpdateParameters",
         **kwargs
-    ) -> "models.Schedule":
+    ) -> "_models.Schedule":
         """Update the schedule identified by schedule name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -140,7 +140,7 @@ class ScheduleOperations:
         :rtype: ~azure.mgmt.automation.models.Schedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Schedule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -177,7 +177,7 @@ class ScheduleOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Schedule', pipeline_response)
@@ -194,7 +194,7 @@ class ScheduleOperations:
         automation_account_name: str,
         schedule_name: str,
         **kwargs
-    ) -> "models.Schedule":
+    ) -> "_models.Schedule":
         """Retrieve the schedule identified by schedule name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -208,7 +208,7 @@ class ScheduleOperations:
         :rtype: ~azure.mgmt.automation.models.Schedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Schedule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -240,7 +240,7 @@ class ScheduleOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Schedule', pipeline_response)
@@ -303,7 +303,7 @@ class ScheduleOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -316,7 +316,7 @@ class ScheduleOperations:
         resource_group_name: str,
         automation_account_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ScheduleListResult"]:
+    ) -> AsyncIterable["_models.ScheduleListResult"]:
         """Retrieve a list of schedules.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -328,7 +328,7 @@ class ScheduleOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.automation.models.ScheduleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScheduleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScheduleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -375,7 +375,7 @@ class ScheduleOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

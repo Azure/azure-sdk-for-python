@@ -1,53 +1,94 @@
 parameters:
-  ServiceDirectory: ''
-  Artifacts: []
-  TestPipeline: false
-  BeforePublishSteps: []
-  TestMarkArgument: ''
-  BuildTargetingString: 'azure-*'
-  TestTimeoutInMinutes: 0
-  ToxEnvParallel: '--tenvparallel'
-  InjectedPackages: ''
-  BuildDocs: true
-  SkipPythonVersion: ''
-  TestMatrix:
-    Linux_Python27:
-      OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '2.7'
-      CoverageArg: ''
-      RunForPR: true
-    Linux_Python35:
-      OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '3.5'
-      CoverageArg: ''
-      RunForPR: false
-    Linux_Python38:
-      OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '3.8'
-      CoverageArg: ''
-      RunForPR: true
-    Windows_Python35:
-      OSVmImage: 'windows-2019'
-      PythonVersion: '3.5'
-      CoverageArg: ''
-      RunForPR: true
-    MacOS_Python27:
-      OSVmImage: 'macOS-10.15'
-      PythonVersion: '2.7'
-      CoverageArg: ''
-      RunForPR: false
-    Linux_pypy3:
-      OSVmImage: 'ubuntu-18.04'
-      PythonVersion: 'pypy3'
-      CoverageArg: '--disablecov'
-      RunForPR: false
-    Linux_Python39:
-      OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '3.9'
-      CoverageArg: ''
-      RunForPR: true
-  AdditionalTestMatrix: []
-  DevFeedName: 'public/azure-sdk-for-python'
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: Artifacts
+    type: object
+    default: []
+  - name: TestPipeline
+    type: boolean
+    default: false
+  - name: BeforePublishSteps
+    type: object
+    default: []
+  - name: TestMarkArgument
+    type: string
+    default: ''
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+  - name: TestTimeoutInMinutes
+    type: number
+    default: 0
+  - name: ToxEnvParallel
+    type: string
+    default: '--tenvparallel'
+  - name: InjectedPackages
+    type: string
+    default: ''
+  - name: BuildDocs
+    type: boolean
+    default: true
+  - name: SkipPythonVersion
+    type: string
+    default: ''
+  - name: TestMatrix
+    type: object
+    default:
+      Linux_Python27:
+        Pool: $(LinuxPool)
+        OSVmImage:
+        PythonVersion: '2.7'
+        CoverageArg: '--disablecov'
+        RunForPR: true
+      Linux_Python35:
+        Pool: $(LinuxPool)
+        OSVmImage:
+        PythonVersion: '3.5'
+        CoverageArg: '--disablecov'
+        RunForPR: false
+      Linux_Python38:
+        Pool: $(LinuxPool)
+        OSVmImage:
+        PythonVersion: '3.8'
+        CoverageArg: '--disablecov'
+        RunForPR: true
+      Windows_Python35:
+        Pool: $(WindowsPool)
+        OSVmImage:
+        PythonVersion: '3.5'
+        CoverageArg: '--disablecov'
+        RunForPR: true
+      MacOS_Python27:
+        Pool:
+        OSVmImage: 'macOS-10.15'
+        PythonVersion: '2.7'
+        CoverageArg: '--disablecov'
+        RunForPR: false
+      Linux_pypy3:
+        Pool: $(LinuxPool)
+        OSVmImage:
+        PythonVersion: 'pypy3'
+        CoverageArg: '--disablecov'
+        RunForPR: false
+      Linux_Python39:
+        Pool: $(LinuxPool)
+        OSVmImage:
+        PythonVersion: '3.9'
+        CoverageArg: ''
+        RunForPR: true
+  - name: AdditionalTestMatrix
+    type: object
+    default: []
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
+  - name: WindowsPool
+    type: string
+    default: azsdk-pool-mms-win-2019-general
+  - name: LinuxPool
+    type: string
+    default: azsdk-pool-mms-ubuntu-1804-general
 
 jobs:
   - job: 'Build'
@@ -55,18 +96,18 @@ jobs:
     - template: ../variables/globals.yml
 
     pool:
-      vmImage: 'ubuntu-18.04'
+      name: ${{ parameters.LinuxPool }}
 
     steps:
     - template: ../steps/build-artifacts.yml
-      parameters: 
+      parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
 
-    - template: /eng/pipelines/templates/steps/create-apireview.yml
+    - template: /eng/common/pipelines/templates/steps/create-apireview.yml
       parameters:
         Artifacts: ${{ parameters.Artifacts }}
 
@@ -79,7 +120,7 @@ jobs:
       - 'Build'
 
     pool:
-      vmImage: 'ubuntu-18.04'
+      name: ${{ parameters.LinuxPool }}
 
     steps:
     - template: /eng/common/pipelines/templates/steps/verify-links.yml
@@ -92,7 +133,7 @@ jobs:
         CheckLinkGuidance: $true
 
     - template: ../steps/analyze.yml
-      parameters: 
+      parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
@@ -106,7 +147,11 @@ jobs:
     - template: ../variables/globals.yml
     - name: InjectedPackages
       value: ${{ parameters.InjectedPackages }}
-    
+    - name: WindowsPool
+      value: ${{ parameters.WindowsPool }}
+    - name: LinuxPool
+      value: ${{ parameters.LinuxPool }}
+
     dependsOn:
        - 'Build'
 
@@ -124,9 +169,9 @@ jobs:
             ${{ matrixEntry.key }}:
               ${{ insert }}: ${{ matrixEntry.value }}
 
-        
     pool:
-      vmImage: '$(OSVmImage)'
+      name: $[coalesce(variables['Pool'], '')]
+      vmImage: $[coalesce(variables['OSVmImage'], '')]
 
     steps:
     - ${{if eq(parameters.TestPipeline, 'true')}}:
@@ -150,7 +195,7 @@ jobs:
         {
           $toxenvvar = '$(Run.ToxCustomEnvs)'
         }
-        
+
         echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
       displayName: "Set Tox Environment"
 
@@ -166,10 +211,10 @@ jobs:
         ToxTestEnv: $(toxenv)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
-        BeforeTestSteps: 
+        BeforeTestSteps:
           - task: DownloadPipelineArtifact@0
             inputs:
-              artifactName: 'artifacts' 
+              artifactName: 'artifacts'
               targetPath: $(Build.ArtifactStagingDirectory)
 
           - template: ../steps/set-dev-build.yml
@@ -188,10 +233,10 @@ jobs:
       - 'Build'
 
     pool:
-      vmImage: 'ubuntu-18.04'
+      name: ${{ parameters.LinuxPool }}
 
     steps:
     - template: ../steps/test_regression.yml
-      parameters: 
+      parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class NodeReportsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class NodeReportsOperations:
         node_id: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.DscNodeReportListResult"]:
+    ) -> AsyncIterable["_models.DscNodeReportListResult"]:
         """Retrieve the Dsc node report list by node id.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -64,7 +64,7 @@ class NodeReportsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.automation.models.DscNodeReportListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscNodeReportListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscNodeReportListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -114,7 +114,7 @@ class NodeReportsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -132,7 +132,7 @@ class NodeReportsOperations:
         node_id: str,
         report_id: str,
         **kwargs
-    ) -> "models.DscNodeReport":
+    ) -> "_models.DscNodeReport":
         """Retrieve the Dsc node report data by node id and report id.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -148,7 +148,7 @@ class NodeReportsOperations:
         :rtype: ~azure.mgmt.automation.models.DscNodeReport
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscNodeReport"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscNodeReport"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -181,7 +181,7 @@ class NodeReportsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DscNodeReport', pipeline_response)
@@ -248,7 +248,7 @@ class NodeReportsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('object', pipeline_response)

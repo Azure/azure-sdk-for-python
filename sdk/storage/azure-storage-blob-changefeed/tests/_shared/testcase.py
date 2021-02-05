@@ -364,116 +364,116 @@ class LogCaptured(object):
         self.test_case.configure_logging()
 
 
-# @pytest.fixture(scope="session")
-# def storage_account():
-#     test_case = AzureMgmtTestCase("__init__")
-#     rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pystorage')
-#     storage_preparer = StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage')
+@pytest.fixture(scope="session")
+def storage_account():
+    test_case = AzureMgmtTestCase("__init__")
+    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pystorage')
+    storage_preparer = StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage')
 
-#     # Create
-#     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", None)
-#     location = os.environ.get("AZURE_LOCATION", "westus")
+    # Create
+    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", None)
+    location = os.environ.get("AZURE_LOCATION", "westus")
 
-#     existing_rg_name = os.environ.get("AZURE_RESOURCEGROUP_NAME")
-#     existing_storage_name = os.environ.get("AZURE_STORAGE_ACCOUNT_NAME")
-#     existing_storage_key = os.environ.get("AZURE_STORAGE_ACCOUNT_KEY")
-#     storage_connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
+    existing_rg_name = os.environ.get("AZURE_RESOURCEGROUP_NAME")
+    existing_storage_name = os.environ.get("AZURE_STORAGE_ACCOUNT_NAME")
+    existing_storage_key = os.environ.get("AZURE_STORAGE_ACCOUNT_KEY")
+    storage_connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
 
-#     i_need_to_create_rg = not (existing_rg_name or existing_storage_name or storage_connection_string)
-#     got_storage_info_from_env = existing_storage_name or storage_connection_string
+    i_need_to_create_rg = not (existing_rg_name or existing_storage_name or storage_connection_string)
+    got_storage_info_from_env = existing_storage_name or storage_connection_string
 
-#     try:
-#         if i_need_to_create_rg:
-#             rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
-#             rg = rg_kwargs['resource_group']
-#         else:
-#             rg_name = existing_rg_name or "no_rg_needed"
-#             rg = FakeResource(
-#                 name=rg_name,
-#                 id="/subscriptions/{}/resourceGroups/{}".format(subscription_id, rg_name)
-#             )
-#         StorageTestCase._RESOURCE_GROUP = rg
+    try:
+        if i_need_to_create_rg:
+            rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
+            rg = rg_kwargs['resource_group']
+        else:
+            rg_name = existing_rg_name or "no_rg_needed"
+            rg = FakeResource(
+                name=rg_name,
+                id="/subscriptions/{}/resourceGroups/{}".format(subscription_id, rg_name)
+            )
+        StorageTestCase._RESOURCE_GROUP = rg
 
-#         try:
-#             if got_storage_info_from_env:
+        try:
+            if got_storage_info_from_env:
 
-#                 if storage_connection_string:
-#                     storage_connection_string_parts = dict([
-#                         part.split('=', 1)
-#                         for part in storage_connection_string.split(";")
-#                     ])
+                if storage_connection_string:
+                    storage_connection_string_parts = dict([
+                        part.split('=', 1)
+                        for part in storage_connection_string.split(";")
+                    ])
 
-#                 storage_account = None
-#                 if existing_storage_name:
-#                     storage_name = existing_storage_name
-#                     storage_account = StorageAccount(
-#                         location=location,
-#                     )
-#                     storage_account.name = storage_name
-#                     storage_account.id = storage_name
-#                     storage_account.primary_endpoints=Endpoints()
-#                     storage_account.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(storage_name, 'blob')
-#                     storage_account.primary_endpoints.queue = 'https://{}.{}.core.windows.net'.format(storage_name, 'queue')
-#                     storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(storage_name, 'table')
-#                     storage_account.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(storage_name, 'file')
-#                     storage_key = existing_storage_key
+                storage_account = None
+                if existing_storage_name:
+                    storage_name = existing_storage_name
+                    storage_account = StorageAccount(
+                        location=location,
+                    )
+                    storage_account.name = storage_name
+                    storage_account.id = storage_name
+                    storage_account.primary_endpoints=Endpoints()
+                    storage_account.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(storage_name, 'blob')
+                    storage_account.primary_endpoints.queue = 'https://{}.{}.core.windows.net'.format(storage_name, 'queue')
+                    storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(storage_name, 'table')
+                    storage_account.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(storage_name, 'file')
+                    storage_key = existing_storage_key
 
-#                 if not storage_connection_string:
-#                     # It means I have received a storage name from env
-#                     storage_connection_string=";".join([
-#                         "DefaultEndpointsProtocol=https",
-#                         "AccountName={}".format(storage_name),
-#                         "AccountKey={}".format(storage_key),
-#                         "BlobEndpoint={}".format(storage_account.primary_endpoints.blob),
-#                         "TableEndpoint={}".format(storage_account.primary_endpoints.table),
-#                         "QueueEndpoint={}".format(storage_account.primary_endpoints.queue),
-#                         "FileEndpoint={}".format(storage_account.primary_endpoints.file),
-#                     ])
+                if not storage_connection_string:
+                    # It means I have received a storage name from env
+                    storage_connection_string=";".join([
+                        "DefaultEndpointsProtocol=https",
+                        "AccountName={}".format(storage_name),
+                        "AccountKey={}".format(storage_key),
+                        "BlobEndpoint={}".format(storage_account.primary_endpoints.blob),
+                        "TableEndpoint={}".format(storage_account.primary_endpoints.table),
+                        "QueueEndpoint={}".format(storage_account.primary_endpoints.queue),
+                        "FileEndpoint={}".format(storage_account.primary_endpoints.file),
+                    ])
 
-#                 if not storage_account:
-#                     # It means I have received a connection string
-#                     storage_name = storage_connection_string_parts["AccountName"]
-#                     storage_account = StorageAccount(
-#                         location=location,
-#                     )
+                if not storage_account:
+                    # It means I have received a connection string
+                    storage_name = storage_connection_string_parts["AccountName"]
+                    storage_account = StorageAccount(
+                        location=location,
+                    )
 
-#                     def build_service_endpoint(service):
-#                         return "{}://{}.{}.{}".format(
-#                             storage_connection_string_parts.get("DefaultEndpointsProtocol", "https"),
-#                             storage_connection_string_parts["AccountName"],
-#                             service,
-#                             storage_connection_string_parts["EndpointSuffix"], # Let it fail if we don't even have that
-#                         )
+                    def build_service_endpoint(service):
+                        return "{}://{}.{}.{}".format(
+                            storage_connection_string_parts.get("DefaultEndpointsProtocol", "https"),
+                            storage_connection_string_parts["AccountName"],
+                            service,
+                            storage_connection_string_parts["EndpointSuffix"], # Let it fail if we don't even have that
+                        )
 
-#                     storage_account.name = storage_name
-#                     storage_account.id = storage_name
-#                     storage_account.primary_endpoints=Endpoints()
-#                     storage_account.primary_endpoints.blob = storage_connection_string_parts.get("BlobEndpoint", build_service_endpoint("blob"))
-#                     storage_account.primary_endpoints.queue = storage_connection_string_parts.get("QueueEndpoint", build_service_endpoint("queue"))
-#                     storage_account.primary_endpoints.file = storage_connection_string_parts.get("FileEndpoint", build_service_endpoint("file"))
-#                     storage_account.secondary_endpoints=Endpoints()
-#                     storage_account.secondary_endpoints.blob = storage_connection_string_parts.get("BlobSecondaryEndpoint", build_service_endpoint("blob"))
-#                     storage_account.secondary_endpoints.queue = storage_connection_string_parts.get("QueueSecondaryEndpoint", build_service_endpoint("queue"))
-#                     storage_account.secondary_endpoints.file = storage_connection_string_parts.get("FileSecondaryEndpoint", build_service_endpoint("file"))
-#                     storage_key = storage_connection_string_parts["AccountKey"]
+                    storage_account.name = storage_name
+                    storage_account.id = storage_name
+                    storage_account.primary_endpoints=Endpoints()
+                    storage_account.primary_endpoints.blob = storage_connection_string_parts.get("BlobEndpoint", build_service_endpoint("blob"))
+                    storage_account.primary_endpoints.queue = storage_connection_string_parts.get("QueueEndpoint", build_service_endpoint("queue"))
+                    storage_account.primary_endpoints.file = storage_connection_string_parts.get("FileEndpoint", build_service_endpoint("file"))
+                    storage_account.secondary_endpoints=Endpoints()
+                    storage_account.secondary_endpoints.blob = storage_connection_string_parts.get("BlobSecondaryEndpoint", build_service_endpoint("blob"))
+                    storage_account.secondary_endpoints.queue = storage_connection_string_parts.get("QueueSecondaryEndpoint", build_service_endpoint("queue"))
+                    storage_account.secondary_endpoints.file = storage_connection_string_parts.get("FileSecondaryEndpoint", build_service_endpoint("file"))
+                    storage_key = storage_connection_string_parts["AccountKey"]
 
-#             else:
-#                 storage_name, storage_kwargs = storage_preparer._prepare_create_resource(test_case, **rg_kwargs)
-#                 storage_account = storage_kwargs['storage_account']
-#                 storage_key = storage_kwargs['storage_account_key']
-#                 storage_connection_string = storage_kwargs['storage_account_cs']
+            else:
+                storage_name, storage_kwargs = storage_preparer._prepare_create_resource(test_case, **rg_kwargs)
+                storage_account = storage_kwargs['storage_account']
+                storage_key = storage_kwargs['storage_account_key']
+                storage_connection_string = storage_kwargs['storage_account_cs']
 
-#             StorageTestCase._STORAGE_ACCOUNT = storage_account
-#             StorageTestCase._STORAGE_KEY = storage_key
-#             StorageTestCase._STORAGE_CONNECTION_STRING = storage_connection_string
-#             yield
-#         finally:
-#             if not got_storage_info_from_env:
-#                 storage_preparer.remove_resource(
-#                     storage_name,
-#                     resource_group=rg
-#                 )
-#     finally:
-#         if i_need_to_create_rg:
-#             rg_preparer.remove_resource(rg_name)
-#         StorageTestCase._RESOURCE_GROUP = None
+            StorageTestCase._STORAGE_ACCOUNT = storage_account
+            StorageTestCase._STORAGE_KEY = storage_key
+            StorageTestCase._STORAGE_CONNECTION_STRING = storage_connection_string
+            yield
+        finally:
+            if not got_storage_info_from_env:
+                storage_preparer.remove_resource(
+                    storage_name,
+                    resource_group=rg
+                )
+    finally:
+        if i_need_to_create_rg:
+            rg_preparer.remove_resource(rg_name)
+        StorageTestCase._RESOURCE_GROUP = None

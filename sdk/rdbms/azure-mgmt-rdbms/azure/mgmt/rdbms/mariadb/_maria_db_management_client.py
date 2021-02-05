@@ -24,15 +24,18 @@ from .operations import FirewallRulesOperations
 from .operations import VirtualNetworkRulesOperations
 from .operations import DatabasesOperations
 from .operations import ConfigurationsOperations
+from .operations import ServerParametersOperations
 from .operations import LogFilesOperations
+from .operations import RecoverableServersOperations
+from .operations import ServerBasedPerformanceTierOperations
 from .operations import LocationBasedPerformanceTierOperations
 from .operations import CheckNameAvailabilityOperations
 from .operations import Operations
 from .operations import QueryTextsOperations
 from .operations import TopQueryStatisticsOperations
 from .operations import WaitStatisticsOperations
-from .operations import AdvisorsOperations
 from .operations import MariaDBManagementClientOperationsMixin
+from .operations import AdvisorsOperations
 from .operations import RecommendedActionsOperations
 from .operations import LocationBasedRecommendedActionSessionsOperationStatusOperations
 from .operations import LocationBasedRecommendedActionSessionsResultOperations
@@ -46,45 +49,51 @@ class MariaDBManagementClient(MariaDBManagementClientOperationsMixin):
     """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure MariaDB resources including servers, databases, firewall rules, VNET rules, log files and configurations with new business model.
 
     :ivar servers: ServersOperations operations
-    :vartype servers: maria_db_management_client.operations.ServersOperations
+    :vartype servers: azure.mgmt.rdbms.mariadb.operations.ServersOperations
     :ivar replicas: ReplicasOperations operations
-    :vartype replicas: maria_db_management_client.operations.ReplicasOperations
+    :vartype replicas: azure.mgmt.rdbms.mariadb.operations.ReplicasOperations
     :ivar firewall_rules: FirewallRulesOperations operations
-    :vartype firewall_rules: maria_db_management_client.operations.FirewallRulesOperations
+    :vartype firewall_rules: azure.mgmt.rdbms.mariadb.operations.FirewallRulesOperations
     :ivar virtual_network_rules: VirtualNetworkRulesOperations operations
-    :vartype virtual_network_rules: maria_db_management_client.operations.VirtualNetworkRulesOperations
+    :vartype virtual_network_rules: azure.mgmt.rdbms.mariadb.operations.VirtualNetworkRulesOperations
     :ivar databases: DatabasesOperations operations
-    :vartype databases: maria_db_management_client.operations.DatabasesOperations
+    :vartype databases: azure.mgmt.rdbms.mariadb.operations.DatabasesOperations
     :ivar configurations: ConfigurationsOperations operations
-    :vartype configurations: maria_db_management_client.operations.ConfigurationsOperations
+    :vartype configurations: azure.mgmt.rdbms.mariadb.operations.ConfigurationsOperations
+    :ivar server_parameters: ServerParametersOperations operations
+    :vartype server_parameters: azure.mgmt.rdbms.mariadb.operations.ServerParametersOperations
     :ivar log_files: LogFilesOperations operations
-    :vartype log_files: maria_db_management_client.operations.LogFilesOperations
+    :vartype log_files: azure.mgmt.rdbms.mariadb.operations.LogFilesOperations
+    :ivar recoverable_servers: RecoverableServersOperations operations
+    :vartype recoverable_servers: azure.mgmt.rdbms.mariadb.operations.RecoverableServersOperations
+    :ivar server_based_performance_tier: ServerBasedPerformanceTierOperations operations
+    :vartype server_based_performance_tier: azure.mgmt.rdbms.mariadb.operations.ServerBasedPerformanceTierOperations
     :ivar location_based_performance_tier: LocationBasedPerformanceTierOperations operations
-    :vartype location_based_performance_tier: maria_db_management_client.operations.LocationBasedPerformanceTierOperations
+    :vartype location_based_performance_tier: azure.mgmt.rdbms.mariadb.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailabilityOperations operations
-    :vartype check_name_availability: maria_db_management_client.operations.CheckNameAvailabilityOperations
+    :vartype check_name_availability: azure.mgmt.rdbms.mariadb.operations.CheckNameAvailabilityOperations
     :ivar operations: Operations operations
-    :vartype operations: maria_db_management_client.operations.Operations
+    :vartype operations: azure.mgmt.rdbms.mariadb.operations.Operations
     :ivar query_texts: QueryTextsOperations operations
-    :vartype query_texts: maria_db_management_client.operations.QueryTextsOperations
+    :vartype query_texts: azure.mgmt.rdbms.mariadb.operations.QueryTextsOperations
     :ivar top_query_statistics: TopQueryStatisticsOperations operations
-    :vartype top_query_statistics: maria_db_management_client.operations.TopQueryStatisticsOperations
+    :vartype top_query_statistics: azure.mgmt.rdbms.mariadb.operations.TopQueryStatisticsOperations
     :ivar wait_statistics: WaitStatisticsOperations operations
-    :vartype wait_statistics: maria_db_management_client.operations.WaitStatisticsOperations
+    :vartype wait_statistics: azure.mgmt.rdbms.mariadb.operations.WaitStatisticsOperations
     :ivar advisors: AdvisorsOperations operations
-    :vartype advisors: maria_db_management_client.operations.AdvisorsOperations
+    :vartype advisors: azure.mgmt.rdbms.mariadb.operations.AdvisorsOperations
     :ivar recommended_actions: RecommendedActionsOperations operations
-    :vartype recommended_actions: maria_db_management_client.operations.RecommendedActionsOperations
+    :vartype recommended_actions: azure.mgmt.rdbms.mariadb.operations.RecommendedActionsOperations
     :ivar location_based_recommended_action_sessions_operation_status: LocationBasedRecommendedActionSessionsOperationStatusOperations operations
-    :vartype location_based_recommended_action_sessions_operation_status: maria_db_management_client.operations.LocationBasedRecommendedActionSessionsOperationStatusOperations
+    :vartype location_based_recommended_action_sessions_operation_status: azure.mgmt.rdbms.mariadb.operations.LocationBasedRecommendedActionSessionsOperationStatusOperations
     :ivar location_based_recommended_action_sessions_result: LocationBasedRecommendedActionSessionsResultOperations operations
-    :vartype location_based_recommended_action_sessions_result: maria_db_management_client.operations.LocationBasedRecommendedActionSessionsResultOperations
+    :vartype location_based_recommended_action_sessions_result: azure.mgmt.rdbms.mariadb.operations.LocationBasedRecommendedActionSessionsResultOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: maria_db_management_client.operations.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections: azure.mgmt.rdbms.mariadb.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: maria_db_management_client.operations.PrivateLinkResourcesOperations
+    :vartype private_link_resources: azure.mgmt.rdbms.mariadb.operations.PrivateLinkResourcesOperations
     :ivar server_security_alert_policies: ServerSecurityAlertPoliciesOperations operations
-    :vartype server_security_alert_policies: maria_db_management_client.operations.ServerSecurityAlertPoliciesOperations
+    :vartype server_security_alert_policies: azure.mgmt.rdbms.mariadb.operations.ServerSecurityAlertPoliciesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -123,7 +132,13 @@ class MariaDBManagementClient(MariaDBManagementClientOperationsMixin):
             self._client, self._config, self._serialize, self._deserialize)
         self.configurations = ConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.server_parameters = ServerParametersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.log_files = LogFilesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.recoverable_servers = RecoverableServersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.server_based_performance_tier = ServerBasedPerformanceTierOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.location_based_performance_tier = LocationBasedPerformanceTierOperations(
             self._client, self._config, self._serialize, self._deserialize)

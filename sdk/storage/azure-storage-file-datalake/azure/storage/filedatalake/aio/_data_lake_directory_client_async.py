@@ -11,7 +11,7 @@ except ImportError:
 from azure.core.pipeline import AsyncPipeline
 from ._data_lake_file_client_async import DataLakeFileClient
 from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
-from .._models import DirectoryProperties
+from .._models import DirectoryProperties, FileProperties
 from .._deserialize import deserialize_dir_properties
 from ._path_client_async import PathClient
 from .._shared.base_client_async import AsyncTransportWrapper
@@ -39,9 +39,11 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
     :type directory_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
 
     .. admonition:: Example:
 
@@ -481,9 +483,9 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :caption: Getting the file client to interact with a specific file.
         """
         try:
-            file_path = file.name
+            file_path = file.get('name')
         except AttributeError:
-            file_path = self.path_name + '/' + file
+            file_path = self.path_name + '/' + str(file)
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -520,9 +522,9 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :caption: Getting the directory client to interact with a specific directory.
         """
         try:
-            subdir_path = sub_directory.name
+            subdir_path = sub_directory.get('name')
         except AttributeError:
-            subdir_path = self.path_name + '/' + sub_directory
+            subdir_path = self.path_name + '/' + str(sub_directory)
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access

@@ -32,7 +32,7 @@ class FirewallRulesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -126,7 +126,7 @@ class FirewallRulesOperations(object):
         :param firewall_rule_name: The name of the server firewall rule.
         :type firewall_rule_name: str
         :param parameters: The required parameters for creating or updating a firewall rule.
-        :type parameters: ~maria_db_management_client.models.FirewallRule
+        :type parameters: ~azure.mgmt.rdbms.mariadb.models.FirewallRule
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -134,7 +134,7 @@ class FirewallRulesOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either FirewallRule or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~maria_db_management_client.models.FirewallRule]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.rdbms.mariadb.models.FirewallRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -320,7 +320,7 @@ class FirewallRulesOperations(object):
         :type firewall_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FirewallRule, or the result of cls(response)
-        :rtype: ~maria_db_management_client.models.FirewallRule
+        :rtype: ~azure.mgmt.rdbms.mariadb.models.FirewallRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRule"]
@@ -380,7 +380,7 @@ class FirewallRulesOperations(object):
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FirewallRuleListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~maria_db_management_client.models.FirewallRuleListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.rdbms.mariadb.models.FirewallRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRuleListResult"]

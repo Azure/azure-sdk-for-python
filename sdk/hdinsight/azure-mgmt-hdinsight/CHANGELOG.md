@@ -1,5 +1,24 @@
 # Release History
 
+## 7.0.0 (2020-12-18)
+
+**Features**
+
+  - Model HostInfo has a new parameter effective_disk_encryption_key_url
+  - Model HostInfo has a new parameter fqdn
+  - Model ClusterGetProperties has a new parameter compute_isolation_properties
+  - Model ClusterCreateProperties has a new parameter compute_isolation_properties
+
+**Breaking changes**
+
+  - Operation ExtensionsOperations.begin_create has a new signature
+  - Operation ClustersOperations.begin_update_auto_scale_configuration has a new signature
+  - Operation ClustersOperations.begin_resize has a new signature
+  - Operation ClustersOperations.update has a new signature
+  - Operation ExtensionsOperations.begin_create has a new signature
+  - Operation ExtensionsOperations.begin_enable_monitoring has a new signature
+  - Operation ClustersOperations.begin_execute_script_actions has a new signature
+
 ## 7.0.0b1 (2020-10-31)
 
 This is beta preview version.

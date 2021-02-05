@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._resource_graph_client import ResourceGraphClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['ResourceGraphClient']
 
 try:

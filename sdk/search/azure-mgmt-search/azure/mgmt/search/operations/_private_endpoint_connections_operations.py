@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class PrivateEndpointConnectionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,11 +50,11 @@ class PrivateEndpointConnectionsOperations(object):
         resource_group_name,  # type: str
         search_service_name,  # type: str
         private_endpoint_connection_name,  # type: str
-        private_endpoint_connection,  # type: "models.PrivateEndpointConnection"
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        private_endpoint_connection,  # type: "_models.PrivateEndpointConnection"
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateEndpointConnection"
+        # type: (...) -> "_models.PrivateEndpointConnection"
         """Updates a Private Endpoint connection to the search service in the given resource group.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -76,7 +76,7 @@ class PrivateEndpointConnectionsOperations(object):
         :rtype: ~azure.mgmt.search.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -134,10 +134,10 @@ class PrivateEndpointConnectionsOperations(object):
         resource_group_name,  # type: str
         search_service_name,  # type: str
         private_endpoint_connection_name,  # type: str
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateEndpointConnection"
+        # type: (...) -> "_models.PrivateEndpointConnection"
         """Gets the details of the private endpoint connection to the search service in the given resource
         group.
 
@@ -157,7 +157,7 @@ class PrivateEndpointConnectionsOperations(object):
         :rtype: ~azure.mgmt.search.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -210,10 +210,10 @@ class PrivateEndpointConnectionsOperations(object):
         resource_group_name,  # type: str
         search_service_name,  # type: str
         private_endpoint_connection_name,  # type: str
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.PrivateEndpointConnection"]
+        # type: (...) -> Optional["_models.PrivateEndpointConnection"]
         """Disconnects the private endpoint connection and deletes it from the search service.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -232,7 +232,7 @@ class PrivateEndpointConnectionsOperations(object):
         :rtype: ~azure.mgmt.search.models.PrivateEndpointConnection or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.PrivateEndpointConnection"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PrivateEndpointConnection"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -286,10 +286,10 @@ class PrivateEndpointConnectionsOperations(object):
         self,
         resource_group_name,  # type: str
         search_service_name,  # type: str
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PrivateEndpointConnectionListResult"]
+        # type: (...) -> Iterable["_models.PrivateEndpointConnectionListResult"]
         """Gets a list of all private endpoint connections in the given service.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -305,7 +305,7 @@ class PrivateEndpointConnectionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.search.models.PrivateEndpointConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

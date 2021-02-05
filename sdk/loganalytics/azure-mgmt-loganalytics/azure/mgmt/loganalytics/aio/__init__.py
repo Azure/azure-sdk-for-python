@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operational_insights_management_client import OperationalInsightsManagementClient
-__all__ = ['OperationalInsightsManagementClient']
+from ._log_analytics_management_client import LogAnalyticsManagementClient
+__all__ = ['LogAnalyticsManagementClient']

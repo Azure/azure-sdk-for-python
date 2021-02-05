@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -11,37 +11,38 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 01 Dec 2020 21:49:02 GMT
+      - Fri, 08 Jan 2021 19:08:17 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainer206719b0?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:f580ff1d-001e-0008-6df1-e549fb000000\nTime:2021-01-08T19:08:17.3853427Z</Message></Error>"
     headers:
       content-length:
-      - '0'
+      - '230'
+      content-type:
+      - application/xml
       date:
-      - Tue, 01 Dec 2020 21:48:59 GMT
-      etag:
-      - '"0x8D89642E930F974"'
-      last-modified:
-      - Tue, 01 Dec 2020 21:48:59 GMT
+      - Fri, 08 Jan 2021 19:08:17 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ContainerAlreadyExists
       x-ms-version:
       - '2020-04-08'
     status:
-      code: 201
-      message: Created
+      code: 409
+      message: The specified container already exists.
 - request:
     body: This is test data to be copied over.
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -50,16 +51,16 @@ interactions:
       - '36'
       Content-Type:
       - application/octet-stream
-      If-None-Match:
-      - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-blob-content-language:
       - spanish
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 01 Dec 2020 21:49:02 GMT
+      - Fri, 08 Jan 2021 19:08:17 GMT
+      x-ms-encryption-algorithm:
+      - AES256
       x-ms-tags:
       - tag1=sourcetag&tag2=secondsourcetag
       x-ms-version:
@@ -75,11 +76,11 @@ interactions:
       content-md5:
       - BmRZdU7mXzYVn1nIbsazYg==
       date:
-      - Tue, 01 Dec 2020 21:48:59 GMT
+      - Fri, 08 Jan 2021 19:08:17 GMT
       etag:
-      - '"0x8D89642E9444B4F"'
+      - '"0x8D8B408C1A6CF5F"'
       last-modified:
-      - Tue, 01 Dec 2020 21:48:59 GMT
+      - Fri, 08 Jan 2021 19:08:17 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -88,8 +89,6 @@ interactions:
       - 'true'
       x-ms-version:
       - '2020-04-08'
-      x-ms-version-id:
-      - '2020-12-01T21:48:59.8500175Z'
     status:
       code: 201
       message: Created
@@ -97,27 +96,25 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '0'
-      If-None-Match:
-      - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-blob-content-language:
       - english
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer206719b0/blob206719b0?se=2020-12-01T22%3A49%3A02Z&sp=rt&sv=2020-04-08&sr=b&sig=DlRTtYHGoo4gbgHe0Fj3rIytLFlDJhjrbtajplrFE1U%3D
+      - https://emilydevtest.blob.core.windows.net/utcontainer206719b0/blob206719b0?se=2021-01-08T20%3A08%3A17Z&sp=rt&sv=2020-04-08&sr=b&sig=2wOv5rHnPoe2/Hi/hYv1nBUW0MII2%2Br06u2Zi9xlQ%2BU%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Tue, 01 Dec 2020 21:49:02 GMT
+      - Fri, 08 Jan 2021 19:08:17 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
@@ -129,7 +126,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer206719b0/blob1copy
+    uri: https://storagename.blob.core.windows.net/utcontainer206719b0/blobcopy206719b0
   response:
     body:
       string: ''
@@ -137,11 +134,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 01 Dec 2020 21:48:59 GMT
+      - Fri, 08 Jan 2021 19:08:17 GMT
       etag:
-      - '"0x8D89642E96B1449"'
+      - '"0x8D8B408C1CF6FE1"'
       last-modified:
-      - Tue, 01 Dec 2020 21:49:00 GMT
+      - Fri, 08 Jan 2021 19:08:17 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -152,8 +149,6 @@ interactions:
       - 'true'
       x-ms-version:
       - '2020-04-08'
-      x-ms-version-id:
-      - '2020-12-01T21:49:00.1041993Z'
     status:
       code: 201
       message: Created
@@ -161,15 +156,15 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 01 Dec 2020 21:49:03 GMT
+      - Fri, 08 Jan 2021 19:08:17 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
@@ -179,17 +174,13 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/utcontainer206719b0/blob1copy
+    uri: https://storagename.blob.core.windows.net/utcontainer206719b0/blobcopy206719b0
   response:
     body:
       string: ''
     headers:
       accept-ranges:
       - bytes
-      access-control-allow-origin:
-      - '*'
-      access-control-expose-headers:
-      - x-ms-request-id,x-ms-client-request-id,Server,x-ms-version,x-ms-tag-count,x-ms-version-id,x-ms-is-current-version,Content-Type,Content-Language,Last-Modified,ETag,x-ms-creation-time,Content-MD5,x-ms-lease-status,x-ms-lease-state,x-ms-blob-type,x-ms-server-encrypted,x-ms-encryption-key-sha256,x-ms-access-tier,x-ms-access-tier-inferred,Accept-Ranges,x-ms-last-access-time,Content-Length,Date,Transfer-Encoding
       content-language:
       - english
       content-length:
@@ -199,13 +190,15 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 01 Dec 2020 21:49:00 GMT
+      - Fri, 08 Jan 2021 19:08:17 GMT
       etag:
-      - '"0x8D89642E96B1449"'
+      - '"0x8D8B408C1CF6FE1"'
       last-modified:
-      - Tue, 01 Dec 2020 21:49:00 GMT
+      - Fri, 08 Jan 2021 19:08:17 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
       x-ms-access-tier:
       - Hot
       x-ms-access-tier-inferred:
@@ -213,13 +206,9 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 01 Dec 2020 21:49:00 GMT
+      - Fri, 18 Dec 2020 01:04:44 GMT
       x-ms-encryption-key-sha256:
       - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
-      x-ms-is-current-version:
-      - 'true'
-      x-ms-last-access-time:
-      - Tue, 01 Dec 2020 21:49:00 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -230,8 +219,6 @@ interactions:
       - '1'
       x-ms-version:
       - '2020-04-08'
-      x-ms-version-id:
-      - '2020-12-01T21:49:00.1041993Z'
     status:
       code: 200
       message: OK

@@ -177,6 +177,8 @@ try:
     from ._models_py3 import PolicyDescriptionCollection
     from ._models_py3 import PolicyDescriptionContract
     from ._models_py3 import PortalDelegationSettings
+    from ._models_py3 import PortalRevisionCollection
+    from ._models_py3 import PortalRevisionContract
     from ._models_py3 import PortalSettingValidationKeyContract
     from ._models_py3 import PortalSigninSettings
     from ._models_py3 import PortalSignupSettings
@@ -424,6 +426,8 @@ except (SyntaxError, ImportError):
     from ._models import PolicyDescriptionCollection  # type: ignore
     from ._models import PolicyDescriptionContract  # type: ignore
     from ._models import PortalDelegationSettings  # type: ignore
+    from ._models import PortalRevisionCollection  # type: ignore
+    from ._models import PortalRevisionContract  # type: ignore
     from ._models import PortalSettingValidationKeyContract  # type: ignore
     from ._models import PortalSigninSettings  # type: ignore
     from ._models import PortalSignupSettings  # type: ignore
@@ -537,6 +541,7 @@ from ._api_management_client_enums import (
     PolicyExportFormat,
     PolicyIdName,
     PolicyScopeContract,
+    PortalRevisionStatus,
     ProductState,
     Protocol,
     ResourceSkuCapacityScaleType,
@@ -723,6 +728,8 @@ __all__ = [
     'PolicyDescriptionCollection',
     'PolicyDescriptionContract',
     'PortalDelegationSettings',
+    'PortalRevisionCollection',
+    'PortalRevisionContract',
     'PortalSettingValidationKeyContract',
     'PortalSigninSettings',
     'PortalSignupSettings',
@@ -834,6 +841,7 @@ __all__ = [
     'PolicyExportFormat',
     'PolicyIdName',
     'PolicyScopeContract',
+    'PortalRevisionStatus',
     'ProductState',
     'Protocol',
     'ResourceSkuCapacityScaleType',

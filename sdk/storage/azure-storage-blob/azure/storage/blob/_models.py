@@ -9,6 +9,7 @@
 from enum import Enum
 
 from azure.core.paging import PageIterator
+from azure.core.exceptions import HttpResponseError
 from ._generated.models import ArrowField
 
 from ._shared import decode_base64_to_text
@@ -20,7 +21,6 @@ from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
-from ._generated.models import StorageErrorException
 
 
 class BlobType(str, Enum):
@@ -317,6 +317,10 @@ class ContainerProperties(DictMixin):
         container as metadata.
     :ivar ~azure.storage.blob.ContainerEncryptionScope encryption_scope:
         The default encryption scope configuration for the container.
+    :ivar bool deleted:
+        Whether this container was deleted.
+    :ivar str version:
+        The version of a deleted container.
     """
 
     def __init__(self, **kwargs):
@@ -396,7 +400,7 @@ class ContainerPropertiesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):

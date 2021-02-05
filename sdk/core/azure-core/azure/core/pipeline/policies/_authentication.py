@@ -17,7 +17,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Optional
-    from azure.core.credentials import AccessToken, TokenCredential, AzureKeyCredential
+    from azure.core.credentials import AccessToken, TokenCredential, AzureKeyCredential, AzureSasCredential
     from azure.core.pipeline import PipelineRequest
 
 
@@ -114,3 +114,34 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):
         request.http_request.headers[self._name] = self._credential.key
+
+
+class AzureSasCredentialPolicy(SansIOHTTPPolicy):
+    """Adds a shared access signature to query for the provided credential.
+
+    :param credential: The credential used to authenticate requests.
+    :type credential: ~azure.core.credentials.AzureSasCredential
+    :raises: ValueError or TypeError
+    """
+    def __init__(self, credential, **kwargs):  # pylint: disable=unused-argument
+        # type: (AzureSasCredential, **Any) -> None
+        super(AzureSasCredentialPolicy, self).__init__()
+        if not credential:
+            raise ValueError("credential can not be None")
+        self._credential = credential
+
+    def on_request(self, request):
+        url = request.http_request.url
+        query = request.http_request.query
+        signature = self._credential.signature
+        if signature.startswith("?"):
+            signature = signature[1:]
+        if query:
+            if signature not in url:
+                url = url + "&" + signature
+        else:
+            if url.endswith("?"):
+                url = url + signature
+            else:
+                url = url + "?" + signature
+        request.http_request.url = url

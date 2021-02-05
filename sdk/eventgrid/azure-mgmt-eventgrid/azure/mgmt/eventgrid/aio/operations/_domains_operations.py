@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class DomainsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         **kwargs
-    ) -> "models.Domain":
+    ) -> "_models.Domain":
         """Get a domain.
 
         Get properties of a domain.
@@ -62,7 +62,7 @@ class DomainsOperations:
         :rtype: ~azure.mgmt.eventgrid.models.Domain
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -107,10 +107,10 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain_info: "models.Domain",
+        domain_info: "_models.Domain",
         **kwargs
-    ) -> "models.Domain":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+    ) -> "_models.Domain":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -160,9 +160,9 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain_info: "models.Domain",
+        domain_info: "_models.Domain",
         **kwargs
-    ) -> AsyncLROPoller["models.Domain"]:
+    ) -> AsyncLROPoller["_models.Domain"]:
         """Create or update a domain.
 
         Asynchronously creates or updates a new domain with the specified parameters.
@@ -184,7 +184,7 @@ class DomainsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -209,7 +209,13 @@ class DomainsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -311,7 +317,13 @@ class DomainsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -329,10 +341,10 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain_update_parameters: "models.DomainUpdateParameters",
+        domain_update_parameters: "_models.DomainUpdateParameters",
         **kwargs
-    ) -> Optional["models.Domain"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Domain"]]
+    ) -> Optional["_models.Domain"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Domain"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -384,9 +396,9 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain_update_parameters: "models.DomainUpdateParameters",
+        domain_update_parameters: "_models.DomainUpdateParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.Domain"]:
+    ) -> AsyncLROPoller["_models.Domain"]:
         """Update a domain.
 
         Asynchronously updates a domain with the specified parameters.
@@ -408,7 +420,7 @@ class DomainsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -433,7 +445,13 @@ class DomainsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -452,7 +470,7 @@ class DomainsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.DomainsListResult"]:
+    ) -> AsyncIterable["_models.DomainsListResult"]:
         """List domains under an Azure subscription.
 
         List all the domains under an Azure subscription.
@@ -473,7 +491,7 @@ class DomainsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.DomainsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -538,7 +556,7 @@ class DomainsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.DomainsListResult"]:
+    ) -> AsyncIterable["_models.DomainsListResult"]:
         """List domains under a resource group.
 
         List all the domains under a resource group.
@@ -561,7 +579,7 @@ class DomainsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventgrid.models.DomainsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -626,7 +644,7 @@ class DomainsOperations:
         resource_group_name: str,
         domain_name: str,
         **kwargs
-    ) -> "models.DomainSharedAccessKeys":
+    ) -> "_models.DomainSharedAccessKeys":
         """List keys for a domain.
 
         List the two keys used to publish to a domain.
@@ -640,7 +658,7 @@ class DomainsOperations:
         :rtype: ~azure.mgmt.eventgrid.models.DomainSharedAccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainSharedAccessKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainSharedAccessKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -685,9 +703,9 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        key_name: str,
+        regenerate_key_request: "_models.DomainRegenerateKeyRequest",
         **kwargs
-    ) -> "models.DomainSharedAccessKeys":
+    ) -> "_models.DomainSharedAccessKeys":
         """Regenerate key for a domain.
 
         Regenerate a shared access key for a domain.
@@ -696,20 +714,18 @@ class DomainsOperations:
         :type resource_group_name: str
         :param domain_name: Name of the domain.
         :type domain_name: str
-        :param key_name: Key name to regenerate key1 or key2.
-        :type key_name: str
+        :param regenerate_key_request: Request body to regenerate key.
+        :type regenerate_key_request: ~azure.mgmt.eventgrid.models.DomainRegenerateKeyRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DomainSharedAccessKeys, or the result of cls(response)
         :rtype: ~azure.mgmt.eventgrid.models.DomainSharedAccessKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainSharedAccessKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainSharedAccessKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _regenerate_key_request = models.DomainRegenerateKeyRequest(key_name=key_name)
         api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -733,7 +749,7 @@ class DomainsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_regenerate_key_request, 'DomainRegenerateKeyRequest')
+        body_content = self._serialize.body(regenerate_key_request, 'DomainRegenerateKeyRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)

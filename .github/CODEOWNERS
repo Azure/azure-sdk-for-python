@@ -20,10 +20,10 @@
 /sdk/identity/                                                       @chlowell @mccoyp @schaabs
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/                                                       @annatisch @yunhaoling @KieranBrantnerMagee
+/sdk/eventhub/                                                       @annatisch @yunhaoling @swathipil @rakshith91
 
 # PRLabel: %Storage
-/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft @tasherif-msft @kasobol-msft
+/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @xiafu-msft @tasherif-msft @kasobol-msft
 
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99
@@ -36,7 +36,7 @@
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
 
 # PRLabel: %Communication
-/sdk/communication/                                                  @RezaJooyandeh @turalf @ankitarorabit @memontic-ms @Azure/azure-sdk-communication-code-reviewers
+/sdk/communication/                                                  @turalf @ankitarorabit @memontic-ms @Azure/azure-sdk-communication-code-reviewers
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @chlowell @mccoyp
@@ -45,7 +45,7 @@
 /sdk/loganalytics/                                                   @alexeldeib
 
 # PRLabel: %Monitor - Exporter
-/sdk/monitor/opentelemetry-exporter-azuremonitor                     @rakshith91 @lmazuel @hectorhdzg @lzchen
+/sdk/monitor/azure-opentelemetry-exporter-azuremonitor               @rakshith91 @lmazuel @hectorhdzg @lzchen
 
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
@@ -66,7 +66,7 @@
 /sdk/datadatamigration/                                              @vchske
 
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @lmazuel @rakshith91 @KieranBrantnerMagee
+/sdk/eventgrid/                                                      @lmazuel @yunhaoling @swathipil @rakshith91
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
@@ -81,7 +81,7 @@
 /sdk/schemaregistry/                                                 @yunhaoling
 
 # PRLabel: %Search
-/sdk/search/                                                         @xiangyan99 @rakshith91
+/sdk/search/                                                         @xiangyan99
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
@@ -90,7 +90,7 @@
 /sql/sql/                                                            @jaredmoo
 
 # PRLabel: %Service Bus
-/sdk/servicebus/                                                     @annatisch @yunhaoling @KieranBrantnerMagee
+/sdk/servicebus/                                                     @annatisch @yunhaoling @swathipil @rakshith91
 
 # PRLabel: %Synapse
 /sdk/synapse/                                                        @aim-for-better @idear1203
@@ -102,7 +102,7 @@
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft @abhahn
 
 # PRLabel: %Cognitive - Form Recognizer
-/sdk/formrecognizer/                                                 @kristapratico @iscai-msft @rakshith91
+/sdk/formrecognizer/                                                 @kristapratico @iscai-msft
 
 # PRLabel: %Cognitive - Metrics Advisor
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico
@@ -110,11 +110,14 @@
 # PRLabel: %Tables
 /sdk/tables/                                                         @seankane-msft
 
+# PRLabel: %Media
+/sdk/media/                                                          @naiteeks @bennage @giakas
+
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
 
 # Management Plane
-/**/*mgmt*/     @msyyc @jsntcy @changlong-liu
+/**/*mgmt*/     @00Kai0 @msyyc @jsntcy @changlong-liu
 
 
 ###########

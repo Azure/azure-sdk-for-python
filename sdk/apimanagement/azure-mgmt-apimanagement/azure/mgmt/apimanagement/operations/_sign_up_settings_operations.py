@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class SignUpSettingsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -93,7 +93,7 @@ class SignUpSettingsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -111,7 +111,7 @@ class SignUpSettingsOperations(object):
         service_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PortalSignupSettings"
+        # type: (...) -> "_models.PortalSignupSettings"
         """Get Sign Up Settings for the Portal.
 
         :param resource_group_name: The name of the resource group.
@@ -123,7 +123,7 @@ class SignUpSettingsOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.PortalSignupSettings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PortalSignupSettings"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PortalSignupSettings"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -154,7 +154,7 @@ class SignUpSettingsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -172,8 +172,7 @@ class SignUpSettingsOperations(object):
         resource_group_name,  # type: str
         service_name,  # type: str
         if_match,  # type: str
-        enabled=None,  # type: Optional[bool]
-        terms_of_service=None,  # type: Optional["models.TermsOfServiceProperties"]
+        parameters,  # type: "_models.PortalSignupSettings"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -186,10 +185,8 @@ class SignUpSettingsOperations(object):
         :param if_match: ETag of the Entity. ETag should match the current entity state from the header
          response of the GET request or it should be * for unconditional update.
         :type if_match: str
-        :param enabled: Allow users to sign up on a developer portal.
-        :type enabled: bool
-        :param terms_of_service: Terms of service contract properties.
-        :type terms_of_service: ~azure.mgmt.apimanagement.models.TermsOfServiceProperties
+        :param parameters: Update Sign-Up settings.
+        :type parameters: ~azure.mgmt.apimanagement.models.PortalSignupSettings
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -200,8 +197,6 @@ class SignUpSettingsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.PortalSignupSettings(enabled=enabled, terms_of_service=terms_of_service)
         api_version = "2020-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -226,7 +221,7 @@ class SignUpSettingsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'PortalSignupSettings')
+        body_content = self._serialize.body(parameters, 'PortalSignupSettings')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -234,7 +229,7 @@ class SignUpSettingsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -246,37 +241,32 @@ class SignUpSettingsOperations(object):
         self,
         resource_group_name,  # type: str
         service_name,  # type: str
+        parameters,  # type: "_models.PortalSignupSettings"
         if_match=None,  # type: Optional[str]
-        enabled=None,  # type: Optional[bool]
-        terms_of_service=None,  # type: Optional["models.TermsOfServiceProperties"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PortalSignupSettings"
+        # type: (...) -> "_models.PortalSignupSettings"
         """Create or Update Sign-Up settings.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
+        :param parameters: Create or update parameters.
+        :type parameters: ~azure.mgmt.apimanagement.models.PortalSignupSettings
         :param if_match: ETag of the Entity. Not required when creating an entity, but required when
          updating an entity.
         :type if_match: str
-        :param enabled: Allow users to sign up on a developer portal.
-        :type enabled: bool
-        :param terms_of_service: Terms of service contract properties.
-        :type terms_of_service: ~azure.mgmt.apimanagement.models.TermsOfServiceProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PortalSignupSettings, or the result of cls(response)
         :rtype: ~azure.mgmt.apimanagement.models.PortalSignupSettings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PortalSignupSettings"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PortalSignupSettings"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.PortalSignupSettings(enabled=enabled, terms_of_service=terms_of_service)
         api_version = "2020-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -302,7 +292,7 @@ class SignUpSettingsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'PortalSignupSettings')
+        body_content = self._serialize.body(parameters, 'PortalSignupSettings')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -310,7 +300,7 @@ class SignUpSettingsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PortalSignupSettings', pipeline_response)

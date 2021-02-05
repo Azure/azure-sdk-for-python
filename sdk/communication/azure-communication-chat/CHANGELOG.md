@@ -1,7 +1,13 @@
 # Release History
 
 ## 1.0.0b4 (Unreleased)
+### Breaking Changes
+- Replaced CommunicationUser with CommunicationUserIdentifier.
+- Replaced PhoneNumber with PhoneNumberIdentifier
 
+### Added
+
+- Added `MicrosoftTeamsUserIdentifier`
 
 ## 1.0.0b3 (2020-11-16)
 - Updated `azure-communication-chat` version.

@@ -1,7 +1,18 @@
 # Release History
 
 ## 1.5.1 (Unreleased)
+### Changed
+- Raised minimum msal version to 1.7.0
+- Raised minimum six version to 1.12.0
 
+### Added
+- `InteractiveBrowserCredential` uses PKCE internally to protect authorization
+  codes
+- `CertificateCredential` can load a certificate from bytes instead of a file
+  path. To provide a certificate as bytes, use the keyword argument
+  `certificate_bytes` instead of `certificate_path`, for example:
+  `CertificateCredential(tenant_id, client_id, certificate_bytes=cert_bytes)`
+  ([#14055](https://github.com/Azure/azure-sdk-for-python/issues/14055))
 
 ## 1.5.0 (2020-11-11)
 ### Breaking Changes

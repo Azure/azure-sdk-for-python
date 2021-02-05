@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ApiSchemaOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -57,7 +57,7 @@ class ApiSchemaOperations(object):
         skip=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SchemaCollection"]
+        # type: (...) -> Iterable["_models.SchemaCollection"]
         """Get the schema configuration at the API level.
 
         :param resource_group_name: The name of the resource group.
@@ -80,7 +80,7 @@ class ApiSchemaOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.SchemaCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SchemaCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SchemaCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -134,7 +134,7 @@ class ApiSchemaOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -204,7 +204,7 @@ class ApiSchemaOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -224,7 +224,7 @@ class ApiSchemaOperations(object):
         schema_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SchemaContract"
+        # type: (...) -> "_models.SchemaContract"
         """Get the schema configuration at the API level.
 
         :param resource_group_name: The name of the resource group.
@@ -242,7 +242,7 @@ class ApiSchemaOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.SchemaContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SchemaContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SchemaContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -275,7 +275,7 @@ class ApiSchemaOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -294,12 +294,12 @@ class ApiSchemaOperations(object):
         service_name,  # type: str
         api_id,  # type: str
         schema_id,  # type: str
-        parameters,  # type: "models.SchemaContract"
+        parameters,  # type: "_models.SchemaContract"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.SchemaContract"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.SchemaContract"]]
+        # type: (...) -> Optional["_models.SchemaContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SchemaContract"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -339,7 +339,7 @@ class ApiSchemaOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -364,11 +364,11 @@ class ApiSchemaOperations(object):
         service_name,  # type: str
         api_id,  # type: str
         schema_id,  # type: str
-        parameters,  # type: "models.SchemaContract"
+        parameters,  # type: "_models.SchemaContract"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.SchemaContract"]
+        # type: (...) -> LROPoller["_models.SchemaContract"]
         """Creates or updates schema configuration for the API.
 
         :param resource_group_name: The name of the resource group.
@@ -397,7 +397,7 @@ class ApiSchemaOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SchemaContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SchemaContract"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -428,7 +428,15 @@ class ApiSchemaOperations(object):
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'schemaId': self._serialize.url("schema_id", schema_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -511,7 +519,7 @@ class ApiSchemaOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

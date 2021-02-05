@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class DelegationSettingsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -88,7 +88,7 @@ class DelegationSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -105,7 +105,7 @@ class DelegationSettingsOperations:
         resource_group_name: str,
         service_name: str,
         **kwargs
-    ) -> "models.PortalDelegationSettings":
+    ) -> "_models.PortalDelegationSettings":
         """Get Delegation Settings for the Portal.
 
         :param resource_group_name: The name of the resource group.
@@ -117,7 +117,7 @@ class DelegationSettingsOperations:
         :rtype: ~azure.mgmt.apimanagement.models.PortalDelegationSettings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PortalDelegationSettings"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PortalDelegationSettings"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -148,7 +148,7 @@ class DelegationSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -166,7 +166,7 @@ class DelegationSettingsOperations:
         resource_group_name: str,
         service_name: str,
         if_match: str,
-        parameters: "models.PortalDelegationSettings",
+        parameters: "_models.PortalDelegationSettings",
         **kwargs
     ) -> None:
         """Update Delegation settings.
@@ -222,7 +222,7 @@ class DelegationSettingsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -234,10 +234,10 @@ class DelegationSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: "models.PortalDelegationSettings",
+        parameters: "_models.PortalDelegationSettings",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.PortalDelegationSettings":
+    ) -> "_models.PortalDelegationSettings":
         """Create or Update Delegation settings.
 
         :param resource_group_name: The name of the resource group.
@@ -254,7 +254,7 @@ class DelegationSettingsOperations:
         :rtype: ~azure.mgmt.apimanagement.models.PortalDelegationSettings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PortalDelegationSettings"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PortalDelegationSettings"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -292,7 +292,7 @@ class DelegationSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PortalDelegationSettings', pipeline_response)
@@ -308,7 +308,7 @@ class DelegationSettingsOperations:
         resource_group_name: str,
         service_name: str,
         **kwargs
-    ) -> "models.PortalSettingValidationKeyContract":
+    ) -> "_models.PortalSettingValidationKeyContract":
         """Gets the secret validation key of the DelegationSettings.
 
         :param resource_group_name: The name of the resource group.
@@ -320,7 +320,7 @@ class DelegationSettingsOperations:
         :rtype: ~azure.mgmt.apimanagement.models.PortalSettingValidationKeyContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PortalSettingValidationKeyContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PortalSettingValidationKeyContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -351,7 +351,7 @@ class DelegationSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PortalSettingValidationKeyContract', pipeline_response)

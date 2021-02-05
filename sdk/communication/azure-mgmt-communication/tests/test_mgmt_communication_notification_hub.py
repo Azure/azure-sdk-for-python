@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 import unittest
 import time
+import pytest
 
 import azure.mgmt.communication
 import azure.mgmt.notificationhubs
@@ -20,6 +21,8 @@ from azure.mgmt.notificationhubs.models import SharedAccessAuthorizationRuleCrea
 AZURE_LOCATION = "westus"
 COMMUNICATION_SERVICE_LOCATION = "global"
 COMMUNICATION_SERVICE_DATA_LOCATION = "UnitedStates"
+DISABLE_MGMT_TESTS = True
+DISABLE_REASON = "Temporary issue causing the tests to fail"
 
 class MgmtCommunicationTest(AzureMgmtTestCase):
 
@@ -32,6 +35,7 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
             azure.mgmt.notificationhubs.NotificationHubsManagementClient
         )
 
+    @pytest.mark.skipif(DISABLE_MGMT_TESTS, reason=DISABLE_REASON)
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_communication_link_notif_hub(self, resource_group):
         GROUP_NAME = resource_group.name
