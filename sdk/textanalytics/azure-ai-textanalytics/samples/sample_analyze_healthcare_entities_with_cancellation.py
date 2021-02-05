@@ -59,8 +59,17 @@ class AnalyzeHealthcareEntitiesWithCancellationSample(object):
         ]
 
         poller = text_analytics_client.begin_analyze_healthcare_entities(documents)
-        cancellation_poller = text_analytics_client.begin_cancel_analyze_healthcare_entities(poller)
-        cancellation_poller.wait()
+        
+        try:
+            cancellation_poller = poller.cancel()
+            cancellation_poller.wait()
+        
+        except Warning as e:
+            # If the operation has already reached a terminal state it cannot be cancelled.
+            print(e)
+
+        else:
+            print("Healthcare entities analysis was successfully cancelled.")
 
         # [END analyze_healthcare_entities_with_cancellation]
 

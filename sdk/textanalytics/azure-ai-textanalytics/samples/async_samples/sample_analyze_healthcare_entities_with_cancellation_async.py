@@ -61,9 +61,17 @@ class AnalyzeHealthcareEntitiesWithCancellationSampleAsync(object):
 
         async with text_analytics_client:
             poller = await text_analytics_client.begin_analyze_healthcare_entities(documents)
-            poller = await text_analytics_client.begin_cancel_analyze_healthcare_entities(poller)
+            
+            try:
+                cancellation_poller = await poller.cancel()
+                await cancellation_poller.wait()
+            
+            except Warning as e:
+                # If the operation has already reached a terminal state it cannot be cancelled.
+                print(e)
 
-        await poller.wait()
+            else:
+                print("Healthcare entities analysis was successfully cancelled.")
 
         # [END analyze_healthcare_entities_with_cancellation_async]
 

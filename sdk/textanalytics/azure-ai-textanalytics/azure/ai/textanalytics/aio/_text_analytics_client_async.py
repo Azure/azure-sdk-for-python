@@ -664,6 +664,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 string_index_type=string_index_type,
                 cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
                 polling=AnalyzeHealthcareEntitiesAsyncLROPollingMethod(
+                    text_analytics_client=self._client,
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)

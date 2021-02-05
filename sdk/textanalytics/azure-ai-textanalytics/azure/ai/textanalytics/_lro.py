@@ -91,6 +91,10 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
 
 class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
+    def __init__(self, *args, **kwargs):
+        self._text_analytics_client = kwargs.pop("text_analytics_client")
+        super().__init__(*args, **kwargs)
+
     @property
     def _current_body(self):
         from ._generated.v3_1_preview_3.models import JobMetadata
@@ -175,7 +179,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller):
                 raise Warning("Operation with ID '%s' is already in a terminal state and cannot be cancelled." \
                     % self.id)
 
-            return getattr(self._polling_method, "_client").begin_cancel_health_job(
+            return getattr(self._polling_method, "_text_analytics_client").begin_cancel_health_job(
                 self.id,
                 polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
             )
