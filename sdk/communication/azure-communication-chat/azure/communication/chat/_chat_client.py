@@ -224,7 +224,7 @@ class ChatClient(object):
         :keyword ~datetime.datetime start_time: The earliest point in time to get chat threads up to.
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ItemPaged[:class:`~azure.communication.chat.ChatThreadInfo`]
-        :rtype: ~azure.core.paging.ItemPaged
+        :rtype: ItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

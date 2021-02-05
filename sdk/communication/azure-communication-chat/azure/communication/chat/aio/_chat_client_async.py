@@ -59,7 +59,7 @@ class ChatClient(object):
     def __init__(
         self, endpoint: str,
         credential: CommunicationTokenCredential,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         if not credential:
             raise ValueError("credential can not be None")
@@ -86,7 +86,7 @@ class ChatClient(object):
     @distributed_trace
     def get_chat_thread_client(
         self, thread_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> ChatThreadClient:
         """
         Get ChatThreadClient by providing a thread_id.
@@ -213,7 +213,7 @@ class ChatClient(object):
     @distributed_trace
     def list_chat_threads(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncItemPaged[ChatThreadInfo]:
         """Gets the list of chat threads of a user.
 
@@ -221,7 +221,7 @@ class ChatClient(object):
         :keyword ~datetime.datetime start_time: The earliest point in time to get chat threads up to.
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AsyncItemPaged[:class:`~azure.communication.chat.ChatThreadInfo`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :rtype: AsyncItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

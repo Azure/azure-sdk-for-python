@@ -73,7 +73,7 @@ class ChatThreadClient(object):
             endpoint: str,
             credential: CommunicationTokenCredential,
             thread_id: str,
-            **kwargs
+            **kwargs: Any
     ) -> None:
         if not thread_id:
             raise ValueError("thread_id can not be None or empty")
@@ -180,14 +180,14 @@ class ChatThreadClient(object):
     @distributed_trace
     def list_read_receipts(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncItemPaged[ChatMessageReadReceipt]:
         """Gets read receipts for a thread.
 
         :keyword int results_per_page: The maximum number of chat message read receipts to be returned per page.
         :keyword int skip: Skips chat message read receipts up to a specified position in response.
         :return: AsyncItemPaged[:class:`~azure.communication.chat.ChatMessageReadReceipt`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :rtype: AsyncItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -325,7 +325,7 @@ class ChatThreadClient(object):
     @distributed_trace
     def list_messages(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncItemPaged[ChatMessage]:
         """Gets a list of messages from a thread.
 
@@ -333,7 +333,7 @@ class ChatThreadClient(object):
         :keyword ~datetime.datetime start_time: The start time where the range query.
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AsyncItemPaged[:class:`~azure.communication.chat.ChatMessage`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :rtype: AsyncItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -429,7 +429,7 @@ class ChatThreadClient(object):
     @distributed_trace
     def list_participants(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncItemPaged[ChatThreadParticipant]:
         """Gets the participants of a thread.
 
@@ -437,7 +437,7 @@ class ChatThreadClient(object):
         :keyword int skip: Skips participants up to a specified position in response.
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AsyncItemPaged[:class:`~azure.communication.chat.ChatThreadParticipant`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :rtype: AsyncItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

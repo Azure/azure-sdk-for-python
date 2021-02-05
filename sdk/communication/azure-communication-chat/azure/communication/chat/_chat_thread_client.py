@@ -192,7 +192,7 @@ class ChatThreadClient(object):
         :keyword int skip: Skips chat message read receipts up to a specified position in response.
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ItemPaged[:class:`~azure.communication.chat.ChatMessageReadReceipt`]
-        :rtype: ~azure.core.paging.ItemPaged
+        :rtype: ItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -342,7 +342,7 @@ class ChatThreadClient(object):
         :keyword ~datetime.datetime start_time: The start time where the range query.
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ItemPaged[:class:`~azure.communication.chat.ChatMessage`]
-        :rtype: ~azure.core.paging.ItemPaged
+        :rtype: ItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -449,7 +449,7 @@ class ChatThreadClient(object):
         :keyword int skip: Skips participants up to a specified position in response.
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ItemPaged[:class:`~azure.communication.chat.ChatThreadParticipant`]
-        :rtype: ~azure.core.paging.ItemPaged
+        :rtype: ItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
