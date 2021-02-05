@@ -198,6 +198,12 @@ class AnalyzeBatchActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
         return self._current_body.created_date_time
 
     @property
+    def expires_on(self):
+        if not self._current_body:
+            return None
+        return self._current_body.expiration_date_time
+
+    @property
     def display_name(self):
         if not self._current_body:
             return None

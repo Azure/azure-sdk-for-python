@@ -12,8 +12,6 @@ from azure.core.async_paging import AsyncList
 from ._models import RequestStatistics, TextDocumentBatchStatistics
 from ._async_paging import (
     AnalyzeHealthcareEntitiesResultAsync,
-    AnalyzeResultAsync,
-    AnalyzeHealthcareResultAsync,
     AnalyzeResultAsync
 )
 from ._response_handlers import healthcare_result, get_iter_items

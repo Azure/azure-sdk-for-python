@@ -51,7 +51,6 @@ class TestHealth(TextAnalyticsTest):
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
-            self.assertIsNotNone(doc.relations)
 
     @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
@@ -70,7 +69,6 @@ class TestHealth(TextAnalyticsTest):
             self.assertIsNotNone(doc.id)
             self.assertIsNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
-            self.assertIsNotNone(doc.relations)
 
     @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
@@ -88,7 +86,6 @@ class TestHealth(TextAnalyticsTest):
             self.assertIsNotNone(response[i].id)
             self.assertIsNone(response[i].statistics)
             self.assertIsNotNone(response[i].entities)
-            self.assertIsNotNone(response[i].relations)
 
         self.assertTrue(response[2].is_error)
 

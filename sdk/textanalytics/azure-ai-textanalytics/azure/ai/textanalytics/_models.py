@@ -216,17 +216,7 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
 
     @classmethod
     def _from_generated(cls, healthcare_result):
-        entities = [
-            HealthcareEntity._from_generated(
-                text=e.text,
-                category=e.category,
-                subcategory=e.subcategory,
-                offset=e.offset,
-                confidence_score=e.confidence_score,
-                data_sources=e.data_sources,
-                related_entities={}
-            ) for e in healthcare_result.entities
-        ] # pylint: disable=protected-access
+        entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities] # pylint: disable=protected-access
 
         relation_map = {}
         if healthcare_result.relations:
@@ -423,9 +413,11 @@ class HealthcareEntity(DictMixin):
             confidence_score=healthcare_entity.confidence_score,
             data_sources=[
                 HealthcareEntityDataSource(entity_id=l.id, name=l.data_source) for l in healthcare_entity.links
-            ] if healthcare_entity.links else None,
-            related_entities=self.related_entities
+            ] if healthcare_entity.links else None
         )
+
+    def __hash__(self):
+        return hash(repr(self))
 
     def __repr__(self):
         return "HealthcareEntity(text={}, category={}, subcategory={}, offset={}, confidence_score={},\

@@ -65,7 +65,6 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
-            self.assertIsNotNone(doc.relations)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -84,7 +83,6 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertIsNotNone(doc.id)
             self.assertIsNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
-            self.assertIsNotNone(doc.relations)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -105,7 +103,6 @@ class TestHealth(AsyncTextAnalyticsTest):
         for i in range(2):
             self.assertIsNotNone(response[i].id)
             self.assertIsNotNone(response[i].entities)
-            self.assertIsNotNone(response[i].relations)
 
         self.assertTrue(response[2].is_error)
 
