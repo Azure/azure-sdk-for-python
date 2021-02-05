@@ -23,14 +23,14 @@ pip install azure-communication-phonenumber
 ```python
 # You can find your endpoint and access token from your resource in the Azure Portal
 import os
-from azure.communication.phonenumber import PhoneNumberAdministrationClient
+from azure.communication.phonenumber import PhoneNumbersAdministrationClient
 from azure.identity import DefaultAzureCredential
 
 endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
 
 # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have your
 # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
-phone_number_administration_client = PhoneNumberAdministrationClient(endpoint, DefaultAzureCredential())
+phone_number_administration_client = PhoneNumbersAdministrationClient(endpoint, DefaultAzureCredential())
 
 ```
 ### Initializing Phone Number Client Using Connection String
@@ -39,10 +39,10 @@ Connection string authentication is also available for Phone Number Client.
 ```python
 # You can find your endpoint and access token from your resource in the Azure Portal
 import os
-from azure.communication.phonenumber import PhoneNumberAdministrationClient
+from azure.communication.phonenumber import PhoneNumbersAdministrationClient
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 ```
 
 ### Phone plans overview
@@ -66,7 +66,7 @@ The following section provides several code snippets covering some of the most c
 ### Get Countries
 
 ```python
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 
 supported_countries = phone_number_administration_client.list_all_supported_countries()
 for supported_country in supported_countries:
@@ -78,7 +78,7 @@ for supported_country in supported_countries:
 Phone plan groups come in two types, Geographic and Toll-Free.
 
 ```python
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 
 phone_plan_groups_response = phone_number_administration_client.list_phone_plan_groups(
     country_code='<country code>'
@@ -92,7 +92,7 @@ for phone_plan_group in phone_plan_groups_response:
 Unlike Toll-Free phone plans, area codes for Geographic Phone Plans are empty. Area codes are found in the Area Codes API.
 
 ```python
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 
 phone_plans_response = phone_number_administration_client.list_phone_plans(
     country_code='<country code>',
@@ -107,7 +107,7 @@ for phone_plan in phone_plans_response:
 For Geographic phone plans, you can query the available geographic locations. The locations options are structured like the geographic hierarchy of a country. For example, the US has states and within each state are cities.
 
 ```python
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 
 location_options_response = phone_number_administration_client.get_phone_plan_location_options(
     country_code='<country code>',
@@ -122,7 +122,7 @@ print(location_options_response)
 Fetching area codes for geographic phone plans will require the the location options queries set. You must include the chain of geographic locations traversing down the location options object returned by the GetLocationOptions API.
 
 ```python
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 
 all_area_codes = phone_number_administration_client.get_all_area_codes(
     location_type="NotRequired",
@@ -135,7 +135,7 @@ print(all_area_codes)
 ### Create Reservation
 
 ```python
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 
 poller = phone_number_administration_client.begin_reserve_phone_numbers(
     area_code='<area code>',
@@ -148,7 +148,7 @@ poller = phone_number_administration_client.begin_reserve_phone_numbers(
 
 ### Get Reservation By Id
 ```python
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 
 phone_number_reservation_response = phone_number_administration_client.get_reservation_by_id(
     reservation_id='<reservation id>'
@@ -159,7 +159,7 @@ print(reservation_id)
 ### Purchase Reservation
 
 ```python
-phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(connection_str)
 
 poller = phone_number_administration_client.begin_purchase_reservation(
     reservation_id='<reservation id to purchase>'

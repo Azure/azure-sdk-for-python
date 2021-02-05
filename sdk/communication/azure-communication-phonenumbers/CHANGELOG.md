@@ -3,7 +3,7 @@
 ## 1.0.0b4 (Unreleased)
 
 ### Added
-- Added PhoneNumberAdministrationClient (originally was part of the azure.communication.administration package).
+- Added PhoneNumbersAdministrationClient (originally was part of the azure.communication.administration package).
 
 
 

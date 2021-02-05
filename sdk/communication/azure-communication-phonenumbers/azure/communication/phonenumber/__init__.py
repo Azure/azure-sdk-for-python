@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from ._phone_number_administration_client import PhoneNumberAdministrationClient
+from ._phone_number_administration_client import PhoneNumbersAdministrationClient
 from ._polling import ReservePhoneNumberPolling, PurchaseReservationPolling, ReleasePhoneNumberPolling
 
 from ._generated.models import (
@@ -36,7 +36,7 @@ from ._shared.models import (
 )
 
 __all__ = [
-    'PhoneNumberAdministrationClient',
+    'PhoneNumbersAdministrationClient',
     'ReservePhoneNumberPolling',
     'PurchaseReservationPolling',
     'ReleasePhoneNumberPolling',
