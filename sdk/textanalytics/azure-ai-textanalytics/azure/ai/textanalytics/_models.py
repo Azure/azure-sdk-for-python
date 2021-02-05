@@ -215,22 +215,25 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
         self.is_error = False
 
     @classmethod
-    def _from_generated(cls, healthcare_result):
-        entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities] # pylint: disable=protected-access
+    def _update_related_entities(cls, entities, relations_result):
+        relation_dict = {}
+        for r in relations_result:
+            _, source_idx = _get_indices(r.source)
+            _, target_idx = _get_indices(r.target)
+            if entities[source_idx] not in relation_dict.keys():
+                relation_dict[entities[source_idx]] = {}
 
-        relation_map = {}
-        if healthcare_result.relations:
-            for r in healthcare_result.relations:
-                _, source_idx = _get_indices(r.source)
-                _, target_idx = _get_indices(r.target)
-                if entities[source_idx] not in relation_map.keys():
-                    relation_map[entities[source_idx]] = {}
-
-                relation_map[entities[source_idx]][entities[target_idx]] = r.relation_type
+            relation_dict[entities[source_idx]][entities[target_idx]] = r.relation_type
 
         for entity in entities:
-            if entity in relation_map.keys():
-                entity.related_entities.update(relation_map[entity])
+            if entity in relation_dict.keys():
+                entity.related_entities.update(relation_dict[entity])
+
+    @classmethod
+    def _from_generated(cls, healthcare_result):
+        entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities] # pylint: disable=protected-access
+        if healthcare_result.relations:
+            cls._update_related_entities(entities, healthcare_result.relations)
 
         return cls(
             id=healthcare_result.id,
