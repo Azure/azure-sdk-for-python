@@ -214,8 +214,8 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
-    @classmethod
-    def _update_related_entities(cls, entities, relations_result):
+    @staticmethod
+    def _update_related_entities(entities, relations_result):
         relation_dict = {}
         for r in relations_result:
             _, source_idx = _get_indices(r.source)

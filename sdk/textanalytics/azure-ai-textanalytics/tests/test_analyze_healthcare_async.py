@@ -79,7 +79,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         self.assertIsNone(response.statistics) # show_stats=False by default
 
-        response = list([r async for r in response])
+        response = [r async for r in response]
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNone(doc.statistics)

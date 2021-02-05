@@ -81,7 +81,7 @@ class AnalyzeHealthcareEntitiesAsyncLROPollingMethod(TextAnalyticsAsyncLROPollin
 
     def __init__(self, *args, **kwargs):
         self._text_analytics_client = kwargs.pop("text_analytics_client")
-        super().__init__(*args, **kwargs)
+        super(AnalyzeHealthcareEntitiesAsyncLROPollingMethod, self).__init__(*args, **kwargs)
 
     @property
     def _current_body(self):
