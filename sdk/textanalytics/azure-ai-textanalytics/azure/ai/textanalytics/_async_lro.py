@@ -154,13 +154,6 @@ class AnalyzeHealthcareEntitiesAsyncLROPoller(AsyncLROPoller[PollingReturnType])
         """
         polling_interval = kwargs.pop("polling_interval", 5)
 
-        terminal_states = ["cancelled", "cancelling", "failed", "succeeded", "partiallyCompleted", "rejected"]
-        await self._polling_method.update_status()
-
-        if self._polling_method.status() in terminal_states:
-            raise Warning("Operation with ID '%s' is already in a terminal state and cannot be cancelled." \
-                % self.id)
-
         try:
             return await getattr(self._polling_method, "_text_analytics_client").begin_cancel_health_job(
                 self.id,

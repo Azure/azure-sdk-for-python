@@ -224,7 +224,7 @@ The following section provides several code snippets covering some of the most c
 - [Recognize PII Entities](#recognize-pii-entities "Recognize pii entities")
 - [Extract Key Phrases](#extract-key-phrases "Extract key phrases")
 - [Detect Language](#detect-language "Detect language")
-- [Healthcare Entities Analysis](#healthcare-analysis "Healthcare analysis")
+- [Healthcare Entities Analysis](#healthcare-entities-analysis "Healthcare Entities Analysis")
 - [Batch Analysis](#batch-analysis "Batch analysis")
 
 ### Analyze sentiment
@@ -444,6 +444,7 @@ Please refer to the service documentation for a conceptual discussion of [langua
 and [language and regional support][language_and_regional_support].
 
 ### Healthcare Entities Analysis
+
 The example below extracts entities recognized within the healthcare domain, and identifies relationships between entities within the input document and links to known sources of information in various well known databases, such as UMLS, CHV, MSH, etc.  This sample demonstrates the usage for [long-running operations](#long-running-operations).
 
 ```python

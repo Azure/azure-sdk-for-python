@@ -617,7 +617,7 @@ class TestHealth(TextAnalyticsTest):
         try:
             cancellation_poller = poller.cancel()
 
-        except Warning:
+        except HttpResponseError:
             pass # expected if the operation was already in a terminal state.
 
         else:

@@ -75,11 +75,14 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
+            result = await (await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
 
         self.assertIsNone(response.statistics) # show_stats=False by default
 
-        response = [r async for r in response]
+        response = []
+        async for r in result:
+            response.append(r)
+
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNone(doc.statistics)
@@ -740,7 +743,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             try:
                 cancellation_poller = await poller.cancel()
 
-            except Warning:
+            except HttpResponseError:
                 pass # expected if the operation was already in a terminal state.
 
             else:

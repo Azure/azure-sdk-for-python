@@ -27,6 +27,8 @@ USAGE:
 
 import os
 import asyncio
+from azure.core.exceptions import HttpResponseError
+
 
 class AnalyzeHealthcareEntitiesWithCancellationSampleAsync(object):
 
@@ -66,7 +68,7 @@ class AnalyzeHealthcareEntitiesWithCancellationSampleAsync(object):
                 cancellation_poller = await poller.cancel()
                 await cancellation_poller.wait()
             
-            except Warning as e:
+            except HttpResponseError as e:
                 # If the operation has already reached a terminal state it cannot be cancelled.
                 print(e)
 

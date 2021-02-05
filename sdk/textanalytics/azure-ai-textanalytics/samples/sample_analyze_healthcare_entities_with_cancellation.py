@@ -25,6 +25,7 @@ USAGE:
 
 
 import os
+from azure.core.exceptions import HttpResponseError
 
 
 class AnalyzeHealthcareEntitiesWithCancellationSample(object):
@@ -64,7 +65,7 @@ class AnalyzeHealthcareEntitiesWithCancellationSample(object):
             cancellation_poller = poller.cancel()
             cancellation_poller.wait()
         
-        except Warning as e:
+        except HttpResponseError as e:
             # If the operation has already reached a terminal state it cannot be cancelled.
             print(e)
 

@@ -166,18 +166,9 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller):
         """
         polling_interval = kwargs.pop("polling_interval", 5)
 
-        terminal_states = ["cancelled", "cancelling", "failed", "succeeded", "partiallyCompleted", "rejected"]
-
         try:
             # Join the thread so we no longer have to wait for a result from it.
             getattr(self, "_thread").join()
-
-            # Get a final status update.
-            getattr(self._polling_method, "update_status")()
-
-            if self._polling_method.status() in terminal_states:
-                raise Warning("Operation with ID '%s' is already in a terminal state and cannot be cancelled." \
-                    % self.id)
 
             return getattr(self._polling_method, "_text_analytics_client").begin_cancel_health_job(
                 self.id,
@@ -187,6 +178,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller):
         except HttpResponseError as error:
             from ._response_handlers import process_http_response_error
             process_http_response_error(error)
+
 
 class AnalyzeBatchActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 

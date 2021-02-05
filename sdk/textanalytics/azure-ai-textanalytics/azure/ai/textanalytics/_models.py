@@ -421,9 +421,9 @@ class HealthcareEntity(DictMixin):
         This value depends on the value of the `string_index_type` parameter specified
         in the original request, which is UnicodeCodePoints by default.
     :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
-            entity.
-        :ivar data_sources: A collection of entity references in known data sources.
-        :vartype data_sources: list[~azure.ai.textanalytics.HealthcareEntityDataSource]
+        entity.
+    :ivar data_sources: A collection of entity references in known data sources.
+    :vartype data_sources: list[~azure.ai.textanalytics.HealthcareEntityDataSource]
     """
 
     def __init__(self, **kwargs):
