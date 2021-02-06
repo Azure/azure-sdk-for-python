@@ -30,7 +30,7 @@ class CommunicationUserIdentifierSerializer(object):
         """
         if isinstance(communicationIdentifier, CommunicationUserIdentifier):
             return CommunicationIdentifierModel(
-                communication_user=CommunicationUserIdentifierModel(raw_id=communicationIdentifier.identifier)
+                communication_user=CommunicationUserIdentifierModel(id=communicationIdentifier.identifier)
             )
         if isinstance(communicationIdentifier, PhoneNumberIdentifier):
             return CommunicationIdentifierModel(
