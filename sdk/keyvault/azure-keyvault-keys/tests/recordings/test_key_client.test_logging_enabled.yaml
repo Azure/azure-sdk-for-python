@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestrsa-key-name116c0ea5/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name116c0ea5/create?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:38 GMT
+      - Sat, 06 Feb 2021 01:53:10 GMT
       expires:
       - '-1'
       pragma:
@@ -52,7 +52,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: '{"key_size": 2048, "kty": "RSA"}'
+    body: '{"kty": "RSA", "key_size": 2048}'
     headers:
       Accept:
       - application/json
@@ -67,10 +67,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestrsa-key-name116c0ea5/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name116c0ea5/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestrsa-key-name116c0ea5/3c515d22923a4d47aa06ad62f1c6eb15","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"v74bigHwYszOPPSmRDdZuamvKw0lb1cuyaLTzivt1oXrst3w_hpHhxY0DchEoQxDNaGmBQ9mbuQFc9KBSxNJzTnSnL9sIsOm7nfY-6VsYgzWbZStio-A4UvDqGmhO1BPlEkOoXwYtKaF9rPr6PXYXPqRx4vl92RER7I0XeaACaL1QLyW_hfokmmNjz3z5hcH429yZxWH8JstSCsIW9uC_dkJ10InD7nkZaWqI4r_WHeVw96pokXdTYtbc20dWmnpDTYdRWp8SAM2QgADrYyardiY9nyamvC5Sfvk8dfb61v84rUv7k9-4btqxQlIaTyA92_WNcl9WnAas4lJlIpkVQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612569279,"updated":1612569279,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name116c0ea5/ece316830ce7498b84196b3a807f61a9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wU5RJuK1uO14RnYS1fLhMYPUyAS7hStitqVv39iwniB_QURC_V6z90yAWZbpWBWbtVQYKUm3x_1LQwOhPvjvW8szRt8K_tK3-HacmflxqSCE0h-CB4vdp3T53zRUjkrmHUPX7cNEAWmTq-udaxh_aGZioyopR0S4JokORZrXCucPcIWYX9c9-uvJ5jtRcYpDfeW5XGBAxYHcQNLa9o0yU13-oiYqEECx_rzulJrX8NO61kVpW24pmtDroPP6xG_YemIqSVcTbb-OIRSjOhl4cRM13v5_8whRevvOrRntFfkGr2bgnDI_lMvA5L0AkLQL-pqhNqq9Pb8bcmCUe9e7aQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576391,"updated":1612576391,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:39 GMT
+      - Sat, 06 Feb 2021 01:53:10 GMT
       expires:
       - '-1'
       pragma:

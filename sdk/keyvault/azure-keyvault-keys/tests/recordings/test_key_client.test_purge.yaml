@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey091110ab7/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey091110ab7/create?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:40 GMT
+      - Sat, 06 Feb 2021 01:53:11 GMT
       expires:
       - '-1'
       pragma:
@@ -67,10 +67,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey091110ab7/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey091110ab7/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey091110ab7/b5e17cc3d59d4cda9d8f763bfd9bb92e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"zA_U_-x-Yg92eiyUPcEu8kVwFjoGNGZ85PbrmfBPK56GLUEf8wSrvFfwuXJdahzzmrWgNg6kGwrYs89kFVvqs-fN34xoNlQNBuaHMTOJUAfG7MSO1JFBqTQUCIXdw0pMBjJOK44iUJvpG5WZPzpZ13sxccNnP7m1di3MJy7MspG-ACge6b5gsoIzb8Q7UMCx6c_WmyBA34ZZ6exvwbjq2PTc4iFvPlFvCmBIABzDEZO7jpmPXCkSuIZLiVxbCZdrQgQoFj1J9DckUwt6lyXK2f1bf0xwOISjas694shNLVjrq4IPiXmbbHfNIq68hnP83pE4mTlN6u_nMfc_wm4O4Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569281,"updated":1612569281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey091110ab7/72dd5b7ee0174798935c062a921e5baf","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"qTeb8JhbKIcPU8Lubpn0N7F7t3v6NTde7nxE9akoXhzK5ZLPym7R3ZVignmaAwoqo4FIb0sWWCkZmnWpwp0oUgkfGR3JgHI68lIvAgK_NJS3vgWSwm-bgrSzPLzGkuqehNKzTi14i6Rg74FZMtNc9CKa9mGiDqBPy60DG7eYtmp_SiTjWAFht6hXSWHQY0NxbKIpOpdEBoWhLrtFgKr3loz7BtMURAwZgZaBtU0GACgqhMt-vOWYm2g_hb8WyX-FQ2m7UOsy_C3j-YfsWK9k9CyOJF8uTmZko3ImI7tkYBWdgLPrnKFLfhDD7t6KkSJ68hWjmtZKnTUetfmWgl4RDQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576393,"updated":1612576393,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:41 GMT
+      - Sat, 06 Feb 2021 01:53:12 GMT
       expires:
       - '-1'
       pragma:
@@ -115,10 +115,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey191110ab7/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey191110ab7/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey191110ab7/f9060607bc4e44a7b281176ba96eae74","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1RZJD_3AdRSaNQnHXhMsVBjzg9IcX0tLagFV5sbPO5ViNE1GAhR3mTzMzSeu4cH-Ym6CwTJ4se7VRFFEpDZjIg_onZR7ppRxglzOacxA1VBoT3Z3w8noJE8gEQDhRpUE8Cfz5aMbj2WqWQTrN3fC4djZCdLeeDmsHDfRLJfUYB3VNnd_JhyNPglw0sk-lvtWn9rWxAuvoO6HtsjKOjwPw8YmAoz4ZZveolATESfIxXbis0hihj8KISjokaHcQzN6GCuXcbrw2r9GNk3eAk_VPs1kVuyCjmbj5p-9r5Qqbr1FWsfUVr_co-NQ_y0vEhFG_LBxdB0INxNwb4_a_CbY0Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569281,"updated":1612569281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey191110ab7/bd14f8feddb049888f981df9fefc1ebd","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vhrCBbahqa0Nz88LjL21W-9FJtfNBDouRZDnhz6xC4AlXtHdjCEqBfnkwMn250AxLvRYNd_6WV9In41yL5P89BjfxKj5zi22BA0Ln1yF2zY22Tt259wBaERc3DGBk6Xp-fTKsMb03e886t_Uxnkz1mnuLVRt3ppkXH9HsxXhAvhb0eIGWo72XIgJ1Z0cysctojFv2vsHKjhnTQZBTQbYd5lR0B0fznPWTSQGs4LuhNM8mR3PvbjVbE6KsDMDB7mv09D8zP47bO7u4-ZUB3ZbVBz41509STv0EFKPzpRRZwgwG0y4jP3SzDaJdWwlU8cWa4MxNS_cCit6JpknyjnEPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576393,"updated":1612576393,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -127,7 +127,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:41 GMT
+      - Sat, 06 Feb 2021 01:53:12 GMT
       expires:
       - '-1'
       pragma:
@@ -163,10 +163,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey291110ab7/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey291110ab7/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey291110ab7/d3fa082a4f3843a1bf0c518f964b5097","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"17T5XXwO7_3LBuA5tKLxlhR2eh62TYEHY2blXnLwkTgyHci0JyqnYf1Wa7x_zeEySXWpsYCxManRcIZZif7uk6-iANKSlKYq2IX0xsEabZzZkx-AzqwUUNouDmwET50RLMuWUzexrJpcxaEziTv1Blhmu6SUsILbb1Q0WnfNCmxcZh3rt3iy2lWuNuRWusehWdt-HW8UuWAu7vZgEYXea30og1vJeKgDk0z2Uefj1-J2UKDEp0DBqhli_L8nPpsvE5Fm9INbEmBPbg6FMC8dE7wkzN6RvThs9CGiAmr3yhKyctSMtyaKR1RPGA4-ZugEGXf0OLd0X8SSb0MOOIxRGQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612569282,"updated":1612569282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey291110ab7/42a7758686144edcb88f0e77bd9e9e33","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"4-W8kWInpZLCMhws0VhEfsHq3QyHDBh-KRHVb_E6Bj34TTVWt4JfAEHn2KzdUMNTrJSV24HU0HwY6wznqZOXN8TPO6_0qnQaUr4CSL7vJ7T5YfCTlIcEcvx5nAETuNWszGdGiU0GSLsQFWIFVskRomLGN3WsllyVV4BgTnI3rvwBen-D_ZHNHvRngwqx7KdTzQRXfi5dkwQUKI2okd-v0psi6IIrr3fcixpvVzlql3JCHZSGfljvzElYMem1Ibp5sZUV_xG4jEnHSmbYNRSskDK9exA1fFSgZaK4MXZmZ6-YhV6FtjGo__GdjgGk7P232tSyVoVPXACBijSIFCAG4Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612576393,"updated":1612576393,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -175,7 +175,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:41 GMT
+      - Sat, 06 Feb 2021 01:53:13 GMT
       expires:
       - '-1'
       pragma:
@@ -211,10 +211,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey391110ab7/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey391110ab7/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey391110ab7/2f43767ce5b645cc93acc88e18f9e814","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"7z-yR2cnQdRWWi0mZQM4hvVTqK_gQm0-8apXem6G63ti_2qMYA8oBwZbJWmvMAktHwMAt_qkfCjSre_aUh0GoPpyvBf4IojO6geFsGZGevi4q0O87BljmBR_yPg-_Wu7hhGOy_UqDZPfdC_3wo7XQ-0t4ADF0rBVcE1K8PTIGwmABbDTYx8mQC2KQs4eLqsffOhSswsK6TV8aY5kfwPEuioCHvoAlZ63su0tBmdWxEKMMdV9tb4NFTOJCoDxCtzwb11c-A4W9ndkMWeU7ZpLZk_Gpe56M1LBXMst3JTrZEqNtmLTJpGeSb2eYyN9sdCWOI_e9wZGiFM5k9ddzSKD7Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569282,"updated":1612569282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey391110ab7/09fca4ce809d4bb78556e6b50f8f34fa","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"mu_mg7OG0l8jh7g6ssjwN-Q6HbqrMMK-FmyIwky83ytR4VBIJy4uRL3kFz0F_lcKY9SKgOvVlDWktBFFK9xlg60zjzPCYdZ5-_Y4sWiYSdgbHR5OC9gCkHoqHqQPRJy_7ic12oX8MOJ9oAoCZ7QZ4XXguvctK6gIQSOTuOjGxIXw-5PeMmWMsd7E-Vwfxpaw-4NJUC_NQPSs_QsfERZde6LYajnHH5SGwkgfW6KgH6y6RT4K8zmiYD_W6zORTpbQtjwB5IED4oIVXY0Qd78t2Y2UjSq7KqqDbg3KVQr1SYhlNQ9zByXwT96xk6ZBhhrk4Yyl6HYmIV-WtksP7bWALQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576394,"updated":1612576394,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -223,7 +223,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:42 GMT
+      - Sat, 06 Feb 2021 01:53:13 GMT
       expires:
       - '-1'
       pragma:
@@ -259,10 +259,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey491110ab7/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey491110ab7/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey491110ab7/49693a7f04ff4fd0a04d2fbb18276f06","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vSt77LZK720yYLzcctrcmMEK0qDYWgSCw2vO6_UoSNKjrUd-ojRGCz15YJ3Eeu6DeaYTx61xaO0EutrvFa0amdtD0fT5yergmWKi013PyQl3VfSOYbsXqzwz__QLLqKIP4PriBOuyTZsQEZgRTWmHW86q1Ixg29RrqA8SakXrvcQpxYMdXZNruDi7zpugGA9xZMwipi1H_VqyythMqdaqA2AlPnnGNpW3pZ8pKTnFJDZTRS42PYpfkyvFCpiETqL2TLryOkLOP4TPudMQ_FbeBWQc7Q0vgPaQkPD2ZgXYplEH4TqUsBCDUYR_STwtmLRvReox2y3T6eegylWpSxc6Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569282,"updated":1612569282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey491110ab7/e26acb95b77f41bca8942a3741cc834f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"mNlOUfAoTR3JlBRBOTP2pDFQ0Nprtmn2DU3bEqk0s8sfEElbutpOMwYdBGYcch1pSyWWCdIHPGEdl4JSPN-Af0s3LPH_rjY8rV1sewxkJD_j1eG7bhesqozRiLegGdn1EZgu9NKS9Dyy06rQrOglaDwTkfaui8zSc3t2CTF4Td8917eW0pd_vBlJ6RHeRJkBAo7QEjrMzUlqgEz_uX4ypV1Mp9_Q-YOWDoVi-fLMZmhrDXqpiBa46MlykB2OktVfuVic4mj5vOoBSiKao5P-1zCGHPoWMMt2ToIjIOOTyrlgZ_5xisitZmapFWe5jpMFFplnwSnYlAAdVv8YyLIPTQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576394,"updated":1612576394,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -271,7 +271,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:42 GMT
+      - Sat, 06 Feb 2021 01:53:13 GMT
       expires:
       - '-1'
       pragma:
@@ -307,10 +307,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey591110ab7/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey591110ab7/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey591110ab7/e1bdc2066dc24741839e8061adefa9e9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tBLm4zc0HHtBj9UrGoQJK9o5S2MI71AeGdT4EBenxsqsiONFV89aTv6jlO5pS_pHyyReYF5UpV-dhzU4fYRXYVEWzmLzOUTosTHwCsYx0HEw-RHxPl1jRkYMtzoGZ5ju8DoKpzRgO6HDTPNlfCTfx2qbUqwbug__wj24c5i3SjB9gCgKxdlERPDAkvia501mVbOdSGzacdpQUcux85C9x1p89-Tls3uSxfWrqS_JV0exMleviht6A1ey9Ri6ERqpYixmqHdFkNWHtsExtyLUzPkydSLymiSYlE9uf_-etaVlkzYaV5BYvIjGU4Qy_R6xIkQUHvuxGUln3TzMb4MaEQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612569283,"updated":1612569283,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey591110ab7/e902f0b303174aa0aec77cca5bedc1a3","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"no0F8havqAbaqUN8kIaFTObsMdbI6w-QU_OdQqgygrbsX3-4rZPRLUXBFdDiGP_JXC_ZziJFrRcbJOIQe_URhL_NvP_ir5XVPCae1JDMtg9nu2n-ujdRMBEFSDCLtP1-ENnzqw94hHQIgxhgCpeMzUwsAuuje9czQlrDSXu0Zs63sKDvq_ff0NKSiZ8Sn551c-niBxZcgtTUcyztuEVC5dt9fGNj0-rNp9xbxNaGtIZQrMdXv7anHw32z6uVolzXR1dULQw0uUsLYxOz7QD5jK-8RrNnNRICcjLoSaJq8c4mvmWeq1IQi9XW1JG3bRiKnfV6hswKYtnrEaBZXajkSQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576394,"updated":1612576394,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -319,7 +319,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:42 GMT
+      - Sat, 06 Feb 2021 01:53:15 GMT
       expires:
       - '-1'
       pragma:
@@ -355,10 +355,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey691110ab7/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey691110ab7/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey691110ab7/ea887cdf927a4b4bad0077d4bc7cb144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"2-yH52nWphdtdm6lhaVajiA-v5QQeKRG4iOFE-_hW__MG59dPv6uS8ADP_9-1Etu9sEQ-E4byNO9qU4RVXrMme8FuSFIDq1BX-vLZmzNHIZo6FLcycBcOVDJ7LHydLuvZnQ6hibqMtec4JT8AARjo9BhC0-d8_q5Vx3d46ZeZ2CjgO41EPcBum7iE0e90VG_SL7ueaTPaTGKraWuj6U-rnb0reVYvK0II_bdjkooXphzuKi1qdHa2YayXu8zQx5tRH4qDoJol3eIKjMr7ThQj510nilxt9ulb5Rvfhq9ek9rpNYTCd2ZJBWxFxINFBnbAs4Xc3qhT5Ir6iacQOFN8Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569283,"updated":1612569283,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey691110ab7/5bafede4af3b4cfda0800a4ed4797e00","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umA4iCVKMFHQH9NJk2_HTWtzsOjxkfAqvdJe0MZOax4gdIGciNioghvCgpXaSBFKoUXvEJtr-8gKjvSXFipPvmzhrNBnIZTf7FFBRH7Q1PBmX7zAeJjM1qS-drJlYk7b6b558NENfWdEmb5niu6K8CNGF_P9_tcJ1UmPedION1kXZTeKB9Rk4W7YxaJV0DKiNOih_Bo7-Ko0U-lsB3KZMe4h8UyRakgym8oBS_fArD-99apd2HsaCp24hnEYtTXD88cnOEQFVTGuVTesObDydXc0WjCcyD-49rKyCNkUvaHo4OVZyq-zVPsfKDtoph73CaqNbT_ryNgyxwDlp2EteQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576395,"updated":1612576395,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -367,7 +367,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:43 GMT
+      - Sat, 06 Feb 2021 01:53:15 GMT
       expires:
       - '-1'
       pragma:
@@ -401,10 +401,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey091110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey091110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey091110ab7","deletedDate":1612569283,"scheduledPurgeDate":1620345283,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey091110ab7/b5e17cc3d59d4cda9d8f763bfd9bb92e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"zA_U_-x-Yg92eiyUPcEu8kVwFjoGNGZ85PbrmfBPK56GLUEf8wSrvFfwuXJdahzzmrWgNg6kGwrYs89kFVvqs-fN34xoNlQNBuaHMTOJUAfG7MSO1JFBqTQUCIXdw0pMBjJOK44iUJvpG5WZPzpZ13sxccNnP7m1di3MJy7MspG-ACge6b5gsoIzb8Q7UMCx6c_WmyBA34ZZ6exvwbjq2PTc4iFvPlFvCmBIABzDEZO7jpmPXCkSuIZLiVxbCZdrQgQoFj1J9DckUwt6lyXK2f1bf0xwOISjas694shNLVjrq4IPiXmbbHfNIq68hnP83pE4mTlN6u_nMfc_wm4O4Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569281,"updated":1612569281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey091110ab7","deletedDate":1612576395,"scheduledPurgeDate":1620352395,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey091110ab7/72dd5b7ee0174798935c062a921e5baf","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"qTeb8JhbKIcPU8Lubpn0N7F7t3v6NTde7nxE9akoXhzK5ZLPym7R3ZVignmaAwoqo4FIb0sWWCkZmnWpwp0oUgkfGR3JgHI68lIvAgK_NJS3vgWSwm-bgrSzPLzGkuqehNKzTi14i6Rg74FZMtNc9CKa9mGiDqBPy60DG7eYtmp_SiTjWAFht6hXSWHQY0NxbKIpOpdEBoWhLrtFgKr3loz7BtMURAwZgZaBtU0GACgqhMt-vOWYm2g_hb8WyX-FQ2m7UOsy_C3j-YfsWK9k9CyOJF8uTmZko3ImI7tkYBWdgLPrnKFLfhDD7t6KkSJ68hWjmtZKnTUetfmWgl4RDQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576393,"updated":1612576393,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -413,7 +413,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:43 GMT
+      - Sat, 06 Feb 2021 01:53:15 GMT
       expires:
       - '-1'
       pragma:
@@ -445,7 +445,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey091110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey091110ab7?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey091110ab7"}}'
@@ -457,7 +457,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:43 GMT
+      - Sat, 06 Feb 2021 01:53:15 GMT
       expires:
       - '-1'
       pragma:
@@ -489,10 +489,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey091110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey091110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey091110ab7","deletedDate":1612569283,"scheduledPurgeDate":1620345283,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey091110ab7/b5e17cc3d59d4cda9d8f763bfd9bb92e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"zA_U_-x-Yg92eiyUPcEu8kVwFjoGNGZ85PbrmfBPK56GLUEf8wSrvFfwuXJdahzzmrWgNg6kGwrYs89kFVvqs-fN34xoNlQNBuaHMTOJUAfG7MSO1JFBqTQUCIXdw0pMBjJOK44iUJvpG5WZPzpZ13sxccNnP7m1di3MJy7MspG-ACge6b5gsoIzb8Q7UMCx6c_WmyBA34ZZ6exvwbjq2PTc4iFvPlFvCmBIABzDEZO7jpmPXCkSuIZLiVxbCZdrQgQoFj1J9DckUwt6lyXK2f1bf0xwOISjas694shNLVjrq4IPiXmbbHfNIq68hnP83pE4mTlN6u_nMfc_wm4O4Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569281,"updated":1612569281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey091110ab7","deletedDate":1612576395,"scheduledPurgeDate":1620352395,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey091110ab7/72dd5b7ee0174798935c062a921e5baf","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"qTeb8JhbKIcPU8Lubpn0N7F7t3v6NTde7nxE9akoXhzK5ZLPym7R3ZVignmaAwoqo4FIb0sWWCkZmnWpwp0oUgkfGR3JgHI68lIvAgK_NJS3vgWSwm-bgrSzPLzGkuqehNKzTi14i6Rg74FZMtNc9CKa9mGiDqBPy60DG7eYtmp_SiTjWAFht6hXSWHQY0NxbKIpOpdEBoWhLrtFgKr3loz7BtMURAwZgZaBtU0GACgqhMt-vOWYm2g_hb8WyX-FQ2m7UOsy_C3j-YfsWK9k9CyOJF8uTmZko3ImI7tkYBWdgLPrnKFLfhDD7t6KkSJ68hWjmtZKnTUetfmWgl4RDQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576393,"updated":1612576393,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -501,7 +501,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:46 GMT
+      - Sat, 06 Feb 2021 01:53:17 GMT
       expires:
       - '-1'
       pragma:
@@ -535,10 +535,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey191110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey191110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey191110ab7","deletedDate":1612569286,"scheduledPurgeDate":1620345286,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey191110ab7/f9060607bc4e44a7b281176ba96eae74","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1RZJD_3AdRSaNQnHXhMsVBjzg9IcX0tLagFV5sbPO5ViNE1GAhR3mTzMzSeu4cH-Ym6CwTJ4se7VRFFEpDZjIg_onZR7ppRxglzOacxA1VBoT3Z3w8noJE8gEQDhRpUE8Cfz5aMbj2WqWQTrN3fC4djZCdLeeDmsHDfRLJfUYB3VNnd_JhyNPglw0sk-lvtWn9rWxAuvoO6HtsjKOjwPw8YmAoz4ZZveolATESfIxXbis0hihj8KISjokaHcQzN6GCuXcbrw2r9GNk3eAk_VPs1kVuyCjmbj5p-9r5Qqbr1FWsfUVr_co-NQ_y0vEhFG_LBxdB0INxNwb4_a_CbY0Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569281,"updated":1612569281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey191110ab7","deletedDate":1612576398,"scheduledPurgeDate":1620352398,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey191110ab7/bd14f8feddb049888f981df9fefc1ebd","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vhrCBbahqa0Nz88LjL21W-9FJtfNBDouRZDnhz6xC4AlXtHdjCEqBfnkwMn250AxLvRYNd_6WV9In41yL5P89BjfxKj5zi22BA0Ln1yF2zY22Tt259wBaERc3DGBk6Xp-fTKsMb03e886t_Uxnkz1mnuLVRt3ppkXH9HsxXhAvhb0eIGWo72XIgJ1Z0cysctojFv2vsHKjhnTQZBTQbYd5lR0B0fznPWTSQGs4LuhNM8mR3PvbjVbE6KsDMDB7mv09D8zP47bO7u4-ZUB3ZbVBz41509STv0EFKPzpRRZwgwG0y4jP3SzDaJdWwlU8cWa4MxNS_cCit6JpknyjnEPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576393,"updated":1612576393,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -547,7 +547,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:46 GMT
+      - Sat, 06 Feb 2021 01:53:18 GMT
       expires:
       - '-1'
       pragma:
@@ -579,7 +579,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey191110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey191110ab7?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey191110ab7"}}'
@@ -591,7 +591,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:46 GMT
+      - Sat, 06 Feb 2021 01:53:18 GMT
       expires:
       - '-1'
       pragma:
@@ -623,10 +623,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey191110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey191110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey191110ab7","deletedDate":1612569286,"scheduledPurgeDate":1620345286,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey191110ab7/f9060607bc4e44a7b281176ba96eae74","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1RZJD_3AdRSaNQnHXhMsVBjzg9IcX0tLagFV5sbPO5ViNE1GAhR3mTzMzSeu4cH-Ym6CwTJ4se7VRFFEpDZjIg_onZR7ppRxglzOacxA1VBoT3Z3w8noJE8gEQDhRpUE8Cfz5aMbj2WqWQTrN3fC4djZCdLeeDmsHDfRLJfUYB3VNnd_JhyNPglw0sk-lvtWn9rWxAuvoO6HtsjKOjwPw8YmAoz4ZZveolATESfIxXbis0hihj8KISjokaHcQzN6GCuXcbrw2r9GNk3eAk_VPs1kVuyCjmbj5p-9r5Qqbr1FWsfUVr_co-NQ_y0vEhFG_LBxdB0INxNwb4_a_CbY0Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569281,"updated":1612569281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey191110ab7","deletedDate":1612576398,"scheduledPurgeDate":1620352398,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey191110ab7/bd14f8feddb049888f981df9fefc1ebd","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vhrCBbahqa0Nz88LjL21W-9FJtfNBDouRZDnhz6xC4AlXtHdjCEqBfnkwMn250AxLvRYNd_6WV9In41yL5P89BjfxKj5zi22BA0Ln1yF2zY22Tt259wBaERc3DGBk6Xp-fTKsMb03e886t_Uxnkz1mnuLVRt3ppkXH9HsxXhAvhb0eIGWo72XIgJ1Z0cysctojFv2vsHKjhnTQZBTQbYd5lR0B0fznPWTSQGs4LuhNM8mR3PvbjVbE6KsDMDB7mv09D8zP47bO7u4-ZUB3ZbVBz41509STv0EFKPzpRRZwgwG0y4jP3SzDaJdWwlU8cWa4MxNS_cCit6JpknyjnEPQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576393,"updated":1612576393,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -635,7 +635,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:49 GMT
+      - Sat, 06 Feb 2021 01:53:20 GMT
       expires:
       - '-1'
       pragma:
@@ -669,10 +669,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey291110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey291110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey291110ab7","deletedDate":1612569289,"scheduledPurgeDate":1620345289,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey291110ab7/d3fa082a4f3843a1bf0c518f964b5097","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"17T5XXwO7_3LBuA5tKLxlhR2eh62TYEHY2blXnLwkTgyHci0JyqnYf1Wa7x_zeEySXWpsYCxManRcIZZif7uk6-iANKSlKYq2IX0xsEabZzZkx-AzqwUUNouDmwET50RLMuWUzexrJpcxaEziTv1Blhmu6SUsILbb1Q0WnfNCmxcZh3rt3iy2lWuNuRWusehWdt-HW8UuWAu7vZgEYXea30og1vJeKgDk0z2Uefj1-J2UKDEp0DBqhli_L8nPpsvE5Fm9INbEmBPbg6FMC8dE7wkzN6RvThs9CGiAmr3yhKyctSMtyaKR1RPGA4-ZugEGXf0OLd0X8SSb0MOOIxRGQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612569282,"updated":1612569282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey291110ab7","deletedDate":1612576401,"scheduledPurgeDate":1620352401,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey291110ab7/42a7758686144edcb88f0e77bd9e9e33","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"4-W8kWInpZLCMhws0VhEfsHq3QyHDBh-KRHVb_E6Bj34TTVWt4JfAEHn2KzdUMNTrJSV24HU0HwY6wznqZOXN8TPO6_0qnQaUr4CSL7vJ7T5YfCTlIcEcvx5nAETuNWszGdGiU0GSLsQFWIFVskRomLGN3WsllyVV4BgTnI3rvwBen-D_ZHNHvRngwqx7KdTzQRXfi5dkwQUKI2okd-v0psi6IIrr3fcixpvVzlql3JCHZSGfljvzElYMem1Ibp5sZUV_xG4jEnHSmbYNRSskDK9exA1fFSgZaK4MXZmZ6-YhV6FtjGo__GdjgGk7P232tSyVoVPXACBijSIFCAG4Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612576393,"updated":1612576393,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -681,7 +681,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:49 GMT
+      - Sat, 06 Feb 2021 01:53:20 GMT
       expires:
       - '-1'
       pragma:
@@ -713,7 +713,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey291110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey291110ab7?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey291110ab7"}}'
@@ -725,7 +725,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:49 GMT
+      - Sat, 06 Feb 2021 01:53:20 GMT
       expires:
       - '-1'
       pragma:
@@ -757,10 +757,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey291110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey291110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey291110ab7","deletedDate":1612569289,"scheduledPurgeDate":1620345289,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey291110ab7/d3fa082a4f3843a1bf0c518f964b5097","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"17T5XXwO7_3LBuA5tKLxlhR2eh62TYEHY2blXnLwkTgyHci0JyqnYf1Wa7x_zeEySXWpsYCxManRcIZZif7uk6-iANKSlKYq2IX0xsEabZzZkx-AzqwUUNouDmwET50RLMuWUzexrJpcxaEziTv1Blhmu6SUsILbb1Q0WnfNCmxcZh3rt3iy2lWuNuRWusehWdt-HW8UuWAu7vZgEYXea30og1vJeKgDk0z2Uefj1-J2UKDEp0DBqhli_L8nPpsvE5Fm9INbEmBPbg6FMC8dE7wkzN6RvThs9CGiAmr3yhKyctSMtyaKR1RPGA4-ZugEGXf0OLd0X8SSb0MOOIxRGQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612569282,"updated":1612569282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey291110ab7","deletedDate":1612576401,"scheduledPurgeDate":1620352401,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey291110ab7/42a7758686144edcb88f0e77bd9e9e33","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"4-W8kWInpZLCMhws0VhEfsHq3QyHDBh-KRHVb_E6Bj34TTVWt4JfAEHn2KzdUMNTrJSV24HU0HwY6wznqZOXN8TPO6_0qnQaUr4CSL7vJ7T5YfCTlIcEcvx5nAETuNWszGdGiU0GSLsQFWIFVskRomLGN3WsllyVV4BgTnI3rvwBen-D_ZHNHvRngwqx7KdTzQRXfi5dkwQUKI2okd-v0psi6IIrr3fcixpvVzlql3JCHZSGfljvzElYMem1Ibp5sZUV_xG4jEnHSmbYNRSskDK9exA1fFSgZaK4MXZmZ6-YhV6FtjGo__GdjgGk7P232tSyVoVPXACBijSIFCAG4Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612576393,"updated":1612576393,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -769,7 +769,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:51 GMT
+      - Sat, 06 Feb 2021 01:53:23 GMT
       expires:
       - '-1'
       pragma:
@@ -803,10 +803,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey391110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey391110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey391110ab7","deletedDate":1612569291,"scheduledPurgeDate":1620345291,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey391110ab7/2f43767ce5b645cc93acc88e18f9e814","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"7z-yR2cnQdRWWi0mZQM4hvVTqK_gQm0-8apXem6G63ti_2qMYA8oBwZbJWmvMAktHwMAt_qkfCjSre_aUh0GoPpyvBf4IojO6geFsGZGevi4q0O87BljmBR_yPg-_Wu7hhGOy_UqDZPfdC_3wo7XQ-0t4ADF0rBVcE1K8PTIGwmABbDTYx8mQC2KQs4eLqsffOhSswsK6TV8aY5kfwPEuioCHvoAlZ63su0tBmdWxEKMMdV9tb4NFTOJCoDxCtzwb11c-A4W9ndkMWeU7ZpLZk_Gpe56M1LBXMst3JTrZEqNtmLTJpGeSb2eYyN9sdCWOI_e9wZGiFM5k9ddzSKD7Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569282,"updated":1612569282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey391110ab7","deletedDate":1612576403,"scheduledPurgeDate":1620352403,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey391110ab7/09fca4ce809d4bb78556e6b50f8f34fa","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"mu_mg7OG0l8jh7g6ssjwN-Q6HbqrMMK-FmyIwky83ytR4VBIJy4uRL3kFz0F_lcKY9SKgOvVlDWktBFFK9xlg60zjzPCYdZ5-_Y4sWiYSdgbHR5OC9gCkHoqHqQPRJy_7ic12oX8MOJ9oAoCZ7QZ4XXguvctK6gIQSOTuOjGxIXw-5PeMmWMsd7E-Vwfxpaw-4NJUC_NQPSs_QsfERZde6LYajnHH5SGwkgfW6KgH6y6RT4K8zmiYD_W6zORTpbQtjwB5IED4oIVXY0Qd78t2Y2UjSq7KqqDbg3KVQr1SYhlNQ9zByXwT96xk6ZBhhrk4Yyl6HYmIV-WtksP7bWALQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576394,"updated":1612576394,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -815,7 +815,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:51 GMT
+      - Sat, 06 Feb 2021 01:53:23 GMT
       expires:
       - '-1'
       pragma:
@@ -847,7 +847,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey391110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey391110ab7?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey391110ab7"}}'
@@ -859,7 +859,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:51 GMT
+      - Sat, 06 Feb 2021 01:53:23 GMT
       expires:
       - '-1'
       pragma:
@@ -891,10 +891,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey391110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey391110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey391110ab7","deletedDate":1612569291,"scheduledPurgeDate":1620345291,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey391110ab7/2f43767ce5b645cc93acc88e18f9e814","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"7z-yR2cnQdRWWi0mZQM4hvVTqK_gQm0-8apXem6G63ti_2qMYA8oBwZbJWmvMAktHwMAt_qkfCjSre_aUh0GoPpyvBf4IojO6geFsGZGevi4q0O87BljmBR_yPg-_Wu7hhGOy_UqDZPfdC_3wo7XQ-0t4ADF0rBVcE1K8PTIGwmABbDTYx8mQC2KQs4eLqsffOhSswsK6TV8aY5kfwPEuioCHvoAlZ63su0tBmdWxEKMMdV9tb4NFTOJCoDxCtzwb11c-A4W9ndkMWeU7ZpLZk_Gpe56M1LBXMst3JTrZEqNtmLTJpGeSb2eYyN9sdCWOI_e9wZGiFM5k9ddzSKD7Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569282,"updated":1612569282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey391110ab7","deletedDate":1612576403,"scheduledPurgeDate":1620352403,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey391110ab7/09fca4ce809d4bb78556e6b50f8f34fa","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"mu_mg7OG0l8jh7g6ssjwN-Q6HbqrMMK-FmyIwky83ytR4VBIJy4uRL3kFz0F_lcKY9SKgOvVlDWktBFFK9xlg60zjzPCYdZ5-_Y4sWiYSdgbHR5OC9gCkHoqHqQPRJy_7ic12oX8MOJ9oAoCZ7QZ4XXguvctK6gIQSOTuOjGxIXw-5PeMmWMsd7E-Vwfxpaw-4NJUC_NQPSs_QsfERZde6LYajnHH5SGwkgfW6KgH6y6RT4K8zmiYD_W6zORTpbQtjwB5IED4oIVXY0Qd78t2Y2UjSq7KqqDbg3KVQr1SYhlNQ9zByXwT96xk6ZBhhrk4Yyl6HYmIV-WtksP7bWALQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576394,"updated":1612576394,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -903,7 +903,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:53 GMT
+      - Sat, 06 Feb 2021 01:53:26 GMT
       expires:
       - '-1'
       pragma:
@@ -937,10 +937,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey491110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey491110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey491110ab7","deletedDate":1612569294,"scheduledPurgeDate":1620345294,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey491110ab7/49693a7f04ff4fd0a04d2fbb18276f06","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vSt77LZK720yYLzcctrcmMEK0qDYWgSCw2vO6_UoSNKjrUd-ojRGCz15YJ3Eeu6DeaYTx61xaO0EutrvFa0amdtD0fT5yergmWKi013PyQl3VfSOYbsXqzwz__QLLqKIP4PriBOuyTZsQEZgRTWmHW86q1Ixg29RrqA8SakXrvcQpxYMdXZNruDi7zpugGA9xZMwipi1H_VqyythMqdaqA2AlPnnGNpW3pZ8pKTnFJDZTRS42PYpfkyvFCpiETqL2TLryOkLOP4TPudMQ_FbeBWQc7Q0vgPaQkPD2ZgXYplEH4TqUsBCDUYR_STwtmLRvReox2y3T6eegylWpSxc6Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569282,"updated":1612569282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey491110ab7","deletedDate":1612576406,"scheduledPurgeDate":1620352406,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey491110ab7/e26acb95b77f41bca8942a3741cc834f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"mNlOUfAoTR3JlBRBOTP2pDFQ0Nprtmn2DU3bEqk0s8sfEElbutpOMwYdBGYcch1pSyWWCdIHPGEdl4JSPN-Af0s3LPH_rjY8rV1sewxkJD_j1eG7bhesqozRiLegGdn1EZgu9NKS9Dyy06rQrOglaDwTkfaui8zSc3t2CTF4Td8917eW0pd_vBlJ6RHeRJkBAo7QEjrMzUlqgEz_uX4ypV1Mp9_Q-YOWDoVi-fLMZmhrDXqpiBa46MlykB2OktVfuVic4mj5vOoBSiKao5P-1zCGHPoWMMt2ToIjIOOTyrlgZ_5xisitZmapFWe5jpMFFplnwSnYlAAdVv8YyLIPTQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576394,"updated":1612576394,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -949,7 +949,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:53 GMT
+      - Sat, 06 Feb 2021 01:53:26 GMT
       expires:
       - '-1'
       pragma:
@@ -981,7 +981,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey491110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey491110ab7?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey491110ab7"}}'
@@ -993,7 +993,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:54 GMT
+      - Sat, 06 Feb 2021 01:53:26 GMT
       expires:
       - '-1'
       pragma:
@@ -1025,10 +1025,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey491110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey491110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey491110ab7","deletedDate":1612569294,"scheduledPurgeDate":1620345294,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey491110ab7/49693a7f04ff4fd0a04d2fbb18276f06","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vSt77LZK720yYLzcctrcmMEK0qDYWgSCw2vO6_UoSNKjrUd-ojRGCz15YJ3Eeu6DeaYTx61xaO0EutrvFa0amdtD0fT5yergmWKi013PyQl3VfSOYbsXqzwz__QLLqKIP4PriBOuyTZsQEZgRTWmHW86q1Ixg29RrqA8SakXrvcQpxYMdXZNruDi7zpugGA9xZMwipi1H_VqyythMqdaqA2AlPnnGNpW3pZ8pKTnFJDZTRS42PYpfkyvFCpiETqL2TLryOkLOP4TPudMQ_FbeBWQc7Q0vgPaQkPD2ZgXYplEH4TqUsBCDUYR_STwtmLRvReox2y3T6eegylWpSxc6Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569282,"updated":1612569282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey491110ab7","deletedDate":1612576406,"scheduledPurgeDate":1620352406,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey491110ab7/e26acb95b77f41bca8942a3741cc834f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"mNlOUfAoTR3JlBRBOTP2pDFQ0Nprtmn2DU3bEqk0s8sfEElbutpOMwYdBGYcch1pSyWWCdIHPGEdl4JSPN-Af0s3LPH_rjY8rV1sewxkJD_j1eG7bhesqozRiLegGdn1EZgu9NKS9Dyy06rQrOglaDwTkfaui8zSc3t2CTF4Td8917eW0pd_vBlJ6RHeRJkBAo7QEjrMzUlqgEz_uX4ypV1Mp9_Q-YOWDoVi-fLMZmhrDXqpiBa46MlykB2OktVfuVic4mj5vOoBSiKao5P-1zCGHPoWMMt2ToIjIOOTyrlgZ_5xisitZmapFWe5jpMFFplnwSnYlAAdVv8YyLIPTQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576394,"updated":1612576394,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -1037,7 +1037,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:57 GMT
+      - Sat, 06 Feb 2021 01:53:28 GMT
       expires:
       - '-1'
       pragma:
@@ -1071,10 +1071,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey591110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey591110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey591110ab7","deletedDate":1612569297,"scheduledPurgeDate":1620345297,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey591110ab7/e1bdc2066dc24741839e8061adefa9e9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tBLm4zc0HHtBj9UrGoQJK9o5S2MI71AeGdT4EBenxsqsiONFV89aTv6jlO5pS_pHyyReYF5UpV-dhzU4fYRXYVEWzmLzOUTosTHwCsYx0HEw-RHxPl1jRkYMtzoGZ5ju8DoKpzRgO6HDTPNlfCTfx2qbUqwbug__wj24c5i3SjB9gCgKxdlERPDAkvia501mVbOdSGzacdpQUcux85C9x1p89-Tls3uSxfWrqS_JV0exMleviht6A1ey9Ri6ERqpYixmqHdFkNWHtsExtyLUzPkydSLymiSYlE9uf_-etaVlkzYaV5BYvIjGU4Qy_R6xIkQUHvuxGUln3TzMb4MaEQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612569283,"updated":1612569283,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey591110ab7","deletedDate":1612576409,"scheduledPurgeDate":1620352409,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey591110ab7/e902f0b303174aa0aec77cca5bedc1a3","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"no0F8havqAbaqUN8kIaFTObsMdbI6w-QU_OdQqgygrbsX3-4rZPRLUXBFdDiGP_JXC_ZziJFrRcbJOIQe_URhL_NvP_ir5XVPCae1JDMtg9nu2n-ujdRMBEFSDCLtP1-ENnzqw94hHQIgxhgCpeMzUwsAuuje9czQlrDSXu0Zs63sKDvq_ff0NKSiZ8Sn551c-niBxZcgtTUcyztuEVC5dt9fGNj0-rNp9xbxNaGtIZQrMdXv7anHw32z6uVolzXR1dULQw0uUsLYxOz7QD5jK-8RrNnNRICcjLoSaJq8c4mvmWeq1IQi9XW1JG3bRiKnfV6hswKYtnrEaBZXajkSQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576394,"updated":1612576394,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -1083,7 +1083,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:57 GMT
+      - Sat, 06 Feb 2021 01:53:28 GMT
       expires:
       - '-1'
       pragma:
@@ -1115,7 +1115,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey591110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey591110ab7?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey591110ab7"}}'
@@ -1127,7 +1127,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:57 GMT
+      - Sat, 06 Feb 2021 01:53:28 GMT
       expires:
       - '-1'
       pragma:
@@ -1159,10 +1159,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey591110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey591110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey591110ab7","deletedDate":1612569297,"scheduledPurgeDate":1620345297,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey591110ab7/e1bdc2066dc24741839e8061adefa9e9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tBLm4zc0HHtBj9UrGoQJK9o5S2MI71AeGdT4EBenxsqsiONFV89aTv6jlO5pS_pHyyReYF5UpV-dhzU4fYRXYVEWzmLzOUTosTHwCsYx0HEw-RHxPl1jRkYMtzoGZ5ju8DoKpzRgO6HDTPNlfCTfx2qbUqwbug__wj24c5i3SjB9gCgKxdlERPDAkvia501mVbOdSGzacdpQUcux85C9x1p89-Tls3uSxfWrqS_JV0exMleviht6A1ey9Ri6ERqpYixmqHdFkNWHtsExtyLUzPkydSLymiSYlE9uf_-etaVlkzYaV5BYvIjGU4Qy_R6xIkQUHvuxGUln3TzMb4MaEQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612569283,"updated":1612569283,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey591110ab7","deletedDate":1612576409,"scheduledPurgeDate":1620352409,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey591110ab7/e902f0b303174aa0aec77cca5bedc1a3","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"no0F8havqAbaqUN8kIaFTObsMdbI6w-QU_OdQqgygrbsX3-4rZPRLUXBFdDiGP_JXC_ZziJFrRcbJOIQe_URhL_NvP_ir5XVPCae1JDMtg9nu2n-ujdRMBEFSDCLtP1-ENnzqw94hHQIgxhgCpeMzUwsAuuje9czQlrDSXu0Zs63sKDvq_ff0NKSiZ8Sn551c-niBxZcgtTUcyztuEVC5dt9fGNj0-rNp9xbxNaGtIZQrMdXv7anHw32z6uVolzXR1dULQw0uUsLYxOz7QD5jK-8RrNnNRICcjLoSaJq8c4mvmWeq1IQi9XW1JG3bRiKnfV6hswKYtnrEaBZXajkSQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576394,"updated":1612576394,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -1171,7 +1171,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:59 GMT
+      - Sat, 06 Feb 2021 01:53:31 GMT
       expires:
       - '-1'
       pragma:
@@ -1205,10 +1205,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkey691110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey691110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey691110ab7","deletedDate":1612569300,"scheduledPurgeDate":1620345300,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey691110ab7/ea887cdf927a4b4bad0077d4bc7cb144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"2-yH52nWphdtdm6lhaVajiA-v5QQeKRG4iOFE-_hW__MG59dPv6uS8ADP_9-1Etu9sEQ-E4byNO9qU4RVXrMme8FuSFIDq1BX-vLZmzNHIZo6FLcycBcOVDJ7LHydLuvZnQ6hibqMtec4JT8AARjo9BhC0-d8_q5Vx3d46ZeZ2CjgO41EPcBum7iE0e90VG_SL7ueaTPaTGKraWuj6U-rnb0reVYvK0II_bdjkooXphzuKi1qdHa2YayXu8zQx5tRH4qDoJol3eIKjMr7ThQj510nilxt9ulb5Rvfhq9ek9rpNYTCd2ZJBWxFxINFBnbAs4Xc3qhT5Ir6iacQOFN8Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569283,"updated":1612569283,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey691110ab7","deletedDate":1612576411,"scheduledPurgeDate":1620352411,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey691110ab7/5bafede4af3b4cfda0800a4ed4797e00","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umA4iCVKMFHQH9NJk2_HTWtzsOjxkfAqvdJe0MZOax4gdIGciNioghvCgpXaSBFKoUXvEJtr-8gKjvSXFipPvmzhrNBnIZTf7FFBRH7Q1PBmX7zAeJjM1qS-drJlYk7b6b558NENfWdEmb5niu6K8CNGF_P9_tcJ1UmPedION1kXZTeKB9Rk4W7YxaJV0DKiNOih_Bo7-Ko0U-lsB3KZMe4h8UyRakgym8oBS_fArD-99apd2HsaCp24hnEYtTXD88cnOEQFVTGuVTesObDydXc0WjCcyD-49rKyCNkUvaHo4OVZyq-zVPsfKDtoph73CaqNbT_ryNgyxwDlp2EteQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576395,"updated":1612576395,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -1217,7 +1217,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:59 GMT
+      - Sat, 06 Feb 2021 01:53:31 GMT
       expires:
       - '-1'
       pragma:
@@ -1249,7 +1249,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey691110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey691110ab7?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey691110ab7"}}'
@@ -1261,7 +1261,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:54:59 GMT
+      - Sat, 06 Feb 2021 01:53:31 GMT
       expires:
       - '-1'
       pragma:
@@ -1293,10 +1293,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey691110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey691110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey691110ab7","deletedDate":1612569300,"scheduledPurgeDate":1620345300,"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey691110ab7/ea887cdf927a4b4bad0077d4bc7cb144","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"2-yH52nWphdtdm6lhaVajiA-v5QQeKRG4iOFE-_hW__MG59dPv6uS8ADP_9-1Etu9sEQ-E4byNO9qU4RVXrMme8FuSFIDq1BX-vLZmzNHIZo6FLcycBcOVDJ7LHydLuvZnQ6hibqMtec4JT8AARjo9BhC0-d8_q5Vx3d46ZeZ2CjgO41EPcBum7iE0e90VG_SL7ueaTPaTGKraWuj6U-rnb0reVYvK0II_bdjkooXphzuKi1qdHa2YayXu8zQx5tRH4qDoJol3eIKjMr7ThQj510nilxt9ulb5Rvfhq9ek9rpNYTCd2ZJBWxFxINFBnbAs4Xc3qhT5Ir6iacQOFN8Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569283,"updated":1612569283,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey691110ab7","deletedDate":1612576411,"scheduledPurgeDate":1620352411,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey691110ab7/5bafede4af3b4cfda0800a4ed4797e00","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"umA4iCVKMFHQH9NJk2_HTWtzsOjxkfAqvdJe0MZOax4gdIGciNioghvCgpXaSBFKoUXvEJtr-8gKjvSXFipPvmzhrNBnIZTf7FFBRH7Q1PBmX7zAeJjM1qS-drJlYk7b6b558NENfWdEmb5niu6K8CNGF_P9_tcJ1UmPedION1kXZTeKB9Rk4W7YxaJV0DKiNOih_Bo7-Ko0U-lsB3KZMe4h8UyRakgym8oBS_fArD-99apd2HsaCp24hnEYtTXD88cnOEQFVTGuVTesObDydXc0WjCcyD-49rKyCNkUvaHo4OVZyq-zVPsfKDtoph73CaqNbT_ryNgyxwDlp2EteQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576395,"updated":1612576395,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -1305,7 +1305,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:01 GMT
+      - Sat, 06 Feb 2021 01:53:33 GMT
       expires:
       - '-1'
       pragma:
@@ -1337,11 +1337,11 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview
   response:
     body:
-      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestcrud-rsa-key51c4108d","deletedDate":1612569235,"scheduledPurgeDate":1620345235,"kid":"https://vaultname.vault.azure.netkeys/livekvtestcrud-rsa-key51c4108d","attributes":{"enabled":true,"exp":2524723200,"created":1612569232,"updated":1612569234,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
-        tag"}}],"nextLink":"https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNTYhTURBd01EY3hJV3RsZVM5TVNWWkZTMVpVUlZOVVJVTXRWa1ZTU1VaWkxWQXRNalUyUzBGRk9USXhNamhHTHpCRE5UUTROMFl6TlRnME5EUkRRa0ZCTWtGRFJVSkVSalUwTVRsR1FVRTBJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9"}'
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key51c4108d","deletedDate":1612576344,"scheduledPurgeDate":1620352344,"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-rsa-key51c4108d","attributes":{"enabled":true,"exp":2524723200,"created":1612576342,"updated":1612576344,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
+        tag"}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNTYhTURBd01EY3hJV3RsZVM5TVNWWkZTMVpVUlZOVVJVTXRWa1ZTU1VaWkxWQXRNalUyUzBGRk9USXhNamhHTHpCRE5UUTROMFl6TlRnME5EUkRRa0ZCTWtGRFJVSkVSalUwTVRsR1FVRTBJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9"}'
     headers:
       cache-control:
       - no-cache
@@ -1350,7 +1350,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:05 GMT
+      - Sat, 06 Feb 2021 01:53:33 GMT
       expires:
       - '-1'
       pragma:
@@ -1382,10 +1382,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNTYhTURBd01EY3hJV3RsZVM5TVNWWkZTMVpVUlZOVVJVTXRWa1ZTU1VaWkxWQXRNalUyUzBGRk9USXhNamhHTHpCRE5UUTROMFl6TlRnME5EUkRRa0ZCTWtGRFJVSkVSalUwTVRsR1FVRTBJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNTYhTURBd01EY3hJV3RsZVM5TVNWWkZTMVpVUlZOVVJVTXRWa1ZTU1VaWkxWQXRNalUyUzBGRk9USXhNamhHTHpCRE5UUTROMFl6TlRnME5EUkRRa0ZCTWtGRFJVSkVSalUwTVRsR1FVRTBJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9
   response:
     body:
-      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey030c90fa1","deletedDate":1612569258,"scheduledPurgeDate":1620345258,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey030c90fa1","attributes":{"enabled":true,"created":1612569245,"updated":1612569245,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey091110ab7","deletedDate":1612569283,"scheduledPurgeDate":1620345283,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey091110ab7","attributes":{"enabled":true,"created":1612569281,"updated":1612569281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1FSTBSRVF3UXpCQklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey030c90fa1","deletedDate":1612576374,"scheduledPurgeDate":1620352374,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey030c90fa1","attributes":{"enabled":true,"created":1612576358,"updated":1612576358,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey091110ab7","deletedDate":1612576395,"scheduledPurgeDate":1620352395,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey091110ab7","attributes":{"enabled":true,"created":1612576393,"updated":1612576393,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1UTXdRemt3UmtFeElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control:
       - no-cache
@@ -1394,7 +1394,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:06 GMT
+      - Sat, 06 Feb 2021 01:53:35 GMT
       expires:
       - '-1'
       pragma:
@@ -1426,10 +1426,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1FSTBSRVF3UXpCQklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1UTXdRemt3UmtFeElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
-      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey130c90fa1","deletedDate":1612569263,"scheduledPurgeDate":1620345263,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey130c90fa1","attributes":{"enabled":true,"created":1612569245,"updated":1612569245,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey191110ab7","deletedDate":1612569286,"scheduledPurgeDate":1620345286,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey191110ab7","attributes":{"enabled":true,"created":1612569281,"updated":1612569281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey230c90fa1","deletedDate":1612569250,"scheduledPurgeDate":1620345250,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey230c90fa1","attributes":{"enabled":true,"created":1612569245,"updated":1612569245,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey291110ab7","deletedDate":1612569289,"scheduledPurgeDate":1620345289,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey291110ab7","attributes":{"enabled":true,"created":1612569282,"updated":1612569282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey330c90fa1","deletedDate":1612569261,"scheduledPurgeDate":1620345261,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey330c90fa1","attributes":{"enabled":true,"created":1612569246,"updated":1612569246,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey391110ab7","deletedDate":1612569291,"scheduledPurgeDate":1620345291,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey391110ab7","attributes":{"enabled":true,"created":1612569282,"updated":1612569282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey430c90fa1","deletedDate":1612569247,"scheduledPurgeDate":1620345247,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey430c90fa1","attributes":{"enabled":true,"created":1612569246,"updated":1612569246,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey491110ab7","deletedDate":1612569294,"scheduledPurgeDate":1620345294,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey491110ab7","attributes":{"enabled":true,"created":1612569282,"updated":1612569282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey530c90fa1","deletedDate":1612569253,"scheduledPurgeDate":1620345253,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey530c90fa1","attributes":{"enabled":true,"created":1612569247,"updated":1612569247,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpOVE13UXprd1JrRXhMMFF3TkRZNE1qaEJNMFExUkRRME1UTkNOelF3TlVZMlJqVTROa05ETmtVM0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey130c90fa1","deletedDate":1612576376,"scheduledPurgeDate":1620352376,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey130c90fa1","attributes":{"enabled":true,"created":1612576358,"updated":1612576358,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey191110ab7","deletedDate":1612576398,"scheduledPurgeDate":1620352398,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey191110ab7","attributes":{"enabled":true,"created":1612576393,"updated":1612576393,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey230c90fa1","deletedDate":1612576371,"scheduledPurgeDate":1620352371,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey230c90fa1","attributes":{"enabled":true,"created":1612576359,"updated":1612576359,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey291110ab7","deletedDate":1612576401,"scheduledPurgeDate":1620352401,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey291110ab7","attributes":{"enabled":true,"created":1612576393,"updated":1612576393,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey330c90fa1","deletedDate":1612576363,"scheduledPurgeDate":1620352363,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey330c90fa1","attributes":{"enabled":true,"created":1612576359,"updated":1612576359,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey391110ab7","deletedDate":1612576403,"scheduledPurgeDate":1620352403,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey391110ab7","attributes":{"enabled":true,"created":1612576394,"updated":1612576394,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey430c90fa1","deletedDate":1612576368,"scheduledPurgeDate":1620352368,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey430c90fa1","attributes":{"enabled":true,"created":1612576359,"updated":1612576359,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey491110ab7","deletedDate":1612576406,"scheduledPurgeDate":1620352406,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey491110ab7","attributes":{"enabled":true,"created":1612576394,"updated":1612576394,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey530c90fa1","deletedDate":1612576360,"scheduledPurgeDate":1620352360,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey530c90fa1","attributes":{"enabled":true,"created":1612576360,"updated":1612576360,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpOVE13UXprd1JrRXhMelpCTUVZeU9FRTRORFEwUlRRMk5USkJOVUUxUXpRNU5rSTBOalpFT1ROR0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control:
       - no-cache
@@ -1438,7 +1438,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:06 GMT
+      - Sat, 06 Feb 2021 01:53:35 GMT
       expires:
       - '-1'
       pragma:
@@ -1470,10 +1470,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpOVE13UXprd1JrRXhMMFF3TkRZNE1qaEJNMFExUkRRME1UTkNOelF3TlVZMlJqVTROa05ETmtVM0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpOVE13UXprd1JrRXhMelpCTUVZeU9FRTRORFEwUlRRMk5USkJOVUUxUXpRNU5rSTBOalpFT1ROR0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
-      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey591110ab7","deletedDate":1612569297,"scheduledPurgeDate":1620345297,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey591110ab7","attributes":{"enabled":true,"created":1612569283,"updated":1612569283,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey630c90fa1","deletedDate":1612569255,"scheduledPurgeDate":1620345255,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey630c90fa1","attributes":{"enabled":true,"created":1612569247,"updated":1612569247,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey691110ab7","deletedDate":1612569300,"scheduledPurgeDate":1620345300,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey691110ab7","attributes":{"enabled":true,"created":1612569283,"updated":1612569283,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDQhTURBd01ETXpJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJMVVZZVUVsU1JVUTBORE5HTVVFeE1DRXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey591110ab7","deletedDate":1612576409,"scheduledPurgeDate":1620352409,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey591110ab7","attributes":{"enabled":true,"created":1612576394,"updated":1612576394,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey630c90fa1","deletedDate":1612576366,"scheduledPurgeDate":1620352366,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey630c90fa1","attributes":{"enabled":true,"created":1612576360,"updated":1612576360,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey691110ab7","deletedDate":1612576411,"scheduledPurgeDate":1620352411,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey691110ab7","attributes":{"enabled":true,"created":1612576395,"updated":1612576395,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDQhTURBd01ETXpJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJMVVZZVUVsU1JVUTBORE5HTVVFeE1DRXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control:
       - no-cache
@@ -1482,7 +1482,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:06 GMT
+      - Sat, 06 Feb 2021 01:53:36 GMT
       expires:
       - '-1'
       pragma:
@@ -1514,10 +1514,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDQhTURBd01ETXpJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJMVVZZVUVsU1JVUTBORE5HTVVFeE1DRXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDQhTURBd01ETXpJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJMVVZZVUVsU1JVUTBORE5HTVVFeE1DRXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
-      string: '{"value":[],"nextLink":"https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNTIhTURBd01EY3dJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJMVlpGVWtsR1dTMDBNRGsyTlRWRE5ERXdPVEF2TURRNFJUUkZNakV6TVRBMU5EVXpSamhFUVRoQk5qRXpRMFJCTkRCRk5VRWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+      string: '{"value":[],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNTIhTURBd01EY3dJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJMVlpGVWtsR1dTMHlNRFE0TlRWRE5ERXdPVEF2TURCRFJUSXdNRVF5TVVWQ05EWTNPVGxFTkROQ056SXpOVVEzTkRoRU5qa2hNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control:
       - no-cache
@@ -1526,7 +1526,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:07 GMT
+      - Sat, 06 Feb 2021 01:53:36 GMT
       expires:
       - '-1'
       pragma:
@@ -1558,7 +1558,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNTIhTURBd01EY3dJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJMVlpGVWtsR1dTMDBNRGsyTlRWRE5ERXdPVEF2TURRNFJUUkZNakV6TVRBMU5EVXpSamhFUVRoQk5qRXpRMFJCTkRCRk5VRWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNTIhTURBd01EY3dJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJMVlpGVWtsR1dTMHlNRFE0TlRWRE5ERXdPVEF2TURCRFJUSXdNRVF5TVVWQ05EWTNPVGxFTkROQ056SXpOVVEzTkRoRU5qa2hNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
       string: '{"value":[],"nextLink":null}'
@@ -1570,7 +1570,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:08 GMT
+      - Sat, 06 Feb 2021 01:53:36 GMT
       expires:
       - '-1'
       pragma:
@@ -1604,7 +1604,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey091110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey091110ab7?api-version=7.2-preview
   response:
     body:
       string: ''
@@ -1612,7 +1612,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Fri, 05 Feb 2021 23:55:08 GMT
+      - Sat, 06 Feb 2021 01:53:37 GMT
       expires:
       - '-1'
       pragma:
@@ -1646,7 +1646,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey191110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey191110ab7?api-version=7.2-preview
   response:
     body:
       string: ''
@@ -1654,7 +1654,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Fri, 05 Feb 2021 23:55:08 GMT
+      - Sat, 06 Feb 2021 01:53:37 GMT
       expires:
       - '-1'
       pragma:
@@ -1688,7 +1688,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey291110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey291110ab7?api-version=7.2-preview
   response:
     body:
       string: ''
@@ -1696,7 +1696,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Fri, 05 Feb 2021 23:55:08 GMT
+      - Sat, 06 Feb 2021 01:53:37 GMT
       expires:
       - '-1'
       pragma:
@@ -1730,7 +1730,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey391110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey391110ab7?api-version=7.2-preview
   response:
     body:
       string: ''
@@ -1738,7 +1738,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Fri, 05 Feb 2021 23:55:08 GMT
+      - Sat, 06 Feb 2021 01:53:37 GMT
       expires:
       - '-1'
       pragma:
@@ -1772,7 +1772,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey491110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey491110ab7?api-version=7.2-preview
   response:
     body:
       string: ''
@@ -1780,7 +1780,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Fri, 05 Feb 2021 23:55:10 GMT
+      - Sat, 06 Feb 2021 01:53:38 GMT
       expires:
       - '-1'
       pragma:
@@ -1814,7 +1814,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey591110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey591110ab7?api-version=7.2-preview
   response:
     body:
       string: ''
@@ -1822,7 +1822,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Fri, 05 Feb 2021 23:55:10 GMT
+      - Sat, 06 Feb 2021 01:53:38 GMT
       expires:
       - '-1'
       pragma:
@@ -1856,7 +1856,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey691110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey691110ab7?api-version=7.2-preview
   response:
     body:
       string: ''
@@ -1864,7 +1864,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Fri, 05 Feb 2021 23:55:10 GMT
+      - Sat, 06 Feb 2021 01:53:38 GMT
       expires:
       - '-1'
       pragma:
@@ -1896,19 +1896,22 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey091110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey091110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey091110ab7"}}'
+      string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey091110ab7
+        was not found in this key vault. If you recently deleted this key you may
+        be able to recover it using the correct recovery command. For help resolving
+        this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '90'
+      - '310'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:11 GMT
+      - Sat, 06 Feb 2021 01:53:38 GMT
       expires:
       - '-1'
       pragma:
@@ -1940,19 +1943,22 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey191110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey191110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey191110ab7"}}'
+      string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey191110ab7
+        was not found in this key vault. If you recently deleted this key you may
+        be able to recover it using the correct recovery command. For help resolving
+        this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '90'
+      - '310'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:11 GMT
+      - Sat, 06 Feb 2021 01:53:38 GMT
       expires:
       - '-1'
       pragma:
@@ -1984,7 +1990,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey291110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey291110ab7?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey291110ab7
@@ -1999,7 +2005,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:11 GMT
+      - Sat, 06 Feb 2021 01:53:39 GMT
       expires:
       - '-1'
       pragma:
@@ -2031,7 +2037,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey391110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey391110ab7?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey391110ab7
@@ -2046,7 +2052,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:11 GMT
+      - Sat, 06 Feb 2021 01:53:39 GMT
       expires:
       - '-1'
       pragma:
@@ -2078,7 +2084,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey491110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey491110ab7?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey491110ab7
@@ -2093,7 +2099,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:11 GMT
+      - Sat, 06 Feb 2021 01:53:39 GMT
       expires:
       - '-1'
       pragma:
@@ -2125,7 +2131,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey591110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey591110ab7?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey591110ab7
@@ -2140,7 +2146,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:11 GMT
+      - Sat, 06 Feb 2021 01:53:39 GMT
       expires:
       - '-1'
       pragma:
@@ -2172,22 +2178,19 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys/livekvtestkey691110ab7?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey691110ab7?api-version=7.2-preview
   response:
     body:
-      string: '{"error":{"code":"KeyNotFound","message":"A key with (name/id) livekvtestkey691110ab7
-        was not found in this key vault. If you recently deleted this key you may
-        be able to recover it using the correct recovery command. For help resolving
-        this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182"}}'
+      string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey691110ab7"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '310'
+      - '90'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:12 GMT
+      - Sat, 06 Feb 2021 01:53:39 GMT
       expires:
       - '-1'
       pragma:
@@ -2219,11 +2222,11 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview
   response:
     body:
-      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestcrud-rsa-key51c4108d","deletedDate":1612569235,"scheduledPurgeDate":1620345235,"kid":"https://vaultname.vault.azure.netkeys/livekvtestcrud-rsa-key51c4108d","attributes":{"enabled":true,"exp":2524723200,"created":1612569232,"updated":1612569234,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
-        tag"}}],"nextLink":"https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNTYhTURBd01EY3hJV3RsZVM5TVNWWkZTMVpVUlZOVVJVTXRWa1ZTU1VaWkxWQXRNalUyUzBGRk9USXhNamhHTHpCRE5UUTROMFl6TlRnME5EUkRRa0ZCTWtGRFJVSkVSalUwTVRsR1FVRTBJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9"}'
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key51c4108d","deletedDate":1612576344,"scheduledPurgeDate":1620352344,"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-rsa-key51c4108d","attributes":{"enabled":true,"exp":2524723200,"created":1612576342,"updated":1612576344,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
+        tag"}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNTYhTURBd01EY3hJV3RsZVM5TVNWWkZTMVpVUlZOVVJVTXRWa1ZTU1VaWkxWQXRNalUyUzBGRk9USXhNamhHTHpCRE5UUTROMFl6TlRnME5EUkRRa0ZCTWtGRFJVSkVSalUwTVRsR1FVRTBJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9"}'
     headers:
       cache-control:
       - no-cache
@@ -2232,7 +2235,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:12 GMT
+      - Sat, 06 Feb 2021 01:53:40 GMT
       expires:
       - '-1'
       pragma:
@@ -2264,10 +2267,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNTYhTURBd01EY3hJV3RsZVM5TVNWWkZTMVpVUlZOVVJVTXRWa1ZTU1VaWkxWQXRNalUyUzBGRk9USXhNamhHTHpCRE5UUTROMFl6TlRnME5EUkRRa0ZCTWtGRFJVSkVSalUwTVRsR1FVRTBJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNTYhTURBd01EY3hJV3RsZVM5TVNWWkZTMVpVUlZOVVJVTXRWa1ZTU1VaWkxWQXRNalUyUzBGRk9USXhNamhHTHpCRE5UUTROMFl6TlRnME5EUkRRa0ZCTWtGRFJVSkVSalUwTVRsR1FVRTBJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9
   response:
     body:
-      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey030c90fa1","deletedDate":1612569258,"scheduledPurgeDate":1620345258,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey030c90fa1","attributes":{"enabled":true,"created":1612569245,"updated":1612569245,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey130c90fa1","deletedDate":1612569263,"scheduledPurgeDate":1620345263,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey130c90fa1","attributes":{"enabled":true,"created":1612569245,"updated":1612569245,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey030c90fa1","deletedDate":1612576374,"scheduledPurgeDate":1620352374,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey030c90fa1","attributes":{"enabled":true,"created":1612576358,"updated":1612576358,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey130c90fa1","deletedDate":1612576376,"scheduledPurgeDate":1620352376,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey130c90fa1","attributes":{"enabled":true,"created":1612576358,"updated":1612576358,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1Ua3hNVEV3UVVJM0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control:
       - no-cache
@@ -2276,7 +2279,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:12 GMT
+      - Sat, 06 Feb 2021 01:53:40 GMT
       expires:
       - '-1'
       pragma:
@@ -2308,10 +2311,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1Ua3hNVEV3UVVJM0lUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
-      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey230c90fa1","deletedDate":1612569250,"scheduledPurgeDate":1620345250,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey230c90fa1","attributes":{"enabled":true,"created":1612569245,"updated":1612569245,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey330c90fa1","deletedDate":1612569261,"scheduledPurgeDate":1620345261,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey330c90fa1","attributes":{"enabled":true,"created":1612569246,"updated":1612569246,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey430c90fa1","deletedDate":1612569247,"scheduledPurgeDate":1620345247,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey430c90fa1","attributes":{"enabled":true,"created":1612569246,"updated":1612569246,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey530c90fa1","deletedDate":1612569253,"scheduledPurgeDate":1620345253,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey530c90fa1","attributes":{"enabled":true,"created":1612569247,"updated":1612569247,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.netdeletedkeys/livekvtestkey630c90fa1","deletedDate":1612569255,"scheduledPurgeDate":1620345255,"kid":"https://vaultname.vault.azure.netkeys/livekvtestkey630c90fa1","attributes":{"enabled":true,"created":1612569247,"updated":1612569247,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDQhTURBd01EWXpJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpRMUpaVUZRNE9UbEZNVEZFUkM4d016WXlSakpCUmpGRU0wUTBNVFpDUVVJNVF6SkROek5HTURRek1UQkZSQ0V3TURBd01qZ2hPVGs1T1MweE1pMHpNVlF5TXpvMU9UbzFPUzQ1T1RrNU9UazVXaUUtIiwiVGFyZ2V0TG9jYXRpb24iOjB9"}'
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey230c90fa1","deletedDate":1612576371,"scheduledPurgeDate":1620352371,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey230c90fa1","attributes":{"enabled":true,"created":1612576359,"updated":1612576359,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey330c90fa1","deletedDate":1612576363,"scheduledPurgeDate":1620352363,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey330c90fa1","attributes":{"enabled":true,"created":1612576359,"updated":1612576359,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey430c90fa1","deletedDate":1612576368,"scheduledPurgeDate":1620352368,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey430c90fa1","attributes":{"enabled":true,"created":1612576359,"updated":1612576359,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey530c90fa1","deletedDate":1612576360,"scheduledPurgeDate":1620352360,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey530c90fa1","attributes":{"enabled":true,"created":1612576360,"updated":1612576360,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey630c90fa1","deletedDate":1612576366,"scheduledPurgeDate":1620352366,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey630c90fa1","attributes":{"enabled":true,"created":1612576360,"updated":1612576360,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDQhTURBd01EWXpJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpRMUpaVUZRNE9UbEZNVEZFUkM4d016WXlSakpCUmpGRU0wUTBNVFpDUVVJNVF6SkROek5HTURRek1UQkZSQ0V3TURBd01qZ2hPVGs1T1MweE1pMHpNVlF5TXpvMU9UbzFPUzQ1T1RrNU9UazVXaUUtIiwiVGFyZ2V0TG9jYXRpb24iOjB9"}'
     headers:
       cache-control:
       - no-cache
@@ -2320,7 +2323,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:13 GMT
+      - Sat, 06 Feb 2021 01:53:40 GMT
       expires:
       - '-1'
       pragma:
@@ -2352,10 +2355,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDQhTURBd01EWXpJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpRMUpaVUZRNE9UbEZNVEZFUkM4d016WXlSakpCUmpGRU0wUTBNVFpDUVVJNVF6SkROek5HTURRek1UQkZSQ0V3TURBd01qZ2hPVGs1T1MweE1pMHpNVlF5TXpvMU9UbzFPUzQ1T1RrNU9UazVXaUUtIiwiVGFyZ2V0TG9jYXRpb24iOjB9
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDQhTURBd01EWXpJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpRMUpaVUZRNE9UbEZNVEZFUkM4d016WXlSakpCUmpGRU0wUTBNVFpDUVVJNVF6SkROek5HTURRek1UQkZSQ0V3TURBd01qZ2hPVGs1T1MweE1pMHpNVlF5TXpvMU9UbzFPUzQ1T1RrNU9UazVXaUUtIiwiVGFyZ2V0TG9jYXRpb24iOjB9
   response:
     body:
-      string: '{"value":[],"nextLink":"https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDAhTURBd01ETXhJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJMVlpCVEVsRU5EUXpSakZCTVRBaE1EQXdNREk0SVRrNU9Ua3RNVEl0TXpGVU1qTTZOVGs2TlRrdU9UazVPVGs1T1ZvaCIsIlRhcmdldExvY2F0aW9uIjowfQ"}'
+      string: '{"value":[],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDAhTURBd01ESTVJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJMVXRGV1VRMVJFWXhNemsxSVRBd01EQXlPQ0U1T1RrNUxURXlMVE14VkRJek9qVTVPalU1TGprNU9UazVPVGxhSVEtLSIsIlRhcmdldExvY2F0aW9uIjowfQ"}'
     headers:
       cache-control:
       - no-cache
@@ -2364,7 +2367,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:13 GMT
+      - Sat, 06 Feb 2021 01:53:42 GMT
       expires:
       - '-1'
       pragma:
@@ -2396,19 +2399,19 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDAhTURBd01ETXhJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJMVlpCVEVsRU5EUXpSakZCTVRBaE1EQXdNREk0SVRrNU9Ua3RNVEl0TXpGVU1qTTZOVGs2TlRrdU9UazVPVGs1T1ZvaCIsIlRhcmdldExvY2F0aW9uIjowfQ
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDAhTURBd01ESTVJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJMVXRGV1VRMVJFWXhNemsxSVRBd01EQXlPQ0U1T1RrNUxURXlMVE14VkRJek9qVTVPalU1TGprNU9UazVPVGxhSVEtLSIsIlRhcmdldExvY2F0aW9uIjowfQ
   response:
     body:
-      string: '{"value":[],"nextLink":"https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjAhTURBd01EUTFJV3RsZVM5VVJWTlVMVkpUUVM4M09EQTNPREJETlROQ00wUTBOemt6UWtJek5rUTBPREF4T0RKQk16QTBSU0V3TURBd01qZ2hPVGs1T1MweE1pMHpNVlF5TXpvMU9UbzFPUzQ1T1RrNU9UazVXaUUtIiwiVGFyZ2V0TG9jYXRpb24iOjB9"}'
+      string: '{"value":[],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EWXhJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJTMFZaUmpneE5UQkZNRFl2TURCRlJEZzBNVUU1T1RSRU5EZ3hPVUUzUkVNelJqQXlSakZFT0RVMk16QWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '330'
+      - '357'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:13 GMT
+      - Sat, 06 Feb 2021 01:53:42 GMT
       expires:
       - '-1'
       pragma:
@@ -2440,7 +2443,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netdeletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjAhTURBd01EUTFJV3RsZVM5VVJWTlVMVkpUUVM4M09EQTNPREJETlROQ00wUTBOemt6UWtJek5rUTBPREF4T0RKQk16QTBSU0V3TURBd01qZ2hPVGs1T1MweE1pMHpNVlF5TXpvMU9UbzFPUzQ1T1RrNU9UazVXaUUtIiwiVGFyZ2V0TG9jYXRpb24iOjB9
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EWXhJV3RsZVM5TVNWWkZTMVpVUlZOVVVsTkJTMFZaUmpneE5UQkZNRFl2TURCRlJEZzBNVUU1T1RSRU5EZ3hPVUUzUkVNelJqQXlSakZFT0RVMk16QWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
       string: '{"value":[],"nextLink":null}'
@@ -2452,7 +2455,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:55:14 GMT
+      - Sat, 06 Feb 2021 01:53:42 GMT
       expires:
       - '-1'
       pragma:

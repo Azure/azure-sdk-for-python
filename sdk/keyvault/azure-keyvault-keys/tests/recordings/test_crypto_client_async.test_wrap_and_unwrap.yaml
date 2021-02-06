@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkeywrapaf9e12b1/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkeywrapaf9e12b1/create?api-version=7.1
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 23:53:19 GMT
+      date: Sat, 06 Feb 2021 01:51:46 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -47,15 +47,15 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkeywrapaf9e12b1/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkeywrapaf9e12b1/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkeywrapaf9e12b1/2fa2c741e3cd45cd8d385211c0f75dd7","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"zxkOi0-tgcG-YgVXy1mfW9pE7G7vdzT_9WdGBmLeyP2MSlWv6pkdAy4nJGB_lj7B0sAHbJ3nNhR6BW_5Wp9S-nfExdq4qYVzt9VeStjJgGUcLvf7hRsS0YzF3FsrCIpv4hKcj4ohkTuYlrHsS36eTzR-YYh7Q0ssSM0k3xjLt1NkTOnwbV9LixYfY1zcVE6htqxErN3Q9SFgKl_kL87Uy7omomZGujNLtT_x-qvuCs5qgusNmBpvrSy8W1rCHq4R84kfQGmQypQ8E7XDgDgVinHBYtm7EvCVthuElXsGIbKfkJeBQF06GAuSe_ZmfQQBxyLcnUQJvkapL_t5ZlC4fQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612569201,"updated":1612569201,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkeywrapaf9e12b1/043a1f411d9e496fa9200011fcf5e442","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xeRxz8igsd-Cgu5x9wvYHw17-dac0szmmStmLNtbPRU974TpVfb_FN2-IB6NLWMa2HmUGOM-OENz9cCATYaAlhSluImc8Z8v_6f-aCvgkBEsV9Yq8ei6P-ALgcDRsDu__DtQ7960BfTiDnfFnm0GQV3EpK-Cz5JpMaDh3po2PYFB5X_5HQauxXR7xKdN-_bdSb7vRxEeNgQBzasgACM_oYka4j5wwY2p5MtIkR5yPGWRoG3WgpOA91hYGWkQj79wAqoIl85E5NLh93IyYrekrdS-1AmWBJiILoS5KlWtpPE13CvONzYNH9tGutbFWiTa0VzySGugAFuxn7rTOOd1KQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576308,"updated":1612576308,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '693'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 23:53:21 GMT
+      date: Sat, 06 Feb 2021 01:51:48 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -76,15 +76,15 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkeywrapaf9e12b1/2fa2c741e3cd45cd8d385211c0f75dd7?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkeywrapaf9e12b1/043a1f411d9e496fa9200011fcf5e442?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkeywrapaf9e12b1/2fa2c741e3cd45cd8d385211c0f75dd7","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"zxkOi0-tgcG-YgVXy1mfW9pE7G7vdzT_9WdGBmLeyP2MSlWv6pkdAy4nJGB_lj7B0sAHbJ3nNhR6BW_5Wp9S-nfExdq4qYVzt9VeStjJgGUcLvf7hRsS0YzF3FsrCIpv4hKcj4ohkTuYlrHsS36eTzR-YYh7Q0ssSM0k3xjLt1NkTOnwbV9LixYfY1zcVE6htqxErN3Q9SFgKl_kL87Uy7omomZGujNLtT_x-qvuCs5qgusNmBpvrSy8W1rCHq4R84kfQGmQypQ8E7XDgDgVinHBYtm7EvCVthuElXsGIbKfkJeBQF06GAuSe_ZmfQQBxyLcnUQJvkapL_t5ZlC4fQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612569201,"updated":1612569201,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkeywrapaf9e12b1/043a1f411d9e496fa9200011fcf5e442","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xeRxz8igsd-Cgu5x9wvYHw17-dac0szmmStmLNtbPRU974TpVfb_FN2-IB6NLWMa2HmUGOM-OENz9cCATYaAlhSluImc8Z8v_6f-aCvgkBEsV9Yq8ei6P-ALgcDRsDu__DtQ7960BfTiDnfFnm0GQV3EpK-Cz5JpMaDh3po2PYFB5X_5HQauxXR7xKdN-_bdSb7vRxEeNgQBzasgACM_oYka4j5wwY2p5MtIkR5yPGWRoG3WgpOA91hYGWkQj79wAqoIl85E5NLh93IyYrekrdS-1AmWBJiILoS5KlWtpPE13CvONzYNH9tGutbFWiTa0VzySGugAFuxn7rTOOd1KQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576308,"updated":1612576308,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '693'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 23:53:21 GMT
+      date: Sat, 06 Feb 2021 01:51:48 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -96,9 +96,10 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkeywrapaf9e12b1/2fa2c741e3cd45cd8d385211c0f75dd7?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkeywrapaf9e12b1/043a1f411d9e496fa9200011fcf5e442?api-version=7.1
 - request:
-    body: '{"alg": "RSA-OAEP", "value": "a5Zu6ZImH1QhF2qahdNAOqYVUF6iLGUcTYOBlKnpNB40jWmDT672IzJKery4VP-Wi-JlZmGxBF5MeyTkp0KSsgKmIMfK7UfmO9rVtQpcYb-zMtGu1om6ripPWzy-MJJXuX9JvQLDs4fiZSHVrpDi0eINMCff2zOoQDQuBT9Z_rzwFRzCY4fB7gWU8L_T-t7tX3rBFR_ezyeaGhryHfv9LAi3R3Qou_mW_FlqtADWcYo7F8dhwkf57Fj49kPOHCgHaiRsyz-4qHjZn8GSGm9Q9bgwEx9HILvKNNvuifVhkIO0JMRMzqmxo1Itm0bZw6gMqYJEWTK7gF-TzAJYFCCuNA"}'
+    body: '{"value": "pA56mqlnvB8NSYGqcVYn7Z4pRe384tuFQdXsZarYU5n1jFwZWMKt5PRDIOASOrQrt2WN5NUD412VMD5F_9XtllzKfnmNF6CubHnoQId324ssZWCmd5wBJE_9CbzjoffKS03u4RlPcL3-jmrlUetpKOmtg5KESRexfRT8ZAF4UaBCOjoZJeZDVYNMOp9DI26DMWW0i47_ChSFnIKKKpDKlkyh3XOhr4p2D0GIowPBunCIHnl_C3Kog0uGJ1_AY6ZxSwewxqcWWAykfoN8AN-xR7RsvGoORru2SOfB38R-wI9B3Iy7I7NDU6W1CkxPhemmGpWNJuq6vJSE7xv6t6tUrw",
+      "alg": "RSA-OAEP"}'
     headers:
       Accept:
       - application/json
@@ -109,15 +110,15 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtestkeywrapaf9e12b1/2fa2c741e3cd45cd8d385211c0f75dd7/unwrapkey?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkeywrapaf9e12b1/043a1f411d9e496fa9200011fcf5e442/unwrapkey?api-version=7.1
   response:
     body:
-      string: '{"kid":"https://vaultname.vault.azure.netkeys/livekvtestkeywrapaf9e12b1/2fa2c741e3cd45cd8d385211c0f75dd7","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkeywrapaf9e12b1/043a1f411d9e496fa9200011fcf5e442","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
     headers:
       cache-control: no-cache
       content-length: '388'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 23:53:21 GMT
+      date: Sat, 06 Feb 2021 01:51:48 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -129,5 +130,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkeywrapaf9e12b1/2fa2c741e3cd45cd8d385211c0f75dd7/unwrapkey?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkeywrapaf9e12b1/043a1f411d9e496fa9200011fcf5e442/unwrapkey?api-version=7.1
 version: 1
