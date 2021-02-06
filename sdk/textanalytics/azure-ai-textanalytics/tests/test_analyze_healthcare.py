@@ -607,7 +607,7 @@ class TestHealth(TextAnalyticsTest):
                 self.assertIsNotNone(doc.statistics)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
+    @TextAnalyticsClientPreparer()
     def test_cancellation(self, client):
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
@@ -641,7 +641,7 @@ class TestHealth(TextAnalyticsTest):
         poller.result()
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
+    @TextAnalyticsClientPreparer()
     def test_bidirectional_relation_type(self, client):
         result = list(client.begin_analyze_healthcare_entities(
             documents=["The patient was diagnosed with Parkinsons Disease (PD)"]

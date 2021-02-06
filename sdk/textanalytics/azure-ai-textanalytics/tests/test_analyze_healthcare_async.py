@@ -732,14 +732,14 @@ class TestHealth(AsyncTextAnalyticsTest):
                     self.assertIsNotNone(doc.statistics)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
+    @TextAnalyticsClientPreparer()
     async def test_cancellation(self, client):
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
 
         async with client:
             poller = await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
-            
+
             try:
                 cancellation_poller = await poller.cancel()
                 cancellation_poller.wait()
@@ -768,7 +768,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         await poller.result()
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
+    @TextAnalyticsClientPreparer()
     async def test_bidirectional_relation_type(self, client):
         response = await (await client.begin_analyze_healthcare_entities(
             documents=["The patient was diagnosed with Parkinsons Disease (PD)"]
@@ -789,4 +789,4 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertEqual(related_entity2, entity1)
         self.assertEqual(relation_type2, "Abbreviation")
 
-    
+
