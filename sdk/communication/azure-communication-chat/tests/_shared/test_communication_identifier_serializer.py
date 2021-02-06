@@ -52,7 +52,7 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
         ]
 
         for model in models_with_missing_property:
-            self.assertRaises(Exception, lambda : CommunicationUserIdentifierSerializer.deserialize(model))
+            self.assertRaises(ValueError, lambda : CommunicationUserIdentifierSerializer.deserialize(model))
 
 
     def test_serialize_communication_user(self):
