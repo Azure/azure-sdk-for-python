@@ -3,6 +3,11 @@
 # pylint: disable=import-error
 # pylint: disable=no-member
 # pylint: disable=no-name-in-module
+"""
+An example to show an application instrumented with the Opentelemetry flask and requests instrumentations.
+Calls to the flask application and with the requests library will be automatically tracked and telemetry
+is exported to application insights with the AzureMonitorTraceExporter.
+"""
 import os
 import requests
 from opentelemetry import trace
