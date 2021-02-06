@@ -30,24 +30,24 @@ class CommunicationUserIdentifierSerializer(object):
         """
         if isinstance(communicationIdentifier, CommunicationUserIdentifier):
             return CommunicationIdentifierModel(
-                communication_user=CommunicationUserIdentifierModel(id=communicationIdentifier.identifier)
+                communication_user=CommunicationUserIdentifierModel(raw_id=communicationIdentifier.identifier)
             )
         if isinstance(communicationIdentifier, PhoneNumberIdentifier):
             return CommunicationIdentifierModel(
-                rawid=communicationIdentifier.rawId,
+                raw_id=communicationIdentifier.rawId,
                 phone_number=PhoneNumberIdentifierModel(value=communicationIdentifier.phone_number)
             )
         if isinstance(communicationIdentifier, MicrosoftTeamsUserIdentifier):
             return CommunicationIdentifierModel(
-                rawid=communicationIdentifier.rawId,
+                raw_id=communicationIdentifier.rawId,
                 microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(user_id=communicationIdentifier.user_id,
-                is_anonymous=communicationIdentifier.isAnonymous,
+                is_anonymous=communicationIdentifier.is_anonymous,
                 cloud=communicationIdentifier.cloud)
             )
 
         if isinstance(communicationIdentifier, UnknownIdentifier):
             return CommunicationIdentifierModel(
-                rawid=communicationIdentifier.identifier
+                raw_id=communicationIdentifier.identifier
             )
 
         raise TypeError("Unsupported identifier type " + communicationIdentifier.__class__.__name__)
@@ -64,11 +64,11 @@ class CommunicationUserIdentifierSerializer(object):
         :rasies: ValueError
         """
 
-        rawId = identifierModel.rawId
+        rawId = identifierModel.raw_id
         if not rawId:
             raise ValueError("Identifier must have a valid id")
 
-        if identifierModel.communicationUser is not None:
+        if identifierModel.communication_user is not None:
             return CommunicationUserIdentifier(rawId)
         if identifierModel.phone_number is not None:
             if not identifierModel.phone_number:
@@ -83,7 +83,7 @@ class CommunicationUserIdentifierSerializer(object):
                 raise ValueError("MicrosoftTeamsUser must have a valid attribute - communication_cloud_environment")
             return MicrosoftTeamsUserIdentifier(
                 rawId=rawId,
-                user_id=identifierModel.microsoft_teams_user.microsoft_teams_user_id,
+                user_id=identifierModel.microsoft_teams_user.user_id,
                 is_anonymous=identifierModel.microsoft_teams_user.is_anonymous,
                 cloud=identifierModel.microsoft_teams_user.cloud
             )
