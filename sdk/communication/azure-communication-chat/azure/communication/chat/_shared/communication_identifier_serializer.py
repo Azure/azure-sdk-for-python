@@ -53,6 +53,19 @@ class CommunicationUserIdentifierSerializer(object):
         raise TypeError("Unsupported identifier type " + communicationIdentifier.__class__.__name__)
 
     @classmethod
+    def assertMaximumOneNestedModel(cls, identifierModel):
+        presentPropertiesCount = 0
+        if identifierModel.communication_user is not None:
+            presentPropertiesCount += 1
+        if identifierModel.phone_number is not None:
+            presentPropertiesCount += 1
+        if identifierModel.microsoft_teams_user is not None:
+            presentPropertiesCount += 1
+
+        if presentPropertiesCount > 1:
+            raise ValueError("Only one of the properties in identifier model should be present.");
+
+    @classmethod
     def deserialize(cls, identifierModel):
         """
         Deserialize the CommunicationIdentifierModel into Communication Identifier
@@ -67,6 +80,8 @@ class CommunicationUserIdentifierSerializer(object):
         raw_id = identifierModel.raw_id
         if not raw_id:
             raise ValueError("Identifier must have a valid id")
+
+        CommunicationUserIdentifierSerializer.assertMaximumOneNestedModel(identifierModel)
 
         if identifierModel.communication_user is not None:
             return CommunicationUserIdentifier(raw_id)
@@ -89,3 +104,5 @@ class CommunicationUserIdentifierSerializer(object):
             )
 
         return UnknownIdentifier(raw_id)
+
+
