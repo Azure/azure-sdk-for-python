@@ -35,14 +35,25 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
                 communication_user=CommunicationUserIdentifierModel(id="id")
             ), # missing id
             CommunicationIdentifierModel(
+                raw_id="someid",
+                microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(user_id="teamsid",
+                cloud=CommunicationCloudEnvironment.Public)
+            ), # missing is_anonymous
+            CommunicationIdentifierModel(
                 microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(user_id="teamsid",
                 is_anonymous=True,
                 cloud=CommunicationCloudEnvironment.Public)
-            ), # missing microsoft_teams_user_id
+            ), # missing id
+            CommunicationIdentifierModel(
+                raw_id="someid",
+                microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(user_id="teamsid",
+                is_anonymous=True)
+            ) # missing cloud,
         ]
 
         for model in models_with_missing_property:
-            self.assertRaises(ValueError, lambda : CommunicationUserIdentifierSerializer.deserialize(model))
+            self.assertRaises(Exception, lambda : CommunicationUserIdentifierSerializer.deserialize(model))
+
 
     def test_serialize_communication_user(self):
         communication_identifier_model = CommunicationUserIdentifierSerializer.serialize(
