@@ -9,6 +9,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
+from .._client import _validate_arguments
 from .._key_validity import raise_if_time_invalid
 from .._providers import get_local_cryptography_provider, NoLocalCryptography
 from ... import KeyOperation
@@ -22,49 +23,6 @@ if TYPE_CHECKING:
     from .. import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def _validate_arguments(operation: "KeyOperation", algorithm: "EncryptionAlgorithm", **kwargs: "Any") -> None:
-    """Validates the arguments passed to perform an operation with a provided algorithm.
-
-    :param KeyOperation operation: the type of operation being requested. Can be "encrypt" or "decrypt"
-    :param EncyptionAlgorithm algorithm: the encryption algorithm to use for the operation
-    :keyword bytes iv: initialization vector
-    :keyword bytes authentication_tag: authentication tag returned from an encryption
-    :keyword bytes additional_authenticated_data: data that is authenticated but not encrypted
-    :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
-    """
-    iv = kwargs.pop("iv", None)
-    tag = kwargs.pop("tag", None)
-    aad = kwargs.pop("aad", None)
-
-    if operation == KeyOperation.encrypt:
-        if iv and "CBC" not in algorithm:
-            raise ValueError(
-                "iv should only be provided with AES-CBC algorithms; {} does not accept an iv".format(algorithm)
-            )
-        if aad and "GCM" not in algorithm:
-            raise ValueError(
-                "additional_authenticated_data should only be provided with AES-GCM algorithms; {} does not accept an "
-                "aad".format(algorithm)
-            )
-
-    if operation == KeyOperation.decrypt:
-        if iv and not ("CBC" in algorithm or "GCM" in algorithm):
-            raise ValueError(
-                "iv should only be provided with AES algorithms; {} does not accept an iv".format(algorithm)
-            )
-        if tag and "GCM" not in algorithm:
-            raise ValueError(
-                "authentication_tag should only be provided with AES-GCM algorithms; {} does not accept a tag".format(
-                    algorithm
-                )
-            )
-        if aad and "GCM" not in algorithm:
-            raise ValueError(
-                "additional_authenticated_data should only be provided with AES-GCM algorithms; {} does not accept an "
-                "aad".format(algorithm)
-            )
 
 
 class CryptographyClient(AsyncKeyVaultClientBase):
