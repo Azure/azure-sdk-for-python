@@ -96,12 +96,12 @@ class PhoneNumberIdentifier(object):
     Represents a phone number.
     :param phone_number: The phone number in E.164 format.
     :type phone_number: str
-    :param rawId: The full id of the phone number.
-    :type rawId: str
+    :param raw_id: The full id of the phone number.
+    :type raw_id: str
     """
-    def __init__(self, phone_number, rawId=None):
+    def __init__(self, phone_number, raw_id=None):
         self.phone_number = phone_number
-        self.rawId = rawId
+        self.raw_id = raw_id
 
 class UnknownIdentifier(object):
     """
@@ -272,7 +272,7 @@ class MicrosoftTeamsUserIdentifier(object):
     :param user_id: Value to initialize MicrosoftTeamsUserIdentifier.
     :type user_id: str
     :ivar rawId: Raw id of the Microsoft Teams user.
-    :vartype rawId: str
+    :vartype raw_id: str
     :ivar cloud: Cloud environment that this identifier belongs to
     :vartype cloud: CommunicationCloudEnvironment
     :ivar is_anonymous: set this to true if the user is anonymous for example when joining a meeting with a share link
@@ -280,8 +280,8 @@ class MicrosoftTeamsUserIdentifier(object):
     :param is_anonymous: Value to initialize MicrosoftTeamsUserIdentifier.
     :type is_anonymous: bool
     """
-    def __init__(self, user_id, rawId=None, cloud=CommunicationCloudEnvironment.Public, is_anonymous=False):
-        self.rawId = rawId
+    def __init__(self, user_id, raw_id=None, cloud=CommunicationCloudEnvironment.Public, is_anonymous=False):
+        self.raw_id = raw_id
         self.user_id = user_id
         self.is_anonymous = is_anonymous
         self.cloud = cloud
