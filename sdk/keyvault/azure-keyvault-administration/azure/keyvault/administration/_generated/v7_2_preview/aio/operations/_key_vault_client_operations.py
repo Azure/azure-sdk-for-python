@@ -8,13 +8,13 @@
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -24,14 +24,17 @@ class KeyVaultClientOperationsMixin:
     async def _full_backup_initial(
         self,
         vault_base_url: str,
-        azure_storage_blob_container_uri: Optional["models.SASTokenParameter"] = None,
+        azure_storage_blob_container_uri: Optional["_models.SASTokenParameter"] = None,
         **kwargs
-    ) -> "models.FullBackupOperation":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FullBackupOperation"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+    ) -> "_models.FullBackupOperation":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FullBackupOperation"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.2-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._full_backup_initial.metadata['url']  # type: ignore
@@ -47,7 +50,7 @@ class KeyVaultClientOperationsMixin:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if azure_storage_blob_container_uri is not None:
@@ -56,13 +59,12 @@ class KeyVaultClientOperationsMixin:
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -79,9 +81,9 @@ class KeyVaultClientOperationsMixin:
     async def begin_full_backup(
         self,
         vault_base_url: str,
-        azure_storage_blob_container_uri: Optional["models.SASTokenParameter"] = None,
+        azure_storage_blob_container_uri: Optional["_models.SASTokenParameter"] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.FullBackupOperation"]:
+    ) -> AsyncLROPoller["_models.FullBackupOperation"]:
         """Creates a full backup using a user-provided SAS token to an Azure blob storage container.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -92,8 +94,8 @@ class KeyVaultClientOperationsMixin:
         :type azure_storage_blob_container_uri: ~azure.keyvault.v7_2.models.SASTokenParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FullBackupOperation or the result of cls(response)
@@ -101,7 +103,7 @@ class KeyVaultClientOperationsMixin:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FullBackupOperation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FullBackupOperation"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -129,7 +131,11 @@ class KeyVaultClientOperationsMixin:
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -148,7 +154,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         job_id: str,
         **kwargs
-    ) -> "models.FullBackupOperation":
+    ) -> "_models.FullBackupOperation":
         """Returns the status of full backup operation.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -160,10 +166,13 @@ class KeyVaultClientOperationsMixin:
         :rtype: ~azure.keyvault.v7_2.models.FullBackupOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FullBackupOperation"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FullBackupOperation"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.2-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.full_backup_status.metadata['url']  # type: ignore
@@ -179,7 +188,7 @@ class KeyVaultClientOperationsMixin:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -187,7 +196,7 @@ class KeyVaultClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('FullBackupOperation', pipeline_response)
@@ -201,14 +210,17 @@ class KeyVaultClientOperationsMixin:
     async def _full_restore_operation_initial(
         self,
         vault_base_url: str,
-        restore_blob_details: Optional["models.RestoreOperationParameters"] = None,
+        restore_blob_details: Optional["_models.RestoreOperationParameters"] = None,
         **kwargs
-    ) -> "models.RestoreOperation":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RestoreOperation"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+    ) -> "_models.RestoreOperation":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestoreOperation"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.2-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._full_restore_operation_initial.metadata['url']  # type: ignore
@@ -224,7 +236,7 @@ class KeyVaultClientOperationsMixin:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if restore_blob_details is not None:
@@ -233,13 +245,12 @@ class KeyVaultClientOperationsMixin:
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -256,9 +267,9 @@ class KeyVaultClientOperationsMixin:
     async def begin_full_restore_operation(
         self,
         vault_base_url: str,
-        restore_blob_details: Optional["models.RestoreOperationParameters"] = None,
+        restore_blob_details: Optional["_models.RestoreOperationParameters"] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.RestoreOperation"]:
+    ) -> AsyncLROPoller["_models.RestoreOperation"]:
         """Restores all key materials using the SAS token pointing to a previously stored Azure Blob
         storage backup folder.
 
@@ -269,8 +280,8 @@ class KeyVaultClientOperationsMixin:
         :type restore_blob_details: ~azure.keyvault.v7_2.models.RestoreOperationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RestoreOperation or the result of cls(response)
@@ -278,7 +289,7 @@ class KeyVaultClientOperationsMixin:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RestoreOperation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestoreOperation"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -306,7 +317,11 @@ class KeyVaultClientOperationsMixin:
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -325,7 +340,7 @@ class KeyVaultClientOperationsMixin:
         vault_base_url: str,
         job_id: str,
         **kwargs
-    ) -> "models.RestoreOperation":
+    ) -> "_models.RestoreOperation":
         """Returns the status of restore operation.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -337,10 +352,13 @@ class KeyVaultClientOperationsMixin:
         :rtype: ~azure.keyvault.v7_2.models.RestoreOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RestoreOperation"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestoreOperation"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.2-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.restore_status.metadata['url']  # type: ignore
@@ -356,7 +374,7 @@ class KeyVaultClientOperationsMixin:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -364,7 +382,7 @@ class KeyVaultClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('RestoreOperation', pipeline_response)
@@ -379,14 +397,17 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         key_name: str,
-        restore_blob_details: Optional["models.SelectiveKeyRestoreOperationParameters"] = None,
+        restore_blob_details: Optional["_models.SelectiveKeyRestoreOperationParameters"] = None,
         **kwargs
-    ) -> "models.SelectiveKeyRestoreOperation":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SelectiveKeyRestoreOperation"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+    ) -> "_models.SelectiveKeyRestoreOperation":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SelectiveKeyRestoreOperation"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.2-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._selective_key_restore_operation_initial.metadata['url']  # type: ignore
@@ -403,7 +424,7 @@ class KeyVaultClientOperationsMixin:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if restore_blob_details is not None:
@@ -412,13 +433,12 @@ class KeyVaultClientOperationsMixin:
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -436,9 +456,9 @@ class KeyVaultClientOperationsMixin:
         self,
         vault_base_url: str,
         key_name: str,
-        restore_blob_details: Optional["models.SelectiveKeyRestoreOperationParameters"] = None,
+        restore_blob_details: Optional["_models.SelectiveKeyRestoreOperationParameters"] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.SelectiveKeyRestoreOperation"]:
+    ) -> AsyncLROPoller["_models.SelectiveKeyRestoreOperation"]:
         """Restores all key versions of a given key using user supplied SAS token pointing to a previously
         stored Azure Blob storage backup folder.
 
@@ -451,8 +471,8 @@ class KeyVaultClientOperationsMixin:
         :type restore_blob_details: ~azure.keyvault.v7_2.models.SelectiveKeyRestoreOperationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SelectiveKeyRestoreOperation or the result of cls(response)
@@ -460,7 +480,7 @@ class KeyVaultClientOperationsMixin:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SelectiveKeyRestoreOperation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SelectiveKeyRestoreOperation"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -489,7 +509,12 @@ class KeyVaultClientOperationsMixin:
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'keyName': self._serialize.url("key_name", key_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

@@ -9,17 +9,17 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class RoleAssignmentsOperations:
-    """RoleAssignmentsOperations async operations.
+class RoleDefinitionsOperations:
+    """RoleDefinitionsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -32,7 +32,7 @@ class RoleAssignmentsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,33 +44,36 @@ class RoleAssignmentsOperations:
         self,
         vault_base_url: str,
         scope: str,
-        role_assignment_name: str,
+        role_definition_name: str,
         **kwargs
-    ) -> "models.RoleAssignment":
-        """Deletes a role assignment.
+    ) -> "_models.RoleDefinition":
+        """Deletes a custom role definition.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param scope: The scope of the role assignment to delete.
+        :param scope: The scope of the role definition to delete. Managed HSM only supports '/'.
         :type scope: str
-        :param role_assignment_name: The name of the role assignment to delete.
-        :type role_assignment_name: str
+        :param role_definition_name: The name (GUID) of the role definition to delete.
+        :type role_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RoleAssignment, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.RoleAssignment
+        :return: RoleDefinition, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_2.models.RoleDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignment"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinition"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.2-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str'),
+            'roleDefinitionName': self._serialize.url("role_definition_name", role_definition_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -80,7 +83,7 @@ class RoleAssignmentsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -88,53 +91,57 @@ class RoleAssignmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('RoleAssignment', pipeline_response)
+        deserialized = self._deserialize('RoleDefinition', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    delete.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'}  # type: ignore
+    delete.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionName}'}  # type: ignore
 
-    async def create(
+    async def create_or_update(
         self,
         vault_base_url: str,
         scope: str,
-        role_assignment_name: str,
-        parameters: "models.RoleAssignmentCreateParameters",
+        role_definition_name: str,
+        parameters: "_models.RoleDefinitionCreateParameters",
         **kwargs
-    ) -> "models.RoleAssignment":
-        """Creates a role assignment.
+    ) -> "_models.RoleDefinition":
+        """Creates or updates a custom role definition.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param scope: The scope of the role assignment to create.
+        :param scope: The scope of the role definition to create or update. Managed HSM only supports
+         '/'.
         :type scope: str
-        :param role_assignment_name: The name of the role assignment to create. It can be any valid
-         GUID.
-        :type role_assignment_name: str
-        :param parameters: Parameters for the role assignment.
-        :type parameters: ~azure.keyvault.v7_2.models.RoleAssignmentCreateParameters
+        :param role_definition_name: The name of the role definition to create or update. It can be any
+         valid GUID.
+        :type role_definition_name: str
+        :param parameters: Parameters for the role definition.
+        :type parameters: ~azure.keyvault.v7_2.models.RoleDefinitionCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RoleAssignment, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.RoleAssignment
+        :return: RoleDefinition, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_2.models.RoleDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignment"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinition"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.2-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
-        url = self.create.metadata['url']  # type: ignore
+        url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str'),
+            'roleDefinitionName': self._serialize.url("role_definition_name", role_definition_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -145,60 +152,62 @@ class RoleAssignmentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'RoleAssignmentCreateParameters')
+        body_content = self._serialize.body(parameters, 'RoleDefinitionCreateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('RoleAssignment', pipeline_response)
+        deserialized = self._deserialize('RoleDefinition', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionName}'}  # type: ignore
 
     async def get(
         self,
         vault_base_url: str,
         scope: str,
-        role_assignment_name: str,
+        role_definition_name: str,
         **kwargs
-    ) -> "models.RoleAssignment":
-        """Get the specified role assignment.
+    ) -> "_models.RoleDefinition":
+        """Get the specified role definition.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param scope: The scope of the role assignment.
+        :param scope: The scope of the role definition to get. Managed HSM only supports '/'.
         :type scope: str
-        :param role_assignment_name: The name of the role assignment to get.
-        :type role_assignment_name: str
+        :param role_definition_name: The name of the role definition to get.
+        :type role_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RoleAssignment, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.RoleAssignment
+        :return: RoleDefinition, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_2.models.RoleDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignment"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinition"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.2-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str'),
+            'roleDefinitionName': self._serialize.url("role_definition_name", role_definition_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -208,7 +217,7 @@ class RoleAssignmentsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -216,52 +225,54 @@ class RoleAssignmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('RoleAssignment', pipeline_response)
+        deserialized = self._deserialize('RoleDefinition', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'}  # type: ignore
+    get.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionName}'}  # type: ignore
 
-    def list_for_scope(
+    def list(
         self,
         vault_base_url: str,
         scope: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.RoleAssignmentListResult"]:
-        """Gets role assignments for a scope.
+    ) -> AsyncIterable["_models.RoleDefinitionListResult"]:
+        """Get all role definitions that are applicable at scope and above.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param scope: The scope of the role assignments.
+        :param scope: The scope of the role definition.
         :type scope: str
-        :param filter: The filter to apply on the operation. Use $filter=atScope() to return all role
-         assignments at or above the scope. Use $filter=principalId eq {id} to return all role
-         assignments at, above or below the scope for the specified principal.
+        :param filter: The filter to apply on the operation. Use atScopeAndBelow filter to search below
+         the given scope as well.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either RoleAssignmentListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.RoleAssignmentListResult]
+        :return: An iterator like instance of either RoleDefinitionListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.RoleDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignmentListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinitionListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.2-preview"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
-                url = self.list_for_scope.metadata['url']  # type: ignore
+                url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
@@ -286,7 +297,7 @@ class RoleAssignmentsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('RoleAssignmentListResult', pipeline_response)
+            deserialized = self._deserialize('RoleDefinitionListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -299,7 +310,7 @@ class RoleAssignmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -308,4 +319,4 @@ class RoleAssignmentsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_for_scope.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleAssignments'}  # type: ignore
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleDefinitions'}  # type: ignore

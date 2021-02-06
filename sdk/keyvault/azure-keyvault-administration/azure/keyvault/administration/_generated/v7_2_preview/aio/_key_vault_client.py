@@ -11,10 +11,10 @@ from typing import Any
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
 
-from ._configuration_async import KeyVaultClientConfiguration
-from .operations_async import KeyVaultClientOperationsMixin
-from .operations_async import RoleDefinitionsOperations
-from .operations_async import RoleAssignmentsOperations
+from ._configuration import KeyVaultClientConfiguration
+from .operations import RoleDefinitionsOperations
+from .operations import RoleAssignmentsOperations
+from .operations import KeyVaultClientOperationsMixin
 from .. import models
 
 
@@ -22,9 +22,9 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
     """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
 
     :ivar role_definitions: RoleDefinitionsOperations operations
-    :vartype role_definitions: azure.keyvault.v7_2.aio.operations_async.RoleDefinitionsOperations
+    :vartype role_definitions: azure.keyvault.v7_2.aio.operations.RoleDefinitionsOperations
     :ivar role_assignments: RoleAssignmentsOperations operations
-    :vartype role_assignments: azure.keyvault.v7_2.aio.operations_async.RoleAssignmentsOperations
+    :vartype role_assignments: azure.keyvault.v7_2.aio.operations.RoleAssignmentsOperations
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
