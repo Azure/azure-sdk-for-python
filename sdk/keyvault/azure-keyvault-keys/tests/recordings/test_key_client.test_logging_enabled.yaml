@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name116c0ea5/create?api-version=7.1
+    uri: https://vaultname.vault.azure.netkeys/livekvtestrsa-key-name116c0ea5/create?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 09:42:53 GMT
+      - Fri, 05 Feb 2021 23:54:38 GMT
       expires:
       - '-1'
       pragma:
@@ -45,7 +45,7 @@ interactions:
       x-ms-keyvault-region:
       - northeurope
       x-ms-keyvault-service-version:
-      - 1.2.139.0
+      - 1.2.164.0
       x-powered-by:
       - ASP.NET
     status:
@@ -67,10 +67,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name116c0ea5/create?api-version=7.1
+    uri: https://vaultname.vault.azure.netkeys/livekvtestrsa-key-name116c0ea5/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name116c0ea5/61fc6c06c0ba4b6ba1ab744560bca8b0","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"sBxJiYMJyjo_AiHarSe_Aq3c-sRODq5KBX-tH3AJKnfZBZDAt3WGPc2ayG4d_uoXdqTsfmwA7SqALY6rdZWAbQnH8l3lL5y6UpgON64Xosv3TdE_87B0efxwPMJAkzONsyQI4Zvd4tvEKnOTNosBtZIqCHb0tu3g6bF_RLFwsELLBJk9pJP6CTmjdgUJML5EttfVIPQt-lDa7mSO-eaAlUU3XYWq8yBvzQLZNJiXDUOZ8qMskuM1VgT2ElYImGCyd50eXak-Tx_XwlReJNngvO1GwLqQ9yOsuF6sGipmIp_rLfn9uftkqvvxCRY_BXL9cVOuHqd1VTPXv--aNL9TuQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612518175,"updated":1612518175,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestrsa-key-name116c0ea5/3c515d22923a4d47aa06ad62f1c6eb15","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"v74bigHwYszOPPSmRDdZuamvKw0lb1cuyaLTzivt1oXrst3w_hpHhxY0DchEoQxDNaGmBQ9mbuQFc9KBSxNJzTnSnL9sIsOm7nfY-6VsYgzWbZStio-A4UvDqGmhO1BPlEkOoXwYtKaF9rPr6PXYXPqRx4vl92RER7I0XeaACaL1QLyW_hfokmmNjz3z5hcH429yZxWH8JstSCsIW9uC_dkJ10InD7nkZaWqI4r_WHeVw96pokXdTYtbc20dWmnpDTYdRWp8SAM2QgADrYyardiY9nyamvC5Sfvk8dfb61v84rUv7k9-4btqxQlIaTyA92_WNcl9WnAas4lJlIpkVQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612569279,"updated":1612569279,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 09:42:56 GMT
+      - Fri, 05 Feb 2021 23:54:39 GMT
       expires:
       - '-1'
       pragma:
@@ -93,7 +93,7 @@ interactions:
       x-ms-keyvault-region:
       - northeurope
       x-ms-keyvault-service-version:
-      - 1.2.139.0
+      - 1.2.164.0
       x-powered-by:
       - ASP.NET
     status:

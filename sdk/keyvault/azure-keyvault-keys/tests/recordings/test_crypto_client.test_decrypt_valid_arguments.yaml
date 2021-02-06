@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtesteckeye9470d88/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.netkeys/livekvtestrsa-keyd502138b/create?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:52:09 GMT
+      - Fri, 05 Feb 2021 23:52:07 GMT
       expires:
       - '-1'
       pragma:
@@ -52,7 +52,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: '{"kty": "EC"}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
       - application/json
@@ -61,69 +61,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '13'
+      - '14'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.netkeys/livekvtesteckeye9470d88/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.netkeys/livekvtestrsa-keyd502138b/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtesteckeye9470d88/3bae1119b1ab446d97ea5abae89bfb78","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"lVcBQAwjadAvKBIatcMr9ZUQmc1-npOjK90Tz-YUMn8","y":"LYYQy8vq4GOtFSozwcxwu-2DOzFquAY-FcpibEt9o2k"},"attributes":{"enabled":true,"created":1612569131,"updated":1612569131,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtestrsa-keyd502138b/3906181decec4132b8a488dd67a4532d","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wMkOK1M09KOeZD0uQVyKmC79zFd-wFKg1_iY8VrNG0kVKfu3JD4wmtmq5C1pJm-U3xTFeYZ49KW8YoGshclhziDCIscwyUr04p6h1OZ9v7-OBu5OcA_hwEPLXUjs9VXr0Mq9W09JnFNloFyv0Zilwbj8JPh9M7jukOk1Gzjy79lw35mXVwrxLy6y5ojQvj8NaFD8z-t9uN-2Riuhb7UN3TBK2iC9rrzPfGQFZLaXRffhX4Q3fMwD_X7CJI1tGInWv-n6rDLEiyABhV-DWRh7DIwk-xP5C1O4iyuANQnsXjmrK7IYOQGRRiHrE2ZcslmxipnMDgNB4bF0yaiog5fX1Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612569129,"updated":1612569129,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '402'
+      - '693'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Feb 2021 23:52:10 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000;includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region:
-      - northeurope
-      x-ms-keyvault-service-version:
-      - 1.2.164.0
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://vaultname.vault.azure.netkeys/livekvtesteckeye9470d88/3bae1119b1ab446d97ea5abae89bfb78?api-version=7.2-preview
-  response:
-    body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.netkeys/livekvtesteckeye9470d88/3bae1119b1ab446d97ea5abae89bfb78","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"lVcBQAwjadAvKBIatcMr9ZUQmc1-npOjK90Tz-YUMn8","y":"LYYQy8vq4GOtFSozwcxwu-2DOzFquAY-FcpibEt9o2k"},"attributes":{"enabled":true,"created":1612569131,"updated":1612569131,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '402'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 05 Feb 2021 23:52:12 GMT
+      - Fri, 05 Feb 2021 23:52:08 GMT
       expires:
       - '-1'
       pragma:
