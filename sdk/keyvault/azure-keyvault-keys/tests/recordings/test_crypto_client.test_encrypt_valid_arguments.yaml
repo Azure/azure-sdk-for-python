@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 01:50:44 GMT
+      - Sat, 06 Feb 2021 02:20:29 GMT
       expires:
       - '-1'
       pragma:
@@ -70,7 +70,7 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-keyd5df1395/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-keyd5df1395/5525f170f008454bb712a37b2347c3c9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"v7u5a9NKZNJIYVhRf9GPQdNG8YE43hIt9_tOERG2FP1ye73uzhXwx_5EYM1obEQqSBjbr72eKhitjSiV5uRBcHwNtVuDxvPeiNWxsNPegIcP5nHn_Ak1gz-nuIJoBif98br84saBIvViaO1wiQg3qYAOxAGPB6rvRthl82D42qVQUC8FWX9P2V6i6LsuGeYOB51EHWi_ykvOmDPecv6mlQx9WiFga60nDYiRcs0Gjzn2ZttyBK7dLzYdxwih2JfgIs1iFXDp7vqp4nLuDA11D-WksbZGB50toXnbv4xXJ2Re_RIsrvQsMUM5WO8jVpmHwRmHQxcz-JgA3QIvmbXYOQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576246,"updated":1612576246,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-keyd5df1395/ffa5bacc39b74c15857bf87aea79a91f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"3ELr36H1UH-FoHFBz2jgwhfdz_FT4Jw7p6hWqh7lhw2ccbdVkVCydbH-MpKGz2a23DhmsinFGiTOfFUGRAnUWcTATqLQQYhdDYgxhTG7gstWnrdG6TMwTSR2BzMT4ALT5VBGWf0ACaJLEgMjrr9ThmdWkBdwNrJ5oJA1fnCu379vioGXScai9d2jKFkfo-mxh-Q7EoTCK9sgmU4_lk01kLo1kNtGlFG8ClXwclZqmfYucDe_CJz0AnpeR8f-ZOwDkMZOUEpX_PBwWcFTfa4xQ1yE1Sz9p6B7UWCbvaE_TKZoaiFUJVDL3KXDb4auGzOOfCi3ZYoHKU5W3qZ2YqYDhQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612578030,"updated":1612578030,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 01:50:45 GMT
+      - Sat, 06 Feb 2021 02:20:30 GMT
       expires:
       - '-1'
       pragma:

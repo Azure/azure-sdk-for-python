@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name13760eb7/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name13760eb7/create?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Sat, 06 Feb 2021 01:55:11 GMT
+      date: Sat, 06 Feb 2021 02:39:43 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -34,7 +34,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestrsa-key-name13760eb7/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestrsa-key-name13760eb7/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA", "key_size": 2048}'
     headers:
@@ -47,15 +47,15 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name13760eb7/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name13760eb7/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name13760eb7/ad046460dfb440ae8c621c91dac8f4eb","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"7iWlqQzwSHFWzLb40Ju7oZ67dR3MSFRyX-deEg28kS_C1JWyk_Qov6D8-CEh3L8x9tIGVPj-bXQqv0GV82BmzXmeMAuwMnZbFSWnv21StGtwdNeN-Vy1TkEjykXlOwIZQPGCck9jTLubI0I7ZENaWEKVZiLWZSlQ9WfjlsVGnhvKwOgsm5pcDZuAiQAJF_pCj9IQoBqaQQT08uqq_S9XHMDKjq4gN1FeInovMMWy-9vEw4diM9Ni-pccj1J5a-Z6vHIhN-vNcTqGdWaGmea4LvUB6T5odHOnT4IERq_NMts0BYJA9Lp1kdSRixIfcEFncxUKVzNwHmx6ox1enxe31Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612576511,"updated":1612576511,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name13760eb7/35507a301b1b4f7a996023abc8c23156","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"s-qhgVqf1qhOrBrGaCth4_K1-fcR-zMNo8httjSz5vDI5iiSOI6zwY687VsBehMgvSgZY1VTDtd1vgdi6mnJy4hA5-sPFzSchOqpKfLkUNC2s5LJyS6IaCq_p-aDMDmCqUyQxShpZ41XwByegIBEm8XT-cXRDRWyeZjsyA9XYTt-c-AiQejce4DhUVv7WA2dlkVvSzxONEPSu0gLPD_KIN-rkY1xFcoC6NJknN6nBlc5c5kVvGTYr7uC7pouIswNGeLo8XjUXF0hKfbkUX_ZiayMyPRnXY7IX4bE9wG7-29dmZVTYG7nJpROq_eMoVmESCRCYIGICqm_E433-vbEAQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579184,"updated":1612579184,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '698'
       content-type: application/json; charset=utf-8
-      date: Sat, 06 Feb 2021 01:55:11 GMT
+      date: Sat, 06 Feb 2021 02:39:44 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -67,5 +67,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestrsa-key-name13760eb7/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestrsa-key-name13760eb7/create?api-version=7.2-preview
 version: 1

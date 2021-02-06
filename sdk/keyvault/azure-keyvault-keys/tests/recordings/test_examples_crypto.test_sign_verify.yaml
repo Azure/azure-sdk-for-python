@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 01:51:56 GMT
+      - Sat, 06 Feb 2021 02:21:41 GMT
       expires:
       - '-1'
       pragma:
@@ -70,7 +70,7 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-wrapping-key25cf0f71/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-wrapping-key25cf0f71/6925a68a055446329e7cf335e01c1bac","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"9vQJ4ADwGqky8GiM_dvSMVaQlFZyqxQGEoBpMdeZSb2e9_3B9oJWrXsH84ibiiqDT_xQy2gZJWinW83kWHm7K0TCMEx4NR7jggrDUPJp5afmTFxp6GiyLDXQCVMs-7vqbexW28ZtEth6Os6dMS7bQ6b30LcmFGWT9oG_faASCfO0OPm2y5LsN15cZCdPoiYqL85UFukRhFOGEk1_UtKCfyvs7N2OUPpYr7XOdSxb_tTrRcjFrCs0a3ByrpUSNBTdEuBwFm0GdsP2pO4ATWUd9TAoCPOBXJWyNbOyjRwZyWMAYOagwmRsCI6yFqotC9JkTHWhROehIIK2Hbw_ENgP3Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612576317,"updated":1612576317,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-wrapping-key25cf0f71/6e8345beaa144ac09ff583a4859e126f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"poIyHmSjmhIDxAvw52DDyCQ5rfmy_h7irHIqPXyBn4mSOdSvKsLcwRl83LZgMz2LpZDg-a0I5jGTLIz_rVoZiNqpMa-hQJqrtak3-1-VDMns25hu62gAwcPd7-LclC_AGuam_xYY6L2PWI1q5P0_QoPWjOD2f1wHdRYp3xfGA5LMcGVmfHOd44QkokPw2YDwvsvP1qyUhADjTrfZG6MJ_H5SEqOt07fQYgiv5jDGOng3RIbo-0zN80ih2CPUnGTfLhOab4_gSvlbS2y76gnfN01J7Ba9CEw7eTxvsmgmjI5vPVkTo7TIUn1orcMDIH_Bf4KmOryHVxDKMy1v6FjOVQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612578103,"updated":1612578103,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 01:51:57 GMT
+      - Sat, 06 Feb 2021 02:21:43 GMT
       expires:
       - '-1'
       pragma:
@@ -100,7 +100,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"value": "ltYuKr0-Qt5fUDMPuO_ExVmYNSeAd7IemqCzPB3wehw", "alg": "RS256"}'
+    body: '{"alg": "RS256", "value": "ltYuKr0-Qt5fUDMPuO_ExVmYNSeAd7IemqCzPB3wehw"}'
     headers:
       Accept:
       - application/json
@@ -115,10 +115,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-wrapping-key25cf0f71/6925a68a055446329e7cf335e01c1bac/sign?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-wrapping-key25cf0f71/6e8345beaa144ac09ff583a4859e126f/sign?api-version=7.2-preview
   response:
     body:
-      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-wrapping-key25cf0f71/6925a68a055446329e7cf335e01c1bac","value":"2w_YfXVgaa1s4uc6qDkUSIavhkxWRmAljm-wpMsQouDED2HYDrFbus-x6CdM3azSx9_YnAdQXzmjNJyGXOKoH8rTEhf4Tg_uwzipIU8bJI_2KOQdrIBGG6fTxKHzQmstD2sWqoEilRYCmUuaeS8sGSPv-52gu1tsJGopuacatXD4tD-qh36WxhR5NjaLpA7KujcGu8xaLal6mX-j_5dyUF0skHLgivKSUk3kFxCcuwvi3hhy246zO69YdEQYHok4FXxwJJWgBiV-2EgeLN6_JjSa3sW667Mmt-QhQskwY_PaydfCfD06DYwlSR52Xr-Y6RsVOQb-Vy0GXQ0jG9L0pQ"}'
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-wrapping-key25cf0f71/6e8345beaa144ac09ff583a4859e126f","value":"mVz6Iuhl073FvrgLHUH5CIqHUy5t47AY4_ArbsXZi6zyZyy7NzrHo-YDwjt1NNwrjyduiRBQhFaZ1o3gK5VsVrRKeDas2wdmOAwFJg-4fc4ia33PJFhErc3GFcIioXoeHS9O4-1uXY8sg0V2NiUhDo73Uaq25435ocy5qidcS0eOhgjx16w_V4T2WgEW38TCfk3PSMnkgodzVRV43Rq-gQuxMtvSa5DCDDfentM-FaR9oUVcy6WSu-By3nmEwhdeu_2euB58MxJiBpsPiK5y6qVudJm1vOe97jJfdob1XtOwP7KWyjDs3s6l1BmpZN5uXbY-tutNFTT5Av4ttTAmWg"}'
     headers:
       cache-control:
       - no-cache
@@ -127,7 +127,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 01:51:59 GMT
+      - Sat, 06 Feb 2021 02:21:43 GMT
       expires:
       - '-1'
       pragma:

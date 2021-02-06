@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 01:51:09 GMT
+      - Sat, 06 Feb 2021 02:20:54 GMT
       expires:
       - '-1'
       pragma:
@@ -70,7 +70,7 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/74dc16879afb4377bcdc295f8de056d8","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"3FAQ0BvXamJBHjLtZ7gF0VXJQy5bGZefmO7sWYzJxi1jHG61f-T6vOiAvNTP4WlUrfETGGA05OPb6xH9eKMM3If_xO32ZN52KnyzIBQe34kV7ZLYkfUtdWsLRtlPOxoP2gbDepBD6ysCO5J1hDhUu08Vz4Oyr0Wee9q3vinOwjliaRLRBjSR23gzDPk8nz667o09bNsyBgCheRKp_Ljx5BTxkKPEttt7EFAI-B81PEygAKiwV04dQ6LOYioBrmuoNsOx0fkQM-Rm_lf58stfCtdLAKQU8AAeFT0ACyikiPqJOYVrb4_4jQZ3k6ZuH6UccMDHk21o6ieGdHQKY9gF0ISOtiOM7_d98FT3RwiFTUxmkV2kduJEhnmIJOK2dLKqCmrpFI4_oGnPkUtaW44msdNxCAfJ3xCXFKwCya69uZbDHm8B1RKKBfV7LurR_sk87_QAkLstiN1jjblscwq1C2_Y1_6gRyrz_nhoFmSPNS1bXNVan5uHIAXubmQ2h0PXYv9K8GsGdok7pTxbdYQzfj-NDv7jA40_Ow3Rt254oU5E3rB6glb8hb0ivOsmARx_c2fNFYcqOrfnGnry1ITXLUBBpxgpFIjWrUZBSdV4OIuDPMIe82YiVe0kRRgfgCtOM3_NalQIGJMt4xsQfv55AxCFLwBU0XRa_U1ctISs3pE","e":"AQAB"},"attributes":{"enabled":true,"created":1612576270,"updated":1612576270,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/d2f73eb69c3f498481dd2222f9e36096","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"6xbO29VlP7twjAxSXjvrpf-yQrvT-KsKo2HUCSp55MbvMo-SGkmjUX3_iTEITT1coq4MWYCqeKWFvNXVkMMaUcB8eJkp0Gp0Mp6rAp_0PSigyIcnRyIHIhXVw6qFBtbOvSNutBFk0bYGSKh3s3u9isbOU4IX0CE-4f8GohMVvF-Yz_8AVH1ibYg9TmcwvSGq3ruHw8AVxt96lg2w8NC_-EJISdB6MK2Utm_lJUNRnG0v_RqF8Ah5vviDoZ0JNnTY_eFUWK9mg6uqKnydLJ6ZSRPWr5bRXwrFdSXoUss4YXLhhvB7Ymw4diZSJHF9L7ycoKGLkonzm8MFXcMr2SiyaF17SqPMwj5J203abddgqlJoQFThFA6KqE8rRw3AzT6IaOXyacUdvxFXA42Ll1JLnpF6IRu0A8PQIIbuTltJH8kDkCjo7NqonVAJemRu4gC3VdPBX_qPfrMZ77932CW8ahn8AvwIpiCCRqsfp9jO04fGkxKkqKXKnS4gsgCV7LJ9XjodVYoUCPufEVTC9njoCN4k31qiOodcVY33V4LILG8MuZni_xHdA5-rNti8pgFjUG27lR0ZlInLFPMyobam3hbg8p4aiR-mM2ft_Ks2luUyO0EM2FVGCZtgQq2uVKQmo0IQ76HYonmeFYv5PyX6k7U4iWxwFobIH4EcmLo75HU","e":"AQAB"},"attributes":{"enabled":true,"created":1612578055,"updated":1612578055,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 01:51:10 GMT
+      - Sat, 06 Feb 2021 02:20:55 GMT
       expires:
       - '-1'
       pragma:
@@ -100,8 +100,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"value": "X3CD_zufgMIaZm-3bccSvivh5E3XFzGKXVbA7ZTQMtT1S7WchF26S3YRRqvJcmnxFoQuNQ7-JrdoIF7gfHdMAl1rtITTG_tAqMV48qIoYPAHCGY3sAq7HRJtdObkyPHt73gTi1ph0E-_DyiS0Xoc8H7L36YknqaNzavE_Pks0zHp_JeevYctr9haGG0nXRy0KPW16X0aECQGL6FfGWUo-9e55zNSIsgZ0NSHbe4ZUyCGp-6JU6V_4SITF6pimjH2ZLd1BXHFdVwn3iN948fDzqOT8YKkq_xjm3A_AsroZwd4YPUvzuJL0fKJjkA8jWK2dMLZZRH8foYltKmVdYAY262IGhRxrlXeR6FGUGhhtJRh0aBGv9Q4UXl6DP-xXjQpp6gohaan1pD42YH5cCxkn_ozVK8Oe9tmwMb6Utj6nRu1sfus1lIP5dv7dIazMuV1zY11Ct8WuCqgPqzxN8p2GguGh93iQj4bIKA2S6fa0KKrNffUbHTSiAYussJKq_RlPUJVfX0tSKfZl0AYJZyK0rGLdWD13q8JEXqyIreyezGWwe0WJOHsGCmohUl28kicqLeus64XufZSV_BzqmLCpPWaHbquyQGabUyCJykbfEBcIR467SaizfEEvGGBH9hXYp-9uniGwPDcd-CbcXtGfxvAtBOhMcWHePJEXMWYvJA",
-      "alg": "RSA-OAEP"}'
+    body: '{"alg": "RSA-OAEP", "value": "MCPhmun1XEFII0KFifLKLGPFEAgii27qVgKOxV4BZhupjaySWYLygiZtSs0mvykHDAJ2BmcaAL36S5NiCtolysotH8x_mXxGpZ3BOWBYpaGB43TT8kYhuH8UmAz-xgYzWrLsxRLudk7MG89AqzPZuLboR7pz_ESRBryjqzhBrvUEADYfbWO5mrT2n75m3UHCNW30MJizzNUIxjQLO4Lsf9FB7eAhFLVUZch1avd94lrqFsxUp6DtJdLQAM0JgtNY9CHK0tHumb69W5EgKwhnBksZlVwGhAqWQYLQEmXXuFkKgU-UiWGF7h6xxyN5MMVee1g2yZqyzUD6LREcBbJvwp3ktURfr4NJPd-vIcZbUqRtxOnMKvi4tXzKqWv0LKVo-Zzy4uPt1uv8HKuoIPYJIMNcEoAI-5SaWGdZ3aKsEiBHHx719fc1somfwUa3f4n42oXyQkm8v4bP5PGUwZqyloGDUu0516N0gUbJ_sDkJgMZGVC8TNPC1iBJ4_jv0rS-isJjE22a-vduqQESP4STX6HW73oeksEbRtF7V_2-hrG1OwYuwySGNgxheNvrr9Of-MTRvRE0-M9yX_Z7lHNj0gQYcz1HCL71oG2pWOZkYPlWcx1DqJvUrwvCI-JKK4Zu8etSknV7Sa0ji0h8F6p1jXV8I0yBGrgNjKpnlfmhoGk"}'
     headers:
       Accept:
       - application/json
@@ -116,10 +115,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/74dc16879afb4377bcdc295f8de056d8/unwrapkey?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/d2f73eb69c3f498481dd2222f9e36096/unwrapkey?api-version=7.2-preview
   response:
     body:
-      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/74dc16879afb4377bcdc295f8de056d8","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/d2f73eb69c3f498481dd2222f9e36096","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
     headers:
       cache-control:
       - no-cache
@@ -128,7 +127,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 01:51:11 GMT
+      - Sat, 06 Feb 2021 02:20:56 GMT
       expires:
       - '-1'
       pragma:
@@ -149,8 +148,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"value": "KJ7skUGytbY6V5O3zKERUXuDmlklimoPwRdsP9EI7xziLY1Ye5n5MNVxIWd40GVWHy-uTm434MyWqWHyRIjKjMa9FYFk615Js9jytYblWvMha1IqOJAHAKBenLX6iePeyhdfR_DGNpCT_Lz11slr6SW0BnHncKD3pGDlhSgtdQrPoZaOas80V4V7_JGPKg1p7FqE20unp6HWS74_kMQgF0hSEGYuTDv0XU3HtrOc_opRR7Z5Sbirm3jSrMeTTGMFMo4Hu4byXYRim8CeASXUDwuRkN8u_P4ztF5nvNoPhKCtmW4LTC2mm_WfPI0FeEYldRKWQgdoGyA-91fDr8IiRtVZGx3WVs_SvxseGJLGGzLm2BjRCKwxiDzC2OdBfBkXsG_9wRqhdf8H6I26o3Pw5G3JeuElQAeLWCjpQa0ylmEC7LBZbUrl9TViHPHYfDfQqj6NR08bNoQjSYoZcMfFz1LwwFv2a0JhH2jQXvlKVMtt9wPa-6ODNal6YtqatE7GRwN4dNTOKi1Ec34wacJqGpNgjANfIYv4KevZ8yClhX6t9lhnDJf2MRPkLrWp1Vu3VF5xiS8GJIQU-jX50VsuEPjWdxlwKZxYYyAT5spcT4xabdXTy8SOkjoInEB--k3ftf2ELCYt0AqqbRuyrbUFt82UPs6_KsH5-I5IZN0mSrk",
-      "alg": "RSA-OAEP-256"}'
+    body: '{"alg": "RSA-OAEP-256", "value": "LNSiaaJWlGiaDnRhMnMRFGtLLazfOdV9XnGM4jnrIfTbH0gKcJpbkrwQgByUjiHBV3UeRmbkxAOMcc9SdD7fZYsJbJmNgHi9sDj7hrc7qeGKX66cb2xDYYSjJi4DVYPTUBHCgzM1KN4DzxbJ26CNGEd06TP5iycRsG4Dcn165-mQLbeHkUg70XTAljeOdn9riJ7bsv35-15Wer2-HZVphbwKXaOdYlCxAXpOnpJtdqLWkZaZ8P0FF4cKPSqJkjE748a0d5ysKCRelM4_TA5QeoPcXYVX3jl3kUy3eEg27EZ8qfStFUeZHvCVoiIy5JXPuG1MwpPH_D9NJjGl3j-hOhk3PyU6Al-ghhhQ73KpU8ro0-EtcdwDrrQB4salJcuOGmWUQw433WDsFW-CH-uZSel_8ktmaXPXwwHC4M47RGm3eyBH6AKQ60QB_JllyPBbhnrrv6nLx7uq0639rctPrkr7ipdDcByQosm_CQsT1fqcYqWGB0iMeFiu2WcsrYMIUvuH_uBUrGCpy4l5aFExUqqCmpRHYPuSDZI_2zied6Ye2KP-P1qkzqb6DVMvdPWVach4c9M_lyycqXeEbRUWBZ41L9ndXMUAZwNhCvPrHIhfQHipCXcucluriCDUaE5D3oDfpJt_M3WtuM4n7JYHYTOru5xaVD5CrW-qcf53v8o"}'
     headers:
       Accept:
       - application/json
@@ -165,10 +163,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/74dc16879afb4377bcdc295f8de056d8/unwrapkey?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/d2f73eb69c3f498481dd2222f9e36096/unwrapkey?api-version=7.2-preview
   response:
     body:
-      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/74dc16879afb4377bcdc295f8de056d8","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/d2f73eb69c3f498481dd2222f9e36096","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
     headers:
       cache-control:
       - no-cache
@@ -177,7 +175,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 01:51:11 GMT
+      - Sat, 06 Feb 2021 02:20:56 GMT
       expires:
       - '-1'
       pragma:
@@ -198,8 +196,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"value": "njR1PbQuWReQ4naJW79mTDQ2q_KT083VRdSxx275arJL0u7H8DcfxA_U_bPIYIdq2qVE5nKoTeE1XICYtsBiYilqbYlbFwRr6NX1XQPNGZk67nheXYQZA1nm12fAyNA5lxgqwp7R9HJCPPjrrijScunItIaLdyXaypu7nas60mHu6Lb93yfc2ToFxbYGIKliRsoJqS-ZWVLILl7WQP5MN-3mcbfs65K-Fze6rjvkHY0CrRVNPbg7RQQWIcGQSr7gcJDwa4EPzWJkoYRAy0Su2eGagk1G0WiBGelsLWz5qt1yEpm8ijfUGUc036UI7_7CoBB5WC2ubS-5uBPnTvQSbz2ALvxouHuLqit1bBKD-3wlIctYwa9wZ6cLBZ-QcuTxm6yx38FZiktO889f1F8uedHWOvTvNQYpbWQ4v-aLm9ULg9v1rjohjgwl0J9SiVMFXlRHdckTyryDyy83Kap9uDb7CojHRq8Xnr6Jh2WgC36SQEntSss7Dzc5I46N49GY--XiTOO0hM7EEUf6qA1BMsRhRuQYk4E5QrbF8dEKaS6S03hx23aSseX-rcI2PraaiuRPNqsgtgqmkW0o-gq9NvXQ4nynvTN9hKGSoFuZqULrKrcoEOlObY0rj1KrK1jASM0YU9qUtTUXmzrJ2dGAOGSWh9PdKtBHVGs7iWPkQow",
-      "alg": "RSA1_5"}'
+    body: '{"alg": "RSA1_5", "value": "uMk0dX8GLiFzZOLegcMCP7Fl1lXuiZT61rvWJm20WvWl2f1249DnhKs98QJxoOLvy2SnJjc6PzbW_8L7uYj9NDsnb8c6rIimOnQMGBWYcPHR_ZzwIUI2YCgQ7SRzQQCdJ9wwqFyhjIB-VUYui5Q0bNzK7H1KgwJsx9mVOyuJgAF9j7tXBcV8k1OV3wKjnkTfPzX4CzuuSYyZOEywKxt8XPO_kMe8rXoCUua7XACtIX_xtnnII-tMei2uYrBaF_GNWmfjzLa5wdn4-LSDmWuVA99uXsEvj2Sqgqh_-o-tGo9z_J7jLqz8GSSqk030BS9gfnn6zbd220dHL0gK6oBu8t64TOm3R7Jc8nPybaOKd-lvqqAGjiGodxOMnC6fiN7lVjblYSS1F2rASO0slXN6WtBlTcddwxeRatdPOFkED98SgF7RlLvlRuNB05GZnaufqyvCMPZSto35tAhBOB37MpX9PoKcQoE6b_5Ps7Ubko-qgeto9selAW1vuKuxsKTbCSBQNT6m4uUr3nSu-J4wertjYTrQs7TJS3USqLMTIwvWx44lwZJwuBFrtRsswvqFpqSPPu6zdf36AoERCsK2RxdknaLKXbmSVYkO7mlreu1vpdT9XtJ-AV93tHVpJhiDMQC9-9ld2f-3DkihPXonBeVRS2BCgcsOXuOSCfOYMiw"}'
     headers:
       Accept:
       - application/json
@@ -214,10 +211,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/74dc16879afb4377bcdc295f8de056d8/unwrapkey?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/d2f73eb69c3f498481dd2222f9e36096/unwrapkey?api-version=7.2-preview
   response:
     body:
-      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/74dc16879afb4377bcdc295f8de056d8","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestwrap-localf86c0e10/d2f73eb69c3f498481dd2222f9e36096","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
     headers:
       cache-control:
       - no-cache
@@ -226,7 +223,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 01:51:12 GMT
+      - Sat, 06 Feb 2021 02:20:57 GMT
       expires:
       - '-1'
       pragma:

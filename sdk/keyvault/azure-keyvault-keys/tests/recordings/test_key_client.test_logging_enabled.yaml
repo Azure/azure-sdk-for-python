@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 01:53:10 GMT
+      - Sat, 06 Feb 2021 02:37:25 GMT
       expires:
       - '-1'
       pragma:
@@ -70,7 +70,7 @@ interactions:
     uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name116c0ea5/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name116c0ea5/ece316830ce7498b84196b3a807f61a9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wU5RJuK1uO14RnYS1fLhMYPUyAS7hStitqVv39iwniB_QURC_V6z90yAWZbpWBWbtVQYKUm3x_1LQwOhPvjvW8szRt8K_tK3-HacmflxqSCE0h-CB4vdp3T53zRUjkrmHUPX7cNEAWmTq-udaxh_aGZioyopR0S4JokORZrXCucPcIWYX9c9-uvJ5jtRcYpDfeW5XGBAxYHcQNLa9o0yU13-oiYqEECx_rzulJrX8NO61kVpW24pmtDroPP6xG_YemIqSVcTbb-OIRSjOhl4cRM13v5_8whRevvOrRntFfkGr2bgnDI_lMvA5L0AkLQL-pqhNqq9Pb8bcmCUe9e7aQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612576391,"updated":1612576391,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name116c0ea5/57cbc7b3579d440e93bf6a239ab78d86","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"q1tuxUlclf7sT7T5AOneL60aIPbWRFojVqBemuiO-PcaW7p7gF3zSlouBbMr9YdBPRFwg47AdEkwAU3kOgehZ-zS60yaUhGuBUZV8D3N7_Sw0eYWUTxDoOWOuP8ILANcN6xustSeuqzPpY0JXrzdy_iy-ozK1oqIhFVNucX8AGynPUdAKhARccuWdTmyd2TkGlm1uu65FJV6OpTpnkdoFGaedMt3iSErXt3AMfbnOhZ7HPODjoQEEENtK_FKTLlDi-Pxd3vQUZh44jqIuVx8IV3tO-jjVrYWLQMSVeYNnU5ow8eDKf6Wnj8mSoxa1xit3zds8IVKfowk5xRdBPtYoQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579046,"updated":1612579046,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 01:53:10 GMT
+      - Sat, 06 Feb 2021 02:37:26 GMT
       expires:
       - '-1'
       pragma:
