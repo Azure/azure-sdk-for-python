@@ -15,7 +15,6 @@ from azure.core.pipeline import policies
 
 from .._version import VERSION
 
-
 class KeyVaultClientConfiguration(Configuration):
     """Configuration for KeyVaultClient.
 
