@@ -26,6 +26,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def _validate_arguments(operation, algorithm, **kwargs):
+    # type: (KeyOperation, EncryptionAlgorithm, **Any) -> None
     """Validates the arguments passed to perform an operation with a provided algorithm.
 
     :param KeyOperation operation: the type of operation being requested. Can be "encrypt" or "decrypt"
@@ -36,8 +37,8 @@ def _validate_arguments(operation, algorithm, **kwargs):
     :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
     """
     iv = kwargs.pop("iv", None)
-    tag = kwargs.pop("authentication_tag", None)
-    aad = kwargs.pop("additional_authenticated_data", None)
+    tag = kwargs.pop("tag", None)
+    aad = kwargs.pop("aad", None)
 
     if operation == KeyOperation.encrypt:
         if iv and "CBC" not in algorithm:
