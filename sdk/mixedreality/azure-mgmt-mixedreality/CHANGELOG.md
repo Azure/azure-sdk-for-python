@@ -1,5 +1,29 @@
 # Release History
 
+## 0.3.0 (2021-02-07)
+
+**Features**
+
+  - Model RemoteRenderingAccount has a new parameter system_data
+  - Model RemoteRenderingAccount has a new parameter storage_account_name
+  - Model RemoteRenderingAccount has a new parameter kind
+  - Model RemoteRenderingAccount has a new parameter plan
+  - Model RemoteRenderingAccount has a new parameter sku
+  - Model SpatialAnchorsAccount has a new parameter system_data
+  - Model SpatialAnchorsAccount has a new parameter storage_account_name
+  - Model SpatialAnchorsAccount has a new parameter kind
+  - Model SpatialAnchorsAccount has a new parameter plan
+  - Model SpatialAnchorsAccount has a new parameter sku
+  - Model SpatialAnchorsAccount has a new parameter identity
+  - Model Operation has a new parameter origin
+  - Model Operation has a new parameter properties
+  - Model Operation has a new parameter is_data_action
+
+**Breaking changes**
+
+  - Operation SpatialAnchorsAccountsOperations.update has a new signature
+  - Operation SpatialAnchorsAccountsOperations.create has a new signature
+
 ## 0.2.0 (2020-05-25)
 
 **Features**
