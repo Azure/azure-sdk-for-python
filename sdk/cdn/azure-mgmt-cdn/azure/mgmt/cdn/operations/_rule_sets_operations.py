@@ -183,7 +183,7 @@ class RuleSetsOperations(object):
 
     def _create_initial(
             self, resource_group_name, profile_name, rule_set_name, custom_headers=None, raw=False, **operation_config):
-        rule_set = None
+        rule_set = {}
 
         # Construct URL
         url = self.create.metadata['url']
