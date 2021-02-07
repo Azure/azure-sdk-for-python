@@ -1,5 +1,17 @@
 # Release History
 
+## 7.0.0 (2021-02-07)
+
+**Breaking changes**
+
+  - Operation SecurityPoliciesOperations.patch has a new signature
+  - Model RouteUpdateParameters no longer has parameter optimization_type
+  - Model Route no longer has parameter optimization_type
+  - Model CustomerCertificateParameters no longer has parameter thumbprint
+  - Model CustomerCertificateParameters no longer has parameter expiration_date
+  - Model CustomerCertificateParameters no longer has parameter subject
+  - Model ManagedCertificateParameters has a new signature
+
 ## 6.0.0 (2020-12-14)
 
 **Features**
