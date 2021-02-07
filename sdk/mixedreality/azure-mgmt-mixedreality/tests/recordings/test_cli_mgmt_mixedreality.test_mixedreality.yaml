@@ -1,0 +1,530 @@
+interactions:
+- request:
+    body: '{"location": "eastus"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '22'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-mixedreality/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/spatialAnchorsAccounts","identity":null,"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{},"properties":{"accountDomain":"eastus.mixedreality.azure.com","accountId":"d4407a0d-bee5-4a1c-9be8-7835fc8e7afb"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '463'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 07 Feb 2021 06:11:49 GMT
+      expires:
+      - '-1'
+      location:
+      - subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount
+      ms-cv:
+      - XNGHaHuXyU+Cg3/YxjZ14g.0
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"location": "eastus", "identity": {"type": "SystemAssigned"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '62'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-mixedreality/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/remoteRenderingAccounts","identity":{"type":"SystemAssigned","principalId":"7c987da4-0f85-457a-90ac-9a933c93cc40","tenantId":"00000000-0000-0000-0000-000000000000"},"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{},"properties":{"accountDomain":"eastus.mixedreality.azure.com","accountId":"28096da6-261b-43ca-aa1e-d42f70242e38"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '589'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 07 Feb 2021 06:11:56 GMT
+      expires:
+      - '-1'
+      location:
+      - subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount
+      ms-cv:
+      - kO5+KshK9k2DKmaGcFaJzA.0
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-mixedreality/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/remoteRenderingAccounts","identity":{"type":"SystemAssigned","principalId":"7c987da4-0f85-457a-90ac-9a933c93cc40","tenantId":"00000000-0000-0000-0000-000000000000"},"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{},"properties":{"accountDomain":"eastus.mixedreality.azure.com","accountId":"28096da6-261b-43ca-aa1e-d42f70242e38"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '589'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 07 Feb 2021 06:11:57 GMT
+      expires:
+      - '-1'
+      ms-cv:
+      - 1eAQK0DVH0KstSfCKx7EcQ.0
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-mixedreality/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/spatialAnchorsAccounts","identity":null,"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{},"properties":{"accountDomain":"eastus.mixedreality.azure.com","accountId":"d4407a0d-bee5-4a1c-9be8-7835fc8e7afb"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '463'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 07 Feb 2021 06:11:57 GMT
+      expires:
+      - '-1'
+      ms-cv:
+      - NimCKzcxZkevGIvB7rgI2A.0
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"serial": 1}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-mixedreality/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount/regenerateKeys?api-version=2021-01-01
+  response:
+    body:
+      string: '{"primaryKey":"tl+kpGFfU1JbcZ2eiGHqtUL1Q8q1TuAoBsD/7MPgFzE=","secondaryKey":"3dhV0+AtZC9giC9onez9fI9Ce/wu3cQCIAoltrHOtFM="}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '123'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 07 Feb 2021 06:11:58 GMT
+      expires:
+      - '-1'
+      ms-cv:
+      - 8lq1MpnNAEyDZ2900UcJAQ.0
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"serial": 1}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-mixedreality/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount/regenerateKeys?api-version=2021-01-01
+  response:
+    body:
+      string: '{"primaryKey":"p3Hy6VgteaZMMmzR6X7N4FHq+o+9iFhtasP98DEsGas=","secondaryKey":"aLXVSKMyjFvDPS48xJNc6eXtgIWO2GzOVWvHKT4coTA="}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '123'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 07 Feb 2021 06:11:59 GMT
+      expires:
+      - '-1'
+      ms-cv:
+      - GsLrT/IH80iqcFGOfpLYeA.0
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"tags": {"heroine": "juliet", "hero": "romeo"}, "location": "eastus",
+      "identity": {"type": "SystemAssigned"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '110'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-mixedreality/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/remoteRenderingAccounts","identity":{"type":"SystemAssigned","principalId":"7c987da4-0f85-457a-90ac-9a933c93cc40","tenantId":"00000000-0000-0000-0000-000000000000"},"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{"heroine":"juliet","hero":"romeo"},"properties":{"accountDomain":"eastus.mixedreality.azure.com","accountId":"28096da6-261b-43ca-aa1e-d42f70242e38"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '622'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 07 Feb 2021 06:12:02 GMT
+      expires:
+      - '-1'
+      ms-cv:
+      - p+SvAk+V3U6ms5yVcOgLCw.0
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"tags": {"heroine": "juliet", "hero": "romeo"}, "location": "eastus"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '70'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-mixedreality/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount?api-version=2021-01-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount","name":"myAccount","type":"Microsoft.MixedReality/spatialAnchorsAccounts","identity":null,"location":"eastus","plan":null,"sku":null,"kind":null,"tags":{"heroine":"juliet","hero":"romeo"},"properties":{"accountDomain":"eastus.mixedreality.azure.com","accountId":"d4407a0d-bee5-4a1c-9be8-7835fc8e7afb"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '496'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 07 Feb 2021 06:12:05 GMT
+      expires:
+      - '-1'
+      ms-cv:
+      - KFrbGkh8akKLhrWXg7srtQ.0
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "MyAccount", "type": "Microsoft.MixedReality/spatialAnchorsAccounts"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '78'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-mixedreality/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.MixedReality/locations/eastus/checkNameAvailability?api-version=2021-01-01
+  response:
+    body:
+      string: '{"nameAvailable":true,"reason":null,"message":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '51'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 07 Feb 2021 06:12:07 GMT
+      expires:
+      - '-1'
+      ms-cv:
+      - pB12QbxjoUW0q4vQjBAXcg.0
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-mixedreality/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/remoteRenderingAccounts/myAccount?api-version=2021-01-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Sun, 07 Feb 2021 06:12:10 GMT
+      expires:
+      - '-1'
+      ms-cv:
+      - M/GCmEC0PkmDypkHeVKS5w.0
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-mixedreality/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_mixedreality_test_mixedreality9961123a/providers/Microsoft.MixedReality/spatialAnchorsAccounts/myAccount?api-version=2021-01-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Sun, 07 Feb 2021 06:12:14 GMT
+      expires:
+      - '-1'
+      ms-cv:
+      - IJyq4GBOSEaDQdwmppQLjg.0
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
+    status:
+      code: 200
+      message: OK
+version: 1
