@@ -64,7 +64,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-11-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -96,7 +96,7 @@ class AccountsOperations:
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -139,7 +139,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-11-01"
         accept = "application/json"
 
         # Construct URL
@@ -181,13 +181,13 @@ class AccountsOperations:
         account_name: str,
         body: "_models.NetAppAccount",
         **kwargs
-    ) -> Optional["_models.NetAppAccount"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.NetAppAccount"]]
+    ) -> "_models.NetAppAccount":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetAppAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -216,11 +216,10 @@ class AccountsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('NetAppAccount', pipeline_response)
 
@@ -292,7 +291,7 @@ class AccountsOperations:
             'accountName': self._serialize.url("account_name", account_name, 'str'),
         }
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -317,7 +316,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-11-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -420,13 +419,13 @@ class AccountsOperations:
         account_name: str,
         body: "_models.NetAppAccountPatch",
         **kwargs
-    ) -> Optional["_models.NetAppAccount"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.NetAppAccount"]]
+    ) -> "_models.NetAppAccount":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetAppAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -455,15 +454,14 @@ class AccountsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('NetAppAccount', pipeline_response)
 
-        if response.status_code == 201:
+        if response.status_code == 202:
             deserialized = self._deserialize('NetAppAccount', pipeline_response)
 
         if cls:
@@ -531,7 +529,7 @@ class AccountsOperations:
             'accountName': self._serialize.url("account_name", account_name, 'str'),
         }
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
