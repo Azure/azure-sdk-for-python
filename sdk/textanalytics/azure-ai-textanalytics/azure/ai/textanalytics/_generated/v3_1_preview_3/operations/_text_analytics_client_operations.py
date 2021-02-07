@@ -8,6 +8,8 @@
 from typing import TYPE_CHECKING
 import warnings
 
+# FIXME: have to manually reconfigure import path for multiapi operation mixin
+from ...._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeHealthcareEntitiesLROPollingMethod
 from ...._lro import AnalyzeBatchActionsLROPoller, AnalyzeBatchActionsLROPollingMethod
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -488,7 +490,7 @@ class TextAnalyticsClientOperationsMixin(object):
         string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> AnalyzeBatchActionsLROPoller["_models.HealthcareJobState"]
+        # type: (...) -> AnalyzeHealthcareEntitiesLROPoller["_models.HealthcareJobState"]
         """Submit healthcare analysis job.
 
         Start a healthcare analysis job to recognize healthcare related entities (drugs, conditions,
@@ -505,12 +507,12 @@ class TextAnalyticsClientOperationsMixin(object):
         :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_3.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AnalyzeBatchActionsLROPollingMethod polling method,
+        :keyword polling: Pass in True if you'd like the AnalyzeHealthcareEntitiesLROPollingMethod polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AnalyzeBatchActionsLROPoller that returns either HealthcareJobState or the result of cls(response)
-        :rtype: ~...._lro.AnalyzeBatchActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_3.models.HealthcareJobState]
+        :return: An instance of AnalyzeHealthcareEntitiesLROPoller that returns either HealthcareJobState or the result of cls(response)
+        :rtype: ~...._lro.AnalyzeHealthcareEntitiesLROPoller[~azure.ai.textanalytics.v3_1_preview_3.models.HealthcareJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
@@ -543,18 +545,18 @@ class TextAnalyticsClientOperationsMixin(object):
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
-        if polling is True: polling_method = AnalyzeBatchActionsLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AnalyzeHealthcareEntitiesLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
-            return AnalyzeBatchActionsLROPoller.from_continuation_token(
+            return AnalyzeHealthcareEntitiesLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return AnalyzeBatchActionsLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AnalyzeHealthcareEntitiesLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_health.metadata = {'url': '/entities/health/jobs'}  # type: ignore
 
     def entities_recognition_general(
