@@ -9,12 +9,12 @@ import functools
 from urllib.parse import urlparse, parse_qsl
 
 from azure.core.async_paging import AsyncList
-from ._models import RequestStatistics, TextDocumentBatchStatistics
+from .._models import RequestStatistics, TextDocumentBatchStatistics
 from ._async_paging import (
     AnalyzeHealthcareEntitiesResultAsync,
     AnalyzeResultAsync
 )
-from ._response_handlers import healthcare_result, get_iter_items
+from .._response_handlers import healthcare_result, get_iter_items
 
 
 async def healthcare_extract_page_data_async(doc_id_order, obj, response_headers, health_job_state): # pylint: disable=unused-argument

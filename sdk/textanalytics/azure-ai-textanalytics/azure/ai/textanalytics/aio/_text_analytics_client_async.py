@@ -29,7 +29,7 @@ from .._response_handlers import (
     pii_entities_result,
     _get_deserialize
 )
-from .._response_handlers_async import healthcare_paged_result, analyze_paged_result
+from ._response_handlers_async import healthcare_paged_result, analyze_paged_result
 from .._models import (
     DetectLanguageInput,
     TextDocumentInput,
@@ -47,7 +47,7 @@ from .._models import (
     AnalyzeBatchActionsType,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
-from .._async_lro import (
+from ._async_lro import (
     AnalyzeHealthcareEntitiesAsyncLROPollingMethod,
     AnalyzeHealthcareEntitiesAsyncLROPoller,
     AsyncAnalyzeBatchActionsLROPollingMethod

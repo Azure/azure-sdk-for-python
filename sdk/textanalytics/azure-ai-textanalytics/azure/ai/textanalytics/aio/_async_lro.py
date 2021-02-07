@@ -85,7 +85,7 @@ class AnalyzeHealthcareEntitiesAsyncLROPollingMethod(TextAnalyticsAsyncLROPollin
 
     @property
     def _current_body(self):
-        from ._generated.v3_1_preview_3.models import JobMetadata
+        from .._generated.v3_1_preview_3.models import JobMetadata
         return JobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -162,7 +162,7 @@ class AnalyzeHealthcareEntitiesAsyncLROPoller(AsyncLROPoller[PollingReturnType])
             )
 
         except HttpResponseError as error:
-            from ._response_handlers import process_http_response_error
+            from .._response_handlers import process_http_response_error
             process_http_response_error(error)
 
 
@@ -170,7 +170,7 @@ class AsyncAnalyzeBatchActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMetho
 
     @property
     def _current_body(self):
-        from ._generated.v3_1_preview_3.models import JobMetadata
+        from .._generated.v3_1_preview_3.models import JobMetadata
         return JobMetadata.deserialize(self._pipeline_response)
 
     @property
