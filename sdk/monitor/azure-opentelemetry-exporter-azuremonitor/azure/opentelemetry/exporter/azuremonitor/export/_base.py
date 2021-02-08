@@ -37,11 +37,12 @@ class BaseExporter:
     :type options: ~azure.opentelemetry.exporter.azuremonitor.options.ExporterOptions
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """Azure Monitor base exporter for OpenTelemetry.
 
         :param options: Exporter configuration options.
         :type options: ~azure.opentelemetry.exporter.azuremonitor.options.ExporterOptions
+        :rtype: None
         """
         options = ExporterOptions(**kwargs)
         parsed_connection_string = ConnectionStringParser(
@@ -111,7 +112,7 @@ class BaseExporter:
                     return ExportResult.SUCCESS
                 resend_envelopes = []
                 for error in track_response.errors:
-                    if is_retryable_code(error.status_code):
+                    if _is_retryable_code(error.status_code):
                         resend_envelopes.append(
                             envelopes[error.index]
                         )
@@ -129,7 +130,7 @@ class BaseExporter:
                     return ExportResult.FAILED_RETRYABLE
 
             except HttpResponseError as response_error:
-                if is_retryable_code(response_error.status_code):
+                if _is_retryable_code(response_error.status_code):
                     return ExportResult.FAILED_RETRYABLE
                 return ExportResult.FAILED_NOT_RETRYABLE
             except ServiceRequestError as request_error:
@@ -149,7 +150,7 @@ class BaseExporter:
         return ExportResult.SUCCESS
 
 
-def is_retryable_code(response_code: int) -> bool:
+def _is_retryable_code(response_code: int) -> bool:
     """
     Determine if response is retryable
     """

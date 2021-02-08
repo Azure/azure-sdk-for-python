@@ -21,6 +21,7 @@ class BaseObject:
 class ExporterOptions(BaseObject):
     """Configuration for Azure Exporters.
     :param str connection_string: Azure Connection String.
+    :rtype: None
     """
 
     __slots__ = (
@@ -29,6 +30,7 @@ class ExporterOptions(BaseObject):
 
     def __init__(
         self,
-        connection_string: str = None
+        connection_string: str = None,
+        **kwargs: Any
     ) -> None:
         self.connection_string = connection_string

@@ -126,14 +126,14 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmit_http_error_retryable(self):
-        with mock.patch("azure.opentelemetry.exporter.azuremonitor.export._base.is_retryable_code") as m:
+        with mock.patch("azure.opentelemetry.exporter.azuremonitor.export._base._is_retryable_code") as m:
             m.return_value = True
             with mock.patch("requests.Session.request", throw(HttpResponseError)):
                 result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmit_http_error_retryable(self):
-        with mock.patch("azure.opentelemetry.exporter.azuremonitor.export._base.is_retryable_code") as m:
+        with mock.patch("azure.opentelemetry.exporter.azuremonitor.export._base._is_retryable_code") as m:
             m.return_value = False
             with mock.patch("requests.Session.request", throw(HttpResponseError)):
                 result = self._base._transmit(self._envelopes_to_export)

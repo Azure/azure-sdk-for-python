@@ -34,10 +34,11 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     :type options: ~azure.opentelemetry.exporter.azuremonitor.options.ExporterOptions
     """
 
-    def export(self, spans: Sequence[Span]) -> SpanExportResult:
+    def export(self, spans: Sequence[Span], **kwargs: Any) -> SpanExportResult:
         """Export data
         :param spans: Open Telemetry Spans to export.
         :type spans: ~opentelemetry.trace.Span
+        :rtype: ~opentelemetry.sdk.trace.export.SpanExportResult
         """
         envelopes = [self._span_to_envelope(span) for span in spans]
         try:
@@ -63,14 +64,14 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     def _span_to_envelope(self, span: Span) -> TelemetryItem:
         if not span:
             return None
-        envelope = convert_span_to_envelope(span)
+        envelope = _convert_span_to_envelope(span)
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
 
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
-def convert_span_to_envelope(span: Span) -> TelemetryItem:
+def _convert_span_to_envelope(span: Span) -> TelemetryItem:
     envelope = TelemetryItem(
         name="",
         instrumentation_key="",

@@ -22,8 +22,9 @@ uuid_regex_pattern = re.compile(
 class ConnectionStringParser:
     """ConnectionString parser.
 
-    Args:
-        connection_string: Azure Connection String.
+    :param connection_string: Azure Connection String.
+    :type: str
+    :rtype: None
     """
 
     def __init__(
