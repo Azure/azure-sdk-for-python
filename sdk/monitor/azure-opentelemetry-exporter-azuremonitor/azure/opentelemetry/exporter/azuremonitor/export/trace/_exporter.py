@@ -37,7 +37,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     def export(self, spans: Sequence[Span], **kwargs: Any) -> SpanExportResult:
         """Export data
         :param spans: Open Telemetry Spans to export.
-        :type spans: ~opentelemetry.trace.Span
+        :type spans: Sequence[~opentelemetry.trace.Span]
         :rtype: ~opentelemetry.sdk.trace.export.SpanExportResult
         """
         envelopes = [self._span_to_envelope(span) for span in spans]
@@ -54,8 +54,8 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             logger.exception("Exception occurred while exporting the data.")
             return get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
-    def shutdown(self):
-        """Shuts down the exporter.
+    def close(self, **kwargs: Any) -> None:
+        """Closes the exporter.
 
         Called when the SDK is shut down.
         """
