@@ -10,6 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultRoleScope, KeyVaultPermission, KeyVaultDataAction
 from azure.keyvault.administration.aio import KeyVaultAccessControlClient
+from azure.keyvault.administration._internal import HttpChallengeCache
 import pytest
 from six.moves.urllib_parse import urlparse
 from devtools_testutils import AzureTestCase
@@ -30,6 +31,11 @@ class AccessControlTests(KeyVaultTestCase):
             playback = urlparse(self.managed_hsm["playback_url"])
             self.scrubber.register_name_pair(real.netloc, playback.netloc)
         super(AccessControlTests, self).setUp(*args, **kwargs)
+
+    def tearDown(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        super(AccessControlTests, self).tearDown()
 
     @property
     def credential(self):
@@ -68,13 +74,20 @@ class AccessControlTests(KeyVaultTestCase):
         assert len(original_definitions)
 
         # create custom role definition
+        role_name = self.get_resource_name("role-name")
         definition_name = self.get_replayable_uuid("definition-name")
         permissions = [KeyVaultPermission(allowed_data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         created_definition = await client.set_role_definition(
-            role_scope=scope, permissions=permissions, role_definition_name=definition_name
+            role_scope=scope,
+            permissions=permissions,
+            role_name=role_name,
+            role_definition_name=definition_name,
+            description="test"
         )
         assert "/" in created_definition.assignable_scopes
+        assert created_definition.role_name == role_name
         assert created_definition.name == definition_name
+        assert created_definition.description == "test"
         assert len(created_definition.permissions) == 1
         assert created_definition.permissions[0].allowed_data_actions == [KeyVaultDataAction.READ_HSM_KEY]
 
@@ -85,6 +98,8 @@ class AccessControlTests(KeyVaultTestCase):
         updated_definition = await client.set_role_definition(
             role_scope=scope, permissions=permissions, role_definition_name=definition_name
         )
+        assert updated_definition.role_name == ""
+        assert updated_definition.description == ""
         assert len(updated_definition.permissions) == 1
         assert len(updated_definition.permissions[0].allowed_data_actions) == 0
         assert updated_definition.permissions[0].denied_data_actions == [KeyVaultDataAction.READ_HSM_KEY]

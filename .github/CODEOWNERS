@@ -102,7 +102,7 @@
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft @abhahn
 
 # PRLabel: %Cognitive - Form Recognizer
-/sdk/formrecognizer/                                                 @kristapratico @iscai-msft
+/sdk/formrecognizer/                                                 @kristapratico @iscai-msft @catalinaperalta
 
 # PRLabel: %Cognitive - Metrics Advisor
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico

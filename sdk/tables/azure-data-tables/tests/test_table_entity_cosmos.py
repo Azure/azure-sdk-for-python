@@ -15,6 +15,8 @@ from math import isnan
 from time import sleep
 import uuid
 
+from devtools_testutils import AzureTestCase
+
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     HttpResponseError,
@@ -38,7 +40,7 @@ from preparers import CosmosPreparer
 
 # ------------------------------------------------------------------------------
 
-class StorageTableEntityTest(TableTestCase):
+class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
     def _set_up(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         self.ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)

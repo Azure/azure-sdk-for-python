@@ -13,6 +13,8 @@ from datetime import datetime
 from dateutil.tz import tzutc
 import sys
 
+from devtools_testutils import AzureTestCase
+
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceExistsError,
@@ -30,14 +32,14 @@ from azure.data.tables import (
     BatchErrorException
 )
 
-from _shared.testcase import TableTestCase
+from _shared.asynctestcase import AsyncTableTestCase
 from preparers import TablesPreparer
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
-class StorageTableBatchTest(TableTestCase):
+class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
     async def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key):
         self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
@@ -627,47 +629,6 @@ class StorageTableBatchTest(TableTestCase):
             async for e in entities:
                 length += 1
             assert 4 ==  length
-        finally:
-            await self._tear_down()
-
-    @pytest.mark.skip("Not sure this is how the batching should operate, will consult w/ Anna")
-    @TablesPreparer()
-    async def test_batch_reuse(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Arrange
-        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
-        try:
-            table2 = self._get_table_reference('table2')
-            table2.create_table()
-
-            # Act
-            entity = TableEntity()
-            entity.PartitionKey = '003'
-            entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(True)
-            entity.test2 = 'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
-
-            batch = self.table.create_batch()
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-2'
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-3'
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-4'
-            batch.create_entity(entity)
-
-            await self.table.send_batch(batch)
-            with pytest.raises(HttpResponseError):
-                resp = await table2.send_batch(batch)
-
-            # Assert
-            entities = self.table.query_entities("PartitionKey eq '003'")
-            length = 0
-            async for e in entities:
-                length += 1
-            assert 5 ==  length
         finally:
             await self._tear_down()
 

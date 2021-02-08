@@ -30,7 +30,8 @@ logging.getLogger().setLevel(logging.INFO)
 MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     'azure-common': '1.1.10',
     'msrest': '0.6.10',
-    'six': '1.9'
+    'six': '1.9',
+    'typing-extensions': '3.6.5'
 }
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
@@ -84,7 +85,7 @@ def process_requirement(req, dependency_type):
 
     # get available versions on PyPI
     client = PyPIClient()
-    versions = [str(v) for v in client.get_ordered_versions(pkg_name)]
+    versions = [str(v) for v in client.get_ordered_versions(pkg_name, True)]
     logging.info("Versions available on PyPI for %s: %s", pkg_name, versions)
 
     if pkg_name in MINIMUM_VERSION_SUPPORTED_OVERRIDE:

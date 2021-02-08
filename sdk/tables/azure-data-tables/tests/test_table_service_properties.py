@@ -8,8 +8,15 @@
 import time
 import pytest
 
-from azure.data.tables import TableServiceClient
-from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
+from devtools_testutils import AzureTestCase
+
+from azure.data.tables import (
+    TableServiceClient,
+    TableAnalyticsLogging,
+    Metrics,
+    RetentionPolicy,
+    CorsRule
+)
 from azure.core.exceptions import HttpResponseError
 
 from _shared.testcase import TableTestCase
@@ -18,7 +25,7 @@ from preparers import TablesPreparer
 # ------------------------------------------------------------------------------
 
 
-class TableServicePropertiesTest(TableTestCase):
+class TableServicePropertiesTest(AzureTestCase, TableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None
@@ -194,13 +201,6 @@ class TableServicePropertiesTest(TableTestCase):
 
     # --Test cases for errors ---------------------------------------
     @TablesPreparer()
-    def test_retention_no_days(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Assert
-        pytest.raises(ValueError,
-                          RetentionPolicy,
-                          True, None)
-
-    @TablesPreparer()
     def test_too_many_cors_rules(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
@@ -223,3 +223,11 @@ class TableServicePropertiesTest(TableTestCase):
         pytest.raises(HttpResponseError,
                           tsc.set_service_properties,
                           None, None, minute_metrics)
+
+
+class TestTableUnitTest(TableTestCase):
+    def test_retention_no_days(self):
+        # Assert
+        pytest.raises(ValueError,
+                          RetentionPolicy,
+                          True, None)

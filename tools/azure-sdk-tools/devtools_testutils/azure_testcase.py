@@ -8,6 +8,7 @@ import inspect
 import logging
 import os.path
 import sys
+import time
 import zlib
 
 try:
@@ -343,3 +344,7 @@ class AzureTestCase(ReplayableTest):
             return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
 
         return run
+
+    def sleep(self, seconds):
+        if self.is_live:
+            time.sleep(seconds)

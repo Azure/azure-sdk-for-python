@@ -1,8 +1,8 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "latest", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
-      [{"parameters": {"model-version": "bad", "stringIndexType": "TextElements_v8"}}],
+      "latest", "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "bad", "stringIndexType": "UnicodeCodePoint"}}],
       "keyPhraseExtractionTasks": [{"parameters": {"model-version": "bad"}}]}, "analysisInput":
       {"documents": [{"id": "1", "text": "I did not like the hotel we stayed at.",
       "language": "english"}]}}'
@@ -14,7 +14,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '425'
+      - '427'
       Content-Type:
       - application/json
       User-Agent:
@@ -26,11 +26,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 806326c1-3eae-492c-975c-56da221fe782
+      - 587ea5f0-0022-4374-9ce3-00e69ea4bd5a
       date:
-      - Wed, 27 Jan 2021 02:09:05 GMT
+      - Thu, 04 Feb 2021 00:39:45 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '27'
+      - '32'
     status:
       code: 202
       message: Accepted
@@ -54,21 +54,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - 814775f7-c51c-4281-845f-488ff35bc4ed
+      - 3086ed82-cfb7-4f37-b68b-e800ba33188c
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:09:10 GMT
+      - Thu, 04 Feb 2021 00:39:51 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -76,7 +76,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '28'
+      - '729'
     status:
       code: 200
       message: OK
@@ -92,21 +92,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - 5cf29a17-8ae8-424b-ae8d-913bdd070667
+      - 273f60eb-e1d4-4bb1-ba84-8d6e9169334d
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:09:16 GMT
+      - Thu, 04 Feb 2021 00:39:57 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -114,7 +114,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '56'
+      - '197'
     status:
       code: 200
       message: OK
@@ -130,21 +130,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - 9521952e-d342-42fb-b741-7eca288fdb64
+      - 604b41b4-f902-4031-bc7d-996264020f80
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:09:21 GMT
+      - Thu, 04 Feb 2021 00:40:02 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -152,7 +152,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '36'
+      - '65'
     status:
       code: 200
       message: OK
@@ -168,21 +168,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - 420e31ad-2a1f-4531-976d-683f4a5c0cdd
+      - 6b87fdd1-6232-493c-a516-152f6be4eaea
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:09:27 GMT
+      - Thu, 04 Feb 2021 00:40:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -190,7 +190,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '46'
+      - '151'
     status:
       code: 200
       message: OK
@@ -206,21 +206,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - a59767d5-4c4c-4957-8dc1-fb96e1ae8ac9
+      - 31f9d5bc-ed5b-411b-b0cb-6457a19c26c9
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:09:31 GMT
+      - Thu, 04 Feb 2021 00:40:12 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -228,7 +228,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '32'
+      - '35'
     status:
       code: 200
       message: OK
@@ -244,21 +244,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - 67515ab7-bc24-4fb1-bf46-589856b20305
+      - 32bc99fa-352a-4edf-bbd9-3413b53973e2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:09:37 GMT
+      - Thu, 04 Feb 2021 00:40:17 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -266,7 +266,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '38'
+      - '70'
     status:
       code: 200
       message: OK
@@ -282,249 +282,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - fca99d3d-f9fb-406c-a4c4-47196fe0489f
+      - 22ab9b16-7ac7-457d-bcca-86d998c17b3d
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:09:42 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '31'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
-  response:
-    body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
-    headers:
-      apim-request-id:
-      - 45b83fd9-fea9-4d31-8b74-78a1d5cd96ae
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 27 Jan 2021 02:09:49 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '2095'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
-  response:
-    body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
-    headers:
-      apim-request-id:
-      - 4f8f2966-65ea-4e32-b477-722a10154ea1
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 27 Jan 2021 02:09:54 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '32'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
-  response:
-    body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
-    headers:
-      apim-request-id:
-      - 4d0cae10-cf71-4dcf-9a0b-9cf6d76e24bd
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 27 Jan 2021 02:09:59 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '59'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
-  response:
-    body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
-    headers:
-      apim-request-id:
-      - b4b77de5-ce2d-482f-87c9-582ec90d0882
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 27 Jan 2021 02:10:04 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
-  response:
-    body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
-    headers:
-      apim-request-id:
-      - 811e3373-3bdb-429e-95ae-f7dfc4fbaf85
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 27 Jan 2021 02:10:10 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '31'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
-  response:
-    body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
-    headers:
-      apim-request-id:
-      - 356b4b47-3466-45f9-8789-f42ddd5a294b
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 27 Jan 2021 02:10:14 GMT
+      - Thu, 04 Feb 2021 00:40:22 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -548,21 +320,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - 8679e54a-961c-4400-80ba-0249b9f57f82
+      - fc84f15c-58c7-4ae0-aa79-fe9490e99fc0
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:10:19 GMT
+      - Thu, 04 Feb 2021 00:40:27 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -570,7 +342,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '52'
+      - '58'
     status:
       code: 200
       message: OK
@@ -586,21 +358,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - 9d9db6e6-32cd-4ee1-ac76-34b22296c8c2
+      - b9dd040b-2c1a-4b4a-b58c-f00be4c694c8
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:10:25 GMT
+      - Thu, 04 Feb 2021 00:40:33 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -608,7 +380,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '34'
+      - '610'
     status:
       code: 200
       message: OK
@@ -624,21 +396,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - 50c389aa-af2f-4a82-9b3e-426186719211
+      - e0d79ad3-6f33-4f7a-90fe-f36d3c110c62
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:10:30 GMT
+      - Thu, 04 Feb 2021 00:40:38 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -646,7 +418,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '107'
+      - '58'
     status:
       code: 200
       message: OK
@@ -662,21 +434,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - 798dc65d-d776-4351-8ad6-d9e6f7d8e5c1
+      - 249f881c-39cb-443f-96ae-726422987fd8
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:10:35 GMT
+      - Thu, 04 Feb 2021 00:40:44 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -684,7 +456,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '36'
+      - '42'
     status:
       code: 200
       message: OK
@@ -700,21 +472,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - 508d990a-e00b-4bd7-9c41-3dd787dd50f2
+      - db183749-7c77-4bdb-a896-62b11ef06c42
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:10:40 GMT
+      - Thu, 04 Feb 2021 00:40:50 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -722,7 +494,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '39'
+      - '1021'
     status:
       code: 200
       message: OK
@@ -738,21 +510,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - c558e07a-1f9f-4b4d-b18b-defbc6804f96
+      - b0552e19-20e9-4487-85e3-bc19776cd68e
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:10:46 GMT
+      - Thu, 04 Feb 2021 00:40:55 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -760,7 +532,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '31'
+      - '40'
     status:
       code: 200
       message: OK
@@ -776,21 +548,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - 47e591b3-8524-4a66-88e7-bd3c76eb0508
+      - 6015f6be-44d6-4ff1-ac7f-aa5786946295
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:10:51 GMT
+      - Thu, 04 Feb 2021 00:41:01 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -798,7 +570,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '34'
+      - '625'
     status:
       code: 200
       message: OK
@@ -814,21 +586,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - f8f747c4-00ed-4998-aaac-26c8bac4529e
+      - 51f56c8e-148a-4c08-9162-db89416d03cc
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:10:55 GMT
+      - Thu, 04 Feb 2021 00:41:06 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -836,7 +608,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '32'
+      - '92'
     status:
       code: 200
       message: OK
@@ -852,21 +624,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - e2dc3d64-e9a8-43e3-9905-10561f4ff341
+      - 851e12c5-9068-45db-b9fd-cabbe53dde73
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:11:00 GMT
+      - Thu, 04 Feb 2021 00:41:11 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -874,7 +646,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '31'
+      - '469'
     status:
       code: 200
       message: OK
@@ -890,21 +662,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - c34f6d6d-ba6a-4b1c-b075-d4a6d386a137
+      - 0b53c77f-621f-4495-b23c-4fe73c1853f7
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:11:06 GMT
+      - Thu, 04 Feb 2021 00:41:17 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -912,7 +684,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '49'
+      - '539'
     status:
       code: 200
       message: OK
@@ -928,21 +700,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - e1aaa091-db35-411a-b40d-542abf73c59a
+      - 2ee47e3c-d1d7-45f3-9159-8b22cd7fc356
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:11:11 GMT
+      - Thu, 04 Feb 2021 00:41:22 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -950,7 +722,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '62'
+      - '74'
     status:
       code: 200
       message: OK
@@ -966,23 +738,213 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
   response:
     body:
-      string: '{"jobId":"72607247-6359-4ee8-a482-acc99a4973f0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:09:08Z","createdDateTime":"2021-01-27T02:09:06Z","expirationDateTime":"2021-01-28T02:09:06Z","status":"partiallySucceeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:09:08Z"},"completed":1,"failed":2,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
+    headers:
+      apim-request-id:
+      - 2514bb33-687f-47b4-a7bd-98f1d9ed889e
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Feb 2021 00:41:28 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '541'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
+  response:
+    body:
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
+    headers:
+      apim-request-id:
+      - b1e996a5-aa41-42e5-8658-81386a291199
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Feb 2021 00:41:35 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '2068'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
+  response:
+    body:
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
+    headers:
+      apim-request-id:
+      - a5d2518a-eeab-4366-a799-c08668d22723
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Feb 2021 00:41:41 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '91'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
+  response:
+    body:
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
+    headers:
+      apim-request-id:
+      - 9bb0489f-4790-458a-af19-7ff499748599
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Feb 2021 00:41:45 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '103'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
+  response:
+    body:
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":0,"failed":2,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
+    headers:
+      apim-request-id:
+      - 04521de8-ff7a-462a-b774-a226e831c497
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Feb 2021 00:41:50 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '65'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000
+  response:
+    body:
+      string: '{"jobId":"d38bd330-9dcb-4e3a-a880-488c36f648ff_637479936000000000","lastUpdateDateTime":"2021-02-04T00:39:48Z","createdDateTime":"2021-02-04T00:39:46Z","expirationDateTime":"2021-02-05T00:39:46Z","status":"partiallySucceeded","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01.","target":"#/tasks/entityRecognitionPiiTasks/0"},{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01.","target":"#/tasks/keyPhraseExtractionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-04T00:39:48Z"},"completed":1,"failed":2,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es,de,fr,zh-Hans,ar,cs,da,fi,hu,it,ja,ko,no,nl,pl,pt-BR,pt-PT,ru,sv,tr"}}}],"modelVersion":"2020-04-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-01-27T02:09:08.0273256Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+        language code. Supported languages: en,es,de,fr,zh-Hans,ar,cs,da,fi,hu,it,ja,ko,no,nl,pl,pt-BR,pt-PT,ru,sv,tr"}}}],"modelVersion":"2021-01-15"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-04T00:39:48.902624Z","results":{"documents":[],"errors":[],"modelVersion":""}}]}}'
     headers:
       apim-request-id:
-      - 5606ac40-3e27-4726-8a53-bdf3d9baf151
+      - 0fbac3c3-0033-486b-86cd-5075e67290b1
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:11:16 GMT
+      - Thu, 04 Feb 2021 00:41:56 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -990,7 +952,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '114'
+      - '103'
     status:
       code: 200
       message: OK

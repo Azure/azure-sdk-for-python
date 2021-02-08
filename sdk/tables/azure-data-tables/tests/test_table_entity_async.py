@@ -13,24 +13,30 @@ from dateutil.tz import tzutc, tzoffset
 from math import isnan
 import uuid
 
+from devtools_testutils import AzureTestCase
+
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
-    ResourceExistsError
+    ResourceExistsError,
 )
 
-from azure.data.tables import TableSasPermissions, AccessPolicy, UpdateMode, generate_table_sas
-from azure.data.tables._entity import TableEntity, EntityProperty, EdmType
+from azure.data.tables import (
+    TableSasPermissions,
+    AccessPolicy,
+    UpdateMode,
+    generate_table_sas,
+    TableEntity,
+    EntityProperty,
+    EdmType
+)
 from azure.data.tables.aio import TableServiceClient
 
-from _shared.testcase import TableTestCase
+from _shared.asynctestcase import AsyncTableTestCase
 from preparers import TablesPreparer
-# ------------------------------------------------------------------------------
-# TODO: change to `with table_client as client:` to close sessions
-# ------------------------------------------------------------------------------
 
-class StorageTableEntityTest(TableTestCase):
+class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
     async def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
