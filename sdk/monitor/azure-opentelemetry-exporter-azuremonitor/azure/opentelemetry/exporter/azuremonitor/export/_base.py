@@ -42,6 +42,7 @@ class BaseExporter:
 
         :param options: Exporter configuration options.
         :type options: ~azure.opentelemetry.exporter.azuremonitor.options.ExporterOptions
+        :keyword str connection_string: The connection string to be used for authentication
         :rtype: None
         """
         options = ExporterOptions(**kwargs)
