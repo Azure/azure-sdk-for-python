@@ -36,6 +36,8 @@ class MixedRealityStsClient(object):
         The Mixed Reality service account domain.
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential used to access the Mixed Reality service.
+    :keyword str custom_endpoint_url:
+        Override the Mixed Reality STS service endpoint.
     """
 
     def __init__(self, account_id, account_domain, credential, **kwargs):
@@ -57,7 +59,7 @@ class MixedRealityStsClient(object):
 
         self._credential = credential
 
-        endpoint_url = kwargs.pop('endpoint_url', construct_endpoint_url(account_domain))
+        endpoint_url = kwargs.pop('custom_endpoint_url', construct_endpoint_url(account_domain))
 
         try:
             if not endpoint_url.lower().startswith('http'):
