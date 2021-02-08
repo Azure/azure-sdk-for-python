@@ -13,6 +13,7 @@ from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
 # FIXME: have to manually reconfigure import path for multiapi operation mixin
+from ..._async_lro import AnalyzeHealthcareEntitiesAsyncLROPoller, AnalyzeHealthcareEntitiesAsyncLROPollingMethod
 from ..._async_lro import AsyncAnalyzeBatchActionsLROPoller, AsyncAnalyzeBatchActionsLROPollingMethod
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -141,7 +142,7 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version: Optional[str] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = "TextElements_v8",
         **kwargs
-    ) -> AsyncAnalyzeBatchActionsLROPoller["_models.HealthcareJobState"]:
+    ) -> AnalyzeHealthcareEntitiesAsyncLROPoller["_models.HealthcareJobState"]:
         """Submit healthcare analysis job.
 
         Start a healthcare analysis job to recognize healthcare related entities (drugs, conditions,
@@ -158,12 +159,12 @@ class TextAnalyticsClientOperationsMixin(object):
         :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_3.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncAnalyzeBatchActionsLROPollingMethod polling method,
+        :keyword polling: Pass in True if you'd like the AnalyzeHealthcareEntitiesAsyncLROPollingMethod polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncAnalyzeBatchActionsLROPoller that returns either HealthcareJobState or the result of cls(response)
-        :rtype: ~...._async_lro.AsyncAnalyzeBatchActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_3.models.HealthcareJobState]
+        :return: An instance of AnalyzeHealthcareEntitiesAsyncLROPoller that returns either HealthcareJobState or the result of cls(response)
+        :rtype: ~....._async_lro.AnalyzeHealthcareEntitiesAsyncLROPoller[~azure.ai.textanalytics.v3_1_preview_3.models.HealthcareJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_health')

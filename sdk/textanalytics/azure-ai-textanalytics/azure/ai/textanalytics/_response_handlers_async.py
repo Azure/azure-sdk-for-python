@@ -10,7 +10,10 @@ from urllib.parse import urlparse, parse_qsl
 
 from azure.core.async_paging import AsyncList
 from ._models import RequestStatistics, TextDocumentBatchStatistics
-from ._async_paging import AnalyzeHealthcareResultAsync, AnalyzeResultAsync
+from ._async_paging import (
+    AnalyzeHealthcareEntitiesResultAsync,
+    AnalyzeResultAsync
+)
 from ._response_handlers import healthcare_result, get_iter_items
 
 
@@ -38,7 +41,7 @@ async def lro_get_next_page_async(lro_status_callback, first_page, continuation_
 
 
 def healthcare_paged_result(doc_id_order, health_status_callback, response, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
-    return AnalyzeHealthcareResultAsync(
+    return AnalyzeHealthcareEntitiesResultAsync(
         functools.partial(lro_get_next_page_async, health_status_callback, obj, show_stats=show_stats),
         functools.partial(healthcare_extract_page_data_async, doc_id_order, obj, response_headers),
         model_version=obj.results.model_version,

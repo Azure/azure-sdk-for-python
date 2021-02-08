@@ -14,6 +14,11 @@
   `CertificateCredential(tenant_id, client_id, certificate_bytes=cert_bytes)`
   ([#14055](https://github.com/Azure/azure-sdk-for-python/issues/14055))
 
+### Fixed
+- `ManagedIdentityCredential` correctly parses responses from the current
+  (preview) version of Azure ML managed identity
+  ([#15361](https://github.com/Azure/azure-sdk-for-python/issues/15361))
+
 ## 1.5.0 (2020-11-11)
 ### Breaking Changes
 - Renamed optional `CertificateCredential` keyword argument `send_certificate`

@@ -182,9 +182,9 @@ class RecognizePiiEntitiesResult(DictMixin):
             )[:1024]
 
 
-class AnalyzeHealthcareResultItem(DictMixin):
+class AnalyzeHealthcareEntitiesResultItem(DictMixin):
     """
-    AnalyzeHealthcareResultItem contains the Healthcare entities and relations from a
+    AnalyzeHealthcareEntitiesResultItem contains the Healthcare entities and relations from a
     particular document.
 
     :ivar str id: Unique, non-empty document identifier that matches the
@@ -204,41 +204,56 @@ class AnalyzeHealthcareResultItem(DictMixin):
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a AnalyzeHealthcareResult.
+        results. Always False for an instance of a AnalyzeHealthcareEntitiesResultItem.
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
-        self.relations = kwargs.get("relations", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
+    @staticmethod
+    def _update_related_entities(entities, relations_result):
+        relation_dict = {}
+        for r in relations_result:
+            _, source_idx = _get_indices(r.source)
+            _, target_idx = _get_indices(r.target)
+
+            if entities[source_idx] not in relation_dict.keys():
+                relation_dict[entities[source_idx]] = {}
+
+            if entities[target_idx] not in relation_dict.keys():
+                relation_dict[entities[target_idx]] = {}
+
+            if r.bidirectional:
+                relation_dict[entities[target_idx]][entities[source_idx]] = r.relation_type
+
+            relation_dict[entities[source_idx]][entities[target_idx]] = r.relation_type
+
+        for entity in entities:
+            if entity in relation_dict.keys():
+                entity.related_entities.update(relation_dict[entity])
+
     @classmethod
     def _from_generated(cls, healthcare_result):
         entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities] # pylint: disable=protected-access
-        relations = []
         if healthcare_result.relations:
-            for r in healthcare_result.relations:
-                _, source_idx = _get_indices(r.source)
-                _, target_idx = _get_indices(r.target)
-                relations.append(HealthcareRelation._from_generated(r, entities[source_idx], entities[target_idx])) # pylint: disable=protected-access
+            cls._update_related_entities(entities, healthcare_result.relations)
 
         return cls(
             id=healthcare_result.id,
             entities=entities,
-            relations=relations,
             warnings=healthcare_result.warnings,
             statistics=healthcare_result.statistics
         )
 
     def __repr__(self):
-        return "AnalyzeHealthcareResultItem(id={}, entities={}, relations={}, warnings={}, statistics={}, \
+        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, warnings={}, statistics={}, \
         is_error={})".format(
             self.id,
             self.entities,
-            self.relations,
             self.warnings,
             self.statistics,
             self.is_error
@@ -289,8 +304,13 @@ class CategorizedEntity(DictMixin):
     :vartype category: str
     :ivar subcategory: Entity subcategory, such as Age/Year/TimeRange etc
     :vartype subcategory: str
+    :ivar int length: The entity text length.  This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoints
+        by default. Only returned for API versions v3.1-preview and up.
     :ivar int offset: The entity text offset from the start of the document.
-        Returned in unicode code points. Only returned for API versions v3.1-preview and up.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoints by default. Only returned for
+        API versions v3.1-preview and up.
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
@@ -302,30 +322,35 @@ class CategorizedEntity(DictMixin):
         self.text = kwargs.get('text', None)
         self.category = kwargs.get('category', None)
         self.subcategory = kwargs.get('subcategory', None)
+        self.length = kwargs.get('length', None)
         self.offset = kwargs.get('offset', None)
         self.confidence_score = kwargs.get('confidence_score', None)
 
     @classmethod
     def _from_generated(cls, entity):
         offset = entity.offset
+        length = entity.length
         if isinstance(entity, _v3_0_models.Entity):
             # we do not return offset for v3.0 since
             # the correct encoding was not introduced for v3.0
             offset = None
+            length = None
         return cls(
             text=entity.text,
             category=entity.category,
             subcategory=entity.subcategory,
+            length=length,
             offset=offset,
             confidence_score=entity.confidence_score,
         )
 
     def __repr__(self):
         return "CategorizedEntity(text={}, category={}, subcategory={}, "\
-            "offset={}, confidence_score={})".format(
+            "length={}, offset={}, confidence_score={})".format(
             self.text,
             self.category,
             self.subcategory,
+            self.length,
             self.offset,
             self.confidence_score
         )[:1024]
@@ -340,8 +365,12 @@ class PiiEntity(DictMixin):
         Identification/Social Security Number/Phone Number, etc.
     :ivar str subcategory: Entity subcategory, such as Credit Card/EU
         Phone number/ABA Routing Numbers, etc.
+    :ivar int length: The PII entity text length.  This value depends on the value
+        of the `string_index_type` parameter specified in the original request, which
+        is UnicodeCodePoints by default.
     :ivar int offset: The PII entity text offset from the start of the document.
-        Returned in unicode code points.
+        This value depends on the value of the `string_index_type` parameter specified
+        in the original request, which is UnicodeCodePoints by default.
     :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     """
@@ -350,6 +379,7 @@ class PiiEntity(DictMixin):
         self.text = kwargs.get('text', None)
         self.category = kwargs.get('category', None)
         self.subcategory = kwargs.get('subcategory', None)
+        self.length = kwargs.get('length', None)
         self.offset = kwargs.get('offset', None)
         self.confidence_score = kwargs.get('confidence_score', None)
 
@@ -359,17 +389,19 @@ class PiiEntity(DictMixin):
             text=entity.text,
             category=entity.category,
             subcategory=entity.subcategory,
+            length=entity.length,
             offset=entity.offset,
             confidence_score=entity.confidence_score,
         )
 
     def __repr__(self):
         return (
-            "PiiEntity(text={}, category={}, subcategory={}, offset={}, "\
-            "confidence_score={})".format(
+            "PiiEntity(text={}, category={}, subcategory={}, length={}, "\
+            "offset={}, confidence_score={})".format(
                 self.text,
                 self.category,
                 self.subcategory,
+                self.length,
                 self.offset,
                 self.confidence_score
             )[:1024]
@@ -379,23 +411,30 @@ class PiiEntity(DictMixin):
 class HealthcareEntity(DictMixin):
     """HealthcareEntity contains information about a Healthcare entity found in text.
 
-        :ivar str text: Entity text as appears in the request.
-        :ivar str category: Entity category, such as Dosage or MedicationName, etc.
-        :ivar str subcategory: Entity subcategory.  # TODO: add subcategory examples
-        :ivar int offset: The Healthcare entity text offset from the start of the document.
-        :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
-            entity.
-        :ivar links: A collection of entity references in known data sources.
-        :vartype links: list[~azure.ai.textanalytics.HealthcareEntityLink]
+    :ivar str text: Entity text as appears in the request.
+    :ivar str category: Entity category, such as Dosage or MedicationName, etc.
+    :ivar str subcategory: Entity subcategory.  # TODO: add subcategory examples
+    :ivar int length: The entity text length.  This value depends on the value
+        of the `string_index_type` parameter specified in the original request, which is
+        UnicodeCodePoints by default.
+    :ivar int offset: The entity text offset from the start of the document.
+        This value depends on the value of the `string_index_type` parameter specified
+        in the original request, which is UnicodeCodePoints by default.
+    :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
+        entity.
+    :ivar data_sources: A collection of entity references in known data sources.
+    :vartype data_sources: list[~azure.ai.textanalytics.HealthcareEntityDataSource]
     """
 
     def __init__(self, **kwargs):
         self.text = kwargs.get("text", None)
         self.category = kwargs.get("category", None)
         self.subcategory = kwargs.get("subcategory", None)
+        self.length = kwargs.get("length", None)
         self.offset = kwargs.get("offset", None)
         self.confidence_score = kwargs.get("confidence_score", None)
-        self.links = kwargs.get("links", [])
+        self.data_sources = kwargs.get("data_sources", [])
+        self.related_entities = {}
 
     @classmethod
     def _from_generated(cls, healthcare_entity):
@@ -403,77 +442,45 @@ class HealthcareEntity(DictMixin):
             text=healthcare_entity.text,
             category=healthcare_entity.category,
             subcategory=healthcare_entity.subcategory,
+            length=healthcare_entity.length,
             offset=healthcare_entity.offset,
             confidence_score=healthcare_entity.confidence_score,
-            links=[
-                HealthcareEntityLink(id=l.id, data_source=l.data_source) for l in healthcare_entity.links
+            data_sources=[
+                HealthcareEntityDataSource(entity_id=l.id, name=l.data_source) for l in healthcare_entity.links
             ] if healthcare_entity.links else None
         )
 
+    def __hash__(self):
+        return hash(repr(self))
+
     def __repr__(self):
-        return "HealthcareEntity(text={}, category={}, subcategory={}, offset={}, confidence_score={},\
-        links={})".format(
+        return "HealthcareEntity(text={}, category={}, subcategory={}, length={}, offset={}, confidence_score={}, "\
+        "data_sources={}, related_entities={})".format(
             self.text,
             self.category,
             self.subcategory,
+            self.length,
             self.offset,
             self.confidence_score,
-            repr(self.links)
+            repr(self.data_sources),
+            repr(self.related_entities)
         )[:1024]
 
 
-class HealthcareRelation(DictMixin):
+class HealthcareEntityDataSource(DictMixin):
     """
-    HealthcareRelation contains information describing a relationship between two entities found in text.
+    HealthcareEntityDataSource contains information representing an entity reference in a known data source.
 
-    :ivar str type: The type of relation, such as DosageOfMedication or FrequencyOfMedication, etc.
-    :ivar bool is_bidirectional: Boolean value indicating that the relationship between the two entities is
-        bidirectional.  If true the relation between the entities is bidirectional, otherwise directionality
-        is source to target.
-    :ivar source: A reference to an extracted Healthcare entity representing the source of the relation.
-    :vartype source: ~azure.ai.textanalytics.HealthcareEntity
-    :ivar target: A reference to an extracted Healthcare entity representing the target of the relation.
-    :vartype target: ~azure.ai.textanalytics.HealthcareEntity
+    :ivar str entity_id: ID of the entity in the given source catalog.
+    :ivar str name: The name of the entity catalog from where the entity was identified, such as UMLS, CHV, MSH, etc.
     """
 
     def __init__(self, **kwargs):
-        self.relation_type = kwargs.get("relation_type", None)
-        self.is_bidirectional = kwargs.get("is_bidirectional", None)
-        self.source = kwargs.get("source", None)
-        self.target = kwargs.get("target", None)
-
-    @classmethod
-    def _from_generated(cls, healthcare_relation, source_entity, target_entity):
-        return cls(
-            relation_type=healthcare_relation.relation_type,
-            is_bidirectional=healthcare_relation.bidirectional,
-            source=source_entity,
-            target=target_entity
-        )
+        self.entity_id = kwargs.get("entity_id", None)
+        self.name = kwargs.get("name", None)
 
     def __repr__(self):
-        return "HealthcareRelation(relation_type={}, is_bidirectional={}, source={}, target={})".format(
-            self.relation_type,
-            self.is_bidirectional,
-            repr(self.source),
-            repr(self.target)
-        )[:1024]
-
-
-class HealthcareEntityLink(DictMixin):
-    """
-    HealthcareEntityLink contains information representing an entity reference in a known data source.
-
-    :ivar str id: ID of the entity in the given source catalog.
-    :ivar str data_source: The entity catalog from where the entity was identified, such as UMLS, CHV, MSH, etc.
-    """
-
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.data_source = kwargs.get("data_source", None)
-
-    def __repr__(self):
-        return "HealthcareEntityLink(id={}, data_source={})".format(self.id, self.data_source)[:1024]
+        return "HealthcareEntityDataSource(entity_id={}, name={})".format(self.entity_id, self.name)[:1024]
 
 
 class TextAnalyticsError(DictMixin):
@@ -740,6 +747,12 @@ class DocumentError(DictMixin):
 class DetectLanguageInput(LanguageInput):
     """The input document to be analyzed for detecting language.
 
+    :keyword str id: Unique, non-empty document identifier.
+    :keyword str text: The input text to process.
+    :keyword str country_hint: A country hint to help better detect
+     the language of the text. Accepts two letter country codes
+     specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
+     in the string "none" to not use a country_hint.
     :ivar id: Required. Unique, non-empty document identifier.
     :vartype id: str
     :ivar text: Required. The input text to process.
@@ -835,8 +848,13 @@ class LinkedEntityMatch(DictMixin):
         returned.
     :vartype confidence_score: float
     :ivar text: Entity text as appears in the request.
+    :ivar int length: The linked entity match text length.  This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoints by default.
+        Only returned for API versions v3.1-preview and up.
     :ivar int offset: The linked entity match text offset from the start of the document.
-        Returned in unicode code points. Only returned for API versions v3.1-preview and up.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoints by default.
+        Only returned for API versions v3.1-preview and up.
     :vartype text: str
     .. versionadded:: v3.1-preview
         The *offset* property.
@@ -845,31 +863,40 @@ class LinkedEntityMatch(DictMixin):
     def __init__(self, **kwargs):
         self.confidence_score = kwargs.get("confidence_score", None)
         self.text = kwargs.get("text", None)
+        self.length = kwargs.get("length", None)
         self.offset = kwargs.get("offset", None)
 
     @classmethod
     def _from_generated(cls, match):
         offset = match.offset
+        length = match.length
         if isinstance(match, _v3_0_models.Match):
             # we do not return offset for v3.0 since
             # the correct encoding was not introduced for v3.0
             offset = None
+            length = None
         return cls(
             confidence_score=match.confidence_score,
             text=match.text,
+            length=length,
             offset=offset,
         )
 
     def __repr__(self):
-        return "LinkedEntityMatch(confidence_score={}, text={}, offset={})".format(
-            self.confidence_score, self.text, self.offset
+        return "LinkedEntityMatch(confidence_score={}, text={}, length={}, offset={})".format(
+            self.confidence_score, self.text, self.length, self.offset
         )[:1024]
 
 
 class TextDocumentInput(DictMixin, MultiLanguageInput):
     """The input document to be analyzed by the service.
 
-    :ivar id: Required. A unique, non-empty document identifier.
+    :keyword str id: Unique, non-empty document identifier.
+    :keyword str text: The input text to process.
+    :keyword str language: This is the 2 letter ISO 639-1 representation
+     of a language. For example, use "en" for English; "es" for Spanish etc. If
+     not set, uses "en" for English as default.
+    :ivar id: Required. Unique, non-empty document identifier.
     :vartype id: str
     :ivar text: Required. The input text to process.
     :vartype text: str
@@ -943,8 +970,13 @@ class SentenceSentiment(DictMixin):
         and 1 for the sentence for all labels.
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int offset: The sentence offset from the start of the document. Returned
-        in unicode code points. Only returned for API versions v3.1-preview and up.
+    :ivar int length: The sentence text length.  This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoints
+        by default. Only returned for API versions v3.1-preview and up.
+    :ivar int offset: The sentence text offset from the start of the document.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoints by default. Only returned for
+        API versions v3.1-preview and up.
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in the sentence "The food is good, but the service is bad", we would
         mine the two opinions "food is good" and "service is bad". Only returned
@@ -960,16 +992,19 @@ class SentenceSentiment(DictMixin):
         self.text = kwargs.get("text", None)
         self.sentiment = kwargs.get("sentiment", None)
         self.confidence_scores = kwargs.get("confidence_scores", None)
+        self.length = kwargs.get("length", None)
         self.offset = kwargs.get("offset", None)
         self.mined_opinions = kwargs.get("mined_opinions", None)
 
     @classmethod
     def _from_generated(cls, sentence, results, sentiment):
         offset = sentence.offset
+        length = sentence.length
         if isinstance(sentence, _v3_0_models.SentenceSentiment):
             # we do not return offset for v3.0 since
             # the correct encoding was not introduced for v3.0
             offset = None
+            length = None
         if hasattr(sentence, "aspects"):
             mined_opinions = (
                 [MinedOpinion._from_generated(aspect, results, sentiment) for aspect in sentence.aspects]  # pylint: disable=protected-access
@@ -981,16 +1016,18 @@ class SentenceSentiment(DictMixin):
             text=sentence.text,
             sentiment=sentence.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
+            length=length,
             offset=offset,
             mined_opinions=mined_opinions
         )
 
     def __repr__(self):
         return "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, "\
-            "offset={}, mined_opinions={})".format(
+            "length={}, offset={}, mined_opinions={})".format(
             self.text,
             self.sentiment,
             repr(self.confidence_scores),
+            self.length,
             self.offset,
             repr(self.mined_opinions)
         )[:1024]
@@ -1057,14 +1094,19 @@ class AspectSentiment(DictMixin):
         for 'neutral' will always be 0
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int offset: The aspect offset from the start of the document. Returned
-        in unicode code points.
+    :ivar int length: The aspect text length.  This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoints
+        by default.
+    :ivar int offset: The aspect text offset from the start of the document.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoints by default.
     """
 
     def __init__(self, **kwargs):
         self.text = kwargs.get("text", None)
         self.sentiment = kwargs.get("sentiment", None)
         self.confidence_scores = kwargs.get("confidence_scores", None)
+        self.length = kwargs.get("length", None)
         self.offset = kwargs.get("offset", None)
 
     @classmethod
@@ -1073,14 +1115,17 @@ class AspectSentiment(DictMixin):
             text=aspect.text,
             sentiment=aspect.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(aspect.confidence_scores),  # pylint: disable=protected-access
+            length=aspect.length,
             offset=aspect.offset,
         )
 
     def __repr__(self):
-        return "AspectSentiment(text={}, sentiment={}, confidence_scores={}, offset={})".format(
+        return "AspectSentiment(text={}, sentiment={}, confidence_scores={}, "\
+        "length={}, offset={})".format(
             self.text,
             self.sentiment,
             repr(self.confidence_scores),
+            self.length,
             self.offset,
         )[:1024]
 
@@ -1099,8 +1144,12 @@ class OpinionSentiment(DictMixin):
         for 'neutral' will always be 0
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int offset: The opinion offset from the start of the document. Returned
-        in unicode code points.
+    :ivar int length: The opinion text length.  This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoints
+        by default.
+    :ivar int offset: The opinion text offset from the start of the document.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoints by default.
     :ivar bool is_negated: Whether the opinion is negated. For example, in
         "The food is not good", the opinion "good" is negated.
     """
@@ -1109,6 +1158,7 @@ class OpinionSentiment(DictMixin):
         self.text = kwargs.get("text", None)
         self.sentiment = kwargs.get("sentiment", None)
         self.confidence_scores = kwargs.get("confidence_scores", None)
+        self.length = kwargs.get("length", None)
         self.offset = kwargs.get("offset", None)
         self.is_negated = kwargs.get("is_negated", None)
 
@@ -1118,16 +1168,19 @@ class OpinionSentiment(DictMixin):
             text=opinion.text,
             sentiment=opinion.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(opinion.confidence_scores),  # pylint: disable=protected-access
+            length=opinion.length,
             offset=opinion.offset,
             is_negated=opinion.is_negated
         )
 
     def __repr__(self):
         return (
-            "OpinionSentiment(text={}, sentiment={}, confidence_scores={}, offset={}, is_negated={})".format(
+            "OpinionSentiment(text={}, sentiment={}, confidence_scores={}, length={}, offset={}, "\
+            "is_negated={})".format(
                 self.text,
                 self.sentiment,
                 repr(self.confidence_scores),
+                self.length,
                 self.offset,
                 self.is_negated
             )[:1024]

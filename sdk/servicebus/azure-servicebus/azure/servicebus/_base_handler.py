@@ -10,9 +10,10 @@ from datetime import timedelta
 from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable
 
 try:
-    from urllib import quote_plus  # type: ignore
+    from urllib.parse import quote_plus, urlparse
 except ImportError:
-    from urllib.parse import quote_plus
+    from urllib import quote_plus  # type: ignore
+    from urlparse import urlparse  # type: ignore
 
 import uamqp
 from uamqp import utils, compat
@@ -48,33 +49,37 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-def _parse_conn_str(conn_str):
-    # type: (str) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
+def _parse_conn_str(conn_str, check_case=False):
+    # type: (str, Optional[bool]) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
     entity_path = None  # type: Optional[str]
     shared_access_signature = None  # type: Optional[str]
     shared_access_signature_expiry = None  # type: Optional[int]
-    for element in conn_str.strip().split(";"):
-        key, _, value = element.partition("=")
-        if key.lower() == "endpoint":
-            endpoint = value.rstrip("/")
-        elif key.lower() == "hostname":
-            endpoint = value.rstrip("/")
-        elif key.lower() == "sharedaccesskeyname":
-            shared_access_key_name = value
-        elif key.lower() == "sharedaccesskey":
-            shared_access_key = value
-        elif key.lower() == "entitypath":
-            entity_path = value
-        elif key.lower() == "sharedaccesssignature":
+
+    # split connection string into properties
+    conn_properties = [s.split("=", 1) for s in conn_str.strip().rstrip(";").split(";")]
+    if any(len(tup) != 2 for tup in conn_properties):
+        raise ValueError("Connection string is either blank or malformed.")
+    conn_settings = dict(conn_properties)   # type: ignore
+
+    # case sensitive check when parsing for connection string properties
+    if check_case:
+        shared_access_key = conn_settings.get("SharedAccessKey")
+        shared_access_key_name = conn_settings.get("SharedAccessKeyName")
+        endpoint = conn_settings.get("Endpoint")
+        entity_path = conn_settings.get("EntityPath")
+
+    # non case sensitive check when parsing connection string for internal use
+    for key, value in conn_settings.items():
+        # only sas check is non case sensitive for both conn str properties and internal use
+        if key.lower() == "sharedaccesssignature":
             shared_access_signature = value
             try:
                 # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
-                # type: ignore
                 shared_access_signature_expiry = int(
-                    shared_access_signature.split("se=")[1].split("&")[0]
+                    shared_access_signature.split("se=")[1].split("&")[0]   # type: ignore
                 )
             except (
                 IndexError,
@@ -83,19 +88,42 @@ def _parse_conn_str(conn_str):
             ):  # Fallback since technically expiry is optional.
                 # An arbitrary, absurdly large number, since you can't renew.
                 shared_access_signature_expiry = int(time.time() * 2)
-    if not (
-        all((endpoint, shared_access_key_name, shared_access_key))
-        or all((endpoint, shared_access_signature))
-    ) or all(
-        (shared_access_key_name, shared_access_signature)
-    ):  # this latter clause since we don't accept both
-        raise ValueError(
-            "Invalid connection string. Should be in the format: "
-            "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>"
-            "\nWith alternate option of providing SharedAccessSignature instead of SharedAccessKeyName and Key"
-        )
+        if not check_case:
+            if key.lower() == "endpoint":
+                endpoint = value.rstrip("/")
+            elif key.lower() == "hostname":
+                endpoint = value.rstrip("/")
+            elif key.lower() == "sharedaccesskeyname":
+                shared_access_key_name = value
+            elif key.lower() == "sharedaccesskey":
+                shared_access_key = value
+            elif key.lower() == "entitypath":
+                entity_path = value
+
     entity = cast(str, entity_path)
-    host = cast(str, strip_protocol_from_uri(cast(str, endpoint)))
+
+    # check that endpoint is valid
+    if not endpoint:
+        raise ValueError("Connection string is either blank or malformed.")
+    parsed = urlparse(endpoint)
+    if not parsed.netloc:
+        raise ValueError("Invalid Endpoint on the Connection String.")
+    host = cast(str, parsed.netloc.strip())
+
+    if any([shared_access_key, shared_access_key_name]) and not all(
+        [shared_access_key, shared_access_key_name]
+    ):
+        raise ValueError(
+            "Connection string must have both SharedAccessKeyName and SharedAccessKey."
+        )
+    if shared_access_signature and shared_access_key:
+        raise ValueError(
+            "Only one of the SharedAccessKey or SharedAccessSignature must be present."
+        )
+    if not shared_access_signature and not shared_access_key:
+        raise ValueError(
+            "At least one of the SharedAccessKey or SharedAccessSignature must be present."
+        )
 
     return (
         host,
