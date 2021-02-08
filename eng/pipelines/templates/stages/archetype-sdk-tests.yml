@@ -129,7 +129,10 @@ stages:
                 -  ${{ config }}
               - ${{ each config in parameters.AdditionalMatrixConfigs }}:
                 -  ${{ config }}
-            MatrixFilters: ${{ parameters.MatrixFilters }}
+            MatrixFilters:
+              - ${{ each cloudFilter in cloud.value.MatrixFilters }}:
+                - ${{ cloudFilter }}
+              - ${{ parameters.MatrixFilters }}
             CloudConfig:
               SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
               Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
