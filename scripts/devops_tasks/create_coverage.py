@@ -72,3 +72,4 @@ def fix_dot_coverage_file(coverage_file):
 if __name__ == "__main__":
     collect_tox_coverage_files()
     generate_coverage_xml()
+    create_coverage_report()
