@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 import json
 import logging
-from typing import Sequence
+from typing import Sequence, Any
 from urllib.parse import urlparse
 
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult

@@ -3,8 +3,8 @@
 import logging
 import os
 import tempfile
-import typing
 from enum import Enum
+from typing import List, Any
 
 from opentelemetry.sdk.trace.export import SpanExportResult
 
@@ -96,7 +96,7 @@ class BaseExporter:
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     # pylint: disable=too-many-return-statements
-    def _transmit(self, envelopes: typing.List[TelemetryItem]) -> ExportResult:
+    def _transmit(self, envelopes: List[TelemetryItem]) -> ExportResult:
         """
         Transmit the data envelopes to the ingestion service.
 
