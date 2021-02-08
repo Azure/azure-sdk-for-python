@@ -174,6 +174,11 @@ jobs:
       vmImage: $[coalesce(variables['OSVmImage'], '')]
 
     steps:
+    - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+      parameters:
+        AgentPool: $(Pool)
+        AgentImage: $(OSVmImage)
+
     - ${{if eq(parameters.TestPipeline, 'true')}}:
       - task: PowerShell@2
         displayName: Prep template pipeline for release

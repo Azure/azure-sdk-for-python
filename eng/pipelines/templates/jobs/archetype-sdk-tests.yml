@@ -98,6 +98,11 @@ jobs:
         vmImage: $(OSVmImage)
 
       steps:
+        - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+          parameters:
+            AgentPool: $(Pool)
+            AgentImage: $(OSVmImage)
+
         - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
 
         - ${{ if eq(parameters['AllocateResourceGroup'], true) }}:
