@@ -24,7 +24,7 @@ jobs:
       - ${{ if eq(config.GenerateVMJobs, 'true') }}:
         - pwsh: |
             $extraFilters = "${{ join('","', parameters.MatrixFilters) }}"
-            $filters ,"container=^$","SupportedClouds=^$|${{ parameters.CloudConfig.Cloud }}"
+            $filters = ,"container=^$","SupportedClouds=^$|${{ parameters.CloudConfig.Cloud }}"
             if ($extraFilters) { $filters = @($extraFilters) + $filters }
             Write-Host "DISPLAY NAME FILTER: `"$(displayNameFilter)`"; FILTERS: `"$filters`""
             eng/scripts/job-matrix/Create-JobMatrix.ps1 `
@@ -38,7 +38,7 @@ jobs:
       - ${{ if eq(config.GenerateContainerJobs, 'true') }}:
         - pwsh: |
             $extraFilters = "${{ join('","', parameters.MatrixFilters) }}"
-            $filters ,"container=.*","SupportedClouds=^$|${{ parameters.CloudConfig.Cloud }}"
+            $filters = ,"container=.*","SupportedClouds=^$|${{ parameters.CloudConfig.Cloud }}"
             if ($extraFilters) { $filters = @($extraFilters) + $filters }
             Write-Host "DISPLAY NAME FILTER: `"$(displayNameFilter)`"; FILTERS: `"$filters`""
             eng/scripts/job-matrix/Create-JobMatrix.ps1 `

@@ -139,6 +139,12 @@ stages:
               Cloud: ${{ cloud.key }}
 
 - stage: Publish_Coverage_${{ parameters.JobName }}
+  dependsOn:
+    - ${{ each cloud in parameters.CloudConfig }}:
+      - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), eq(cloud.key, 'Canary'))) }}:
+        - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
+          - ${{ cloud.key }}
+- ${{ each cloud in parameters.CloudConfig }}:
   jobs:
   - template: ../jobs/publish-coverage.yml
     parameters:

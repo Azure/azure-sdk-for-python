@@ -8,6 +8,7 @@ stages:
       ServiceDirectory: formrecognizer
       TestTimeoutInMinutes: 200
       TestSamples: true
+      Clouds: 'Prod,Canary'
       # This is a specific request from the formrecognizer service team
       # their claim is that the full matrix ends up stress-testing their service.
       # As such, the canary test runs should run on a reduced matrix.
@@ -17,10 +18,10 @@ stages:
           Location: 'westus2'
         Canary:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-          Location: 'eastus2euap'
+          Location: 'centraluseuap'
           MatrixFilters:
-            - '"macOS-10.15=^$"'
-            - '"PythonVersion=^(?!pypy3).*"'
+            - OSVmImage=^(?!macOS).*
+            - PythonVersion=^(?!pypy3).*
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
@@ -29,7 +30,6 @@ stages:
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
-        REGION: '${{ parameters.CloudConfig.Location }}'
         # EnvVars for samples to run. TODO: These use an existing FR resource. Fix samples so they don't have to
         AZURE_FORM_RECOGNIZER_AAD_ENDPOINT: $(python-formrecognizer-test-aad-endpoint)
         AZURE_FORM_RECOGNIZER_ENDPOINT: $(python-formrecognizer-test-endpoint)
