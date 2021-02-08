@@ -25,7 +25,6 @@ from azure.opentelemetry.exporter.azuremonitor import ExporterOptions
 from azure.opentelemetry.exporter.azuremonitor.export._base import ExportResult
 from azure.opentelemetry.exporter.azuremonitor.export.metrics._exporter import (
     AzureMonitorMetricsExporter,
-    # standard_metrics_processor,
 )
 from azure.opentelemetry.exporter.azuremonitor._generated.models import (
     MetricDataPoint,
@@ -52,7 +51,6 @@ class TestAzureMetricsExporter(unittest.TestCase):
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
         cls._exporter = AzureMonitorMetricsExporter()
-        print(cls._exporter._instrumentation_key)
 
         metrics.set_meter_provider(MeterProvider())
         cls._meter = metrics.get_meter(__name__)

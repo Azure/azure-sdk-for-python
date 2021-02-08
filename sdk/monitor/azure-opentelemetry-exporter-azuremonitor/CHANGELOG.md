@@ -4,6 +4,8 @@
 
 - Added metrics exporter from previous repository
     ([#16383](https://github.com/Azure/azure-sdk-for-python/pull/16383))
+- Added auto-collection + standard metrics from previous repository
+    ([#16417](https://github.com/Azure/azure-sdk-for-python/pull/16417))
 
 ## 1.0.0b2 (2021-01-13)
 
