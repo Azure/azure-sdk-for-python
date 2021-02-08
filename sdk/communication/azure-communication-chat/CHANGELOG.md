@@ -1,9 +1,15 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b4 (2021-02-08)
 ### Breaking Changes
 - Replaced CommunicationUser with CommunicationUserIdentifier.
 - Replaced PhoneNumber with PhoneNumberIdentifier
+- Support for CreateChatThreadResult and AddChatParticipantsResult to handle partial errors in batch calls.
+- Added idempotency identifier parameter for chat creation calls.
+- Added support for readreceipts and getparticipants pagination.
+- Added new model for messages anc ontent types : Text, Html, ParticipantAdded, ParticipantRemoved, TopicUpdated 
+- Removed priority field (ChatMessage.Priority)
+- Added new model for errors (CommunicationError)
 
 ### Added
 
