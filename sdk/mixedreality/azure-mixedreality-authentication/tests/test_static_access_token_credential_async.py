@@ -7,7 +7,7 @@
 from azure.core.credentials import AccessToken
 from devtools_testutils import AzureTestCase
 
-from azure.mixedreality.authentication.shared.aio._static_access_token_credential import StaticAccessTokenCredential
+from azure.mixedreality.authentication._shared.aio.static_access_token_credential import StaticAccessTokenCredential
 
 class TestAsyncStaticAccessTokenCredential:
     @AzureTestCase.await_prepared_test

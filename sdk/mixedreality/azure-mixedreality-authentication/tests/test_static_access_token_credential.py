@@ -6,7 +6,7 @@
 
 from azure.core.credentials import AccessToken
 
-from azure.mixedreality.authentication.shared._static_access_token_credential import StaticAccessTokenCredential
+from azure.mixedreality.authentication._shared.static_access_token_credential import StaticAccessTokenCredential
 
 class TestStaticAccessTokenCredential:
     def test_get_token(self):

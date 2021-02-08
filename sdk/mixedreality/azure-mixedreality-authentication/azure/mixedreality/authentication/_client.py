@@ -17,9 +17,9 @@ from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from ._generated import MixedRealityStsRestClient
 from ._generated.models import TokenRequestOptions
 from ._version import SDK_MONIKER
-from .shared._authentication_endpoint import construct_endpoint_url
-from .shared._mixedreality_account_key_credential import MixedRealityAccountKeyCredential
-from .utils import _convert_to_access_token, _generate_cv_base
+from ._shared.authentication_endpoint import construct_endpoint_url
+from ._shared.mixedreality_account_key_credential import MixedRealityAccountKeyCredential
+from ._utils import convert_to_access_token, generate_cv_base
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -90,14 +90,14 @@ class MixedRealityStsClient(object):
         :rtype: ~azure.core.credentials.AccessToken
         """
         token_request_options = TokenRequestOptions()
-        token_request_options.client_request_id = _generate_cv_base()
+        token_request_options.client_request_id = generate_cv_base()
 
         response = self._client.get_token(
             self._account_id,
             api_version=None,
             token_request_options=token_request_options,
             **kwargs)
-        return _convert_to_access_token(response)
+        return convert_to_access_token(response)
 
     def close(self):
         # type: () -> None

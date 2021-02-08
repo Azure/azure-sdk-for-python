@@ -6,9 +6,9 @@
 
 from azure.core.credentials import AccessToken, AzureKeyCredential
 
-from azure.mixedreality.authentication.shared.aio._mixed_reality_token_credential import get_mixedreality_credential, MixedRealityTokenCredential
-from azure.mixedreality.authentication.shared.aio._static_access_token_credential import StaticAccessTokenCredential
-from azure.mixedreality.authentication.shared.aio._mixedreality_account_key_credential import MixedRealityAccountKeyCredential
+from azure.mixedreality.authentication._shared.aio.mixed_reality_token_credential import get_mixedreality_credential, MixedRealityTokenCredential
+from azure.mixedreality.authentication._shared.aio.static_access_token_credential import StaticAccessTokenCredential
+from azure.mixedreality.authentication._shared.aio.mixedreality_account_key_credential import MixedRealityAccountKeyCredential
 
 class TestMixedRealityTokenCredential:
     def test_get_mixedreality_credential_static_credential(self):

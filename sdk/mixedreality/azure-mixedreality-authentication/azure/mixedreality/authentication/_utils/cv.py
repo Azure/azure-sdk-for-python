@@ -13,7 +13,7 @@ import random
 BASE_64_CHAR_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 CV_BASE_LENGTH = 22
 
-def _generate_cv_base():
+def generate_cv_base():
     # type: () -> str
     """
     Seed function to randomly generate a 16 character base64 encoded string for

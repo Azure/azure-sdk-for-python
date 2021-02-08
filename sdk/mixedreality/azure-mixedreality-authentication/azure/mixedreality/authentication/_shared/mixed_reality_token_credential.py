@@ -6,19 +6,15 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Any
-    from azure.core.credentials import AccessToken
-    from azure.core.credentials_async import AsyncTokenCredential
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Union
+    from azure.core.credentials import AccessToken, TokenCredential
 
-from ._static_access_token_credential import StaticAccessTokenCredential
-from ...aio._client_async import MixedRealityStsClient
+from .static_access_token_credential import StaticAccessTokenCredential
+from .._client import MixedRealityStsClient
 
-def get_mixedreality_credential(
-    account_id: str,
-    account_domain: str,
-    endpoint_url: str,
-    credential: "AsyncTokenCredential",
-    **kwargs):
+def get_mixedreality_credential(account_id, account_domain, endpoint_url, credential, **kwargs):
+        # type: (str, str, str, TokenCredential, Any) -> TokenCredential
         if isinstance(credential, StaticAccessTokenCredential):
             return credential
 
@@ -39,7 +35,8 @@ class MixedRealityTokenCredential(object):
     :param TokenCredential credential: The credential used to access the Mixed Reality service.
     """
 
-    def __init__(self, account_id: str, account_domain: str, endpoint_url: str, credential: "AsyncTokenCredential", **kwargs):
+    def __init__(self, account_id, account_domain, endpoint_url, credential, **kwargs):
+        # type: (str, str, str, TokenCredential, Any) -> None
         self.stsClient = MixedRealityStsClient(
             account_id=account_id,
             account_domain=account_domain,
@@ -47,15 +44,6 @@ class MixedRealityTokenCredential(object):
             credential=credential,
             **kwargs)
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
-        return await self.stsClient.get_token(**kwargs)
-
-    async def close(self) -> None:
-        self.stsClient.close()
-
-    async def __aenter__(self):
-        await self.stsClient.__aenter__()
-        return self
-
-    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
-        await self.stsClient.__aexit__()
+    def get_token(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> AccessToken
+        return self.stsClient.get_token(**kwargs)

@@ -7,7 +7,7 @@
 import base64
 import json
 
-def _retrieve_jwt_expiration_timestamp(jwt_value):
+def retrieve_jwt_expiration_timestamp(jwt_value):
     # type: (str) -> int
     """
     Retrieves the expiration value from the JWT.
