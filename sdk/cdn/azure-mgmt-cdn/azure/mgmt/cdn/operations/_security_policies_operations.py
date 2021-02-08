@@ -26,7 +26,7 @@ class SecurityPoliciesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2020-09-01".
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2020-09-01. Constant value: "2020-09-01".
     """
 
     models = models
@@ -216,7 +216,7 @@ class SecurityPoliciesOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 201, 202]:
             raise models.AfdErrorResponseException(self._deserialize, response)
 
         deserialized = None
@@ -224,6 +224,8 @@ class SecurityPoliciesOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('SecurityPolicy', response)
         if response.status_code == 201:
+            deserialized = self._deserialize('SecurityPolicy', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('SecurityPolicy', response)
 
         if raw:
@@ -246,8 +248,7 @@ class SecurityPoliciesOperations(object):
          profile.
         :type security_policy_name: str
         :param parameters: object which contains security policy parameters
-        :type parameters:
-         ~azure.mgmt.cdn.models.SecurityPolicyWebApplicationFirewallParameters
+        :type parameters: ~azure.mgmt.cdn.models.SecurityPolicyParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -292,7 +293,9 @@ class SecurityPoliciesOperations(object):
 
 
     def _patch_initial(
-            self, resource_group_name, profile_name, security_policy_name, security_policy_parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, profile_name, security_policy_name, parameters=None, custom_headers=None, raw=False, **operation_config):
+        security_policy_properties = models.SecurityPolicyProperties(parameters=parameters)
+
         # Construct URL
         url = self.patch.metadata['url']
         path_format_arguments = {
@@ -319,7 +322,7 @@ class SecurityPoliciesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(security_policy_parameters, 'SecurityPolicyWebApplicationFirewallParameters')
+        body_content = self._serialize.body(security_policy_properties, 'SecurityPolicyProperties')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -342,7 +345,7 @@ class SecurityPoliciesOperations(object):
         return deserialized
 
     def patch(
-            self, resource_group_name, profile_name, security_policy_name, security_policy_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, profile_name, security_policy_name, parameters=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates an existing Secret within a profile.
 
         :param resource_group_name: Name of the Resource group within the
@@ -354,9 +357,8 @@ class SecurityPoliciesOperations(object):
         :param security_policy_name: Name of the security policy under the
          profile.
         :type security_policy_name: str
-        :param security_policy_parameters: Security policy update properties
-        :type security_policy_parameters:
-         ~azure.mgmt.cdn.models.SecurityPolicyWebApplicationFirewallParameters
+        :param parameters: object which contains security policy parameters
+        :type parameters: ~azure.mgmt.cdn.models.SecurityPolicyParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -375,7 +377,7 @@ class SecurityPoliciesOperations(object):
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             security_policy_name=security_policy_name,
-            security_policy_parameters=security_policy_parameters,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -429,7 +431,7 @@ class SecurityPoliciesOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             raise models.AfdErrorResponseException(self._deserialize, response)
 
         if raw:

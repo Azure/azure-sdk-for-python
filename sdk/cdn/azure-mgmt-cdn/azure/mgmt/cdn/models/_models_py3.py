@@ -1501,20 +1501,43 @@ class CustomerCertificate(Certificate):
         self.subject_alternative_names = subject_alternative_names
 
 
-class CustomerCertificateParameters(Model):
+class SecretParameters(Model):
+    """The json object containing secret parameters.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: UrlSigningKeyParameters, ManagedCertificateParameters,
+    CustomerCertificateParameters
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'UrlSigningKey': 'UrlSigningKeyParameters', 'ManagedCertificate': 'ManagedCertificateParameters', 'CustomerCertificate': 'CustomerCertificateParameters'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(SecretParameters, self).__init__(**kwargs)
+        self.type = None
+
+
+class CustomerCertificateParameters(SecretParameters):
     """Customer Certificate used for https.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of the Secret to create. Possible values
-     include: 'UrlSigningKey', 'CustomerCertificate', 'ManagedCertificate'
-    :type type: str or ~azure.mgmt.cdn.models.SecretType
-    :param subject: Subject name in the certificate.
-    :type subject: str
-    :param expiration_date: Certificate expiration date.
-    :type expiration_date: str
-    :param thumbprint: Certificate thumbprint.
-    :type thumbprint: str
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param secret_source: Required. Resource reference to the KV secret
     :type secret_source: ~azure.mgmt.cdn.models.ResourceReference
     :param secret_version: Version of the secret to be used
@@ -1535,9 +1558,6 @@ class CustomerCertificateParameters(Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
         'secret_source': {'key': 'secretSource', 'type': 'ResourceReference'},
         'secret_version': {'key': 'secretVersion', 'type': 'str'},
         'certificate_authority': {'key': 'certificateAuthority', 'type': 'str'},
@@ -1545,17 +1565,14 @@ class CustomerCertificateParameters(Model):
         'subject_alternative_names': {'key': 'subjectAlternativeNames', 'type': '[str]'},
     }
 
-    def __init__(self, *, type, secret_source, subject: str=None, expiration_date: str=None, thumbprint: str=None, secret_version: str=None, certificate_authority: str=None, use_latest_version: bool=None, subject_alternative_names=None, **kwargs) -> None:
+    def __init__(self, *, secret_source, secret_version: str=None, certificate_authority: str=None, use_latest_version: bool=None, subject_alternative_names=None, **kwargs) -> None:
         super(CustomerCertificateParameters, self).__init__(**kwargs)
-        self.type = type
-        self.subject = subject
-        self.expiration_date = expiration_date
-        self.thumbprint = thumbprint
         self.secret_source = secret_source
         self.secret_version = secret_version
         self.certificate_authority = certificate_authority
         self.use_latest_version = use_latest_version
         self.subject_alternative_names = subject_alternative_names
+        self.type = 'CustomerCertificate'
 
 
 class CustomRule(Model):
@@ -3246,20 +3263,13 @@ class ManagedCertificate(Certificate):
         super(ManagedCertificate, self).__init__(subject=subject, expiration_date=expiration_date, thumbprint=thumbprint, **kwargs)
 
 
-class ManagedCertificateParameters(Model):
+class ManagedCertificateParameters(SecretParameters):
     """Managed Certificate used for https.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of the Secret to create. Possible values
-     include: 'UrlSigningKey', 'CustomerCertificate', 'ManagedCertificate'
-    :type type: str or ~azure.mgmt.cdn.models.SecretType
-    :param subject: Subject name in the certificate.
-    :type subject: str
-    :param expiration_date: Certificate expiration date.
-    :type expiration_date: str
-    :param thumbprint: Certificate thumbprint.
-    :type thumbprint: str
+    :param type: Required. Constant filled by server.
+    :type type: str
     """
 
     _validation = {
@@ -3268,17 +3278,11 @@ class ManagedCertificateParameters(Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
     }
 
-    def __init__(self, *, type, subject: str=None, expiration_date: str=None, thumbprint: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(ManagedCertificateParameters, self).__init__(**kwargs)
-        self.type = type
-        self.subject = subject
-        self.expiration_date = expiration_date
-        self.thumbprint = thumbprint
+        self.type = 'ManagedCertificate'
 
 
 class ManagedRuleDefinition(Model):
@@ -5017,21 +5021,13 @@ class Route(ProxyResource):
     :type patterns_to_match: list[str]
     :param compression_settings: compression settings.
     :type compression_settings: object
-    :param query_string_caching_behavior: Defines how AzureFrontDoor caches
-     requests that include query strings. You can ignore any query strings when
-     caching, bypass caching to prevent requests that contain query strings
-     from being cached, or cache every request with a unique URL. Possible
-     values include: 'IgnoreQueryString', 'BypassCaching', 'UseQueryString',
-     'NotSet'
+    :param query_string_caching_behavior: Defines how CDN caches requests that
+     include query strings. You can ignore any query strings when caching,
+     bypass caching to prevent requests that contain query strings from being
+     cached, or cache every request with a unique URL. Possible values include:
+     'IgnoreQueryString', 'UseQueryString', 'NotSet'
     :type query_string_caching_behavior: str or
-     ~azure.mgmt.cdn.models.QueryStringCachingBehavior
-    :param optimization_type: Specifies what scenario the customer wants this
-     AzureFrontDoor endpoint to optimize for, e.g. Download, Media services.
-     With this information, AzureFrontDoor can apply scenario driven
-     optimization. Possible values include: 'GeneralWebDelivery',
-     'GeneralMediaStreaming', 'VideoOnDemandMediaStreaming',
-     'LargeFileDownload', 'DynamicSiteAcceleration'
-    :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
+     ~azure.mgmt.cdn.models.AfdQueryStringCachingBehavior
     :param forwarding_protocol: Protocol this rule will use when forwarding
      traffic to backends. Possible values include: 'HttpOnly', 'HttpsOnly',
      'MatchRequest'
@@ -5081,8 +5077,7 @@ class Route(ProxyResource):
         'supported_protocols': {'key': 'properties.supportedProtocols', 'type': '[str]'},
         'patterns_to_match': {'key': 'properties.patternsToMatch', 'type': '[str]'},
         'compression_settings': {'key': 'properties.compressionSettings', 'type': 'object'},
-        'query_string_caching_behavior': {'key': 'properties.queryStringCachingBehavior', 'type': 'QueryStringCachingBehavior'},
-        'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
+        'query_string_caching_behavior': {'key': 'properties.queryStringCachingBehavior', 'type': 'AfdQueryStringCachingBehavior'},
         'forwarding_protocol': {'key': 'properties.forwardingProtocol', 'type': 'str'},
         'link_to_default_domain': {'key': 'properties.linkToDefaultDomain', 'type': 'str'},
         'https_redirect': {'key': 'properties.httpsRedirect', 'type': 'str'},
@@ -5091,7 +5086,7 @@ class Route(ProxyResource):
         'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
     }
 
-    def __init__(self, *, origin_group, custom_domains=None, origin_path: str=None, rule_sets=None, supported_protocols=None, patterns_to_match=None, compression_settings=None, query_string_caching_behavior=None, optimization_type=None, forwarding_protocol=None, link_to_default_domain=None, https_redirect=None, enabled_state=None, **kwargs) -> None:
+    def __init__(self, *, origin_group, custom_domains=None, origin_path: str=None, rule_sets=None, supported_protocols=None, patterns_to_match=None, compression_settings=None, query_string_caching_behavior=None, forwarding_protocol=None, link_to_default_domain=None, https_redirect=None, enabled_state=None, **kwargs) -> None:
         super(Route, self).__init__(**kwargs)
         self.custom_domains = custom_domains
         self.origin_group = origin_group
@@ -5101,7 +5096,6 @@ class Route(ProxyResource):
         self.patterns_to_match = patterns_to_match
         self.compression_settings = compression_settings
         self.query_string_caching_behavior = query_string_caching_behavior
-        self.optimization_type = optimization_type
         self.forwarding_protocol = forwarding_protocol
         self.link_to_default_domain = link_to_default_domain
         self.https_redirect = https_redirect
@@ -5129,21 +5123,13 @@ class RouteUpdateParameters(Model):
     :type patterns_to_match: list[str]
     :param compression_settings: compression settings.
     :type compression_settings: object
-    :param query_string_caching_behavior: Defines how AzureFrontDoor caches
-     requests that include query strings. You can ignore any query strings when
-     caching, bypass caching to prevent requests that contain query strings
-     from being cached, or cache every request with a unique URL. Possible
-     values include: 'IgnoreQueryString', 'BypassCaching', 'UseQueryString',
-     'NotSet'
+    :param query_string_caching_behavior: Defines how CDN caches requests that
+     include query strings. You can ignore any query strings when caching,
+     bypass caching to prevent requests that contain query strings from being
+     cached, or cache every request with a unique URL. Possible values include:
+     'IgnoreQueryString', 'UseQueryString', 'NotSet'
     :type query_string_caching_behavior: str or
-     ~azure.mgmt.cdn.models.QueryStringCachingBehavior
-    :param optimization_type: Specifies what scenario the customer wants this
-     AzureFrontDoor endpoint to optimize for, e.g. Download, Media services.
-     With this information, AzureFrontDoor can apply scenario driven
-     optimization. Possible values include: 'GeneralWebDelivery',
-     'GeneralMediaStreaming', 'VideoOnDemandMediaStreaming',
-     'LargeFileDownload', 'DynamicSiteAcceleration'
-    :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
+     ~azure.mgmt.cdn.models.AfdQueryStringCachingBehavior
     :param forwarding_protocol: Protocol this rule will use when forwarding
      traffic to backends. Possible values include: 'HttpOnly', 'HttpsOnly',
      'MatchRequest'
@@ -5172,15 +5158,14 @@ class RouteUpdateParameters(Model):
         'supported_protocols': {'key': 'properties.supportedProtocols', 'type': '[str]'},
         'patterns_to_match': {'key': 'properties.patternsToMatch', 'type': '[str]'},
         'compression_settings': {'key': 'properties.compressionSettings', 'type': 'object'},
-        'query_string_caching_behavior': {'key': 'properties.queryStringCachingBehavior', 'type': 'QueryStringCachingBehavior'},
-        'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
+        'query_string_caching_behavior': {'key': 'properties.queryStringCachingBehavior', 'type': 'AfdQueryStringCachingBehavior'},
         'forwarding_protocol': {'key': 'properties.forwardingProtocol', 'type': 'str'},
         'link_to_default_domain': {'key': 'properties.linkToDefaultDomain', 'type': 'str'},
         'https_redirect': {'key': 'properties.httpsRedirect', 'type': 'str'},
         'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
     }
 
-    def __init__(self, *, custom_domains=None, origin_group=None, origin_path: str=None, rule_sets=None, supported_protocols=None, patterns_to_match=None, compression_settings=None, query_string_caching_behavior=None, optimization_type=None, forwarding_protocol=None, link_to_default_domain=None, https_redirect=None, enabled_state=None, **kwargs) -> None:
+    def __init__(self, *, custom_domains=None, origin_group=None, origin_path: str=None, rule_sets=None, supported_protocols=None, patterns_to_match=None, compression_settings=None, query_string_caching_behavior=None, forwarding_protocol=None, link_to_default_domain=None, https_redirect=None, enabled_state=None, **kwargs) -> None:
         super(RouteUpdateParameters, self).__init__(**kwargs)
         self.custom_domains = custom_domains
         self.origin_group = origin_group
@@ -5190,7 +5175,6 @@ class RouteUpdateParameters(Model):
         self.patterns_to_match = patterns_to_match
         self.compression_settings = compression_settings
         self.query_string_caching_behavior = query_string_caching_behavior
-        self.optimization_type = optimization_type
         self.forwarding_protocol = forwarding_protocol
         self.link_to_default_domain = link_to_default_domain
         self.https_redirect = https_redirect
@@ -5410,35 +5394,6 @@ class Secret(ProxyResource):
         self.parameters = parameters
 
 
-class SecretParameters(Model):
-    """The json object containing secret parameters.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: UrlSigningKeyParameters
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Constant filled by server.
-    :type type: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'UrlSigningKey': 'UrlSigningKeyParameters'}
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(SecretParameters, self).__init__(**kwargs)
-        self.type = None
-
-
 class SecretProperties(AFDStateProperties):
     """The JSON object that contains the properties of the Secret to create.
 
@@ -5494,8 +5449,7 @@ class SecurityPolicy(ProxyResource):
      'InProgress', 'Succeeded', 'Failed'
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :param parameters: object which contains security policy parameters
-    :type parameters:
-     ~azure.mgmt.cdn.models.SecurityPolicyWebApplicationFirewallParameters
+    :type parameters: ~azure.mgmt.cdn.models.SecurityPolicyParameters
     """
 
     _validation = {
@@ -5514,7 +5468,7 @@ class SecurityPolicy(ProxyResource):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': 'SecurityPolicyWebApplicationFirewallParameters'},
+        'parameters': {'key': 'properties.parameters', 'type': 'SecurityPolicyParameters'},
     }
 
     def __init__(self, *, parameters=None, **kwargs) -> None:
@@ -5551,6 +5505,40 @@ class SecurityPolicyParameters(Model):
     def __init__(self, **kwargs) -> None:
         super(SecurityPolicyParameters, self).__init__(**kwargs)
         self.type = None
+
+
+class SecurityPolicyProperties(AFDStateProperties):
+    """The json object that contains properties required to create a security
+    policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar provisioning_state: Provisioning status. Possible values include:
+     'Succeeded', 'Failed', 'Updating', 'Deleting', 'Creating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status: Possible values include: 'NotStarted',
+     'InProgress', 'Succeeded', 'Failed'
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    :param parameters: object which contains security policy parameters
+    :type parameters: ~azure.mgmt.cdn.models.SecurityPolicyParameters
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'deployment_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'SecurityPolicyParameters'},
+    }
+
+    def __init__(self, *, parameters=None, **kwargs) -> None:
+        super(SecurityPolicyProperties, self).__init__(**kwargs)
+        self.parameters = parameters
 
 
 class SecurityPolicyWebApplicationFirewallAssociation(Model):

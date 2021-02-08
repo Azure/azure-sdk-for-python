@@ -24,7 +24,7 @@ class LogAnalyticsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2020-09-01".
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2020-09-01. Constant value: "2020-09-01".
     """
 
     models = models
@@ -147,7 +147,7 @@ class LogAnalyticsOperations(object):
         :param metrics:
         :type metrics: list[str]
         :param max_ranking:
-        :type max_ranking: float
+        :type max_ranking: int
         :param date_time_begin:
         :type date_time_begin: datetime
         :param date_time_end:
@@ -179,7 +179,7 @@ class LogAnalyticsOperations(object):
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         query_parameters['rankings'] = self._serialize.query("rankings", rankings, '[str]', div=',')
         query_parameters['metrics'] = self._serialize.query("metrics", metrics, '[str]', div=',')
-        query_parameters['maxRanking'] = self._serialize.query("max_ranking", max_ranking, 'float')
+        query_parameters['maxRanking'] = self._serialize.query("max_ranking", max_ranking, 'int')
         query_parameters['dateTimeBegin'] = self._serialize.query("date_time_begin", date_time_begin, 'iso-8601')
         query_parameters['dateTimeEnd'] = self._serialize.query("date_time_end", date_time_end, 'iso-8601')
         if custom_domains is not None:
@@ -440,7 +440,7 @@ class LogAnalyticsOperations(object):
         :param date_time_end:
         :type date_time_end: datetime
         :param max_ranking:
-        :type max_ranking: float
+        :type max_ranking: int
         :param rankings:
         :type rankings: list[str]
         :param actions:
@@ -473,7 +473,7 @@ class LogAnalyticsOperations(object):
         query_parameters['metrics'] = self._serialize.query("metrics", metrics, '[str]', div=',')
         query_parameters['dateTimeBegin'] = self._serialize.query("date_time_begin", date_time_begin, 'iso-8601')
         query_parameters['dateTimeEnd'] = self._serialize.query("date_time_end", date_time_end, 'iso-8601')
-        query_parameters['maxRanking'] = self._serialize.query("max_ranking", max_ranking, 'float')
+        query_parameters['maxRanking'] = self._serialize.query("max_ranking", max_ranking, 'int')
         query_parameters['rankings'] = self._serialize.query("rankings", rankings, '[str]', div=',')
         if actions is not None:
             query_parameters['actions'] = self._serialize.query("actions", actions, '[str]', div=',')

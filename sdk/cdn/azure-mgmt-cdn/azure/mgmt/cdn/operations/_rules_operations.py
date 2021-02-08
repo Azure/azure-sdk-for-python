@@ -26,7 +26,7 @@ class RulesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2020-09-01".
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2020-09-01. Constant value: "2020-09-01".
     """
 
     models = models
@@ -220,7 +220,7 @@ class RulesOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 201, 202]:
             raise models.AfdErrorResponseException(self._deserialize, response)
 
         deserialized = None
@@ -228,6 +228,8 @@ class RulesOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('Rule', response)
         if response.status_code == 201:
+            deserialized = self._deserialize('Rule', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('Rule', response)
 
         if raw:
@@ -440,7 +442,7 @@ class RulesOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             raise models.AfdErrorResponseException(self._deserialize, response)
 
         if raw:
