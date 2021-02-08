@@ -56,6 +56,9 @@ parameters:
   - name: Clouds
     type: string
     default: 'Public'
+  - name: SupportedClouds
+    type: string
+    default: 'Public,Canary'
   - name: CloudConfig
     type: object
     default:
@@ -95,7 +98,7 @@ stages:
   # TODO: re-enable tests-weekly allow filter once sovereign cloud live tests are stable: https://github.com/Azure/azure-sdk/issues/2074
   # Run all clouds by default for weekly test pipeline, except for clouds specifically unsupported by the calling pipeline
   # - ${{ if or(contains(parameters.Clouds, cloud.key), contains(variables['Build.DefinitionName'], 'tests-weekly')) }}:
-  - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), eq(cloud.key, 'Canary'))) }}:
+  - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
     - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
       - stage: ${{ cloud.key }}
         dependsOn: []
@@ -139,12 +142,14 @@ stages:
               Cloud: ${{ cloud.key }}
 
 - stage: Publish_Coverage_${{ parameters.JobName }}
+  # If dependsOn isn't specified, this stage may end up running after the previous stage in the pipeline. In the case
+  # that a stage (i.e. cloud) is skipped in the UI, then this stage will run too early, so make dependsOn include ALL dynamic
+  # stages.
   dependsOn:
     - ${{ each cloud in parameters.CloudConfig }}:
-      - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), eq(cloud.key, 'Canary'))) }}:
+      - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
         - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
           - ${{ cloud.key }}
-- ${{ each cloud in parameters.CloudConfig }}:
   jobs:
   - template: ../jobs/publish-coverage.yml
     parameters:

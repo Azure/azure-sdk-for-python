@@ -9,8 +9,8 @@
       },
       "PythonVersion": "3.5",
       "CoverageArg": "",
-      "RunForPR": false,
-      "InjectedPackages": "git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev"
+      "InjectedPackages": "git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev",
+      "RunForPR": false
     }
   ]
 }
