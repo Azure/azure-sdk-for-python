@@ -1,6 +1,6 @@
 # Live Test For Python SDK
 
-name: PYTHON SDK LIVE TEST RUN $(USER_TARGET) $(USER_LIVE) $(USER_USERNAME) $(Date:yyyyMMdd)$(Rev:.r)
+name: PYTHON SDK AUTO RELEASE RUN  $(BASE_BRANCH) $(Date:yyyyMMdd)$(Rev:.r)
 
 trigger:
   branches:
@@ -53,6 +53,7 @@ jobs:
 
         # judge
         if [ ! -f "$output_path/output.txt" ]; then
+          echo "output.txt does not exist, pipeline fail!!!"
           exit 1
         fi
 
@@ -69,7 +70,10 @@ jobs:
               }" \
               $(REPO)/pulls
 
+        echo "\'[AutoRelease_Python] $new_branch \' has been created!!!"
+
         # if test failed, still push and crete PR. But pipeline failed to remind user
         if [ -f "$output_path/live_test_fail.txt" ]; then
+          echo "please fix failed test!!! \'[AutoRelease_Python] $new_branch \' has been created!!! "
           exit 1
         fi
