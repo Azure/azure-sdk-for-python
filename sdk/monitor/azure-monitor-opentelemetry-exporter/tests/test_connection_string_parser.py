@@ -4,7 +4,7 @@
 import os
 import unittest
 
-from azure.opentelemetry.exporter.azuremonitor._connection_string_parser import ConnectionStringParser
+from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 
 
 # pylint: disable=too-many-public-methods

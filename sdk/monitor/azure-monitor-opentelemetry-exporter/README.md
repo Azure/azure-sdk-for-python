@@ -31,7 +31,7 @@ Please find the samples linked below for demonstration as to how to authenticate
 #### [Create Exporter from connection string][sample_authenticate_client_connstr]
 
 ```Python
-from azure.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
+from azure.monitor.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
 exporter = AzureMonitorTraceExporter(
     connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
 )
@@ -73,7 +73,7 @@ import os
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
-from azure.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
+from azure.monitor.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
 
 exporter = AzureMonitorTraceExporter(
     connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
@@ -104,7 +104,7 @@ from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
-from azure.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
+from azure.monitor.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)

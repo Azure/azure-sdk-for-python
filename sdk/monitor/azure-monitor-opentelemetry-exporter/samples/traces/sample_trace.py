@@ -5,7 +5,7 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
-from azure.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
+from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 
 exporter = AzureMonitorTraceExporter(
