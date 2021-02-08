@@ -63,7 +63,7 @@ class CommunicationUserIdentifierSerializer(object):
             presentPropertiesCount += 1
 
         if presentPropertiesCount > 1:
-            raise ValueError("Only one of the properties in identifier model should be present.");
+            raise ValueError("Only one of the properties in identifier model should be present.")
 
     @classmethod
     def deserialize(cls, identifierModel):
@@ -104,5 +104,3 @@ class CommunicationUserIdentifierSerializer(object):
             )
 
         return UnknownIdentifier(raw_id)
-
-
