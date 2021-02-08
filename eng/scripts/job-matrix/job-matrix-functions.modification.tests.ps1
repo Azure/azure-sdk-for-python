@@ -1,7 +1,21 @@
 Import-Module Pester
 
+
 BeforeAll {
     . ./job-matrix-functions.ps1
+
+    function CompareMatrices([Array]$matrix, [Array]$expected) {
+        $matrix.Length | Should -Be $expected.Length
+
+        for ($i = 0; $i -lt $matrix.Length; $i++) {
+            foreach ($entry in $matrix[$i]) {
+                $expected[$i].name | Should -Be $entry.name
+                foreach ($param in $entry.parameters.GetEnumerator()) {
+                    $expected[$i].parameters[$param.Name] | Should -Be $param.Value
+                }
+            }
+        }
+    }
 }
 
 Describe "Platform Matrix nonSparse" -Tag "nonsparse" {
@@ -100,63 +114,42 @@ Describe "Platform Matrix Import" -Tag "import" {
     }
 }
 '@
+
+        $expectedMatrix = @'
+[
+  {
+    "parameters": { "testField1": "test11", "testField2": "test21", "Foo": "foo1", "Bar": "bar1" },
+    "name": "test11_test21_foo1_bar1"
+  },
+  {
+    "parameters": { "testField1": "test11", "testField2": "test21", "Foo": "foo2", "Bar": "bar2" },
+    "name": "test11_test21_foo2_bar2"
+  },
+  {
+    "parameters": { "testField1": "test11", "testField2": "test21", "Baz": "importedBaz" },
+    "name": "test11_test21_importedBaz"
+  },
+  {
+    "parameters": { "testField1": "test12", "testField2": "test22", "Foo": "foo1", "Bar": "bar1" },
+    "name": "test12_test22_foo1_bar1"
+  },
+  {
+    "parameters": { "testField1": "test12", "testField2": "test22", "Foo": "foo2", "Bar": "bar2" },
+    "name": "test12_test22_foo2_bar2"
+  },
+  {
+    "parameters": { "testField1": "test12", "testField2": "test22", "Baz": "importedBaz" },
+    "name": "test12_test22_importedBaz"
+  }
+]
+'@
+
         $importConfig = GetMatrixConfigFromJson $matrixJson
         $matrix = GenerateMatrix $importConfig "sparse"
+        $expected = $expectedMatrix | ConvertFrom-Json -AsHashtable
 
         $matrix.Length | Should -Be 6
-
-        $matrix[0].name | Should -Be test11_test21_foo1_bar1
-        $matrix[0].parameters.testField1 | Should -Be "test11"
-        $matrix[0].parameters.testField2 | Should -Be "test21"
-        $matrix[0].parameters.Foo | Should -Be "foo1"
-        $matrix[2].name | Should -Be test11_test21_importedBaz
-        $matrix[2].parameters.testField1 | Should -Be "test11"
-        $matrix[2].parameters.testField2 | Should -Be "test21"
-        $matrix[2].parameters.Baz | Should -Be "importedBaz"
-        $matrix[4].name | Should -Be test12_test22_foo2_bar2
-        $matrix[4].parameters.testField1 | Should -Be "test12"
-        $matrix[4].parameters.testField2 | Should -Be "test22"
-        $matrix[4].parameters.Foo | Should -Be "foo2"
-    }
-
-    It "Should generate different matrices when importing and not importing" {
-        $importMatrixJson = @'
-{
-    "matrix": {
-        "$IMPORT": "./test-import-matrix.json",
-        "testField1": [ "test11", "test12" ]
-    }
-}
-'@
-        $matrixJson = @'
-{
-    "matrix": {
-        "testField1": [ "test11", "test12" ]
-    }
-}
-'@
-        $configToImport = GetMatrixConfigFromJson (Get-Content test-import-matrix.json)
-        $matrixToImport = GenerateMatrix $configToImport "sparse"
-        $importConfig = GetMatrixConfigFromJson $importMatrixJson
-        $matrixWithImport = GenerateMatrix $importConfig "sparse"
-        $nonImportConfig = GetMatrixConfigFromJson $matrixJson
-        $matrixWithoutImport = GenerateMatrix $nonImportConfig "sparse"
-
-        $matrixToImport.Length | Should -Be 3
-        $matrixWithoutImport.Length | Should -Be 2
-        $matrixWithImport.Length | Should -Be 6
-
-        $combined = CombineMatrices $matrixWithoutImport $matrixToImport
-        $combined.Length | Should -Be 6
-
-        for ($i = 0; $i -lt $matrixWithImport.Length; $i++) {
-            foreach ($entry in $matrixWithImport[$i]) {
-                $combined[$i].name | Should -Be $entry.name
-                foreach ($param in $entry.parameters.GetEnumerator()) {
-                    $combined[$i].parameters[$param.Name] | Should -Be $param.Value
-                }
-            }
-        }
+        CompareMatrices $matrix $expected
     }
 
     It "Should import a sparse matrix with import, include, and exclude" {
@@ -183,9 +176,44 @@ Describe "Platform Matrix Import" -Tag "import" {
 }
 '@
 
+        $expectedMatrix = @'
+[
+  {
+    "parameters": { "testField": "test2", "Foo": "foo1", "Bar": "bar1" },
+    "name": "test2_foo1_bar1"
+  },
+  {
+    "parameters": { "testField": "test2", "Foo": "foo2", "Bar": "bar2" },
+    "name": "test2_foo2_bar2"
+  },
+  {
+    "parameters": { "testField": "test2", "Baz": "importedBaz" },
+    "name": "test2_importedBaz"
+  },
+  {
+    "parameters": { "testField": "test3", "Foo": "foo1", "Bar": "bar1" },
+    "name": "test3_foo1_bar1"
+  },
+  {
+    "parameters": { "testField": "test3", "Foo": "foo2", "Bar": "bar2" },
+    "name": "test3_foo2_bar2"
+  },
+  {
+    "parameters": { "testImportIncludeName": "testInclude1" },
+    "name": "testInclude1"
+  },
+  {
+    "parameters": { "testImportIncludeName": "testInclude2" },
+    "name": "testInclude2"
+  }
+]
+'@
+
         $importConfig = GetMatrixConfigFromJson $matrixJson
         $matrix = GenerateMatrix $importConfig "sparse"
+        $expected = $expectedMatrix | ConvertFrom-Json -AsHashtable
 
         $matrix.Length | Should -Be 7
+        CompareMatrices $matrix $expected
     }
 }
