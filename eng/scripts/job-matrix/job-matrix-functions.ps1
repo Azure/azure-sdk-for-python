@@ -63,7 +63,7 @@ function ProcessNonSparseParameters(
     [System.Collections.Specialized.OrderedDictionary]$parameters,
     [Array]$nonSparseParameters
 ) {
-    if (-not $nonSparseParameters) {
+    if (!$nonSparseParameters) {
         return $parameters, $null
     }
 
@@ -198,7 +198,7 @@ function ProcessIncludes([MatrixConfig]$config, [Array]$matrix)
 
 function ProcessImport([System.Collections.Specialized.OrderedDictionary]$matrix, [String]$selection)
 {
-    if (-not $matrix -or -not $matrix.Contains($IMPORT_KEYWORD)) {
+    if (!$matrix -or !$matrix.Contains($IMPORT_KEYWORD)) {
         return $matrix
     }
 
@@ -214,10 +214,10 @@ function ProcessImport([System.Collections.Specialized.OrderedDictionary]$matrix
 function CombineMatrices([Array]$matrix1, [Array]$matrix2)
 {
     $combined = @()
-    if (-not $matrix1) {
+    if (!$matrix1) {
         return $matrix2
     }
-    if (-not $matrix2) {
+    if (!$matrix2) {
         return $matrix1
     }
 
@@ -228,7 +228,7 @@ function CombineMatrices([Array]$matrix1, [Array]$matrix2)
                 parameters = CloneOrderedDictionary $entry1.parameters
             }
             foreach($param in $entry2.parameters.GetEnumerator()) {
-                if (-not $newEntry.Contains($param.Name)) {
+                if (!$newEntry.Contains($param.Name)) {
                     $newEntry.parameters[$param.Name] = $param.Value
                 } else {
                     Write-Warning "Skipping duplicate parameter `"$($param.Name)`" when combining matrix."
@@ -256,7 +256,7 @@ function MatrixElementMatch([System.Collections.Specialized.OrderedDictionary]$s
     }
 
     foreach ($key in $target.Keys) {
-        if (-not $source.Contains($key) -or $source[$key] -ne $target[$key]) {
+        if (!$source.Contains($key) -or $source[$key] -ne $target[$key]) {
             return $false
         }
     }
@@ -401,7 +401,7 @@ function InitializeMatrix
     )
     $head, $tail = $parameters
 
-    if (-not $head) {
+    if (!$head) {
         $entry = CreateMatrixEntry $permutation $displayNamesLookup
         $permutations.Add($entry) | Out-Null
         return

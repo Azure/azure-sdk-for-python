@@ -20,7 +20,7 @@ param (
 
 $config = GetMatrixConfigFromJson (Get-Content $ConfigPath)
 # Strip empty string filters in order to be able to use azure pipelines yaml join()
-$Filters = $Filters | Where-Object { $_ -ne "" }
+$Filters = $Filters | Where-Object { $_ }
 
 [array]$matrix = GenerateMatrix `
     -config $config `

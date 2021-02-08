@@ -119,6 +119,46 @@ Describe "Platform Matrix Import" -Tag "import" {
         $matrix[4].parameters.Foo | Should -Be "foo2"
     }
 
+    It "Should generate different matrices when importing and not importing" {
+        $importMatrixJson = @'
+{
+    "matrix": {
+        "$IMPORT": "./test-import-matrix.json",
+        "testField1": [ "test11", "test12" ]
+    }
+}
+'@
+        $matrixJson = @'
+{
+    "matrix": {
+        "testField1": [ "test11", "test12" ]
+    }
+}
+'@
+        $configToImport = GetMatrixConfigFromJson (Get-Content test-import-matrix.json)
+        $matrixToImport = GenerateMatrix $configToImport "sparse"
+        $importConfig = GetMatrixConfigFromJson $importMatrixJson
+        $matrixWithImport = GenerateMatrix $importConfig "sparse"
+        $nonImportConfig = GetMatrixConfigFromJson $matrixJson
+        $matrixWithoutImport = GenerateMatrix $nonImportConfig "sparse"
+
+        $matrixToImport.Length | Should -Be 3
+        $matrixWithoutImport.Length | Should -Be 2
+        $matrixWithImport.Length | Should -Be 6
+
+        $combined = CombineMatrices $matrixWithoutImport $matrixToImport
+        $combined.Length | Should -Be 6
+
+        for ($i = 0; $i -lt $matrixWithImport.Length; $i++) {
+            foreach ($entry in $matrixWithImport[$i]) {
+                $combined[$i].name | Should -Be $entry.name
+                foreach ($param in $entry.parameters.GetEnumerator()) {
+                    $combined[$i].parameters[$param.Name] | Should -Be $param.Value
+                }
+            }
+        }
+    }
+
     It "Should import a sparse matrix with import, include, and exclude" {
         $matrixJson = @'
 {

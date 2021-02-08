@@ -163,7 +163,13 @@ To import a matrix, add a parameter with the key `$IMPORT`:
 Importing can be useful, for example, in cases where there is a shared base matrix, but there is a need to run it
 once for each instance of a language version.
 
-Includes and excludes for the importing matrix will still get processed after the imported matrix is combined with the base matrix.
+The processing order is as follows:
+
+1. The base matrix is generated
+1. The imported base matrix is generated
+1. Includes/excludes from the imported matrix get applied to the imported matrix
+1. The base matrix is multipled by the imported matrix
+1. Includes/excludes from the top-level matrix get applied to the multiplied matrix
 
 ## Matrix Generation behavior
 
