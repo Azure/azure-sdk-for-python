@@ -156,7 +156,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         time.sleep(5)
 
-        # the created document should NOT be gone as it's ttl value is set to -1(never expire) which overrides the collections's defaultTtl value
+        # the created document should NOT be gone as its ttl value is set to -1(never expire) which overrides the collection's defaultTtl value
         read_document = created_collection.read_item(item=document_definition['id'], partition_key=document_definition['id'])
         self.assertEqual(created_document['id'], read_document['id'])
 
@@ -166,7 +166,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         time.sleep(4)
 
-        # the created document should be gone now as it's ttl value is set to 2 which overrides the collections's defaultTtl value(5)
+        # the created document should be gone now as its ttl value is set to 2 which overrides the collection's defaultTtl value(5)
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
             created_collection.read_item,
@@ -180,7 +180,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         time.sleep(6)
 
-        # the created document should NOT be gone as it's ttl value is set to 8 which overrides the collections's defaultTtl value(5)
+        # the created document should NOT be gone as its ttl value is set to 8 which overrides the collection's defaultTtl value(5)
         read_document = created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
         self.assertEqual(created_document['id'], read_document['id'])
 
@@ -221,7 +221,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         time.sleep(4)
 
-        # the created document should be gone now as it's ttl value is set to 2 which overrides the collections's defaultTtl value(-1)
+        # the created document should be gone now as it's ttl value is set to 2 which overrides the collection's defaultTtl value(-1)
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
             created_collection.read_item,
@@ -294,7 +294,7 @@ class Test_ttl_tests(unittest.TestCase):
 
         time.sleep(7)
 
-        # Upserted document still exists after 10 secs from document creation time(with collection's defaultTtl set to 8) since it's ttl was reset after 3 secs by upserting it
+        # Upserted document still exists after 10 secs from document creation time(with collection's defaultTtl set to 8) since its ttl was reset after 3 secs by upserting it
         read_document = created_collection.read_item(item=upserted_docment['id'], partition_key=upserted_docment['id'])
         self.assertEqual(upserted_docment['id'], read_document['id'])
 

@@ -1,0 +1,207 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - b0e6998a-54a7-11eb-a963-c8348e5fffbc
+      x-ms-date:
+      - Tue, 12 Jan 2021 07:27:56 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/old5e0c1a7d?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Date: Tue, 12 Jan 2021 07:27:57 GMT
+      ETag: '"0x8D8B6CB953F97B8"'
+      Last-Modified: Tue, 12 Jan 2021 07:27:57 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      x-ms-request-id: 247881fb-701e-0008-22b4-e8fa3a000000
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://storagename.blob.core.windows.net/old5e0c1a7d?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - b110dded-54a7-11eb-8172-c8348e5fffbc
+      x-ms-date:
+      - Tue, 12 Jan 2021 07:27:57 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - 6c0de9a0-60ff-4ad5-a11e-3642d5da43b6
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/old5e0c1a7d?comp=lease&restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Date: Tue, 12 Jan 2021 07:27:57 GMT
+      ETag: '"0x8D8B6CB953F97B8"'
+      Last-Modified: Tue, 12 Jan 2021 07:27:57 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      x-ms-lease-id: 6c0de9a0-60ff-4ad5-a11e-3642d5da43b6
+      x-ms-request-id: 247881ff-701e-0008-23b4-e8fa3a000000
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://storagename.blob.core.windows.net/old5e0c1a7d?comp=lease&restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - b11a0591-54a7-11eb-9b96-c8348e5fffbc
+      x-ms-date:
+      - Tue, 12 Jan 2021 07:27:57 GMT
+      x-ms-source-container-name:
+      - old5e0c1a7d
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/new5e0c1a7d?restype=container&comp=rename
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>LeaseIdMissing</Code><Message>There
+        is currently a lease on the container and no lease ID was specified in the
+        request.\nRequestId:24788200-701e-0008-24b4-e8fa3a000000\nTime:2021-01-12T07:27:57.3085406Z</Message></Error>"
+    headers:
+      Content-Length: '273'
+      Content-Type: application/xml
+      Date: Tue, 12 Jan 2021 07:27:57 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: LeaseIdMissing
+      x-ms-request-id: 24788200-701e-0008-24b4-e8fa3a000000
+      x-ms-version: '2020-04-08'
+    status:
+      code: 412
+      message: There is currently a lease on the container and no lease ID was specified
+        in the request.
+    url: https://storagename.blob.core.windows.net/new5e0c1a7d?restype=container&comp=rename
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - b12417be-54a7-11eb-abcc-c8348e5fffbc
+      x-ms-date:
+      - Tue, 12 Jan 2021 07:27:57 GMT
+      x-ms-source-container-name:
+      - old5e0c1a7d
+      x-ms-source-lease-id:
+      - bad_id
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/new5e0c1a7d?restype=container&comp=rename
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>InvalidHeaderValue</Code><Message>The
+        value for one of the HTTP headers is not in the correct format.\nRequestId:24788201-701e-0008-25b4-e8fa3a000000\nTime:2021-01-12T07:27:57.3665815Z</Message><HeaderName>x-ms-source-lease-id</HeaderName><HeaderValue>bad_id</HeaderValue></Error>"
+    headers:
+      Content-Length: '333'
+      Content-Type: application/xml
+      Date: Tue, 12 Jan 2021 07:27:57 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: InvalidHeaderValue
+      x-ms-request-id: 24788201-701e-0008-25b4-e8fa3a000000
+      x-ms-version: '2020-04-08'
+    status:
+      code: 400
+      message: The value for one of the HTTP headers is not in the correct format.
+    url: https://storagename.blob.core.windows.net/new5e0c1a7d?restype=container&comp=rename
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - b12cf181-54a7-11eb-9a54-c8348e5fffbc
+      x-ms-date:
+      - Tue, 12 Jan 2021 07:27:57 GMT
+      x-ms-source-container-name:
+      - old5e0c1a7d
+      x-ms-source-lease-id:
+      - 6c0de9a0-60ff-4ad5-a11e-3642d5da43b6
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/new5e0c1a7d?restype=container&comp=rename
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Tue, 12 Jan 2021 07:27:57 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 24788202-701e-0008-26b4-e8fa3a000000
+      x-ms-version: '2020-04-08'
+    status:
+      code: 200
+      message: OK
+    url: https://storagename.blob.core.windows.net/new5e0c1a7d?restype=container&comp=rename
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - b13778d7-54a7-11eb-9c90-c8348e5fffbc
+      x-ms-date:
+      - Tue, 12 Jan 2021 07:27:57 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/new5e0c1a7d?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Date: Tue, 12 Jan 2021 07:27:57 GMT
+      ETag: '"0x8D8B6CB956A2461"'
+      Last-Modified: Tue, 12 Jan 2021 07:27:57 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      x-ms-default-encryption-scope: $account-encryption-key
+      x-ms-deny-encryption-scope-override: 'false'
+      x-ms-has-immutability-policy: 'false'
+      x-ms-has-legal-hold: 'false'
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-request-id: 24788203-701e-0008-27b4-e8fa3a000000
+      x-ms-version: '2020-04-08'
+    status:
+      code: 200
+      message: OK
+    url: https://storagename.blob.core.windows.net/new5e0c1a7d?restype=container
+version: 1

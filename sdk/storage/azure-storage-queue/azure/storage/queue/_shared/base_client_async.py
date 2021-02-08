@@ -35,7 +35,6 @@ from .policies import (
 )
 from .policies_async import AsyncStorageResponseHook
 
-from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 if TYPE_CHECKING:
@@ -155,7 +154,7 @@ class AsyncStorageAccountHostsMixin(object):
                     raise error
                 return AsyncList(parts_list)
             return parts
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
 

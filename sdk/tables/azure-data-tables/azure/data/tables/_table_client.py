@@ -5,7 +5,8 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union  # pylint: disable = W0611
+from typing import TYPE_CHECKING
+
 
 try:
     from urllib.parse import urlparse, unquote
@@ -17,12 +18,12 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
+from ._constants import CONNECTION_TIMEOUT
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
 from ._error import _process_table_error
 from ._generated import AzureTable
 from ._generated.models import (
-    # AccessPolicy,
     SignedIdentifier,
     TableProperties,
 )
@@ -31,10 +32,11 @@ from ._base_client import parse_connection_str
 from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
-
 from ._table_batch import TableBatchOperations
 from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
 
+if TYPE_CHECKING:
+    from typing import Optional, Any, Union  # pylint: disable=ungrouped-imports
 
 class TableClient(TableClientBase):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
@@ -66,7 +68,12 @@ class TableClient(TableClientBase):
         super(TableClient, self).__init__(
             account_url, table_name, credential=credential, **kwargs
         )
-        self._client = AzureTable(self.url, pipeline=self._pipeline)
+        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
+        self._client = AzureTable(
+            self.url,
+            policies=kwargs.pop('policies', self._policies),
+            **kwargs
+        )
 
     @classmethod
     def from_connection_string(
@@ -454,7 +461,7 @@ class TableClient(TableClientBase):
     @distributed_trace
     def query_entities(
         self,
-        filter,  # type: str  # pylint: disable = W0622
+        filter,  # type: str  pylint: disable=redefined-builtin
         **kwargs
     ):
         # type: (...) -> ItemPaged[TableEntity]
@@ -481,7 +488,7 @@ class TableClient(TableClientBase):
         parameters = kwargs.pop("parameters", None)
         filter = self._parameter_filter_substitution(
             parameters, filter
-        )  # pylint: disable = W0622
+        )
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
@@ -525,7 +532,7 @@ class TableClient(TableClientBase):
                 :caption: Get a single entity from a table
         """
         try:
-            entity = self._client.table.query_entities_with_partition_and_row_key(
+            entity = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
@@ -538,7 +545,7 @@ class TableClient(TableClientBase):
             _process_table_error(error)
 
     @distributed_trace
-    def upsert_entity(  # pylint:disable=R1710
+    def upsert_entity(
         self,
         entity,  # type: Union[TableEntity, Dict[str,str]]
         mode=UpdateMode.MERGE,  # type: UpdateMode
@@ -620,9 +627,9 @@ class TableClient(TableClientBase):
         """
         return TableBatchOperations(
             self._client,
-            self._client._serialize,  # pylint:disable=protected-access
-            self._client._deserialize,  # pylint:disable=protected-access
-            self._client._config,  # pylint:disable=protected-access
+            self._client._serialize,  # pylint: disable=protected-access
+            self._client._deserialize,  # pylint: disable=protected-access
+            self._client._config,  # pylint: disable=protected-access
             self.table_name,
             self,
             **kwargs
@@ -649,6 +656,6 @@ class TableClient(TableClientBase):
                 :dedent: 8
                 :caption: Using batches to send multiple requests at once
         """
-        return self._batch_send(  # pylint:disable=protected-access
-            batch._entities, *batch._requests, **kwargs  # pylint:disable=protected-access
+        return self._batch_send(  # pylint: disable=protected-access
+            batch._entities, *batch._requests, **kwargs  # pylint: disable=protected-access
         )

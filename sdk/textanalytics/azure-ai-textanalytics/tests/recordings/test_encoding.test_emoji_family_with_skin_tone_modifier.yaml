@@ -14,9 +14,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: "{\"documents\":[{\"redactedText\":\"\U0001F469\U0001F3FB\u200D\U0001F469\
@@ -26,13 +26,13 @@ interactions:
         :0.65}],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}"
     headers:
       apim-request-id:
-      - c488c24c-6935-469b-ba7e-5b655f42eb77
+      - 1c9c2e0c-ffb6-455d-976a-02d402a6f6d5
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 19 Nov 2020 21:25:37 GMT
+      - Wed, 27 Jan 2021 02:22:11 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '76'
+      - '67'
     status:
       code: 200
       message: OK

@@ -1,9 +1,11 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b3 (Unreleased)
 
-- Fix to only retry upon request error
-  ([#16087](https://github.com/Azure/azure-sdk-for-python/pull/16087))
+- Add azure servicebus samples and docstrings to samples
+    ([#16580](https://github.com/Azure/azure-sdk-for-python/pull/16580))
+
+## 1.0.0b2 (2021-01-13)
 
   **Breaking Changes**
   - Rename Azure Trace exporter class, only allow connection string configuration
@@ -17,6 +19,9 @@
 
   - This library is renamed to `azure-opentelemetry-exporter-azuremonitor`.
     ([#16030](https://github.com/Azure/azure-sdk-for-python/pull/16030))
+
+  - Fix to only retry upon request error
+    ([#16087](https://github.com/Azure/azure-sdk-for-python/pull/16087))
 
 ## 1.0.0b1 (2020-11-13)
 

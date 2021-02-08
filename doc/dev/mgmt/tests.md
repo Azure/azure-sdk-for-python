@@ -35,13 +35,13 @@ sdk/storage/azure-mgmt-storage> pytest
 
 You can provide directories or individual files as positional arguments to specify particular tests to run rather than running the entire test suite. For example:
 ```Shell
-sdk/storage/azure-mgmt-storage> pytest sdk/storage/azure-mgmt-storage/
-sdk/storage/azure-mgmt-storage> pytest sdk/storage/azure-mgmt-storage/tests/test_mgmt_storage.py
+sdk/storage/azure-mgmt-storage> pytest
+sdk/storage/azure-mgmt-storage> pytest tests/test_mgmt_storage.py
 ```
 
 If you have print statements in your tests for debugging you can add the `-s` flag to send those print statements to standard output:
 ```Shell
-sdk/storage/azure-mgmt-storage> pytest sdk/storage/azure-mgmt-storage/ -s
+sdk/storage/azure-mgmt-storage> pytest -s
 ```
 
 ## Getting Azure credentials
@@ -106,6 +106,7 @@ def get_credentials(**kwargs):
 ```python
 def get_azure_core_credentials(**kwargs):
     from azure.identity import ClientSecretCredential
+    import os
     return ClientSecretCredential(
         client_id = os.environ['AZURE_CLIENT_ID'],
         client_secret = os.environ['AZURE_CLIENT_SECRET'],
@@ -309,11 +310,11 @@ class ExampleSqlServerTestCase(AzureMgmtTestCase):
 ```
 
 <!-- LINKS -->
-[arm_apis]: https://docs.microsoft.com/en-us/rest/api/resources/
+[arm_apis]: https://docs.microsoft.com/rest/api/resources/
 [azure_devtools]: https://pypi.org/project/azure-devtools/
 [azure_portal]: https://portal.azure.com/
 [decorators]: https://www.python.org/dev/peps/pep-0318/
-[dev_setup]: ../dev_setup.md
+[dev_setup]: https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/dev_setup.md
 [devtools_testutils]: https://github.com/Azure/azure-sdk-for-python/tree/master/tools/azure-sdk-tools/devtools_testutils
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
 [pytest]: https://docs.pytest.org/en/latest/

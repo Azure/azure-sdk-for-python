@@ -11,7 +11,7 @@ from azure.core.pipeline import Pipeline
 from ._deserialize import deserialize_dir_properties
 from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._data_lake_file_client import DataLakeFileClient
-from ._models import DirectoryProperties
+from ._models import DirectoryProperties, FileProperties
 from ._path_client import PathClient
 
 
@@ -502,12 +502,12 @@ class DataLakeDirectoryClient(PathClient):
             or an instance of FileProperties. eg. directory/subdirectory/file
         :type file: str or ~azure.storage.filedatalake.FileProperties
         :returns: A DataLakeFileClient.
-        :rtype: ~azure.storage.filedatalake..DataLakeFileClient
+        :rtype: ~azure.storage.filedatalake.DataLakeFileClient
         """
         try:
-            file_path = file.name
+            file_path = file.get('name')
         except AttributeError:
-            file_path = self.path_name + '/' + file
+            file_path = self.path_name + '/' + str(file)
 
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -535,9 +535,9 @@ class DataLakeDirectoryClient(PathClient):
         :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
         """
         try:
-            subdir_path = sub_directory.name
+            subdir_path = sub_directory.get('name')
         except AttributeError:
-            subdir_path = self.path_name + '/' + sub_directory
+            subdir_path = self.path_name + '/' + str(sub_directory)
 
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access

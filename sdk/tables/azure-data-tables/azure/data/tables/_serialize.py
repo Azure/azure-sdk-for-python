@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
+
 from uuid import UUID
 from datetime import datetime
 from math import isnan
@@ -159,7 +159,7 @@ def _to_entity_str(value):
     return EdmType.STRING, value
 
 
-def _to_entity_none(value):  # pylint:disable=W0613
+def _to_entity_none(value):  # pylint: disable=unused-argument
     return None, None
 
 

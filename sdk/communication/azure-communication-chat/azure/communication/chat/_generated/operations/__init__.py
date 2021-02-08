@@ -6,8 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_communication_chat_service_operations import AzureCommunicationChatServiceOperationsMixin
+from ._chat_thread_operations import ChatThreadOperations
+from ._chat_operations import ChatOperations
 
 __all__ = [
-    'AzureCommunicationChatServiceOperationsMixin',
+    'ChatThreadOperations',
+    'ChatOperations',
 ]

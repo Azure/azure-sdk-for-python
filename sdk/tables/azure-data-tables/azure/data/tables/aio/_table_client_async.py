@@ -22,6 +22,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
+from .._constants import CONNECTION_TIMEOUT
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties
@@ -77,7 +78,14 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             loop=loop,
             **kwargs
         )
-        self._client = AzureTable(self.url, pipeline=self._pipeline, loop=loop)
+        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
+        self._configure_policies(**kwargs)
+        self._client = AzureTable(
+            self.url,
+            policies=kwargs.pop('policies', self._policies),
+            loop=loop,
+            **kwargs
+        )
         self._loop = loop
 
     @classmethod
@@ -468,7 +476,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace
     def query_entities(
         self,
-        filter,  # type: str  # pylint: disable = W0622
+        filter,  # type: str  # pylint: disable=redefined-builtin
         **kwargs
     ):
         # type: (...) -> AsyncItemPaged[TableEntity]
@@ -495,7 +503,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         parameters = kwargs.pop("parameters", None)
         filter = self._parameter_filter_substitution(
             parameters, filter
-        )  # pylint: disable = W0622
+        )  # pylint: disable = redefined-builtin
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
@@ -539,7 +547,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :caption: Getting an entity from PartitionKey and RowKey
         """
         try:
-            entity = await self._client.table.query_entities_with_partition_and_row_key(
+            entity = await self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
@@ -632,9 +640,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """
         return TableBatchOperations(
             self._client,
-            self._client._serialize,  # pylint:disable=protected-access
-            self._client._deserialize,  # pylint:disable=protected-access
-            self._client._config,  # pylint:disable=protected-access
+            self._client._serialize,  # pylint: disable=protected-access
+            self._client._deserialize,  # pylint: disable=protected-access
+            self._client._config,  # pylint: disable=protected-access
             self.table_name,
             self,
             **kwargs
@@ -660,5 +668,5 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :caption: Using batches to send multiple requests at once
         """
         return await self._batch_send(
-            batch._entities, *batch._requests, **kwargs  # pylint:disable=protected-access
+            batch._entities, *batch._requests, **kwargs  # pylint: disable=protected-access
         )

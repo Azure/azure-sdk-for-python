@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/anomaly_alert_configuration_id/alerts/alert_id/anomalies
   response:
@@ -18,21 +18,21 @@ interactions:
         Handbags & Sunglasses"},"property":{"anomalySeverity":"Medium","anomalyStatus":"Active"}},{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","timestamp":"2020-10-20T00:00:00Z","createdTime":"2020-10-21T15:54:37.73Z","modifiedTime":"2020-10-21T15:54:37.73Z","dimension":{"dimension_name":"Karachi","category":"Handmade"},"property":{"anomalySeverity":"Medium","anomalyStatus":"Active"}}],"@nextLink":null}'
     headers:
       apim-request-id:
-      - 9da12033-e802-4373-a5f6-2413d44546fc
+      - 8d06d0e2-bc8c-4e97-9be4-94b0d551709f
       content-length:
       - '763'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:21 GMT
+      - Fri, 22 Jan 2021 01:02:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '102'
+      - '89'
       x-request-id:
-      - 9da12033-e802-4373-a5f6-2413d44546fc
+      - 8d06d0e2-bc8c-4e97-9be4-94b0d551709f
     status:
       code: 200
       message: OK

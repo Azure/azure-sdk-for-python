@@ -2,6 +2,13 @@
 
 ## 3.1.0b3 (Unreleased)
 
+**Breaking Changes**
+
+- `Appearance` is renamed to `TextAppearance`
+- `Style` is renamed to `TextStyle`
+- Client property `api_version` is no longer exposed. Pass keyword argument `api_version` into the client to select the
+API version
+- Bumped `six` requirement from `1.6` to `1.11.0`.
 
 ## 3.1.0b2 (2021-01-12)
 

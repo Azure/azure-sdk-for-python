@@ -1,5 +1,21 @@
 # Release History
 
+## 1.0.0 (2021-02-04)
+
+**Features**
+
+  - Model ApplicationInsightsComponent has a new parameter etag
+  - Model ApplicationInsightsComponent has a new parameter name_properties_name
+
+**Breaking changes**
+
+  - Model OperationDisplay no longer has parameter description
+  - Model Operation no longer has parameter is_data_action
+  - Model Operation no longer has parameter origin
+  - Model ErrorDetail has a new signature
+  - Removed operation group QueryPacksOperations
+  - Removed operation group QueriesOperations
+
 ## 1.0.0b1 (2020-12-08)
 
 This is beta preview version.

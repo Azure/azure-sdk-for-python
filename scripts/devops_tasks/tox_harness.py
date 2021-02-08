@@ -38,7 +38,7 @@ pool_size = multiprocessing.cpu_count() * 2
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
 IGNORED_TOX_INIS = ["azure-cosmos"]
 test_tools_path = os.path.join(root_dir, "eng", "test_tools.txt")
-
+dependency_tools_path = os.path.join(root_dir, "eng", "dependency_tools.txt")
 
 class ToxWorkItem:
     def __init__(self, target_package_path, tox_env, options_array):
@@ -112,12 +112,8 @@ def collect_tox_coverage_files(targeted_packages):
 
     clean_coverage(coverage_dir)
 
-    # coverage report has paths starting .tox and azure
     # coverage combine fixes this with the help of tox.ini[coverage:paths]
-    combine_coverage_files(targeted_packages)
-
     coverage_files = []
-    # generate coverage files
     for package_dir in [package for package in targeted_packages]:
         coverage_file = os.path.join(package_dir, ".coverage")
         if os.path.isfile(coverage_file):
@@ -127,61 +123,8 @@ def collect_tox_coverage_files(targeted_packages):
             shutil.copyfile(coverage_file, destination_file)
             coverage_files.append(destination_file)
 
-    logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
-    if len(coverage_files):
-        # Remove portions of coverage file that are not desired
-        for cov_file in coverage_files:
-            trim_cov_file(cov_file)
+    logging.info("Uploading .coverage files: {}".format(coverage_files))
 
-        cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
-        cov_cmd_array.extend(coverage_files)
-
-        # merge them with coverage combine and copy to root
-        run_check_call(cov_cmd_array, os.path.join(root_dir, "_coverage/"))
-
-        source = os.path.join(coverage_dir, "./.coverage")
-        dest = os.path.join(root_dir, ".coverage")
-
-        shutil.move(source, dest)
-        # Generate coverage XML
-        generate_coverage_xml()
-        # Format coverage into packages
-        create_coverage_report()
-
-
-def trim_cov_file(coverage_file):
-    # Remove generated files, python2 specific files
-    remove_keywords = ["_generated"]
-    trimmed_info = []
-    intro = ""
-    with open(coverage_file, "r") as f_cov:
-        for line in f_cov:
-            idx = line.find('{')
-            intro = line[0:idx]
-            line = line[idx:]
-            cov = json.loads(line)
-            files_tested = cov['lines'].keys()
-            files_to_remove = []
-            for keyword in remove_keywords:
-                for file_tested in files_tested:
-                    if keyword in file_tested:
-                        files_to_remove.append(file_tested)
-            for f in files_to_remove:
-                print(f)
-                del cov['lines'][f]
-        intro += json.dumps(cov)
-    with open(coverage_file, "w") as f_cov:
-        f_cov.write(intro)
-
-
-def generate_coverage_xml():
-    coverage_path = os.path.join(root_dir, ".coverage")
-    if os.path.exists(coverage_path):
-        logging.info("Generating coverage XML")
-        commands = ["coverage", "xml", "-i", "--omit", '"*test*,*example*"']
-        run_check_call(commands, root_dir, always_exit = False)
-    else:
-        logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_path))
 
 
 def individual_workload(tox_command_tuple, workload_results):
@@ -408,6 +351,7 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         if in_ci():
             replace_dev_reqs(destination_dev_req, package_dir)
             replace_dev_reqs(test_tools_path, package_dir)
+            replace_dev_reqs(dependency_tools_path, package_dir)
             os.environ["TOX_PARALLEL_NO_SPINNER"] = "1"
 
         inject_custom_reqs(

@@ -7,28 +7,46 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import CheckAccessDecision
+    from ._models_py3 import CheckPrincipalAccessRequest
+    from ._models_py3 import CheckPrincipalAccessResponse
     from ._models_py3 import ErrorContract
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import RequiredAction
     from ._models_py3 import RoleAssignmentDetails
-    from ._models_py3 import RoleAssignmentOptions
-    from ._models_py3 import RolesListResponse
-    from ._models_py3 import SynapseRole
+    from ._models_py3 import RoleAssignmentDetailsList
+    from ._models_py3 import RoleAssignmentRequest
+    from ._models_py3 import SubjectInfo
+    from ._models_py3 import SynapseRbacPermission
+    from ._models_py3 import SynapseRoleDefinition
 except (SyntaxError, ImportError):
+    from ._models import CheckAccessDecision  # type: ignore
+    from ._models import CheckPrincipalAccessRequest  # type: ignore
+    from ._models import CheckPrincipalAccessResponse  # type: ignore
     from ._models import ErrorContract  # type: ignore
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import RequiredAction  # type: ignore
     from ._models import RoleAssignmentDetails  # type: ignore
-    from ._models import RoleAssignmentOptions  # type: ignore
-    from ._models import RolesListResponse  # type: ignore
-    from ._models import SynapseRole  # type: ignore
+    from ._models import RoleAssignmentDetailsList  # type: ignore
+    from ._models import RoleAssignmentRequest  # type: ignore
+    from ._models import SubjectInfo  # type: ignore
+    from ._models import SynapseRbacPermission  # type: ignore
+    from ._models import SynapseRoleDefinition  # type: ignore
 
 __all__ = [
+    'CheckAccessDecision',
+    'CheckPrincipalAccessRequest',
+    'CheckPrincipalAccessResponse',
     'ErrorContract',
     'ErrorDetail',
     'ErrorResponse',
+    'RequiredAction',
     'RoleAssignmentDetails',
-    'RoleAssignmentOptions',
-    'RolesListResponse',
-    'SynapseRole',
+    'RoleAssignmentDetailsList',
+    'RoleAssignmentRequest',
+    'SubjectInfo',
+    'SynapseRbacPermission',
+    'SynapseRoleDefinition',
 ]

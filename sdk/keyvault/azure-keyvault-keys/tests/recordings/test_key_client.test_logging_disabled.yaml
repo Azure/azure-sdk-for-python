@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/rsa-key-name/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12/create?api-version=7.1
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Jul 2020 16:13:23 GMT
+      - Fri, 05 Feb 2021 09:42:52 GMT
       expires:
       - '-1'
       pragma:
@@ -38,23 +38,21 @@ interactions:
       www-authenticate:
       - Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
         resource="https://vault.azure.net"
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus
+      - northeurope
       x-ms-keyvault-service-version:
-      - 1.1.10.0
+      - 1.2.139.0
       x-powered-by:
       - ASP.NET
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: '{"kty": "RSA", "key_size": 2048}'
+    body: '{"key_size": 2048, "kty": "RSA"}'
     headers:
       Accept:
       - application/json
@@ -67,37 +65,35 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/rsa-key-name/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/rsa-key-name/fe726f4b24c54df8becefc171fc06f23","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wzhtevUIf1RSZRgQfOeijGrumJvlt61IL9cTN7Bn7Qg8HbIC5B8Jhy0OZYr3EOYmp_0funD-9iQxTlZ_JkWSjKdUDHg5tmw2Pob6PYuhzA6J_UopwVobe2PJZkHjSMpFlpfNKrx3iewRcOy2FRNdJ9Y6tIK3WQxb6PEG8mwMyGHn_2udHuqRgCgT1SCAjFxw87H5tchSWJcN1ZMpZAGLL7M54L0HtssgyS0Jzi-ieu6C5olRbe7rzmp7nt2-4mKbHjvzP5GwBr9w2frnoLZv3pf7lCB9ckcCPoMfyODIWyacDJuRV4_k1VN32C_iXbDE9cKb8NQKXqpksqbh6_atJw","e":"AQAB"},"attributes":{"enabled":true,"created":1596039204,"updated":1596039204,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12/bf343a3835194efe923857217ed9369a","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1zwRWnnhquO7Pb3aUm4EcsUV_fH3MGxwZ8EPSl96h3gGQnMmVJqwPDndXpydzrn6Cc_9EJUYexJLMc61ioNP0LEmq2ZRn-5wkS2jwe5n2H8DFT01sZ0BDFocdfaBvwCobeUzXWjJziwnxS2OsmQdrEzFZ_Pc3jPxgvTt_LC8a1f_9VVSRwFukPyV-MhW_jsyIRLOO-uX4aJPY9RQ4bchthMm5YPfNzVta3eVYSl-bIDEjwZF8qkMX1mVR2a1PgmVUPi_KyTPsuQ2rmL7EUxiEzHBlyrSoRbcpzdEp96npmlAKwUc3AvSAKVOLFlNmwVL6Jp3Gdk4gH63j7kM-hSV0Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612518173,"updated":1612518173,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '692'
+      - '698'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 29 Jul 2020 16:13:24 GMT
+      - Fri, 05 Feb 2021 09:42:54 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000;includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus
+      - northeurope
       x-ms-keyvault-service-version:
-      - 1.1.10.0
+      - 1.2.139.0
       x-powered-by:
       - ASP.NET
     status:

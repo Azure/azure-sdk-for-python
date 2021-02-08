@@ -39,31 +39,31 @@ parameters:
         Pool: $(LinuxPool)
         OSVmImage:
         PythonVersion: '2.7'
-        CoverageArg: ''
+        CoverageArg: '--disablecov'
         RunForPR: true
       Linux_Python35:
         Pool: $(LinuxPool)
         OSVmImage:
         PythonVersion: '3.5'
-        CoverageArg: ''
+        CoverageArg: '--disablecov'
         RunForPR: false
       Linux_Python38:
         Pool: $(LinuxPool)
         OSVmImage:
         PythonVersion: '3.8'
-        CoverageArg: ''
+        CoverageArg: '--disablecov'
         RunForPR: true
       Windows_Python35:
         Pool: $(WindowsPool)
         OSVmImage:
         PythonVersion: '3.5'
-        CoverageArg: ''
+        CoverageArg: '--disablecov'
         RunForPR: true
       MacOS_Python27:
         Pool:
         OSVmImage: 'macOS-10.15'
         PythonVersion: '2.7'
-        CoverageArg: ''
+        CoverageArg: '--disablecov'
         RunForPR: false
       Linux_pypy3:
         Pool: $(LinuxPool)
@@ -100,7 +100,7 @@ jobs:
 
     steps:
     - template: ../steps/build-artifacts.yml
-      parameters: 
+      parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
@@ -133,7 +133,7 @@ jobs:
         CheckLinkGuidance: $true
 
     - template: ../steps/analyze.yml
-      parameters: 
+      parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
@@ -168,7 +168,7 @@ jobs:
           ${{ if or(eq(matrixEntry.value.RunForPR, 'true'), ne(variables['Build.Reason'], 'PullRequest')) }}:
             ${{ matrixEntry.key }}:
               ${{ insert }}: ${{ matrixEntry.value }}
-        
+
     pool:
       name: $[coalesce(variables['Pool'], '')]
       vmImage: $[coalesce(variables['OSVmImage'], '')]
@@ -195,7 +195,7 @@ jobs:
         {
           $toxenvvar = '$(Run.ToxCustomEnvs)'
         }
-        
+
         echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
       displayName: "Set Tox Environment"
 
@@ -211,10 +211,10 @@ jobs:
         ToxTestEnv: $(toxenv)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
-        BeforeTestSteps: 
+        BeforeTestSteps:
           - task: DownloadPipelineArtifact@0
             inputs:
-              artifactName: 'artifacts' 
+              artifactName: 'artifacts'
               targetPath: $(Build.ArtifactStagingDirectory)
 
           - template: ../steps/set-dev-build.yml
@@ -233,10 +233,10 @@ jobs:
       - 'Build'
 
     pool:
-      vmImage: ${{ parameters.LinuxPool }}
+      name: ${{ parameters.LinuxPool }}
 
     steps:
     - template: ../steps/test_regression.yml
-      parameters: 
+      parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}

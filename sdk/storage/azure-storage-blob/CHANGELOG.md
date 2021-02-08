@@ -1,5 +1,12 @@
 # Release History
 
+## 12.7.2 (Unreleased)
+
+
+## 12.7.1 (2021-01-20)
+**Fixes**
+- Fixed msrest dependency issue (#16250)
+
 ## 12.7.0 (2021-01-13)
 **Stable release of preview features**
 - Added `upload_blob_from_url` api on `BlobClient`.
@@ -69,7 +76,7 @@
 - Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
 - For replication enabled account, users can get replication policies when get blob properties.
 
-## 12.3.2 (2020-6-12)
+## 12.3.2 
 **Fixes**
 - Fixed issue where batch requests could not be combined with SAS (#9534)
 - Batch requests now support applying parameters to individual blobs within the request via passing in a dictionary.
@@ -100,7 +107,7 @@ of using the existing one in the `ContainerClient`.
 - The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.
 
 
-## 12.2.0
+## 12.2.0 
 
 **New features**
 - Added support for the 2019-07-07 service version, and added `api_version` parameter to clients.
@@ -310,11 +317,11 @@ https://aka.ms/azure-sdk-preview1-python.
 - Operation `update_page` has been renamed to `upload_page`.
 - Operation `get_page_ranges_diff` has been replaced by an optional str flag in the `get_page_ranges` operation.
 
-## 2.0.1
+## 2.0.1 
 
 - Updated dependency on azure-storage-common.
 
-## 2.0.0
+## 2.0.0 
 
 - Support for 2018-11-09 REST version. Please see our REST API documentation and blog for information about the related added features.
 - Added support for append block from URL(synchronously) for append blobs.
@@ -322,40 +329,40 @@ https://aka.ms/azure-sdk-preview1-python.
 - Added support for generating and using blob snapshot SAS tokens.
 - Added support for generating user delegation SAS tokens.
 
-## 1.5.0
+## 1.5.0 
 
 - Added new method list_blob_names to efficiently list only blob names in an efficient way.
 
-## 1.4.0
+## 1.4.0 
 
 - azure-storage-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
 - copy_blob method added to BlockBlobService to enable support for deep sync copy.
 
-## 1.3.1
+## 1.3.1 
 
 - Fixed design flaw where get_blob_to_* methods buffer entire blob when max_connections is set to 1.
 - Added support for access conditions on append_blob_from_* methods.
 
-## 1.3.0
+## 1.3.0 
 
 - Support for 2018-03-28 REST version. Please see our REST API documentation and blog for information about the related added features.
 - Added support for setting static website service properties.
 - Added support for getting account information, such as SKU name and account kind.
 - Added support for put block from URL(synchronously).
 
-## 1.2.0rc1
+## 1.2.0rc1 
 
 - Support for 2017-11-09 REST version. Please see our REST API documentation and blog for information about the related added features.
 - Support for write-once read-many containers.
 - Added support for OAuth authentication for HTTPS requests(Please note that this feature is available in preview).
 
-## 1.1.0
+## 1.1.0 
 
 - Support for 2017-07-29 REST version. Please see our REST API documentation and blogs for information about the related added features.
 - Added support for soft delete feature. If a delete retention policy is enabled through the set service properties API, then blobs or snapshots could be deleted softly and retained for a specified number of days, before being permanently removed by garbage collection.
 - Error message now contains the ErrorCode from the x-ms-error-code header value.
 
-## 1.0.0
+## 1.0.0 
 
 - The package has switched from Apache 2.0 to the MIT license.
 - Fixed bug where get_blob_to_* cannot get a single byte when start_range and end_range are both equal to 0.
@@ -363,7 +370,7 @@ https://aka.ms/azure-sdk-preview1-python.
 - Added convenient method to generate container url (make_container_url).
 - Metadata keys are now case-preserving when fetched from the service. Previously they were made lower-case by the library.
 
-## 0.37.1
+## 0.37.1 
 
 - Enabling MD5 validation no longer uses the memory-efficient algorithm for large block blobs, since computing the MD5 hash requires reading the entire block into memory.
 - Fixed a bug in the _SubStream class which was at risk of causing data corruption when using the memory-efficient algorithm for large block blobs.

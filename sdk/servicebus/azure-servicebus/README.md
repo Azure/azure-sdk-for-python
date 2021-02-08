@@ -55,6 +55,10 @@ Please find the samples linked below for demonstration as to how to authenticate
 [TokenCredential][token_credential_interface]
 protocol. There are implementations of the `TokenCredential` protocol available in the
 [azure-identity package][pypi_azure_identity]. The fully qualified namespace is of the format `<yournamespace.servicebus.windows.net>`.
+- To use the credential types provided by `azure-identity`, please install the package:
+```pip install azure-identity```
+- Additionally, to use the async API supported on Python 3.5+, you must first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/):
+```pip install aiohttp```
 - When using Azure Active Directory, your principal must be assigned a role which allows access to Service Bus, such as the
 Azure Service Bus Data Owner role. For more information about using Azure Active Directory authorization with Service Bus,
 please refer to [the associated documentation][servicebus_aad_authentication].
@@ -453,6 +457,14 @@ For more extensive documentation on the Service Bus service, see the [Service Bu
 For users seeking to perform management operations against ServiceBus (Creating a queue/topic/etc, altering filter rules, enumerating entities)
 please see the [azure-mgmt-servicebus documentation][service_bus_mgmt_docs] for API documentation.  Terse usage examples can be found
 [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-mgmt-servicebus/tests) as well.
+
+### Building uAMQP wheel from source
+
+`azure-servicebus` depends on the [uAMQP](https://pypi.org/project/uamqp/) for the AMQP protocol implementation.
+uAMQP wheels are provided for most major operating systems and will be installed automatically when installing `azure-servicebus`.
+
+If you're running on a platform for which uAMQP wheels are not provided, please follow
+ the [uAMQP Installation](https://github.com/Azure/azure-uamqp-python#installation) guidance to install from source.
 
 ## Contributing
 

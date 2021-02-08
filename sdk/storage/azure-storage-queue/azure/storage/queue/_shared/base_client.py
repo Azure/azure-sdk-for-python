@@ -56,7 +56,6 @@ from .policies import (
     ExponentialRetry,
 )
 from .._version import VERSION
-from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 
@@ -305,7 +304,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                     raise error
                 return iter(parts)
             return parts
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
 class TransportWrapper(HttpTransport):

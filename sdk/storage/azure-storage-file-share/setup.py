@@ -79,7 +79,7 @@ setup(
     ]),
     install_requires=[
         "azure-core<2.0.0,>=1.10.0",
-        "msrest>=0.6.10",
+        "msrest>=0.6.18",
         "cryptography>=2.1.4"
     ],
     extras_require={

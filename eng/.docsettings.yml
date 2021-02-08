@@ -8,6 +8,7 @@ omitted_paths:
   - doc/*
   - sdk/**/samples/*
   - sdk/identity/azure-identity/tests/*
+  - sdk/**/tests/perfstress_tests/*
 
 language: python
 root_check_enabled: True
@@ -90,6 +91,7 @@ known_content_issues:
   - ['sdk/schemaregistry/azure-schemaregistry/swagger/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/swagger/README.md', '#4554']
+  - ['sdk/servicebus/azure-servicebus/tests/perf_tests/README.md', '#4554']
   - ['sdk/servicefabric/azure-servicefabric/README.md', '#4554']
   - ['sdk/storage/azure-storage-nspkg/README.md', '#4554']
   - ['sdk/storage/azure-storage-blob/swagger/README.md', '#4554']

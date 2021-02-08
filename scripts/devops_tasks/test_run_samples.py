@@ -25,8 +25,7 @@ IGNORED_SAMPLES = {
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",
         "consume_cloud_events_from_service_bus_queue.py",
-        "consume_cloud_events_from_storage_queue.py",
-        "cs2_publish_custom_events_to_a_domain_topic.py"]
+        "consume_cloud_events_from_storage_queue.py"]
 }
 
 

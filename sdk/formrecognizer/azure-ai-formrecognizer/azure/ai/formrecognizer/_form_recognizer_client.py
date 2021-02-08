@@ -122,7 +122,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if locale:
-            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"locale": locale})
             else:
                 raise ValueError("'locale' is only available for API version V2_1_PREVIEW and up")
@@ -179,7 +179,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if locale:
-            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"locale": locale})
             else:
                 raise ValueError("'locale' is only available for API version V2_1_PREVIEW and up")
@@ -443,9 +443,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         :param form: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type form: bytes or IO[bytes]
-        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
-            pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
-            range with a comma.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword str language: The BCP-47 language code of the text in the document.
             See supported language codes here:
             https://docs.microsoft.com/azure/cognitive-services/form-recognizer/language-support.
@@ -488,13 +488,13 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
-            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError("'pages' is only available for API version V2_1_PREVIEW and up")
 
         if language:
-            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"language": language})
             else:
                 raise ValueError("'language' is only available for API version V2_1_PREVIEW and up")
@@ -515,9 +515,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         :param str form_url: The URL of the form to analyze. The input must be a valid, encoded URL
             of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
-        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
-            pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
-            range with a comma.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword str language: The BCP-47 language code of the text in the document.
             See supported language codes here:
             https://docs.microsoft.com/azure/cognitive-services/form-recognizer/language-support.
@@ -541,13 +541,13 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
-            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError("'pages' is only available for API version V2_1_PREVIEW and up")
 
         if language:
-            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"language": language})
             else:
                 raise ValueError("'language' is only available for API version V2_1_PREVIEW and up")
