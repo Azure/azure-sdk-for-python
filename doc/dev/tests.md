@@ -296,6 +296,29 @@ class TestTablesUnitTest(object):
             ep = EntityProperty(2 ** 75, EdmType.Int64) # Tables can only handle integers up to 2 ^ 63
 ```
 
+Async tests need to be marked with a `@pytest.mark.asyncio` to be properly handled. For example:
+```python
+import pytest
+from azure.data.tables.aio import TableServiceClient
+
+class TestTablesUnitTest(object):
+
+    @pytest.mark.asyncio
+    async def test_invalid_table_name(self):
+        account_name = 'fake_account_name'
+        account_key = 'fake_account_key1234567890'
+        tsc = TableServiceClient(
+            account_url='https://{}.table.core.windows.net/'.format(account_name),
+            credential=account_key
+        )
+
+        invalid_table_name = "bad_table_name" # table name cannot have an '_' character
+
+        with pytest.raises(ValueError):
+            await tsc.create_table(invalid_table_name)
+```
+
+
 ## More Test Examples
 
 This section will demonstrate how to write tests with the `devtools_testutils` package with a few samples to showcase the features of the test framework.
