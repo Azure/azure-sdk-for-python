@@ -6,16 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import FrontDoorManagementClientConfiguration
 from .operations import NetworkExperimentProfilesOperations
@@ -30,38 +28,38 @@ from .operations import EndpointsOperations
 from .operations import RulesEnginesOperations
 from .operations import PoliciesOperations
 from .operations import ManagedRuleSetsOperations
-from . import models
+from .. import models
 
 
 class FrontDoorManagementClient(object):
     """FrontDoor Client.
 
     :ivar network_experiment_profiles: NetworkExperimentProfilesOperations operations
-    :vartype network_experiment_profiles: azure.mgmt.frontdoor.operations.NetworkExperimentProfilesOperations
+    :vartype network_experiment_profiles: azure.mgmt.frontdoor.aio.operations.NetworkExperimentProfilesOperations
     :ivar preconfigured_endpoints: PreconfiguredEndpointsOperations operations
-    :vartype preconfigured_endpoints: azure.mgmt.frontdoor.operations.PreconfiguredEndpointsOperations
+    :vartype preconfigured_endpoints: azure.mgmt.frontdoor.aio.operations.PreconfiguredEndpointsOperations
     :ivar experiments: ExperimentsOperations operations
-    :vartype experiments: azure.mgmt.frontdoor.operations.ExperimentsOperations
+    :vartype experiments: azure.mgmt.frontdoor.aio.operations.ExperimentsOperations
     :ivar reports: ReportsOperations operations
-    :vartype reports: azure.mgmt.frontdoor.operations.ReportsOperations
+    :vartype reports: azure.mgmt.frontdoor.aio.operations.ReportsOperations
     :ivar front_door_name_availability: FrontDoorNameAvailabilityOperations operations
-    :vartype front_door_name_availability: azure.mgmt.frontdoor.operations.FrontDoorNameAvailabilityOperations
+    :vartype front_door_name_availability: azure.mgmt.frontdoor.aio.operations.FrontDoorNameAvailabilityOperations
     :ivar front_door_name_availability_with_subscription: FrontDoorNameAvailabilityWithSubscriptionOperations operations
-    :vartype front_door_name_availability_with_subscription: azure.mgmt.frontdoor.operations.FrontDoorNameAvailabilityWithSubscriptionOperations
+    :vartype front_door_name_availability_with_subscription: azure.mgmt.frontdoor.aio.operations.FrontDoorNameAvailabilityWithSubscriptionOperations
     :ivar front_doors: FrontDoorsOperations operations
-    :vartype front_doors: azure.mgmt.frontdoor.operations.FrontDoorsOperations
+    :vartype front_doors: azure.mgmt.frontdoor.aio.operations.FrontDoorsOperations
     :ivar frontend_endpoints: FrontendEndpointsOperations operations
-    :vartype frontend_endpoints: azure.mgmt.frontdoor.operations.FrontendEndpointsOperations
+    :vartype frontend_endpoints: azure.mgmt.frontdoor.aio.operations.FrontendEndpointsOperations
     :ivar endpoints: EndpointsOperations operations
-    :vartype endpoints: azure.mgmt.frontdoor.operations.EndpointsOperations
+    :vartype endpoints: azure.mgmt.frontdoor.aio.operations.EndpointsOperations
     :ivar rules_engines: RulesEnginesOperations operations
-    :vartype rules_engines: azure.mgmt.frontdoor.operations.RulesEnginesOperations
+    :vartype rules_engines: azure.mgmt.frontdoor.aio.operations.RulesEnginesOperations
     :ivar policies: PoliciesOperations operations
-    :vartype policies: azure.mgmt.frontdoor.operations.PoliciesOperations
+    :vartype policies: azure.mgmt.frontdoor.aio.operations.PoliciesOperations
     :ivar managed_rule_sets: ManagedRuleSetsOperations operations
-    :vartype managed_rule_sets: azure.mgmt.frontdoor.operations.ManagedRuleSetsOperations
+    :vartype managed_rule_sets: azure.mgmt.frontdoor.aio.operations.ManagedRuleSetsOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
@@ -70,16 +68,15 @@ class FrontDoorManagementClient(object):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = FrontDoorManagementClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -110,15 +107,12 @@ class FrontDoorManagementClient(object):
         self.managed_rule_sets = ManagedRuleSetsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> FrontDoorManagementClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "FrontDoorManagementClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)

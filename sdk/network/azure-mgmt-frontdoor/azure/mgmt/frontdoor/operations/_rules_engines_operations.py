@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class PoliciesOperations(object):
-    """PoliciesOperations operations.
+class RulesEnginesOperations(object):
+    """RulesEnginesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,27 +47,30 @@ class PoliciesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def list(
+    def list_by_front_door(
         self,
         resource_group_name,  # type: str
+        front_door_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.WebApplicationFirewallPolicyList"]
-        """Lists all of the protection policies within a resource group.
+        # type: (...) -> Iterable["_models.RulesEngineListResult"]
+        """Lists all of the Rules Engine Configurations within a Front Door.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
+        :param front_door_name: Name of the Front Door which is globally unique.
+        :type front_door_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either WebApplicationFirewallPolicyList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicyList]
+        :return: An iterator like instance of either RulesEngineListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.frontdoor.models.RulesEngineListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebApplicationFirewallPolicyList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RulesEngineListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01"
+        api_version = "2020-05-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -77,10 +80,11 @@ class PoliciesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']  # type: ignore
+                url = self.list_by_front_door.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
+                    'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -95,7 +99,7 @@ class PoliciesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('WebApplicationFirewallPolicyList', pipeline_response)
+            deserialized = self._deserialize('RulesEngineListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -117,40 +121,44 @@ class PoliciesOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoorWebApplicationFirewallPolicies'}  # type: ignore
+    list_by_front_door.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines'}  # type: ignore
 
     def get(
         self,
         resource_group_name,  # type: str
-        policy_name,  # type: str
+        front_door_name,  # type: str
+        rules_engine_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.WebApplicationFirewallPolicy"
-        """Retrieve protection policy with specified name within a resource group.
+        # type: (...) -> "_models.RulesEngine"
+        """Gets a Rules Engine Configuration with the specified name within the specified Front Door.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
-        :param policy_name: The name of the Web Application Firewall Policy.
-        :type policy_name: str
+        :param front_door_name: Name of the Front Door which is globally unique.
+        :type front_door_name: str
+        :param rules_engine_name: Name of the Rules Engine which is unique within the Front Door.
+        :type rules_engine_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: WebApplicationFirewallPolicy, or the result of cls(response)
-        :rtype: ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy
+        :return: RulesEngine, or the result of cls(response)
+        :rtype: ~azure.mgmt.frontdoor.models.RulesEngine
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebApplicationFirewallPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RulesEngine"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01"
+        api_version = "2020-05-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128, min_length=0),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
+            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
+            'rulesEngineName': self._serialize.url("rules_engine_name", rules_engine_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -171,37 +179,39 @@ class PoliciesOperations(object):
             error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('WebApplicationFirewallPolicy', pipeline_response)
+        deserialized = self._deserialize('RulesEngine', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/{policyName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines/{rulesEngineName}'}  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name,  # type: str
-        policy_name,  # type: str
-        parameters,  # type: "_models.WebApplicationFirewallPolicy"
+        front_door_name,  # type: str
+        rules_engine_name,  # type: str
+        rules_engine_parameters,  # type: "_models.RulesEngine"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.WebApplicationFirewallPolicy"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebApplicationFirewallPolicy"]
+        # type: (...) -> "_models.RulesEngine"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RulesEngine"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01"
+        api_version = "2020-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128, min_length=0),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
+            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
+            'rulesEngineName': self._serialize.url("rules_engine_name", rules_engine_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -215,7 +225,7 @@ class PoliciesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'WebApplicationFirewallPolicy')
+        body_content = self._serialize.body(rules_engine_parameters, 'RulesEngine')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -227,48 +237,53 @@ class PoliciesOperations(object):
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('WebApplicationFirewallPolicy', pipeline_response)
+            deserialized = self._deserialize('RulesEngine', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('WebApplicationFirewallPolicy', pipeline_response)
+            deserialized = self._deserialize('RulesEngine', pipeline_response)
 
         if response.status_code == 202:
-            deserialized = self._deserialize('WebApplicationFirewallPolicy', pipeline_response)
+            deserialized = self._deserialize('RulesEngine', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/{policyName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines/{rulesEngineName}'}  # type: ignore
 
     def begin_create_or_update(
         self,
         resource_group_name,  # type: str
-        policy_name,  # type: str
-        parameters,  # type: "_models.WebApplicationFirewallPolicy"
+        front_door_name,  # type: str
+        rules_engine_name,  # type: str
+        rules_engine_parameters,  # type: "_models.RulesEngine"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.WebApplicationFirewallPolicy"]
-        """Create or update policy with specified rule set name within a resource group.
+        # type: (...) -> LROPoller["_models.RulesEngine"]
+        """Creates a new Rules Engine Configuration with the specified name within the specified Front
+        Door.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
-        :param policy_name: The name of the Web Application Firewall Policy.
-        :type policy_name: str
-        :param parameters: Policy to be created.
-        :type parameters: ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy
+        :param front_door_name: Name of the Front Door which is globally unique.
+        :type front_door_name: str
+        :param rules_engine_name: Name of the Rules Engine which is unique within the Front Door.
+        :type rules_engine_name: str
+        :param rules_engine_parameters: Rules Engine Configuration properties needed to create a new
+         Rules Engine Configuration.
+        :type rules_engine_parameters: ~azure.mgmt.frontdoor.models.RulesEngine
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either WebApplicationFirewallPolicy or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy]
+        :return: An instance of LROPoller that returns either RulesEngine or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.frontdoor.models.RulesEngine]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebApplicationFirewallPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RulesEngine"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -277,8 +292,9 @@ class PoliciesOperations(object):
         if cont_token is None:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
-                policy_name=policy_name,
-                parameters=parameters,
+                front_door_name=front_door_name,
+                rules_engine_name=rules_engine_name,
+                rules_engine_parameters=rules_engine_parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -287,19 +303,20 @@ class PoliciesOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('WebApplicationFirewallPolicy', pipeline_response)
+            deserialized = self._deserialize('RulesEngine', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128, min_length=0),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
+            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
+            'rulesEngineName': self._serialize.url("rules_engine_name", rules_engine_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$'),
         }
 
-        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -311,12 +328,13 @@ class PoliciesOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/{policyName}'}  # type: ignore
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines/{rulesEngineName}'}  # type: ignore
 
     def _delete_initial(
         self,
         resource_group_name,  # type: str
-        policy_name,  # type: str
+        front_door_name,  # type: str
+        rules_engine_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -325,14 +343,16 @@ class PoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01"
+        api_version = "2020-05-01"
+        accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128, min_length=0),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
+            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
+            'rulesEngineName': self._serialize.url("rules_engine_name", rules_engine_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -342,33 +362,38 @@ class PoliciesOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/{policyName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines/{rulesEngineName}'}  # type: ignore
 
     def begin_delete(
         self,
         resource_group_name,  # type: str
-        policy_name,  # type: str
+        front_door_name,  # type: str
+        rules_engine_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Deletes Policy.
+        """Deletes an existing Rules Engine Configuration with the specified parameters.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
-        :param policy_name: The name of the Web Application Firewall Policy.
-        :type policy_name: str
+        :param front_door_name: Name of the Front Door which is globally unique.
+        :type front_door_name: str
+        :param rules_engine_name: Name of the Rules Engine which is unique within the Front Door.
+        :type rules_engine_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -389,7 +414,8 @@ class PoliciesOperations(object):
         if cont_token is None:
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
-                policy_name=policy_name,
+                front_door_name=front_door_name,
+                rules_engine_name=rules_engine_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -402,12 +428,13 @@ class PoliciesOperations(object):
                 return cls(pipeline_response, None, {})
 
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
-            'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128, min_length=0),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
+            'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
+            'rulesEngineName': self._serialize.url("rules_engine_name", rules_engine_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$'),
         }
 
-        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -419,4 +446,4 @@ class PoliciesOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallPolicies/{policyName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines/{rulesEngineName}'}  # type: ignore
