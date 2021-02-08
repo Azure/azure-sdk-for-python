@@ -19,9 +19,9 @@ def _get_deserialize(api_version):
         from ._generated.v2_0 import FormRecognizerClient
     else:
         from ._generated.v2_1_preview_2 import FormRecognizerClient
-    return FormRecognizerClient(
+    return FormRecognizerClient(  # pylint: disable=protected-access
         "dummy", "dummy"
-    )._deserialize  # pylint: disable=protected-access
+    )._deserialize
 
 
 def get_element_type(element_pointer):
