@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class RegionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class RegionsOperations:
         self,
         sku: str,
         **kwargs
-    ) -> AsyncIterable["models.MessagingRegionsListResult"]:
+    ) -> AsyncIterable["_models.MessagingRegionsListResult"]:
         """Gets the available Regions for a given sku.
 
         :param sku: The sku type.
@@ -55,7 +55,7 @@ class RegionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventhub.v2017_04_01.models.MessagingRegionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MessagingRegionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MessagingRegionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -101,7 +101,7 @@ class RegionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

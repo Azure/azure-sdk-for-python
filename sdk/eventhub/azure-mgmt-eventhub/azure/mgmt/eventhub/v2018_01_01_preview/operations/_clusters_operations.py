@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ClustersOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class ClustersOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AvailableClustersList"
+        # type: (...) -> "_models.AvailableClustersList"
         """List the quantity of available pre-provisioned Event Hubs Clusters, indexed by Azure region.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -59,7 +59,7 @@ class ClustersOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.AvailableClustersList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AvailableClustersList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailableClustersList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -88,7 +88,7 @@ class ClustersOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AvailableClustersList', pipeline_response)
@@ -104,7 +104,7 @@ class ClustersOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ClusterListResult"]
+        # type: (...) -> Iterable["_models.ClusterListResult"]
         """Lists the available Event Hubs Clusters within an ARM resource group.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -114,7 +114,7 @@ class ClustersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventhub.v2018_01_01_preview.models.ClusterListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ClusterListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -160,7 +160,7 @@ class ClustersOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -177,7 +177,7 @@ class ClustersOperations(object):
         cluster_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Cluster"
+        # type: (...) -> "_models.Cluster"
         """Gets the resource description of the specified Event Hubs Cluster.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -189,7 +189,7 @@ class ClustersOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Cluster
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -220,7 +220,7 @@ class ClustersOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Cluster', pipeline_response)
@@ -235,11 +235,11 @@ class ClustersOperations(object):
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
-        parameters,  # type: "models.Cluster"
+        parameters,  # type: "_models.Cluster"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.Cluster"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Cluster"]]
+        # type: (...) -> Optional["_models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Cluster"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -275,7 +275,7 @@ class ClustersOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -295,10 +295,10 @@ class ClustersOperations(object):
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
-        parameters,  # type: "models.Cluster"
+        parameters,  # type: "_models.Cluster"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Cluster"]
+        # type: (...) -> LROPoller["_models.Cluster"]
         """Creates or updates an instance of an Event Hubs Cluster.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -318,7 +318,7 @@ class ClustersOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -343,7 +343,13 @@ class ClustersOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=50, min_length=6),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -361,11 +367,11 @@ class ClustersOperations(object):
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
-        parameters,  # type: "models.Cluster"
+        parameters,  # type: "_models.Cluster"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.Cluster"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Cluster"]]
+        # type: (...) -> Optional["_models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Cluster"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -401,7 +407,7 @@ class ClustersOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -421,10 +427,10 @@ class ClustersOperations(object):
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
-        parameters,  # type: "models.Cluster"
+        parameters,  # type: "_models.Cluster"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Cluster"]
+        # type: (...) -> LROPoller["_models.Cluster"]
         """Modifies mutable properties on the Event Hubs Cluster. This operation is idempotent.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -444,7 +450,7 @@ class ClustersOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -469,7 +475,13 @@ class ClustersOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=50, min_length=6),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -521,7 +533,7 @@ class ClustersOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -574,7 +586,13 @@ class ClustersOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=50, min_length=6),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -594,7 +612,7 @@ class ClustersOperations(object):
         cluster_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EHNamespaceIdListResult"
+        # type: (...) -> "_models.EHNamespaceIdListResult"
         """List all Event Hubs Namespace IDs in an Event Hubs Dedicated Cluster.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -606,7 +624,7 @@ class ClustersOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespaceIdListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EHNamespaceIdListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EHNamespaceIdListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -637,7 +655,7 @@ class ClustersOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('EHNamespaceIdListResult', pipeline_response)

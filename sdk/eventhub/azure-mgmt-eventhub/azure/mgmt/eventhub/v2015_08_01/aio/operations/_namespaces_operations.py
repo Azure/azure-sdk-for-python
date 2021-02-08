@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class NamespacesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,9 +45,9 @@ class NamespacesOperations:
 
     async def check_name_availability(
         self,
-        parameters: "models.CheckNameAvailabilityParameter",
+        parameters: "_models.CheckNameAvailabilityParameter",
         **kwargs
-    ) -> "models.CheckNameAvailabilityResult":
+    ) -> "_models.CheckNameAvailabilityResult":
         """Check the give Namespace name availability.
 
         :param parameters: Parameters to check availability of the given Namespace name.
@@ -57,7 +57,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.CheckNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -104,7 +104,7 @@ class NamespacesOperations:
     def list_by_subscription(
         self,
         **kwargs
-    ) -> AsyncIterable["models.NamespaceListResult"]:
+    ) -> AsyncIterable["_models.NamespaceListResult"]:
         """Lists all the available Namespaces within a subscription, irrespective of the resource groups.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -112,7 +112,7 @@ class NamespacesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventhub.v2015_08_01.models.NamespaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NamespaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NamespaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -171,7 +171,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.NamespaceListResult"]:
+    ) -> AsyncIterable["_models.NamespaceListResult"]:
         """Lists the available Namespaces within a resource group.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -181,7 +181,7 @@ class NamespacesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventhub.v2015_08_01.models.NamespaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NamespaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NamespaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -241,10 +241,10 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        parameters: "models.NamespaceCreateOrUpdateParameters",
+        parameters: "_models.NamespaceCreateOrUpdateParameters",
         **kwargs
-    ) -> Optional["models.NamespaceResource"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.NamespaceResource"]]
+    ) -> Optional["_models.NamespaceResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.NamespaceResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -299,9 +299,9 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        parameters: "models.NamespaceCreateOrUpdateParameters",
+        parameters: "_models.NamespaceCreateOrUpdateParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.NamespaceResource"]:
+    ) -> AsyncLROPoller["_models.NamespaceResource"]:
         """Creates or updates a namespace. Once created, this namespace's resource manifest is immutable.
         This operation is idempotent.
 
@@ -322,7 +322,7 @@ class NamespacesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NamespaceResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NamespaceResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -347,7 +347,13 @@ class NamespacesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -448,7 +454,13 @@ class NamespacesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -467,7 +479,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         **kwargs
-    ) -> "models.NamespaceResource":
+    ) -> "_models.NamespaceResource":
         """Gets the description of the specified namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -479,7 +491,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.NamespaceResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NamespaceResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NamespaceResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -528,9 +540,9 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        parameters: "models.NamespaceUpdateParameter",
+        parameters: "_models.NamespaceUpdateParameter",
         **kwargs
-    ) -> Optional["models.NamespaceResource"]:
+    ) -> Optional["_models.NamespaceResource"]:
         """Creates or updates a namespace. Once created, this namespace's resource manifest is immutable.
         This operation is idempotent.
 
@@ -545,7 +557,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.NamespaceResource or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.NamespaceResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.NamespaceResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -601,7 +613,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         **kwargs
-    ) -> AsyncIterable["models.SharedAccessAuthorizationRuleListResult"]:
+    ) -> AsyncIterable["_models.SharedAccessAuthorizationRuleListResult"]:
         """Gets a list of authorization rules for a Namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -613,7 +625,7 @@ class NamespacesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.eventhub.v2015_08_01.models.SharedAccessAuthorizationRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessAuthorizationRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessAuthorizationRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -675,9 +687,9 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         authorization_rule_name: str,
-        parameters: "models.SharedAccessAuthorizationRuleCreateOrUpdateParameters",
+        parameters: "_models.SharedAccessAuthorizationRuleCreateOrUpdateParameters",
         **kwargs
-    ) -> "models.SharedAccessAuthorizationRuleResource":
+    ) -> "_models.SharedAccessAuthorizationRuleResource":
         """Creates or updates an AuthorizationRule for a Namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -693,7 +705,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.SharedAccessAuthorizationRuleResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessAuthorizationRuleResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessAuthorizationRuleResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -803,7 +815,7 @@ class NamespacesOperations:
         namespace_name: str,
         authorization_rule_name: str,
         **kwargs
-    ) -> "models.SharedAccessAuthorizationRuleResource":
+    ) -> "_models.SharedAccessAuthorizationRuleResource":
         """Gets an AuthorizationRule for a Namespace by rule name.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -817,7 +829,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.SharedAccessAuthorizationRuleResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessAuthorizationRuleResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessAuthorizationRuleResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -865,7 +877,7 @@ class NamespacesOperations:
         namespace_name: str,
         authorization_rule_name: str,
         **kwargs
-    ) -> "models.ResourceListKeys":
+    ) -> "_models.ResourceListKeys":
         """Gets the primary and secondary connection strings for the Namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -879,7 +891,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.ResourceListKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceListKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceListKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -926,9 +938,9 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         authorization_rule_name: str,
-        parameters: "models.RegenerateKeysParameters",
+        parameters: "_models.RegenerateKeysParameters",
         **kwargs
-    ) -> "models.ResourceListKeys":
+    ) -> "_models.ResourceListKeys":
         """Regenerates the primary or secondary connection strings for the specified Namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -944,7 +956,7 @@ class NamespacesOperations:
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.ResourceListKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceListKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceListKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
