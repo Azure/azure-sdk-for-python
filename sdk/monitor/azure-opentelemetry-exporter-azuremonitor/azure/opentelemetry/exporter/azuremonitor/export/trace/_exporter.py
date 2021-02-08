@@ -34,7 +34,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     :type options: ~azure.opentelemetry.exporter.azuremonitor.options.ExporterOptions
     """
 
-    def export(self, spans: Sequence[Span], **kwargs: Any) -> SpanExportResult:
+    def export(self, spans: Sequence[Span], **kwargs: Any) -> SpanExportResult: # pylint: disable=unused-argument
         """Export data
         :param spans: Open Telemetry Spans to export.
         :type spans: Sequence[~opentelemetry.trace.Span]
