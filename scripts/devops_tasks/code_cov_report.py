@@ -2,8 +2,6 @@ import logging
 import os
 import xml.etree.ElementTree as ET
 
-from code_cov_report import create_coverage_report
-
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_file = os.path.join(root_dir, "coverage.xml")
 
