@@ -54,7 +54,7 @@ class ClientTests(AzureTestCase):
             account_id=self.account_id,
             account_domain=self.account_domain,
             credential=self.key_credential,
-            custom_endpoint=custom_endpoint_url)
+            endpoint_url=custom_endpoint_url)
 
         assert client._endpoint_url == custom_endpoint_url
 
@@ -91,7 +91,7 @@ class ClientTests(AzureTestCase):
                 account_id=self.account_id,
                 account_domain=self.account_domain,
                 credential=self.key_credential,
-                custom_endpoint="#")
+                endpoint_url="#")
 
     def test_get_token(self):
         client = MixedRealityStsClient(
