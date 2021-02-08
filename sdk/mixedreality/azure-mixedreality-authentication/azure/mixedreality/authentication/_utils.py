@@ -6,6 +6,24 @@
 
 import base64
 import json
+import random
+
+from azure.core.credentials import AccessToken
+
+from ._generated.models import StsTokenResponseMessage
+
+
+def convert_to_access_token(token_response_message):
+    # type: (StsTokenResponseMessage) -> AccessToken
+    """
+    Converts the specified token response message to an AccessToken.
+    """
+    if not StsTokenResponseMessage:
+        raise ValueError("token_response_message can not be None")
+
+    expiration_timestamp = retrieve_jwt_expiration_timestamp(token_response_message.access_token)
+
+    return AccessToken(token_response_message.access_token, expiration_timestamp)
 
 def retrieve_jwt_expiration_timestamp(jwt_value):
     # type: (str) -> int
@@ -35,3 +53,20 @@ def retrieve_jwt_expiration_timestamp(jwt_value):
         raise ValueError("Invalid JWT payload structure. No expiration.")
 
     return int(exp)
+
+BASE_64_CHAR_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+CV_BASE_LENGTH = 22
+
+def generate_cv_base():
+    # type: () -> str
+    """
+    Seed function to randomly generate a 16 character base64 encoded string for
+    the Correlation Vector's base value.
+    """
+    result = ''
+
+    for i in range(CV_BASE_LENGTH):
+        random_index = random.randint(0, len(BASE_64_CHAR_SET) - 1)
+        result += BASE_64_CHAR_SET[random_index]
+
+    return result
