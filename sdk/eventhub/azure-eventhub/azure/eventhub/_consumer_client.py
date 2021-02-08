@@ -106,7 +106,7 @@ class EventHubConsumerClient(ClientBase):
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
      The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
-     If port is not specified in the custom_endpoint_address, by default port 443 will be used.
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
@@ -248,7 +248,7 @@ class EventHubConsumerClient(ClientBase):
          the Event Hubs service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
          The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
-         If port is not specified in the custom_endpoint_address, by default port 443 will be used.
+         If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.

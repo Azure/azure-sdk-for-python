@@ -1,18 +1,19 @@
 # Release History
 
-## 5.3.0 (Unreleased)
+## 5.3.0 (2021-02-08)
 
 **New Features**
+
 - Added a `parse_connection_string` method which parses a connection string into a properties bag, `EventHubConnectionStringProperties`, containing its component parts.
-- The `EventHubConsumerClient` and `EventHubProducerClient` constructor now accepts optional `custom_endpoint_address` argument
-which allows for specifying a custom endpoint to use when communicating with the Event Hubs service,
+- The constructor and `from_connection_string` method of `EventHubConsumerClient` and `EventHubProducerClient` now accept two new optional arguments:
+  - `custom_endpoint_address` which allows for specifying a custom endpoint to use when communicating with the Event Hubs service,
 and is useful when your network does not allow communicating to the standard Event Hubs endpoint.
-- The `EventHubConsumerClient` and `EventHubProducerClient` constructor now accepts optional `connection_verify` argument
-which allows for specifying the path to the custom CA_BUNDLE file of the SSL certificate which is used to authenticate
+  - `connection_verify` which allows for specifying the path to the custom CA_BUNDLE file of the SSL certificate which is used to authenticate
 the identity of the connection endpoint.
 
 **Notes**
-- Updated uAMQP dependency to 1.2.14
+
+- Updated uAMQP dependency to 1.2.14.
 
 ## 5.2.1 (2021-01-11)
 
@@ -53,6 +54,7 @@ the identity of the connection endpoint.
 - Added enqueueTime to span links of distributed tracing. #9599
 
 **Bug fixes**
+
 - Fixed a bug that turned `azure.eventhub.EventhubConsumerClient` into an exclusive receiver when it has no checkpoint store. #11181
 - Updated uAMQP dependency to 1.2.7.
   - Fixed bug in setting certificate of tlsio on MacOS. #7201
@@ -61,6 +63,7 @@ the identity of the connection endpoint.
 ## 5.1.0b1 (2020-04-06)
 
 **New Features**
+
 - Added `EventHubConsumerClient.receive_batch()` to receive and process events in batches instead of one by one. #9184
 - `EventHubConsumerCliuent.receive()` has a new param `max_wait_time`. 
 `on_event` is called every `max_wait_time` when no events are received and `max_wait_time` is not `None` or 0.
@@ -127,7 +130,6 @@ an error on Azure Stack #9920
     - The `starting_position_inclusive` parameter of the `receive` method accepts `bool` or `dict` indicating whether the given event position is inclusive or not.
 - `PartitionContext` no longer has attribute `owner_id`.
 - `PartitionContext` now has attribute `last_enqueued_event_properties` which is populated if `track_last_enqueued_event_properties` is set to `True` in the `receive` method.
-
 
 **New features**
 
