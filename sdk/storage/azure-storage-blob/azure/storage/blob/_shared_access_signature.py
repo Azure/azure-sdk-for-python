@@ -8,15 +8,15 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, TYPE_CHECKING
 )
 
-from azure.storage.blob._shared import sign_string, url_quote
-from azure.storage.blob._shared.constants import X_MS_VERSION
-from azure.storage.blob._shared.models import Services
-from azure.storage.blob._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
+from ._shared import sign_string, url_quote
+from ._shared.constants import X_MS_VERSION
+from ._shared.models import Services
+from ._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
     QueryStringConstants
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.storage.blob import (
+    from ..blob import (
         ResourceTypes,
         AccountSasPermissions,
         UserDelegationKey,
