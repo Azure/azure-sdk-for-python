@@ -73,11 +73,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base.storage._retention_period, 604800)
         self.assertEqual(base._timeout, 10)
 
-    def test_constructor_wrong_options(self):
-        """Test the constructor with wrong options."""
-        with self.assertRaises(TypeError):
-            BaseExporter(something_else=6)
-
     @unittest.skip("transient storage")
     def test_transmit_from_storage_failed_retryable(self):
         envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
