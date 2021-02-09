@@ -4,7 +4,7 @@
 
 ## Instructions
 
-From `azure-opentelemetry-exporter-azuremonitor/`:
+From `azure-monitor-opentelemetry-exporter/`:
 
 ```
 rmdir ./azure/opentelemetry/exporter/azuremonitor/_generated
