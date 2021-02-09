@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b4 (2021-02-08)
+## 1.0.0b4 (2021-02-09)
 ### Breaking Changes
 - Replaced CommunicationUser with CommunicationUserIdentifier.
 - Replaced PhoneNumber with PhoneNumberIdentifier
