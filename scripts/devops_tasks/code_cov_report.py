@@ -16,7 +16,6 @@ def create_coverage_report():
 
     packages = root[1]
 
-    # First  go through and edit the name to include the full path
     recursive_set_name(packages)
 
     packages_to_report = []
@@ -24,8 +23,7 @@ def create_coverage_report():
         # Order should be: ['azure', '<package-name>', 'azure-<package-name>', ...]
         name = child.attrib['name'].split('.')
         logging.info("Name: {}".format(name))
-        folder = name[1]
-        package = name[2]
+        folder, package = name[1], name[2]
         if (folder, package) not in packages_to_report:
             packages_to_report.append((folder, package))
             logging.info("Found a package: {}".format(package))
@@ -109,7 +107,6 @@ def create_new_node(package_tuple, packages_root):
                 if classes[0].tag == "class" and package_name in classes[0].attrib["filename"]:
                     new_node.append(classes)
                     break
-
 
     ET.ElementTree(new_node).write("temp.xml")
 
