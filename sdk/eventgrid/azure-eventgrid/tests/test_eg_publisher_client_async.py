@@ -101,8 +101,10 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
         eg_event = {
                 "subject":"sample", 
                 "data":b"eventgridevent", 
-                "event_type":"Sample.EventGrid.Event",
-                "data_version":"2.0"
+                "eventType":"Sample.EventGrid.Event",
+                "dataVersion":"2.0",
+                "id": "123-ddf-133-324255ffd",
+                "eventTime": dt.datetime.utcnow()
         }
         with pytest.raises(TypeError, match="Data in EventGridEvent cannot be bytes*"):
             await client.send(eg_event)
