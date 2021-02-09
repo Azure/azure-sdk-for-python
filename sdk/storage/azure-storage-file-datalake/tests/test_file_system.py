@@ -361,6 +361,12 @@ class FileSystemTest(StorageTestCase):
             with fs_client.get_directory_client("file2") as f_client:
                 f_client.create_directory()
 
+    @record
+    def test_get_account_information(self):
+        account_info = self.dsc.get_account_information()
+        self.assertTrue(account_info['is_hns_enabled'])
+        self.assertIsNotNone(account_info['sku_name'])
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

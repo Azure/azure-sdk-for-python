@@ -175,6 +175,27 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                                                                            **kwargs)  # pylint: disable=protected-access
         return UserDelegationKey._from_generated(delegation_key)  # pylint: disable=protected-access
 
+    def get_account_information(self, **kwargs):
+        # type: (Any) -> Dict[str, str]
+        """Gets information related to the storage account.
+
+        The information can also be retrieved if the user has an account SAS.
+        The keys in the returned dictionary include 'sku_name' and 'account_kind', 'is_hns_enabled'.
+
+        :returns: A dict of account information (SKU and account type).
+        :rtype: dict(str, str)
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_service.py
+                :start-after: [START get_account_info]
+                :end-before: [END get_account_info]
+                :language: python
+                :dedent: 8
+                :caption: Getting account information for the datalake service.
+        """
+        return self._blob_service_client.get_account_information(**kwargs) # type: ignore
+
     def list_file_systems(self, name_starts_with=None,  # type: Optional[str]
                           include_metadata=None,  # type: Optional[bool]
                           **kwargs):

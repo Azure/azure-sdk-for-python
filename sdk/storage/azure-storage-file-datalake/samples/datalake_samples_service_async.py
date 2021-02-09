@@ -112,7 +112,25 @@ async def data_lake_service_sample():
 
     await token_credential.close()
 
+
+async def get_storage_account_information_async():
+    # [START get_account_info]
+    # Instantiate a DataLakeServiceClient using a connection string
+    from azure.storage.filedatalake.aio import DataLakeServiceClient
+    datalake_service_client = DataLakeServiceClient.from_connection_string(connection_string)
+
+    async with datalake_service_client:
+        account_info = await datalake_service_client.get_account_information()
+        print('Using Storage SKU: {}'.format(account_info['sku_name']))
+        print('Is HNS enabled: {}'.format(account_info['is_hns_enabled']))
+    # [END get_account_info]
+
+
+async def main():
+    await data_lake_service_sample()
+    await get_storage_account_information_async()
+
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(data_lake_service_sample())
+    loop.run_until_complete(main())
 
