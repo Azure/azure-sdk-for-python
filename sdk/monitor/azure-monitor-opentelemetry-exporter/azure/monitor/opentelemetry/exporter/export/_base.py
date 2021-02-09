@@ -41,7 +41,7 @@ class BaseExporter:
         """Azure Monitor base exporter for OpenTelemetry.
 
         :param options: Exporter configuration options.
-        :type options: ~azure.opentelemetry.exporter.azuremonitor.options.ExporterOptions
+        :type options: ~azure.monitor.opentelemetry.exporter.options.ExporterOptions
         :keyword str connection_string: The connection string to be used for authentication
         :rtype: None
         """
