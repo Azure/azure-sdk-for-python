@@ -276,11 +276,21 @@ def replace_dev_reqs(file, pkg_root):
 
 def collect_log_files(working_dir):
     logging.info("Collecting log files from {}".format(working_dir))
+    package = working_dir.split('/')[-1]
     # collect all the log files into one place for publishing in case of tox failure
     test_envs = ["whl", "sdist", "depends", "latestdependency", "mindependency"]
 
     log_directory = os.path.join(
         root_dir, "_tox_logs"
+    )
+
+    try:
+        os.mkdir(log_directory)
+    except OSError:
+        logging.info("'{}' directory already exists".format(log_directory))
+
+    log_directory = os.path.join(
+        log_directory, package)
     )
 
     try:
