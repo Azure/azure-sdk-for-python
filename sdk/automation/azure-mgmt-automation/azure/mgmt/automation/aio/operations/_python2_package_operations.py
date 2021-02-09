@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class Python2PackageOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -93,7 +93,7 @@ class Python2PackageOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -107,7 +107,7 @@ class Python2PackageOperations:
         automation_account_name: str,
         package_name: str,
         **kwargs
-    ) -> "models.Module":
+    ) -> "_models.Module":
         """Retrieve the python 2 package identified by package name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -121,7 +121,7 @@ class Python2PackageOperations:
         :rtype: ~azure.mgmt.automation.models.Module
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Module"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Module"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -153,7 +153,7 @@ class Python2PackageOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Module', pipeline_response)
@@ -169,9 +169,9 @@ class Python2PackageOperations:
         resource_group_name: str,
         automation_account_name: str,
         package_name: str,
-        parameters: "models.PythonPackageCreateParameters",
+        parameters: "_models.PythonPackageCreateParameters",
         **kwargs
-    ) -> "models.Module":
+    ) -> "_models.Module":
         """Create or Update the python 2 package identified by package name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -187,7 +187,7 @@ class Python2PackageOperations:
         :rtype: ~azure.mgmt.automation.models.Module
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Module"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Module"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -224,7 +224,7 @@ class Python2PackageOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -244,9 +244,9 @@ class Python2PackageOperations:
         resource_group_name: str,
         automation_account_name: str,
         package_name: str,
-        parameters: "models.PythonPackageUpdateParameters",
+        parameters: "_models.PythonPackageUpdateParameters",
         **kwargs
-    ) -> "models.Module":
+    ) -> "_models.Module":
         """Update the python 2 package identified by package name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -262,7 +262,7 @@ class Python2PackageOperations:
         :rtype: ~azure.mgmt.automation.models.Module
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Module"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Module"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -299,7 +299,7 @@ class Python2PackageOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Module', pipeline_response)
@@ -315,7 +315,7 @@ class Python2PackageOperations:
         resource_group_name: str,
         automation_account_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ModuleListResult"]:
+    ) -> AsyncIterable["_models.ModuleListResult"]:
         """Retrieve a list of python 2 packages.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -327,7 +327,7 @@ class Python2PackageOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.automation.models.ModuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ModuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -374,7 +374,7 @@ class Python2PackageOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

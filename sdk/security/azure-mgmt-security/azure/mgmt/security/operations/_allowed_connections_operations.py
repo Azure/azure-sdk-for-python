@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class AllowedConnectionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class AllowedConnectionsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AllowedConnectionsList"]
+        # type: (...) -> Iterable["_models.AllowedConnectionsList"]
         """Gets the list of all possible traffic between resources for the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -57,7 +57,7 @@ class AllowedConnectionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.AllowedConnectionsList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AllowedConnectionsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AllowedConnectionsList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -116,7 +116,7 @@ class AllowedConnectionsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AllowedConnectionsList"]
+        # type: (...) -> Iterable["_models.AllowedConnectionsList"]
         """Gets the list of all possible traffic between resources for the subscription and location.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -124,7 +124,7 @@ class AllowedConnectionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.AllowedConnectionsList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AllowedConnectionsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AllowedConnectionsList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -183,10 +183,10 @@ class AllowedConnectionsOperations(object):
     def get(
         self,
         resource_group_name,  # type: str
-        connection_type,  # type: Union[str, "models.ConnectionType"]
+        connection_type,  # type: Union[str, "_models.ConnectionType"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AllowedConnectionsResource"
+        # type: (...) -> "_models.AllowedConnectionsResource"
         """Gets the list of all possible traffic between resources for the subscription and location,
         based on connection type.
 
@@ -200,7 +200,7 @@ class AllowedConnectionsOperations(object):
         :rtype: ~azure.mgmt.security.models.AllowedConnectionsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AllowedConnectionsResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AllowedConnectionsResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

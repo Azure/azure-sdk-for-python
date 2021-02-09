@@ -12,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -31,7 +31,7 @@ class BigDataPoolsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -42,7 +42,7 @@ class BigDataPoolsOperations:
     async def list(
         self,
         **kwargs
-    ) -> "models.BigDataPoolResourceInfoListResult":
+    ) -> "_models.BigDataPoolResourceInfoListResult":
         """List Big Data Pools.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -50,7 +50,7 @@ class BigDataPoolsOperations:
         :rtype: ~azure.synapse.artifacts.models.BigDataPoolResourceInfoListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BigDataPoolResourceInfoListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BigDataPoolResourceInfoListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -79,7 +79,7 @@ class BigDataPoolsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('BigDataPoolResourceInfoListResult', pipeline_response)
@@ -94,7 +94,7 @@ class BigDataPoolsOperations:
         self,
         big_data_pool_name: str,
         **kwargs
-    ) -> "models.BigDataPoolResourceInfo":
+    ) -> "_models.BigDataPoolResourceInfo":
         """Get Big Data Pool.
 
         :param big_data_pool_name: The Big Data Pool name.
@@ -104,7 +104,7 @@ class BigDataPoolsOperations:
         :rtype: ~azure.synapse.artifacts.models.BigDataPoolResourceInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BigDataPoolResourceInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BigDataPoolResourceInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -134,7 +134,7 @@ class BigDataPoolsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('BigDataPoolResourceInfo', pipeline_response)

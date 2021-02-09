@@ -2,427 +2,292 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 871806ca-3cb9-11ea-bced-001a7dda7113
+      - 74af8536-6a51-11eb-99b9-c8348e5fffbc
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:12 GMT
+      - Mon, 08 Feb 2021 21:06:04 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-04-08'
     method: PUT
     uri: https://storagename.blob.core.windows.net/filesystem2ae119a8?restype=container
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Wed, 22 Jan 2020 01:50:11 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D79EDD6B5B1B62"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Wed, 22 Jan 2020 01:50:12 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: cc3e1ede-001e-006d-23c6-d0f9df000000
-      x-ms-version: '2019-02-02'
+      Content-Length: '0'
+      Date: Mon, 08 Feb 2021 21:06:05 GMT
+      ETag: '"0x8D8CC75592EADCA"'
+      Last-Modified: Mon, 08 Feb 2021 21:06:05 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 6418ee8c-201e-00bc-6c5e-fe1c9d000000
+      x-ms-version: '2020-04-08'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.blob.core.windows.net
-        - /filesystem2ae119a8
-        - restype=container
-        - ''
+    url: https://seanprodhierarchical.blob.core.windows.net/filesystem2ae119a8?restype=container
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 8737dc80-3cb9-11ea-a555-001a7dda7113
+      - 752d2ebf-6a51-11eb-a169-c8348e5fffbc
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:12 GMT
+      - Mon, 08 Feb 2021 21:06:05 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/filesystem2ae119a8/dir10?resource=directory
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Wed, 22 Jan 2020 01:50:11 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D79EDD6B7DD9AB"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Wed, 22 Jan 2020 01:50:12 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 78256c5c-501f-0002-40c6-d0f32c000000
-      x-ms-version: '2019-02-02'
+      Content-Length: '0'
+      Date: Mon, 08 Feb 2021 21:06:06 GMT
+      ETag: '"0x8D8CC7559C152F5"'
+      Last-Modified: Mon, 08 Feb 2021 21:06:06 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 7e8257ce-b01f-00cc-045e-fea56a000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem2ae119a8/dir10
-        - resource=directory
-        - ''
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem2ae119a8/dir10?resource=directory
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 875909d8-3cb9-11ea-b07b-001a7dda7113
+      - 760cb7cc-6a51-11eb-92d2-c8348e5fffbc
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:12 GMT
+      - Mon, 08 Feb 2021 21:06:07 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/filesystem2ae119a8/dir11?resource=directory
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Wed, 22 Jan 2020 01:50:11 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D79EDD6B87389A"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Wed, 22 Jan 2020 01:50:12 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 78256c5d-501f-0002-41c6-d0f32c000000
-      x-ms-version: '2019-02-02'
+      Content-Length: '0'
+      Date: Mon, 08 Feb 2021 21:06:06 GMT
+      ETag: '"0x8D8CC755A502A9A"'
+      Last-Modified: Mon, 08 Feb 2021 21:06:07 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 7e82580f-b01f-00cc-455e-fea56a000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem2ae119a8/dir11
-        - resource=directory
-        - ''
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem2ae119a8/dir11?resource=directory
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 87624d76-3cb9-11ea-b23c-001a7dda7113
+      - 761124a1-6a51-11eb-a846-c8348e5fffbc
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:12 GMT
+      - Mon, 08 Feb 2021 21:06:07 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/filesystem2ae119a8/dir12?resource=directory
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Wed, 22 Jan 2020 01:50:11 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D79EDD6B909234"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Wed, 22 Jan 2020 01:50:12 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 78256c5e-501f-0002-42c6-d0f32c000000
-      x-ms-version: '2019-02-02'
+      Content-Length: '0'
+      Date: Mon, 08 Feb 2021 21:06:06 GMT
+      ETag: '"0x8D8CC755A5504E0"'
+      Last-Modified: Mon, 08 Feb 2021 21:06:07 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 7e825811-b01f-00cc-475e-fea56a000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem2ae119a8/dir12
-        - resource=directory
-        - ''
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem2ae119a8/dir12?resource=directory
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 876c3500-3cb9-11ea-bd3e-001a7dda7113
+      - 7614f542-6a51-11eb-bbef-c8348e5fffbc
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:12 GMT
+      - Mon, 08 Feb 2021 21:06:07 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/filesystem2ae119a8/dir13?resource=directory
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Wed, 22 Jan 2020 01:50:11 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D79EDD6B9B313B"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Wed, 22 Jan 2020 01:50:12 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 78256c62-501f-0002-46c6-d0f32c000000
-      x-ms-version: '2019-02-02'
+      Content-Length: '0'
+      Date: Mon, 08 Feb 2021 21:06:06 GMT
+      ETag: '"0x8D8CC755A5886B8"'
+      Last-Modified: Mon, 08 Feb 2021 21:06:07 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 7e825813-b01f-00cc-495e-fea56a000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem2ae119a8/dir13
-        - resource=directory
-        - ''
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem2ae119a8/dir13?resource=directory
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 87765034-3cb9-11ea-a797-001a7dda7113
+      - 7619b03b-6a51-11eb-a697-c8348e5fffbc
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:12 GMT
+      - Mon, 08 Feb 2021 21:06:07 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/filesystem2ae119a8/dir14?resource=directory
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Wed, 22 Jan 2020 01:50:11 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D79EDD6BA51FC8"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Wed, 22 Jan 2020 01:50:12 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 78256c69-501f-0002-4dc6-d0f32c000000
-      x-ms-version: '2019-02-02'
+      Content-Length: '0'
+      Date: Mon, 08 Feb 2021 21:06:06 GMT
+      ETag: '"0x8D8CC755A5D43C3"'
+      Last-Modified: Mon, 08 Feb 2021 21:06:07 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 7e825814-b01f-00cc-4a5e-fea56a000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem2ae119a8/dir14
-        - resource=directory
-        - ''
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem2ae119a8/dir14?resource=directory
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 87804acc-3cb9-11ea-9896-001a7dda7113
+      - 761df5ed-6a51-11eb-95a8-c8348e5fffbc
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:12 GMT
+      - Mon, 08 Feb 2021 21:06:07 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/filesystem2ae119a8/dir15?resource=directory
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Wed, 22 Jan 2020 01:50:12 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D79EDD6BAF1167"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Wed, 22 Jan 2020 01:50:12 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 78256c6d-501f-0002-51c6-d0f32c000000
-      x-ms-version: '2019-02-02'
+      Content-Length: '0'
+      Date: Mon, 08 Feb 2021 21:06:06 GMT
+      ETag: '"0x8D8CC755A61C265"'
+      Last-Modified: Mon, 08 Feb 2021 21:06:07 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 7e825815-b01f-00cc-4b5e-fea56a000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem2ae119a8/dir15
-        - resource=directory
-        - ''
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem2ae119a8/dir15?resource=directory
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 8789b198-3cb9-11ea-8225-001a7dda7113
+      - 762262b8-6a51-11eb-b6a1-c8348e5fffbc
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:12 GMT
+      - Mon, 08 Feb 2021 21:06:07 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: GET
-    uri: https://storagename.dfs.core.windows.net/filesystem2ae119a8?recursive=true&maxResults=2&upn=true&resource=filesystem
+    uri: https://storagename.dfs.core.windows.net/filesystem2ae119a8?resource=filesystem&recursive=true&maxResults=2&upn=true
   response:
     body:
-      string: '{"paths":[{"contentLength":"0","etag":"0x8D79EDD6B7DD9AB","group":"$superuser","isDirectory":"true","lastModified":"Wed,
-        22 Jan 2020 01:50:12 GMT","name":"dir10","owner":"$superuser","permissions":"rwxr-x---"},{"contentLength":"0","etag":"0x8D79EDD6B87389A","group":"$superuser","isDirectory":"true","lastModified":"Wed,
-        22 Jan 2020 01:50:12 GMT","name":"dir11","owner":"$superuser","permissions":"rwxr-x---"}]}
+      string: '{"paths":[{"contentLength":"0","creationTime":"132572919662007029","etag":"0x8D8CC7559C152F5","group":"$superuser","isDirectory":"true","lastModified":"Mon,
+        08 Feb 2021 21:06:06 GMT","name":"dir10","owner":"$superuser","permissions":"rwxr-x---"},{"contentLength":"0","creationTime":"132572919671368346","etag":"0x8D8CC755A502A9A","group":"$superuser","isDirectory":"true","lastModified":"Mon,
+        08 Feb 2021 21:06:07 GMT","name":"dir11","owner":"$superuser","permissions":"rwxr-x---"}]}
 
         '
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Type
-      : application/json;charset=utf-8
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Wed, 22 Jan 2020 01:50:12 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._multidict.istr
-      - Transfer-Encoding
-      : chunked
-      x-ms-continuation: OTc3Mzc2OTMxNzcwMjIyNjEyMSAwIC94aWFmdWhucwEwMUQ1N0ZDMzg0QzgyRTNEL2ZpbGVzeXN0ZW0yYWUxMTlhOAEwMUQ1RDBDNjQ4RTQ1QTZDL2RpcjEy
-      x-ms-request-id: 78256c6f-501f-0002-52c6-d0f32c000000
-      x-ms-version: '2019-02-02'
+      Content-Type: application/json;charset=utf-8
+      Date: Mon, 08 Feb 2021 21:06:10 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      x-ms-continuation: VBaaiJqskrGIyEIYVRhQL3NlYW5wcm9kaGllcmFyY2hpY2FsATAxRDUyQjgzMjIxMkY4MEEvZmlsZXN5c3RlbTJhZTExOWE4ATAxRDZGRTVFMzZCODA4MkUvZGlyMTIWAAAA
+      x-ms-request-id: 7e825819-b01f-00cc-4f5e-fea56a000000
+      x-ms-version: '2020-02-10'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem2ae119a8
-        - recursive=true&maxResults=2&upn=true&resource=filesystem
-        - ''
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem2ae119a8?resource=filesystem&recursive=true&maxResults=2&upn=true
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.0b7 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 8793515e-3cb9-11ea-8309-001a7dda7113
+      - 78ad9aea-6a51-11eb-b1b2-c8348e5fffbc
       x-ms-date:
-      - Wed, 22 Jan 2020 01:50:12 GMT
+      - Mon, 08 Feb 2021 21:06:11 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: GET
-    uri: https://storagename.dfs.core.windows.net/filesystem2ae119a8?continuation=OTc3Mzc2OTMxNzcwMjIyNjEyMSAwIC94aWFmdWhucwEwMUQ1N0ZDMzg0QzgyRTNEL2ZpbGVzeXN0ZW0yYWUxMTlhOAEwMUQ1RDBDNjQ4RTQ1QTZDL2RpcjEy&recursive=true&maxResults=4&upn=true&resource=filesystem
+    uri: https://storagename.dfs.core.windows.net/filesystem2ae119a8?resource=filesystem&continuation=VBaaiJqskrGIyEIYVRhQL3NlYW5wcm9kaGllcmFyY2hpY2FsATAxRDUyQjgzMjIxMkY4MEEvZmlsZXN5c3RlbTJhZTExOWE4ATAxRDZGRTVFMzZCODA4MkUvZGlyMTIWAAAA&recursive=true&maxResults=4&upn=true
   response:
     body:
-      string: '{"paths":[{"contentLength":"0","etag":"0x8D79EDD6B909234","group":"$superuser","isDirectory":"true","lastModified":"Wed,
-        22 Jan 2020 01:50:12 GMT","name":"dir12","owner":"$superuser","permissions":"rwxr-x---"},{"contentLength":"0","etag":"0x8D79EDD6B9B313B","group":"$superuser","isDirectory":"true","lastModified":"Wed,
-        22 Jan 2020 01:50:12 GMT","name":"dir13","owner":"$superuser","permissions":"rwxr-x---"},{"contentLength":"0","etag":"0x8D79EDD6BA51FC8","group":"$superuser","isDirectory":"true","lastModified":"Wed,
-        22 Jan 2020 01:50:12 GMT","name":"dir14","owner":"$superuser","permissions":"rwxr-x---"},{"contentLength":"0","etag":"0x8D79EDD6BAF1167","group":"$superuser","isDirectory":"true","lastModified":"Wed,
-        22 Jan 2020 01:50:12 GMT","name":"dir15","owner":"$superuser","permissions":"rwxr-x---"}]}
+      string: '{"paths":[{"contentLength":"0","creationTime":"132572919671686368","etag":"0x8D8CC755A5504E0","group":"$superuser","isDirectory":"true","lastModified":"Mon,
+        08 Feb 2021 21:06:07 GMT","name":"dir12","owner":"$superuser","permissions":"rwxr-x---"},{"contentLength":"0","creationTime":"132572919671916216","etag":"0x8D8CC755A5886B8","group":"$superuser","isDirectory":"true","lastModified":"Mon,
+        08 Feb 2021 21:06:07 GMT","name":"dir13","owner":"$superuser","permissions":"rwxr-x---"},{"contentLength":"0","creationTime":"132572919672226755","etag":"0x8D8CC755A5D43C3","group":"$superuser","isDirectory":"true","lastModified":"Mon,
+        08 Feb 2021 21:06:07 GMT","name":"dir14","owner":"$superuser","permissions":"rwxr-x---"},{"contentLength":"0","creationTime":"132572919672521317","etag":"0x8D8CC755A61C265","group":"$superuser","isDirectory":"true","lastModified":"Mon,
+        08 Feb 2021 21:06:07 GMT","name":"dir15","owner":"$superuser","permissions":"rwxr-x---"}]}
 
         '
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Type
-      : application/json;charset=utf-8
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Wed, 22 Jan 2020 01:50:12 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._multidict.istr
-      - Transfer-Encoding
-      : chunked
-      x-ms-request-id: 78256c71-501f-0002-53c6-d0f32c000000
-      x-ms-version: '2019-02-02'
+      Content-Type: application/json;charset=utf-8
+      Date: Mon, 08 Feb 2021 21:06:10 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      x-ms-request-id: 7e8259aa-b01f-00cc-505e-fea56a000000
+      x-ms-version: '2020-02-10'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystem2ae119a8
-        - continuation=OTc3Mzc2OTMxNzcwMjIyNjEyMSAwIC94aWFmdWhucwEwMUQ1N0ZDMzg0QzgyRTNEL2ZpbGVzeXN0ZW0yYWUxMTlhOAEwMUQ1RDBDNjQ4RTQ1QTZDL2RpcjEy&recursive=true&maxResults=4&upn=true&resource=filesystem
-        - ''
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystem2ae119a8?resource=filesystem&continuation=VBaaiJqskrGIyEIYVRhQL3NlYW5wcm9kaGllcmFyY2hpY2FsATAxRDUyQjgzMjIxMkY4MEEvZmlsZXN5c3RlbTJhZTExOWE4ATAxRDZGRTVFMzZCODA4MkUvZGlyMTIWAAAA&recursive=true&maxResults=4&upn=true
 version: 1

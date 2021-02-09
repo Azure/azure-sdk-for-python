@@ -1,11 +1,11 @@
 trigger: none
 
-jobs:
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: monitor
       TestTimeoutInMinutes: 300
-      BuildTargetingString: microsoft-opentelemetry-exporter-azuremonitor
+      BuildTargetingString: azure-opentelemetry-exporter-azuremonitor
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
@@ -14,11 +14,17 @@ jobs:
         AZURE_TEST_RUN_LIVE: 'true'
       Matrix:
         Linux_Python35:
-          OSVmImage: 'ubuntu-18.04'
+          Pool: azsdk-pool-mms-ubuntu-1804-general
+          OSVmImage: MMSUbuntu18.04
           PythonVersion: '3.5'
+          CoverageArg: '--disablecov'
         MacOs_Python37:
+          Pool: Azure Pipelines
           OSVmImage: 'macOS-10.15'
           PythonVersion: '3.7'
+          CoverageArg: '--disablecov'
         Linux_Python39:
-          OSVmImage: 'ubuntu-18.04'
-          PythonVersion: '3.9.0'
+          Pool: azsdk-pool-mms-ubuntu-1804-general
+          OSVmImage: MMSUbuntu18.04
+          PythonVersion: '3.9'
+          CoverageArg: ''

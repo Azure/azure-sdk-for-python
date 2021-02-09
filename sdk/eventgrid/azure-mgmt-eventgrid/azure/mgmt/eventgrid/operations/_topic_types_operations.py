@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class TopicTypesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class TopicTypesOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TopicTypesListResult"]
+        # type: (...) -> Iterable["_models.TopicTypesListResult"]
         """List topic types.
 
         List all registered topic types.
@@ -59,7 +59,7 @@ class TopicTypesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.TopicTypesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TopicTypesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TopicTypesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -115,7 +115,7 @@ class TopicTypesOperations(object):
         topic_type_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TopicTypeInfo"
+        # type: (...) -> "_models.TopicTypeInfo"
         """Get a topic type.
 
         Get information about a topic type.
@@ -127,7 +127,7 @@ class TopicTypesOperations(object):
         :rtype: ~azure.mgmt.eventgrid.models.TopicTypeInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TopicTypeInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TopicTypeInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -171,7 +171,7 @@ class TopicTypesOperations(object):
         topic_type_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.EventTypesListResult"]
+        # type: (...) -> Iterable["_models.EventTypesListResult"]
         """List event types.
 
         List event types for a topic type.
@@ -183,7 +183,7 @@ class TopicTypesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.EventTypesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventTypesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventTypesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

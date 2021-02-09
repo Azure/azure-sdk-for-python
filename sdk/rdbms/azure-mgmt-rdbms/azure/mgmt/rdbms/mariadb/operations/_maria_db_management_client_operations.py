@@ -26,6 +26,65 @@ if TYPE_CHECKING:
 
 class MariaDBManagementClientOperationsMixin(object):
 
+    def reset_query_performance_insight_data(
+        self,
+        resource_group_name,  # type: str
+        server_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.QueryPerformanceInsightResetDataResult"
+        """Reset data for Query Performance Insight.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: QueryPerformanceInsightResetDataResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.rdbms.mariadb.models.QueryPerformanceInsightResetDataResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueryPerformanceInsightResetDataResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2018-06-01"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.reset_query_performance_insight_data.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('QueryPerformanceInsightResetDataResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    reset_query_performance_insight_data.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMariaDB/servers/{serverName}/resetQueryPerformanceInsightData'}  # type: ignore
+
     def _create_recommended_action_session_initial(
         self,
         resource_group_name,  # type: str

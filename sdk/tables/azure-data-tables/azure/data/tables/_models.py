@@ -17,14 +17,11 @@ from ._generated.models import QueryOptions
 from ._deserialize import (
     _convert_to_entity,
     _return_context_and_deserialized,
-    _extract_continuation_token
+    _extract_continuation_token,
 )
 from ._error import _process_table_error
-from ._constants import (
-    NEXT_PARTITION_KEY,
-    NEXT_ROW_KEY,
-    NEXT_TABLE_NAME
-)
+from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
+
 
 class TableServiceStats(GenTableServiceStats):
     """Stats for the service
@@ -33,7 +30,9 @@ class TableServiceStats(GenTableServiceStats):
     :type geo_replication: ~azure.data.tables.models.GeoReplication
     """
 
-    def __init__(self, geo_replication=None, **kwargs):  # pylint:disable=W0231
+    def __init__(  # pylint: disable=super-init-not-called
+        self, geo_replication=None, **kwargs
+    ):
         self.geo_replication = geo_replication
 
 
@@ -80,7 +79,9 @@ class AccessPolicy(GenAccessPolicy):
     :type start: ~datetime.datetime or str
     """
 
-    def __init__(self, permission=None, expiry=None, start=None, **kwargs):  # pylint:disable=W0231
+    def __init__(  # pylint: disable=super-init-not-called
+        self, permission=None, expiry=None, start=None, **kwargs
+    ):
         self.start = start
         self.expiry = expiry
         self.permission = permission
@@ -89,27 +90,26 @@ class AccessPolicy(GenAccessPolicy):
 class TableAnalyticsLogging(GeneratedLogging):
     """Azure Analytics Logging settings.
 
-   All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to Azure.
 
-   :keyword str version: Required. The version of Storage Analytics to configure.
-   :keyword bool delete: Required. Indicates whether all delete requests should be logged.
-   :keyword bool read: Required. Indicates whether all read requests should be logged.
-   :keyword bool write: Required. Indicates whether all write requests should be logged.
-   :keyword ~azure.data.tables.RetentionPolicy retention_policy: Required.
-       The retention policy for the metrics.
-   """
+    :keyword str version: Required. The version of Storage Analytics to configure.
+    :keyword bool delete: Required. Indicates whether all delete requests should be logged.
+    :keyword bool read: Required. Indicates whether all read requests should be logged.
+    :keyword bool write: Required. Indicates whether all write requests should be logged.
+    :keyword ~azure.data.tables.RetentionPolicy retention_policy: Required.
+        The retention policy for the metrics.
+    """
 
-    def __init__(  # pylint:disable=W0231
-            self,
-            **kwargs  # type: Any
+    def __init__(  # pylint: disable=super-init-not-called
+        self, **kwargs  # type: Any
     ):
         # type: (...)-> None
 
-        self.version = kwargs.get('version', u'1.0')
-        self.delete = kwargs.get('delete', False)
-        self.read = kwargs.get('read', False)
-        self.write = kwargs.get('write', False)
-        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+        self.version = kwargs.get("version", u"1.0")
+        self.delete = kwargs.get("delete", False)
+        self.read = kwargs.get("read", False)
+        self.write = kwargs.get("write", False)
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
@@ -120,8 +120,9 @@ class TableAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint:disable=W0212
-            # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
+                generated.retention_policy
+            )
         )
 
 
@@ -138,68 +139,69 @@ class Metrics(GeneratedMetrics):
         The retention policy for the metrics.
     """
 
-    def __init__(self,  # pylint:disable=W0231
-                 **kwargs  # type: Any
-                 ):
-        self.version = kwargs.get('version', u'1.0')
-        self.enabled = kwargs.get('enabled', False)
-        self.include_apis = kwargs.get('include_apis')
-        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+    def __init__(  # pylint: disable=super-init-not-called
+        self,
+        **kwargs  # type: Any
+    ):
+        self.version = kwargs.get("version", u"1.0")
+        self.enabled = kwargs.get("enabled", False)
+        self.include_apis = kwargs.get("include_apis")
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
         # type: (...) -> cls
         """A summary of request statistics grouped by API in hour or minute aggregates.
 
-           :param Metrics generated: generated Metrics
-           """
+        :param Metrics generated: generated Metrics
+        """
         if not generated:
             return cls()
         return cls(
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint:disable=W0212
-            # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
+                generated.retention_policy
+            )
         )
 
 
 class RetentionPolicy(GeneratedRetentionPolicy):
-
-    def __init__(  # pylint:disable=W0231
-            self,
-            enabled=False,  # type: bool
-            days=None,  # type: int
-            **kwargs  # type: Any
+    def __init__(  # pylint: disable=super-init-not-called
+        self,
+        enabled=False,  # type: bool
+        days=None,  # type: int
+        **kwargs  # type: Any
     ):
         # type: (...) ->None
         """The retention policy which determines how long the associated data should
-          persist.
+        persist.
 
-          All required parameters must be populated in order to send to Azure.
+        All required parameters must be populated in order to send to Azure.
 
-          :param bool enabled: Required. Indicates whether a retention policy is enabled
-              for the storage service.
-          :param int days: Indicates the number of days that metrics or logging or
-              soft-deleted data should be retained. All data older than this value will
-              be deleted.
-          :param Any kwargs:
-          """
+        :param bool enabled: Required. Indicates whether a retention policy is enabled
+            for the storage service.
+        :param int days: Indicates the number of days that metrics or logging or
+            soft-deleted data should be retained. All data older than this value will
+            be deleted.
+        :param Any kwargs:
+        """
         self.enabled = enabled
         self.days = days
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def _from_generated(cls, generated, **kwargs):  # pylint:disable=W0613
+    def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
         # type: (...) -> cls
         """The retention policy which determines how long the associated data should
-            persist.
+        persist.
 
-            All required parameters must be populated in order to send to Azure.
+        All required parameters must be populated in order to send to Azure.
 
-            :param RetentionPolicy generated: Generated Retention Policy
-            """
+        :param RetentionPolicy generated: Generated Retention Policy
+        """
 
         if not generated:
             return cls()
@@ -239,19 +241,19 @@ class CorsRule(GeneratedCorsRule):
         headers. Each header can be up to 256 characters.
     """
 
-    def __init__(  # pylint:disable=W0231
-            self,
-            allowed_origins,  # type: list[str]
-            allowed_methods,  # type: list[str]
-            **kwargs  # type: Any
+    def __init__(  # pylint: disable=super-init-not-called
+        self,
+        allowed_origins,  # type: list[str]
+        allowed_methods,  # type: list[str]
+        **kwargs  # type: Any
     ):
         # type: (...)-> None
 
-        self.allowed_origins = ','.join(allowed_origins)
-        self.allowed_methods = ','.join(allowed_methods)
-        self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
-        self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
-        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
+        self.allowed_origins = ",".join(allowed_origins)
+        self.allowed_methods = ",".join(allowed_methods)
+        self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
+        self.exposed_headers = ",".join(kwargs.get("exposed_headers", []))
+        self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -280,34 +282,35 @@ class TablePropertiesPaged(PageIterator):
         super(TablePropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
-            continuation_token=kwargs.get('continuation_token') or ""
+            continuation_token=kwargs.get("continuation_token") or "",
         )
         self._command = command
         self._headers = None
         self._response = None
-        self.results_per_page = kwargs.get('results_per_page')
-        self.filter = kwargs.get('filter')
-        self.select = kwargs.get('select')
+        self.results_per_page = kwargs.get("results_per_page")
+        self.filter = kwargs.get("filter")
+        self.select = kwargs.get("select")
         self.location_mode = None
 
     def _get_next_cb(self, continuation_token, **kwargs):
         query_options = QueryOptions(
-            top=self.results_per_page,
-            select=self.select,
-            filter=self.filter)
+            top=self.results_per_page, select=self.select, filter=self.filter
+        )
         try:
             return self._command(
                 query_options=query_options,
                 next_table_name=continuation_token or None,
-                cls=kwargs.pop('cls', None) or _return_context_and_deserialized,
-                use_location=self.location_mode
+                cls=kwargs.pop("cls", None) or _return_context_and_deserialized,
+                use_location=self.location_mode,
             )
         except HttpResponseError as error:
             _process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [TableItem._from_generated(t, **self._headers) for t in self._response.value] # pylint:disable=protected-access
+        props_list = [
+            TableItem._from_generated(t, **self._headers) for t in self._response.value  # pylint: disable=protected-access
+        ]
         return self._headers[NEXT_TABLE_NAME] or None, props_list
 
 
@@ -328,31 +331,32 @@ class TableEntityPropertiesPaged(PageIterator):
         super(TableEntityPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
-            continuation_token=kwargs.get('continuation_token') or {}
+            continuation_token=kwargs.get("continuation_token") or {},
         )
         self._command = command
         self._headers = None
         self._response = None
         self.table = table
-        self.results_per_page = kwargs.get('results_per_page')
-        self.filter = kwargs.get('filter')
-        self.select = kwargs.get('select')
+        self.results_per_page = kwargs.get("results_per_page")
+        self.filter = kwargs.get("filter")
+        self.select = kwargs.get("select")
         self.location_mode = None
 
     def _get_next_cb(self, continuation_token, **kwargs):
-        next_partition_key, next_row_key = _extract_continuation_token(continuation_token)
+        next_partition_key, next_row_key = _extract_continuation_token(
+            continuation_token
+        )
         query_options = QueryOptions(
-            top=self.results_per_page,
-            select=self.select,
-            filter=self.filter)
+            top=self.results_per_page, select=self.select, filter=self.filter
+        )
         try:
             return self._command(
                 query_options=query_options,
                 next_row_key=next_row_key,
                 next_partition_key=next_partition_key,
                 table=self.table,
-                cls=kwargs.pop('cls', None) or _return_context_and_deserialized,
-                use_location=self.location_mode
+                cls=kwargs.pop("cls", None) or _return_context_and_deserialized,
+                use_location=self.location_mode,
             )
         except HttpResponseError as error:
             _process_table_error(error)
@@ -363,17 +367,17 @@ class TableEntityPropertiesPaged(PageIterator):
         next_entity = {}
         if self._headers[NEXT_PARTITION_KEY] or self._headers[NEXT_ROW_KEY]:
             next_entity = {
-                'PartitionKey': self._headers[NEXT_PARTITION_KEY],
-                'RowKey': self._headers[NEXT_ROW_KEY]
+                "PartitionKey": self._headers[NEXT_PARTITION_KEY],
+                "RowKey": self._headers[NEXT_ROW_KEY],
             }
         return next_entity or None, props_list
 
 
 class TableSasPermissions(object):
     def __init__(
-            self,
-            _str=None,  # type: str
-            **kwargs  # type: Any
+        self,
+        _str=None,  # type: str
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """
@@ -389,11 +393,11 @@ class TableSasPermissions(object):
             A string representing the permissions.
         """
         if not _str:
-            _str = ''
-        self.read = kwargs.pop('read', None) or ('r' in _str)
-        self.add = kwargs.pop('add', None) or ('a' in _str)
-        self.update = kwargs.pop('update', None) or ('u' in _str)
-        self.delete = kwargs.pop('delete', None) or ('d' in _str)
+            _str = ""
+        self.read = kwargs.pop("read", None) or ("r" in _str)
+        self.add = kwargs.pop("add", None) or ("a" in _str)
+        self.update = kwargs.pop("update", None) or ("u" in _str)
+        self.delete = kwargs.pop("delete", None) or ("d" in _str)
 
     def __or__(self, other):
         return TableSasPermissions(_str=str(self) + str(other))
@@ -402,15 +406,19 @@ class TableSasPermissions(object):
         return TableSasPermissions(_str=str(self) + str(other))
 
     def __str__(self):
-        return (('r' if self.read else '') +
-                ('a' if self.add else '') +
-                ('u' if self.update else '') +
-                ('d' if self.delete else ''))
+        return (
+            ("r" if self.read else "")
+            + ("a" if self.add else "")
+            + ("u" if self.update else "")
+            + ("d" if self.delete else "")
+        )
 
     @classmethod
-    def from_string(cls,
-                    permission,  # type: str
-                    **kwargs):  # pylint:disable=W0613
+    def from_string(
+        cls,
+        permission,  # type: str
+        **kwargs
+    ):
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
@@ -423,14 +431,15 @@ class TableSasPermissions(object):
         :return: A AccountSasPermissions object
         :rtype: ~azure.data.tables.AccountSasPermissions
         """
-        p_read = 'r' in permission
-        p_add = 'a' in permission
-        p_delete = 'd' in permission
-        p_update = 'u' in permission
+        p_read = "r" in permission
+        p_add = "a" in permission
+        p_delete = "d" in permission
+        p_update = "u" in permission
 
         parsed = cls(
-            **dict(kwargs, read=p_read, add=p_add, delete=p_delete, update=p_update))
-        parsed._str = permission  # pylint: disable = W0201
+            **dict(kwargs, read=p_read, add=p_add, delete=p_delete, update=p_update)
+        )
+        parsed._str = permission  # pylint: disable=protected-access,attribute-defined-outside-init
         return parsed
 
 
@@ -441,25 +450,28 @@ TableSasPermissions.DELETE = TableSasPermissions(**dict(delete=True))
 
 
 def service_stats_deserialize(generated):
-    """Deserialize a ServiceStats objects into a dict.
-    """
+    """Deserialize a ServiceStats objects into a dict."""
     return {
-        'geo_replication': {
-            'status': generated.geo_replication.status,
-            'last_sync_time': generated.geo_replication.last_sync_time,
+        "geo_replication": {
+            "status": generated.geo_replication.status,
+            "last_sync_time": generated.geo_replication.last_sync_time,
         }
     }
 
 
 def service_properties_deserialize(generated):
-    """Deserialize a ServiceProperties objects into a dict.
-    """
+    """Deserialize a ServiceProperties objects into a dict."""
     return {
-        'analytics_logging': TableAnalyticsLogging._from_generated(generated.logging),
-        # pylint: disable=protected-access
-        'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
-        'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
-        'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
+        "analytics_logging": TableAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
+        "hour_metrics": Metrics._from_generated(  # pylint: disable=protected-access
+            generated.hour_metrics
+        ),
+        "minute_metrics": Metrics._from_generated(  # pylint: disable=protected-access
+            generated.minute_metrics
+        ),
+        "cors": [
+            CorsRule._from_generated(cors) for cors in generated.cors  # pylint: disable=protected-access
+        ],
     }
 
 
@@ -476,28 +488,29 @@ class TableItem(object):
     def __init__(self, table_name, **kwargs):
         # type: (str, **Any) -> None
         self.table_name = table_name
-        self.api_version = kwargs.get('version')
-        self.date = kwargs.get('date') or kwargs.get('Date')
+        self.api_version = kwargs.get("version")
+        self.date = kwargs.get("date") or kwargs.get("Date")
 
     @classmethod
-    def _from_generated(cls, generated, **kwargs):  # pylint:disable=W0613
+    def _from_generated(cls, generated, **kwargs):
         # type: (obj, **Any) -> cls
         return cls(generated.table_name, **kwargs)
 
+
 class TablePayloadFormat(object):
-    '''
+    """
     Specifies the accepted content type of the response payload. More information
     can be found here: https://msdn.microsoft.com/en-us/library/azure/dn535600.aspx
-    '''
+    """
 
-    JSON_NO_METADATA = 'application/json;odata=nometadata'
-    '''Returns no type information for the entity properties.'''
+    JSON_NO_METADATA = "application/json;odata=nometadata"
+    """Returns no type information for the entity properties."""
 
-    JSON_MINIMAL_METADATA = 'application/json;odata=minimalmetadata'
-    '''Returns minimal type information for the entity properties.'''
+    JSON_MINIMAL_METADATA = "application/json;odata=minimalmetadata"
+    """Returns minimal type information for the entity properties."""
 
-    JSON_FULL_METADATA = 'application/json;odata=fullmetadata'
-    '''Returns minimal type information for the entity properties plus some extra odata properties.'''
+    JSON_FULL_METADATA = "application/json;odata=fullmetadata"
+    """Returns minimal type information for the entity properties plus some extra odata properties."""
 
 
 class UpdateMode(str, Enum):
@@ -520,7 +533,9 @@ class PartialBatchErrorException(HttpResponseError):
 
     def __init__(self, message, response, parts):
         self.parts = parts
-        super(PartialBatchErrorException, self).__init__(message=message, response=response)
+        super(PartialBatchErrorException, self).__init__(
+            message=message, response=response
+        )
 
 
 class BatchErrorException(HttpResponseError):
@@ -533,7 +548,9 @@ class BatchErrorException(HttpResponseError):
 
     def __init__(self, message, response, parts, *args, **kwargs):
         self.parts = parts
-        super(BatchErrorException, self).__init__(message=message, response=response, *args, **kwargs)
+        super(BatchErrorException, self).__init__(
+            message=message, response=response, *args, **kwargs
+        )
 
 
 class BatchTransactionResult(object):
@@ -551,19 +568,19 @@ class BatchTransactionResult(object):
 
     def get_entity(self, row_key):
         for entity in self.entities:
-            if entity['RowKey'] == row_key:
+            if entity["RowKey"] == row_key:
                 return entity
         return None
 
     def get_request(self, row_key):
         for i, entity in enumerate(self.entities):
-            if entity['RowKey'] == row_key:
+            if entity["RowKey"] == row_key:
                 return self.requests[i]
         return None
 
     def get_result(self, row_key):
         for i, entity in enumerate(self.entities):
-            if entity['RowKey'] == row_key:
+            if entity["RowKey"] == row_key:
                 return self.results[i]
         return None
 
@@ -575,8 +592,10 @@ class LocationMode(object):
     must use PRIMARY.
     """
 
-    PRIMARY = 'primary'  #: Requests should be sent to the primary location.
-    SECONDARY = 'secondary'  #: Requests should be sent to the secondary location, if possible.
+    PRIMARY = "primary"  #: Requests should be sent to the primary location.
+    SECONDARY = (
+        "secondary"  #: Requests should be sent to the secondary location, if possible.
+    )
 
 
 class ResourceTypes(object):
@@ -591,11 +610,12 @@ class ResourceTypes(object):
         files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
     """
 
-    def __init__(self, service=False, object=False):  # pylint: disable=redefined-builtin
+    def __init__(
+        self, service=False, object=False
+    ):  # pylint: disable=redefined-builtin
         self.service = service
         self.object = object
-        self._str = (('s' if self.service else '') +
-                     ('o' if self.object else ''))
+        self._str = ("s" if self.service else "") + ("o" if self.object else "")
 
     def __str__(self):
         return self._str
@@ -613,8 +633,8 @@ class ResourceTypes(object):
         :return: A ResourceTypes object
         :rtype: ~azure.data.tables.ResourceTypes
         """
-        res_service = 's' in string
-        res_object = 'o' in string
+        res_service = "s" in string
+        res_object = "o" in string
 
         parsed = cls(res_service, res_object)
         parsed._str = string  # pylint: disable = protected-access
@@ -652,29 +672,31 @@ class AccountSasPermissions(object):
         Valid for the following Object resource type only: queue messages.
     """
 
-    def __init__(self, **kwargs):  # pylint: disable=redefined-builtin
-        self.read = kwargs.pop('read', None)
-        self.write = kwargs.pop('write', None)
-        self.delete = kwargs.pop('delete', None)
-        self.list = kwargs.pop('list', None)
-        self.add = kwargs.pop('add', None)
-        self.create = kwargs.pop('create', None)
-        self.update = kwargs.pop('update', None)
-        self.process = kwargs.pop('process', None)
-        self._str = (('r' if self.read else '') +
-                     ('w' if self.write else '') +
-                     ('d' if self.delete else '') +
-                     ('l' if self.list else '') +
-                     ('a' if self.add else '') +
-                     ('c' if self.create else '') +
-                     ('u' if self.update else '') +
-                     ('p' if self.process else ''))
+    def __init__(self, **kwargs):
+        self.read = kwargs.pop("read", None)
+        self.write = kwargs.pop("write", None)
+        self.delete = kwargs.pop("delete", None)
+        self.list = kwargs.pop("list", None)
+        self.add = kwargs.pop("add", None)
+        self.create = kwargs.pop("create", None)
+        self.update = kwargs.pop("update", None)
+        self.process = kwargs.pop("process", None)
+        self._str = (
+            ("r" if self.read else "")
+            + ("w" if self.write else "")
+            + ("d" if self.delete else "")
+            + ("l" if self.list else "")
+            + ("a" if self.add else "")
+            + ("c" if self.create else "")
+            + ("u" if self.update else "")
+            + ("p" if self.process else "")
+        )
 
     def __str__(self):
         return self._str
 
     @classmethod
-    def from_string(cls, permission, **kwargs):  # pylint:disable=W0613
+    def from_string(cls, permission, **kwargs):
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
@@ -687,17 +709,27 @@ class AccountSasPermissions(object):
         :return: A AccountSasPermissions object
         :rtype: ~azure.data.tables.AccountSasPermissions
         """
-        p_read = 'r' in permission
-        p_write = 'w' in permission
-        p_delete = 'd' in permission
-        p_list = 'l' in permission
-        p_add = 'a' in permission
-        p_create = 'c' in permission
-        p_update = 'u' in permission
-        p_process = 'p' in permission
+        p_read = "r" in permission
+        p_write = "w" in permission
+        p_delete = "d" in permission
+        p_list = "l" in permission
+        p_add = "a" in permission
+        p_create = "c" in permission
+        p_update = "u" in permission
+        p_process = "p" in permission
 
         parsed = cls(
-            **dict(kwargs, read=p_read, write=p_write, delete=p_delete, list=p_list, add=p_add, create=p_create,
-                   update=p_update, process=p_process))
+            **dict(
+                kwargs,
+                read=p_read,
+                write=p_write,
+                delete=p_delete,
+                list=p_list,
+                add=p_add,
+                create=p_create,
+                update=p_update,
+                process=p_process,
+            )
+        )
         parsed._str = permission  # pylint: disable = protected-access
         return parsed

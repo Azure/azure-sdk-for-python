@@ -18,6 +18,7 @@
 
 # current coverage: 85
 
+import time
 import unittest
 
 import azure.mgmt.automation
@@ -934,6 +935,9 @@ class MgmtAutomationClientTest(AzureMgmtTestCase):
           }
         }
         result = self.mgmt_client.module.update(resource_group.name, AUTOMATION_ACCOUNT_NAME, MODULE_NAME, BODY)
+
+        if self.is_live:
+            time.sleep(60)
 
         # Stop job[post]
         result = self.mgmt_client.job.stop(resource_group.name, AUTOMATION_ACCOUNT_NAME, JOB_NAME)

@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ApiOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -53,7 +53,7 @@ class ApiOperations:
         tags: Optional[str] = None,
         expand_api_version_set: Optional[bool] = None,
         **kwargs
-    ) -> AsyncIterable["models.ApiCollection"]:
+    ) -> AsyncIterable["_models.ApiCollection"]:
         """Lists all APIs of the API Management service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -82,7 +82,7 @@ class ApiOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.ApiCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -139,7 +139,7 @@ class ApiOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -203,7 +203,7 @@ class ApiOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -221,7 +221,7 @@ class ApiOperations:
         service_name: str,
         api_id: str,
         **kwargs
-    ) -> "models.ApiContract":
+    ) -> "_models.ApiContract":
         """Gets the details of the API specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -236,7 +236,7 @@ class ApiOperations:
         :rtype: ~azure.mgmt.apimanagement.models.ApiContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -268,7 +268,7 @@ class ApiOperations:
 
         if response.status_code not in [200, 200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -291,11 +291,11 @@ class ApiOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        parameters: "models.ApiCreateOrUpdateParameter",
+        parameters: "_models.ApiCreateOrUpdateParameter",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> Optional["models.ApiContract"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ApiContract"]]
+    ) -> Optional["_models.ApiContract"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApiContract"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -334,7 +334,7 @@ class ApiOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -358,10 +358,10 @@ class ApiOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        parameters: "models.ApiCreateOrUpdateParameter",
+        parameters: "_models.ApiCreateOrUpdateParameter",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.ApiContract"]:
+    ) -> AsyncLROPoller["_models.ApiContract"]:
         """Creates new or updates existing specified API of the API Management service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -387,7 +387,7 @@ class ApiOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiContract"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -417,7 +417,14 @@ class ApiOperations:
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -437,9 +444,9 @@ class ApiOperations:
         service_name: str,
         api_id: str,
         if_match: str,
-        parameters: "models.ApiUpdateContract",
+        parameters: "_models.ApiUpdateContract",
         **kwargs
-    ) -> "models.ApiContract":
+    ) -> "_models.ApiContract":
         """Updates the specified API of the API Management service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -459,7 +466,7 @@ class ApiOperations:
         :rtype: ~azure.mgmt.apimanagement.models.ApiContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -497,7 +504,7 @@ class ApiOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -573,7 +580,7 @@ class ApiOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -590,7 +597,7 @@ class ApiOperations:
         skip: Optional[int] = None,
         include_not_tagged_apis: Optional[bool] = None,
         **kwargs
-    ) -> AsyncIterable["models.TagResourceCollection"]:
+    ) -> AsyncIterable["_models.TagResourceCollection"]:
         """Lists a collection of apis associated with tags.
 
         :param resource_group_name: The name of the resource group.
@@ -618,7 +625,7 @@ class ApiOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.TagResourceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagResourceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagResourceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -673,7 +680,7 @@ class ApiOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

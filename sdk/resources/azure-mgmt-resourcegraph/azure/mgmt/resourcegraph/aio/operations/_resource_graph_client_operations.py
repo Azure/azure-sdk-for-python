@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -22,20 +22,20 @@ class ResourceGraphClientOperationsMixin:
 
     async def resources(
         self,
-        query: "models.QueryRequest",
+        query: "_models.QueryRequest",
         **kwargs
-    ) -> "models.QueryResponse":
+    ) -> "_models.QueryResponse":
         """Queries the resources managed by Azure Resource Manager for all subscriptions specified in the
         request.
 
         :param query: Request specifying query and its options.
-        :type query: ~resource_graph_client.models.QueryRequest
+        :type query: ~azure.mgmt.resourcegraph.models.QueryRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QueryResponse, or the result of cls(response)
-        :rtype: ~resource_graph_client.models.QueryResponse
+        :rtype: ~azure.mgmt.resourcegraph.models.QueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.QueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueryResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -65,7 +65,7 @@ class ResourceGraphClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('QueryResponse', pipeline_response)
@@ -78,19 +78,19 @@ class ResourceGraphClientOperationsMixin:
 
     async def resource_changes(
         self,
-        parameters: "models.ResourceChangesRequestParameters",
+        parameters: "_models.ResourceChangesRequestParameters",
         **kwargs
-    ) -> "models.ResourceChangeList":
+    ) -> "_models.ResourceChangeList":
         """List changes to a resource for a given time interval.
 
         :param parameters: the parameters for this request for changes.
-        :type parameters: ~resource_graph_client.models.ResourceChangesRequestParameters
+        :type parameters: ~azure.mgmt.resourcegraph.models.ResourceChangesRequestParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceChangeList, or the result of cls(response)
-        :rtype: ~resource_graph_client.models.ResourceChangeList
+        :rtype: ~azure.mgmt.resourcegraph.models.ResourceChangeList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceChangeList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceChangeList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -120,7 +120,7 @@ class ResourceGraphClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ResourceChangeList', pipeline_response)
@@ -133,19 +133,19 @@ class ResourceGraphClientOperationsMixin:
 
     async def resource_change_details(
         self,
-        parameters: "models.ResourceChangeDetailsRequestParameters",
+        parameters: "_models.ResourceChangeDetailsRequestParameters",
         **kwargs
-    ) -> "models.ResourceChangeData":
+    ) -> "_models.ResourceChangeData":
         """Get resource change details.
 
         :param parameters: The parameters for this request for resource change details.
-        :type parameters: ~resource_graph_client.models.ResourceChangeDetailsRequestParameters
+        :type parameters: ~azure.mgmt.resourcegraph.models.ResourceChangeDetailsRequestParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceChangeData, or the result of cls(response)
-        :rtype: ~resource_graph_client.models.ResourceChangeData
+        :rtype: ~azure.mgmt.resourcegraph.models.ResourceChangeData
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceChangeData"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceChangeData"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -175,7 +175,7 @@ class ResourceGraphClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ResourceChangeData', pipeline_response)

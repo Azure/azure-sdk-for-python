@@ -39,10 +39,12 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from time import struct_time
-    from typing import Any, Dict, Iterable, Mapping, Optional, Union
+    from typing import Any, Dict, Iterable, List, Mapping, Optional, Union
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import HTTPPolicy
+    from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
+
+    PolicyListType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
 class AuthnClientBase(ABC):
@@ -166,10 +168,9 @@ class AuthnClientBase(ABC):
 
         raise ValueError("'{}' doesn't match the expected format".format(expires_on))
 
-    # TODO: public, factor out of request_token
     def _prepare_request(
         self,
-        method="POST",  # type: Optional[str]
+        method="POST",  # type: str
         headers=None,  # type: Optional[Mapping[str, str]]
         form_data=None,  # type: Optional[Mapping[str, str]]
         params=None,  # type: Optional[Dict[str, str]]
@@ -200,7 +201,7 @@ class AuthnClient(AuthnClientBase):
     def __init__(
         self,
         config=None,  # type: Optional[Configuration]
-        policies=None,  # type: Optional[Iterable[HTTPPolicy]]
+        policies=None,  # type: Optional[PolicyListType]
         transport=None,  # type: Optional[HttpTransport]
         **kwargs  # type: Any
     ):
@@ -217,13 +218,13 @@ class AuthnClient(AuthnClientBase):
         ]
         if not transport:
             transport = RequestsTransport(**kwargs)
-        self._pipeline = Pipeline(transport=transport, policies=policies)
+        self._pipeline = Pipeline(transport=transport, policies=policies)  # type: Pipeline
         super(AuthnClient, self).__init__(**kwargs)
 
     def request_token(
         self,
         scopes,  # type: Iterable[str]
-        method="POST",  # type: Optional[str]
+        method="POST",  # type: str
         headers=None,  # type: Optional[Mapping[str, str]]
         form_data=None,  # type: Optional[Mapping[str, str]]
         params=None,  # type: Optional[Dict[str, str]]

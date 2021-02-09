@@ -33,8 +33,8 @@ VALID_TENANT_ID_CHARACTERS = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmn
 
 
 def validate_tenant_id(tenant_id):
-    """Raise ValueError if tenant_id is empty or contains a character invalid for a tenant id"""
     # type: (str) -> None
+    """Raise ValueError if tenant_id is empty or contains a character invalid for a tenant id"""
     if not tenant_id or any(c not in VALID_TENANT_ID_CHARACTERS for c in tenant_id):
         raise ValueError(
             "Invalid tenant id provided. You can locate your tenant id by following the instructions here: "
@@ -47,7 +47,6 @@ from .aad_client import AadClient
 from .aad_client_base import AadClientBase
 from .auth_code_redirect_handler import AuthCodeRedirectServer
 from .aadclient_certificate import AadClientCertificate
-from .certificate_credential_base import CertificateCredentialBase
 from .client_secret_credential_base import ClientSecretCredentialBase
 from .decorators import wrap_exceptions
 from .interactive import InteractiveCredential
@@ -72,7 +71,6 @@ __all__ = [
     "AadClientBase",
     "AuthCodeRedirectServer",
     "AadClientCertificate",
-    "CertificateCredentialBase",
     "ClientSecretCredentialBase",
     "get_default_authority",
     "InteractiveCredential",

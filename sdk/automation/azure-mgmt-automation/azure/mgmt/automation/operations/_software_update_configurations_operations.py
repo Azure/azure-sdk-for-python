@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class SoftwareUpdateConfigurationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,11 +49,11 @@ class SoftwareUpdateConfigurationsOperations(object):
         resource_group_name,  # type: str
         automation_account_name,  # type: str
         software_update_configuration_name,  # type: str
-        parameters,  # type: "models.SoftwareUpdateConfiguration"
+        parameters,  # type: "_models.SoftwareUpdateConfiguration"
         client_request_id=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SoftwareUpdateConfiguration"
+        # type: (...) -> "_models.SoftwareUpdateConfiguration"
         """Create a new software update configuration with the name given in the URI.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -72,7 +72,7 @@ class SoftwareUpdateConfigurationsOperations(object):
         :rtype: ~azure.mgmt.automation.models.SoftwareUpdateConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SoftwareUpdateConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SoftwareUpdateConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,7 +111,7 @@ class SoftwareUpdateConfigurationsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -134,7 +134,7 @@ class SoftwareUpdateConfigurationsOperations(object):
         client_request_id=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SoftwareUpdateConfiguration"
+        # type: (...) -> "_models.SoftwareUpdateConfiguration"
         """Get a single software update configuration by name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -151,7 +151,7 @@ class SoftwareUpdateConfigurationsOperations(object):
         :rtype: ~azure.mgmt.automation.models.SoftwareUpdateConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SoftwareUpdateConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SoftwareUpdateConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -185,7 +185,7 @@ class SoftwareUpdateConfigurationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SoftwareUpdateConfiguration', pipeline_response)
@@ -255,7 +255,7 @@ class SoftwareUpdateConfigurationsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -271,7 +271,7 @@ class SoftwareUpdateConfigurationsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SoftwareUpdateConfigurationListResult"
+        # type: (...) -> "_models.SoftwareUpdateConfigurationListResult"
         """Get all software update configurations for the account.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -287,7 +287,7 @@ class SoftwareUpdateConfigurationsOperations(object):
         :rtype: ~azure.mgmt.automation.models.SoftwareUpdateConfigurationListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SoftwareUpdateConfigurationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SoftwareUpdateConfigurationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -322,7 +322,7 @@ class SoftwareUpdateConfigurationsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SoftwareUpdateConfigurationListResult', pipeline_response)

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class JitNetworkAccessPoliciesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,7 +44,7 @@ class JitNetworkAccessPoliciesOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.JitNetworkAccessPoliciesList"]:
+    ) -> AsyncIterable["_models.JitNetworkAccessPoliciesList"]:
         """Policies for protecting resources using Just-in-Time access control.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -52,7 +52,7 @@ class JitNetworkAccessPoliciesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.JitNetworkAccessPoliciesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JitNetworkAccessPoliciesList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JitNetworkAccessPoliciesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -110,7 +110,7 @@ class JitNetworkAccessPoliciesOperations:
     def list_by_region(
         self,
         **kwargs
-    ) -> AsyncIterable["models.JitNetworkAccessPoliciesList"]:
+    ) -> AsyncIterable["_models.JitNetworkAccessPoliciesList"]:
         """Policies for protecting resources using Just-in-Time access control for the subscription,
         location.
 
@@ -119,7 +119,7 @@ class JitNetworkAccessPoliciesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.JitNetworkAccessPoliciesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JitNetworkAccessPoliciesList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JitNetworkAccessPoliciesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -179,7 +179,7 @@ class JitNetworkAccessPoliciesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.JitNetworkAccessPoliciesList"]:
+    ) -> AsyncIterable["_models.JitNetworkAccessPoliciesList"]:
         """Policies for protecting resources using Just-in-Time access control for the subscription,
         location.
 
@@ -191,7 +191,7 @@ class JitNetworkAccessPoliciesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.JitNetworkAccessPoliciesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JitNetworkAccessPoliciesList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JitNetworkAccessPoliciesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -251,7 +251,7 @@ class JitNetworkAccessPoliciesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.JitNetworkAccessPoliciesList"]:
+    ) -> AsyncIterable["_models.JitNetworkAccessPoliciesList"]:
         """Policies for protecting resources using Just-in-Time access control for the subscription,
         location.
 
@@ -263,7 +263,7 @@ class JitNetworkAccessPoliciesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.JitNetworkAccessPoliciesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JitNetworkAccessPoliciesList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JitNetworkAccessPoliciesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -325,7 +325,7 @@ class JitNetworkAccessPoliciesOperations:
         resource_group_name: str,
         jit_network_access_policy_name: str,
         **kwargs
-    ) -> "models.JitNetworkAccessPolicy":
+    ) -> "_models.JitNetworkAccessPolicy":
         """Policies for protecting resources using Just-in-Time access control for the subscription,
         location.
 
@@ -339,7 +339,7 @@ class JitNetworkAccessPoliciesOperations:
         :rtype: ~azure.mgmt.security.models.JitNetworkAccessPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JitNetworkAccessPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JitNetworkAccessPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -385,9 +385,9 @@ class JitNetworkAccessPoliciesOperations:
         self,
         resource_group_name: str,
         jit_network_access_policy_name: str,
-        body: "models.JitNetworkAccessPolicy",
+        body: "_models.JitNetworkAccessPolicy",
         **kwargs
-    ) -> "models.JitNetworkAccessPolicy":
+    ) -> "_models.JitNetworkAccessPolicy":
         """Create a policy for protecting resources using Just-in-Time access control.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -402,7 +402,7 @@ class JitNetworkAccessPoliciesOperations:
         :rtype: ~azure.mgmt.security.models.JitNetworkAccessPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JitNetworkAccessPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JitNetworkAccessPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -510,9 +510,9 @@ class JitNetworkAccessPoliciesOperations:
         self,
         resource_group_name: str,
         jit_network_access_policy_name: str,
-        body: "models.JitNetworkAccessPolicyInitiateRequest",
+        body: "_models.JitNetworkAccessPolicyInitiateRequest",
         **kwargs
-    ) -> "models.JitNetworkAccessRequest":
+    ) -> "_models.JitNetworkAccessRequest":
         """Initiate a JIT access from a specific Just-in-Time policy configuration.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -527,7 +527,7 @@ class JitNetworkAccessPoliciesOperations:
         :rtype: ~azure.mgmt.security.models.JitNetworkAccessRequest
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JitNetworkAccessRequest"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JitNetworkAccessRequest"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

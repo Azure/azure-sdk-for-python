@@ -27,7 +27,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: template
-    TestPipeline: true
     Artifacts:
     - name: azure_template
       safeName: azuretemplate

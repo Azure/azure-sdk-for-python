@@ -4,23 +4,22 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, invalid-overridden-method
-
+from functools import partial
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
 )
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._deserialize import get_page_ranges_result, parse_tags
+from .._deserialize import get_page_ranges_result, parse_tags, deserialize_pipeline_response_into_cls
 from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
-from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import StorageErrorException, CpkInfo
+from .._generated.models import CpkInfo
 from .._deserialize import deserialize_blob_properties
 from .._blob_client import BlobClient as BlobClientBase
 from ._upload_helpers import (
@@ -58,9 +57,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         or the response returned from :func:`create_snapshot`.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
@@ -117,7 +118,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
@@ -133,7 +135,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         try:
             return await self._client.blob.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -232,7 +234,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.block_blob.put_blob_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -531,7 +533,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._delete_blob_options(delete_snapshots=delete_snapshots, **kwargs)
         try:
             await self._client.blob.delete(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -557,7 +559,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         try:
             await self._client.blob.undelete(timeout=kwargs.pop('timeout', None), **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -567,10 +569,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         Returns True if a blob exists with the defined parameters, and returns
         False otherwise.
 
-        :param str version_id:
+        :kwarg str version_id:
             The version id parameter is an opaque DateTime
             value that, when present, specifies the version of the blob to check if it exists.
-        :param int timeout:
+        :kwarg int timeout:
             The timeout parameter is expressed in seconds.
         :returns: boolean
         """
@@ -579,7 +581,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 snapshot=self.snapshot,
                 **kwargs)
             return True
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             try:
                 process_storage_error(error)
             except ResourceNotFoundError:
@@ -654,6 +656,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
         try:
+            cls_method = kwargs.pop('cls', None)
+            if cls_method:
+                kwargs['cls'] = partial(deserialize_pipeline_response_into_cls, cls_method)
             blob_props = await self._client.blob.get_properties(
                 timeout=kwargs.pop('timeout', None),
                 version_id=kwargs.pop('version_id', None),
@@ -663,7 +668,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 cls=kwargs.pop('cls', None) or deserialize_blob_properties,
                 cpk_info=cpk_info,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         blob_props.name = self.blob_name
         if isinstance(blob_props, BlobProperties):
@@ -716,7 +721,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
             return await self._client.blob.set_http_headers(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -776,7 +781,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
             return await self._client.blob.set_metadata(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -864,7 +869,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.page_blob.create(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -933,7 +938,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.append_blob.create(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1009,7 +1014,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._create_snapshot_options(metadata=metadata, **kwargs)
         try:
             return await self._client.blob.create_snapshot(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1173,7 +1178,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             if incremental_copy:
                 return await self._client.page_blob.copy_incremental(**options)
             return await self._client.blob.start_copy_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1202,7 +1207,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._abort_copy_options(copy_id, **kwargs)
         try:
             await self._client.blob.abort_copy_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1306,7 +1311,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 modified_access_conditions=mod_conditions,
                 lease_access_conditions=access_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1363,7 +1368,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.block_blob.stage_block(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1420,7 +1425,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.block_blob.stage_block_from_url(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1458,7 +1463,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return self._get_block_list_result(blocks)
 
@@ -1553,7 +1558,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.block_blob.commit_block_list(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1593,7 +1598,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1638,7 +1643,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._set_blob_tags_options(tags=tags, **kwargs)
         try:
             return await self._client.blob.set_tags(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1668,7 +1673,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         try:
             _, tags = await self._client.blob.get_tags(**options)
             return parse_tags(tags)  # pylint: disable=protected-access
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1744,7 +1749,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 ranges = await self._client.page_blob.get_page_ranges_diff(**options)
             else:
                 ranges = await self._client.page_blob.get_page_ranges(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)
 
@@ -1817,7 +1822,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             ranges = await self._client.page_blob.get_page_ranges_diff(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)
 
@@ -1873,7 +1878,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
             return await self._client.page_blob.update_sequence_number(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -1926,7 +1931,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._resize_blob_options(size, **kwargs)
         try:
             return await self._client.page_blob.resize(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -2021,7 +2026,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             **kwargs)
         try:
             return await self._client.page_blob.upload_pages(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -2133,7 +2138,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         )
         try:
             return await self._client.page_blob.upload_pages_from_url(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -2200,7 +2205,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._clear_page_options(offset, length, **kwargs)
         try:
             return await self._client.page_blob.clear_pages(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -2289,7 +2294,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         )
         try:
             return await self._client.append_blob.append_block(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async()
@@ -2391,7 +2396,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         )
         try:
             return await self._client.append_blob.append_block_from_url(**options)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async()
@@ -2436,5 +2441,5 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._seal_append_blob_options(**kwargs)
         try:
             return await self._client.append_blob.seal(**options) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)

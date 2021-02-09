@@ -31,7 +31,7 @@ class MgmtDatabricksClientTest(AzureMgmtTestCase):
             azure.mgmt.databricks.DatabricksClient
         )
         
-    
+    @ unittest.skip("unavailable in track2")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_databricks(self, resource_group):
 

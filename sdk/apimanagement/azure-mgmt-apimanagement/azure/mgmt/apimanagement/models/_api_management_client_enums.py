@@ -144,14 +144,14 @@ class ContentFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     WADL_XML = "wadl-xml"  #: The contents are inline and Content type is a WADL document.
     WADL_LINK_JSON = "wadl-link-json"  #: The WADL document is hosted on a publicly accessible internet address.
-    SWAGGER_JSON = "swagger-json"  #: The contents are inline and Content Type is a OpenApi 2.0 Document.
-    SWAGGER_LINK_JSON = "swagger-link-json"  #: The Open Api 2.0 document is hosted on a publicly accessible internet address.
+    SWAGGER_JSON = "swagger-json"  #: The contents are inline and Content Type is a OpenAPI 2.0 JSON Document.
+    SWAGGER_LINK_JSON = "swagger-link-json"  #: The OpenAPI 2.0 JSON document is hosted on a publicly accessible internet address.
     WSDL = "wsdl"  #: The contents are inline and the document is a WSDL/Soap document.
     WSDL_LINK = "wsdl-link"  #: The WSDL document is hosted on a publicly accessible internet address.
-    OPENAPI = "openapi"  #: The contents are inline and Content Type is a OpenApi 3.0 Document in YAML format.
-    OPENAPI_JSON = "openapi+json"  #: The contents are inline and Content Type is a OpenApi 3.0 Document in JSON format.
-    OPENAPI_LINK = "openapi-link"  #: The Open Api 3.0 document is hosted on a publicly accessible internet address.
-    OPENAPI_JSON_LINK = "openapi+json-link"  #: The Open Api 3.0 Json document is hosted on a publicly accessible internet address.
+    OPENAPI = "openapi"  #: The contents are inline and Content Type is a OpenAPI 3.0 YAML Document.
+    OPENAPI_JSON = "openapi+json"  #: The contents are inline and Content Type is a OpenAPI 3.0 JSON Document.
+    OPENAPI_LINK = "openapi-link"  #: The OpenAPI 3.0 YAML document is hosted on a publicly accessible internet address.
+    OPENAPI_JSON_LINK = "openapi+json-link"  #: The OpenAPI 3.0 JSON document is hosted on a publicly accessible internet address.
 
 class DataMaskingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Data masking mode.
@@ -166,11 +166,11 @@ class ExportApi(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class ExportFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    SWAGGER = "swagger-link"  #: Export the Api Definition in OpenApi Specification 2.0 format to the Storage Blob.
+    SWAGGER = "swagger-link"  #: Export the Api Definition in OpenAPI 2.0 Specification as JSON document to the Storage Blob.
     WSDL = "wsdl-link"  #: Export the Api Definition in WSDL Schema to Storage Blob. This is only supported for APIs of Type ``soap``.
     WADL = "wadl-link"  #: Export the Api Definition in WADL Schema to Storage Blob.
-    OPENAPI = "openapi-link"  #: Export the Api Definition in OpenApi Specification 3.0 to Storage Blob.
-    OPENAPI_JSON = "openapi+json-link"  #: Export the Api Definition in OpenApi Specification 3.0 as JSON document to Storage Blob.
+    OPENAPI = "openapi-link"  #: Export the Api Definition in OpenAPI 3.0 Specification as YAML document to Storage Blob.
+    OPENAPI_JSON = "openapi+json-link"  #: Export the Api Definition in OpenAPI 3.0 Specification as JSON document to Storage Blob.
 
 class ExportResultFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Format in which the Api Details are exported to the Storage Blob with Sas Key valid for 5
@@ -291,6 +291,15 @@ class PolicyScopeContract(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     API = "Api"
     OPERATION = "Operation"
     ALL = "All"
+
+class PortalRevisionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Portal revision publishing status
+    """
+
+    PENDING = "pending"  #: Portal revision publishing is pending.
+    PUBLISHING = "publishing"  #: Portal revision is publishing.
+    COMPLETED = "completed"  #: Portal revision publishing completed.
+    FAILED = "failed"  #: Portal revision publishing failed.
 
 class ProductState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """whether product is published or not. Published products are discoverable by users of developer

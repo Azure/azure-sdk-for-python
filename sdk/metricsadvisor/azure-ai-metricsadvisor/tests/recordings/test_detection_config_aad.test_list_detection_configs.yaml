@@ -1,0 +1,48 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/enrichment/anomalyDetection/configurations
+  response:
+    body:
+      string: '{"value":[{"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","name":"detection-config","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":100.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"10240200-6f3a-4783-b8e4-e7b34a3973d6","name":"my_detection_config","description":"anomaly
+        detection config for metric","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"OR","smartDetectionCondition":{"sensitivity":10.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":2,"minRatio":2.0}},"hardThresholdCondition":{"upperBound":100.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":2,"minRatio":2.0}},"changeThresholdCondition":{"changePercentage":20.0,"shiftPoint":10,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minNumber":5,"minRatio":2.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"5d50b465-7565-4167-b33b-b92eb3199254","name":"test_detection_configuration1605051259010","description":"Detection
+        configuration description","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":100.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":1.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"eb6ef516-9a09-4535-8ade-f64e26dfaefb","name":"js-detection-config-160521899279304202","description":"fresh
+        detection","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"AND","hardThresholdCondition":{"upperBound":400.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":2,"minRatio":2.0}},"changeThresholdCondition":{"changePercentage":33.0,"shiftPoint":1,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minNumber":2,"minRatio":2.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"1d270422-7ef8-4d3e-99e9-46b2bb1362fc","name":"js-detection-config-160521901418201870","description":"fresh
+        detection","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"AND","hardThresholdCondition":{"upperBound":400.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":2,"minRatio":2.0}},"changeThresholdCondition":{"changePercentage":33.0,"shiftPoint":1,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minNumber":2,"minRatio":2.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"64993d1d-02b8-4e0b-87d3-13095b187fe4","name":"js-detection-config-160521939989909966","description":"fresh
+        detection","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"AND","hardThresholdCondition":{"upperBound":400.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":2,"minRatio":2.0}},"changeThresholdCondition":{"changePercentage":33.0,"shiftPoint":1,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minNumber":2,"minRatio":2.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"dc0a5df5-c84e-4e9b-9065-f4017c4fbb97","name":"js-detection-config-160521942344906897","description":"fresh
+        detection","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"AND","hardThresholdCondition":{"upperBound":400.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":2,"minRatio":2.0}},"changeThresholdCondition":{"changePercentage":33.0,"shiftPoint":1,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minNumber":2,"minRatio":2.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"0491bfd7-b80a-4c2b-a32b-009e355a6cf5","name":"js-detection-config-160521950750209992","description":"fresh
+        detection","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"AND","hardThresholdCondition":{"upperBound":400.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":2,"minRatio":2.0}},"changeThresholdCondition":{"changePercentage":33.0,"shiftPoint":1,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minNumber":2,"minRatio":2.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"d803825a-12bf-4ae3-abcc-efd051509a1a","name":"js-detection-config-160521952580900483","description":"fresh
+        detection","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"AND","hardThresholdCondition":{"upperBound":400.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":2,"minRatio":2.0}},"changeThresholdCondition":{"changePercentage":33.0,"shiftPoint":1,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minNumber":2,"minRatio":2.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"a9f3cfed-7f4d-4351-8b38-0e9acf4f3a35","name":"js-detection-config-161116759979002989","description":"fresh
+        detection","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"AND","hardThresholdCondition":{"upperBound":400.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":2,"minRatio":2.0}},"changeThresholdCondition":{"changePercentage":33.0,"shiftPoint":1,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minNumber":2,"minRatio":2.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","name":"Default","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":100.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"251047f4-1798-41b8-b88c-7dd7dbea9875","name":"new
+        Name","description":"new description","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"OR","hardThresholdCondition":{"upperBound":500.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":5,"minRatio":5.0}},"changeThresholdCondition":{"changePercentage":44.0,"shiftPoint":2,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minNumber":4,"minRatio":4.0}}},"dimensionGroupOverrideConfigurations":[{"group":{"dimension":{"city":"Mumbai"}},"hardThresholdCondition":{"upperBound":400.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":2,"minRatio":2.0}}}],"seriesOverrideConfigurations":[{"series":{"dimension":{"city":"Kolkata","category":"Handmade"}},"changeThresholdCondition":{"changePercentage":33.0,"shiftPoint":1,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minNumber":2,"minRatio":2.0}}}]}]}'
+    headers:
+      apim-request-id:
+      - 0ec2792d-2465-45ba-b702-7e47dda34b67
+      content-length:
+      - '7524'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 Jan 2021 00:59:16 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '49'
+      x-request-id:
+      - 0ec2792d-2465-45ba-b702-7e47dda34b67
+    status:
+      code: 200
+      message: OK
+version: 1

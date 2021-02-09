@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class IntegrationRuntimesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class IntegrationRuntimesOperations(object):
         factory_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IntegrationRuntimeListResponse"]
+        # type: (...) -> Iterable["_models.IntegrationRuntimeListResponse"]
         """Lists integration runtimes.
 
         :param resource_group_name: The resource group name.
@@ -65,7 +65,7 @@ class IntegrationRuntimesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datafactory.models.IntegrationRuntimeListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationRuntimeListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -127,11 +127,11 @@ class IntegrationRuntimesOperations(object):
         resource_group_name,  # type: str
         factory_name,  # type: str
         integration_runtime_name,  # type: str
-        integration_runtime,  # type: "models.IntegrationRuntimeResource"
+        integration_runtime,  # type: "_models.IntegrationRuntimeResource"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationRuntimeResource"
+        # type: (...) -> "_models.IntegrationRuntimeResource"
         """Creates or updates an integration runtime.
 
         :param resource_group_name: The resource group name.
@@ -150,7 +150,7 @@ class IntegrationRuntimesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationRuntimeResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -207,7 +207,7 @@ class IntegrationRuntimesOperations(object):
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.IntegrationRuntimeResource"]
+        # type: (...) -> Optional["_models.IntegrationRuntimeResource"]
         """Gets an integration runtime.
 
         :param resource_group_name: The resource group name.
@@ -225,7 +225,7 @@ class IntegrationRuntimesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.IntegrationRuntimeResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.IntegrationRuntimeResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -276,10 +276,10 @@ class IntegrationRuntimesOperations(object):
         resource_group_name,  # type: str
         factory_name,  # type: str
         integration_runtime_name,  # type: str
-        update_integration_runtime_request,  # type: "models.UpdateIntegrationRuntimeRequest"
+        update_integration_runtime_request,  # type: "_models.UpdateIntegrationRuntimeRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationRuntimeResource"
+        # type: (...) -> "_models.IntegrationRuntimeResource"
         """Updates an integration runtime.
 
         :param resource_group_name: The resource group name.
@@ -295,7 +295,7 @@ class IntegrationRuntimesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationRuntimeResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -409,7 +409,7 @@ class IntegrationRuntimesOperations(object):
         integration_runtime_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationRuntimeStatusResponse"
+        # type: (...) -> "_models.IntegrationRuntimeStatusResponse"
         """Gets detailed status information for an integration runtime.
 
         :param resource_group_name: The resource group name.
@@ -423,7 +423,7 @@ class IntegrationRuntimesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationRuntimeStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeStatusResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -472,7 +472,7 @@ class IntegrationRuntimesOperations(object):
         integration_runtime_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationRuntimeConnectionInfo"
+        # type: (...) -> "_models.IntegrationRuntimeConnectionInfo"
         """Gets the on-premises integration runtime connection information for encrypting the on-premises
         data source credentials.
 
@@ -487,7 +487,7 @@ class IntegrationRuntimesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeConnectionInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationRuntimeConnectionInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeConnectionInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -534,10 +534,10 @@ class IntegrationRuntimesOperations(object):
         resource_group_name,  # type: str
         factory_name,  # type: str
         integration_runtime_name,  # type: str
-        regenerate_key_parameters,  # type: "models.IntegrationRuntimeRegenerateKeyParameters"
+        regenerate_key_parameters,  # type: "_models.IntegrationRuntimeRegenerateKeyParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationRuntimeAuthKeys"
+        # type: (...) -> "_models.IntegrationRuntimeAuthKeys"
         """Regenerates the authentication key for an integration runtime.
 
         :param resource_group_name: The resource group name.
@@ -554,7 +554,7 @@ class IntegrationRuntimesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationRuntimeAuthKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeAuthKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -608,7 +608,7 @@ class IntegrationRuntimesOperations(object):
         integration_runtime_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationRuntimeAuthKeys"
+        # type: (...) -> "_models.IntegrationRuntimeAuthKeys"
         """Retrieves the authentication keys for an integration runtime.
 
         :param resource_group_name: The resource group name.
@@ -622,7 +622,7 @@ class IntegrationRuntimesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationRuntimeAuthKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeAuthKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -671,8 +671,8 @@ class IntegrationRuntimesOperations(object):
         integration_runtime_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.IntegrationRuntimeStatusResponse"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.IntegrationRuntimeStatusResponse"]]
+        # type: (...) -> Optional["_models.IntegrationRuntimeStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.IntegrationRuntimeStatusResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -723,7 +723,7 @@ class IntegrationRuntimesOperations(object):
         integration_runtime_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.IntegrationRuntimeStatusResponse"]
+        # type: (...) -> LROPoller["_models.IntegrationRuntimeStatusResponse"]
         """Starts a ManagedReserved type integration runtime.
 
         :param resource_group_name: The resource group name.
@@ -743,7 +743,7 @@ class IntegrationRuntimesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationRuntimeStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeStatusResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -976,7 +976,7 @@ class IntegrationRuntimesOperations(object):
         integration_runtime_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationRuntimeMonitoringData"
+        # type: (...) -> "_models.IntegrationRuntimeMonitoringData"
         """Get the integration runtime monitoring data, which includes the monitor data for all the nodes
         under this integration runtime.
 
@@ -991,7 +991,7 @@ class IntegrationRuntimesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeMonitoringData
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationRuntimeMonitoringData"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeMonitoringData"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1098,7 +1098,7 @@ class IntegrationRuntimesOperations(object):
         resource_group_name,  # type: str
         factory_name,  # type: str
         integration_runtime_name,  # type: str
-        linked_integration_runtime_request,  # type: "models.LinkedIntegrationRuntimeRequest"
+        linked_integration_runtime_request,  # type: "_models.LinkedIntegrationRuntimeRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1168,10 +1168,10 @@ class IntegrationRuntimesOperations(object):
         resource_group_name,  # type: str
         factory_name,  # type: str
         integration_runtime_name,  # type: str
-        create_linked_integration_runtime_request,  # type: "models.CreateLinkedIntegrationRuntimeRequest"
+        create_linked_integration_runtime_request,  # type: "_models.CreateLinkedIntegrationRuntimeRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationRuntimeStatusResponse"
+        # type: (...) -> "_models.IntegrationRuntimeStatusResponse"
         """Create a linked integration runtime entry in a shared integration runtime.
 
         :param resource_group_name: The resource group name.
@@ -1187,7 +1187,7 @@ class IntegrationRuntimesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationRuntimeStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeStatusResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

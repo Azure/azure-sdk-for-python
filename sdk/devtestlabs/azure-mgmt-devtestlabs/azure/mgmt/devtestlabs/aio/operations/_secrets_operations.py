@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class SecretsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -53,7 +53,7 @@ class SecretsOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.SecretList"]:
+    ) -> AsyncIterable["_models.SecretList"]:
         """List secrets in a given user profile.
 
         :param resource_group_name: The name of the resource group.
@@ -76,7 +76,7 @@ class SecretsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devtestlabs.models.SecretList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -150,7 +150,7 @@ class SecretsOperations:
         name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.Secret":
+    ) -> "_models.Secret":
         """Get secret.
 
         :param resource_group_name: The name of the resource group.
@@ -168,7 +168,7 @@ class SecretsOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.Secret
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Secret"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Secret"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -219,10 +219,10 @@ class SecretsOperations:
         lab_name: str,
         user_name: str,
         name: str,
-        secret: "models.Secret",
+        secret: "_models.Secret",
         **kwargs
-    ) -> "models.Secret":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Secret"]
+    ) -> "_models.Secret":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Secret"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -280,9 +280,9 @@ class SecretsOperations:
         lab_name: str,
         user_name: str,
         name: str,
-        secret: "models.Secret",
+        secret: "_models.Secret",
         **kwargs
-    ) -> AsyncLROPoller["models.Secret"]:
+    ) -> AsyncLROPoller["_models.Secret"]:
         """Create or replace an existing secret. This operation can take a while to complete.
 
         :param resource_group_name: The name of the resource group.
@@ -306,7 +306,7 @@ class SecretsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Secret"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Secret"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -333,7 +333,15 @@ class SecretsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'userName': self._serialize.url("user_name", user_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -419,7 +427,7 @@ class SecretsOperations:
         tags: Optional[Dict[str, str]] = None,
         value: Optional[str] = None,
         **kwargs
-    ) -> "models.Secret":
+    ) -> "_models.Secret":
         """Allows modifying tags of secrets. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -439,13 +447,13 @@ class SecretsOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.Secret
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Secret"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Secret"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _secret = models.SecretFragment(tags=tags, value=value)
+        _secret = _models.SecretFragment(tags=tags, value=value)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"

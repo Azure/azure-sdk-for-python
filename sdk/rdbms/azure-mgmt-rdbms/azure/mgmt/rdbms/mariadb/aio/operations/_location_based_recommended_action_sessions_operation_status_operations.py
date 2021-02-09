@@ -25,7 +25,7 @@ class LocationBasedRecommendedActionSessionsOperationStatusOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -54,7 +54,7 @@ class LocationBasedRecommendedActionSessionsOperationStatusOperations:
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RecommendedActionSessionsOperationStatus, or the result of cls(response)
-        :rtype: ~maria_db_management_client.models.RecommendedActionSessionsOperationStatus
+        :rtype: ~azure.mgmt.rdbms.mariadb.models.RecommendedActionSessionsOperationStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecommendedActionSessionsOperationStatus"]

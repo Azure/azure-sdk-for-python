@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class PrivateLinkScopedResourcesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,7 +49,7 @@ class PrivateLinkScopedResourcesOperations:
         scope_name: str,
         name: str,
         **kwargs
-    ) -> "models.ScopedResource":
+    ) -> "_models.ScopedResource":
         """Gets a scoped resource in a private link scope.
 
         :param resource_group_name: The name of the resource group.
@@ -63,7 +63,7 @@ class PrivateLinkScopedResourcesOperations:
         :rtype: ~$(python-base-namespace).v2019_10_17.models.ScopedResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScopedResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScopedResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -110,10 +110,10 @@ class PrivateLinkScopedResourcesOperations:
         resource_group_name: str,
         scope_name: str,
         name: str,
-        parameters: "models.ScopedResource",
+        parameters: "_models.ScopedResource",
         **kwargs
-    ) -> Optional["models.ScopedResource"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ScopedResource"]]
+    ) -> Optional["_models.ScopedResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ScopedResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -170,9 +170,9 @@ class PrivateLinkScopedResourcesOperations:
         resource_group_name: str,
         scope_name: str,
         name: str,
-        parameters: "models.ScopedResource",
+        parameters: "_models.ScopedResource",
         **kwargs
-    ) -> AsyncLROPoller["models.ScopedResource"]:
+    ) -> AsyncLROPoller["_models.ScopedResource"]:
         """Approve or reject a private endpoint connection with a given name.
 
         :param resource_group_name: The name of the resource group.
@@ -194,7 +194,7 @@ class PrivateLinkScopedResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScopedResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScopedResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -220,7 +220,14 @@ class PrivateLinkScopedResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -326,7 +333,14 @@ class PrivateLinkScopedResourcesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -345,7 +359,7 @@ class PrivateLinkScopedResourcesOperations:
         resource_group_name: str,
         scope_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ScopedResourceListResult"]:
+    ) -> AsyncIterable["_models.ScopedResourceListResult"]:
         """Gets all private endpoint connections on a private link scope.
 
         :param resource_group_name: The name of the resource group.
@@ -357,7 +371,7 @@ class PrivateLinkScopedResourcesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2019_10_17.models.ScopedResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScopedResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScopedResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class TasksOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class TasksOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecurityTaskList"]
+        # type: (...) -> Iterable["_models.SecurityTaskList"]
         """Recommended tasks that will help improve the security of the subscription proactively.
 
         :param filter: OData filter. Optional.
@@ -60,7 +60,7 @@ class TasksOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.SecurityTaskList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityTaskList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityTaskList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -122,7 +122,7 @@ class TasksOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecurityTaskList"]
+        # type: (...) -> Iterable["_models.SecurityTaskList"]
         """Recommended tasks that will help improve the security of the subscription proactively.
 
         :param filter: OData filter. Optional.
@@ -132,7 +132,7 @@ class TasksOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.SecurityTaskList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityTaskList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityTaskList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -195,7 +195,7 @@ class TasksOperations(object):
         task_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecurityTask"
+        # type: (...) -> "_models.SecurityTask"
         """Recommended tasks that will help improve the security of the subscription proactively.
 
         :param task_name: Name of the task object, will be a GUID.
@@ -205,7 +205,7 @@ class TasksOperations(object):
         :rtype: ~azure.mgmt.security.models.SecurityTask
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityTask"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityTask"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -249,7 +249,7 @@ class TasksOperations(object):
     def update_subscription_level_task_state(
         self,
         task_name,  # type: str
-        task_update_action_type,  # type: Union[str, "models.Enum15"]
+        task_update_action_type,  # type: Union[str, "_models.Enum15"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -309,7 +309,7 @@ class TasksOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecurityTaskList"]
+        # type: (...) -> Iterable["_models.SecurityTaskList"]
         """Recommended tasks that will help improve the security of the subscription proactively.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -322,7 +322,7 @@ class TasksOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.SecurityTaskList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityTaskList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityTaskList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -387,7 +387,7 @@ class TasksOperations(object):
         task_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecurityTask"
+        # type: (...) -> "_models.SecurityTask"
         """Recommended tasks that will help improve the security of the subscription proactively.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -400,7 +400,7 @@ class TasksOperations(object):
         :rtype: ~azure.mgmt.security.models.SecurityTask
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityTask"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityTask"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -446,7 +446,7 @@ class TasksOperations(object):
         self,
         resource_group_name,  # type: str
         task_name,  # type: str
-        task_update_action_type,  # type: Union[str, "models.Enum15"]
+        task_update_action_type,  # type: Union[str, "_models.Enum15"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None

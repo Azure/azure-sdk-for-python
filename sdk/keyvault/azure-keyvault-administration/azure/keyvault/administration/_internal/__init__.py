@@ -4,11 +4,7 @@
 # ------------------------------------
 from collections import namedtuple
 
-try:
-    import urllib.parse as parse
-except ImportError:
-    # pylint:disable=import-error
-    import urlparse as parse  # type: ignore
+from six.moves.urllib_parse import urlparse
 
 from .challenge_auth_policy import ChallengeAuthPolicy, ChallengeAuthPolicyBase
 from .client_base import KeyVaultClientBase
@@ -29,7 +25,7 @@ _VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])
 
 def parse_vault_id(url):
     try:
-        parsed_uri = parse.urlparse(url)
+        parsed_uri = urlparse(url)
     except Exception:  # pylint: disable=broad-except
         raise ValueError("'{}' is not not a valid url".format(url))
     if not (parsed_uri.scheme and parsed_uri.hostname):
@@ -46,6 +42,38 @@ def parse_vault_id(url):
         name=path[1],
         version=path[2] if len(path) == 3 else None,
     )
+
+
+BackupLocation = namedtuple("BackupLocation", ["container_url", "folder_name"])
+
+
+def parse_folder_url(folder_url):
+    # type: (str) -> BackupLocation
+    """Parse the blob container URL and folder name from a backup's blob storage URL.
+
+    For example, https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313 parses to
+    (container_url="https://<account>.blob.core.windows.net/backup", folder_name="mhsm-account-2020090117323313").
+    """
+
+    try:
+        parsed = urlparse(folder_url)
+
+        # the first segment of the path is the container name
+        stripped_path = parsed.path.strip("/")
+        container = stripped_path.split("/")[0]
+
+        # the rest of the path is the folder name
+        folder_name = stripped_path[len(container) + 1 :]
+
+        # this intentionally discards any SAS token in the URL--methods require the SAS token as a separate parameter
+        container_url = "{}://{}/{}".format(parsed.scheme, parsed.netloc, container)
+
+        return BackupLocation(container_url, folder_name)
+    except:  # pylint:disable=broad-except
+        raise ValueError(
+            '"folder_url" should be the URL of a blob holding a Key Vault backup, for example '
+            '"https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313"'
+        )
 
 
 try:

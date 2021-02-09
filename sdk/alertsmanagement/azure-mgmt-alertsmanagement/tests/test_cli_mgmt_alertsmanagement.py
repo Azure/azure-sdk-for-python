@@ -31,6 +31,7 @@ class MgmtAlertsTest(AzureMgmtTestCase):
             azure.mgmt.alertsmanagement.AlertsManagementClient
         )
     
+    @unittest.skip("skip")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_alertsmanagement(self, resource_group):
 

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class JobOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -165,7 +165,7 @@ class JobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline)
@@ -233,7 +233,7 @@ class JobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -298,7 +298,7 @@ class JobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -313,7 +313,7 @@ class JobOperations:
         job_name: str,
         client_request_id: Optional[str] = None,
         **kwargs
-    ) -> "models.Job":
+    ) -> "_models.Job":
         """Retrieve the job identified by job name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -329,7 +329,7 @@ class JobOperations:
         :rtype: ~azure.mgmt.automation.models.Job
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Job"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Job"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -363,7 +363,7 @@ class JobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Job', pipeline_response)
@@ -379,10 +379,10 @@ class JobOperations:
         resource_group_name: str,
         automation_account_name: str,
         job_name: str,
-        parameters: "models.JobCreateParameters",
+        parameters: "_models.JobCreateParameters",
         client_request_id: Optional[str] = None,
         **kwargs
-    ) -> "models.Job":
+    ) -> "_models.Job":
         """Create a job of the runbook.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -400,7 +400,7 @@ class JobOperations:
         :rtype: ~azure.mgmt.automation.models.Job
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Job"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Job"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -439,7 +439,7 @@ class JobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Job', pipeline_response)
@@ -457,7 +457,7 @@ class JobOperations:
         filter: Optional[str] = None,
         client_request_id: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.JobListResultV2"]:
+    ) -> AsyncIterable["_models.JobListResultV2"]:
         """Retrieve a list of jobs.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -473,7 +473,7 @@ class JobOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.automation.models.JobListResultV2]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobListResultV2"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobListResultV2"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -524,7 +524,7 @@ class JobOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -592,7 +592,7 @@ class JobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

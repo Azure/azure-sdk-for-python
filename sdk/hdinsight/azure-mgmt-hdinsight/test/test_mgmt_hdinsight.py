@@ -596,8 +596,14 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
 
         # Execute script actions, and persist on success.
         script_action_params = self.get_execute_script_action_params(script_name, install_giraph)
-        self.hdinsight_client.clusters.begin_execute_script_actions(rg_name, cluster_name, True,
-                                                                    script_action_params).wait()
+        self.hdinsight_client.clusters.begin_execute_script_actions(
+            rg_name,
+            cluster_name,
+            {
+                "persist_on_success": True,
+                "script_actions": script_action_params
+            }
+        ).wait()
 
         # List script actions and validate script is persisted.
         script_action_list = list(self.hdinsight_client.script_actions.list_by_cluster(rg_name, cluster_name))
@@ -632,8 +638,14 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
 
         # Execute script actions, but don't persist on success.
         script_action_params = self.get_execute_script_action_params("script5baf", install_giraph)
-        self.hdinsight_client.clusters.begin_execute_script_actions(rg_name, cluster_name, False,
-                                                                    script_action_params).wait()
+        self.hdinsight_client.clusters.begin_execute_script_actions(
+            rg_name,
+            cluster_name,
+            {
+                "persist_on_success": False,
+                "script_actions": script_action_params
+            }                                                        
+        ).wait()
 
         # List script action history and validate the new script also appears.
         list_history_response = list(

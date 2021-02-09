@@ -759,7 +759,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
@@ -767,13 +767,13 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
         request contains too many records. Max 10 records are permitted."}}}'
     headers:
-      apim-request-id: 59931313-b19b-4dd8-9c09-fa76e838cd17
+      apim-request-id: b6dbb784-39bf-4c9f-b207-1d0bccddb7a2
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:35:41 GMT
+      date: Wed, 27 Jan 2021 02:29:02 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '13'
+      x-envoy-upstream-service-time: '8'
     status:
       code: 400
       message: Bad Request

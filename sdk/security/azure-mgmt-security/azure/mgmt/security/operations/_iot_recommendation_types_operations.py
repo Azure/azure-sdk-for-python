@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class IotRecommendationTypesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class IotRecommendationTypesOperations(object):
         solution_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IotRecommendationTypeList"
+        # type: (...) -> "_models.IotRecommendationTypeList"
         """List IoT recommendation types.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -63,7 +63,7 @@ class IotRecommendationTypesOperations(object):
         :rtype: ~azure.mgmt.security.models.IotRecommendationTypeList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotRecommendationTypeList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotRecommendationTypeList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,7 +111,7 @@ class IotRecommendationTypesOperations(object):
         iot_recommendation_type_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IotRecommendationType"
+        # type: (...) -> "_models.IotRecommendationType"
         """Get IoT recommendation type.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -126,7 +126,7 @@ class IotRecommendationTypesOperations(object):
         :rtype: ~azure.mgmt.security.models.IotRecommendationType
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotRecommendationType"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotRecommendationType"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -167,3 +167,109 @@ class IotRecommendationTypesOperations(object):
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/iotRecommendationTypes/{iotRecommendationTypeName}'}  # type: ignore
+
+    def list_at_subscription_scope(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.IotRecommendationTypeList"
+        """List IoT recommendation types.
+
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IotRecommendationTypeList, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IotRecommendationTypeList
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotRecommendationTypeList"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-08-06-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.list_at_subscription_scope.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('IotRecommendationTypeList', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    list_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotRecommendationTypes'}  # type: ignore
+
+    def get_at_subscription_scope(
+        self,
+        iot_recommendation_type_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.IotRecommendationType"
+        """Get IoT recommendation type.
+
+        :param iot_recommendation_type_name: Name of the recommendation type.
+        :type iot_recommendation_type_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IotRecommendationType, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IotRecommendationType
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotRecommendationType"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-08-06-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_at_subscription_scope.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'iotRecommendationTypeName': self._serialize.url("iot_recommendation_type_name", iot_recommendation_type_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('IotRecommendationType', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotRecommendationTypes/{iotRecommendationTypeName}'}  # type: ignore

@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class MachineLearningComputeOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -54,7 +54,7 @@ class MachineLearningComputeOperations(object):
         skiptoken=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PaginatedComputeResourcesList"]
+        # type: (...) -> Iterable["_models.PaginatedComputeResourcesList"]
         """Gets computes in specified workspace.
 
         :param resource_group_name: Name of the resource group in which workspace is located.
@@ -68,7 +68,7 @@ class MachineLearningComputeOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedComputeResourcesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PaginatedComputeResourcesList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedComputeResourcesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -117,7 +117,7 @@ class MachineLearningComputeOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.MachineLearningServiceError, response)
+                error = self._deserialize(_models.MachineLearningServiceError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -135,7 +135,7 @@ class MachineLearningComputeOperations(object):
         compute_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ComputeResource"
+        # type: (...) -> "_models.ComputeResource"
         """Gets compute definition by its name. Any secrets (storage keys, service credentials, etc) are
         not returned - use 'keys' nested resource to get them.
 
@@ -150,7 +150,7 @@ class MachineLearningComputeOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.ComputeResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ComputeResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ComputeResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -182,7 +182,7 @@ class MachineLearningComputeOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ComputeResource', pipeline_response)
@@ -198,11 +198,11 @@ class MachineLearningComputeOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         compute_name,  # type: str
-        parameters,  # type: "models.ComputeResource"
+        parameters,  # type: "_models.ComputeResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ComputeResource"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ComputeResource"]
+        # type: (...) -> "_models.ComputeResource"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ComputeResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -239,7 +239,7 @@ class MachineLearningComputeOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -261,10 +261,10 @@ class MachineLearningComputeOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         compute_name,  # type: str
-        parameters,  # type: "models.ComputeResource"
+        parameters,  # type: "_models.ComputeResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ComputeResource"]
+        # type: (...) -> LROPoller["_models.ComputeResource"]
         """Creates or updates compute. This call will overwrite a compute if it exists. This is a
         nonrecoverable operation. If your intent is to create a new compute, do a GET first to verify
         that it does not exist yet.
@@ -288,7 +288,7 @@ class MachineLearningComputeOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ComputeResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ComputeResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -308,16 +308,20 @@ class MachineLearningComputeOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
             deserialized = self._deserialize('ComputeResource', pipeline_response)
 
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)
+                return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'computeName': self._serialize.url("compute_name", compute_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -336,17 +340,15 @@ class MachineLearningComputeOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         compute_name,  # type: str
-        scale_settings=None,  # type: Optional["models.ScaleSettings"]
+        parameters,  # type: "_models.ClusterUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ComputeResource"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ComputeResource"]
+        # type: (...) -> "_models.ComputeResource"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ComputeResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.ClusterUpdateParameters(scale_settings=scale_settings)
         api_version = "2020-08-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -371,7 +373,7 @@ class MachineLearningComputeOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'ClusterUpdateParameters')
+        body_content = self._serialize.body(parameters, 'ClusterUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -379,7 +381,7 @@ class MachineLearningComputeOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ComputeResource', pipeline_response)
@@ -395,10 +397,10 @@ class MachineLearningComputeOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         compute_name,  # type: str
-        scale_settings=None,  # type: Optional["models.ScaleSettings"]
+        parameters,  # type: "_models.ClusterUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ComputeResource"]
+        # type: (...) -> LROPoller["_models.ComputeResource"]
         """Updates properties of a compute. This call will overwrite a compute if it exists. This is a
         nonrecoverable operation.
 
@@ -408,8 +410,8 @@ class MachineLearningComputeOperations(object):
         :type workspace_name: str
         :param compute_name: Name of the Azure Machine Learning compute.
         :type compute_name: str
-        :param scale_settings: Desired scale settings for the amlCompute.
-        :type scale_settings: ~azure.mgmt.machinelearningservices.models.ScaleSettings
+        :param parameters: Additional parameters for cluster update.
+        :type parameters: ~azure.mgmt.machinelearningservices.models.ClusterUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -421,7 +423,7 @@ class MachineLearningComputeOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ComputeResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ComputeResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -432,7 +434,7 @@ class MachineLearningComputeOperations(object):
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 compute_name=compute_name,
-                scale_settings=scale_settings,
+                parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -447,7 +449,14 @@ class MachineLearningComputeOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'computeName': self._serialize.url("compute_name", compute_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -466,7 +475,7 @@ class MachineLearningComputeOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         compute_name,  # type: str
-        underlying_resource_action,  # type: Union[str, "models.UnderlyingResourceAction"]
+        underlying_resource_action,  # type: Union[str, "_models.UnderlyingResourceAction"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -503,7 +512,7 @@ class MachineLearningComputeOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -521,7 +530,7 @@ class MachineLearningComputeOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         compute_name,  # type: str
-        underlying_resource_action,  # type: Union[str, "models.UnderlyingResourceAction"]
+        underlying_resource_action,  # type: Union[str, "_models.UnderlyingResourceAction"]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -570,7 +579,14 @@ class MachineLearningComputeOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'computeName': self._serialize.url("compute_name", compute_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -591,7 +607,7 @@ class MachineLearningComputeOperations(object):
         compute_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AmlComputeNodesInformation"
+        # type: (...) -> "_models.AmlComputeNodesInformation"
         """Get the details (e.g IP address, port etc) of all the compute nodes in the compute.
 
         :param resource_group_name: Name of the resource group in which workspace is located.
@@ -605,7 +621,7 @@ class MachineLearningComputeOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.AmlComputeNodesInformation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AmlComputeNodesInformation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AmlComputeNodesInformation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -637,7 +653,7 @@ class MachineLearningComputeOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AmlComputeNodesInformation', pipeline_response)
@@ -655,7 +671,7 @@ class MachineLearningComputeOperations(object):
         compute_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ComputeSecrets"
+        # type: (...) -> "_models.ComputeSecrets"
         """Gets secrets related to Machine Learning compute (storage keys, service credentials, etc).
 
         :param resource_group_name: Name of the resource group in which workspace is located.
@@ -669,7 +685,7 @@ class MachineLearningComputeOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.ComputeSecrets
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ComputeSecrets"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ComputeSecrets"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -701,7 +717,7 @@ class MachineLearningComputeOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ComputeSecrets', pipeline_response)
@@ -765,7 +781,7 @@ class MachineLearningComputeOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -826,7 +842,7 @@ class MachineLearningComputeOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -887,7 +903,7 @@ class MachineLearningComputeOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

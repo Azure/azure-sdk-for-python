@@ -1,5 +1,15 @@
 # Release History
 
+## 8.0.0 (2020-12-25)
+
+**Breaking changes**
+
+  - Change client name from OperationalInsightsManagementClient to LogAnalyticsManagementClient
+
+## 7.0.0 (2020-12-17)
+
+- GA release
+
 ## 7.0.0b1 (2020-11-16)
 
 This is beta preview version.

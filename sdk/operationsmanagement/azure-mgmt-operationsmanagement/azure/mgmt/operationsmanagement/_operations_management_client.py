@@ -29,13 +29,13 @@ class OperationsManagementClient(object):
     """Operations Management Client.
 
     :ivar solutions: SolutionsOperations operations
-    :vartype solutions: operations_management_client.operations.SolutionsOperations
+    :vartype solutions: azure.mgmt.operationsmanagement.operations.SolutionsOperations
     :ivar management_associations: ManagementAssociationsOperations operations
-    :vartype management_associations: operations_management_client.operations.ManagementAssociationsOperations
+    :vartype management_associations: azure.mgmt.operationsmanagement.operations.ManagementAssociationsOperations
     :ivar management_configurations: ManagementConfigurationsOperations operations
-    :vartype management_configurations: operations_management_client.operations.ManagementConfigurationsOperations
+    :vartype management_configurations: azure.mgmt.operationsmanagement.operations.ManagementConfigurationsOperations
     :ivar operations: Operations operations
-    :vartype operations: operations_management_client.operations.Operations
+    :vartype operations: azure.mgmt.operationsmanagement.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Gets subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.

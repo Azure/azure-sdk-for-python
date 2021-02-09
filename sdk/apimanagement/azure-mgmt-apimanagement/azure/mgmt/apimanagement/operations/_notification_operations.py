@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class NotificationOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class NotificationOperations(object):
         skip=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.NotificationCollection"]
+        # type: (...) -> Iterable["_models.NotificationCollection"]
         """Lists a collection of properties defined within a service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -69,7 +69,7 @@ class NotificationOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.NotificationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -120,7 +120,7 @@ class NotificationOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -135,10 +135,10 @@ class NotificationOperations(object):
         self,
         resource_group_name,  # type: str
         service_name,  # type: str
-        notification_name,  # type: Union[str, "models.NotificationName"]
+        notification_name,  # type: Union[str, "_models.NotificationName"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NotificationContract"
+        # type: (...) -> "_models.NotificationContract"
         """Gets the details of the Notification specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -152,7 +152,7 @@ class NotificationOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.NotificationContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -184,7 +184,7 @@ class NotificationOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NotificationContract', pipeline_response)
@@ -199,11 +199,11 @@ class NotificationOperations(object):
         self,
         resource_group_name,  # type: str
         service_name,  # type: str
-        notification_name,  # type: Union[str, "models.NotificationName"]
+        notification_name,  # type: Union[str, "_models.NotificationName"]
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NotificationContract"
+        # type: (...) -> "_models.NotificationContract"
         """Create or Update API Management publisher notification.
 
         :param resource_group_name: The name of the resource group.
@@ -220,7 +220,7 @@ class NotificationOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.NotificationContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -254,7 +254,7 @@ class NotificationOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NotificationContract', pipeline_response)

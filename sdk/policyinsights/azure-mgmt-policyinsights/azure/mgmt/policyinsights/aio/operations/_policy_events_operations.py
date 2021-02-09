@@ -15,7 +15,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class PolicyEventsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,9 +45,9 @@ class PolicyEventsOperations:
     def list_query_results_for_management_group(
         self,
         management_group_name: str,
-        query_options: Optional["models.QueryOptions"] = None,
+        query_options: Optional["_models.QueryOptions"] = None,
         **kwargs
-    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
+    ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the resources under the management group.
 
         :param management_group_name: Management group name.
@@ -59,7 +59,7 @@ class PolicyEventsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyEventsQueryResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -142,7 +142,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.QueryFailure, response)
+                error = self._deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -156,9 +156,9 @@ class PolicyEventsOperations:
     def list_query_results_for_subscription(
         self,
         subscription_id: str,
-        query_options: Optional["models.QueryOptions"] = None,
+        query_options: Optional["_models.QueryOptions"] = None,
         **kwargs
-    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
+    ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the resources under the subscription.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -170,7 +170,7 @@ class PolicyEventsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyEventsQueryResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -251,7 +251,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.QueryFailure, response)
+                error = self._deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -266,9 +266,9 @@ class PolicyEventsOperations:
         self,
         subscription_id: str,
         resource_group_name: str,
-        query_options: Optional["models.QueryOptions"] = None,
+        query_options: Optional["_models.QueryOptions"] = None,
         **kwargs
-    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
+    ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the resources under the resource group.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -282,7 +282,7 @@ class PolicyEventsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyEventsQueryResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -364,7 +364,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.QueryFailure, response)
+                error = self._deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -378,9 +378,9 @@ class PolicyEventsOperations:
     def list_query_results_for_resource(
         self,
         resource_id: str,
-        query_options: Optional["models.QueryOptions"] = None,
+        query_options: Optional["_models.QueryOptions"] = None,
         **kwargs
-    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
+    ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the resource.
 
         :param resource_id: Resource ID.
@@ -392,7 +392,7 @@ class PolicyEventsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyEventsQueryResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -477,7 +477,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.QueryFailure, response)
+                error = self._deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -492,9 +492,9 @@ class PolicyEventsOperations:
         self,
         subscription_id: str,
         policy_set_definition_name: str,
-        query_options: Optional["models.QueryOptions"] = None,
+        query_options: Optional["_models.QueryOptions"] = None,
         **kwargs
-    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
+    ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the subscription level policy set definition.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -508,7 +508,7 @@ class PolicyEventsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyEventsQueryResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -592,7 +592,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.QueryFailure, response)
+                error = self._deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -607,9 +607,9 @@ class PolicyEventsOperations:
         self,
         subscription_id: str,
         policy_definition_name: str,
-        query_options: Optional["models.QueryOptions"] = None,
+        query_options: Optional["_models.QueryOptions"] = None,
         **kwargs
-    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
+    ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the subscription level policy definition.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -623,7 +623,7 @@ class PolicyEventsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyEventsQueryResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -707,7 +707,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.QueryFailure, response)
+                error = self._deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -722,9 +722,9 @@ class PolicyEventsOperations:
         self,
         subscription_id: str,
         policy_assignment_name: str,
-        query_options: Optional["models.QueryOptions"] = None,
+        query_options: Optional["_models.QueryOptions"] = None,
         **kwargs
-    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
+    ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the subscription level policy assignment.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -738,7 +738,7 @@ class PolicyEventsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyEventsQueryResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -822,7 +822,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.QueryFailure, response)
+                error = self._deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -838,9 +838,9 @@ class PolicyEventsOperations:
         subscription_id: str,
         resource_group_name: str,
         policy_assignment_name: str,
-        query_options: Optional["models.QueryOptions"] = None,
+        query_options: Optional["_models.QueryOptions"] = None,
         **kwargs
-    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
+    ) -> AsyncIterable["_models.PolicyEventsQueryResults"]:
         """Queries policy events for the resource group level policy assignment.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -856,7 +856,7 @@ class PolicyEventsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyEventsQueryResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -941,7 +941,7 @@ class PolicyEventsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.QueryFailure, response)
+                error = self._deserialize(_models.QueryFailure, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

@@ -11,23 +11,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:38:14 GMT
+      - Fri, 18 Dec 2020 17:10:30 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:38:14 GMT
+      - Fri, 18 Dec 2020 17:10:30 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable66e91674"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable66e91674"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Sat, 07 Nov 2020 01:38:14 GMT
-      location: https://tablesteststorname.table.core.windows.net/Tables('uttable66e91674')
+      date: Fri, 18 Dec 2020 17:10:31 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('uttable66e91674')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -35,13 +35,13 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/Tables
+    url: https://seankaneprim.table.core.windows.net/Tables
 - request:
-    body: '{"PartitionKey@odata.type": "Edm.String", "sign": "aquarius", "sex@odata.type":
-      "Edm.String", "birthday@odata.type": "Edm.DateTime", "RowKey@odata.type": "Edm.String",
-      "RowKey": "rk66e91674", "sex": "female", "PartitionKey": "pk66e91674", "sign@odata.type":
-      "Edm.String", "age@odata.type": "Edm.String", "birthday": "1991-10-04T00:00:00Z",
-      "age": "abc"}'
+    body: '{"PartitionKey": "pk66e91674", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk66e91674", "RowKey@odata.type": "Edm.String", "age": "abc", "age@odata.type":
+      "Edm.String", "sex": "female", "sex@odata.type": "Edm.String", "sign": "aquarius",
+      "sign@odata.type": "Edm.String", "birthday": "1991-10-04T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime"}'
     headers:
       Accept:
       - application/json
@@ -52,25 +52,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:38:14 GMT
+      - Fri, 18 Dec 2020 17:10:30 GMT
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:38:14 GMT
+      - Fri, 18 Dec 2020 17:10:30 GMT
       x-ms-version:
       - '2019-02-02'
     method: PATCH
-    uri: https://tablesteststorname.table.core.windows.net/uttable66e91674(PartitionKey='pk66e91674',RowKey='rk66e91674')
+    uri: https://fake_table_account.table.core.windows.net/uttable66e91674(PartitionKey='pk66e91674',RowKey='rk66e91674')
   response:
     body:
       string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:bfb5ae2a-f002-005f-2da6-b40351000000\nTime:2020-11-07T01:38:15.2211408Z"}}}'
+        specified resource does not exist.\nRequestId:6303beda-0002-006e-0860-d5f636000000\nTime:2020-12-18T17:10:31.3774547Z"}}}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Sat, 07 Nov 2020 01:38:14 GMT
+      date: Fri, 18 Dec 2020 17:10:31 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -78,34 +78,34 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/uttable66e91674(PartitionKey='pk66e91674',RowKey='rk66e91674')
+    url: https://seankaneprim.table.core.windows.net/uttable66e91674(PartitionKey='pk66e91674',RowKey='rk66e91674')
 - request:
     body: null
     headers:
       Accept:
       - application/json
       Date:
-      - Sat, 07 Nov 2020 01:38:14 GMT
+      - Fri, 18 Dec 2020 17:10:31 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:38:14 GMT
+      - Fri, 18 Dec 2020 17:10:31 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablesteststorname.table.core.windows.net/Tables('uttable66e91674')
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttable66e91674')
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Sat, 07 Nov 2020 01:38:14 GMT
+      date: Fri, 18 Dec 2020 17:10:31 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/Tables('uttable66e91674')
+    url: https://seankaneprim.table.core.windows.net/Tables('uttable66e91674')
 version: 1

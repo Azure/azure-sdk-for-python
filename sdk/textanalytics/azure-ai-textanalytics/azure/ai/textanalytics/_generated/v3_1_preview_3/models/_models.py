@@ -2011,7 +2011,7 @@ class TasksStateTasks(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param details:
-    :type details: ~azure.ai.textanalytics.v3_1_preview_3.models.TaskState
+    :type details: ~azure.ai.textanalytics.v3_1_preview_3.models.TasksStateTasksDetails
     :param completed: Required.
     :type completed: int
     :param failed: Required.
@@ -2039,7 +2039,7 @@ class TasksStateTasks(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': 'TaskState'},
+        'details': {'key': 'details', 'type': 'TasksStateTasksDetails'},
         'completed': {'key': 'completed', 'type': 'int'},
         'failed': {'key': 'failed', 'type': 'int'},
         'in_progress': {'key': 'inProgress', 'type': 'int'},

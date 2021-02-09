@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class SecureScoresOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class SecureScoresOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecureScoresList"]
+        # type: (...) -> Iterable["_models.SecureScoresList"]
         """List secure scores for all your Security Center initiatives within your current scope.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -57,7 +57,7 @@ class SecureScoresOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.SecureScoresList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecureScoresList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecureScoresList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -117,7 +117,7 @@ class SecureScoresOperations(object):
         secure_score_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecureScoreItem"
+        # type: (...) -> "_models.SecureScoreItem"
         """Get secure score for a specific Security Center initiative within your current scope. For the
         ASC Default initiative, use 'ascScore'.
 
@@ -129,7 +129,7 @@ class SecureScoresOperations(object):
         :rtype: ~azure.mgmt.security.models.SecureScoreItem
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecureScoreItem"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecureScoreItem"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

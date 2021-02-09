@@ -116,6 +116,8 @@ Metrics Advisor lets you create and subscribe to real-time alerts. These alerts 
 Metrics Advisor supports connecting different types of data sources. Here is a sample to ingest data from SQL Server.
 
 ```py
+import os
+import datetime
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
 from azure.ai.metricsadvisor.models import (
         SQLServerDataFeed,
@@ -124,6 +126,7 @@ from azure.ai.metricsadvisor.models import (
         DataFeedDimension,
         DataFeedOptions,
         DataFeedRollupSettings,
+        DataFeedMissingDataPointFillSettings
     )
 
 service_endpoint = os.getenv("ENDPOINT")
@@ -410,7 +413,6 @@ for result in results:
 We can also query the root causes of an incident
 
 ```py
-import datetime
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
 
 service_endpoint = os.getenv("ENDPOINT")

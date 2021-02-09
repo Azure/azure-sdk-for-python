@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class DevicesForSubscriptionOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class DevicesForSubscriptionOperations(object):
         self,
         limit=None,  # type: Optional[int]
         skip_token=None,  # type: Optional[str]
-        device_management_type=None,  # type: Optional[Union[str, "models.ManagementState"]]
+        device_management_type=None,  # type: Optional[Union[str, "_models.ManagementState"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeviceList"]
+        # type: (...) -> Iterable["_models.DeviceList"]
         """Get list of the devices by their subscription.
 
         :param limit: Limit the number of items returned in a single page.
@@ -66,7 +66,7 @@ class DevicesForSubscriptionOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.DeviceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeviceList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeviceList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

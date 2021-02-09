@@ -31,6 +31,7 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
             azure.mgmt.appplatform.AppPlatformManagementClient
         )
     
+    @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_appplatform(self, resource_group):
 

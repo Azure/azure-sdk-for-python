@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class GalleryImagesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -55,7 +55,7 @@ class GalleryImagesOperations(object):
         orderby=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.GalleryImageList"]
+        # type: (...) -> Iterable["_models.GalleryImageList"]
         """List gallery images in a given lab.
 
         :param resource_group_name: The name of the resource group.
@@ -76,7 +76,7 @@ class GalleryImagesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.devtestlabs.models.GalleryImageList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryImageList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryImageList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

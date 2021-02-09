@@ -59,8 +59,8 @@ async def sample_list_metric_enriched_series_data_async():
 
     # [END list_metric_enriched_series_data_async]
 
-async def sample_list_dimension_values_async():
-    # [START list_dimension_values_async]
+async def sample_list_anomaly_dimension_values_async():
+    # [START list_anomaly_dimension_values_async]
     import datetime
     from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
     from azure.ai.metricsadvisor.aio import MetricsAdvisorClient
@@ -75,7 +75,7 @@ async def sample_list_dimension_values_async():
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     async with client:
-        results = client.list_dimension_values(
+        results = client.list_anomaly_dimension_values(
             detection_configuration_id=detection_configuration_id,
             dimension_name=dimension_name,
             start_time=datetime.datetime(2020, 1, 1),
@@ -84,7 +84,7 @@ async def sample_list_dimension_values_async():
         async for result in results:
             print(str(result))
 
-    # [END list_dimension_values_async]
+    # [END list_anomaly_dimension_values_async]
 
 async def sample_list_metric_dimension_values_async():
     # [START list_metric_dimension_values_async]
@@ -191,7 +191,7 @@ async def main():
     print("---List metric enriched series data...")
     await sample_list_metric_enriched_series_data_async()
     print("---List dimension values...")
-    await sample_list_dimension_values_async()
+    await sample_list_anomaly_dimension_values_async()
     print("---List metric dimension values...")
     await sample_list_metric_dimension_values_async()
     print("---List metric series data...")

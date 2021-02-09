@@ -1,5 +1,19 @@
 # Release History
 
+## 1.0.0 (2020-12-21)
+
+**Breaking changes**
+
+  - Operation FirewallRulesOperations.create_or_update has a new signature
+  - Operation FirewallRulesOperations.update has a new signature
+  - Operation VirtualNetworkRulesOperations.create_or_update has a new signature
+  - Operation VirtualNetworkRulesOperations.update has a new signature
+  - Operation TrustedIdProvidersOperations.create_or_update has a new signature
+  - Operation TrustedIdProvidersOperations.update has a new signature
+  - Operation AccountsOperations.check_name_availability has a new signature
+  - Operation FirewallRulesOperations.update has a new signature
+  - Operation FirewallRulesOperations.create_or_update has a new signature
+
 ## 1.0.0b1 (2020-10-31)
 
 This is beta preview version.

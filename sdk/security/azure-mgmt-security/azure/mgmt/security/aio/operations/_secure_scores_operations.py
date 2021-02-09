@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class SecureScoresOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,7 +44,7 @@ class SecureScoresOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.SecureScoresList"]:
+    ) -> AsyncIterable["_models.SecureScoresList"]:
         """List secure scores for all your Security Center initiatives within your current scope.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -52,7 +52,7 @@ class SecureScoresOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.SecureScoresList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecureScoresList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecureScoresList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,7 +111,7 @@ class SecureScoresOperations:
         self,
         secure_score_name: str,
         **kwargs
-    ) -> "models.SecureScoreItem":
+    ) -> "_models.SecureScoreItem":
         """Get secure score for a specific Security Center initiative within your current scope. For the
         ASC Default initiative, use 'ascScore'.
 
@@ -123,7 +123,7 @@ class SecureScoresOperations:
         :rtype: ~azure.mgmt.security.models.SecureScoreItem
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecureScoreItem"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecureScoreItem"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

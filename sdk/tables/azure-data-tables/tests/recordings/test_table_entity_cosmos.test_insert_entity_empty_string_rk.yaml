@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:47:01 GMT
+      - Fri, 18 Dec 2020 16:20:50 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:47:01 GMT
+      - Fri, 18 Dec 2020 16:20:50 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"uttablee1c918b5","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"uttablee1c918b5","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Sat, 07 Nov 2020 01:47:02 GMT
+      - Fri, 18 Dec 2020 16:20:52 GMT
       etag:
-      - W/"datetime'2020-11-07T01%3A47%3A03.0627335Z'"
+      - W/"datetime'2020-12-18T16%3A20%3A51.5669000Z'"
       location:
-      - https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttablee1c918b5')
+      - https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttablee1c918b5')
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -44,8 +44,8 @@ interactions:
       code: 201
       message: Ok
 - request:
-    body: '{"PartitionKey": "pk", "RowKey@odata.type": "Edm.String", "RowKey": "",
-      "PartitionKey@odata.type": "Edm.String"}'
+    body: '{"PartitionKey": "pk", "PartitionKey@odata.type": "Edm.String", "RowKey":
+      "", "RowKey@odata.type": "Edm.String"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -60,25 +60,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:47:02 GMT
+      - Fri, 18 Dec 2020 16:20:51 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:47:02 GMT
+      - Fri, 18 Dec 2020 16:20:51 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttablee1c918b5
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttablee1c918b5
   response:
     body:
-      string: "{\"odata.error\":{\"code\":\"PropertiesNeedValue\",\"message\":{\"lang\":\"en-us\",\"value\":\"PartitionKey/RowKey
-        cannot be empty\\r\\nActivityId: 21f88640-209b-11eb-ab40-58961df361d1, documentdb-dotnet-sdk/2.11.0
-        Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:21f88640-209b-11eb-ab40-58961df361d1\\n\"}}}\r\n"
+      string: "{\"odata.error\":{\"code\":\"PropertiesNeedValue\",\"message\":{\"\
+        lang\":\"en-us\",\"value\":\"PartitionKey/RowKey cannot be empty\\r\\nActivityId:\
+        \ ff0c5f26-414c-11eb-b622-58961df361d1, documentdb-dotnet-sdk/2.11.0 Host/64-bit\
+        \ MicrosoftWindowsNT/6.2.9200.0\\nRequestID:ff0c5f26-414c-11eb-b622-58961df361d1\\\
+        n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=fullmetadata
       date:
-      - Sat, 07 Nov 2020 01:47:02 GMT
+      - Fri, 18 Dec 2020 16:20:52 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -98,15 +100,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 07 Nov 2020 01:47:02 GMT
+      - Fri, 18 Dec 2020 16:20:51 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:47:02 GMT
+      - Fri, 18 Dec 2020 16:20:51 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttablee1c918b5')
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttablee1c918b5')
   response:
     body:
       string: ''
@@ -114,7 +116,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 07 Nov 2020 01:47:03 GMT
+      - Fri, 18 Dec 2020 16:20:52 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -132,23 +134,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:47:03 GMT
+      - Fri, 18 Dec 2020 16:20:52 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:47:03 GMT
+      - Fri, 18 Dec 2020 16:20:52 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"value":[],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+      string: '{"value":[],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Sat, 07 Nov 2020 01:47:03 GMT
+      - Fri, 18 Dec 2020 16:20:52 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

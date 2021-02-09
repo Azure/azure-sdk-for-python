@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class OpenIdConnectProviderOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,7 +49,7 @@ class OpenIdConnectProviderOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.OpenIdConnectProviderCollection"]:
+    ) -> AsyncIterable["_models.OpenIdConnectProviderCollection"]:
         """Lists of all the OpenId Connect Providers.
 
         :param resource_group_name: The name of the resource group.
@@ -71,7 +71,7 @@ class OpenIdConnectProviderOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.OpenIdConnectProviderCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OpenIdConnectProviderCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OpenIdConnectProviderCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -124,7 +124,7 @@ class OpenIdConnectProviderOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -187,7 +187,7 @@ class OpenIdConnectProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -205,7 +205,7 @@ class OpenIdConnectProviderOperations:
         service_name: str,
         opid: str,
         **kwargs
-    ) -> "models.OpenidConnectProviderContract":
+    ) -> "_models.OpenidConnectProviderContract":
         """Gets specific OpenID Connect Provider without secrets.
 
         :param resource_group_name: The name of the resource group.
@@ -219,7 +219,7 @@ class OpenIdConnectProviderOperations:
         :rtype: ~azure.mgmt.apimanagement.models.OpenidConnectProviderContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OpenidConnectProviderContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OpenidConnectProviderContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -251,7 +251,7 @@ class OpenIdConnectProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -269,10 +269,10 @@ class OpenIdConnectProviderOperations:
         resource_group_name: str,
         service_name: str,
         opid: str,
-        parameters: "models.OpenidConnectProviderContract",
+        parameters: "_models.OpenidConnectProviderContract",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.OpenidConnectProviderContract":
+    ) -> "_models.OpenidConnectProviderContract":
         """Creates or updates the OpenID Connect Provider.
 
         :param resource_group_name: The name of the resource group.
@@ -291,7 +291,7 @@ class OpenIdConnectProviderOperations:
         :rtype: ~azure.mgmt.apimanagement.models.OpenidConnectProviderContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OpenidConnectProviderContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OpenidConnectProviderContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -330,7 +330,7 @@ class OpenIdConnectProviderOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -354,9 +354,9 @@ class OpenIdConnectProviderOperations:
         service_name: str,
         opid: str,
         if_match: str,
-        parameters: "models.OpenidConnectProviderUpdateContract",
+        parameters: "_models.OpenidConnectProviderUpdateContract",
         **kwargs
-    ) -> "models.OpenidConnectProviderContract":
+    ) -> "_models.OpenidConnectProviderContract":
         """Updates the specific OpenID Connect Provider.
 
         :param resource_group_name: The name of the resource group.
@@ -375,7 +375,7 @@ class OpenIdConnectProviderOperations:
         :rtype: ~azure.mgmt.apimanagement.models.OpenidConnectProviderContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OpenidConnectProviderContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OpenidConnectProviderContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -413,7 +413,7 @@ class OpenIdConnectProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -483,7 +483,7 @@ class OpenIdConnectProviderOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -497,7 +497,7 @@ class OpenIdConnectProviderOperations:
         service_name: str,
         opid: str,
         **kwargs
-    ) -> "models.ClientSecretContract":
+    ) -> "_models.ClientSecretContract":
         """Gets the client secret details of the OpenID Connect Provider.
 
         :param resource_group_name: The name of the resource group.
@@ -511,7 +511,7 @@ class OpenIdConnectProviderOperations:
         :rtype: ~azure.mgmt.apimanagement.models.ClientSecretContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ClientSecretContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClientSecretContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -543,7 +543,7 @@ class OpenIdConnectProviderOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}

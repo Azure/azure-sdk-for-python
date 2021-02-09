@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/quotas?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/quotas?api-version=2021-01-01
   response:
     body:
       string: '{"accountQuota":3}'
@@ -23,7 +23,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 23 Oct 2020 06:34:38 GMT
+      - Thu, 28 Jan 2021 07:58:36 GMT
       expires:
       - '-1'
       pragma:

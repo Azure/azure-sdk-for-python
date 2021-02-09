@@ -1,5 +1,39 @@
 # Release History
 
+## 18.2.0 (2021-02-02)
+
+**Features**
+
+  - Added operation group CloudServicesUpdateDomainOperations
+  - Added operation group CloudServiceRolesOperations
+  - Added operation group CloudServiceRoleInstancesOperations
+  - Added operation group CloudServicesOperations
+
+## 18.1.0 (2021-01-19)
+
+**Features**
+  - Model Disk has a new parameter purchase_plan
+  - Model Disk has a new parameter extended_location
+  - Model Disk has a new parameter bursting_enabled
+  - Model ThrottledRequestsInput has a new parameter group_by_client_application_id
+  - Model ThrottledRequestsInput has a new parameter group_by_user_agent
+  - Model Snapshot has a new parameter purchase_plan
+  - Model Snapshot has a new parameter extended_location
+  - Model DiskUpdate has a new parameter purchase_plan
+  - Model DiskUpdate has a new parameter bursting_enabled
+  - Model LogAnalyticsInputBase has a new parameter group_by_client_application_id
+  - Model LogAnalyticsInputBase has a new parameter group_by_user_agent
+  - Model PurchasePlan has a new parameter promotion_code
+  - Model VirtualMachineScaleSetNetworkConfiguration has a new parameter enable_fpga
+  - Model RequestRateByIntervalInput has a new parameter group_by_client_application_id
+  - Model RequestRateByIntervalInput has a new parameter group_by_user_agent
+  - Model VirtualMachineScaleSetUpdateNetworkConfiguration has a new parameter enable_fpga
+  - Added operation DiskAccessesOperations.list_private_endpoint_connections
+  - Added operation DiskAccessesOperations.begin_delete_a_private_endpoint_connection
+  - Added operation DiskAccessesOperations.begin_update_a_private_endpoint_connection
+  - Added operation DiskAccessesOperations.get_a_private_endpoint_connection
+  - Added operation group DiskRestorePointOperations
+
 ## 18.0.0 (2020-11-17)
 
 **Features**

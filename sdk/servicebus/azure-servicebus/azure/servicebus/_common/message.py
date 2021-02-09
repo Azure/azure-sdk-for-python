@@ -33,26 +33,30 @@ from .constants import (
     ANNOTATION_SYMBOL_PARTITION_KEY,
     ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
     ANNOTATION_SYMBOL_KEY_MAP,
-    MESSAGE_PROPERTY_MAX_LENGTH
+    MESSAGE_PROPERTY_MAX_LENGTH,
 )
 
 from .utils import (
     utc_from_timestamp,
     utc_now,
     transform_messages_to_sendable_if_needed,
-    trace_message
+    trace_message,
 )
 from ..exceptions import MessageSizeExceededError
 
 if TYPE_CHECKING:
-    from ..aio._servicebus_receiver_async import ServiceBusReceiver as AsyncServiceBusReceiver
+    from ..aio._servicebus_receiver_async import (
+        ServiceBusReceiver as AsyncServiceBusReceiver,
+    )
     from .._servicebus_receiver import ServiceBusReceiver
     from azure.core.tracing import AbstractSpan
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
+class ServiceBusMessage(
+    object
+):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """A Service Bus Message.
 
     :param body: The data to send in a single message.
@@ -89,13 +93,13 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         # type: (Optional[Union[str, bytes]], Any) -> None
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
-        self._encoding = kwargs.pop("encoding", 'UTF-8')
+        self._encoding = kwargs.pop("encoding", "UTF-8")
         self._amqp_properties = uamqp.message.MessageProperties(encoding=self._encoding)
         self._amqp_header = uamqp.message.MessageHeader()
 
-        if 'message' in kwargs:
+        if "message" in kwargs:
             # Note: This cannot be renamed until UAMQP no longer relies on this specific name.
-            self.message = kwargs['message']
+            self.message = kwargs["message"]
             self._amqp_properties = self.message.properties
             self._amqp_header = self.message.header
         else:
@@ -109,22 +113,33 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             self.reply_to = kwargs.pop("reply_to", None)
             self.reply_to_session_id = kwargs.pop("reply_to_session_id", None)
             self.subject = kwargs.pop("subject", None)
-            self.scheduled_enqueue_time_utc = kwargs.pop("scheduled_enqueue_time_utc", None)
+            self.scheduled_enqueue_time_utc = kwargs.pop(
+                "scheduled_enqueue_time_utc", None
+            )
             self.time_to_live = kwargs.pop("time_to_live", None)
             self.partition_key = kwargs.pop("partition_key", None)
 
         # If message is the full message, raw_amqp_message is the "public facing interface" for what we expose.
-        self.raw_amqp_message = AMQPAnnotatedMessage(self.message) # type: AMQPAnnotatedMessage
+        self.raw_amqp_message = AMQPAnnotatedMessage(
+            self.message
+        )  # type: AMQPAnnotatedMessage
 
     def __str__(self):
         return str(self.message)
 
     def _build_message(self, body):
-        if not (isinstance(body, (six.string_types, six.binary_type)) or (body is None)):
-            raise TypeError("ServiceBusMessage body must be a string, bytes, or None.  Got instead: {}".format(
-                type(body)))
+        if not (
+            isinstance(body, (six.string_types, six.binary_type)) or (body is None)
+        ):
+            raise TypeError(
+                "ServiceBusMessage body must be a string, bytes, or None.  Got instead: {}".format(
+                    type(body)
+                )
+            )
 
-        self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
+        self.message = uamqp.Message(
+            body, properties=self._amqp_properties, header=self._amqp_header
+        )
 
     def _set_message_annotations(self, key, value):
         if not self.message.annotations:
@@ -147,7 +162,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     def _to_outgoing_message(self):
         # type: () -> ServiceBusMessage
         self.message.state = MessageState.WaitingToBeSent
-        self.message._response = None # pylint: disable=protected-access
+        self.message._response = None  # pylint: disable=protected-access
         return self
 
     @property
@@ -164,7 +179,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         :rtype: str
         """
         try:
-            return self._amqp_properties.group_id.decode('UTF-8')
+            return self._amqp_properties.group_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
             return self._amqp_properties.group_id
 
@@ -172,7 +187,11 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     def session_id(self, value):
         # type: (str) -> None
         if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
-            raise ValueError("session_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
+            raise ValueError(
+                "session_id cannot be longer than {} characters.".format(
+                    MESSAGE_PROPERTY_MAX_LENGTH
+                )
+            )
 
         self._amqp_properties.group_id = value
 
@@ -193,7 +212,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     @property
     def partition_key(self):
         # type: () -> Optional[str]
-        """ The partition key for sending a message to a partitioned entity.
+        """The partition key for sending a message to a partitioned entity.
 
         Setting this value enables assigning related messages to the same internal partition, so that submission
         sequence order is correctly recorded.
@@ -206,9 +225,10 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         """
         p_key = None
         try:
-            p_key = self.message.annotations.get(_X_OPT_PARTITION_KEY) or \
-                self.message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)
-            return p_key.decode('UTF-8')
+            p_key = self.message.annotations.get(
+                _X_OPT_PARTITION_KEY
+            ) or self.message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)
+            return p_key.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
             return p_key
 
@@ -216,11 +236,17 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     def partition_key(self, value):
         # type: (str) -> None
         if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
-            raise ValueError("partition_key cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
+            raise ValueError(
+                "partition_key cannot be longer than {} characters.".format(
+                    MESSAGE_PROPERTY_MAX_LENGTH
+                )
+            )
 
         if value and value != self.session_id:
             raise ValueError(
-                "partition_key:{} cannot be set to a different value than session_id:{}".format(value, self.session_id)
+                "partition_key:{} cannot be set to a different value than session_id:{}".format(
+                    value, self.session_id
+                )
             )
         self._set_message_annotations(_X_OPT_PARTITION_KEY, value)
 
@@ -268,11 +294,12 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         :rtype: ~datetime.datetime
         """
         if self.message.annotations:
-            timestamp = self.message.annotations.get(_X_OPT_SCHEDULED_ENQUEUE_TIME) or \
-                self.message.annotations.get(ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME)
+            timestamp = self.message.annotations.get(
+                _X_OPT_SCHEDULED_ENQUEUE_TIME
+            ) or self.message.annotations.get(ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME)
             if timestamp:
                 try:
-                    in_seconds = timestamp/1000.0
+                    in_seconds = timestamp / 1000.0
                     return utc_from_timestamp(in_seconds)
                 except TypeError:
                     return timestamp
@@ -305,7 +332,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         :rtype: str
         """
         try:
-            return self._amqp_properties.content_type.decode('UTF-8')
+            return self._amqp_properties.content_type.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
             return self._amqp_properties.content_type
 
@@ -329,7 +356,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         :rtype: str
         """
         try:
-            return self._amqp_properties.correlation_id.decode('UTF-8')
+            return self._amqp_properties.correlation_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
             return self._amqp_properties.correlation_id
 
@@ -349,7 +376,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         :rtype: str
         """
         try:
-            return self._amqp_properties.subject.decode('UTF-8')
+            return self._amqp_properties.subject.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
             return self._amqp_properties.subject
 
@@ -372,7 +399,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         :rtype: str
         """
         try:
-            return self._amqp_properties.message_id.decode('UTF-8')
+            return self._amqp_properties.message_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
             return self._amqp_properties.message_id
 
@@ -380,7 +407,11 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     def message_id(self, value):
         # type: (str) -> None
         if value and len(str(value)) > MESSAGE_PROPERTY_MAX_LENGTH:
-            raise ValueError("message_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
+            raise ValueError(
+                "message_id cannot be longer than {} characters.".format(
+                    MESSAGE_PROPERTY_MAX_LENGTH
+                )
+            )
 
         self._amqp_properties.message_id = value
 
@@ -400,7 +431,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         :rtype: str
         """
         try:
-            return self._amqp_properties.reply_to.decode('UTF-8')
+            return self._amqp_properties.reply_to.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
             return self._amqp_properties.reply_to
 
@@ -424,7 +455,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         :rtype: str
         """
         try:
-            return self._amqp_properties.reply_to_group_id.decode('UTF-8')
+            return self._amqp_properties.reply_to_group_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
             return self._amqp_properties.reply_to_group_id
 
@@ -433,7 +464,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         # type: (str) -> None
         if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError(
-                "reply_to_session_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH)
+                "reply_to_session_id cannot be longer than {} characters.".format(
+                    MESSAGE_PROPERTY_MAX_LENGTH
+                )
             )
 
         self._amqp_properties.reply_to_group_id = value
@@ -452,7 +485,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         :rtype: str
         """
         try:
-            return self._amqp_properties.to.decode('UTF-8')
+            return self._amqp_properties.to.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
             return self._amqp_properties.to
 
@@ -477,10 +510,15 @@ class ServiceBusMessageBatch(object):
     :param Optional[int] max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object
      can hold.
     """
+
     def __init__(self, max_size_in_bytes=None):
         # type: (Optional[int]) -> None
-        self.message = uamqp.BatchMessage(data=[], multi_messages=False, properties=None)
-        self._max_size_in_bytes = max_size_in_bytes or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
+        self.message = uamqp.BatchMessage(
+            data=[], multi_messages=False, properties=None
+        )
+        self._max_size_in_bytes = (
+            max_size_in_bytes or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
+        )
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
         self._messages = []  # type: List[ServiceBusMessage]
@@ -500,8 +538,12 @@ class ServiceBusMessageBatch(object):
         # type: (Iterable[ServiceBusMessage], AbstractSpan) -> None
         for each in messages:
             if not isinstance(each, ServiceBusMessage):
-                raise TypeError("Only ServiceBusMessage or an iterable object containing ServiceBusMessage "
-                                "objects are accepted. Received instead: {}".format(each.__class__.__name__))
+                raise TypeError(
+                    "Only ServiceBusMessage or an iterable object containing ServiceBusMessage "
+                    "objects are accepted. Received instead: {}".format(
+                        each.__class__.__name__
+                    )
+                )
             self._add(each, parent_span)
 
     @property
@@ -541,7 +583,9 @@ class ServiceBusMessageBatch(object):
         # type: (ServiceBusMessage, AbstractSpan) -> None
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         message = transform_messages_to_sendable_if_needed(message)
-        trace_message(message, parent_span) # parent_span is e.g. if built as part of a send operation.
+        trace_message(
+            message, parent_span
+        )  # parent_span is e.g. if built as part of a send operation.
         message_size = message.message.get_message_encoded_size()
 
         # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to
@@ -582,20 +626,25 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             :caption: Checking the properties on a received message.
 
     """
+
     def __init__(self, message, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, **kwargs):
         # type: (uamqp.message.Message, Union[ServiceBusReceiveMode, str], Any) -> None
         super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
-        self._settled = (receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE)
+        self._settled = receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self._is_peeked_message = kwargs.get("is_peeked_message", False)
         self.auto_renew_error = None  # type: Optional[Exception]
         try:
-            self._receiver = kwargs.pop("receiver")  # type: Union[ServiceBusReceiver, AsyncServiceBusReceiver]
+            self._receiver = kwargs.pop(
+                "receiver"
+            )  # type: Union[ServiceBusReceiver, AsyncServiceBusReceiver]
         except KeyError:
-            raise TypeError("ServiceBusReceivedMessage requires a receiver to be initialized. " +
-                            "This class should never be initialized by a user; " +
-                            "for outgoing messages, the ServiceBusMessage class should be utilized instead.")
+            raise TypeError(
+                "ServiceBusReceivedMessage requires a receiver to be initialized. "
+                + "This class should never be initialized by a user; "
+                + "for outgoing messages, the ServiceBusMessage class should be utilized instead."
+            )
         self._expiry = None  # type: Optional[datetime.datetime]
 
     @property
@@ -609,7 +658,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         """
         try:
             if self._receiver.session:  # type: ignore
-                raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
+                raise TypeError(
+                    "Session messages do not expire. Please use the Session expiry instead."
+                )
         except AttributeError:  # Is not a session receiver
             pass
         if self.locked_until_utc and self.locked_until_utc <= utc_now():
@@ -622,7 +673,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         amqp_body = amqp_message._body  # pylint: disable=protected-access
 
         if isinstance(amqp_body, uamqp.message.DataBody):
-            body = b''.join(amqp_body.data)
+            body = b"".join(amqp_body.data)
         else:
             # amqp_body is type of uamqp.message.ValueBody
             body = amqp_body.data
@@ -640,7 +691,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             session_id=self.session_id,
             scheduled_enqueue_time_utc=self.scheduled_enqueue_time_utc,
             time_to_live=self.time_to_live,
-            to=self.to
+            to=self.to,
         )
 
     @property
@@ -653,7 +704,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         """
         if self.message.application_properties:
             try:
-                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION).decode('UTF-8')
+                return self.message.application_properties.get(
+                    PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION
+                ).decode("UTF-8")
             except AttributeError:
                 pass
         return None
@@ -668,7 +721,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         """
         if self.message.application_properties:
             try:
-                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_REASON).decode('UTF-8')
+                return self.message.application_properties.get(
+                    PROPERTIES_DEAD_LETTER_REASON
+                ).decode("UTF-8")
             except AttributeError:
                 pass
         return None
@@ -685,7 +740,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         """
         if self.message.annotations:
             try:
-                return self.message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode('UTF-8')
+                return self.message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode(
+                    "UTF-8"
+                )
             except AttributeError:
                 pass
         return None
@@ -727,7 +784,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         if self.message.annotations:
             timestamp = self.message.annotations.get(_X_OPT_ENQUEUED_TIME)
             if timestamp:
-                in_seconds = timestamp/1000.0
+                in_seconds = timestamp / 1000.0
                 return utc_from_timestamp(in_seconds)
         return None
 
@@ -799,7 +856,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         if self._expiry:
             return self._expiry
         if self.message.annotations and _X_OPT_LOCKED_UNTIL in self.message.annotations:
-            expiry_in_seconds = self.message.annotations[_X_OPT_LOCKED_UNTIL]/1000
+            expiry_in_seconds = self.message.annotations[_X_OPT_LOCKED_UNTIL] / 1000
             self._expiry = utc_from_timestamp(expiry_in_seconds)
         return self._expiry
 
@@ -808,6 +865,7 @@ class AMQPAnnotatedMessage(object):
     """
     The internal AMQP message that this ServiceBusMessage represents.  Is read-only.
     """
+
     def __init__(self, message):
         # type: (uamqp.Message) -> None
         self._message = message
@@ -820,21 +878,22 @@ class AMQPAnnotatedMessage(object):
 
         :rtype: ~uamqp.message.MessageProperties
         """
-        return uamqp.message.MessageProperties(message_id=self._message.properties.message_id,
-                                               user_id=self._message.properties.user_id,
-                                               to=self._message.properties.to,
-                                               subject=self._message.properties.subject,
-                                               reply_to=self._message.properties.reply_to,
-                                               correlation_id=self._message.properties.correlation_id,
-                                               content_type=self._message.properties.content_type,
-                                               content_encoding=self._message.properties.content_encoding
-                                               )
+        return uamqp.message.MessageProperties(
+            message_id=self._message.properties.message_id,
+            user_id=self._message.properties.user_id,
+            to=self._message.properties.to,
+            subject=self._message.properties.subject,
+            reply_to=self._message.properties.reply_to,
+            correlation_id=self._message.properties.correlation_id,
+            content_type=self._message.properties.content_type,
+            content_encoding=self._message.properties.content_encoding,
+        )
 
     # NOTE: These are disabled pending arch. design and cross-sdk consensus on
     # how we will expose sendability of amqp focused messages. To undo, uncomment and remove deepcopies/workarounds.
     #
-    #@properties.setter
-    #def properties(self, value):
+    # @properties.setter
+    # def properties(self, value):
     #    self._message.properties = value
 
     @property
@@ -847,8 +906,8 @@ class AMQPAnnotatedMessage(object):
         """
         return copy.deepcopy(self._message.application_properties)
 
-    #@application_properties.setter
-    #def application_properties(self, value):
+    # @application_properties.setter
+    # def application_properties(self, value):
     #    self._message.application_properties = value
 
     @property
@@ -862,8 +921,8 @@ class AMQPAnnotatedMessage(object):
         """
         return copy.deepcopy(self._message.annotations)
 
-    #@annotations.setter
-    #def annotations(self, value):
+    # @annotations.setter
+    # def annotations(self, value):
     #    self._message.annotations = value
 
     @property
@@ -878,8 +937,8 @@ class AMQPAnnotatedMessage(object):
         """
         return copy.deepcopy(self._message.delivery_annotations)
 
-    #@delivery_annotations.setter
-    #def delivery_annotations(self, value):
+    # @delivery_annotations.setter
+    # def delivery_annotations(self, value):
     #    self._message.delivery_annotations = value
 
     @property
@@ -892,8 +951,8 @@ class AMQPAnnotatedMessage(object):
         """
         return uamqp.message.MessageHeader(header=self._message.header)
 
-    #@header.setter
-    #def header(self, value):
+    # @header.setter
+    # def header(self, value):
     #    self._message.header = value
 
     @property
@@ -906,6 +965,6 @@ class AMQPAnnotatedMessage(object):
         """
         return copy.deepcopy(self._message.footer)
 
-    #@footer.setter
-    #def footer(self, value):
+    # @footer.setter
+    # def footer(self, value):
     #    self._message.footer = value

@@ -1,7 +1,7 @@
 trigger: none
 
-jobs:
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       AllocateResourceGroup: 'false'
       ServiceDirectory: identity

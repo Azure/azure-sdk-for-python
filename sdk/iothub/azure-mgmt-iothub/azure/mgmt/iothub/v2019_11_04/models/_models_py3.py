@@ -43,7 +43,7 @@ class CertificateDescription(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param properties: The description of an X509 CA Certificate.
-    :type properties: ~azure.mgmt.iothub.v2019_11_04.models.CertificateProperties
+    :type properties: ~azure.mgmt.iothub.models.CertificateProperties
     :ivar id: The resource identifier.
     :vartype id: str
     :ivar name: The name of the certificate.
@@ -87,7 +87,7 @@ class CertificateListDescription(msrest.serialization.Model):
     """The JSON-serialized array of Certificate objects.
 
     :param value: The array of Certificate objects.
-    :type value: list[~azure.mgmt.iothub.v2019_11_04.models.CertificateDescription]
+    :type value: list[~azure.mgmt.iothub.models.CertificateDescription]
     """
 
     _attribute_map = {
@@ -250,7 +250,7 @@ class CertificateWithNonceDescription(msrest.serialization.Model):
 
     :param properties: The description of an X509 CA Certificate including the challenge nonce
      issued for the Proof-Of-Possession flow.
-    :type properties: ~azure.mgmt.iothub.v2019_11_04.models.CertificatePropertiesWithNonce
+    :type properties: ~azure.mgmt.iothub.models.CertificatePropertiesWithNonce
     :ivar id: The resource identifier.
     :vartype id: str
     :ivar name: The name of the certificate.
@@ -302,7 +302,7 @@ class CloudToDeviceProperties(msrest.serialization.Model):
      to-device-messages.
     :type default_ttl_as_iso8601: ~datetime.timedelta
     :param feedback: The properties of the feedback queue for cloud-to-device messages.
-    :type feedback: ~azure.mgmt.iothub.v2019_11_04.models.FeedbackProperties
+    :type feedback: ~azure.mgmt.iothub.models.FeedbackProperties
     """
 
     _validation = {
@@ -344,7 +344,7 @@ class EndpointHealthData(msrest.serialization.Model):
      the IoT Hub has not established a connection with the endpoint. No messages have been delivered
      to or rejected from this endpoint. Possible values include: "unknown", "healthy", "unhealthy",
      "dead".
-    :type health_status: str or ~azure.mgmt.iothub.v2019_11_04.models.EndpointHealthStatus
+    :type health_status: str or ~azure.mgmt.iothub.models.EndpointHealthStatus
     """
 
     _attribute_map = {
@@ -370,7 +370,7 @@ class EndpointHealthDataListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: JSON-serialized array of Endpoint health data.
-    :type value: list[~azure.mgmt.iothub.v2019_11_04.models.EndpointHealthData]
+    :type value: list[~azure.mgmt.iothub.models.EndpointHealthData]
     :ivar next_link: Link to more results.
     :vartype next_link: str
     """
@@ -527,7 +527,7 @@ class EventHubConsumerGroupsListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: List of consumer groups objects.
-    :type value: list[~azure.mgmt.iothub.v2019_11_04.models.EventHubConsumerGroupInfo]
+    :type value: list[~azure.mgmt.iothub.models.EventHubConsumerGroupInfo]
     :ivar next_link: The next link.
     :vartype next_link: str
     """
@@ -673,7 +673,7 @@ class FallbackRouteProperties(msrest.serialization.Model):
     :param source: Required. The source to which the routing rule is to be applied to. For example,
      DeviceMessages. Possible values include: "Invalid", "DeviceMessages", "TwinChangeEvents",
      "DeviceLifecycleEvents", "DeviceJobLifecycleEvents".
-    :type source: str or ~azure.mgmt.iothub.v2019_11_04.models.RoutingSource
+    :type source: str or ~azure.mgmt.iothub.models.RoutingSource
     :param condition: The condition which is evaluated in order to apply the fallback route. If the
      condition is not provided it will evaluate to true by default. For grammar, See:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language.
@@ -803,7 +803,7 @@ class IotHubCapacity(msrest.serialization.Model):
     :vartype default: long
     :ivar scale_type: The type of the scaling enabled. Possible values include: "Automatic",
      "Manual", "None".
-    :vartype scale_type: str or ~azure.mgmt.iothub.v2019_11_04.models.IotHubScaleType
+    :vartype scale_type: str or ~azure.mgmt.iothub.models.IotHubScaleType
     """
 
     _validation = {
@@ -901,9 +901,9 @@ class IotHubDescription(Resource):
      also be provided as a header per the normal ETag convention.
     :type etag: str
     :param properties: IotHub properties.
-    :type properties: ~azure.mgmt.iothub.v2019_11_04.models.IotHubProperties
+    :type properties: ~azure.mgmt.iothub.models.IotHubProperties
     :param sku: Required. IotHub SKU info.
-    :type sku: ~azure.mgmt.iothub.v2019_11_04.models.IotHubSkuInfo
+    :type sku: ~azure.mgmt.iothub.models.IotHubSkuInfo
     """
 
     _validation = {
@@ -947,7 +947,7 @@ class IotHubDescriptionListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: The array of IotHubDescription objects.
-    :type value: list[~azure.mgmt.iothub.v2019_11_04.models.IotHubDescription]
+    :type value: list[~azure.mgmt.iothub.models.IotHubDescription]
     :ivar next_link: The next link.
     :vartype next_link: str
     """
@@ -981,7 +981,7 @@ class IotHubLocationDescription(msrest.serialization.Model):
      where the IoT hub is currently provisioned. The secondary region is the Azure disaster recovery
      (DR) paired region and also the region where the IoT hub can failover to. Possible values
      include: "primary", "secondary".
-    :type role: str or ~azure.mgmt.iothub.v2019_11_04.models.IotHubReplicaRoleType
+    :type role: str or ~azure.mgmt.iothub.models.IotHubReplicaRoleType
     """
 
     _attribute_map = {
@@ -1010,7 +1010,7 @@ class IotHubNameAvailabilityInfo(msrest.serialization.Model):
     :vartype name_available: bool
     :ivar reason: The reason for unavailability. Possible values include: "Invalid",
      "AlreadyExists".
-    :vartype reason: str or ~azure.mgmt.iothub.v2019_11_04.models.IotHubNameUnavailabilityReason
+    :vartype reason: str or ~azure.mgmt.iothub.models.IotHubNameUnavailabilityReason
     :param message: The detailed reason message.
     :type message: str
     """
@@ -1046,9 +1046,9 @@ class IotHubProperties(msrest.serialization.Model):
     :param authorization_policies: The shared access policies you can use to secure a connection to
      the IoT hub.
     :type authorization_policies:
-     list[~azure.mgmt.iothub.v2019_11_04.models.SharedAccessSignatureAuthorizationRule]
+     list[~azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule]
     :param ip_filter_rules: The IP filter rules.
-    :type ip_filter_rules: list[~azure.mgmt.iothub.v2019_11_04.models.IpFilterRule]
+    :type ip_filter_rules: list[~azure.mgmt.iothub.models.IpFilterRule]
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
     :ivar state: The hub state.
@@ -1058,32 +1058,30 @@ class IotHubProperties(msrest.serialization.Model):
     :param event_hub_endpoints: The Event Hub-compatible endpoint properties. The only possible
      keys to this dictionary is events. This key has to be present in the dictionary while making
      create or update calls for the IoT hub.
-    :type event_hub_endpoints: dict[str, ~azure.mgmt.iothub.v2019_11_04.models.EventHubProperties]
+    :type event_hub_endpoints: dict[str, ~azure.mgmt.iothub.models.EventHubProperties]
     :param routing: The routing related properties of the IoT hub. See:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging.
-    :type routing: ~azure.mgmt.iothub.v2019_11_04.models.RoutingProperties
+    :type routing: ~azure.mgmt.iothub.models.RoutingProperties
     :param storage_endpoints: The list of Azure Storage endpoints where you can upload files.
      Currently you can configure only one Azure Storage account and that MUST have its key as
      $default. Specifying more than one storage account causes an error to be thrown. Not specifying
      a value for this property when the enableFileUploadNotifications property is set to True,
      causes an error to be thrown.
-    :type storage_endpoints: dict[str,
-     ~azure.mgmt.iothub.v2019_11_04.models.StorageEndpointProperties]
+    :type storage_endpoints: dict[str, ~azure.mgmt.iothub.models.StorageEndpointProperties]
     :param messaging_endpoints: The messaging endpoint properties for the file upload notification
      queue.
-    :type messaging_endpoints: dict[str,
-     ~azure.mgmt.iothub.v2019_11_04.models.MessagingEndpointProperties]
+    :type messaging_endpoints: dict[str, ~azure.mgmt.iothub.models.MessagingEndpointProperties]
     :param enable_file_upload_notifications: If True, file upload notifications are enabled.
     :type enable_file_upload_notifications: bool
     :param cloud_to_device: The IoT hub cloud-to-device messaging properties.
-    :type cloud_to_device: ~azure.mgmt.iothub.v2019_11_04.models.CloudToDeviceProperties
+    :type cloud_to_device: ~azure.mgmt.iothub.models.CloudToDeviceProperties
     :param comments: IoT hub comments.
     :type comments: str
     :param features: The capabilities and features enabled for the IoT hub. Possible values
      include: "None", "DeviceManagement".
-    :type features: str or ~azure.mgmt.iothub.v2019_11_04.models.Capabilities
+    :type features: str or ~azure.mgmt.iothub.models.Capabilities
     :ivar locations: Primary and secondary location for iot hub.
-    :vartype locations: list[~azure.mgmt.iothub.v2019_11_04.models.IotHubLocationDescription]
+    :vartype locations: list[~azure.mgmt.iothub.models.IotHubLocationDescription]
     """
 
     _validation = {
@@ -1183,7 +1181,7 @@ class IotHubQuotaMetricInfoListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: The array of quota metrics objects.
-    :type value: list[~azure.mgmt.iothub.v2019_11_04.models.IotHubQuotaMetricInfo]
+    :type value: list[~azure.mgmt.iothub.models.IotHubQuotaMetricInfo]
     :ivar next_link: The next link.
     :vartype next_link: str
     """
@@ -1218,9 +1216,9 @@ class IotHubSkuDescription(msrest.serialization.Model):
     :ivar resource_type: The type of the resource.
     :vartype resource_type: str
     :param sku: Required. The type of the resource.
-    :type sku: ~azure.mgmt.iothub.v2019_11_04.models.IotHubSkuInfo
+    :type sku: ~azure.mgmt.iothub.models.IotHubSkuInfo
     :param capacity: Required. IotHub capacity.
-    :type capacity: ~azure.mgmt.iothub.v2019_11_04.models.IotHubCapacity
+    :type capacity: ~azure.mgmt.iothub.models.IotHubCapacity
     """
 
     _validation = {
@@ -1254,7 +1252,7 @@ class IotHubSkuDescriptionListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: The array of IotHubSkuDescription.
-    :type value: list[~azure.mgmt.iothub.v2019_11_04.models.IotHubSkuDescription]
+    :type value: list[~azure.mgmt.iothub.models.IotHubSkuDescription]
     :ivar next_link: The next link.
     :vartype next_link: str
     """
@@ -1288,10 +1286,10 @@ class IotHubSkuInfo(msrest.serialization.Model):
 
     :param name: Required. The name of the SKU. Possible values include: "F1", "S1", "S2", "S3",
      "B1", "B2", "B3".
-    :type name: str or ~azure.mgmt.iothub.v2019_11_04.models.IotHubSku
+    :type name: str or ~azure.mgmt.iothub.models.IotHubSku
     :ivar tier: The billing tier for the IoT hub. Possible values include: "Free", "Standard",
      "Basic".
-    :vartype tier: str or ~azure.mgmt.iothub.v2019_11_04.models.IotHubSkuTier
+    :vartype tier: str or ~azure.mgmt.iothub.models.IotHubSkuTier
     :param capacity: The number of provisioned IoT Hub units. See:
      https://docs.microsoft.com/azure/azure-subscription-service-limits#iot-hub-limits.
     :type capacity: long
@@ -1330,7 +1328,7 @@ class IpFilterRule(msrest.serialization.Model):
     :type filter_name: str
     :param action: Required. The desired action for requests captured by this rule. Possible values
      include: "Accept", "Reject".
-    :type action: str or ~azure.mgmt.iothub.v2019_11_04.models.IpFilterActionType
+    :type action: str or ~azure.mgmt.iothub.models.IpFilterActionType
     :param ip_mask: Required. A string that contains the IP address range in CIDR notation for the
      rule.
     :type ip_mask: str
@@ -1376,10 +1374,10 @@ class JobResponse(msrest.serialization.Model):
     :ivar type: The type of the job. Possible values include: "unknown", "export", "import",
      "backup", "readDeviceProperties", "writeDeviceProperties", "updateDeviceConfiguration",
      "rebootDevice", "factoryResetDevice", "firmwareUpdate".
-    :vartype type: str or ~azure.mgmt.iothub.v2019_11_04.models.JobType
+    :vartype type: str or ~azure.mgmt.iothub.models.JobType
     :ivar status: The status of the job. Possible values include: "unknown", "enqueued", "running",
      "completed", "failed", "cancelled".
-    :vartype status: str or ~azure.mgmt.iothub.v2019_11_04.models.JobStatus
+    :vartype status: str or ~azure.mgmt.iothub.models.JobStatus
     :ivar failure_reason: If status == failed, this string containing the reason for the failure.
     :vartype failure_reason: str
     :ivar status_message: The status message for the job.
@@ -1431,7 +1429,7 @@ class JobResponseListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: The array of JobResponse objects.
-    :type value: list[~azure.mgmt.iothub.v2019_11_04.models.JobResponse]
+    :type value: list[~azure.mgmt.iothub.models.JobResponse]
     :ivar next_link: The next link.
     :vartype next_link: str
     """
@@ -1460,7 +1458,7 @@ class MatchedRoute(msrest.serialization.Model):
     """Routes that matched.
 
     :param properties: Properties of routes that matched.
-    :type properties: ~azure.mgmt.iothub.v2019_11_04.models.RouteProperties
+    :type properties: ~azure.mgmt.iothub.models.RouteProperties
     """
 
     _attribute_map = {
@@ -1550,7 +1548,7 @@ class Operation(msrest.serialization.Model):
     :ivar name: Operation name: {provider}/{resource}/{read | write | action | delete}.
     :vartype name: str
     :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.iothub.v2019_11_04.models.OperationDisplay
+    :type display: ~azure.mgmt.iothub.models.OperationDisplay
     """
 
     _validation = {
@@ -1646,7 +1644,7 @@ class OperationListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of IoT Hub operations supported by the Microsoft.Devices resource provider.
-    :vartype value: list[~azure.mgmt.iothub.v2019_11_04.models.Operation]
+    :vartype value: list[~azure.mgmt.iothub.models.Operation]
     :ivar next_link: URL to get the next set of operation list results if there are any.
     :vartype next_link: str
     """
@@ -1711,9 +1709,9 @@ class RouteCompilationError(msrest.serialization.Model):
     :param message: Route error message.
     :type message: str
     :param severity: Severity of the route error. Possible values include: "error", "warning".
-    :type severity: str or ~azure.mgmt.iothub.v2019_11_04.models.RouteErrorSeverity
+    :type severity: str or ~azure.mgmt.iothub.models.RouteErrorSeverity
     :param location: Location where the route error happened.
-    :type location: ~azure.mgmt.iothub.v2019_11_04.models.RouteErrorRange
+    :type location: ~azure.mgmt.iothub.models.RouteErrorRange
     """
 
     _attribute_map = {
@@ -1766,9 +1764,9 @@ class RouteErrorRange(msrest.serialization.Model):
     """Range of route errors.
 
     :param start: Start where the route error happened.
-    :type start: ~azure.mgmt.iothub.v2019_11_04.models.RouteErrorPosition
+    :type start: ~azure.mgmt.iothub.models.RouteErrorPosition
     :param end: End where the route error happened.
-    :type end: ~azure.mgmt.iothub.v2019_11_04.models.RouteErrorPosition
+    :type end: ~azure.mgmt.iothub.models.RouteErrorPosition
     """
 
     _attribute_map = {
@@ -1800,7 +1798,7 @@ class RouteProperties(msrest.serialization.Model):
     :param source: Required. The source that the routing rule is to be applied to, such as
      DeviceMessages. Possible values include: "Invalid", "DeviceMessages", "TwinChangeEvents",
      "DeviceLifecycleEvents", "DeviceJobLifecycleEvents".
-    :type source: str or ~azure.mgmt.iothub.v2019_11_04.models.RoutingSource
+    :type source: str or ~azure.mgmt.iothub.models.RoutingSource
     :param condition: The condition that is evaluated to apply the routing rule. If no condition is
      provided, it evaluates to true by default. For grammar, see:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language.
@@ -1851,18 +1849,17 @@ class RoutingEndpoints(msrest.serialization.Model):
     :param service_bus_queues: The list of Service Bus queue endpoints that IoT hub routes the
      messages to, based on the routing rules.
     :type service_bus_queues:
-     list[~azure.mgmt.iothub.v2019_11_04.models.RoutingServiceBusQueueEndpointProperties]
+     list[~azure.mgmt.iothub.models.RoutingServiceBusQueueEndpointProperties]
     :param service_bus_topics: The list of Service Bus topic endpoints that the IoT hub routes the
      messages to, based on the routing rules.
     :type service_bus_topics:
-     list[~azure.mgmt.iothub.v2019_11_04.models.RoutingServiceBusTopicEndpointProperties]
+     list[~azure.mgmt.iothub.models.RoutingServiceBusTopicEndpointProperties]
     :param event_hubs: The list of Event Hubs endpoints that IoT hub routes messages to, based on
      the routing rules. This list does not include the built-in Event Hubs endpoint.
-    :type event_hubs: list[~azure.mgmt.iothub.v2019_11_04.models.RoutingEventHubProperties]
+    :type event_hubs: list[~azure.mgmt.iothub.models.RoutingEventHubProperties]
     :param storage_containers: The list of storage container endpoints that IoT hub routes messages
      to, based on the routing rules.
-    :type storage_containers:
-     list[~azure.mgmt.iothub.v2019_11_04.models.RoutingStorageContainerProperties]
+    :type storage_containers: list[~azure.mgmt.iothub.models.RoutingStorageContainerProperties]
     """
 
     _attribute_map = {
@@ -1972,19 +1969,19 @@ class RoutingProperties(msrest.serialization.Model):
      messages based on the routing rules. A maximum of 10 custom endpoints are allowed across all
      endpoint types for paid hubs and only 1 custom endpoint is allowed across all endpoint types
      for free hubs.
-    :type endpoints: ~azure.mgmt.iothub.v2019_11_04.models.RoutingEndpoints
+    :type endpoints: ~azure.mgmt.iothub.models.RoutingEndpoints
     :param routes: The list of user-provided routing rules that the IoT hub uses to route messages
      to built-in and custom endpoints. A maximum of 100 routing rules are allowed for paid hubs and
      a maximum of 5 routing rules are allowed for free hubs.
-    :type routes: list[~azure.mgmt.iothub.v2019_11_04.models.RouteProperties]
+    :type routes: list[~azure.mgmt.iothub.models.RouteProperties]
     :param fallback_route: The properties of the route that is used as a fall-back route when none
      of the conditions specified in the 'routes' section are met. This is an optional parameter.
      When this property is not set, the messages which do not meet any of the conditions specified
      in the 'routes' section get routed to the built-in eventhub endpoint.
-    :type fallback_route: ~azure.mgmt.iothub.v2019_11_04.models.FallbackRouteProperties
+    :type fallback_route: ~azure.mgmt.iothub.models.FallbackRouteProperties
     :param enrichments: The list of user-provided enrichments that the IoT hub applies to messages
      to be delivered to built-in and custom endpoints. See: https://aka.ms/telemetryoneventgrid.
-    :type enrichments: list[~azure.mgmt.iothub.v2019_11_04.models.EnrichmentProperties]
+    :type enrichments: list[~azure.mgmt.iothub.models.EnrichmentProperties]
     """
 
     _attribute_map = {
@@ -2135,8 +2132,7 @@ class RoutingStorageContainerProperties(msrest.serialization.Model):
     :param encoding: Encoding that is used to serialize messages to blobs. Supported values are
      'avro', 'avrodeflate', and 'JSON'. Default value is 'avro'. Possible values include: "Avro",
      "AvroDeflate", "JSON".
-    :type encoding: str or
-     ~azure.mgmt.iothub.v2019_11_04.models.RoutingStorageContainerPropertiesEncoding
+    :type encoding: str or ~azure.mgmt.iothub.models.RoutingStorageContainerPropertiesEncoding
     """
 
     _validation = {
@@ -2191,7 +2187,7 @@ class RoutingTwin(msrest.serialization.Model):
     :param tags: A set of tags. Twin Tags.
     :type tags: object
     :param properties:
-    :type properties: ~azure.mgmt.iothub.v2019_11_04.models.RoutingTwinProperties
+    :type properties: ~azure.mgmt.iothub.models.RoutingTwinProperties
     """
 
     _attribute_map = {
@@ -2255,7 +2251,7 @@ class SharedAccessSignatureAuthorizationRule(msrest.serialization.Model):
      "RegistryRead, RegistryWrite, ServiceConnect", "RegistryRead, RegistryWrite, DeviceConnect",
      "RegistryRead, ServiceConnect, DeviceConnect", "RegistryWrite, ServiceConnect, DeviceConnect",
      "RegistryRead, RegistryWrite, ServiceConnect, DeviceConnect".
-    :type rights: str or ~azure.mgmt.iothub.v2019_11_04.models.AccessRights
+    :type rights: str or ~azure.mgmt.iothub.models.AccessRights
     """
 
     _validation = {
@@ -2292,7 +2288,7 @@ class SharedAccessSignatureAuthorizationRuleListResult(msrest.serialization.Mode
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value: The list of shared access policies.
-    :type value: list[~azure.mgmt.iothub.v2019_11_04.models.SharedAccessSignatureAuthorizationRule]
+    :type value: list[~azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule]
     :ivar next_link: The next link.
     :vartype next_link: str
     """
@@ -2385,11 +2381,11 @@ class TestAllRoutesInput(msrest.serialization.Model):
 
     :param routing_source: Routing source. Possible values include: "Invalid", "DeviceMessages",
      "TwinChangeEvents", "DeviceLifecycleEvents", "DeviceJobLifecycleEvents".
-    :type routing_source: str or ~azure.mgmt.iothub.v2019_11_04.models.RoutingSource
+    :type routing_source: str or ~azure.mgmt.iothub.models.RoutingSource
     :param message: Routing message.
-    :type message: ~azure.mgmt.iothub.v2019_11_04.models.RoutingMessage
+    :type message: ~azure.mgmt.iothub.models.RoutingMessage
     :param twin: Routing Twin Reference.
-    :type twin: ~azure.mgmt.iothub.v2019_11_04.models.RoutingTwin
+    :type twin: ~azure.mgmt.iothub.models.RoutingTwin
     """
 
     _attribute_map = {
@@ -2416,7 +2412,7 @@ class TestAllRoutesResult(msrest.serialization.Model):
     """Result of testing all routes.
 
     :param routes: JSON-serialized array of matched routes.
-    :type routes: list[~azure.mgmt.iothub.v2019_11_04.models.MatchedRoute]
+    :type routes: list[~azure.mgmt.iothub.models.MatchedRoute]
     """
 
     _attribute_map = {
@@ -2439,11 +2435,11 @@ class TestRouteInput(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param message: Routing message.
-    :type message: ~azure.mgmt.iothub.v2019_11_04.models.RoutingMessage
+    :type message: ~azure.mgmt.iothub.models.RoutingMessage
     :param route: Required. Route properties.
-    :type route: ~azure.mgmt.iothub.v2019_11_04.models.RouteProperties
+    :type route: ~azure.mgmt.iothub.models.RouteProperties
     :param twin: Routing Twin Reference.
-    :type twin: ~azure.mgmt.iothub.v2019_11_04.models.RoutingTwin
+    :type twin: ~azure.mgmt.iothub.models.RoutingTwin
     """
 
     _validation = {
@@ -2474,9 +2470,9 @@ class TestRouteResult(msrest.serialization.Model):
     """Result of testing one route.
 
     :param result: Result of testing route. Possible values include: "undefined", "false", "true".
-    :type result: str or ~azure.mgmt.iothub.v2019_11_04.models.TestResultStatus
+    :type result: str or ~azure.mgmt.iothub.models.TestResultStatus
     :param details: Detailed result of testing route.
-    :type details: ~azure.mgmt.iothub.v2019_11_04.models.TestRouteResultDetails
+    :type details: ~azure.mgmt.iothub.models.TestRouteResultDetails
     """
 
     _attribute_map = {
@@ -2500,7 +2496,7 @@ class TestRouteResultDetails(msrest.serialization.Model):
     """Detailed result of testing a route.
 
     :param compilation_errors: JSON-serialized list of route compilation errors.
-    :type compilation_errors: list[~azure.mgmt.iothub.v2019_11_04.models.RouteCompilationError]
+    :type compilation_errors: list[~azure.mgmt.iothub.models.RouteCompilationError]
     """
 
     _attribute_map = {
@@ -2531,7 +2527,7 @@ class UserSubscriptionQuota(msrest.serialization.Model):
     :param limit: Numerical limit on IotHub type.
     :type limit: int
     :param name: IotHub type.
-    :type name: ~azure.mgmt.iothub.v2019_11_04.models.Name
+    :type name: ~azure.mgmt.iothub.models.Name
     """
 
     _attribute_map = {
@@ -2569,7 +2565,7 @@ class UserSubscriptionQuotaListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param value:
-    :type value: list[~azure.mgmt.iothub.v2019_11_04.models.UserSubscriptionQuota]
+    :type value: list[~azure.mgmt.iothub.models.UserSubscriptionQuota]
     :ivar next_link:
     :vartype next_link: str
     """

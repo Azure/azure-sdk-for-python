@@ -26,6 +26,14 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class FieldRestrictionResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of restriction that is imposed on the field.
+    """
+
+    REQUIRED = "Required"  #: The field and/or values are required by policy.
+    REMOVED = "Removed"  #: The field will be removed by policy.
+    DENY = "Deny"  #: The field and/or values will be denied by policy.
+
 class PolicyStatesResource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     DEFAULT = "default"

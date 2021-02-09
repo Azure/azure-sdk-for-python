@@ -51,6 +51,30 @@ def authentication_administration_client_with_metrics_advisor_credential():
     # [END administration_client_with_metrics_advisor_credential]
 
 
+def authentication_client_with_aad():
+    # [START authentication_client_with_aad]
+    from azure.ai.metricsadvisor import MetricsAdvisorClient
+    from azure.identity import DefaultAzureCredential
+
+    service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
+    credential = DefaultAzureCredential()
+    client = MetricsAdvisorClient(service_endpoint, credential)
+    # [END authentication_client_with_aad]
+
+
+def authentication_administration_client_with_aad():
+    # [START administration_client_with_aad]
+    from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
+    from azure.identity import DefaultAzureCredential
+
+    service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
+    credential = DefaultAzureCredential()
+    client = MetricsAdvisorAdministrationClient(service_endpoint, credential)
+    # [END administration_client_with_aad]
+
+
 if __name__ == '__main__':
     authentication_client_with_metrics_advisor_credential()
     authentication_administration_client_with_metrics_advisor_credential()
+    authentication_client_with_aad()
+    authentication_administration_client_with_aad()

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ApplicationPackageOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,10 +51,10 @@ class ApplicationPackageOperations(object):
         account_name,  # type: str
         application_name,  # type: str
         version_name,  # type: str
-        parameters,  # type: "models.ActivateApplicationPackageParameters"
+        parameters,  # type: "_models.ActivateApplicationPackageParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ApplicationPackage"
+        # type: (...) -> "_models.ApplicationPackage"
         """Activates the specified application package. This should be done after the
         ``ApplicationPackage`` was created and uploaded. This needs to be done before an
         ``ApplicationPackage`` can be used on Pools or Tasks.
@@ -74,12 +74,12 @@ class ApplicationPackageOperations(object):
         :rtype: ~azure.mgmt.batch.models.ApplicationPackage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationPackage"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationPackage"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -128,10 +128,10 @@ class ApplicationPackageOperations(object):
         account_name,  # type: str
         application_name,  # type: str
         version_name,  # type: str
-        parameters=None,  # type: Optional["models.ApplicationPackage"]
+        parameters=None,  # type: Optional["_models.ApplicationPackage"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ApplicationPackage"
+        # type: (...) -> "_models.ApplicationPackage"
         """Creates an application package record. The record contains the SAS where the package should be
         uploaded to.  Once it is uploaded the ``ApplicationPackage`` needs to be activated using
         ``ApplicationPackageActive`` before it can be used.
@@ -151,12 +151,12 @@ class ApplicationPackageOperations(object):
         :rtype: ~azure.mgmt.batch.models.ApplicationPackage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationPackage"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationPackage"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -231,7 +231,7 @@ class ApplicationPackageOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -274,7 +274,7 @@ class ApplicationPackageOperations(object):
         version_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ApplicationPackage"
+        # type: (...) -> "_models.ApplicationPackage"
         """Gets information about the specified application package.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -290,12 +290,12 @@ class ApplicationPackageOperations(object):
         :rtype: ~azure.mgmt.batch.models.ApplicationPackage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationPackage"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationPackage"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -341,7 +341,7 @@ class ApplicationPackageOperations(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListApplicationPackagesResult"]
+        # type: (...) -> Iterable["_models.ListApplicationPackagesResult"]
         """Lists all of the application packages in the specified application.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -357,12 +357,12 @@ class ApplicationPackageOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.batch.models.ListApplicationPackagesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListApplicationPackagesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListApplicationPackagesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

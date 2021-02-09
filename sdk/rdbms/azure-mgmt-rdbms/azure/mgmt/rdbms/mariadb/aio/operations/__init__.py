@@ -12,15 +12,18 @@ from ._firewall_rules_operations import FirewallRulesOperations
 from ._virtual_network_rules_operations import VirtualNetworkRulesOperations
 from ._databases_operations import DatabasesOperations
 from ._configurations_operations import ConfigurationsOperations
+from ._server_parameters_operations import ServerParametersOperations
 from ._log_files_operations import LogFilesOperations
+from ._recoverable_servers_operations import RecoverableServersOperations
+from ._server_based_performance_tier_operations import ServerBasedPerformanceTierOperations
 from ._location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
 from ._check_name_availability_operations import CheckNameAvailabilityOperations
 from ._operations import Operations
 from ._query_texts_operations import QueryTextsOperations
 from ._top_query_statistics_operations import TopQueryStatisticsOperations
 from ._wait_statistics_operations import WaitStatisticsOperations
-from ._advisors_operations import AdvisorsOperations
 from ._maria_db_management_client_operations import MariaDBManagementClientOperationsMixin
+from ._advisors_operations import AdvisorsOperations
 from ._recommended_actions_operations import RecommendedActionsOperations
 from ._location_based_recommended_action_sessions_operation_status_operations import LocationBasedRecommendedActionSessionsOperationStatusOperations
 from ._location_based_recommended_action_sessions_result_operations import LocationBasedRecommendedActionSessionsResultOperations
@@ -35,15 +38,18 @@ __all__ = [
     'VirtualNetworkRulesOperations',
     'DatabasesOperations',
     'ConfigurationsOperations',
+    'ServerParametersOperations',
     'LogFilesOperations',
+    'RecoverableServersOperations',
+    'ServerBasedPerformanceTierOperations',
     'LocationBasedPerformanceTierOperations',
     'CheckNameAvailabilityOperations',
     'Operations',
     'QueryTextsOperations',
     'TopQueryStatisticsOperations',
     'WaitStatisticsOperations',
-    'AdvisorsOperations',
     'MariaDBManagementClientOperationsMixin',
+    'AdvisorsOperations',
     'RecommendedActionsOperations',
     'LocationBasedRecommendedActionSessionsOperationStatusOperations',
     'LocationBasedRecommendedActionSessionsResultOperations',
