@@ -3,7 +3,7 @@
 ## 1.0.0b4 (2020-20-09)
 
 ### Breaking Changes
-- CommunicationIdentityClient is moved to a new package: "azure.communication.identity"
+- CommunicationIdentityClient is moved to a new package: "azure.communication.identity".
 - Replaced CommunicationUser with CommunicationUserIdentifier.
 - Renamed CommunicationUserCredential to CommunicationTokenCredential.
 
