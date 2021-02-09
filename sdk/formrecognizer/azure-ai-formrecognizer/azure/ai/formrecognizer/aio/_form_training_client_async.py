@@ -26,15 +26,12 @@ from .._generated.models import (
     TrainRequest,
     TrainSourceFilter,
     CopyRequest,
-    CopyAuthorizationResult
+    CopyAuthorizationResult,
 )
-from .._models import (
-    CustomFormModelInfo,
-    AccountProperties,
-    CustomFormModel
-)
+from .._models import CustomFormModelInfo, AccountProperties, CustomFormModel
 from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._polling import TrainingPolling, CopyPolling
+
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
 
@@ -77,10 +74,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def begin_training(
-            self,
-            training_files_url: str,
-            use_training_labels: bool,
-            **kwargs: Any
+        self, training_files_url: str, use_training_labels: bool, **kwargs: Any
     ) -> AsyncLROPoller[CustomFormModel]:
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
@@ -134,9 +128,13 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         cls = kwargs.pop("cls", None)
         model_name = kwargs.pop("model_name", None)
         if model_name and self._api_version == "2.0":
-            raise ValueError("'model_name' is only available for API version V2_1_PREVIEW and up")
+            raise ValueError(
+                "'model_name' is only available for API version V2_1_PREVIEW and up"
+            )
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        polling_interval = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
+        )
 
         if self._api_version == "2.0":
             deserialization_callback = cls if cls else callback_v2_0
@@ -149,7 +147,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                     ),
                     continuation_token=continuation_token,
                     client=self._client._client,
-                    deserialization_callback=deserialization_callback
+                    deserialization_callback=deserialization_callback,
                 )
 
             response = await self._client.train_custom_model_async(
@@ -158,8 +156,8 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                     use_label_file=use_training_labels,
                     source_filter=TrainSourceFilter(
                         prefix=kwargs.pop("prefix", ""),
-                        include_sub_folders=kwargs.pop("include_subfolders", False)
-                    )
+                        include_sub_folders=kwargs.pop("include_subfolders", False),
+                    ),
                 ),
                 cls=lambda pipeline_response, _, response_headers: pipeline_response,
                 **kwargs
@@ -173,7 +171,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                     timeout=polling_interval,
                     lro_algorithms=[TrainingPolling()],
                     **kwargs
-                )
+                ),
             )
 
         deserialization_callback = cls if cls else callback_v2_1
@@ -185,11 +183,13 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                     prefix=kwargs.pop("prefix", ""),
                     include_sub_folders=kwargs.pop("include_subfolders", False),
                 ),
-                model_name=model_name
+                model_name=model_name,
             ),
             cls=deserialization_callback,
             continuation_token=continuation_token,
-            polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
+            polling=AsyncLROBasePolling(
+                timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs
+            ),
             **kwargs
         )
 
@@ -237,8 +237,15 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                 :caption: List model information for each model on the account.
         """
         return self._client.list_custom_models(  # type: ignore
-            cls=kwargs.pop("cls", lambda objs:
-            [CustomFormModelInfo._from_generated(x, api_version=self._api_version) for x in objs]),
+            cls=kwargs.pop(
+                "cls",
+                lambda objs: [
+                    CustomFormModelInfo._from_generated(
+                        x, api_version=self._api_version
+                    )
+                    for x in objs
+                ],
+            ),
             **kwargs
         )
 
@@ -289,16 +296,16 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         response = await self._client.get_custom_model(
             model_id=model_id, include_keys=True, **kwargs
         )
-        if hasattr(response, "composed_train_results") and response.composed_train_results:
+        if (
+            hasattr(response, "composed_train_results")
+            and response.composed_train_results
+        ):
             return CustomFormModel._from_generated_composed(response)
         return CustomFormModel._from_generated(response, api_version=self._api_version)
 
     @distributed_trace_async
     async def get_copy_authorization(
-            self,
-            resource_id: str,
-            resource_region: str,
-            **kwargs: Any
+        self, resource_id: str, resource_region: str, **kwargs: Any
     ) -> Dict[str, Union[str, int]]:
         """Generate authorization for copying a custom model into the target Form Recognizer resource.
         This should be called by the target resource (where the model will be copied to)
@@ -336,10 +343,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def begin_copy_model(
-        self,
-        model_id: str,
-        target: dict,
-        **kwargs: Any
+        self, model_id: str, target: dict, **kwargs: Any
     ) -> AsyncLROPoller[CustomFormModelInfo]:
         """Copy a custom model stored in this resource (the source) to the user specified
         target Form Recognizer resource. This should be called with the source Form Recognizer resource
@@ -371,19 +375,31 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        polling_interval = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
+        )
         continuation_token = kwargs.pop("continuation_token", None)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            copy_operation = self._deserialize(self._generated_models.CopyOperationResult, raw_response)
-            model_id = copy_operation.copy_result.model_id if hasattr(copy_operation, "copy_result") else None
+            copy_operation = self._deserialize(
+                self._generated_models.CopyOperationResult, raw_response
+            )
+            model_id = (
+                copy_operation.copy_result.model_id
+                if hasattr(copy_operation, "copy_result")
+                else None
+            )
             if model_id:
-                return CustomFormModelInfo._from_generated(copy_operation, model_id, api_version=self._api_version)
+                return CustomFormModelInfo._from_generated(
+                    copy_operation, model_id, api_version=self._api_version
+                )
             if target:
                 return CustomFormModelInfo._from_generated(
                     copy_operation, target["model_id"], api_version=self._api_version
                 )
-            return CustomFormModelInfo._from_generated(copy_operation, None, api_version=self._api_version)
+            return CustomFormModelInfo._from_generated(
+                copy_operation, None, api_version=self._api_version
+            )
 
         return await self._client.begin_copy_custom_model(  # type: ignore
             model_id=model_id,
@@ -393,14 +409,14 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                 copy_authorization=CopyAuthorizationResult(
                     access_token=target["accessToken"],
                     model_id=target["modelId"],
-                    expiration_date_time_ticks=target["expirationDateTimeTicks"]
-                )
-            ) if target else None,
+                    expiration_date_time_ticks=target["expirationDateTimeTicks"],
+                ),
+            )
+            if target
+            else None,
             cls=kwargs.pop("cls", _copy_callback),
             polling=AsyncLROBasePolling(
-                timeout=polling_interval,
-                lro_algorithms=[CopyPolling()],
-                **kwargs
+                timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs
             ),
             continuation_token=continuation_token,
             **kwargs
@@ -408,9 +424,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def begin_create_composed_model(
-        self,
-        model_ids: List[str],
-        **kwargs: Any
+        self, model_ids: List[str], **kwargs: Any
     ) -> AsyncLROPoller[CustomFormModel]:
         """Creates a composed model from a collection of existing models that were trained with labels.
 
@@ -441,19 +455,27 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                 :caption: Create a composed model
         """
 
-        def _compose_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+        def _compose_callback(
+            raw_response, _, headers
+        ):  # pylint: disable=unused-argument
             model = self._deserialize(self._generated_models.Model, raw_response)
             return CustomFormModel._from_generated_composed(model)
 
         model_name = kwargs.pop("model_name", None)
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        polling_interval = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
+        )
         continuation_token = kwargs.pop("continuation_token", None)
 
         try:
             return await self._client.begin_compose_custom_models_async(  # type: ignore
                 {"model_ids": model_ids, "model_name": model_name},
                 cls=kwargs.pop("cls", _compose_callback),
-                polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
+                polling=AsyncLROBasePolling(
+                    timeout=polling_interval,
+                    lro_algorithms=[TrainingPolling()],
+                    **kwargs
+                ),
                 continuation_token=continuation_token,
                 **kwargs
             )
@@ -470,7 +492,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._client._client._pipeline._transport),
-            policies=self._client._client._pipeline._impl_policies
+            policies=self._client._client._pipeline._impl_policies,
         )  # type: AsyncPipeline
         client = FormRecognizerClient(
             endpoint=self._endpoint,
@@ -491,6 +513,5 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:
-        """Close the :class:`~azure.ai.formrecognizer.aio.FormTrainingClient` session.
-        """
+        """Close the :class:`~azure.ai.formrecognizer.aio.FormTrainingClient` session."""
         await self._client.__aexit__()
