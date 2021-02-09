@@ -26,8 +26,10 @@ from azure.data.tables import (
     Metrics,
     TableServiceClient,
     TableItem,
-    generate_account_sas
+    generate_account_sas,
+    ResourceTypes
 )
+from azure.core.credentials import AzureSasCredential
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     HeadersPolicy,
@@ -515,6 +517,30 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         ts.delete_table(table)
         locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
+
+    @TablesPreparer()
+    def test_azure_sas_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+
+        token = generate_account_sas(
+            tables_storage_account_name,
+            tables_primary_storage_account_key,
+            ResourceTypes(),
+            AccountSasPermissions(read=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        client = TableServiceClient(
+            self.account_url(tables_storage_account_name, "table"),
+            credential=AzureSasCredential(token)
+        )
+
+        assert client is not None
+        total = 0
+        for table in client.list_tables():
+            total += 1
+
+        assert total
 
 
 class TestTablesUnitTest(TableTestCase):
