@@ -15,18 +15,19 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
-from ._configuration import PhoneNumberAdministrationServiceConfiguration
-from .operations import PhoneNumberAdministrationOperations
+from ._configuration import PhoneNumbersClientConfiguration
+from .operations import PhoneNumbersOperations
 from . import models
 
 
-class PhoneNumberAdministrationService(object):
-    """Phone Number Administration Service.
+class PhoneNumbersClient(object):
+    """The phone numbers client uses Azure Communication Services to acquire and manage phone numbers.
 
-    :ivar phone_number_administration: PhoneNumberAdministrationOperations operations
-    :vartype phone_number_administration: azure.communication.phonenumbers.operations.PhoneNumberAdministrationOperations
-    :param endpoint: The endpoint of the Azure Communication resource.
+    :ivar phone_numbers: PhoneNumbersOperations operations
+    :vartype phone_numbers: azure.communication.phonenumbers.operations.PhoneNumbersOperations
+    :param endpoint: The communication resource, for example https://resourcename.communication.azure.com.
     :type endpoint: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -36,15 +37,14 @@ class PhoneNumberAdministrationService(object):
     ):
         # type: (...) -> None
         base_url = '{endpoint}'
-        self._config = PhoneNumberAdministrationServiceConfiguration(endpoint, **kwargs)
+        self._config = PhoneNumbersClientConfiguration(endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.phone_number_administration = PhoneNumberAdministrationOperations(
+        self.phone_numbers = PhoneNumbersOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):
@@ -52,7 +52,7 @@ class PhoneNumberAdministrationService(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> PhoneNumberAdministrationService
+        # type: () -> PhoneNumbersClient
         self._client.__enter__()
         return self
 

@@ -11,18 +11,19 @@ from typing import Any
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
 
-from ._configuration import PhoneNumberAdministrationServiceConfiguration
-from .operations import PhoneNumberAdministrationOperations
+from ._configuration import PhoneNumbersClientConfiguration
+from .operations import PhoneNumbersOperations
 from .. import models
 
 
-class PhoneNumberAdministrationService(object):
-    """Phone Number Administration Service.
+class PhoneNumbersClient(object):
+    """The phone numbers client uses Azure Communication Services to acquire and manage phone numbers.
 
-    :ivar phone_number_administration: PhoneNumberAdministrationOperations operations
-    :vartype phone_number_administration: azure.communication.phonenumbers.aio.operations.PhoneNumberAdministrationOperations
-    :param endpoint: The endpoint of the Azure Communication resource.
+    :ivar phone_numbers: PhoneNumbersOperations operations
+    :vartype phone_numbers: azure.communication.phonenumbers.aio.operations.PhoneNumbersOperations
+    :param endpoint: The communication resource, for example https://resourcename.communication.azure.com.
     :type endpoint: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -31,21 +32,20 @@ class PhoneNumberAdministrationService(object):
         **kwargs: Any
     ) -> None:
         base_url = '{endpoint}'
-        self._config = PhoneNumberAdministrationServiceConfiguration(endpoint, **kwargs)
+        self._config = PhoneNumbersClientConfiguration(endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.phone_number_administration = PhoneNumberAdministrationOperations(
+        self.phone_numbers = PhoneNumbersOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "PhoneNumberAdministrationService":
+    async def __aenter__(self) -> "PhoneNumbersClient":
         await self._client.__aenter__()
         return self
 

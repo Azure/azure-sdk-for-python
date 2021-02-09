@@ -1,0 +1,41 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 09 Feb 2021 23:12:37 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/phoneNumbers/%2B16194895842?api-version=2021-03-07
+  response:
+    body:
+      string: '{"id": "16194895842", "phoneNumber": "+16194895842", "countryCode":
+        "US", "phoneNumberType": "Geographic", "capabilities": {"calling": "outbound",
+        "sms": "none"}, "assignmentType": "User", "callbackUri": null, "applicationId":
+        null}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 09 Feb 2021 23:12:38 GMT
+      ms-cv:
+      - wGv205MCmUqkevuR6YoXTw.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 953ms
+    status:
+      code: 200
+      message: OK
+version: 1
