@@ -13,7 +13,7 @@ except ImportError:
     import mock
 
 from azure.core.exceptions import HttpResponseError
-from azure.keyvault.keys import JsonWebKey, KeyClient, KeyCurveName, KeyVaultKey
+from azure.keyvault.keys import JsonWebKey, KeyClient, KeyCurveName, KeyType, KeyVaultKey
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys._shared import HttpChallengeCache
@@ -46,6 +46,8 @@ class CryptoClientTests(KeyVaultTestCase):
         super(CryptoClientTests, self).tearDown()
 
     plaintext = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
+    iv = codecs.decode("89b8adbfb07345e3598932a09c517441", "hex_codec")
+    aad = b"test"
 
     def create_key_client(self, vault_uri, **kwargs):
         credential = self.get_credential(KeyClient)
@@ -102,6 +104,15 @@ class CryptoClientTests(KeyVaultTestCase):
         )
         imported_key = client.import_key(name, key)
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
+        return imported_key
+
+    def _import_symmetric_test_key(self, client, name):
+        key = JsonWebKey(
+            kty="oct-HSM",
+            key_ops=["encrypt", "decrypt", "wrapKey", "unwrapKey"],
+            k=bytes.fromhex("e27ed0c84512bbd55b6af434d237c11feba311870f80f2c2e3364260f31c82c8"),
+        )
+        imported_key = client.import_key(name, key)
         return imported_key
 
     @KeyVaultPreparer()
@@ -188,6 +199,58 @@ class CryptoClientTests(KeyVaultTestCase):
 
         result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         self.assertEqual(key_bytes, result.key)
+
+    @pytest.mark.skip("MHSM-only algorithms can't be tested in CI yet")
+    @KeyVaultPreparer()
+    def test_symmetric_encrypt_and_decrypt(self, azure_keyvault_url, **kwargs):
+        key_client = self.create_key_client(azure_keyvault_url)
+        key_name = self.get_resource_name("symmetric-encrypt")
+
+        imported_key = self._import_symmetric_test_key(key_client, key_name)
+        assert imported_key is not None
+        crypto_client = self.create_crypto_client(imported_key.id)
+        # Use 256-bit AES algorithms for the 256-bit key
+        symmetric_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("A256")]
+
+        for algorithm in symmetric_algorithms:
+            if algorithm.endswith("GCM"):
+                result = crypto_client.encrypt(algorithm, self.plaintext, additional_authenticated_data=self.aad)
+                self.assertEqual(result.key_id, imported_key.id)
+                result = crypto_client.decrypt(
+                    result.algorithm,
+                    result.ciphertext,
+                    iv=result.iv,
+                    authentication_tag=result.tag,
+                    additional_authenticated_data=self.aad
+                )
+            else:
+                result = crypto_client.encrypt(
+                    algorithm, self.plaintext, iv=self.iv, additional_authenticated_data=self.aad
+                )
+                self.assertEqual(result.key_id, imported_key.id)
+                result = crypto_client.decrypt(
+                    result.algorithm, result.ciphertext, iv=self.iv, additional_authenticated_data=self.aad
+                )
+
+            self.assertEqual(result.key_id, imported_key.id)
+            self.assertEqual(algorithm, result.algorithm)
+            assert result.plaintext.startswith(self.plaintext)  # AES-CBC returns a zero-padded plaintext
+
+    @pytest.mark.skip("MHSM-only algorithms can't be tested in CI yet")
+    @KeyVaultPreparer()
+    def test_symmetric_wrap_and_unwrap(self, azure_keyvault_url, **kwargs):
+        key_client = self.create_key_client(azure_keyvault_url)
+        key_name = self.get_resource_name("symmetric-kw")
+
+        imported_key = self._import_symmetric_test_key(key_client, key_name)
+        assert imported_key is not None
+        crypto_client = self.create_crypto_client(imported_key.id)
+
+        result = crypto_client.wrap_key(KeyWrapAlgorithm.aes_256, self.plaintext)
+        self.assertEqual(result.key_id, imported_key.id)
+
+        result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
+        self.assertEqual(self.plaintext, result.key)
 
     @KeyVaultPreparer()
     def test_encrypt_local(self, azure_keyvault_url, **kwargs):
