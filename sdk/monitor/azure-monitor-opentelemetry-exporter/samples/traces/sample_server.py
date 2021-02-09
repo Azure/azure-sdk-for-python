@@ -17,7 +17,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
 import flask
-from azure.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
+from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 # The preferred tracer implementation must be set, as the opentelemetry-api
 # defines the interface with a no-op implementation.

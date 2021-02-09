@@ -13,13 +13,13 @@ from opentelemetry.sdk.metrics.export import MetricsExportResult
 from opentelemetry.sdk.trace.export import SpanExportResult
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-from azure.opentelemetry.exporter.azuremonitor.export._base import (
+from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
     get_trace_export_result,
 )
-from azure.opentelemetry.exporter.azuremonitor._options import ExporterOptions
-from azure.opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._options import ExporterOptions
+from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 
 
 def throw(exc_type, *args, **kwargs):
@@ -109,7 +109,7 @@ class TestBaseExporter(unittest.TestCase):
         envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
         self._base.storage.put(envelopes_to_store)
         with mock.patch(
-            "azure.opentelemetry.exporter.azuremonitor._storage.LocalFileBlob.lease"
+            "azure.monitor.opentelemetry.exporter._storage.LocalFileBlob.lease"
         ) as lease:  # noqa: E501
             lease.return_value = False
             self._base._transmit_from_storage()

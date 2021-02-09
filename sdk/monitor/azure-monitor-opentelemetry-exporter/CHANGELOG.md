@@ -2,8 +2,12 @@
 
 ## 1.0.0b3 (Unreleased)
 
-- Add azure servicebus samples and docstrings to samples
-    ([#16580](https://github.com/Azure/azure-sdk-for-python/pull/16580))
+  **Breaking Changes**
+  - The package has been renamed to `azure-monitor-opentelemetry-exporter`
+
+  **Features**
+  - Add azure servicebus samples and docstrings to samples
+      ([#16580](https://github.com/Azure/azure-sdk-for-python/pull/16580))
 
 ## 1.0.0b2 (2021-01-13)
 

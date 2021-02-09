@@ -6,7 +6,7 @@ import shutil
 import unittest
 from unittest import mock
 
-from azure.opentelemetry.exporter.azuremonitor._storage import (
+from azure.monitor.opentelemetry.exporter._storage import (
     LocalFileBlob,
     LocalFileStorage,
     _now,
@@ -96,7 +96,7 @@ class TestLocalFileStorage(unittest.TestCase):
         now = _now()
         with LocalFileStorage(os.path.join(TEST_FOLDER, "foo")) as stor:
             stor.put((1, 2, 3), lease_period=10)
-            with mock.patch("azure.opentelemetry.exporter.azuremonitor._storage._now") as m:
+            with mock.patch("azure.monitor.opentelemetry.exporter._storage._now") as m:
                 m.return_value = now - _seconds(30 * 24 * 60 * 60)
                 stor.put((1, 2, 3))
                 stor.put((1, 2, 3), lease_period=10)

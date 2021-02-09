@@ -9,14 +9,14 @@ from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
 from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.trace import Span, SpanKind
 
-from azure.opentelemetry.exporter.azuremonitor import _utils
-from azure.opentelemetry.exporter.azuremonitor._generated.models import (
+from azure.monitor.opentelemetry.exporter import _utils
+from azure.monitor.opentelemetry.exporter._generated.models import (
     MonitorBase,
     RemoteDependencyData,
     RequestData,
     TelemetryItem
 )
-from azure.opentelemetry.exporter.azuremonitor.export._base import (
+from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
     get_trace_export_result,
@@ -31,7 +31,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     """Azure Monitor base exporter for OpenTelemetry.
 
     :param options: Exporter configuration options.
-    :type options: ~azure.opentelemetry.exporter.azuremonitor.options.ExporterOptions
+    :type options: ~azure.monitor.opentelemetry.exporter.options.ExporterOptions
     """
 
     def export(self, spans: Sequence[Span], **kwargs: Any) -> SpanExportResult: # pylint: disable=unused-argument

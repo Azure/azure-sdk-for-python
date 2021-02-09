@@ -10,12 +10,12 @@ from opentelemetry.sdk.trace.export import SpanExportResult
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RequestIdPolicy
-from azure.opentelemetry.exporter.azuremonitor._generated import AzureMonitorClient
-from azure.opentelemetry.exporter.azuremonitor._generated._configuration import AzureMonitorClientConfiguration
-from azure.opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
-from azure.opentelemetry.exporter.azuremonitor._connection_string_parser import ConnectionStringParser
-from azure.opentelemetry.exporter.azuremonitor._storage import LocalFileStorage
-from azure.opentelemetry.exporter.azuremonitor._options import ExporterOptions
+from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
+from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
+from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
+from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
+from azure.monitor.opentelemetry.exporter._options import ExporterOptions
 
 
 logger = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ class BaseExporter:
     """Azure Monitor base exporter for OpenTelemetry.
 
     :param options: Exporter configuration options.
-    :type options: ~azure.opentelemetry.exporter.azuremonitor.options.ExporterOptions
+    :type options: ~azure.monitor.opentelemetry.exporter.options.ExporterOptions
     """
 
     def __init__(self, **kwargs: Any) -> None:
