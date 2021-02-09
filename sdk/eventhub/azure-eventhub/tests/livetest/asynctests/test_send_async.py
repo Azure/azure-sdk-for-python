@@ -30,8 +30,7 @@ async def test_send_with_partition_key_async(connstr_receivers):
                 data_val += 1
                 await client.send_batch(batch)
 
-        with pytest.raises(EventDataSendError):
-            await client.send_batch(await client.create_batch())
+        await client.send_batch(await client.create_batch())
 
     found_partition_keys = {}
     for index, partition in enumerate(receivers):

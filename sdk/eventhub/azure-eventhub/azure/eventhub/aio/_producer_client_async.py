@@ -285,7 +285,7 @@ class EventHubProducerClient(ClientBaseAsync):
             to_send_batch._load_events(event_data_batch)  # pylint:disable=protected-access
 
         if len(to_send_batch) == 0:
-            raise EventDataSendError("The event_data_batch object must not be empty.")
+            return
 
         partition_id = (
             to_send_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access

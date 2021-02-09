@@ -257,7 +257,7 @@ class EventHubProducerClient(ClientBase):
         )
 
         if len(to_send_batch) == 0:
-            raise EventDataSendError("The event_data_batch object must not be empty.")
+            return
 
         send_timeout = kwargs.pop("timeout", None)
         try:
