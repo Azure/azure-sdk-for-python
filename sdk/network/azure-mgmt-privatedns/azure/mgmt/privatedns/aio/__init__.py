@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._private_dns_management_client import PrivateDnsManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['PrivateDnsManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
