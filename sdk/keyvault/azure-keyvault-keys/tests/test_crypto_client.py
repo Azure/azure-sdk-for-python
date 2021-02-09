@@ -110,7 +110,7 @@ class CryptoClientTests(KeyVaultTestCase):
         key = JsonWebKey(
             kty="oct-HSM",
             key_ops=["encrypt", "decrypt", "wrapKey", "unwrapKey"],
-            k=bytes.fromhex("e27ed0c84512bbd55b6af434d237c11feba311870f80f2c2e3364260f31c82c8"),
+            k=codecs.decode("e27ed0c84512bbd55b6af434d237c11feba311870f80f2c2e3364260f31c82c8", "hex_codec"),
         )
         imported_key = client.import_key(name, key)
         return imported_key
