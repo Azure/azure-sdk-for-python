@@ -28,10 +28,20 @@ IGNORED_SAMPLES = {
         "consume_cloud_events_from_storage_queue.py"],
     "azure-servicebus": [
         "failure_and_recovery.py",
+        "mgmt_queue.py",
+        "mgmt_rule.py",
+        "mgmt_subscription.py",
+        "mgmt_topic.py",
         "proxy.py",
+        "receive_deferred_message_queue.py",
         "receive_iterator_queue.py",
         "session_pool_receive.py",
+        "mgmt_queue_async.py",
+        "mgmt_rule_async.py",
+        "mgmt_subscription_async.py",
+        "mgmt_topic_async.py",
         "proxy_async.py",
+        "receive_deferred_message_queue_async.py",
         "receive_iterator_queue_async.py",
         "session_pool_receive_async.py"
     ]
