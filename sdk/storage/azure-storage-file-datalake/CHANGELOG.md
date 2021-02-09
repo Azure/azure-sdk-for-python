@@ -1,5 +1,9 @@
 # Release History
 
+## 12.2.3 (2021-02-08)
+**Fixes**
+- Fixed paging issue (#16531)
+
 ## 12.2.2 (2021-01-20)
 **Fixes**
 - Fixed msrest dependency issue (#16250)
