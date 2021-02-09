@@ -95,7 +95,7 @@ def _is_cloud_event(event):
 
 def _is_eventgrid_event(event):
     # type: (Any) -> bool
-    required = ('subject', 'eventType', 'data', 'dataVersion', 'id', 'eventTime')
+    required = ('subject', 'event_type', 'data', 'data_version', 'id', 'event_time')
     try:
         return all([prop in event for prop in required])
     except TypeError:
