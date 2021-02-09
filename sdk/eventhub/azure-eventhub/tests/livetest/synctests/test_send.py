@@ -28,6 +28,9 @@ def test_send_with_partition_key(connstr_receivers):
                 data_val += 1
                 client.send_batch(batch)
 
+        with pytest.raises(EventDataSendError):
+            client.send_batch(client.create_batch())
+
     found_partition_keys = {}
     for index, partition in enumerate(receivers):
         received = partition.receive_message_batch(timeout=5000)

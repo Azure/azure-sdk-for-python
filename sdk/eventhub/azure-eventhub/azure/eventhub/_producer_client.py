@@ -9,7 +9,7 @@ from typing import Any, Union, TYPE_CHECKING, Dict, List, Optional, cast
 
 from uamqp import constants
 
-from .exceptions import ConnectError, EventHubError
+from .exceptions import ConnectError, EventHubError, EventDataSendError
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
@@ -242,6 +242,7 @@ class EventHubProducerClient(ClientBase):
                 :caption: Sends event data
 
         """
+
         partition_id = kwargs.get("partition_id")
         partition_key = kwargs.get("partition_key")
         if isinstance(event_data_batch, EventDataBatch):
@@ -255,6 +256,10 @@ class EventHubProducerClient(ClientBase):
         partition_id = (
             to_send_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
         )
+
+        if len(to_send_batch) == 0:
+            raise EventDataSendError("The event_data_batch object must not be empty.")
+
         send_timeout = kwargs.pop("timeout", None)
         try:
             cast(EventHubProducer, self._producers[partition_id]).send(

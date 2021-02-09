@@ -8,7 +8,7 @@ import logging
 from typing import Any, Union, TYPE_CHECKING, List, Optional, Dict, cast
 from uamqp import constants
 
-from ..exceptions import ConnectError, EventHubError
+from ..exceptions import ConnectError, EventHubError, EventDataSendError
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
 from .._constants import ALL_PARTITIONS
@@ -283,6 +283,9 @@ class EventHubProducerClient(ClientBaseAsync):
         else:
             to_send_batch = await self.create_batch(partition_id=partition_id, partition_key=partition_key)
             to_send_batch._load_events(event_data_batch)  # pylint:disable=protected-access
+
+        if len(to_send_batch) == 0:
+            raise EventDataSendError("The event_data_batch object must not be empty.")
 
         partition_id = (
             to_send_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
