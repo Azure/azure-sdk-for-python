@@ -1,5 +1,9 @@
 # Release History
 
+## 0.0.0 (2021-02-09)
+
+change_log.py: error: the following arguments are required: latest
+
 ## 0.3.0 (2019-10-11)
 
   - Fixed new network experiment SDK structure
