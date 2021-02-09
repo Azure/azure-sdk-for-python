@@ -28,6 +28,7 @@ IGNORED_SAMPLES = {
         "consume_cloud_events_from_storage_queue.py"],
     "azure-eventhub": [
         "authenticate_with_sas_token.py",
+        "connection_to_custom_endpoint_address.py",
         "proxy.py",
         "receive_batch_with_checkpoint.py",
         "recv.py",
@@ -38,6 +39,7 @@ IGNORED_SAMPLES = {
         "recv_with_custom_starting_position.py",
         "sample_code_eventhub.py",
         "authenticate_with_sas_token_async.py",
+        "connection_to_custom_endpoint_address_async.py",
         "iot_hub_connection_string_receive_async.py",
         "proxy_async.py",
         "receive_batch_with_checkpoint_async.py",
