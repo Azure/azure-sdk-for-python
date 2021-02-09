@@ -1,7 +1,8 @@
 # Release History
 
-## 12.7.2 (Unreleased)
-
+## 12.8.0b1 (2021-02-09)
+**New Features**
+- Added `ContainerClient.exists()` method
 
 ## 12.7.1 (2021-01-20)
 **Fixes**
