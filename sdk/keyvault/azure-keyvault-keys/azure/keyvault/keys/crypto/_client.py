@@ -47,8 +47,8 @@ def _validate_arguments(operation, algorithm, **kwargs):
             )
         if aad and not ("CBC" in algorithm or "GCM" in algorithm):
             raise ValueError(
-                "additional_authenticated_data should only be provided with AES algorithms; {} does not accept an "
-                "aad".format(algorithm)
+                "additional_authenticated_data should only be provided with AES algorithms; {} does not accept "
+                "additional authenticated data".format(algorithm)
             )
 
     if operation == KeyOperation.decrypt:
@@ -64,8 +64,8 @@ def _validate_arguments(operation, algorithm, **kwargs):
             )
         if aad and not ("CBC" in algorithm or "GCM" in algorithm):
             raise ValueError(
-                "additional_authenticated_data should only be provided with AES algorithms; {} does not accept an "
-                "aad".format(algorithm)
+                "additional_authenticated_data should only be provided with AES algorithms; {} does not accept "
+                "additional authenticated data".format(algorithm)
             )
 
 

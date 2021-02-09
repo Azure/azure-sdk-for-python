@@ -197,9 +197,11 @@ class CryptoClientTests(KeyVaultTestCase):
         result = await crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         self.assertEqual(key_bytes, result.key)
 
-    @pytest.mark.skip("MHSM-only algorithms can't be tested in CI yet")
     @KeyVaultPreparer()
     async def test_symmetric_encrypt_and_decrypt(self, azure_keyvault_url, **kwargs):
+        if self.is_live:
+            pytest.skip("MHSM-only algorithms can't be tested in CI yet")
+
         key_client = self.create_key_client(azure_keyvault_url)
         key_name = self.get_resource_name("symmetric-encrypt")
 
@@ -212,7 +214,7 @@ class CryptoClientTests(KeyVaultTestCase):
         for algorithm in symmetric_algorithms:
             if algorithm.endswith("GCM"):
                 result = await crypto_client.encrypt(algorithm, self.plaintext, additional_authenticated_data=self.aad)
-                self.assertEqual(result.key_id, imported_key.id)
+                assert result.key_id == imported_key.id
                 result = await crypto_client.decrypt(
                     result.algorithm,
                     result.ciphertext,
@@ -229,13 +231,18 @@ class CryptoClientTests(KeyVaultTestCase):
                     result.algorithm, result.ciphertext, iv=self.iv, additional_authenticated_data=self.aad
                 )
 
-            self.assertEqual(result.key_id, imported_key.id)
-            self.assertEqual(algorithm, result.algorithm)
-            assert result.plaintext.startswith(self.plaintext)  # AES-CBC returns a zero-padded plaintext
+            assert result.key_id == imported_key.id
+            assert result.algorithm == algorithm
+            if algorithm.endswith("CBC"):
+                assert result.plaintext.startswith(self.plaintext)  # AES-CBC returns a zero-padded plaintext
+            else:
+                assert result.plaintext == self.plaintext
 
-    @pytest.mark.skip("MHSM-only algorithms can't be tested in CI yet")
     @KeyVaultPreparer()
     async def test_symmetric_wrap_and_unwrap(self, azure_keyvault_url, **kwargs):
+        if self.is_live:
+            pytest.skip("MHSM-only algorithms can't be tested in CI yet")
+
         key_client = self.create_key_client(azure_keyvault_url)
         key_name = self.get_resource_name("symmetric-kw")
 
@@ -244,10 +251,10 @@ class CryptoClientTests(KeyVaultTestCase):
         crypto_client = self.create_crypto_client(imported_key.id)
 
         result = await crypto_client.wrap_key(KeyWrapAlgorithm.aes_256, self.plaintext)
-        self.assertEqual(result.key_id, imported_key.id)
+        assert result.key_id == imported_key.id
 
         result = await crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
-        self.assertEqual(self.plaintext, result.key)
+        assert result.key == self.plaintext
 
     @KeyVaultPreparer()
     async def test_encrypt_local(self, azure_keyvault_url, **kwargs):
@@ -550,7 +557,7 @@ async def test_prefers_local_provider():
 
 
 @pytest.mark.asyncio
-async def test_encrypt_valid_arguments():
+async def test_encrypt_argument_validation():
     """The client should raise an error when arguments don't work with the specified algorithm"""
     mock_client = mock.Mock()
     key = mock.Mock(
@@ -572,7 +579,7 @@ async def test_encrypt_valid_arguments():
 
 
 @pytest.mark.asyncio
-async def test_decrypt_valid_arguments():
+async def test_decrypt_argument_validation():
     mock_client = mock.Mock()
     key = mock.Mock(
         spec=KeyVaultKey,
