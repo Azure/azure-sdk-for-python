@@ -242,7 +242,6 @@ class EventHubProducerClient(ClientBase):
                 :caption: Sends event data
 
         """
-
         partition_id = kwargs.get("partition_id")
         partition_key = kwargs.get("partition_key")
         if isinstance(event_data_batch, EventDataBatch):
