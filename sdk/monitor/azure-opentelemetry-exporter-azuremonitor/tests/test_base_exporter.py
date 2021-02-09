@@ -73,11 +73,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base.storage._retention_period, 604800)
         self.assertEqual(base._timeout, 10)
 
-    def test_constructor_wrong_options(self):
-        """Test the constructor with wrong options."""
-        with self.assertRaises(TypeError):
-            BaseExporter(something_else=6)
-
     @unittest.skip("transient storage")
     def test_transmit_from_storage_failed_retryable(self):
         envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
@@ -126,14 +121,14 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmit_http_error_retryable(self):
-        with mock.patch("azure.opentelemetry.exporter.azuremonitor.export._base.is_retryable_code") as m:
+        with mock.patch("azure.opentelemetry.exporter.azuremonitor.export._base._is_retryable_code") as m:
             m.return_value = True
             with mock.patch("requests.Session.request", throw(HttpResponseError)):
                 result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmit_http_error_retryable(self):
-        with mock.patch("azure.opentelemetry.exporter.azuremonitor.export._base.is_retryable_code") as m:
+        with mock.patch("azure.opentelemetry.exporter.azuremonitor.export._base._is_retryable_code") as m:
             m.return_value = False
             with mock.patch("requests.Session.request", throw(HttpResponseError)):
                 result = self._base._transmit(self._envelopes_to_export)

@@ -10,11 +10,12 @@ products:
 
 These code samples show common champion scenario operations with the AzureMonitorTraceExporter.
 
-* Trace: [sample_trace.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-opentelemetry-exporter-azuremonitor/samples/traces/sample_trace.py)
-* Client: [sample_client.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-opentelemetry-exporter-azuremonitor/samples/traces/sample_client.py)
-* Server: [sample_server.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-opentelemetry-exporter-azuremonitor/samples/traces/sample_server.py)
 * Azure Service Bus Send: [sample_servicebus_send.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-opentelemetry-exporter-azuremonitor/samples/traces/sample_servicebus_send.py)
 * Azure Service Bus Receive: [sample_servicebus_receive.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-opentelemetry-exporter-azuremonitor/samples/traces/sample_servicebus_receive.py)
+* Azure Storage Blob Create Container: [sample_storage.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-opentelemetry-exporter-azuremonitor/samples/traces/sample_storage.py)
+* Client: [sample_client.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-opentelemetry-exporter-azuremonitor/samples/traces/sample_client.py)
+* Trace: [sample_trace.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-opentelemetry-exporter-azuremonitor/samples/traces/sample_trace.py)
+* Server: [sample_server.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-opentelemetry-exporter-azuremonitor/samples/traces/sample_server.py)
 
 ## Installation
 
@@ -98,6 +99,25 @@ $ # azure sdk core tracing library for opentelemetry
 $ pip install azure-core-tracing-opentelemetry
 $ # from this directory
 $ python sample_servicebus_receive.py
+```
+
+### Azure Storage Blob Create Container
+
+The following sample assumes that you have setup an Azure Service Bus [namespace](https://docs.microsoft.com/azure/service-bus-messaging/service-bus-quickstart-portal).
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+* Update `AZURE_STORAGE_CONNECTION_STRING` environment variable
+* Update `AZURE_STORAGE_BLOB_CONTAINER_NAME` environment variable
+
+* Run the sample
+
+```sh
+$ # azure-storage-blob library
+$ pip install azure-storage-blob
+$ # azure sdk core tracing library for opentelemetry
+$ pip install azure-core-tracing-opentelemetry
+$ # from this directory
+$ python sample_storage.py
 ```
 
 ## Explore the data
