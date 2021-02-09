@@ -373,37 +373,6 @@ class CryptoClientTests(KeyVaultTestCase):
             valid_key, (str(the_year_3000), str(the_year_3001)), rsa_encryption_algorithms, rsa_wrap_algorithms
         )
 
-    @KeyVaultPreparer()
-    def test_encrypt_valid_arguments(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_key_client(azure_keyvault_url)
-        key_name = self.get_resource_name("rsa-key")
-        rsa_key = key_client.create_rsa_key(key_name)
-
-        crypto_client = self.create_crypto_client(rsa_key)
-        with pytest.raises(ValueError) as ex:
-            crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...", iv=b"...")
-        assert "iv" in str(ex.value)
-        with pytest.raises(ValueError) as ex:
-            crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...", additional_authenticated_data=b"...")
-        assert "additional_authenticated_data" in str(ex.value)
-
-    @KeyVaultPreparer()
-    def test_decrypt_valid_arguments(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_key_client(azure_keyvault_url)
-        key_name = self.get_resource_name("rsa-key")
-        rsa_key = key_client.create_rsa_key(key_name)
-
-        crypto_client = self.create_crypto_client(rsa_key)
-        with pytest.raises(ValueError) as ex:
-            crypto_client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...", iv=b"...")
-        assert "iv" in str(ex.value)
-        with pytest.raises(ValueError) as ex:
-            crypto_client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...", additional_authenticated_data=b"...")
-        assert "additional_authenticated_data" in str(ex.value)
-        with pytest.raises(ValueError) as ex:
-            crypto_client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...", authentication_tag=b"...")
-        assert "authentication_tag" in str(ex.value)
-
 
 def test_custom_hook_policy():
     class CustomHookPolicy(object):
@@ -553,3 +522,47 @@ def test_prefers_local_provider():
     client.wrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
     assert mock_client.wrap_key.call_count == 0
     assert supports_everything.wrap_key.call_count == 1
+
+
+def test_encrypt_valid_arguments():
+    """The client should raise an error when arguments don't work with the specified algorithm"""
+    mock_client = mock.Mock()
+    key = mock.Mock(
+        spec=KeyVaultKey,
+        id="https://localhost/fake/key/version",
+        properties=mock.Mock(
+            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+        ),
+    )
+    client = CryptographyClient(key, mock.Mock())
+    client._client = mock_client
+
+    with pytest.raises(ValueError) as ex:
+        client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...", iv=b"...")
+    assert "iv" in str(ex.value)
+    with pytest.raises(ValueError) as ex:
+        client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...", additional_authenticated_data=b"...")
+    assert "additional_authenticated_data" in str(ex.value)
+
+
+def test_decrypt_valid_arguments():
+    mock_client = mock.Mock()
+    key = mock.Mock(
+        spec=KeyVaultKey,
+        id="https://localhost/fake/key/version",
+        properties=mock.Mock(
+            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+        ),
+    )
+    client = CryptographyClient(key, mock.Mock())
+    client._client = mock_client
+
+    with pytest.raises(ValueError) as ex:
+        client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...", iv=b"...")
+    assert "iv" in str(ex.value)
+    with pytest.raises(ValueError) as ex:
+        client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...", additional_authenticated_data=b"...")
+    assert "additional_authenticated_data" in str(ex.value)
+    with pytest.raises(ValueError) as ex:
+        client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...", authentication_tag=b"...")
+    assert "authentication_tag" in str(ex.value)
