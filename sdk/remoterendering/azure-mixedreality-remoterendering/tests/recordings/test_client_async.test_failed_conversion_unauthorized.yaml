@@ -1,0 +1,25 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-authentication/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      X-MRC-CV:
+      - LNs1BzhxdWK+E8HIkAm6rs
+    method: GET
+    uri: https://sts.eastus.mixedreality.azure.com/Accounts/70a8e4d2-816a-4d03-a800-aeb20126ae51/token?api-version=2019-02-28-preview
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 23 Mar 2021 13:22:55 GMT
+      ms-cv: AAtLiNdfs0e+CBc/O6wMUQ.0
+      x-content-type-options: nosniff
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://sts.eastus2.mixedreality.azure.com/Accounts/cea4d2db-47b8-4dd1-913e-cfafd6635ce2/token?api-version=2019-02-28-preview
+version: 1
