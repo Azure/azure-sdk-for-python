@@ -3,19 +3,19 @@
 * [Usage in a pipeline](#usage-in-a-pipeline)
 * [Matrix config file syntax](#matrix-config-file-syntax)
  * [Fields](#fields)
-	* [matrix](#matrix)
-	* [include](#include)
-	* [exclude](#exclude)
-	* [displayNames](#displaynames)
-	* [$IMPORT](#import)
+    * [matrix](#matrix)
+    * [include](#include)
+    * [exclude](#exclude)
+    * [displayNames](#displaynames)
+    * [$IMPORT](#import)
 * [Matrix Generation behavior](#matrix-generation-behavior)
-	* [all](#all)
-	* [sparse](#sparse)
-	* [include/exclude](#includeexclude)
-	* [displayNames](#displaynames-1)
-	* [Filters](#filters)
-	* [NonSparseParameters](#nonsparseparameters)
-	* [Under the hood](#under-the-hood)
+    * [all](#all)
+    * [sparse](#sparse)
+    * [include/exclude](#includeexclude)
+    * [displayNames](#displaynames-1)
+    * [Filters](#filters)
+    * [NonSparseParameters](#nonsparseparameters)
+    * [Under the hood](#under-the-hood)
 * [Testing](#testing)
 
 
@@ -40,14 +40,14 @@ jobs:
       - Name: base_product_matrix
         Path: /eng/pipelines/matrix.json
         Selection: sparse
-		NonSparseParameters: <csv of parameter names for which all combinations should be included>
-		GenerateVMJobs: true
+        NonSparseParameters: <csv of parameter names for which all combinations should be included>
+        GenerateVMJobs: true
       - Name: sdk_specific_matrix
         Path: /sdk/foobar/matrix.json
         Selection: all
-		GenerateContainerJobs: true
-	steps:
-	  - pwsh:
+        GenerateContainerJobs: true
+    steps:
+      - pwsh:
           ...
 ```
 
@@ -61,14 +61,14 @@ type is useful for when 2 or more parameters need to be grouped together, but wi
   "<parameter1 name>": [ <values...> ],
   "<parameter2 name>": [ <values...> ],
   "<parameter set>": {
-	"<parameter set 1 name>": {
-		"<parameter set 1 value 1": "value",
-		"<parameter set 1 value 2": "<value>",
-	},
-	"<parameter set 2 name>": {
-		"<parameter set 2 value 1": "value",
-		"<parameter set 2 value 2": "<value>",
-	}
+    "<parameter set 1 name>": {
+        "<parameter set 1 value 1": "value",
+        "<parameter set 1 value 2": "<value>",
+    },
+    "<parameter set 2 name>": {
+        "<parameter set 2 value 1": "value",
+        "<parameter set 2 value 2": "<value>",
+    }
   }
 }
 "include": [ <matrix>, <matrix>, ... ],
@@ -165,11 +165,131 @@ once for each instance of a language version.
 
 The processing order is as follows:
 
-1. The base matrix is generated
-1. The imported base matrix is generated
+Given a matrix and import matrix like below:
+```
+{
+    "matrix": {
+        "$IMPORT": "example-matrix.json",
+        "endpointType": [ "storage", "cosmos" ],
+        "JavaVersion": [ "1.8", "1.11" ]
+    },
+    "include": [
+        {
+            "operatingSystem": "windows",
+            "mode": "TestFromSource",
+            "JavaVersion": "1.8"
+        }
+    ]
+}
+
+### example-matrix.json to import
+{
+    "matrix": {
+      "operatingSystem": [ "windows", "linux" ],
+      "client": [ "netty", "okhttp" ]
+    },
+    "include": [
+        {
+          "operatingSystem": "mac",
+          "client": "netty"
+        }
+    ]
+}
+```
+
+1. The base matrix is generated (sparse in this example):
+    ```
+    {
+      "storage_18": {
+        "endpointType": "storage",
+        "JavaVersion": "1.8"
+      },
+      "cosmos_111": {
+        "endpointType": "cosmos",
+        "JavaVersion": "1.11"
+      }
+    }
+    ```
+1. The imported base matrix is generated (sparse in this example):
+    ```
+    {
+      "windows_netty": {
+        "operatingSystem": "windows",
+        "client": "netty"
+      },
+      "linux_okhttp": {
+        "operatingSystem": "linux",
+        "client": "okhttp"
+      }
+    }
+    ```
 1. Includes/excludes from the imported matrix get applied to the imported matrix
-1. The base matrix is multipled by the imported matrix
-1. Includes/excludes from the top-level matrix get applied to the multiplied matrix
+    ```
+    {
+      "windows_netty": {
+        "operatingSystem": "windows",
+        "client": "netty"
+      },
+      "linux_okhttp": {
+        "operatingSystem": "linux",
+        "client": "okhttp"
+      },
+      "mac_netty": {
+        "operatingSystem": "mac",
+        "client": "netty"
+      }
+    }
+    ```
+1. The base matrix is multipled by the imported matrix (in this case, the base matrix has 2 elements, and the imported
+   matrix has 3 elements, so the product is a matrix with 6 elements:
+    ```
+      "storage_18_windows_netty": {
+        "endpointType": "storage",
+        "JavaVersion": "1.8",
+        "operatingSystem": "windows",
+        "client": "netty"
+      },
+      "storage_18_linux_okhttp": {
+        "endpointType": "storage",
+        "JavaVersion": "1.8",
+        "operatingSystem": "linux",
+        "client": "okhttp"
+      },
+      "storage_18_mac_netty": {
+        "endpointType": "storage",
+        "JavaVersion": "1.8",
+        "operatingSystem": "mac",
+        "client": "netty"
+      },
+      "cosmos_111_windows_netty": {
+        "endpointType": "cosmos",
+        "JavaVersion": "1.11",
+        "operatingSystem": "windows",
+        "client": "netty"
+      },
+      "cosmos_111_linux_okhttp": {
+        "endpointType": "cosmos",
+        "JavaVersion": "1.11",
+        "operatingSystem": "linux",
+        "client": "okhttp"
+      },
+      "cosmos_111_mac_netty": {
+        "endpointType": "cosmos",
+        "JavaVersion": "1.11",
+        "operatingSystem": "mac",
+        "client": "netty"
+      }
+    }
+    ```
+1. Includes/excludes from the top-level matrix get applied to the multiplied matrix, so the below element will be added
+   to the above matrix, for an output matrix with 7 elements:
+    ```
+    "windows_TestFromSource_18": {
+      "operatingSystem": "windows",
+      "mode": "TestFromSource",
+      "JavaVersion": "1.8"
+    }
+    ```
 
 ## Matrix Generation behavior
 
@@ -247,7 +367,7 @@ The logic for generating display names works like this:
 - Join parameter values by "_"
     a. If the parameter value exists as a key in `displayNames` in the matrix config, replace it with that value.
     b. For each name value, strip all non-alphanumeric characters (excluding "_").
-	c. If the name is greater than 100 characters, truncate it.
+    c. If the name is greater than 100 characters, truncate it.
 
 #### Filters
 
