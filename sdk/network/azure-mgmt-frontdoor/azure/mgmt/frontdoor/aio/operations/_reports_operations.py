@@ -6,25 +6,21 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models as _models
+from ... import models as _models
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-class ReportsOperations(object):
-    """ReportsOperations operations.
+class ReportsOperations:
+    """ReportsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -39,23 +35,22 @@ class ReportsOperations(object):
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def get_latency_scorecards(
+    async def get_latency_scorecards(
         self,
-        resource_group_name,  # type: str
-        profile_name,  # type: str
-        experiment_name,  # type: str
-        aggregation_interval,  # type: Union[str, "_models.LatencyScorecardAggregationInterval"]
-        end_date_time_utc=None,  # type: Optional[str]
-        country=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.LatencyScorecard"
+        resource_group_name: str,
+        profile_name: str,
+        experiment_name: str,
+        aggregation_interval: Union[str, "_models.LatencyScorecardAggregationInterval"],
+        end_date_time_utc: Optional[str] = None,
+        country: Optional[str] = None,
+        **kwargs
+    ) -> "_models.LatencyScorecard":
         """Gets a Latency Scorecard for a given Experiment.
 
         Gets a Latency Scorecard for a given Experiment.
@@ -110,7 +105,7 @@ class ReportsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -126,20 +121,19 @@ class ReportsOperations(object):
         return deserialized
     get_latency_scorecards.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/Experiments/{experimentName}/LatencyScorecard'}  # type: ignore
 
-    def get_timeseries(
+    async def get_timeseries(
         self,
-        resource_group_name,  # type: str
-        profile_name,  # type: str
-        experiment_name,  # type: str
-        start_date_time_utc,  # type: datetime.datetime
-        end_date_time_utc,  # type: datetime.datetime
-        aggregation_interval,  # type: Union[str, "_models.TimeseriesAggregationInterval"]
-        timeseries_type,  # type: Union[str, "_models.TimeseriesType"]
-        endpoint=None,  # type: Optional[str]
-        country=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.Timeseries"
+        resource_group_name: str,
+        profile_name: str,
+        experiment_name: str,
+        start_date_time_utc: datetime.datetime,
+        end_date_time_utc: datetime.datetime,
+        aggregation_interval: Union[str, "_models.TimeseriesAggregationInterval"],
+        timeseries_type: Union[str, "_models.TimeseriesType"],
+        endpoint: Optional[str] = None,
+        country: Optional[str] = None,
+        **kwargs
+    ) -> "_models.Timeseries":
         """Gets a Timeseries for a given Experiment.
 
         Gets a Timeseries for a given Experiment.
@@ -203,7 +197,7 @@ class ReportsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
