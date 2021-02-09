@@ -118,7 +118,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         """Creates or updates a custom role definition.
 
         :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
-            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.global_value.
+            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.GLOBAL.
         :type role_scope: str or KeyVaultRoleScope
         :param permissions: the role definition's permissions. An empty list results in a role definition with no action
             permissions.
@@ -166,7 +166,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         """Get the specified role definition.
 
         :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
-            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.global_value.
+            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.GLOBAL.
         :type role_scope: str or KeyVaultRoleScope
         :param role_definition_name: the role definition's name.
         :type role_definition_name: str or uuid.UUID
@@ -183,7 +183,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         """Deletes a custom role definition.
 
         :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
-            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.global_value.
+            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.GLOBAL.
         :type role_scope: str or KeyVaultRoleScope
         :param role_definition_name: the role definition's name.
         :type role_definition_name: str or uuid.UUID
