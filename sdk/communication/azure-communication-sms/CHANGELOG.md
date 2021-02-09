@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b5 (2021-02-09)
 ### Added
 
 - Added support for Azure Active Directory authentication
