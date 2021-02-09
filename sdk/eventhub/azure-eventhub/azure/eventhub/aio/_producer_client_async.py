@@ -8,7 +8,7 @@ import logging
 from typing import Any, Union, TYPE_CHECKING, List, Optional, Dict, cast
 from uamqp import constants
 
-from ..exceptions import ConnectError, EventHubError, EventDataSendError
+from ..exceptions import ConnectError, EventHubError
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
 from .._constants import ALL_PARTITIONS
