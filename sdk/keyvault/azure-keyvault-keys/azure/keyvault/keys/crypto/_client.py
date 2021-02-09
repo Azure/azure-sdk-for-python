@@ -29,7 +29,7 @@ def _validate_arguments(operation, algorithm, **kwargs):
     # type: (KeyOperation, EncryptionAlgorithm, **Any) -> None
     """Validates the arguments passed to perform an operation with a provided algorithm.
 
-    :param KeyOperation operation: the type of operation being requested. Can be "encrypt" or "decrypt"
+    :param KeyOperation operation: the type of operation being requested
     :param EncyptionAlgorithm algorithm: the encryption algorithm to use for the operation
     :keyword bytes iv: initialization vector
     :keyword bytes authentication_tag: authentication tag returned from an encryption
@@ -45,9 +45,9 @@ def _validate_arguments(operation, algorithm, **kwargs):
             raise ValueError(
                 "iv should only be provided with AES-CBC algorithms; {} does not accept an iv".format(algorithm)
             )
-        if aad and "GCM" not in algorithm:
+        if aad and not ("CBC" in algorithm or "GCM" in algorithm):
             raise ValueError(
-                "additional_authenticated_data should only be provided with AES-GCM algorithms; {} does not accept an "
+                "additional_authenticated_data should only be provided with AES algorithms; {} does not accept an "
                 "aad".format(algorithm)
             )
 
@@ -62,9 +62,9 @@ def _validate_arguments(operation, algorithm, **kwargs):
                     algorithm
                 )
             )
-        if aad and "GCM" not in algorithm:
+        if aad and not ("CBC" in algorithm or "GCM" in algorithm):
             raise ValueError(
-                "additional_authenticated_data should only be provided with AES-GCM algorithms; {} does not accept an "
+                "additional_authenticated_data should only be provided with AES algorithms; {} does not accept an "
                 "aad".format(algorithm)
             )
 
@@ -175,10 +175,10 @@ class CryptographyClient(KeyVaultClientBase):
             :language: python
             :dedent: 8
         """
-        self._initialize(**kwargs)
         iv = kwargs.pop("iv", None)
         aad = kwargs.pop("additional_authenticated_data", None)
         _validate_arguments(operation=KeyOperation.encrypt, algorithm=algorithm, iv=iv, aad=aad)
+        self._initialize(**kwargs)
 
         if self._local_provider.supports(KeyOperation.encrypt, algorithm):
             raise_if_time_invalid(self._key)
@@ -229,11 +229,11 @@ class CryptographyClient(KeyVaultClientBase):
             :language: python
             :dedent: 8
         """
-        self._initialize(**kwargs)
         iv = kwargs.pop("iv", None)
         tag = kwargs.pop("authentication_tag", None)
         aad = kwargs.pop("additional_authenticated_data", None)
         _validate_arguments(operation=KeyOperation.decrypt, algorithm=algorithm, iv=iv, tag=tag, aad=aad)
+        self._initialize(**kwargs)
 
         if self._local_provider.supports(KeyOperation.decrypt, algorithm):
             try:

@@ -127,10 +127,10 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             :language: python
             :dedent: 8
         """
-        await self._initialize(**kwargs)
         iv = kwargs.pop("iv", None)
         aad = kwargs.pop("additional_authenticated_data", None)
         _validate_arguments(operation=KeyOperation.encrypt, algorithm=algorithm, iv=iv, aad=aad)
+        await self._initialize(**kwargs)
 
         if self._local_provider.supports(KeyOperation.encrypt, algorithm):
             raise_if_time_invalid(self._key)
@@ -180,11 +180,11 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             :language: python
             :dedent: 8
         """
-        await self._initialize(**kwargs)
         iv = kwargs.pop("iv", None)
         tag = kwargs.pop("authentication_tag", None)
         aad = kwargs.pop("additional_authenticated_data", None)
         _validate_arguments(operation=KeyOperation.decrypt, algorithm=algorithm, iv=iv, tag=tag, aad=aad)
+        await self._initialize(**kwargs)
 
         if self._local_provider.supports(KeyOperation.decrypt, algorithm):
             try:
