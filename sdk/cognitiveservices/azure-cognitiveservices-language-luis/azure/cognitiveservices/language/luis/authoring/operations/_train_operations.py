@@ -36,7 +36,7 @@ class TrainOperations(object):
         self.config = config
 
     def train_version(
-            self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, mode=None, custom_headers=None, raw=False, **operation_config):
         """Sends a training request for a version of a specified LUIS app. This
         POST request initiates a request asynchronously. To determine whether
         the training request is successful, submit a GET request to get
@@ -49,6 +49,8 @@ class TrainOperations(object):
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
+        :param mode: An enum value specifying mode of training.
+        :type mode: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -72,6 +74,8 @@ class TrainOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if mode is not None:
+            query_parameters['mode'] = self._serialize.query("mode", mode, 'str')
 
         # Construct headers
         header_parameters = {}

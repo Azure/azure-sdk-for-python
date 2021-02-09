@@ -22,4 +22,5 @@ class TrainingStatus(str, Enum):
 class OperationStatusType(str, Enum):
 
     failed = "Failed"
+    failed = "FAILED"
     success = "Success"

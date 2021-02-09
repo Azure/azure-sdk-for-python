@@ -421,7 +421,7 @@ class FeaturesOperations(object):
     delete_phrase_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/phraselists/{phraselistId}'}
 
     def add_intent_feature(
-            self, app_id, version_id, intent_id, model_name=None, feature_name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, intent_id, feature_relation_create_object, custom_headers=None, raw=False, **operation_config):
         """Adds a new feature relation to be used by the intent in a version of
         the application.
 
@@ -431,10 +431,10 @@ class FeaturesOperations(object):
         :type version_id: str
         :param intent_id: The intent classifier ID.
         :type intent_id: str
-        :param model_name: The name of the model used.
-        :type model_name: str
-        :param feature_name: The name of the feature used.
-        :type feature_name: str
+        :param feature_relation_create_object: A Feature relation information
+         object.
+        :type feature_relation_create_object:
+         ~azure.cognitiveservices.language.luis.authoring.models.ModelFeatureInformation
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -447,8 +447,6 @@ class FeaturesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
-        feature_relation_create_object = models.ModelFeatureInformation(model_name=model_name, feature_name=feature_name)
-
         # Construct URL
         url = self.add_intent_feature.metadata['url']
         path_format_arguments = {
@@ -491,7 +489,7 @@ class FeaturesOperations(object):
     add_intent_feature.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/features'}
 
     def add_entity_feature(
-            self, app_id, version_id, entity_id, model_name=None, feature_name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, feature_relation_create_object, custom_headers=None, raw=False, **operation_config):
         """Adds a new feature relation to be used by the entity in a version of
         the application.
 
@@ -501,10 +499,10 @@ class FeaturesOperations(object):
         :type version_id: str
         :param entity_id: The entity extractor ID.
         :type entity_id: str
-        :param model_name: The name of the model used.
-        :type model_name: str
-        :param feature_name: The name of the feature used.
-        :type feature_name: str
+        :param feature_relation_create_object: A Feature relation information
+         object.
+        :type feature_relation_create_object:
+         ~azure.cognitiveservices.language.luis.authoring.models.ModelFeatureInformation
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -517,8 +515,6 @@ class FeaturesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
-        feature_relation_create_object = models.ModelFeatureInformation(model_name=model_name, feature_name=feature_name)
-
         # Construct URL
         url = self.add_entity_feature.metadata['url']
         path_format_arguments = {

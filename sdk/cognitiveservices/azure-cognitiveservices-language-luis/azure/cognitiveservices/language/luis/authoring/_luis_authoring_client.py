@@ -20,7 +20,6 @@ from .operations import ModelOperations
 from .operations import AppsOperations
 from .operations import VersionsOperations
 from .operations import TrainOperations
-from .operations import PermissionsOperations
 from .operations import PatternOperations
 from .operations import SettingsOperations
 from .operations import AzureAccountsOperations
@@ -45,8 +44,6 @@ class LUISAuthoringClient(SDKClient):
     :vartype versions: azure.cognitiveservices.language.luis.authoring.operations.VersionsOperations
     :ivar train: Train operations
     :vartype train: azure.cognitiveservices.language.luis.authoring.operations.TrainOperations
-    :ivar permissions: Permissions operations
-    :vartype permissions: azure.cognitiveservices.language.luis.authoring.operations.PermissionsOperations
     :ivar pattern: Pattern operations
     :vartype pattern: azure.cognitiveservices.language.luis.authoring.operations.PatternOperations
     :ivar settings: Settings operations
@@ -84,8 +81,6 @@ class LUISAuthoringClient(SDKClient):
         self.versions = VersionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.train = TrainOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.permissions = PermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.pattern = PatternOperations(
             self._client, self.config, self._serialize, self._deserialize)
