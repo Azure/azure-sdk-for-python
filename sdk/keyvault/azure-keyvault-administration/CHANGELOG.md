@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0b3 (Unreleased)
+## 4.0.0b3 (2021-02-09)
 ### Added
 - `KeyVaultAccessControlClient` supports managing custom role definitions
 
