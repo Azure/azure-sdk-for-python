@@ -290,7 +290,7 @@ def collect_log_files(working_dir):
         logging.info("'{}' directory already exists".format(log_directory))
 
     log_directory = os.path.join(
-        log_directory, package)
+        log_directory, package
     )
 
     try:
