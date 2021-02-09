@@ -54,8 +54,8 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             logger.exception("Exception occurred while exporting the data.")
             return get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
-    def close(self) -> None:
-        """Closes the exporter.
+    def shutdown(self) -> None:
+        """Shuts down the exporter.
 
         Called when the SDK is shut down.
         """
