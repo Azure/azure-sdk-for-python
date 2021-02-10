@@ -115,7 +115,8 @@ def test_http_client_response():
     assert len(response.text()) != 0
     assert "content-type" in response.headers
     assert "Content-Type" in response.headers
-
+    assert response.json()
+    assert json.dumps(response.json())
 
 def test_response_deserialization():
 

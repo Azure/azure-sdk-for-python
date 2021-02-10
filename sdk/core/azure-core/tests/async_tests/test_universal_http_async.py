@@ -33,6 +33,7 @@ from azure.core.pipeline.transport import (
     AsyncioRequestsTransport,
     TrioRequestsTransport)
 
+import json
 import aiohttp
 import trio
 
@@ -120,3 +121,13 @@ async def test_aiohttp_response_text():
             {'Content-Type': 'text/plain'}
         )
         assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)
+
+def test_aiohttp_response_json():
+    res = _create_aiohttp_response(b'{"key": "value"}', {'Content-Type': 'application/json'})
+    assert res.json() == {"key": "value"}
+    assert json.dumps(res.json())
+
+def test_aiohttp_response_json_error():
+    res = _create_aiohttp_response(b'this is not json serializable', {'Content-Type': 'application/json'})
+    with pytest.raises(json.decoder.JSONDecodeError):
+        res.json()

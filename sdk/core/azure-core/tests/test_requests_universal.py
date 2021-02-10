@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 import concurrent.futures
 import pytest
+import json
 import requests.utils
 
 from azure.core.pipeline.transport import HttpRequest, RequestsTransport, RequestsTransportResponse
@@ -82,3 +83,13 @@ def test_requests_response_text():
             {'Content-Type': 'text/plain'}
         )
         assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)
+
+def test_requests_response_json():
+    res = _create_requests_response(b'{"key": "value"}')
+    assert res.json() == {"key": "value"}
+    assert json.dumps(res.json())
+
+def test_requests_response_json_error():
+    res = _create_requests_response(b'this is not json serializable')
+    with pytest.raises(json.decoder.JSONDecodeError):
+        res.json()
