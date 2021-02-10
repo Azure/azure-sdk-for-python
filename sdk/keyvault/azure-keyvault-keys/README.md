@@ -162,6 +162,7 @@ This section contains code snippets covering common tasks:
 [create_ec_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.create_ec_key)
 create RSA and elliptic curve keys in the vault, respectively. If a key with the same name already exists, a new version
 of that key is created.
+
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
