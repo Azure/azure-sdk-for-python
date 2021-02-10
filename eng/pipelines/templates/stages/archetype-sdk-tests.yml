@@ -100,7 +100,7 @@ stages:
   # - ${{ if or(contains(parameters.Clouds, cloud.key), contains(variables['Build.DefinitionName'], 'tests-weekly')) }}:
   - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
     - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
-      - stage: ${{ cloud.key }}
+      - stage: ${{ cloud.key }}_${{ parameters.JobName }}
         dependsOn: []
         jobs:
         - template: /eng/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
@@ -149,7 +149,7 @@ stages:
     - ${{ each cloud in parameters.CloudConfig }}:
       - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
         - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
-          - ${{ cloud.key }}
+          - ${{ cloud.key }}_${{ parameters.JobName }}
   jobs:
   - template: ../jobs/publish-coverage.yml
     parameters:
