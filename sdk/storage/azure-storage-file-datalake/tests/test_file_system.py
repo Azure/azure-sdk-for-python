@@ -200,7 +200,7 @@ class FileSystemTest(StorageTestCase):
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                restored_fs_client = self.dsc.undelete_file_system(filesystem.name, filesystem.version,
+                restored_fs_client = self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
                                                                    new_name="restored" + name + str(restored_version))
                 restored_version += 1
 
@@ -232,7 +232,7 @@ class FileSystemTest(StorageTestCase):
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
                 with self.assertRaises(HttpResponseError):
-                    self.dsc.undelete_file_system(filesystem.name, filesystem.version,
+                    self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
                                                   new_name=existing_filesystem_client.file_system_name)
 
     @record
@@ -261,7 +261,7 @@ class FileSystemTest(StorageTestCase):
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                restored_fs_client = dsc.undelete_file_system(filesystem.name, filesystem.version,
+                restored_fs_client = dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
                                                               new_name="restored" + name + str(restored_version))
                 restored_version += 1
 
