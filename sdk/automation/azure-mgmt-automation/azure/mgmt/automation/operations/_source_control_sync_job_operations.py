@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class SourceControlSyncJobOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,10 +51,10 @@ class SourceControlSyncJobOperations(object):
         automation_account_name,  # type: str
         source_control_name,  # type: str
         source_control_sync_job_id,  # type: str
-        parameters,  # type: "models.SourceControlSyncJobCreateParameters"
+        parameters,  # type: "_models.SourceControlSyncJobCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SourceControlSyncJob"
+        # type: (...) -> "_models.SourceControlSyncJob"
         """Creates the sync job for a source control.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -72,7 +72,7 @@ class SourceControlSyncJobOperations(object):
         :rtype: ~azure.mgmt.automation.models.SourceControlSyncJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SourceControlSyncJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceControlSyncJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -110,7 +110,7 @@ class SourceControlSyncJobOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SourceControlSyncJob', pipeline_response)
@@ -129,7 +129,7 @@ class SourceControlSyncJobOperations(object):
         source_control_sync_job_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SourceControlSyncJobById"
+        # type: (...) -> "_models.SourceControlSyncJobById"
         """Retrieve the source control sync job identified by job id.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -145,7 +145,7 @@ class SourceControlSyncJobOperations(object):
         :rtype: ~azure.mgmt.automation.models.SourceControlSyncJobById
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SourceControlSyncJobById"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceControlSyncJobById"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -178,7 +178,7 @@ class SourceControlSyncJobOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SourceControlSyncJobById', pipeline_response)
@@ -197,7 +197,7 @@ class SourceControlSyncJobOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SourceControlSyncJobListResult"]
+        # type: (...) -> Iterable["_models.SourceControlSyncJobListResult"]
         """Retrieve a list of source control sync jobs.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -213,7 +213,7 @@ class SourceControlSyncJobOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.automation.models.SourceControlSyncJobListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SourceControlSyncJobListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceControlSyncJobListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -263,7 +263,7 @@ class SourceControlSyncJobOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

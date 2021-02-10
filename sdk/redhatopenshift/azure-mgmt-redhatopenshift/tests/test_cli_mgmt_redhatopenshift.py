@@ -23,6 +23,7 @@ from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'australiaeast'
 
+@unittest.skip("skip test")
 class MgmtAzureRedHatOpenShiftClientTest(AzureMgmtTestCase):
 
     def setUp(self):

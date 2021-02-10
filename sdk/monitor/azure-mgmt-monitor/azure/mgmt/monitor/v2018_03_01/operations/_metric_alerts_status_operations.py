@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class MetricAlertsStatusOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class MetricAlertsStatusOperations(object):
         rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.MetricAlertStatusCollection"
+        # type: (...) -> "_models.MetricAlertStatusCollection"
         """Retrieve an alert rule status.
 
         :param resource_group_name: The name of the resource group.
@@ -62,7 +62,7 @@ class MetricAlertsStatusOperations(object):
         :rtype: ~$(python-base-namespace).v2018_03_01.models.MetricAlertStatusCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricAlertStatusCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetricAlertStatusCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -93,7 +93,7 @@ class MetricAlertsStatusOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MetricAlertStatusCollection', pipeline_response)
@@ -111,7 +111,7 @@ class MetricAlertsStatusOperations(object):
         status_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.MetricAlertStatusCollection"
+        # type: (...) -> "_models.MetricAlertStatusCollection"
         """Retrieve an alert rule status.
 
         :param resource_group_name: The name of the resource group.
@@ -125,7 +125,7 @@ class MetricAlertsStatusOperations(object):
         :rtype: ~$(python-base-namespace).v2018_03_01.models.MetricAlertStatusCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricAlertStatusCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetricAlertStatusCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -157,7 +157,7 @@ class MetricAlertsStatusOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MetricAlertStatusCollection', pipeline_response)

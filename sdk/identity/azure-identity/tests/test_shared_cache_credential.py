@@ -800,6 +800,44 @@ def test_authentication_record_authenticating_tenant():
     assert transport.send.called
 
 
+def test_client_capabilities():
+    """the credential should configure MSAL for capability CP1 (ability to handle claims challenges)"""
+
+    record = AuthenticationRecord("tenant-id", "client_id", "authority", "home_account_id", "username")
+    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
+    credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
+
+    with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication") as PublicClientApplication:
+        credential._initialize()
+
+    assert PublicClientApplication.call_count == 1
+    _, kwargs = PublicClientApplication.call_args
+    assert kwargs["client_capabilities"] == ["CP1"]
+
+
+def test_claims_challenge():
+    """get_token should pass any claims challenge to MSAL token acquisition APIs"""
+
+    expected_claims = '{"access_token": {"essential": "true"}'
+
+    record = AuthenticationRecord("tenant-id", "client_id", "authority", "home_account_id", "username")
+
+    msal_app = Mock()
+    msal_app.get_accounts.return_value = [{"home_account_id": record.home_account_id}]
+    msal_app.acquire_token_silent_with_error.return_value = dict(
+        build_aad_response(access_token="**", id_token=build_id_token())
+    )
+
+    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
+    credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
+    with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication", lambda *_, **__: msal_app):
+        credential.get_token("scope", claims=expected_claims)
+
+    assert msal_app.acquire_token_silent_with_error.call_count == 1
+    args, kwargs = msal_app.acquire_token_silent_with_error.call_args
+    assert kwargs["claims_challenge"] == expected_claims
+
+
 def get_account_event(
     username, uid, utid, authority=None, client_id="client-id", refresh_token="refresh-token", scopes=None, **kwargs
 ):

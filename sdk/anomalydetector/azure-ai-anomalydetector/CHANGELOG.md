@@ -9,8 +9,8 @@
   - Renamed `entire_detect` to `detect_entire_series`
   - Renamed `APIError` to `AnomalyDetectorError`
   - Renamed `Request` to `DetectRequest`
-  - Renamed `LastDetect` to `DetectLastPoint`
-  - Renamed `ChangePointDetect` to `DetectChangePoint`
+  - Renamed `last_detect` to `detect_last_point`
+  - Renamed `change_point_detect` to `detect_change_point`
   - Renamed `Granularity` to `TimeGranularity`
   - Renamed `minutely` and `secondly` to `per_minute` and `per_second`
   - Renamed `Point` to `TimeSeriesPoint`

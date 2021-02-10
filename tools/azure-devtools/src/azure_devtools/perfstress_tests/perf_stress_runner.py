@@ -33,6 +33,13 @@ class PerfStressRunner:
         self._discover_tests(test_folder_path)
         self._parse_args()
 
+    def _get_completed_operations(self):
+        return sum(self._completed_operations)
+
+    def _get_operations_per_second(self):
+        return sum(map(
+            lambda x: x[0] / x[1] if x[1] else 0,
+            zip(self._completed_operations, self._last_completion_times)))
 
     def _parse_args(self):
         # First, detect which test we're running.
@@ -74,7 +81,6 @@ class PerfStressRunner:
         self.logger.info(self.per_test_args)
         self.logger.info("")
 
-
     def _discover_tests(self, test_folder_path):
         self._test_classes = {}
 
@@ -92,7 +98,6 @@ class PerfStressRunner:
                 if inspect.isclass(value) and issubclass(value, PerfStressTest) and value != PerfStressTest:
                     self.logger.info("Loaded test class: {}".format(name))
                     self._test_classes[name] = value
-
 
     async def start(self):      
         self.logger.info("=== Setup ===")
@@ -133,7 +138,6 @@ class PerfStressRunner:
         finally:
             await asyncio.gather(*[test.close() for test in tests])
 
-
     async def _run_tests(self, tests, duration, title):
         self._completed_operations = [0] * len(tests)
         self._last_completion_times = [0] * len(tests)
@@ -157,17 +161,14 @@ class PerfStressRunner:
         self.logger.info("")
         self.logger.info("=== Results ===")
 
-        total_operations = sum(self._completed_operations)
-        operations_per_second = sum(map(
-            lambda x: x[0] / x[1],
-            zip(self._completed_operations, self._last_completion_times)))
+        total_operations = self._get_completed_operations()
+        operations_per_second = self._get_operations_per_second()
         seconds_per_operation = 1 / operations_per_second
         weighted_average_seconds = total_operations / operations_per_second
 
-        self.logger.info("Completed {} operations in a weighted-average of {:.2f}s ({:.2f} ops/s, {:.3f} s/op)".format(
+        self.logger.info("Completed {:,} operations in a weighted-average of {:,.2f}s ({:,.2f} ops/s, {:,.3f} s/op)".format(
             total_operations, weighted_average_seconds, operations_per_second, seconds_per_operation))
         self.logger.info("")
-
 
     def _run_sync_loop(self, test, duration, id):
         start = time.time()
@@ -178,7 +179,6 @@ class PerfStressRunner:
             self._completed_operations[id] += 1
             self._last_completion_times[id] = runtime
 
-
     async def _run_async_loop(self, test, duration, id):
         start = time.time()
         runtime = 0
@@ -188,12 +188,14 @@ class PerfStressRunner:
             self._completed_operations[id] += 1
             self._last_completion_times[id] = runtime
 
-
     def _print_status(self, title):
         if self._last_total_operations == -1:
             self._last_total_operations = 0
-            self.logger.info("=== {} ===\nCurrent\t\tTotal".format(title))
+            self.logger.info("=== {} ===\nCurrent\t\tTotal\t\tAverage".format(title))
 
-        total_operations = sum(self._completed_operations)
-        self.logger.info("{}\t\t{}".format(total_operations - self._last_total_operations, total_operations))
+        total_operations = self._get_completed_operations()
+        current_operations = total_operations - self._last_total_operations
+        average_operations = self._get_operations_per_second()
+
         self._last_total_operations = total_operations
+        self.logger.info("{}\t\t{}\t\t{:.2f}".format(current_operations, total_operations, average_operations))

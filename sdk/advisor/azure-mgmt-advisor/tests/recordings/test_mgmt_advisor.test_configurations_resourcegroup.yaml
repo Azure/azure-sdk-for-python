@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-advisor/9.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-advisor/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/default?api-version=2020-01-01
   response:
@@ -27,7 +27,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Nov 2020 02:48:53 GMT
+      - Tue, 22 Dec 2020 02:49:36 GMT
       expires:
       - '-1'
       pragma:
@@ -57,7 +57,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-advisor/9.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-advisor/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations?api-version=2020-01-01
   response:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Nov 2020 02:48:53 GMT
+      - Tue, 22 Dec 2020 02:49:37 GMT
       expires:
       - '-1'
       pragma:
@@ -105,7 +105,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-advisor/9.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-advisor/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/default?api-version=2020-01-01
   response:
@@ -119,7 +119,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Nov 2020 02:48:54 GMT
+      - Tue, 22 Dec 2020 02:49:37 GMT
       expires:
       - '-1'
       pragma:
@@ -149,7 +149,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-advisor/9.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-advisor/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations?api-version=2020-01-01
   response:
@@ -163,7 +163,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Nov 2020 02:48:54 GMT
+      - Tue, 22 Dec 2020 02:49:37 GMT
       expires:
       - '-1'
       pragma:

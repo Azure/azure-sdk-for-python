@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0 (2020-12-17)
+
+**Features**
+
+  - Model PatchVault has a new parameter identity
+
 ## 1.0.0b1 (2020-11-10)
 
 This is beta preview version.

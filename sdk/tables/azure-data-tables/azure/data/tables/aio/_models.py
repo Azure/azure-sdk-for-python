@@ -9,16 +9,13 @@ from azure.core.async_paging import AsyncPageIterator
 from .._deserialize import (
     _return_context_and_deserialized,
     _convert_to_entity,
-    _extract_continuation_token
+    _extract_continuation_token,
 )
 from .._generated.models import QueryOptions
 from .._models import TableItem
 from .._error import _process_table_error
-from .._constants import (
-    NEXT_PARTITION_KEY,
-    NEXT_TABLE_NAME,
-    NEXT_ROW_KEY
-)
+from .._constants import NEXT_PARTITION_KEY, NEXT_TABLE_NAME, NEXT_ROW_KEY
+
 
 class TablePropertiesPaged(AsyncPageIterator):
     """An iterable of Table properties.
@@ -36,34 +33,35 @@ class TablePropertiesPaged(AsyncPageIterator):
         super(TablePropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
-            continuation_token=kwargs.get('continuation_token') or ""
+            continuation_token=kwargs.get("continuation_token") or "",
         )
         self._command = command
         self._headers = None
         self._response = None
-        self.results_per_page = kwargs.get('results_per_page')
-        self.filter = kwargs.get('filter')
-        self.select = kwargs.get('select')
+        self.results_per_page = kwargs.get("results_per_page")
+        self.filter = kwargs.get("filter")
+        self.select = kwargs.get("select")
         self.location_mode = None
 
     async def _get_next_cb(self, continuation_token, **kwargs):
         query_options = QueryOptions(
-            top=self.results_per_page,
-            select=self.select,
-            filter=self.filter)
+            top=self.results_per_page, select=self.select, filter=self.filter
+        )
         try:
             return await self._command(
                 query_options=query_options,
                 next_table_name=continuation_token or None,
-                cls=kwargs.pop('cls', None) or _return_context_and_deserialized,
-                use_location=self.location_mode
+                cls=kwargs.pop("cls", None) or _return_context_and_deserialized,
+                use_location=self.location_mode,
             )
         except HttpResponseError as error:
             _process_table_error(error)
 
     async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [TableItem._from_generated(t, **self._headers) for t in self._response.value] # pylint:disable=protected-access
+        props_list = [
+            TableItem._from_generated(t, **self._headers) for t in self._response.value  # pylint: disable=protected-access
+        ]
         return self._headers[NEXT_TABLE_NAME] or None, props_list
 
 
@@ -84,23 +82,24 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
         super(TableEntityPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
-            continuation_token=kwargs.get('continuation_token') or {}
+            continuation_token=kwargs.get("continuation_token") or {},
         )
         self._command = command
         self._headers = None
         self._response = None
         self.table = table
-        self.results_per_page = kwargs.get('results_per_page')
-        self.filter = kwargs.get('filter')
-        self.select = kwargs.get('select')
+        self.results_per_page = kwargs.get("results_per_page")
+        self.filter = kwargs.get("filter")
+        self.select = kwargs.get("select")
         self.location_mode = None
 
     async def _get_next_cb(self, continuation_token, **kwargs):
-        next_partition_key, next_row_key = _extract_continuation_token(continuation_token)
+        next_partition_key, next_row_key = _extract_continuation_token(
+            continuation_token
+        )
         query_options = QueryOptions(
-            top=self.results_per_page,
-            select=self.select,
-            filter=self.filter)
+            top=self.results_per_page, select=self.select, filter=self.filter
+        )
         try:
             return await self._command(
                 query_options=query_options,
@@ -108,7 +107,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
                 next_partition_key=next_partition_key,
                 table=self.table,
                 cls=kwargs.pop("cls", _return_context_and_deserialized),
-                use_location=self.location_mode
+                use_location=self.location_mode,
             )
         except HttpResponseError as error:
             _process_table_error(error)
@@ -119,7 +118,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
         next_entity = {}
         if self._headers[NEXT_PARTITION_KEY] or self._headers[NEXT_ROW_KEY]:
             next_entity = {
-                'PartitionKey': self._headers[NEXT_PARTITION_KEY],
-                'RowKey': self._headers[NEXT_ROW_KEY]
+                "PartitionKey": self._headers[NEXT_PARTITION_KEY],
+                "RowKey": self._headers[NEXT_ROW_KEY],
             }
         return next_entity or None, props_list

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ManagedVirtualNetworksOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class ManagedVirtualNetworksOperations(object):
         factory_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ManagedVirtualNetworkListResponse"]
+        # type: (...) -> Iterable["_models.ManagedVirtualNetworkListResponse"]
         """Lists managed Virtual Networks.
 
         :param resource_group_name: The resource group name.
@@ -63,7 +63,7 @@ class ManagedVirtualNetworksOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datafactory.models.ManagedVirtualNetworkListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedVirtualNetworkListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedVirtualNetworkListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -125,11 +125,11 @@ class ManagedVirtualNetworksOperations(object):
         resource_group_name,  # type: str
         factory_name,  # type: str
         managed_virtual_network_name,  # type: str
-        managed_virtual_network,  # type: "models.ManagedVirtualNetworkResource"
+        managed_virtual_network,  # type: "_models.ManagedVirtualNetworkResource"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagedVirtualNetworkResource"
+        # type: (...) -> "_models.ManagedVirtualNetworkResource"
         """Creates or updates a managed Virtual Network.
 
         :param resource_group_name: The resource group name.
@@ -148,7 +148,7 @@ class ManagedVirtualNetworksOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedVirtualNetworkResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedVirtualNetworkResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -205,7 +205,7 @@ class ManagedVirtualNetworksOperations(object):
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagedVirtualNetworkResource"
+        # type: (...) -> "_models.ManagedVirtualNetworkResource"
         """Gets a managed Virtual Network.
 
         :param resource_group_name: The resource group name.
@@ -223,7 +223,7 @@ class ManagedVirtualNetworksOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedVirtualNetworkResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedVirtualNetworkResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

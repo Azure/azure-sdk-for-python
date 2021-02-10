@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class AutoProvisioningSettingsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class AutoProvisioningSettingsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AutoProvisioningSettingList"]
+        # type: (...) -> Iterable["_models.AutoProvisioningSettingList"]
         """Exposes the auto provisioning settings of the subscriptions.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -57,7 +57,7 @@ class AutoProvisioningSettingsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.AutoProvisioningSettingList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutoProvisioningSettingList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutoProvisioningSettingList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -117,7 +117,7 @@ class AutoProvisioningSettingsOperations(object):
         setting_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AutoProvisioningSetting"
+        # type: (...) -> "_models.AutoProvisioningSetting"
         """Details of a specific setting.
 
         :param setting_name: Auto provisioning setting key.
@@ -127,7 +127,7 @@ class AutoProvisioningSettingsOperations(object):
         :rtype: ~azure.mgmt.security.models.AutoProvisioningSetting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutoProvisioningSetting"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutoProvisioningSetting"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -170,10 +170,10 @@ class AutoProvisioningSettingsOperations(object):
     def create(
         self,
         setting_name,  # type: str
-        setting,  # type: "models.AutoProvisioningSetting"
+        setting,  # type: "_models.AutoProvisioningSetting"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AutoProvisioningSetting"
+        # type: (...) -> "_models.AutoProvisioningSetting"
         """Details of a specific setting.
 
         :param setting_name: Auto provisioning setting key.
@@ -185,7 +185,7 @@ class AutoProvisioningSettingsOperations(object):
         :rtype: ~azure.mgmt.security.models.AutoProvisioningSetting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutoProvisioningSetting"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutoProvisioningSetting"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

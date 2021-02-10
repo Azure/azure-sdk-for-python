@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 00:38:02 GMT
+      - Fri, 18 Dec 2020 17:28:41 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 00:38:02 GMT
+      - Fri, 18 Dec 2020 17:28:41 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesync2c5a0f7d"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesync2c5a0f7d"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 01 Oct 2020 00:38:02 GMT
+      - Fri, 18 Dec 2020 17:28:41 GMT
       location:
-      - https://tablesteststorname.table.core.windows.net/Tables('pytablesync2c5a0f7d')
+      - https://fake_table_account.table.core.windows.net/Tables('pytablesync2c5a0f7d')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -63,26 +63,26 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 00:38:02 GMT
+      - Fri, 18 Dec 2020 17:28:41 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 00:38:02 GMT
+      - Fri, 18 Dec 2020 17:28:41 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
       string: '{"odata.error":{"code":"TableAlreadyExists","message":{"lang":"en-US","value":"The
-        table specified already exists.\nRequestId:b1683c27-6002-006c-618b-9775b2000000\nTime:2020-10-01T00:38:03.0079648Z"}}}'
+        table specified already exists.\nRequestId:bbb0eb37-5002-005c-4263-d5f641000000\nTime:2020-12-18T17:28:42.2736306Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 01 Oct 2020 00:38:02 GMT
+      - Fri, 18 Dec 2020 17:28:41 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -106,15 +106,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 01 Oct 2020 00:38:02 GMT
+      - Fri, 18 Dec 2020 17:28:41 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 00:38:02 GMT
+      - Fri, 18 Dec 2020 17:28:41 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablesteststorname.table.core.windows.net/Tables('pytablesync2c5a0f7d')
+    uri: https://fake_table_account.table.core.windows.net/Tables('pytablesync2c5a0f7d')
   response:
     body:
       string: ''
@@ -124,7 +124,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 01 Oct 2020 00:38:02 GMT
+      - Fri, 18 Dec 2020 17:28:41 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

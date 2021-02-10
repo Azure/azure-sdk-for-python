@@ -176,10 +176,10 @@ MODEL_CLASS_ATTRIBUTES = {
         "updated_at",
         "accessed_at",
         "message_count_details",
+        "forward_dead_lettered_messages_to",
         "auto_delete_on_idle",
         "entity_availability_status",
         "user_metadata",
-        "forward_dead_lettered_messages_to",
     ),
     SubscriptionDescriptionEntry: (
         "id",

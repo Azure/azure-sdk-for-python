@@ -18,13 +18,18 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 from ._configuration import AccessControlClientConfiguration
-from .operations import AccessControlClientOperationsMixin
+from .operations import RoleAssignmentsOperations
+from .operations import RoleDefinitionsOperations
 from . import models
 
 
-class AccessControlClient(AccessControlClientOperationsMixin):
+class AccessControlClient(object):
     """AccessControlClient.
 
+    :ivar role_assignments: RoleAssignmentsOperations operations
+    :vartype role_assignments: azure.synapse.accesscontrol.operations.RoleAssignmentsOperations
+    :ivar role_definitions: RoleDefinitionsOperations operations
+    :vartype role_definitions: azure.synapse.accesscontrol.operations.RoleDefinitionsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
@@ -47,6 +52,10 @@ class AccessControlClient(AccessControlClientOperationsMixin):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.role_assignments = RoleAssignmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.role_definitions = RoleDefinitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):
         # type: () -> None

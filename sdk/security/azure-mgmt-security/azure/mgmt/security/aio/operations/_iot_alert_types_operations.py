@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class IotAlertTypesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class IotAlertTypesOperations:
         resource_group_name: str,
         solution_name: str,
         **kwargs
-    ) -> "models.IotAlertTypeList":
+    ) -> "_models.IotAlertTypeList":
         """List IoT alert types.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -58,7 +58,7 @@ class IotAlertTypesOperations:
         :rtype: ~azure.mgmt.security.models.IotAlertTypeList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotAlertTypeList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotAlertTypeList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -105,7 +105,7 @@ class IotAlertTypesOperations:
         solution_name: str,
         iot_alert_type_name: str,
         **kwargs
-    ) -> "models.IotAlertType":
+    ) -> "_models.IotAlertType":
         """Get IoT alert type.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -120,7 +120,7 @@ class IotAlertTypesOperations:
         :rtype: ~azure.mgmt.security.models.IotAlertType
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotAlertType"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotAlertType"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -161,3 +161,107 @@ class IotAlertTypesOperations:
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/iotAlertTypes/{iotAlertTypeName}'}  # type: ignore
+
+    async def list_at_subscription_scope(
+        self,
+        **kwargs
+    ) -> "_models.IotAlertTypeList":
+        """List IoT alert types.
+
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IotAlertTypeList, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IotAlertTypeList
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotAlertTypeList"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-08-06-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.list_at_subscription_scope.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('IotAlertTypeList', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    list_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotAlertTypes'}  # type: ignore
+
+    async def get_at_subscription_scope(
+        self,
+        iot_alert_type_name: str,
+        **kwargs
+    ) -> "_models.IotAlertType":
+        """Get IoT alert type.
+
+        :param iot_alert_type_name: Name of the alert type.
+        :type iot_alert_type_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IotAlertType, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IotAlertType
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotAlertType"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-08-06-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_at_subscription_scope.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'iotAlertTypeName': self._serialize.url("iot_alert_type_name", iot_alert_type_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('IotAlertType', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotAlertTypes/{iotAlertTypeName}'}  # type: ignore

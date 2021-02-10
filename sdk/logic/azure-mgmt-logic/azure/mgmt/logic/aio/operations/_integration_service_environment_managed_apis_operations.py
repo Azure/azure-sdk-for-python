@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class IntegrationServiceEnvironmentManagedApisOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class IntegrationServiceEnvironmentManagedApisOperations:
         resource_group: str,
         integration_service_environment_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ManagedApiListResult"]:
+    ) -> AsyncIterable["_models.ManagedApiListResult"]:
         """Gets the integration service environment managed Apis.
 
         :param resource_group: The resource group.
@@ -60,7 +60,7 @@ class IntegrationServiceEnvironmentManagedApisOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.logic.models.ManagedApiListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedApiListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedApiListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -107,7 +107,7 @@ class IntegrationServiceEnvironmentManagedApisOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -124,7 +124,7 @@ class IntegrationServiceEnvironmentManagedApisOperations:
         integration_service_environment_name: str,
         api_name: str,
         **kwargs
-    ) -> "models.ManagedApi":
+    ) -> "_models.ManagedApi":
         """Gets the integration service environment managed Api.
 
         :param resource_group: The resource group name.
@@ -138,7 +138,7 @@ class IntegrationServiceEnvironmentManagedApisOperations:
         :rtype: ~azure.mgmt.logic.models.ManagedApi
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedApi"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedApi"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -170,7 +170,7 @@ class IntegrationServiceEnvironmentManagedApisOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagedApi', pipeline_response)
@@ -187,8 +187,8 @@ class IntegrationServiceEnvironmentManagedApisOperations:
         integration_service_environment_name: str,
         api_name: str,
         **kwargs
-    ) -> "models.ManagedApi":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedApi"]
+    ) -> "_models.ManagedApi":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedApi"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -220,7 +220,7 @@ class IntegrationServiceEnvironmentManagedApisOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -241,7 +241,7 @@ class IntegrationServiceEnvironmentManagedApisOperations:
         integration_service_environment_name: str,
         api_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.ManagedApi"]:
+    ) -> AsyncLROPoller["_models.ManagedApi"]:
         """Puts the integration service environment managed Api.
 
         :param resource_group: The resource group name.
@@ -261,7 +261,7 @@ class IntegrationServiceEnvironmentManagedApisOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedApi"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedApi"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -286,7 +286,14 @@ class IntegrationServiceEnvironmentManagedApisOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+            'integrationServiceEnvironmentName': self._serialize.url("integration_service_environment_name", integration_service_environment_name, 'str'),
+            'apiName': self._serialize.url("api_name", api_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -339,7 +346,7 @@ class IntegrationServiceEnvironmentManagedApisOperations:
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -395,7 +402,14 @@ class IntegrationServiceEnvironmentManagedApisOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+            'integrationServiceEnvironmentName': self._serialize.url("integration_service_environment_name", integration_service_environment_name, 'str'),
+            'apiName': self._serialize.url("api_name", api_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

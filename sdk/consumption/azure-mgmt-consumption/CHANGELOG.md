@@ -1,5 +1,13 @@
 # Release History
 
+## 8.0.0 (2020-12-22)
+
+**Features**
+
+  - Model ReservationRecommendationDetailsCalculatedSavingsProperties has a new parameter reserved_unit_count
+  - Model ReservationRecommendationDetailsModel has a new parameter location
+  - Model ReservationRecommendationDetailsModel has a new parameter sku
+
 ## 8.0.0b1 (2020-10-31)
 
 This is beta preview version.

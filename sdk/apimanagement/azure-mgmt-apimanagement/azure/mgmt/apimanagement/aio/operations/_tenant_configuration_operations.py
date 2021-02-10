@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class TenantConfigurationOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,18 +46,15 @@ class TenantConfigurationOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        configuration_name: Union[str, "models.ConfigurationIdName"],
-        branch: Optional[str] = None,
-        force: Optional[bool] = None,
+        configuration_name: Union[str, "_models.ConfigurationIdName"],
+        parameters: "_models.DeployConfigurationParameters",
         **kwargs
-    ) -> Optional["models.OperationResultContract"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationResultContract"]]
+    ) -> Optional["_models.OperationResultContract"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationResultContract"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.DeployConfigurationParameters(branch=branch, force=force)
         api_version = "2020-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -82,7 +79,7 @@ class TenantConfigurationOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'DeployConfigurationParameters')
+        body_content = self._serialize.body(parameters, 'DeployConfigurationParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -90,7 +87,7 @@ class TenantConfigurationOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -107,11 +104,10 @@ class TenantConfigurationOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        configuration_name: Union[str, "models.ConfigurationIdName"],
-        branch: Optional[str] = None,
-        force: Optional[bool] = None,
+        configuration_name: Union[str, "_models.ConfigurationIdName"],
+        parameters: "_models.DeployConfigurationParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.OperationResultContract"]:
+    ) -> AsyncLROPoller["_models.OperationResultContract"]:
         """This operation applies changes from the specified Git branch to the configuration database.
         This is a long running operation and could take several minutes to complete.
 
@@ -121,12 +117,8 @@ class TenantConfigurationOperations:
         :type service_name: str
         :param configuration_name: The identifier of the Git Configuration Operation.
         :type configuration_name: str or ~azure.mgmt.apimanagement.models.ConfigurationIdName
-        :param branch: The name of the Git branch from which the configuration is to be deployed to the
-         configuration database.
-        :type branch: str
-        :param force: The value enforcing deleting subscriptions to products that are deleted in this
-         update.
-        :type force: bool
+        :param parameters: Deploy Configuration parameters.
+        :type parameters: ~azure.mgmt.apimanagement.models.DeployConfigurationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -138,7 +130,7 @@ class TenantConfigurationOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationResultContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationResultContract"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -149,8 +141,7 @@ class TenantConfigurationOperations:
                 resource_group_name=resource_group_name,
                 service_name=service_name,
                 configuration_name=configuration_name,
-                branch=branch,
-                force=force,
+                parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -165,7 +156,14 @@ class TenantConfigurationOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -183,18 +181,15 @@ class TenantConfigurationOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        configuration_name: Union[str, "models.ConfigurationIdName"],
-        branch: Optional[str] = None,
-        force: Optional[bool] = None,
+        configuration_name: Union[str, "_models.ConfigurationIdName"],
+        parameters: "_models.SaveConfigurationParameter",
         **kwargs
-    ) -> Optional["models.OperationResultContract"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationResultContract"]]
+    ) -> Optional["_models.OperationResultContract"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationResultContract"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.SaveConfigurationParameter(branch=branch, force=force)
         api_version = "2020-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -219,7 +214,7 @@ class TenantConfigurationOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'SaveConfigurationParameter')
+        body_content = self._serialize.body(parameters, 'SaveConfigurationParameter')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -227,7 +222,7 @@ class TenantConfigurationOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -244,11 +239,10 @@ class TenantConfigurationOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        configuration_name: Union[str, "models.ConfigurationIdName"],
-        branch: Optional[str] = None,
-        force: Optional[bool] = None,
+        configuration_name: Union[str, "_models.ConfigurationIdName"],
+        parameters: "_models.SaveConfigurationParameter",
         **kwargs
-    ) -> AsyncLROPoller["models.OperationResultContract"]:
+    ) -> AsyncLROPoller["_models.OperationResultContract"]:
         """This operation creates a commit with the current configuration snapshot to the specified branch
         in the repository. This is a long running operation and could take several minutes to complete.
 
@@ -258,12 +252,8 @@ class TenantConfigurationOperations:
         :type service_name: str
         :param configuration_name: The identifier of the Git Configuration Operation.
         :type configuration_name: str or ~azure.mgmt.apimanagement.models.ConfigurationIdName
-        :param branch: The name of the Git branch in which to commit the current configuration
-         snapshot.
-        :type branch: str
-        :param force: The value if true, the current configuration database is committed to the Git
-         repository, even if the Git repository has newer changes that would be overwritten.
-        :type force: bool
+        :param parameters: Save Configuration parameters.
+        :type parameters: ~azure.mgmt.apimanagement.models.SaveConfigurationParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -275,7 +265,7 @@ class TenantConfigurationOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationResultContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationResultContract"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -286,8 +276,7 @@ class TenantConfigurationOperations:
                 resource_group_name=resource_group_name,
                 service_name=service_name,
                 configuration_name=configuration_name,
-                branch=branch,
-                force=force,
+                parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -302,7 +291,14 @@ class TenantConfigurationOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -320,18 +316,15 @@ class TenantConfigurationOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        configuration_name: Union[str, "models.ConfigurationIdName"],
-        branch: Optional[str] = None,
-        force: Optional[bool] = None,
+        configuration_name: Union[str, "_models.ConfigurationIdName"],
+        parameters: "_models.DeployConfigurationParameters",
         **kwargs
-    ) -> Optional["models.OperationResultContract"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationResultContract"]]
+    ) -> Optional["_models.OperationResultContract"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationResultContract"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.DeployConfigurationParameters(branch=branch, force=force)
         api_version = "2020-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -356,7 +349,7 @@ class TenantConfigurationOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'DeployConfigurationParameters')
+        body_content = self._serialize.body(parameters, 'DeployConfigurationParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -364,7 +357,7 @@ class TenantConfigurationOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -381,11 +374,10 @@ class TenantConfigurationOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        configuration_name: Union[str, "models.ConfigurationIdName"],
-        branch: Optional[str] = None,
-        force: Optional[bool] = None,
+        configuration_name: Union[str, "_models.ConfigurationIdName"],
+        parameters: "_models.DeployConfigurationParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.OperationResultContract"]:
+    ) -> AsyncLROPoller["_models.OperationResultContract"]:
         """This operation validates the changes in the specified Git branch. This is a long running
         operation and could take several minutes to complete.
 
@@ -395,12 +387,8 @@ class TenantConfigurationOperations:
         :type service_name: str
         :param configuration_name: The identifier of the Git Configuration Operation.
         :type configuration_name: str or ~azure.mgmt.apimanagement.models.ConfigurationIdName
-        :param branch: The name of the Git branch from which the configuration is to be deployed to the
-         configuration database.
-        :type branch: str
-        :param force: The value enforcing deleting subscriptions to products that are deleted in this
-         update.
-        :type force: bool
+        :param parameters: Validate Configuration parameters.
+        :type parameters: ~azure.mgmt.apimanagement.models.DeployConfigurationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -412,7 +400,7 @@ class TenantConfigurationOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationResultContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationResultContract"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -423,8 +411,7 @@ class TenantConfigurationOperations:
                 resource_group_name=resource_group_name,
                 service_name=service_name,
                 configuration_name=configuration_name,
-                branch=branch,
-                force=force,
+                parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -439,7 +426,14 @@ class TenantConfigurationOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -457,9 +451,9 @@ class TenantConfigurationOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        configuration_name: Union[str, "models.ConfigurationIdName"],
+        configuration_name: Union[str, "_models.ConfigurationIdName"],
         **kwargs
-    ) -> "models.TenantConfigurationSyncStateContract":
+    ) -> "_models.TenantConfigurationSyncStateContract":
         """Gets the status of the most recent synchronization between the configuration database and the
         Git repository.
 
@@ -474,7 +468,7 @@ class TenantConfigurationOperations:
         :rtype: ~azure.mgmt.apimanagement.models.TenantConfigurationSyncStateContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TenantConfigurationSyncStateContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TenantConfigurationSyncStateContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

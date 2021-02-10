@@ -8,8 +8,10 @@
 import unittest
 from datetime import datetime, timedelta
 import asyncio
+import pytest
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
     ClientAuthenticationError, ResourceModifiedError
@@ -17,7 +19,6 @@ from azure.storage.filedatalake import ContentSettings, generate_account_sas, ge
     ResourceTypes, AccountSasPermissions, FileSasPermissions
 from azure.storage.filedatalake.aio import DataLakeServiceClient, FileSystemClient, DataLakeDirectoryClient, \
     DataLakeFileClient
-from azure.storage.filedatalake._generated.models import StorageErrorException
 from testcase import (
     StorageTestCase,
     record,
@@ -504,21 +505,26 @@ class FileTest(StorageTestCase):
             datetime.utcnow() + timedelta(hours=1),
         )
 
-        # read the created file which is under root directory
-        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, file_name, credential=token)
-        properties = await file_client.get_file_properties()
+        for credential in [token, AzureSasCredential(token)]:
+            # read the created file which is under root directory
+            file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, file_name, credential=credential)
+            properties = await file_client.get_file_properties()
 
-        # make sure we can read the file properties
-        self.assertIsNotNone(properties)
+            # make sure we can read the file properties
+            self.assertIsNotNone(properties)
 
-        # try to write to the created file with the token
-        with self.assertRaises(HttpResponseError):
-            await file_client.append_data(b"abcd", 0, 4)
+            # try to write to the created file with the token
+            with self.assertRaises(HttpResponseError):
+                await file_client.append_data(b"abcd", 0, 4)
 
     @record
     def test_account_sas_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_account_sas())
+
+    def test_account_sas_raises_if_sas_already_in_uri(self):
+        with self.assertRaises(ValueError):
+            DataLakeFileClient(self.dsc.url + "?sig=foo", self.file_system_name, "foo", credential=AzureSasCredential("?foo=bar"))
 
     async def _test_file_sas_only_applies_to_file_level(self):
         # SAS URL is calculated from storage key, so this test runs live only

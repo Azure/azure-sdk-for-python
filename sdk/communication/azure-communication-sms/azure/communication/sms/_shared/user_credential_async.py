@@ -9,27 +9,23 @@ from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
 )
-import six
-from msrest.serialization import TZ_UTC
-from .utils import create_access_token
 
-class CommunicationUserCredential(object):
+from msrest.serialization import TZ_UTC
+
+class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
-    :param str token: The token used to authenticate to an Azure Communication service
+    :param communication_token_refresh_options: The token used to authenticate to an Azure Communication service
+    :type communication_token_refresh_options: ~azure.communication.chat.aio.CommunicationTokenRefreshOptions
     :raises: TypeError
     """
 
     ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
 
     def __init__(self,
-            token, # type: str
-            token_refresher=None
+            communication_token_refresh_options
         ):
-        # type: (str) -> None
-        if not isinstance(token, six.string_types):
-            raise TypeError("token must be a string.")
-        self._token = create_access_token(token)
-        self._token_refresher = token_refresher
+        self._token = communication_token_refresh_options.get_token()
+        self._token_refresher = communication_token_refresh_options.get_token_refresher()
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
 

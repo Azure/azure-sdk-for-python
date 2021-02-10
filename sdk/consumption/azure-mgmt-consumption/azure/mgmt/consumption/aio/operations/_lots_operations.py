@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class LotsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class LotsOperations:
         billing_account_id: str,
         billing_profile_id: str,
         **kwargs
-    ) -> AsyncIterable["models.Lots"]:
+    ) -> AsyncIterable["_models.Lots"]:
         """Lists the lots by billingAccountId and billingProfileId.
 
         :param billing_account_id: BillingAccount ID.
@@ -58,7 +58,7 @@ class LotsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.consumption.models.Lots]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Lots"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Lots"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -104,7 +104,7 @@ class LotsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

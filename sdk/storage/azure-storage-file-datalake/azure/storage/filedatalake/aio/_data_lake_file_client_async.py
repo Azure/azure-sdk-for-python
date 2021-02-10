@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+from azure.core.exceptions import HttpResponseError
 
 try:
     from urllib.parse import quote, unquote
@@ -15,7 +16,6 @@ from ._path_client_async import PathClient
 from .._data_lake_file_client import DataLakeFileClient as DataLakeFileClientBase
 from .._serialize import convert_datetime_to_rfc1123
 from .._deserialize import process_storage_error, deserialize_file_properties
-from .._generated.models import StorageErrorException
 from .._models import FileProperties
 from ..aio._upload_helper import upload_datalake_file
 
@@ -40,9 +40,11 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
     :type file_path: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
 
     .. admonition:: Example:
 
@@ -335,7 +337,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             **kwargs)
         try:
             return await self._client.path.append_data(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def flush_data(self, offset,  # type: int
@@ -402,7 +404,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             retain_uncommitted_data=retain_uncommitted_data, **kwargs)
         try:
             return await self._client.path.flush_data(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def download_file(self, offset=None, length=None, **kwargs):

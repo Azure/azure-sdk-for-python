@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class SchedulesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -52,7 +52,7 @@ class SchedulesOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ScheduleList"]:
+    ) -> AsyncIterable["_models.ScheduleList"]:
         """List schedules in a given lab.
 
         :param resource_group_name: The name of the resource group.
@@ -73,7 +73,7 @@ class SchedulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devtestlabs.models.ScheduleList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScheduleList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScheduleList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -145,7 +145,7 @@ class SchedulesOperations:
         name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.Schedule":
+    ) -> "_models.Schedule":
         """Get schedule.
 
         :param resource_group_name: The name of the resource group.
@@ -161,7 +161,7 @@ class SchedulesOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.Schedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Schedule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -210,9 +210,9 @@ class SchedulesOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        schedule: "models.Schedule",
+        schedule: "_models.Schedule",
         **kwargs
-    ) -> "models.Schedule":
+    ) -> "_models.Schedule":
         """Create or replace an existing schedule.
 
         :param resource_group_name: The name of the resource group.
@@ -228,7 +228,7 @@ class SchedulesOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.Schedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Schedule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -343,9 +343,9 @@ class SchedulesOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        schedule: "models.ScheduleFragment",
+        schedule: "_models.ScheduleFragment",
         **kwargs
-    ) -> "models.Schedule":
+    ) -> "_models.Schedule":
         """Allows modifying tags of schedules. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -361,7 +361,7 @@ class SchedulesOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.Schedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Schedule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -502,7 +502,14 @@ class SchedulesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -522,7 +529,7 @@ class SchedulesOperations:
         lab_name: str,
         name: str,
         **kwargs
-    ) -> AsyncIterable["models.ScheduleList"]:
+    ) -> AsyncIterable["_models.ScheduleList"]:
         """Lists all applicable schedules.
 
         :param resource_group_name: The name of the resource group.
@@ -536,7 +543,7 @@ class SchedulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devtestlabs.models.ScheduleList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScheduleList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScheduleList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

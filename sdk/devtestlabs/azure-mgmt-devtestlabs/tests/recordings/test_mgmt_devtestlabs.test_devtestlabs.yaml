@@ -13,15 +13,15 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-devtestlabs/9.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-devtestlabs/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.DevTestLab/labs/pylab34410fc3?api-version=2018-09-15
   response:
     body:
-      string: '{"properties":{"labStorageType":"Premium","mandatoryArtifactsResourceIdsLinux":[],"mandatoryArtifactsResourceIdsWindows":[],"createdDate":"2020-10-27T03:09:35.8720183+00:00","premiumDataDisks":"Disabled","environmentPermission":"Reader","announcement":{"title":"","markdown":"","enabled":"Disabled","expired":false},"support":{"enabled":"Disabled","markdown":""},"provisioningState":"Creating","uniqueIdentifier":"49410ae7-85ef-422f-9092-090fd6a7e8cb"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.devtestlab/labs/pylab34410fc3","name":"pylab34410fc3","type":"Microsoft.DevTestLab/labs","location":"westus"}'
+      string: '{"properties":{"labStorageType":"Premium","mandatoryArtifactsResourceIdsLinux":[],"mandatoryArtifactsResourceIdsWindows":[],"createdDate":"2020-12-21T08:59:05.0313735+00:00","premiumDataDisks":"Disabled","environmentPermission":"Reader","announcement":{"title":"","markdown":"","enabled":"Disabled","expired":false},"support":{"enabled":"Disabled","markdown":""},"provisioningState":"Creating","uniqueIdentifier":"1aff1749-d06e-4c63-b433-ac051e343c6c"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.devtestlab/labs/pylab34410fc3","name":"pylab34410fc3","type":"Microsoft.DevTestLab/labs","location":"westus"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201027-9787fb8e-c156-4a6b-a82b-c7f37214ce3c?api-version=2018-09-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201221-3c8f635a-d2d6-43c2-8609-0db5bd52d61a?api-version=2018-09-15
       cache-control:
       - no-cache
       content-length:
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 03:09:36 GMT
+      - Mon, 21 Dec 2020 08:59:06 GMT
       expires:
       - '-1'
       pragma:
@@ -59,9 +59,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-devtestlabs/9.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-devtestlabs/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201027-9787fb8e-c156-4a6b-a82b-c7f37214ce3c?api-version=2018-09-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201221-3c8f635a-d2d6-43c2-8609-0db5bd52d61a?api-version=2018-09-15
   response:
     body:
       string: '{"status":"Running"}'
@@ -73,7 +73,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 03:10:08 GMT
+      - Mon, 21 Dec 2020 08:59:37 GMT
       expires:
       - '-1'
       pragma:
@@ -105,9 +105,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-devtestlabs/9.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-devtestlabs/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201027-9787fb8e-c156-4a6b-a82b-c7f37214ce3c?api-version=2018-09-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201221-3c8f635a-d2d6-43c2-8609-0db5bd52d61a?api-version=2018-09-15
   response:
     body:
       string: '{"status":"Running"}'
@@ -119,7 +119,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 03:10:38 GMT
+      - Mon, 21 Dec 2020 09:00:07 GMT
       expires:
       - '-1'
       pragma:
@@ -151,9 +151,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-devtestlabs/9.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-devtestlabs/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201027-9787fb8e-c156-4a6b-a82b-c7f37214ce3c?api-version=2018-09-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201221-3c8f635a-d2d6-43c2-8609-0db5bd52d61a?api-version=2018-09-15
   response:
     body:
       string: '{"status":"Running"}'
@@ -165,7 +165,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 03:11:08 GMT
+      - Mon, 21 Dec 2020 09:00:37 GMT
       expires:
       - '-1'
       pragma:
@@ -197,9 +197,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-devtestlabs/9.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-devtestlabs/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201027-9787fb8e-c156-4a6b-a82b-c7f37214ce3c?api-version=2018-09-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201221-3c8f635a-d2d6-43c2-8609-0db5bd52d61a?api-version=2018-09-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -211,7 +211,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 03:11:38 GMT
+      - Mon, 21 Dec 2020 09:01:07 GMT
       expires:
       - '-1'
       pragma:
@@ -243,21 +243,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-devtestlabs/9.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-devtestlabs/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.DevTestLab/labs/pylab34410fc3?api-version=2018-09-15
   response:
     body:
-      string: '{"properties":{"defaultStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc35134","defaultPremiumStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc35134","artifactsStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc35134","premiumDataDiskStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc35134","vaultName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.keyvault/vaults/pylab34410fc32097","labStorageType":"Premium","mandatoryArtifactsResourceIdsLinux":[],"mandatoryArtifactsResourceIdsWindows":[],"createdDate":"2020-10-27T03:09:35.8720183+00:00","premiumDataDisks":"Disabled","environmentPermission":"Reader","announcement":{"title":"","markdown":"","enabled":"Disabled","expired":false},"support":{"enabled":"Disabled","markdown":""},"provisioningState":"Succeeded","uniqueIdentifier":"49410ae7-85ef-422f-9092-090fd6a7e8cb"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.devtestlab/labs/pylab34410fc3","name":"pylab34410fc3","type":"Microsoft.DevTestLab/labs","location":"westus"}'
+      string: '{"properties":{"defaultStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc37224","defaultPremiumStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc37224","artifactsStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc37224","premiumDataDiskStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc37224","vaultName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.keyvault/vaults/pylab34410fc3481","labStorageType":"Premium","mandatoryArtifactsResourceIdsLinux":[],"mandatoryArtifactsResourceIdsWindows":[],"createdDate":"2020-12-21T08:59:05.0313735+00:00","premiumDataDisks":"Disabled","environmentPermission":"Reader","announcement":{"title":"","markdown":"","enabled":"Disabled","expired":false},"support":{"enabled":"Disabled","markdown":""},"provisioningState":"Succeeded","uniqueIdentifier":"1aff1749-d06e-4c63-b433-ac051e343c6c"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.devtestlab/labs/pylab34410fc3","name":"pylab34410fc3","type":"Microsoft.DevTestLab/labs","location":"westus"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1714'
+      - '1713'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 03:11:38 GMT
+      - Mon, 21 Dec 2020 09:01:09 GMT
       expires:
       - '-1'
       pragma:
@@ -289,21 +289,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-devtestlabs/9.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-devtestlabs/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.DevTestLab/labs/pylab34410fc3?api-version=2018-09-15
   response:
     body:
-      string: '{"properties":{"defaultStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc35134","defaultPremiumStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc35134","artifactsStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc35134","premiumDataDiskStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc35134","vaultName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.keyvault/vaults/pylab34410fc32097","labStorageType":"Premium","mandatoryArtifactsResourceIdsLinux":[],"mandatoryArtifactsResourceIdsWindows":[],"createdDate":"2020-10-27T03:09:35.8720183+00:00","premiumDataDisks":"Disabled","environmentPermission":"Reader","announcement":{"title":"","markdown":"","enabled":"Disabled","expired":false},"support":{"enabled":"Disabled","markdown":""},"provisioningState":"Succeeded","uniqueIdentifier":"49410ae7-85ef-422f-9092-090fd6a7e8cb"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.devtestlab/labs/pylab34410fc3","name":"pylab34410fc3","type":"Microsoft.DevTestLab/labs","location":"westus"}'
+      string: '{"properties":{"defaultStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc37224","defaultPremiumStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc37224","artifactsStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc37224","premiumDataDiskStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.storage/storageaccounts/apylab34410fc37224","vaultName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.keyvault/vaults/pylab34410fc3481","labStorageType":"Premium","mandatoryArtifactsResourceIdsLinux":[],"mandatoryArtifactsResourceIdsWindows":[],"createdDate":"2020-12-21T08:59:05.0313735+00:00","premiumDataDisks":"Disabled","environmentPermission":"Reader","announcement":{"title":"","markdown":"","enabled":"Disabled","expired":false},"support":{"enabled":"Disabled","markdown":""},"provisioningState":"Succeeded","uniqueIdentifier":"1aff1749-d06e-4c63-b433-ac051e343c6c"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.devtestlab/labs/pylab34410fc3","name":"pylab34410fc3","type":"Microsoft.DevTestLab/labs","location":"westus"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1714'
+      - '1713'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 03:11:39 GMT
+      - Mon, 21 Dec 2020 09:01:09 GMT
       expires:
       - '-1'
       pragma:
@@ -339,21 +339,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-devtestlabs/9.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-devtestlabs/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.DevTestLab/labs/pylab34410fc3?api-version=2018-09-15
   response:
     body:
-      string: '{"properties":{"vaultName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.keyvault/vaults/pylab34410fc32097","labStorageType":"Premium","mandatoryArtifactsResourceIdsLinux":[],"mandatoryArtifactsResourceIdsWindows":[],"createdDate":"2020-10-27T03:09:35.8720183+00:00","premiumDataDisks":"Disabled","environmentPermission":"Reader","announcement":{"title":"","markdown":"","enabled":"Disabled","expired":false},"support":{"enabled":"Disabled","markdown":""},"provisioningState":"Succeeded","uniqueIdentifier":"49410ae7-85ef-422f-9092-090fd6a7e8cb"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.devtestlab/labs/pylab34410fc3","name":"pylab34410fc3","type":"Microsoft.DevTestLab/labs","location":"westus"}'
+      string: '{"properties":{"vaultName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.keyvault/vaults/pylab34410fc3481","labStorageType":"Premium","mandatoryArtifactsResourceIdsLinux":[],"mandatoryArtifactsResourceIdsWindows":[],"createdDate":"2020-12-21T08:59:05.0313735+00:00","premiumDataDisks":"Disabled","environmentPermission":"Reader","announcement":{"title":"","markdown":"","enabled":"Disabled","expired":false},"support":{"enabled":"Disabled","markdown":""},"provisioningState":"Succeeded","uniqueIdentifier":"1aff1749-d06e-4c63-b433-ac051e343c6c"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.devtestlab/labs/pylab34410fc3","name":"pylab34410fc3","type":"Microsoft.DevTestLab/labs","location":"westus"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '885'
+      - '884'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 03:11:40 GMT
+      - Mon, 21 Dec 2020 09:01:10 GMT
       expires:
       - '-1'
       pragma:
@@ -389,7 +389,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-devtestlabs/9.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-devtestlabs/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.DevTestLab/labs/pylab34410fc3?api-version=2018-09-15
   response:
@@ -397,17 +397,17 @@ interactions:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201027-f0ef54a9-7d0c-4986-874c-c5971f644639?api-version=2018-09-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201221-643833d7-aa90-48a9-bbea-d5a0d93c8f7b?api-version=2018-09-15
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 27 Oct 2020 03:11:41 GMT
+      - Mon, 21 Dec 2020 09:01:11 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201027-f0ef54a9-7d0c-4986-874c-c5971f644639?monitor=true&api-version=2018-09-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201221-643833d7-aa90-48a9-bbea-d5a0d93c8f7b?monitor=true&api-version=2018-09-15
       pragma:
       - no-cache
       request-context:
@@ -435,9 +435,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-devtestlabs/9.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-devtestlabs/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201027-f0ef54a9-7d0c-4986-874c-c5971f644639?api-version=2018-09-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201221-643833d7-aa90-48a9-bbea-d5a0d93c8f7b?api-version=2018-09-15
   response:
     body:
       string: '{"status":"Running"}'
@@ -449,7 +449,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 03:12:11 GMT
+      - Mon, 21 Dec 2020 09:01:41 GMT
       expires:
       - '-1'
       pragma:
@@ -481,9 +481,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-devtestlabs/9.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-devtestlabs/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201027-f0ef54a9-7d0c-4986-874c-c5971f644639?api-version=2018-09-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201221-643833d7-aa90-48a9-bbea-d5a0d93c8f7b?api-version=2018-09-15
   response:
     body:
       string: '{"status":"Running"}'
@@ -495,7 +495,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 03:12:41 GMT
+      - Mon, 21 Dec 2020 09:02:12 GMT
       expires:
       - '-1'
       pragma:
@@ -527,55 +527,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-devtestlabs/9.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-devtestlabs/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201027-f0ef54a9-7d0c-4986-874c-c5971f644639?api-version=2018-09-15
-  response:
-    body:
-      string: '{"status":"Running"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '20'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 27 Oct 2020 03:13:13 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      request-context:
-      - appId=cid-v1:9e8cebda-9c88-460b-b55d-9410c4648f9a
-      server:
-      - Kestrel
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-devtestlabs/9.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201027-f0ef54a9-7d0c-4986-874c-c5971f644639?api-version=2018-09-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DevTestLab/locations/westus/operations/20201221-643833d7-aa90-48a9-bbea-d5a0d93c8f7b?api-version=2018-09-15
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -587,7 +541,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Oct 2020 03:13:43 GMT
+      - Mon, 21 Dec 2020 09:02:42 GMT
       expires:
       - '-1'
       pragma:

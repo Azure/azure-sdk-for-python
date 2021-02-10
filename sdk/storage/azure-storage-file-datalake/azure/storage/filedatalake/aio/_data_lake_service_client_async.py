@@ -4,12 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+from typing import Any
 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import AsyncPipeline
 
 from azure.storage.blob.aio import BlobServiceClient
-from .._generated.aio import DataLakeStorageClient
+from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from ._file_system_client_async import FileSystemClient
 from .._data_lake_service_client import DataLakeServiceClient as DataLakeServiceClientBase
@@ -40,9 +41,11 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         authenticated with a SAS token.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
 
     .. admonition:: Example:
 
@@ -75,12 +78,15 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         )
         self._blob_service_client = BlobServiceClient(self._blob_account_url, credential, **kwargs)
         self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  #pylint: disable=protected-access
-        self._client = DataLakeStorageClient(self.url, None, None, pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
+
+    async def __aenter__(self):
+        await self._blob_service_client.__aenter__()
+        return self
 
     async def __aexit__(self, *args):
         await self._blob_service_client.close()
-        await super(DataLakeServiceClient, self).__aexit__(*args)
 
     async def close(self):
         # type: () -> None
@@ -88,7 +94,6 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         It need not be used when using with a context manager.
         """
         await self._blob_service_client.close()
-        await self.__aexit__()
 
     async def get_user_delegation_key(self, key_start_time,  # type: datetime
                                       key_expiry_time,  # type: datetime
@@ -143,6 +148,10 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             call. If the request does not specify the server will return up to 5,000 items per page.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword bool include_deleted:
+            Specifies that deleted file systems to be returned in the response. This is for file system restore enabled
+            account. The default value is `False`.
+            .. versionadded:: 12.3.0
         :returns: An iterable (auto-paging) of FileSystemProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.FileSystemProperties]
 
@@ -197,6 +206,54 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         file_system_client = self.get_file_system_client(file_system)
         await file_system_client.create_file_system(metadata=metadata, public_access=public_access, **kwargs)
         return file_system_client
+
+    async def _rename_file_system(self, name, new_name, **kwargs):
+        # type: (str, str, **Any) -> FileSystemClient
+        """Renames a filesystem.
+
+        Operation is successful only if the source filesystem exists.
+
+        :param str name:
+            The name of the filesystem to rename.
+        :param str new_name:
+            The new filesystem name the user wants to rename to.
+        :keyword lease:
+            Specify this to perform only if the lease ID given
+            matches the active lease ID of the source filesystem.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        """
+        await self._blob_service_client._rename_container(name, new_name, **kwargs)   # pylint: disable=protected-access
+        renamed_file_system = self.get_file_system_client(new_name)
+        return renamed_file_system
+
+    async def undelete_file_system(self, name, version, **kwargs):
+        # type: (str, str, **Any) -> FileSystemClient
+        """Restores soft-deleted filesystem.
+
+        Operation will only be successful if used within the specified number of days
+        set in the delete retention policy.
+
+        .. versionadded:: 12.3.0
+            This operation was introduced in API version '2019-12-12'.
+
+        :param str name:
+            Specifies the name of the deleted filesystem to restore.
+        :param str version:
+            Specifies the version of the deleted filesystem to restore.
+        :keyword str new_name:
+            The new name for the deleted filesystem to be restored to.
+            If not specified "name" will be used as the restored filesystem name.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        """
+        new_name = kwargs.pop('new_name', None)
+        await self._blob_service_client.undelete_container(name, version, new_name=new_name, **kwargs)  # pylint: disable=protected-access
+        file_system = self.get_file_system_client(new_name or name)
+        return file_system
 
     async def delete_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
                                  **kwargs):

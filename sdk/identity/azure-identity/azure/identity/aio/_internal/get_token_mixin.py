@@ -20,7 +20,9 @@ _LOGGER = logging.getLogger(__name__)
 class GetTokenMixin(abc.ABC):
     def __init__(self, *args: "Any", **kwargs: "Any") -> None:
         self._last_request_time = 0
-        super(GetTokenMixin, self).__init__(*args, **kwargs)
+
+        # https://github.com/python/mypy/issues/5887
+        super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
     async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":

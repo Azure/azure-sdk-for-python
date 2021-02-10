@@ -25,7 +25,7 @@ class ResourceGraphClient(ResourceGraphClientOperationsMixin):
     """Azure Resource Graph API Reference.
 
     :ivar operations: Operations operations
-    :vartype operations: resource_graph_client.aio.operations.Operations
+    :vartype operations: azure.mgmt.resourcegraph.aio.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param str base_url: Service URL

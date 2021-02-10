@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class SecureScoreControlsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,10 +48,10 @@ class SecureScoreControlsOperations(object):
     def list_by_secure_score(
         self,
         secure_score_name,  # type: str
-        expand=None,  # type: Optional[Union[str, "models.ExpandControlsEnum"]]
+        expand=None,  # type: Optional[Union[str, "_models.ExpandControlsEnum"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecureScoreControlList"]
+        # type: (...) -> Iterable["_models.SecureScoreControlList"]
         """Get all security controls for a specific initiative within a scope.
 
         :param secure_score_name: The initiative name. For the ASC Default initiative, use 'ascScore'
@@ -64,7 +64,7 @@ class SecureScoreControlsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.SecureScoreControlList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecureScoreControlList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecureScoreControlList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -124,10 +124,10 @@ class SecureScoreControlsOperations(object):
 
     def list(
         self,
-        expand=None,  # type: Optional[Union[str, "models.ExpandControlsEnum"]]
+        expand=None,  # type: Optional[Union[str, "_models.ExpandControlsEnum"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecureScoreControlList"]
+        # type: (...) -> Iterable["_models.SecureScoreControlList"]
         """Get all security controls within a scope.
 
         :param expand: OData expand. Optional.
@@ -137,7 +137,7 @@ class SecureScoreControlsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.SecureScoreControlList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecureScoreControlList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecureScoreControlList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class BatchAccountOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,16 +51,16 @@ class BatchAccountOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        parameters,  # type: "models.BatchAccountCreateParameters"
+        parameters,  # type: "_models.BatchAccountCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.BatchAccount"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.BatchAccount"]]
+        # type: (...) -> Optional["_models.BatchAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BatchAccount"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -112,10 +112,10 @@ class BatchAccountOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        parameters,  # type: "models.BatchAccountCreateParameters"
+        parameters,  # type: "_models.BatchAccountCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.BatchAccount"]
+        # type: (...) -> LROPoller["_models.BatchAccount"]
         """Creates a new Batch account with the specified parameters. Existing accounts cannot be updated
         with this API and should instead be updated with the Update Batch Account API.
 
@@ -140,7 +140,7 @@ class BatchAccountOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BatchAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchAccount"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -165,7 +165,13 @@ class BatchAccountOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-z0-9]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -183,10 +189,10 @@ class BatchAccountOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        parameters,  # type: "models.BatchAccountUpdateParameters"
+        parameters,  # type: "_models.BatchAccountUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BatchAccount"
+        # type: (...) -> "_models.BatchAccount"
         """Updates the properties of an existing Batch account.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -200,12 +206,12 @@ class BatchAccountOperations(object):
         :rtype: ~azure.mgmt.batch.models.BatchAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BatchAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -258,7 +264,7 @@ class BatchAccountOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -341,7 +347,13 @@ class BatchAccountOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -361,7 +373,7 @@ class BatchAccountOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BatchAccount"
+        # type: (...) -> "_models.BatchAccount"
         """Gets information about the specified Batch account.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -373,12 +385,12 @@ class BatchAccountOperations(object):
         :rtype: ~azure.mgmt.batch.models.BatchAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BatchAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -418,7 +430,7 @@ class BatchAccountOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BatchAccountListResult"]
+        # type: (...) -> Iterable["_models.BatchAccountListResult"]
         """Gets information about the Batch accounts associated with the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -426,12 +438,12 @@ class BatchAccountOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.batch.models.BatchAccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BatchAccountListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchAccountListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -486,7 +498,7 @@ class BatchAccountOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BatchAccountListResult"]
+        # type: (...) -> Iterable["_models.BatchAccountListResult"]
         """Gets information about the Batch accounts associated with the specified resource group.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -496,12 +508,12 @@ class BatchAccountOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.batch.models.BatchAccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BatchAccountListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchAccountListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -576,7 +588,7 @@ class BatchAccountOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -613,10 +625,10 @@ class BatchAccountOperations(object):
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        parameters,  # type: "models.BatchAccountRegenerateKeyParameters"
+        parameters,  # type: "_models.BatchAccountRegenerateKeyParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BatchAccountKeys"
+        # type: (...) -> "_models.BatchAccountKeys"
         """Regenerates the specified account key for the Batch account.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -630,12 +642,12 @@ class BatchAccountOperations(object):
         :rtype: ~azure.mgmt.batch.models.BatchAccountKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BatchAccountKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchAccountKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -682,7 +694,7 @@ class BatchAccountOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BatchAccountKeys"
+        # type: (...) -> "_models.BatchAccountKeys"
         """Gets the account keys for the specified Batch account.
 
         This operation applies only to Batch accounts created with a poolAllocationMode of
@@ -699,12 +711,12 @@ class BatchAccountOperations(object):
         :rtype: ~azure.mgmt.batch.models.BatchAccountKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BatchAccountKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchAccountKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL

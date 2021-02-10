@@ -24,7 +24,7 @@ class Column(msrest.serialization.Model):
     :type name: str
     :param type: Required. Column data type. Possible values include: "string", "integer",
      "number", "boolean", "object".
-    :type type: str or ~resource_graph_client.models.ColumnDataType
+    :type type: str or ~azure.mgmt.resourcegraph.models.ColumnDataType
     """
 
     _validation = {
@@ -96,7 +96,7 @@ class Error(msrest.serialization.Model):
     :param message: Required. A human readable error message.
     :type message: str
     :param details: Error details.
-    :type details: list[~resource_graph_client.models.ErrorDetails]
+    :type details: list[~azure.mgmt.resourcegraph.models.ErrorDetails]
     """
 
     _validation = {
@@ -169,7 +169,7 @@ class ErrorResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param error: Required. Error information.
-    :type error: ~resource_graph_client.models.Error
+    :type error: ~azure.mgmt.resourcegraph.models.Error
     """
 
     _validation = {
@@ -239,7 +239,7 @@ class FacetError(Facet):
     :param result_type: Required. Result type.Constant filled by server.
     :type result_type: str
     :param errors: Required. An array containing detected facet errors with details.
-    :type errors: list[~resource_graph_client.models.ErrorDetails]
+    :type errors: list[~azure.mgmt.resourcegraph.models.ErrorDetails]
     """
 
     _validation = {
@@ -274,7 +274,7 @@ class FacetRequest(msrest.serialization.Model):
     :param expression: Required. The column or list of columns to summarize by.
     :type expression: str
     :param options: The options for facet evaluation.
-    :type options: ~resource_graph_client.models.FacetRequestOptions
+    :type options: ~azure.mgmt.resourcegraph.models.FacetRequestOptions
     """
 
     _validation = {
@@ -306,7 +306,7 @@ class FacetRequestOptions(msrest.serialization.Model):
     :type sort_by: str
     :param sort_order: The sorting order by the selected column (count by default). Possible values
      include: "asc", "desc". Default value: "desc".
-    :type sort_order: str or ~resource_graph_client.models.FacetSortOrder
+    :type sort_order: str or ~azure.mgmt.resourcegraph.models.FacetSortOrder
     :param filter: Specifies the filter condition for the 'where' clause which will be run on main
      query's result, just before the actual faceting.
     :type filter: str
@@ -397,7 +397,7 @@ class Operation(msrest.serialization.Model):
     :param name: Operation name: {provider}/{resource}/{operation}.
     :type name: str
     :param display: Display metadata associated with the operation.
-    :type display: ~resource_graph_client.models.OperationDisplay
+    :type display: ~azure.mgmt.resourcegraph.models.OperationDisplay
     :param origin: The origin of operations.
     :type origin: str
     """
@@ -463,7 +463,7 @@ class OperationListResult(msrest.serialization.Model):
 
     :param value: List of Resource Graph operations supported by the Resource Graph resource
      provider.
-    :type value: list[~resource_graph_client.models.Operation]
+    :type value: list[~azure.mgmt.resourcegraph.models.Operation]
     """
 
     _attribute_map = {
@@ -492,9 +492,9 @@ class QueryRequest(msrest.serialization.Model):
     :param query: Required. The resources query.
     :type query: str
     :param options: The query evaluation options.
-    :type options: ~resource_graph_client.models.QueryRequestOptions
+    :type options: ~azure.mgmt.resourcegraph.models.QueryRequestOptions
     :param facets: An array of facet requests to be computed against the query result.
-    :type facets: list[~resource_graph_client.models.FacetRequest]
+    :type facets: list[~azure.mgmt.resourcegraph.models.FacetRequest]
     """
 
     _validation = {
@@ -541,7 +541,7 @@ class QueryRequestOptions(msrest.serialization.Model):
     :type skip: int
     :param result_format: Defines in which format query result returned. Possible values include:
      "table", "objectArray".
-    :type result_format: str or ~resource_graph_client.models.ResultFormat
+    :type result_format: str or ~azure.mgmt.resourcegraph.models.ResultFormat
     """
 
     _validation = {
@@ -584,7 +584,7 @@ class QueryResponse(msrest.serialization.Model):
     :type count: long
     :param result_truncated: Required. Indicates whether the query results are truncated. Possible
      values include: "true", "false".
-    :type result_truncated: str or ~resource_graph_client.models.ResultTruncated
+    :type result_truncated: str or ~azure.mgmt.resourcegraph.models.ResultTruncated
     :param skip_token: When present, the value can be passed to a subsequent query call (together
      with the same query and subscriptions used in the current request) to retrieve the next page of
      data.
@@ -592,7 +592,7 @@ class QueryResponse(msrest.serialization.Model):
     :param data: Required. Query output in tabular format.
     :type data: object
     :param facets: Query facets.
-    :type facets: list[~resource_graph_client.models.Facet]
+    :type facets: list[~azure.mgmt.resourcegraph.models.Facet]
     """
 
     _validation = {
@@ -639,14 +639,14 @@ class ResourceChangeData(msrest.serialization.Model):
     :param change_id: Required. The change ID. Valid and unique within the specified resource only.
     :type change_id: str
     :param before_snapshot: Required. The snapshot before the change.
-    :type before_snapshot: ~resource_graph_client.models.ResourceSnapshotData
+    :type before_snapshot: ~azure.mgmt.resourcegraph.models.ResourceSnapshotData
     :param after_snapshot: Required. The snapshot after the change.
-    :type after_snapshot: ~resource_graph_client.models.ResourceSnapshotData
+    :type after_snapshot: ~azure.mgmt.resourcegraph.models.ResourceSnapshotData
     :param change_type: The change type for snapshot. PropertyChanges will be provided in case of
      Update change type. Possible values include: "Create", "Update", "Delete".
-    :type change_type: str or ~resource_graph_client.models.ChangeType
+    :type change_type: str or ~azure.mgmt.resourcegraph.models.ChangeType
     :param property_changes: An array of resource property change.
-    :type property_changes: list[~resource_graph_client.models.ResourcePropertyChange]
+    :type property_changes: list[~azure.mgmt.resourcegraph.models.ResourcePropertyChange]
     """
 
     _validation = {
@@ -829,7 +829,7 @@ class ResourceChangeList(msrest.serialization.Model):
      * This list will be empty if there were no changes during the requested interval.
      * The ``Before`` snapshot timestamp value of the oldest change can be outside of the specified
      time interval.
-    :type changes: list[~resource_graph_client.models.ResourceChangeData]
+    :type changes: list[~azure.mgmt.resourcegraph.models.ResourceChangeData]
     :param skip_token: Skip token that encodes the skip information while executing the current
      request.
     :type skip_token: object
@@ -860,7 +860,7 @@ class ResourceChangesRequestParameters(msrest.serialization.Model):
     :param resource_id: Required. Specifies the resource for a changes request.
     :type resource_id: str
     :param interval: Required. Specifies the date and time interval for a changes request.
-    :type interval: ~resource_graph_client.models.DateTimeInterval
+    :type interval: ~azure.mgmt.resourcegraph.models.DateTimeInterval
     :param skip_token: Acts as the continuation token for paged responses.
     :type skip_token: str
     :param top: The maximum number of changes the client can accept in a paged response.
@@ -949,10 +949,10 @@ class ResourcePropertyChange(msrest.serialization.Model):
     :type after_value: str
     :param change_category: Required. The change category. Possible values include: "User",
      "System".
-    :type change_category: str or ~resource_graph_client.models.ChangeCategory
+    :type change_category: str or ~azure.mgmt.resourcegraph.models.ChangeCategory
     :param property_change_type: Required. The property change Type. Possible values include:
      "Insert", "Update", "Remove".
-    :type property_change_type: str or ~resource_graph_client.models.PropertyChangeType
+    :type property_change_type: str or ~azure.mgmt.resourcegraph.models.PropertyChangeType
     """
 
     _validation = {
@@ -993,7 +993,7 @@ class Table(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param columns: Required. Query result column descriptors.
-    :type columns: list[~resource_graph_client.models.Column]
+    :type columns: list[~azure.mgmt.resourcegraph.models.Column]
     :param rows: Required. Query result rows.
     :type rows: list[list[object]]
     """

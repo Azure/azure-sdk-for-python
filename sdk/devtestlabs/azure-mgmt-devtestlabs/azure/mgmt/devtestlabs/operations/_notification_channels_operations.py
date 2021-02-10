@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class NotificationChannelsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -55,7 +55,7 @@ class NotificationChannelsOperations(object):
         orderby=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.NotificationChannelList"]
+        # type: (...) -> Iterable["_models.NotificationChannelList"]
         """List notification channels in a given lab.
 
         :param resource_group_name: The name of the resource group.
@@ -76,7 +76,7 @@ class NotificationChannelsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.devtestlabs.models.NotificationChannelList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationChannelList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationChannelList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -149,7 +149,7 @@ class NotificationChannelsOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NotificationChannel"
+        # type: (...) -> "_models.NotificationChannel"
         """Get notification channel.
 
         :param resource_group_name: The name of the resource group.
@@ -165,7 +165,7 @@ class NotificationChannelsOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.NotificationChannel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationChannel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationChannel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -214,10 +214,10 @@ class NotificationChannelsOperations(object):
         resource_group_name,  # type: str
         lab_name,  # type: str
         name,  # type: str
-        notification_channel,  # type: "models.NotificationChannel"
+        notification_channel,  # type: "_models.NotificationChannel"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NotificationChannel"
+        # type: (...) -> "_models.NotificationChannel"
         """Create or replace an existing notification channel.
 
         :param resource_group_name: The name of the resource group.
@@ -233,7 +233,7 @@ class NotificationChannelsOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.NotificationChannel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationChannel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationChannel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -349,10 +349,10 @@ class NotificationChannelsOperations(object):
         resource_group_name,  # type: str
         lab_name,  # type: str
         name,  # type: str
-        notification_channel,  # type: "models.NotificationChannelFragment"
+        notification_channel,  # type: "_models.NotificationChannelFragment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NotificationChannel"
+        # type: (...) -> "_models.NotificationChannel"
         """Allows modifying tags of notification channels. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -368,7 +368,7 @@ class NotificationChannelsOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.NotificationChannel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationChannel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationChannel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -420,7 +420,7 @@ class NotificationChannelsOperations(object):
         resource_group_name,  # type: str
         lab_name,  # type: str
         name,  # type: str
-        event_name=None,  # type: Optional[Union[str, "models.NotificationChannelEventType"]]
+        event_name=None,  # type: Optional[Union[str, "_models.NotificationChannelEventType"]]
         json_payload=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -448,7 +448,7 @@ class NotificationChannelsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _notify_parameters = models.NotifyParameters(event_name=event_name, json_payload=json_payload)
+        _notify_parameters = _models.NotifyParameters(event_name=event_name, json_payload=json_payload)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"

@@ -12,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -31,7 +31,7 @@ class WorkspaceOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -42,7 +42,7 @@ class WorkspaceOperations:
     async def get(
         self,
         **kwargs
-    ) -> "models.Workspace":
+    ) -> "_models.Workspace":
         """Get Workspace.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -50,7 +50,7 @@ class WorkspaceOperations:
         :rtype: ~azure.synapse.artifacts.models.Workspace
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Workspace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -79,7 +79,7 @@ class WorkspaceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('Workspace', pipeline_response)

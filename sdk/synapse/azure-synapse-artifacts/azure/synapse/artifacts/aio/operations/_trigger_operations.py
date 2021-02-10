@@ -15,7 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class TriggerOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class TriggerOperations:
     def get_triggers_by_workspace(
         self,
         **kwargs
-    ) -> AsyncIterable["models.TriggerListResponse"]:
+    ) -> AsyncIterable["_models.TriggerListResponse"]:
         """Lists triggers.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -53,7 +53,7 @@ class TriggerOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.TriggerListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -102,7 +102,7 @@ class TriggerOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.CloudError, response)
+                error = self._deserialize(_models.CloudError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -116,17 +116,17 @@ class TriggerOperations:
     async def _create_or_update_trigger_initial(
         self,
         trigger_name: str,
-        properties: "models.Trigger",
+        properties: "_models.Trigger",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> Optional["models.TriggerResource"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggerResource"]]
+    ) -> Optional["_models.TriggerResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _trigger = models.TriggerResource(properties=properties)
+        _trigger = _models.TriggerResource(properties=properties)
         api_version = "2019-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -159,7 +159,7 @@ class TriggerOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = None
@@ -175,10 +175,10 @@ class TriggerOperations:
     async def begin_create_or_update_trigger(
         self,
         trigger_name: str,
-        properties: "models.Trigger",
+        properties: "_models.Trigger",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.TriggerResource"]:
+    ) -> AsyncLROPoller["_models.TriggerResource"]:
         """Creates or updates a trigger.
 
         :param trigger_name: The trigger name.
@@ -199,7 +199,7 @@ class TriggerOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -224,7 +224,12 @@ class TriggerOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'triggerName': self._serialize.url("trigger_name", trigger_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -243,7 +248,7 @@ class TriggerOperations:
         trigger_name: str,
         if_none_match: Optional[str] = None,
         **kwargs
-    ) -> Optional["models.TriggerResource"]:
+    ) -> Optional["_models.TriggerResource"]:
         """Gets a trigger.
 
         :param trigger_name: The trigger name.
@@ -256,7 +261,7 @@ class TriggerOperations:
         :rtype: ~azure.synapse.artifacts.models.TriggerResource or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggerResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -288,7 +293,7 @@ class TriggerOperations:
 
         if response.status_code not in [200, 304]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = None
@@ -336,7 +341,7 @@ class TriggerOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -384,7 +389,12 @@ class TriggerOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'triggerName': self._serialize.url("trigger_name", trigger_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -402,8 +412,8 @@ class TriggerOperations:
         self,
         trigger_name: str,
         **kwargs
-    ) -> Optional["models.TriggerSubscriptionOperationStatus"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggerSubscriptionOperationStatus"]]
+    ) -> Optional["_models.TriggerSubscriptionOperationStatus"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerSubscriptionOperationStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -433,7 +443,7 @@ class TriggerOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = None
@@ -450,7 +460,7 @@ class TriggerOperations:
         self,
         trigger_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.TriggerSubscriptionOperationStatus"]:
+    ) -> AsyncLROPoller["_models.TriggerSubscriptionOperationStatus"]:
         """Subscribe event trigger to events.
 
         :param trigger_name: The trigger name.
@@ -466,7 +476,7 @@ class TriggerOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -489,7 +499,12 @@ class TriggerOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'triggerName': self._serialize.url("trigger_name", trigger_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -507,7 +522,7 @@ class TriggerOperations:
         self,
         trigger_name: str,
         **kwargs
-    ) -> "models.TriggerSubscriptionOperationStatus":
+    ) -> "_models.TriggerSubscriptionOperationStatus":
         """Get a trigger's event subscription status.
 
         :param trigger_name: The trigger name.
@@ -517,7 +532,7 @@ class TriggerOperations:
         :rtype: ~azure.synapse.artifacts.models.TriggerSubscriptionOperationStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -547,7 +562,7 @@ class TriggerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('TriggerSubscriptionOperationStatus', pipeline_response)
@@ -562,8 +577,8 @@ class TriggerOperations:
         self,
         trigger_name: str,
         **kwargs
-    ) -> Optional["models.TriggerSubscriptionOperationStatus"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TriggerSubscriptionOperationStatus"]]
+    ) -> Optional["_models.TriggerSubscriptionOperationStatus"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerSubscriptionOperationStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -593,7 +608,7 @@ class TriggerOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = None
@@ -610,7 +625,7 @@ class TriggerOperations:
         self,
         trigger_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.TriggerSubscriptionOperationStatus"]:
+    ) -> AsyncLROPoller["_models.TriggerSubscriptionOperationStatus"]:
         """Unsubscribe event trigger from events.
 
         :param trigger_name: The trigger name.
@@ -626,7 +641,7 @@ class TriggerOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TriggerSubscriptionOperationStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerSubscriptionOperationStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -649,7 +664,12 @@ class TriggerOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'triggerName': self._serialize.url("trigger_name", trigger_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -698,7 +718,7 @@ class TriggerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -746,7 +766,12 @@ class TriggerOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'triggerName': self._serialize.url("trigger_name", trigger_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -795,7 +820,7 @@ class TriggerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.CloudError, response)
+            error = self._deserialize(_models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -843,7 +868,12 @@ class TriggerOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'triggerName': self._serialize.url("trigger_name", trigger_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

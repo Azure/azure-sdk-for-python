@@ -34,6 +34,7 @@ class MgmtDataBoxTest(AzureMgmtTestCase):
             azure.mgmt.databox.DataBoxManagementClient
         )
     
+    @unittest.skip("unavailable in track2")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_databox(self, resource_group):
 

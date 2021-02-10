@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         solution_name: str,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.IoTSecurityAggregatedAlertList"]:
+    ) -> AsyncIterable["_models.IoTSecurityAggregatedAlertList"]:
         """Use this method to get the aggregated alert list of yours IoT Security solution.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -62,7 +62,7 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.IoTSecurityAggregatedAlertList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecurityAggregatedAlertList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecurityAggregatedAlertList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -127,7 +127,7 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         solution_name: str,
         aggregated_alert_name: str,
         **kwargs
-    ) -> "models.IoTSecurityAggregatedAlert":
+    ) -> "_models.IoTSecurityAggregatedAlert":
         """Use this method to get a single the aggregated alert of yours IoT Security solution. This
         aggregation is performed by alert name.
 
@@ -143,7 +143,7 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:
         :rtype: ~azure.mgmt.security.models.IoTSecurityAggregatedAlert
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecurityAggregatedAlert"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecurityAggregatedAlert"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

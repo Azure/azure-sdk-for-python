@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class RegulatoryComplianceControlsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class RegulatoryComplianceControlsOperations:
         regulatory_compliance_standard_name: str,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.RegulatoryComplianceControlList"]:
+    ) -> AsyncIterable["_models.RegulatoryComplianceControlList"]:
         """All supported regulatory compliance controls details and state for selected standard.
 
         :param regulatory_compliance_standard_name: Name of the regulatory compliance standard object.
@@ -58,7 +58,7 @@ class RegulatoryComplianceControlsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.RegulatoryComplianceControlList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegulatoryComplianceControlList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegulatoryComplianceControlList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -121,7 +121,7 @@ class RegulatoryComplianceControlsOperations:
         regulatory_compliance_standard_name: str,
         regulatory_compliance_control_name: str,
         **kwargs
-    ) -> "models.RegulatoryComplianceControl":
+    ) -> "_models.RegulatoryComplianceControl":
         """Selected regulatory compliance control details and state.
 
         :param regulatory_compliance_standard_name: Name of the regulatory compliance standard object.
@@ -133,7 +133,7 @@ class RegulatoryComplianceControlsOperations:
         :rtype: ~azure.mgmt.security.models.RegulatoryComplianceControl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegulatoryComplianceControl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegulatoryComplianceControl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

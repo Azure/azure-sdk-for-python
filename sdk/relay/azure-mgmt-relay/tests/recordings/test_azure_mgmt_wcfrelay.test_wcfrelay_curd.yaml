@@ -14,22 +14,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub","name":"testingpythontestcaseeventhubnamespaceEventhub","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcaseeventhubnamespaceeventhub","createdAt":"2020-11-03T02:48:00.357Z","updatedAt":"2020-11-03T02:48:00.357Z","serviceBusEndpoint":"https://testingpythontestcaseeventhubnamespaceEventhub.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcaseeventhubnamespaceeventhub","createdAt":"2020-12-22T03:37:55.04Z","updatedAt":"2020-12-22T03:37:55.04Z","serviceBusEndpoint":"https://testingpythontestcaseeventhubnamespaceEventhub.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '757'
+      - '755'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:48:01 GMT
+      - Tue, 22 Dec 2020 03:37:56 GMT
       expires:
       - '-1'
       pragma:
@@ -48,7 +48,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -62,22 +62,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub","name":"testingpythontestcaseeventhubnamespaceEventhub","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcaseeventhubnamespaceeventhub","createdAt":"2020-11-03T02:48:00.357Z","updatedAt":"2020-11-03T02:48:00.357Z","serviceBusEndpoint":"https://testingpythontestcaseeventhubnamespaceEventhub.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcaseeventhubnamespaceeventhub","createdAt":"2020-12-22T03:37:55.04Z","updatedAt":"2020-12-22T03:37:55.04Z","serviceBusEndpoint":"https://testingpythontestcaseeventhubnamespaceEventhub.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '757'
+      - '755'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:48:33 GMT
+      - Tue, 22 Dec 2020 03:38:27 GMT
       expires:
       - '-1'
       pragma:
@@ -108,13 +108,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub","name":"testingpythontestcaseeventhubnamespaceEventhub","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcaseeventhubnamespaceeventhub","createdAt":"2020-11-03T02:48:00.357Z","updatedAt":"2020-11-03T02:48:43.87Z","serviceBusEndpoint":"https://testingpythontestcaseeventhubnamespaceEventhub.servicebus.windows.net:443/","status":"Active"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcaseeventhubnamespaceeventhub","createdAt":"2020-12-22T03:37:55.04Z","updatedAt":"2020-12-22T03:38:39.743Z","serviceBusEndpoint":"https://testingpythontestcaseeventhubnamespaceEventhub.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
@@ -123,16 +123,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:49:04 GMT
+      - Tue, 22 Dec 2020 03:38:58 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -154,13 +154,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub","name":"testingpythontestcaseeventhubnamespaceEventhub","type":"Microsoft.Relay/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcaseeventhubnamespaceeventhub","createdAt":"2020-11-03T02:48:00.357Z","updatedAt":"2020-11-03T02:48:43.87Z","serviceBusEndpoint":"https://testingpythontestcaseeventhubnamespaceEventhub.servicebus.windows.net:443/","status":"Active"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcaseeventhubnamespaceeventhub","createdAt":"2020-12-22T03:37:55.04Z","updatedAt":"2020-12-22T03:38:39.743Z","serviceBusEndpoint":"https://testingpythontestcaseeventhubnamespaceEventhub.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
@@ -169,16 +169,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:49:04 GMT
+      - Tue, 22 Dec 2020 03:38:58 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -205,13 +205,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay?api-version=2017-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay","name":"testingpythontestcasewcfrelay","type":"Microsoft.Relay/Namespaces/WcfRelays","location":"West
-        US","properties":{"createdAt":"2020-11-03T02:49:06.5629656Z","updatedAt":"2020-11-03T02:49:06.5629656Z","listenerCount":0,"requiresClientAuthorization":true,"relayType":"NetTcp","requiresTransportSecurity":true,"isDynamic":false,"userMetadata":"User
+        US","properties":{"createdAt":"2020-12-22T03:39:00.9355084Z","updatedAt":"2020-12-22T03:39:00.9355084Z","listenerCount":0,"requiresClientAuthorization":true,"relayType":"NetTcp","requiresTransportSecurity":true,"isDynamic":false,"userMetadata":"User
         data for WcfRelay"}}'
     headers:
       cache-control:
@@ -221,16 +221,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:49:07 GMT
+      - Tue, 22 Dec 2020 03:39:01 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -240,7 +240,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -254,13 +254,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay?api-version=2017-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay","name":"testingpythontestcasewcfrelay","type":"Microsoft.Relay/Namespaces/WcfRelays","location":"West
-        US","properties":{"createdAt":"2020-11-03T02:49:06.5629656Z","updatedAt":"2020-11-03T02:49:06.5629656Z","listenerCount":0,"requiresClientAuthorization":true,"relayType":"NetTcp","requiresTransportSecurity":true,"isDynamic":false,"userMetadata":"User
+        US","properties":{"createdAt":"2020-12-22T03:39:00.9355084Z","updatedAt":"2020-12-22T03:39:00.9355084Z","listenerCount":0,"requiresClientAuthorization":true,"relayType":"NetTcp","requiresTransportSecurity":true,"isDynamic":false,"userMetadata":"User
         data for WcfRelay"}}'
     headers:
       cache-control:
@@ -270,16 +270,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:49:07 GMT
+      - Tue, 22 Dec 2020 03:39:01 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -301,13 +301,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays?api-version=2017-04-01
   response:
     body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay","name":"testingpythontestcasewcfrelay","type":"Microsoft.Relay/Namespaces/WcfRelays","location":"West
-        US","properties":{"createdAt":"2020-11-03T02:49:06.5629656Z","updatedAt":"2020-11-03T02:49:06.5629656Z","listenerCount":0,"requiresClientAuthorization":true,"relayType":"NetTcp","requiresTransportSecurity":true,"isDynamic":false,"userMetadata":"User
+        US","properties":{"createdAt":"2020-12-22T03:39:00.9355084Z","updatedAt":"2020-12-22T03:39:00.9355084Z","listenerCount":0,"requiresClientAuthorization":true,"relayType":"NetTcp","requiresTransportSecurity":true,"isDynamic":false,"userMetadata":"User
         data for WcfRelay"}}]}'
     headers:
       cache-control:
@@ -317,16 +317,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:49:08 GMT
+      - Tue, 22 Dec 2020 03:39:02 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -355,7 +355,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay?api-version=2017-04-01
   response:
@@ -371,16 +371,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:49:09 GMT
+      - Tue, 22 Dec 2020 03:39:03 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -390,7 +390,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1193'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -408,7 +408,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay/authorizationRules/testingauthrulepy?api-version=2017-04-01
   response:
@@ -423,16 +423,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:49:10 GMT
+      - Tue, 22 Dec 2020 03:39:03 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -442,7 +442,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1192'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -456,7 +456,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay/authorizationRules/testingauthrulepy?api-version=2017-04-01
   response:
@@ -471,16 +471,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:49:10 GMT
+      - Tue, 22 Dec 2020 03:39:04 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -506,7 +506,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay/authorizationRules/testingauthrulepy?api-version=2017-04-01
   response:
@@ -521,16 +521,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:49:11 GMT
+      - Tue, 22 Dec 2020 03:39:04 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -540,7 +540,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1191'
+      - '1195'
     status:
       code: 200
       message: OK
@@ -554,7 +554,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay/authorizationRules?api-version=2017-04-01
   response:
@@ -569,16 +569,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:49:12 GMT
+      - Tue, 22 Dec 2020 03:39:05 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -602,12 +602,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay/authorizationRules/testingauthrulepy/listKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcaseeventhubnamespaceeventhub.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=1ArQ4nTw32jlWg8l/F5u9LhRbwLoCn15QfFTCboWrgc=;EntityPath=testingpythontestcasewcfrelay","secondaryConnectionString":"Endpoint=sb://testingpythontestcaseeventhubnamespaceeventhub.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=C0GUJoKaRnowYn1dlbl9HZ59qj71zv9iIu4yO9gZ1QI=;EntityPath=testingpythontestcasewcfrelay","primaryKey":"1ArQ4nTw32jlWg8l/F5u9LhRbwLoCn15QfFTCboWrgc=","secondaryKey":"C0GUJoKaRnowYn1dlbl9HZ59qj71zv9iIu4yO9gZ1QI=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcaseeventhubnamespaceeventhub.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=VWaEnVR34vDytJooXuE3+zarQUJJ4dC19A4PpZu0yQE=;EntityPath=testingpythontestcasewcfrelay","secondaryConnectionString":"Endpoint=sb://testingpythontestcaseeventhubnamespaceeventhub.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=2iMOsUu7QL5MhF1ci5XU15lYsmpQ2Jy9orqWLBqmA7g=;EntityPath=testingpythontestcasewcfrelay","primaryKey":"VWaEnVR34vDytJooXuE3+zarQUJJ4dC19A4PpZu0yQE=","secondaryKey":"2iMOsUu7QL5MhF1ci5XU15lYsmpQ2Jy9orqWLBqmA7g=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -616,16 +616,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:49:12 GMT
+      - Tue, 22 Dec 2020 03:39:05 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -635,7 +635,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -653,12 +653,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcaseeventhubnamespaceeventhub.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=rR6qmYBrWWgfkVvZbMyP7t5wTKEDB9ownN7mNyTmK4M=;EntityPath=testingpythontestcasewcfrelay","secondaryConnectionString":"Endpoint=sb://testingpythontestcaseeventhubnamespaceeventhub.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=C0GUJoKaRnowYn1dlbl9HZ59qj71zv9iIu4yO9gZ1QI=;EntityPath=testingpythontestcasewcfrelay","primaryKey":"rR6qmYBrWWgfkVvZbMyP7t5wTKEDB9ownN7mNyTmK4M=","secondaryKey":"C0GUJoKaRnowYn1dlbl9HZ59qj71zv9iIu4yO9gZ1QI=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcaseeventhubnamespaceeventhub.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=XBijgLFQqLsTtOjtfInWkWyOo2VB3DzGGHeQkz+lyiU=;EntityPath=testingpythontestcasewcfrelay","secondaryConnectionString":"Endpoint=sb://testingpythontestcaseeventhubnamespaceeventhub.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=2iMOsUu7QL5MhF1ci5XU15lYsmpQ2Jy9orqWLBqmA7g=;EntityPath=testingpythontestcasewcfrelay","primaryKey":"XBijgLFQqLsTtOjtfInWkWyOo2VB3DzGGHeQkz+lyiU=","secondaryKey":"2iMOsUu7QL5MhF1ci5XU15lYsmpQ2Jy9orqWLBqmA7g=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -667,16 +667,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:49:13 GMT
+      - Tue, 22 Dec 2020 03:39:06 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -686,7 +686,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -704,12 +704,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcaseeventhubnamespaceeventhub.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=rR6qmYBrWWgfkVvZbMyP7t5wTKEDB9ownN7mNyTmK4M=;EntityPath=testingpythontestcasewcfrelay","secondaryConnectionString":"Endpoint=sb://testingpythontestcaseeventhubnamespaceeventhub.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=477rMvqdApMYRTCexdpoaCvaaBkHnr/qzE27z1YJ+FY=;EntityPath=testingpythontestcasewcfrelay","primaryKey":"rR6qmYBrWWgfkVvZbMyP7t5wTKEDB9ownN7mNyTmK4M=","secondaryKey":"477rMvqdApMYRTCexdpoaCvaaBkHnr/qzE27z1YJ+FY=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcaseeventhubnamespaceeventhub.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=XBijgLFQqLsTtOjtfInWkWyOo2VB3DzGGHeQkz+lyiU=;EntityPath=testingpythontestcasewcfrelay","secondaryConnectionString":"Endpoint=sb://testingpythontestcaseeventhubnamespaceeventhub.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=nGqYFEJHdqGC642ACKtYna3knjUxrecKzy4MKuP+l+Y=;EntityPath=testingpythontestcasewcfrelay","primaryKey":"XBijgLFQqLsTtOjtfInWkWyOo2VB3DzGGHeQkz+lyiU=","secondaryKey":"nGqYFEJHdqGC642ACKtYna3knjUxrecKzy4MKuP+l+Y=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -718,16 +718,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Nov 2020 02:49:14 GMT
+      - Tue, 22 Dec 2020 03:39:06 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -737,7 +737,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -753,7 +753,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay/authorizationRules/testingauthrulepy?api-version=2017-04-01
   response:
@@ -765,16 +765,16 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Nov 2020 02:49:15 GMT
+      - Tue, 22 Dec 2020 03:39:07 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -796,7 +796,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/wcfRelays/testingpythontestcasewcfrelay?api-version=2017-04-01
   response:
@@ -808,16 +808,16 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Nov 2020 02:49:16 GMT
+      - Tue, 22 Dec 2020 03:39:08 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -839,7 +839,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub?api-version=2017-04-01
   response:
@@ -851,7 +851,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Nov 2020 02:49:17 GMT
+      - Tue, 22 Dec 2020 03:39:09 GMT
       expires:
       - '-1'
       location:
@@ -859,10 +859,10 @@ interactions:
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -882,7 +882,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-relay/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-relay/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_wcfrelay_test_wcfrelay_curd89e511ce/providers/Microsoft.Relay/namespaces/testingpythontestcaseeventhubnamespaceEventhub/operationresults/testingpythontestcaseeventhubnamespaceEventhub?api-version=2017-04-01
   response:
@@ -894,16 +894,16 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Nov 2020 02:49:48 GMT
+      - Tue, 22 Dec 2020 03:39:39 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:

@@ -6,6 +6,11 @@ omit =
 	*/test*
 	env*
 
+[paths]
+source =
+	sdk/
+	**/sdk
+
 [report]
 exclude_lines =
 	pragma: no cover
@@ -13,3 +18,4 @@ exclude_lines =
 	if custom_headers:
 	if headers:
 	if response.status_code not in
+	if TYPE_CHECKING:

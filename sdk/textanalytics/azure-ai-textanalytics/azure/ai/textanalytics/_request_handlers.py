@@ -10,8 +10,10 @@ import six
 from ._models import (
     DetectLanguageInput,
     TextDocumentInput,
+    RecognizeEntitiesAction,
+    RecognizePiiEntitiesAction,
+    AnalyzeBatchActionsType,
 )
-
 
 def _validate_input(documents, hint, whole_input_hint):
     """Validate that batch input has either all string docs
@@ -64,3 +66,28 @@ def _validate_input(documents, hint, whole_input_hint):
             request_batch.append(doc)
 
     return request_batch
+
+def _determine_action_type(action):
+    if isinstance(action, RecognizeEntitiesAction):
+        return AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+    if isinstance(action, RecognizePiiEntitiesAction):
+        return AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+    return AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
+
+def _check_string_index_type_arg(string_index_type_arg, api_version, string_index_type_default="UnicodeCodePoint"):
+    string_index_type = None
+
+    if api_version == "v3.0":
+        if string_index_type_arg is not None:
+            raise ValueError(
+                "'string_index_type' is only available for API version v3.1-preview and up"
+            )
+
+    else:
+        if string_index_type_arg is None:
+            string_index_type = string_index_type_default
+
+        else:
+            string_index_type = string_index_type_arg
+
+    return string_index_type

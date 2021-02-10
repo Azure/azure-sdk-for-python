@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class IntegrationRuntimeNodesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class IntegrationRuntimeNodesOperations(object):
         node_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SelfHostedIntegrationRuntimeNode"
+        # type: (...) -> "_models.SelfHostedIntegrationRuntimeNode"
         """Gets a self-hosted integration runtime node.
 
         :param resource_group_name: The resource group name.
@@ -68,7 +68,7 @@ class IntegrationRuntimeNodesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.SelfHostedIntegrationRuntimeNode
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SelfHostedIntegrationRuntimeNode"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SelfHostedIntegrationRuntimeNode"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -181,10 +181,10 @@ class IntegrationRuntimeNodesOperations(object):
         factory_name,  # type: str
         integration_runtime_name,  # type: str
         node_name,  # type: str
-        update_integration_runtime_node_request,  # type: "models.UpdateIntegrationRuntimeNodeRequest"
+        update_integration_runtime_node_request,  # type: "_models.UpdateIntegrationRuntimeNodeRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SelfHostedIntegrationRuntimeNode"
+        # type: (...) -> "_models.SelfHostedIntegrationRuntimeNode"
         """Updates a self-hosted integration runtime node.
 
         :param resource_group_name: The resource group name.
@@ -203,7 +203,7 @@ class IntegrationRuntimeNodesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.SelfHostedIntegrationRuntimeNode
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SelfHostedIntegrationRuntimeNode"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SelfHostedIntegrationRuntimeNode"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -259,7 +259,7 @@ class IntegrationRuntimeNodesOperations(object):
         node_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationRuntimeNodeIpAddress"
+        # type: (...) -> "_models.IntegrationRuntimeNodeIpAddress"
         """Get the IP address of self-hosted integration runtime node.
 
         :param resource_group_name: The resource group name.
@@ -275,7 +275,7 @@ class IntegrationRuntimeNodesOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeNodeIpAddress
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationRuntimeNodeIpAddress"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationRuntimeNodeIpAddress"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

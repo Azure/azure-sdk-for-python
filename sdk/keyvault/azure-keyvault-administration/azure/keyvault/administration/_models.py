@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from enum import Enum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -12,37 +11,29 @@ if TYPE_CHECKING:
 # pylint:disable=protected-access
 
 
-class KeyVaultRoleScope(str, Enum):
-    """Collection of well known role scopes. This list is not exhaustive"""
-
-    global_value = "/"  #: use this if you want role assignments to apply to everything on the resource
-
-    keys_value = "/keys"  #: use this if you want role assignments to apply to all keys
-
-
 class KeyVaultPermission(object):
     """Role definition permissions.
 
-    :ivar list[str] actions: allowed actions
-    :ivar list[str] not_actions: denied actions
-    :ivar list[str] data_actions: allowed data actions
-    :ivar list[str] not_data_actions: denied data actions
+    :ivar list[str] allowed_actions:
+    :ivar list[str] denied_actions:
+    :ivar list[str] allowed_data_actions:
+    :ivar list[str] denied_data_actions:
     """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self.actions = kwargs.get("actions")
-        self.not_actions = kwargs.get("not_actions")
-        self.data_actions = kwargs.get("data_actions")
-        self.not_data_actions = kwargs.get("not_data_actions")
+        self.allowed_actions = kwargs.get("allowed_actions")
+        self.denied_actions = kwargs.get("denied_actions")
+        self.allowed_data_actions = kwargs.get("allowed_data_actions")
+        self.denied_data_actions = kwargs.get("denied_data_actions")
 
     @classmethod
     def _from_generated(cls, permissions):
         return cls(
-            actions=permissions.actions,
-            not_actions=permissions.not_actions,
-            data_actions=permissions.data_actions,
-            not_data_actions=permissions.not_data_actions,
+            allowed_actions=permissions.actions,
+            denied_actions=permissions.not_actions,
+            allowed_data_actions=permissions.data_actions,
+            denied_data_actions=permissions.not_data_actions,
         )
 
 
@@ -51,20 +42,20 @@ class KeyVaultRoleAssignment(object):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._assignment_id = kwargs.get("assignment_id")
+        self._role_assignment_id = kwargs.get("role_assignment_id")
         self._name = kwargs.get("name")
         self._properties = kwargs.get("properties")
         self._type = kwargs.get("assignment_type")
 
     def __repr__(self):
         # type: () -> str
-        return "KeyVaultRoleAssignment<{}>".format(self._assignment_id)
+        return "KeyVaultRoleAssignment<{}>".format(self._role_assignment_id)
 
     @property
-    def assignment_id(self):
+    def role_assignment_id(self):
         # type: () -> str
         """unique identifier for this assignment"""
-        return self._assignment_id
+        return self._role_assignment_id
 
     @property
     def name(self):
@@ -102,7 +93,7 @@ class KeyVaultRoleAssignment(object):
     @classmethod
     def _from_generated(cls, role_assignment):
         return cls(
-            assignment_id=role_assignment.id,
+            role_assignment_id=role_assignment.id,
             name=role_assignment.name,
             assignment_type=role_assignment.type,
             properties=KeyVaultRoleAssignmentProperties._from_generated(role_assignment.properties),
@@ -134,33 +125,70 @@ class KeyVaultRoleAssignmentProperties(object):
 
 
 class KeyVaultRoleDefinition(object):
-    """Role definition.
-
-    :ivar str id: The role definition ID.
-    :ivar str name: The role definition name.
-    :ivar str type: The role definition type.
-    :ivar str role_name: The role name.
-    :ivar str description: The role definition description.
-    :ivar str role_type: The role type.
-    :ivar permissions: Role definition permissions.
-    :vartype permissions: list[KeyVaultPermission]
-    :ivar list[str] assignable_scopes: Role definition assignable scopes.
-    """
+    """Represents the definition of a role over a scope."""
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self.id = kwargs.get("id")
-        self.name = kwargs.get("name")
-        self.role_name = kwargs.get("role_name")
-        self.description = kwargs.get("description")
-        self.role_type = kwargs.get("role_type")
-        self.type = kwargs.get("type")
-        self.permissions = kwargs.get("permissions")
-        self.assignable_scopes = kwargs.get("assignable_scopes")
+        self._id = kwargs.get("id")
+        self._name = kwargs.get("name")
+        self._role_name = kwargs.get("role_name")
+        self._description = kwargs.get("description")
+        self._role_type = kwargs.get("role_type")
+        self._type = kwargs.get("type")
+        self._permissions = kwargs.get("permissions")
+        self._assignable_scopes = kwargs.get("assignable_scopes")
 
     def __repr__(self):
         # type: () -> str
-        return "<KeyVaultRoleDefinition {}>".format(self.role_name)[:1024]
+        return "KeyVaultRoleDefinition<{}>".format(self._id)
+
+    @property
+    def id(self):
+        # type: () -> str
+        """unique identifier for this role definition"""
+        return self._id
+
+    @property
+    def name(self):
+        # type: () -> str
+        """name of the role definition"""
+        return self._name
+
+    @property
+    def role_name(self):
+        # type: () -> str
+        """name of the role"""
+        return self._role_name
+
+    @property
+    def description(self):
+        # type: () -> str
+        """description of the role definition"""
+        return self._description
+
+    @property
+    def role_type(self):
+        # type: () -> str
+        """type of the role"""
+        return self._role_type
+
+    @property
+    def type(self):
+        # type: () -> str
+        """type of the role definition"""
+        return self._type
+
+    @property
+    def permissions(self):
+        # type: () -> list[KeyVaultPermission]
+        """permissions defined for the role"""
+        return self._permissions
+
+    @property
+    def assignable_scopes(self):
+        # type: () -> list[str]
+        """scopes that can be assigned to the role"""
+        return self._assignable_scopes
 
     @classmethod
     def _from_generated(cls, definition):
@@ -183,7 +211,7 @@ class _Operation(object):
         self.error = kwargs.get("error", None)
         self.start_time = kwargs.get("start_time", None)
         self.end_time = kwargs.get("end_time", None)
-        self.id = kwargs.get("job_id", None)
+        self.job_id = kwargs.get("job_id", None)
 
     @classmethod
     def _wrap_generated(cls, response, deserialized_operation, response_headers):  # pylint:disable=unused-argument
@@ -200,11 +228,11 @@ class BackupOperation(_Operation):
     :ivar datetime.datetime start_time: UTC start time of the operation
     :ivar datetime.datetime end_time: UTC end time of the operation
     :ivar str job_id: identifier for the operation
-    :ivar str azure_storage_blob_container_uri: URI of the Azure blob storage container which contains the backup
+    :ivar str folder_url: URL of the Azure blob storage container which contains the backup
     """
 
     def __init__(self, **kwargs):
-        self.azure_storage_blob_container_uri = kwargs.pop("azure_storage_blob_container_uri", None)
+        self.folder_url = kwargs.pop("azure_storage_blob_container_uri", None)
         super(BackupOperation, self).__init__(**kwargs)
 
 

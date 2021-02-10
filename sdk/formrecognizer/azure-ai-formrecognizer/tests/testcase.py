@@ -6,27 +6,17 @@
 # license information.
 # --------------------------------------------------------------------------
 
-
 import os
-import time
 import six
-import pytest
 import logging
-from collections import namedtuple
-from azure.core.credentials import AzureKeyCredential, AccessToken
+from azure.core.credentials import AccessToken
 from azure.ai.formrecognizer._helpers import (
     adjust_value_type,
     get_element,
     adjust_confidence,
     adjust_text_angle
 )
-from devtools_testutils import (
-    AzureTestCase,
-    AzureMgmtPreparer,
-    FakeResource,
-    ResourceGroupPreparer,
-)
-from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
+from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import (
     RecordingProcessor,
     ReplayableTest
@@ -35,16 +25,6 @@ from azure_devtools.scenario_tests.utilities import is_text_payload
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
-REGION = os.getenv('REGION', 'centraluseuap')
-ENDPOINT = os.getenv('ENDPOINT', 'None')
-NAME = os.getenv('NAME', 'None')
-RESOURCE_GROUP = os.getenv('RESOURCE_GROUP', 'None')
-
-
-ResourceGroup = namedtuple(
-    'ResourceGroup',
-    ['name']
-)
 
 
 class RequestBodyReplacer(RecordingProcessor):
@@ -62,6 +42,29 @@ class RequestBodyReplacer(RecordingProcessor):
         except TypeError:
             pass
         return request
+
+
+class OperationLocationReplacer(RecordingProcessor):
+    """Replace the location/operation location uri in a request/response body."""
+
+    def __init__(self):
+        self._replacement = "https://region.api.cognitive.microsoft.com/formrecognizer/"
+
+    def process_response(self, response):
+        try:
+            headers = response['headers']
+            location_header = None
+            if 'operation-location' in headers:
+                location_header = "operation-location"
+            if 'location' in headers:
+                location_header = "location"
+            if location_header:
+                if len(headers[location_header]) > 0:
+                    suffix = headers[location_header][0].split("/formrecognizer/")[1]
+                    response['headers'][location_header] = [self._replacement + suffix]
+            return response
+        except (KeyError, ValueError):
+            return response
 
 
 class AccessTokenReplacer(RecordingProcessor):
@@ -110,21 +113,36 @@ class FormRecognizerTest(AzureTestCase):
         self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(AccessTokenReplacer())
         self.recording_processors.append(RequestBodyReplacer())
+        self.recording_processors.append(OperationLocationReplacer())
         self.configure_logging()
 
         # URL samples
-        self.receipt_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"
-        self.receipt_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
-        self.business_card_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.jpg"
-        self.business_card_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.png"
-        self.business_card_multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-multipage.pdf"
-        self.invoice_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
-        self.invoice_url_tiff = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.tiff"
-        self.multipage_vendor_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multi1.pdf"
-        self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
-        self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipage_invoice1.pdf"
-        self.multipage_table_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipagelayout.pdf"
-        self.selection_mark_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/selection_mark_form.pdf"
+        # self.receipt_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"
+        # self.receipt_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
+        # self.business_card_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.jpg"
+        # self.business_card_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.png"
+        # self.business_card_multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-multipage.pdf"
+        # self.invoice_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
+        # self.invoice_url_tiff = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.tiff"
+        # self.multipage_vendor_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multi1.pdf"
+        # self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
+        # self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipage_invoice1.pdf"
+        # self.multipage_table_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipagelayout.pdf"
+        # self.selection_mark_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/selection_mark_form.pdf"
+
+        testing_container_sas_url = os.getenv("FORMRECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL")
+        self.receipt_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "contoso-allinone.jpg")
+        self.receipt_url_png = self.get_blob_url(testing_container_sas_url, "testingdata", "contoso-receipt.png")
+        self.business_card_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
+        self.business_card_url_png = self.get_blob_url(testing_container_sas_url, "testingdata", "businessCard.png")
+        self.business_card_multipage_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "business-card-multipage.pdf")
+        self.invoice_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.pdf")
+        self.invoice_url_tiff = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.tiff")
+        self.multipage_vendor_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multi1.pdf")
+        self.form_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "Form_1.jpg")
+        self.multipage_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipage_invoice1.pdf")
+        self.multipage_table_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipagelayout.pdf")
+        self.selection_mark_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "selection_mark_form.pdf")
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -141,6 +159,19 @@ class FormRecognizerTest(AzureTestCase):
         self.multipage_table_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf"))
         self.multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
         self.selection_form_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf"))
+
+    def get_blob_url(self, container_sas_url, container, file_name):
+        if self.is_live:
+            url = container_sas_url.split(container)
+            url[0] += container + "/" + file_name
+            blob_sas_url = url[0] + url[1]
+            self.scrubber.register_name_pair(
+                blob_sas_url,
+                "blob_sas_url"
+            )
+        else:
+            blob_sas_url = "blob_sas_url"
+        return blob_sas_url
 
     def get_oauth_endpoint(self):
         return self.get_settings_value("FORM_RECOGNIZER_AAD_ENDPOINT")
@@ -521,248 +552,3 @@ class FormRecognizerTest(AzureTestCase):
             self.assertIsNotNone(field.name)
             self.assertIsNotNone(field.value_data.text)
             self.assertIsNotNone(field.value_data.bounding_box)
-
-
-class GlobalResourceGroupPreparer(AzureMgmtPreparer):
-    def __init__(self):
-        super(GlobalResourceGroupPreparer, self).__init__(
-            name_prefix='',
-            random_name_length=42
-        )
-
-    def create_resource(self, name, **kwargs):
-        rg = FormRecognizerTest._RESOURCE_GROUP
-        if self.is_live:
-            self.test_class_instance.scrubber.register_name_pair(
-                rg.name,
-                "rgname"
-            )
-        else:
-            rg = FakeResource(
-                name="rgname",
-                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname"
-            )
-
-        return {
-            'location': REGION,
-            'resource_group': rg,
-        }
-
-
-class GlobalFormRecognizerAccountPreparer(AzureMgmtPreparer):
-    def __init__(self):
-        super(GlobalFormRecognizerAccountPreparer, self).__init__(
-            name_prefix='',
-            random_name_length=42
-        )
-
-    def create_resource(self, name, **kwargs):
-        form_recognizer_account = FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT
-        return {
-            'location': REGION,
-            'resource_group': FormRecognizerTest._RESOURCE_GROUP,
-            'form_recognizer_account': form_recognizer_account,
-            'form_recognizer_account_key': FormRecognizerTest._FORM_RECOGNIZER_KEY
-        }
-
-
-class GlobalClientPreparer(AzureMgmtPreparer):
-    def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super(GlobalClientPreparer, self).__init__(
-            name_prefix='',
-            random_name_length=42
-        )
-        self.client_kwargs = client_kwargs
-        self.client_cls = client_cls
-        self.training = kwargs.get("training", False)
-        self.multipage_test = kwargs.get("multipage", False)
-        self.multipage_test_2 = kwargs.get("multipage2", False)
-        self.selection_marks = kwargs.get("selection_marks", False)
-        self.need_blob_sas_url = kwargs.get("blob_sas_url", False)
-        self.copy = kwargs.get("copy", False)
-        self.language = kwargs.get("language", None)
-
-    def _load_settings(self):
-        try:
-            from devtools_testutils import mgmt_settings_real as real_settings
-            return real_settings
-        except ImportError:
-            return False
-
-    def get_settings_value(self, key):
-        key_value = os.environ.get("AZURE_"+key, None)
-        self._real_settings = self._load_settings()
-
-        if key_value and self._real_settings and getattr(self._real_settings, key) != key_value:
-            raise ValueError(
-                "You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to difference values"
-                .format(key=key))
-
-        if not key_value:
-            try:
-                key_value = getattr(self._real_settings, key)
-            except Exception:
-                print("Could not get {}".format(key))
-                raise
-        return key_value
-
-    def get_blob_url(self, container_sas_url, container, file_name):
-        url = container_sas_url.split(container)
-        url[0] += container + "/" + file_name
-        blob_sas_url = url[0] + url[1]
-        self.test_class_instance.scrubber.register_name_pair(
-            blob_sas_url,
-            "blob_sas_url"
-        )
-        return blob_sas_url
-
-    def get_training_parameters(self, client):
-        if self.is_live:
-            if self.multipage_test:
-                container_sas_url = self.get_settings_value("FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL")
-                blob_sas_url = self.get_blob_url(container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
-
-            elif self.multipage_test_2:
-                container_sas_url = self.get_settings_value("FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL_2")
-                blob_sas_url = self.get_blob_url(container_sas_url, "multipage-vendor-forms", "multi1.pdf")
-
-            elif self.selection_marks:
-                container_sas_url = self.get_settings_value("FORM_RECOGNIZER_SELECTION_MARK_STORAGE_CONTAINER_SAS_URL")
-                blob_sas_url = None
-            else:
-                container_sas_url = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
-                blob_sas_url = None
-
-            self.test_class_instance.scrubber.register_name_pair(
-                container_sas_url,
-                "containersasurl"
-            )
-        else:
-            container_sas_url = "containersasurl"
-            blob_sas_url = "blob_sas_url"
-
-        if self.need_blob_sas_url:
-            return {"client": client,
-                    "container_sas_url": container_sas_url,
-                    "blob_sas_url": blob_sas_url}
-        else:
-            return {"client": client,
-                    "container_sas_url": container_sas_url}
-
-    def get_copy_parameters(self, training_params, client, **kwargs):
-        if self.is_live:
-            resource_group = kwargs.get("resource_group")
-            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
-            form_recognizer_name = FormRecognizerTest._FORM_RECOGNIZER_NAME
-
-            resource_id = "/subscriptions/" + subscription_id + "/resourceGroups/" + resource_group.name + \
-                          "/providers/Microsoft.CognitiveServices/accounts/" + form_recognizer_name
-            resource_location = REGION
-            self.test_class_instance.scrubber.register_name_pair(
-                resource_id,
-                "resource_id"
-            )
-        else:
-            resource_location = REGION
-            resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname"
-
-        return {
-            "client": client,
-            "container_sas_url": training_params["container_sas_url"],
-            "location": resource_location,
-            "resource_id": resource_id
-        }
-
-    def create_resource(self, name, **kwargs):
-        client = self.create_form_client(**kwargs)
-
-        if self.language:
-            if self.is_live:
-                container_sas_url = self.get_settings_value("FORM_RECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL")
-                form_name = "content_" + self.language + ".pdf"
-                blob_sas_url = self.get_blob_url(container_sas_url, "testingdata", form_name)
-            else:
-                blob_sas_url = "blob_sas_url"
-            return {
-                "client": client,
-                "language_form": blob_sas_url
-            }
-
-        if not self.training:
-            return {"client": client}
-
-        training_params = self.get_training_parameters(client)
-
-        if self.copy:
-            return self.get_copy_parameters(training_params, client, **kwargs)
-
-        return training_params
-
-    def create_form_client(self, **kwargs):
-        form_recognizer_account = self.client_kwargs.pop("form_recognizer_account", None)
-        if form_recognizer_account is None:
-            form_recognizer_account = kwargs.pop("form_recognizer_account")
-
-        form_recognizer_account_key = self.client_kwargs.pop("form_recognizer_account_key", None)
-        if form_recognizer_account_key is None:
-            form_recognizer_account_key = kwargs.pop("form_recognizer_account_key")
-
-        if self.is_live:
-            polling_interval = 5
-        else:
-            polling_interval = 0
-
-        return self.client_cls(
-            form_recognizer_account,
-            AzureKeyCredential(form_recognizer_account_key),
-            polling_interval=polling_interval,
-            logging_enable=True if ENABLE_LOGGER == "True" else False,
-            **self.client_kwargs
-        )
-
-
-@pytest.fixture(scope="session")
-def form_recognizer_account():
-    # temp allow an existing resource to be used instead of creating an FR resource on the fly
-    if ENDPOINT != "None":
-        FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = ENDPOINT
-        if REGION == "centraluseuap":
-            FormRecognizerTest._FORM_RECOGNIZER_KEY = os.getenv("AZURE_FORM_RECOGNIZER_PYTHON_CANARY_API_KEY")
-        else:
-            FormRecognizerTest._FORM_RECOGNIZER_KEY = os.getenv("AZURE_FORM_RECOGNIZER_PYTHON_API_KEY")
-        FormRecognizerTest._FORM_RECOGNIZER_NAME = NAME
-        FormRecognizerTest._RESOURCE_GROUP = ResourceGroup(name=RESOURCE_GROUP)
-        yield
-    else:
-        test_case = AzureTestCase("__init__")
-        rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog', location=REGION)
-        form_recognizer_preparer = CognitiveServicesAccountPreparer(
-            random_name_enabled=True,
-            kind="formrecognizer",
-            name_prefix='pycog',
-            location=REGION
-        )
-
-        try:
-            rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
-            FormRecognizerTest._RESOURCE_GROUP = rg_kwargs['resource_group']
-            try:
-                form_recognizer_name, form_recognizer_kwargs = form_recognizer_preparer._prepare_create_resource(
-                    test_case, **rg_kwargs)
-                if test_case.is_live:
-                    time.sleep(600)  # current ask until race condition bug fixed
-                FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = form_recognizer_kwargs['cognitiveservices_account']
-                FormRecognizerTest._FORM_RECOGNIZER_KEY = form_recognizer_kwargs['cognitiveservices_account_key']
-                FormRecognizerTest._FORM_RECOGNIZER_NAME = form_recognizer_name
-                yield
-            finally:
-                form_recognizer_preparer.remove_resource(
-                    form_recognizer_name,
-                    resource_group=rg_kwargs['resource_group']
-                )
-                FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = None
-                FormRecognizerTest._FORM_RECOGNIZER_KEY = None
-
-        finally:
-            rg_preparer.remove_resource(rg_name)
-            FormRecognizerTest._RESOURCE_GROUP = None

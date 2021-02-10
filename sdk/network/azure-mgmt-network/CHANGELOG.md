@@ -1,5 +1,25 @@
 # Release History
 
+## 17.1.0 (2021-01-26)
+
+**Features**
+  - Model PrivateEndpoint has a new parameter extended_location
+  - Model VpnGateway has a new parameter nat_rules
+  - Model ExpressRouteConnection has a new parameter express_route_gateway_bypass
+  - Model SecurityRule has a new parameter type
+  - Model PrivateLinkService has a new parameter extended_location
+  - Model Route has a new parameter type
+  - Model Route has a new parameter has_bgp_override
+  - Model RouteTable has a new parameter resource_guid
+  - Model VpnSiteLinkConnection has a new parameter ingress_nat_rules
+  - Model VpnSiteLinkConnection has a new parameter vpn_link_connection_mode
+  - Model VpnSiteLinkConnection has a new parameter egress_nat_rules
+  - Model BackendAddressPool has a new parameter location
+  - Model CustomIpPrefix has a new parameter extended_location
+  - Added operation ExpressRouteGatewaysOperations.begin_update_tags
+  - Added operation VirtualNetworkGatewayConnectionsOperations.begin_get_ike_sas
+  - Added operation group NatRulesOperations
+
 ## 17.0.0 (2020-11-25)
 
 **Features**

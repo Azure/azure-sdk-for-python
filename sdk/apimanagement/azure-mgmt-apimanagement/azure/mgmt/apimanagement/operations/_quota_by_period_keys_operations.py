@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class QuotaByPeriodKeysOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class QuotaByPeriodKeysOperations(object):
         quota_period_key,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.QuotaCounterContract"
+        # type: (...) -> "_models.QuotaCounterContract"
         """Gets the value of the quota counter associated with the counter-key in the policy for the
         specific period in service instance.
 
@@ -72,7 +72,7 @@ class QuotaByPeriodKeysOperations(object):
         :rtype: ~azure.mgmt.apimanagement.models.QuotaCounterContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.QuotaCounterContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QuotaCounterContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -105,7 +105,7 @@ class QuotaByPeriodKeysOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('QuotaCounterContract', pipeline_response)
@@ -122,11 +122,10 @@ class QuotaByPeriodKeysOperations(object):
         service_name,  # type: str
         quota_counter_key,  # type: str
         quota_period_key,  # type: str
-        calls_count=None,  # type: Optional[int]
-        kb_transferred=None,  # type: Optional[float]
+        parameters,  # type: "_models.QuotaCounterValueUpdateContract"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.QuotaCounterContract"
+        # type: (...) -> "_models.QuotaCounterContract"
         """Updates an existing quota counter value in the specified service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -140,22 +139,18 @@ class QuotaByPeriodKeysOperations(object):
         :type quota_counter_key: str
         :param quota_period_key: Quota period key identifier.
         :type quota_period_key: str
-        :param calls_count: Number of times Counter was called.
-        :type calls_count: int
-        :param kb_transferred: Data Transferred in KiloBytes.
-        :type kb_transferred: float
+        :param parameters: The value of the Quota counter to be applied on the specified period.
+        :type parameters: ~azure.mgmt.apimanagement.models.QuotaCounterValueUpdateContract
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QuotaCounterContract, or the result of cls(response)
         :rtype: ~azure.mgmt.apimanagement.models.QuotaCounterContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.QuotaCounterContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QuotaCounterContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.QuotaCounterValueUpdateContract(calls_count=calls_count, kb_transferred=kb_transferred)
         api_version = "2020-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -181,7 +176,7 @@ class QuotaByPeriodKeysOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'QuotaCounterValueUpdateContract')
+        body_content = self._serialize.body(parameters, 'QuotaCounterValueUpdateContract')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -189,7 +184,7 @@ class QuotaByPeriodKeysOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('QuotaCounterContract', pipeline_response)

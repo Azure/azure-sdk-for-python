@@ -43,6 +43,12 @@ class RandomStream:
         self._remaining = self._remaining - e
         self._position += e
         return self._base_data[:e]
+    
+    def tell(self):
+        return self._position
+
+    def seek(self, index):
+        self._position = index
 
     def tell(self):
         return self._position

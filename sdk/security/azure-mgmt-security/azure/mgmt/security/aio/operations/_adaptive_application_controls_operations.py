@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class AdaptiveApplicationControlsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -42,10 +42,10 @@ class AdaptiveApplicationControlsOperations:
 
     async def list(
         self,
-        include_path_recommendations: Optional[Union[bool, "models.Enum37"]] = None,
-        summary: Optional[Union[bool, "models.Enum38"]] = None,
+        include_path_recommendations: Optional[Union[bool, "_models.Enum37"]] = None,
+        summary: Optional[Union[bool, "_models.Enum38"]] = None,
         **kwargs
-    ) -> "models.AdaptiveApplicationControlGroups":
+    ) -> "_models.AdaptiveApplicationControlGroups":
         """Gets a list of application control machine groups for the subscription.
 
         :param include_path_recommendations: Include the policy rules.
@@ -57,7 +57,7 @@ class AdaptiveApplicationControlsOperations:
         :rtype: ~azure.mgmt.security.models.AdaptiveApplicationControlGroups
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AdaptiveApplicationControlGroups"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AdaptiveApplicationControlGroups"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -104,7 +104,7 @@ class AdaptiveApplicationControlsOperations:
         self,
         group_name: str,
         **kwargs
-    ) -> "models.AdaptiveApplicationControlGroup":
+    ) -> "_models.AdaptiveApplicationControlGroup":
         """Gets an application control VM/server group.
 
         :param group_name: Name of an application control machine group.
@@ -114,7 +114,7 @@ class AdaptiveApplicationControlsOperations:
         :rtype: ~azure.mgmt.security.models.AdaptiveApplicationControlGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AdaptiveApplicationControlGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AdaptiveApplicationControlGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -158,9 +158,9 @@ class AdaptiveApplicationControlsOperations:
     async def put(
         self,
         group_name: str,
-        body: "models.AdaptiveApplicationControlGroup",
+        body: "_models.AdaptiveApplicationControlGroup",
         **kwargs
-    ) -> "models.AdaptiveApplicationControlGroup":
+    ) -> "_models.AdaptiveApplicationControlGroup":
         """Update an application control machine group.
 
         :param group_name: Name of an application control machine group.
@@ -172,7 +172,7 @@ class AdaptiveApplicationControlsOperations:
         :rtype: ~azure.mgmt.security.models.AdaptiveApplicationControlGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AdaptiveApplicationControlGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AdaptiveApplicationControlGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

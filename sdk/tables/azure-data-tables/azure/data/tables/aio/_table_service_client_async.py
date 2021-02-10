@@ -17,6 +17,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import LocationMode
+from .._constants import CONNECTION_TIMEOUT
 from .._base_client import parse_connection_str
 from .._generated.aio._azure_table import AzureTable
 from .._generated.models import TableServiceProperties, TableProperties
@@ -26,7 +27,7 @@ from .._table_service_client_base import TableServiceClientBase
 from .._models import TableItem
 from ._policies_async import ExponentialRetry
 from ._table_client_async import TableClient
-from ._base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from ._base_client_async import AsyncStorageAccountHostsMixin
 from ._models import TablePropertiesPaged
 
 
@@ -76,27 +77,34 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     """
 
     def __init__(
-            self, account_url,  # type: str
-            credential=None,  # type: str
-            **kwargs  # type: Any
+        self,
+        account_url,  # type: str
+        credential=None,  # type: str
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
-        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
-        loop = kwargs.pop('loop', None)
+        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(
+            **kwargs
+        )
+        loop = kwargs.pop("loop", None)
         super(TableServiceClient, self).__init__(  # type: ignore
-            account_url,
-            service='table',
-            credential=credential,
-            loop=loop,
-            **kwargs)
-        self._client = AzureTable(url=self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
+            account_url, service="table", credential=credential, loop=loop, **kwargs
+        )
+        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
+        self._configure_policies(**kwargs)
+        self._client = AzureTable(
+            self.url,
+            policies=kwargs.pop('policies', self._policies),
+            **kwargs
+        )
         self._loop = loop
 
     @classmethod
     def from_connection_string(
-            cls, conn_str, # type: any
-            **kwargs # type: Any
-    ): # type: (...) -> TableServiceClient
+        cls,
+        conn_str,  # type: any
+        **kwargs  # type: Any
+    ):  # type: (...) -> TableServiceClient
         """Create TableServiceClient from a Connection String.
 
         :param conn_str:
@@ -116,7 +124,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         """
         account_url, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service='table', keyword_args=kwargs)
+            conn_str=conn_str, credential=None, service="table", keyword_args=kwargs
+        )
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace_async
@@ -132,9 +141,10 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         try:
-            timeout = kwargs.pop('timeout', None)
+            timeout = kwargs.pop("timeout", None)
             stats = await self._client.service.get_statistics(  # type: ignore
-                timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+                timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs
+            )
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
             _process_table_error(error)
@@ -150,7 +160,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :rtype: ~azure.data.tables.models.TableServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
             return service_properties_deserialize(service_props)
@@ -159,34 +169,34 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
     @distributed_trace_async
     async def set_service_properties(
-            self,
-            analytics_logging=None,  # type: Optional[TableAnalyticsLogging]
-            hour_metrics=None,  # type: Optional[Metrics]
-            minute_metrics=None,  # type: Optional[Metrics]
-            cors=None,  # type: Optional[CorsRule]
-            **kwargs  # type: Any
+        self,
+        analytics_logging=None,  # type: Optional[TableAnalyticsLogging]
+        hour_metrics=None,  # type: Optional[Metrics]
+        minute_metrics=None,  # type: Optional[Metrics]
+        cors=None,  # type: Optional[CorsRule]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Sets properties for an account's Table service endpoint,
-        including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
+         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-       :param analytics_logging: Properties for analytics
-       :type analytics_logging: ~azure.data.tables.TableAnalyticsLogging
-       :param hour_metrics: Hour level metrics
-       :type hour_metrics: ~azure.data.tables.Metrics
-       :param minute_metrics: Minute level metrics
-       :type minute_metrics: ~azure.data.tables.Metrics
-       :param cors: Cross-origin resource sharing rules
-       :type cors: ~azure.data.tables.CorsRule
-       :return: None
-       :rtype: None
-       :raises ~azure.core.exceptions.HttpResponseError:
+        :param analytics_logging: Properties for analytics
+        :type analytics_logging: ~azure.data.tables.TableAnalyticsLogging
+        :param hour_metrics: Hour level metrics
+        :type hour_metrics: ~azure.data.tables.Metrics
+        :param minute_metrics: Minute level metrics
+        :type minute_metrics: ~azure.data.tables.Metrics
+        :param cors: Cross-origin resource sharing rules
+        :type cors: ~azure.data.tables.CorsRule
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         props = TableServiceProperties(
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors
+            cors=cors,
         )
         try:
             return await self._client.service.set_properties(props, **kwargs)  # type: ignore
@@ -195,9 +205,9 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
     @distributed_trace_async
     async def create_table(
-            self,
-            table_name,  # type: str
-            **kwargs  # type: Any
+        self,
+        table_name,  # type: str
+        **kwargs  # type: Any
     ):
         # type: (...) -> TableClient
         """Creates a new table under the given account.
@@ -225,8 +235,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     @distributed_trace_async
     async def create_table_if_not_exists(
         self,
-        table_name, # type: str
-        **kwargs # type: Any
+        table_name,  # type: str
+        **kwargs  # type: Any
     ):
         # type: (...) -> TableClient
         """Creates a new table if it does not currently exist.
@@ -256,9 +266,9 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
     @distributed_trace_async
     async def delete_table(
-            self,
-            table_name,  # type: str
-            **kwargs  # type: Any
+        self,
+        table_name,  # type: str
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Deletes the table under the current account
@@ -277,14 +287,13 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
                 :language: python
                 :dedent: 8
                 :caption: Deleting a table
-         """
+        """
         table = self.get_table_client(table_name=table_name)
         await table.delete_table(**kwargs)
 
     @distributed_trace
     def list_tables(
-            self,
-            **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[TableItem]
         """Queries tables under the given account.
@@ -305,23 +314,24 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
                 :dedent: 8
                 :caption: Listing all tables in an account
         """
-        user_select = kwargs.pop('select', None)
+        user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
-        top = kwargs.pop('results_per_page', None)
+        top = kwargs.pop("results_per_page", None)
 
         command = functools.partial(self._client.table.query, **kwargs)
         return AsyncItemPaged(
             command,
             results_per_page=top,
             select=user_select,
-            page_iterator_class=TablePropertiesPaged
+            page_iterator_class=TablePropertiesPaged,
         )
 
     @distributed_trace
     def query_tables(
-            self, filter,  # type: str    pylint: disable=W0622
-            **kwargs  # type: Any
+        self,
+        filter,  # type: str    pylint: disable=redefined-builtin
+        **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[TableItem]
         """Queries tables under the given account.
@@ -345,12 +355,14 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
                 :dedent: 8
                 :caption: Querying tables in an account given specific parameters
         """
-        parameters = kwargs.pop('parameters', None)
-        filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
-        user_select = kwargs.pop('select', None)
+        parameters = kwargs.pop("parameters", None)
+        filter = self._parameter_filter_substitution(
+            parameters, filter
+        )  # pylint: disable=redefined-builtin
+        user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
-        top = kwargs.pop('results_per_page', None)
+        top = kwargs.pop("results_per_page", None)
 
         command = functools.partial(self._client.table.query, **kwargs)
         return AsyncItemPaged(
@@ -358,12 +370,13 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             results_per_page=top,
             select=user_select,
             filter=filter,
-            page_iterator_class=TablePropertiesPaged
+            page_iterator_class=TablePropertiesPaged,
         )
 
     def get_table_client(
-            self, table_name, # type: str
-            **kwargs # type: Optional[Any]
+        self,
+        table_name,  # type: str
+        **kwargs  # type: Optional[Any]
     ):
         # type: (...) -> TableClient
         """Get a client to interact with the specified table.
@@ -378,14 +391,23 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :rtype: ~azure.data.tables.TableClient
 
         """
-
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
+            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
+            policies=self._policies,  # pylint: disable = protected-access
         )
 
         return TableClient(
-            self.url, table_name=table_name, credential=self.credential,
-            key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=self._pipeline,
-            _configuration=self._config, _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)
+            self.url,
+            table_name=table_name,
+            credential=self.credential,
+            key_resolver_function=self.key_resolver_function,
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            api_version=self.api_version,
+            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
+            policies=self._policies,
+            _configuration=self._client._config,  # pylint: disable=protected-access
+            _location_mode=self._location_mode,
+            _hosts=self._hosts,
+            **kwargs
+        )

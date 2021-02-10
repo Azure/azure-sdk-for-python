@@ -1,4 +1,5 @@
 $Language = "python"
+$LanguageDisplayName = "Python"
 $PackageRepository = "PyPI"
 $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
@@ -12,18 +13,29 @@ function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
   {
     $setupLocation = $pkgPath.Replace('\','/')
     pushd $RepoRoot
-    $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import parse_setup; obj=parse_setup('$setupLocation'); print('{0},{1}'.format(obj[0], obj[1]));") -split ","
+    $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import get_package_properties; obj=get_package_properties('$setupLocation'); print('{0},{1},{2}'.format(obj[0], obj[1], obj[2]));") -split ","
     popd
     if (($setupProps -ne $null) -and ($setupProps[0] -eq $pkgName))
     {
-      return [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceDirectory)
+      $pkgProp = [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceDirectory)
+      if ($pkgName -match "mgmt")
+      {
+        $pkgProp.SdkType = "mgmt"
+      }
+      else
+      {
+        $pkgProp.SdkType = "client"
+      }
+      $pkgProp.IsNewSdk = $setupProps[3]
+      return $pkgProp
     }
   }
   return $null
 }
 
 # Returns the pypi publish status of a package id and version.
-function IsPythonPackageVersionPublished($pkgId, $pkgVersion) {
+function IsPythonPackageVersionPublished($pkgId, $pkgVersion)
+{
   try 
   {
     $existingVersion = (Invoke-RestMethod -MaximumRetryCount 3 -RetryIntervalSec 10 -Method "Get" -uri "https://pypi.org/pypi/$pkgId/$pkgVersion/json").info.version
@@ -48,10 +60,12 @@ function IsPythonPackageVersionPublished($pkgId, $pkgVersion) {
 }
 
 # Parse out package publishing information given a python sdist of ZIP format.
-function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory) {
+function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
+{
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
 
   $pkgId = $matches["package"]
+  $docsReadMeName = $pkgId -replace "^azure-" , ""
   $pkgVersion = $matches["versionstring"]
 
   $workFolder = "$workingDirectory$($pkg.Basename)"
@@ -82,6 +96,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory) {
     Deployable     = $forceCreate -or !(IsPythonPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
+    DocsReadMeName = $docsReadMeName
   }
 }
 
@@ -109,7 +124,8 @@ function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
   }
 }
 
-function Get-python-GithubIoDocIndex() {
+function Get-python-GithubIoDocIndex()
+{
   # Update the main.js and docfx.json language content
   UpdateDocIndexFiles -appTitleLang Python 
   # Fetch out all package metadata from csv file.
@@ -125,7 +141,8 @@ function Get-python-GithubIoDocIndex() {
 # Updates a python CI configuration json.
 # For "latest", the version attribute is cleared, as default behavior is to pull latest "non-preview".
 # For "preview", we update to >= the target releasing package version.
-function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$null){
+function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$null)
+{
   $pkgJsonLoc = (Join-Path -Path $ciRepo -ChildPath $locationInDocRepo)
 
   if (-not (Test-Path $pkgJsonLoc)) {
@@ -178,4 +195,61 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
   $jsonContent = $allJson | ConvertTo-Json -Depth 10 | % {$_ -replace "(?m)  (?<=^(?:  )*)", "  " }
 
   Set-Content -Path $pkgJsonLoc -Value $jsonContent
+}
+
+# function is used to auto generate API View
+function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
+{
+  # Find wheel file in given artifact directory
+  # Make sure to pick only package with given artifact name
+  # Skip auto API review creation for management packages
+  if ($artifactName -match "mgmt")
+  {
+    Write-Host "Skipping automatic API review for management artifact $($artifactName)"
+    return $null
+  }
+
+  $packageName = $artifactName + "-"
+  Write-Host "Searching for $($packageName) wheel in artifact path $($artifactDir)"
+  $files = Get-ChildItem "${artifactDir}" | Where-Object -FilterScript {$_.Name.StartsWith($packageName) -and $_.Name.EndsWith(".whl")}
+  if (!$files)
+  {
+    Write-Host "$($artifactDir) does not have wheel package for $($packageName)"
+    return $null
+  }
+  elseif($files.Count -ne 1)
+  {
+    Write-Host "$($artifactDir) should contain only one published wheel package for $($packageName)"
+    Write-Host "No of Packages $($files.Count)"
+    return $null
+  }
+
+  $packages = @{
+    $files[0].Name = $files[0].FullName
+  }
+  return $packages
+}
+
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate, $BuildType=$null, $GroupId=$null)
+{
+  if($null -eq $ReleaseDate)
+  {
+    $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
+  }
+  pip install -r "$EngDir/versioning/requirements.txt" -q -I
+  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceDirectory --release-date $ReleaseDate
+}
+
+function GetExistingPackageVersions ($PackageName, $GroupId=$null)
+{
+  try
+  {
+    $existingVersion = Invoke-RestMethod -Method GET -Uri "https://pypi.python.org/pypi/${PackageName}/json"
+    return ($existingVersion.releases | Get-Member -MemberType NoteProperty).Name
+  }
+  catch
+  {
+    LogError "Failed to retrieve package versions. `n$_"
+    return $null
+  }
 }

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class SecurityContactsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,7 +44,7 @@ class SecurityContactsOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.SecurityContactList"]:
+    ) -> AsyncIterable["_models.SecurityContactList"]:
         """Security contact configurations for the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -52,7 +52,7 @@ class SecurityContactsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.SecurityContactList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityContactList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityContactList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,7 +111,7 @@ class SecurityContactsOperations:
         self,
         security_contact_name: str,
         **kwargs
-    ) -> "models.SecurityContact":
+    ) -> "_models.SecurityContact":
         """Security contact configurations for the subscription.
 
         :param security_contact_name: Name of the security contact object.
@@ -121,7 +121,7 @@ class SecurityContactsOperations:
         :rtype: ~azure.mgmt.security.models.SecurityContact
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityContact"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityContact"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -164,9 +164,9 @@ class SecurityContactsOperations:
     async def create(
         self,
         security_contact_name: str,
-        security_contact: "models.SecurityContact",
+        security_contact: "_models.SecurityContact",
         **kwargs
-    ) -> "models.SecurityContact":
+    ) -> "_models.SecurityContact":
         """Security contact configurations for the subscription.
 
         :param security_contact_name: Name of the security contact object.
@@ -178,7 +178,7 @@ class SecurityContactsOperations:
         :rtype: ~azure.mgmt.security.models.SecurityContact
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityContact"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityContact"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -277,9 +277,9 @@ class SecurityContactsOperations:
     async def update(
         self,
         security_contact_name: str,
-        security_contact: "models.SecurityContact",
+        security_contact: "_models.SecurityContact",
         **kwargs
-    ) -> "models.SecurityContact":
+    ) -> "_models.SecurityContact":
         """Security contact configurations for the subscription.
 
         :param security_contact_name: Name of the security contact object.
@@ -291,7 +291,7 @@ class SecurityContactsOperations:
         :rtype: ~azure.mgmt.security.models.SecurityContact
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityContact"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityContact"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

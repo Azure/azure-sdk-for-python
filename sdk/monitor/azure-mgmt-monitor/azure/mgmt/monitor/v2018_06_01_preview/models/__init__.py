@@ -39,7 +39,7 @@ except (SyntaxError, ImportError):
     from ._models import Resource  # type: ignore
     from ._models import SinkConfiguration  # type: ignore
 
-from ._monitor_client_enums import (
+from ._monitor_management_client_enums import (
     DataSourceKind,
     GuestDiagnosticSettingsOsType,
     SinkConfigurationKind,

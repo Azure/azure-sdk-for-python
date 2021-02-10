@@ -12,9 +12,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/keyPhrases?showStats=false
   response:
     body:
       string: "{\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"I should take my cat\"\
@@ -23,16 +23,16 @@ interactions:
         :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
         :\"2020-07-01\"}"
     headers:
-      apim-request-id: 2b2ffeeb-c1e7-4385-a9d0-62a7385b5ade
+      apim-request-id: 5e4b4d3a-a574-4a50-82cb-3e7d210b01ef
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 19 Nov 2020 21:26:44 GMT
+      date: Wed, 27 Jan 2021 02:22:48 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '8'
+      x-envoy-upstream-service-time: '7'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.2/keyPhrases?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/keyPhrases?showStats=false
 version: 1

@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ServiceFabricSchedulesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -59,7 +59,7 @@ class ServiceFabricSchedulesOperations(object):
         orderby=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ScheduleList"]
+        # type: (...) -> Iterable["_models.ScheduleList"]
         """List schedules in a given service fabric.
 
         :param resource_group_name: The name of the resource group.
@@ -84,7 +84,7 @@ class ServiceFabricSchedulesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.devtestlabs.models.ScheduleList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ScheduleList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScheduleList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -161,7 +161,7 @@ class ServiceFabricSchedulesOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Schedule"
+        # type: (...) -> "_models.Schedule"
         """Get schedule.
 
         :param resource_group_name: The name of the resource group.
@@ -181,7 +181,7 @@ class ServiceFabricSchedulesOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.Schedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Schedule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -234,10 +234,10 @@ class ServiceFabricSchedulesOperations(object):
         user_name,  # type: str
         service_fabric_name,  # type: str
         name,  # type: str
-        schedule,  # type: "models.Schedule"
+        schedule,  # type: "_models.Schedule"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Schedule"
+        # type: (...) -> "_models.Schedule"
         """Create or replace an existing schedule.
 
         :param resource_group_name: The name of the resource group.
@@ -257,7 +257,7 @@ class ServiceFabricSchedulesOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.Schedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Schedule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -385,10 +385,10 @@ class ServiceFabricSchedulesOperations(object):
         user_name,  # type: str
         service_fabric_name,  # type: str
         name,  # type: str
-        schedule,  # type: "models.ScheduleFragment"
+        schedule,  # type: "_models.ScheduleFragment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Schedule"
+        # type: (...) -> "_models.Schedule"
         """Allows modifying tags of schedules. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -408,7 +408,7 @@ class ServiceFabricSchedulesOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.Schedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Schedule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -565,7 +565,16 @@ class ServiceFabricSchedulesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'userName': self._serialize.url("user_name", user_name, 'str'),
+            'serviceFabricName': self._serialize.url("service_fabric_name", service_fabric_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

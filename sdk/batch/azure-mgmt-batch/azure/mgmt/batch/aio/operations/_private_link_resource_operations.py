@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class PrivateLinkResourceOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class PrivateLinkResourceOperations:
         account_name: str,
         maxresults: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.ListPrivateLinkResourcesResult"]:
+    ) -> AsyncIterable["_models.ListPrivateLinkResourcesResult"]:
         """Lists all of the private link resources in the specified account.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -61,12 +61,12 @@ class PrivateLinkResourceOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.batch.models.ListPrivateLinkResourcesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListPrivateLinkResourcesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListPrivateLinkResourcesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -126,7 +126,7 @@ class PrivateLinkResourceOperations:
         account_name: str,
         private_link_resource_name: str,
         **kwargs
-    ) -> "models.PrivateLinkResource":
+    ) -> "_models.PrivateLinkResource":
         """Gets information about the specified private link resource.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -141,12 +141,12 @@ class PrivateLinkResourceOperations:
         :rtype: ~azure.mgmt.batch.models.PrivateLinkResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL

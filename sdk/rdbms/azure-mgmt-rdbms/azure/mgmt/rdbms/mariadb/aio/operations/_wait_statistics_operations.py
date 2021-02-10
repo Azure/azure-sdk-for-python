@@ -26,7 +26,7 @@ class WaitStatisticsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -58,7 +58,7 @@ class WaitStatisticsOperations:
         :type wait_statistics_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WaitStatistic, or the result of cls(response)
-        :rtype: ~maria_db_management_client.models.WaitStatistic
+        :rtype: ~azure.mgmt.rdbms.mariadb.models.WaitStatistic
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WaitStatistic"]
@@ -117,10 +117,10 @@ class WaitStatisticsOperations:
         :param server_name: The name of the server.
         :type server_name: str
         :param parameters: The required parameters for retrieving wait statistics.
-        :type parameters: ~maria_db_management_client.models.WaitStatisticsInput
+        :type parameters: ~azure.mgmt.rdbms.mariadb.models.WaitStatisticsInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either WaitStatisticsResultList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~maria_db_management_client.models.WaitStatisticsResultList]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mariadb.models.WaitStatisticsResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WaitStatisticsResultList"]

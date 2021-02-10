@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-security-attestation/1.0.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fakeresource.wus.attest.azure.net/certificates?api-version=2020-10-01
+  response:
+    body:
+      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vcHlsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsICJraWQiOiAiMTVOMk1Ib2o5aUFka0YvYzVuUkUzSjJIQjhKRzZWdWUzVXp2dTNLL1Nlcz0iLCAidHlwIjogIkpXVCJ9.eyJleHAiOiAxNjA3NjI3NDE3LCAiaWF0IjogMTYwNzYyMzgxNywgImlzcyI6ICJodHRwczovL3B5bGFycnlvYXR0ZXN0YXRpb25hYWQud3VzLmF0dGVzdC5henVyZS5uZXQiLCAibmJmIjogMTYwNzYyMzgxNywgIngtbXMtcG9saWN5LWNlcnRpZmljYXRlcyI6IHsia2V5cyI6IFtdfX0.As_5hIHROW75T2CLnx_OZ7siycDsyH29-iX4vp0G5oJeDap7NbqxzNMQKY3NsayORBjVGySdqHpgwlbrQ1gYr9iHB-V7YbkXW3t4xO8RaX5G2iM9f_jeV0m36EBr_ohX7e3ePtVdKhtvWJ7nPPr3cZJjzhdXxLRlHN2DtX1UW1M"}'
+    headers:
+      content-length:
+      - '604'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 10 Dec 2020 18:10:17 GMT
+      server:
+      - Kestrel
+      x-ms-maa-service-version:
+      - 1.10.01432.0002
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class QueryKeysOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,10 +50,10 @@ class QueryKeysOperations(object):
         resource_group_name,  # type: str
         search_service_name,  # type: str
         name,  # type: str
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.QueryKey"
+        # type: (...) -> "_models.QueryKey"
         """Generates a new query key for the specified search service. You can create up to 50 query keys
         per service.
 
@@ -72,7 +72,7 @@ class QueryKeysOperations(object):
         :rtype: ~azure.mgmt.search.models.QueryKey
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.QueryKey"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueryKey"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -124,10 +124,10 @@ class QueryKeysOperations(object):
         self,
         resource_group_name,  # type: str
         search_service_name,  # type: str
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListQueryKeysResult"]
+        # type: (...) -> Iterable["_models.ListQueryKeysResult"]
         """Returns the list of query API keys for the given Azure Cognitive Search service.
 
         :param resource_group_name: The name of the resource group within the current subscription. You
@@ -143,7 +143,7 @@ class QueryKeysOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.search.models.ListQueryKeysResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListQueryKeysResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListQueryKeysResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -211,7 +211,7 @@ class QueryKeysOperations(object):
         resource_group_name,  # type: str
         search_service_name,  # type: str
         key,  # type: str
-        search_management_request_options=None,  # type: Optional["models.SearchManagementRequestOptions"]
+        search_management_request_options=None,  # type: Optional["_models.SearchManagementRequestOptions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None

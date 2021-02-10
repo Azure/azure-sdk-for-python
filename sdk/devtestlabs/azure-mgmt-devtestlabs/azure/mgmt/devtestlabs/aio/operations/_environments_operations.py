@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class EnvironmentsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -53,7 +53,7 @@ class EnvironmentsOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.DtlEnvironmentList"]:
+    ) -> AsyncIterable["_models.DtlEnvironmentList"]:
         """List environments in a given user profile.
 
         :param resource_group_name: The name of the resource group.
@@ -76,7 +76,7 @@ class EnvironmentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devtestlabs.models.DtlEnvironmentList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DtlEnvironmentList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DtlEnvironmentList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -150,7 +150,7 @@ class EnvironmentsOperations:
         name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.DtlEnvironment":
+    ) -> "_models.DtlEnvironment":
         """Get environment.
 
         :param resource_group_name: The name of the resource group.
@@ -168,7 +168,7 @@ class EnvironmentsOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.DtlEnvironment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DtlEnvironment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DtlEnvironment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -219,10 +219,10 @@ class EnvironmentsOperations:
         lab_name: str,
         user_name: str,
         name: str,
-        dtl_environment: "models.DtlEnvironment",
+        dtl_environment: "_models.DtlEnvironment",
         **kwargs
-    ) -> "models.DtlEnvironment":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DtlEnvironment"]
+    ) -> "_models.DtlEnvironment":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DtlEnvironment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -280,9 +280,9 @@ class EnvironmentsOperations:
         lab_name: str,
         user_name: str,
         name: str,
-        dtl_environment: "models.DtlEnvironment",
+        dtl_environment: "_models.DtlEnvironment",
         **kwargs
-    ) -> AsyncLROPoller["models.DtlEnvironment"]:
+    ) -> AsyncLROPoller["_models.DtlEnvironment"]:
         """Create or replace an existing environment. This operation can take a while to complete.
 
         :param resource_group_name: The name of the resource group.
@@ -306,7 +306,7 @@ class EnvironmentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DtlEnvironment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DtlEnvironment"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -333,7 +333,15 @@ class EnvironmentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'userName': self._serialize.url("user_name", user_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -447,7 +455,15 @@ class EnvironmentsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'labName': self._serialize.url("lab_name", lab_name, 'str'),
+            'userName': self._serialize.url("user_name", user_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -467,9 +483,9 @@ class EnvironmentsOperations:
         lab_name: str,
         user_name: str,
         name: str,
-        dtl_environment: "models.DtlEnvironmentFragment",
+        dtl_environment: "_models.DtlEnvironmentFragment",
         **kwargs
-    ) -> "models.DtlEnvironment":
+    ) -> "_models.DtlEnvironment":
         """Allows modifying tags of environments. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -487,7 +503,7 @@ class EnvironmentsOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.DtlEnvironment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DtlEnvironment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DtlEnvironment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

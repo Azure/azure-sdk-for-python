@@ -11,23 +11,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 00:38:06 GMT
+      - Fri, 18 Dec 2020 17:29:46 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 00:38:06 GMT
+      - Fri, 18 Dec 2020 17:29:46 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytableasynce5ae0d85"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytableasynce5ae0d85"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 01 Oct 2020 00:38:06 GMT
-      location: https://tablesteststorname.table.core.windows.net/Tables('pytableasynce5ae0d85')
+      date: Fri, 18 Dec 2020 17:29:47 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('pytableasynce5ae0d85')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -35,7 +35,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://tablesteststorname.table.core.windows.net/Tables
+    url: https://seankaneprim.table.core.windows.net/Tables
 - request:
     body: '{"PartitionKey": "test", "PartitionKey@odata.type": "Edm.String", "RowKey":
       "test1", "RowKey@odata.type": "Edm.String", "text": "hello", "text@odata.type":
@@ -50,30 +50,30 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 00:38:06 GMT
+      - Fri, 18 Dec 2020 17:29:47 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 00:38:06 GMT
+      - Fri, 18 Dec 2020 17:29:47 GMT
       x-ms-version:
       - '2019-02-02'
     method: PATCH
-    uri: https://tablesteststorname.table.core.windows.net/pytableasynce5ae0d85(PartitionKey='test',RowKey='test1')
+    uri: https://fake_table_account.table.core.windows.net/pytableasynce5ae0d85(PartitionKey='test',RowKey='test1')
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 01 Oct 2020 00:38:06 GMT
-      etag: W/"datetime'2020-10-01T00%3A38%3A06.7383Z'"
+      date: Fri, 18 Dec 2020 17:29:47 GMT
+      etag: W/"datetime'2020-12-18T17%3A29%3A47.7326422Z'"
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://tablesteststorname.table.core.windows.net/pytableasynce5ae0d85(PartitionKey='test',RowKey='test1')
+    url: https://seankaneprim.table.core.windows.net/pytableasynce5ae0d85(PartitionKey='test',RowKey='test1')
 - request:
     body: '{"PartitionKey": "test", "PartitionKey@odata.type": "Edm.String", "RowKey":
       "test2", "RowKey@odata.type": "Edm.String", "text": "hello", "text@odata.type":
@@ -88,30 +88,30 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 00:38:06 GMT
+      - Fri, 18 Dec 2020 17:29:47 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 00:38:06 GMT
+      - Fri, 18 Dec 2020 17:29:47 GMT
       x-ms-version:
       - '2019-02-02'
     method: PATCH
-    uri: https://tablesteststorname.table.core.windows.net/pytableasynce5ae0d85(PartitionKey='test',RowKey='test2')
+    uri: https://fake_table_account.table.core.windows.net/pytableasynce5ae0d85(PartitionKey='test',RowKey='test2')
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 01 Oct 2020 00:38:06 GMT
-      etag: W/"datetime'2020-10-01T00%3A38%3A06.7773275Z'"
+      date: Fri, 18 Dec 2020 17:29:47 GMT
+      etag: W/"datetime'2020-12-18T17%3A29%3A47.8507277Z'"
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://tablesteststorname.table.core.windows.net/pytableasynce5ae0d85(PartitionKey='test',RowKey='test2')
+    url: https://seankaneprim.table.core.windows.net/pytableasynce5ae0d85(PartitionKey='test',RowKey='test2')
 - request:
     body: null
     headers:
@@ -120,22 +120,22 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 00:38:06 GMT
+      - Fri, 18 Dec 2020 17:29:47 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 00:38:06 GMT
+      - Fri, 18 Dec 2020 17:29:47 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://tablesteststorname.table.core.windows.net/pytableasynce5ae0d85()?st=2020-10-01T00:37:06Z&se=2020-10-01T01:38:06Z&sp=r&sv=2019-02-02&ss=t&srt=o&sig=RvEgp8AKlM88dWLtaiGmGQ6qHcKTXaGZhW63aJucyco%3D
+    uri: https://fake_table_account.table.core.windows.net/pytableasynce5ae0d85()?st=2020-12-18T17:28:47Z&se=2020-12-18T18:29:47Z&sp=r&sv=2019-02-02&ss=t&srt=o&sig=3wlGVUFwIcxDmzmcbdMeIqdlisAFPXGxcVa0y8Tk%2BlU%3D
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#pytableasynce5ae0d85","value":[{"odata.etag":"W/\"datetime''2020-10-01T00%3A38%3A06.7383Z''\"","PartitionKey":"test","RowKey":"test1","Timestamp":"2020-10-01T00:38:06.7383Z","text":"hello"},{"odata.etag":"W/\"datetime''2020-10-01T00%3A38%3A06.7773275Z''\"","PartitionKey":"test","RowKey":"test2","Timestamp":"2020-10-01T00:38:06.7773275Z","text":"hello"}]}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#pytableasynce5ae0d85","value":[{"odata.etag":"W/\"datetime''2020-12-18T17%3A29%3A47.7326422Z''\"","PartitionKey":"test","RowKey":"test1","Timestamp":"2020-12-18T17:29:47.7326422Z","text":"hello"},{"odata.etag":"W/\"datetime''2020-12-18T17%3A29%3A47.8507277Z''\"","PartitionKey":"test","RowKey":"test2","Timestamp":"2020-12-18T17:29:47.8507277Z","text":"hello"}]}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 01 Oct 2020 00:38:06 GMT
+      date: Fri, 18 Dec 2020 17:29:47 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -143,34 +143,34 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://tablesteststorname.table.core.windows.net/pytableasynce5ae0d85()?st=2020-10-01T00:37:06Z&se=2020-10-01T01:38:06Z&sp=r&sv=2019-02-02&ss=t&srt=o&sig=RvEgp8AKlM88dWLtaiGmGQ6qHcKTXaGZhW63aJucyco%3D
+    url: https://seankaneprim.table.core.windows.net/pytableasynce5ae0d85()?st=2020-12-18T17:28:47Z&se=2020-12-18T18:29:47Z&sp=r&sv=2019-02-02&ss=t&srt=o&sig=3wlGVUFwIcxDmzmcbdMeIqdlisAFPXGxcVa0y8Tk%2BlU%3D
 - request:
     body: null
     headers:
       Accept:
       - application/json
       Date:
-      - Thu, 01 Oct 2020 00:38:06 GMT
+      - Fri, 18 Dec 2020 17:29:47 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 00:38:06 GMT
+      - Fri, 18 Dec 2020 17:29:47 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablesteststorname.table.core.windows.net/Tables('pytableasynce5ae0d85')
+    uri: https://fake_table_account.table.core.windows.net/Tables('pytableasynce5ae0d85')
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 01 Oct 2020 00:38:06 GMT
+      date: Fri, 18 Dec 2020 17:29:48 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://tablesteststorname.table.core.windows.net/Tables('pytableasynce5ae0d85')
+    url: https://seankaneprim.table.core.windows.net/Tables('pytableasynce5ae0d85')
 version: 1

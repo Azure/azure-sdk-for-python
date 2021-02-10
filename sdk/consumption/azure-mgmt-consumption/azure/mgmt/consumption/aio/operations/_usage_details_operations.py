@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class UsageDetailsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,9 +48,9 @@ class UsageDetailsOperations:
         filter: Optional[str] = None,
         skiptoken: Optional[str] = None,
         top: Optional[int] = None,
-        metric: Optional[Union[str, "models.Metrictype"]] = None,
+        metric: Optional[Union[str, "_models.Metrictype"]] = None,
         **kwargs
-    ) -> AsyncIterable["models.UsageDetailsListResult"]:
+    ) -> AsyncIterable["_models.UsageDetailsListResult"]:
         """Lists the usage details for the defined scope. Usage details are available via this API only
         for May 1, 2014 or later.
 
@@ -99,7 +99,7 @@ class UsageDetailsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.consumption.models.UsageDetailsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.UsageDetailsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsageDetailsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -154,7 +154,7 @@ class UsageDetailsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

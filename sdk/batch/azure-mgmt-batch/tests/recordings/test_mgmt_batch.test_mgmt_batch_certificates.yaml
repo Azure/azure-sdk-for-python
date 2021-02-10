@@ -15,12 +15,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2021-01-01
   response:
     body:
-      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8772844586D03\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-10-23T07:50:10.1922477Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
+      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8C3651E868712\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-01-28T08:17:14.4151117Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
     headers:
       cache-control:
       - no-cache
@@ -29,13 +29,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 23 Oct 2020 07:50:10 GMT
+      - Thu, 28 Jan 2021 08:17:13 GMT
       etag:
-      - W/"0x8D8772844586D03"
+      - W/"0x8D8C3651E868712"
       expires:
       - '-1'
       last-modified:
-      - Fri, 23 Oct 2020 07:50:10 GMT
+      - Thu, 28 Jan 2021 08:17:14 GMT
       pragma:
       - no-cache
       server:
@@ -49,7 +49,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -63,12 +63,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates?api-version=2021-01-01
   response:
     body:
-      string: '{"value":[{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8772844586D03\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-10-23T07:50:10.1922477Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}]}'
+      string: '{"value":[{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8C3651E868712\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-01-28T08:17:14.4151117Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}]}'
     headers:
       cache-control:
       - no-cache
@@ -77,7 +77,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 23 Oct 2020 07:50:10 GMT
+      - Thu, 28 Jan 2021 08:17:13 GMT
       expires:
       - '-1'
       pragma:
@@ -105,12 +105,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2021-01-01
   response:
     body:
-      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8772844586D03\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-10-23T07:50:10.1922477Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
+      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8C3651E868712\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-01-28T08:17:14.4151117Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
     headers:
       cache-control:
       - no-cache
@@ -119,13 +119,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 23 Oct 2020 07:50:10 GMT
+      - Thu, 28 Jan 2021 08:17:14 GMT
       etag:
-      - W/"0x8D8772844586D03"
+      - W/"0x8D8C3651E868712"
       expires:
       - '-1'
       last-modified:
-      - Fri, 23 Oct 2020 07:50:10 GMT
+      - Thu, 28 Jan 2021 08:17:14 GMT
       pragma:
       - no-cache
       server:
@@ -156,12 +156,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2021-01-01
   response:
     body:
-      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8772844586D03\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-10-23T07:50:10.1922477Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
+      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8C3651E868712\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-01-28T08:17:14.4151117Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
     headers:
       cache-control:
       - no-cache
@@ -170,63 +170,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 23 Oct 2020 07:50:11 GMT
+      - Thu, 28 Jan 2021 08:17:14 GMT
       etag:
-      - W/"0x8D8772844586D03"
+      - W/"0x8D8C3651E868712"
       expires:
       - '-1'
       last-modified:
-      - Fri, 23 Oct 2020 07:50:10 GMT
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1193'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7/cancelDelete?api-version=2020-09-01
-  response:
-    body:
-      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8772844586D03\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2020-10-23T07:50:10.1922477Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '1189'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 23 Oct 2020 07:50:11 GMT
-      etag:
-      - W/"0x8D8772844586D03"
-      expires:
-      - '-1'
-      last-modified:
-      - Fri, 23 Oct 2020 07:50:10 GMT
+      - Thu, 28 Jan 2021 08:17:14 GMT
       pragma:
       - no-cache
       server:
@@ -256,9 +206,59 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7/cancelDelete?api-version=2021-01-01
+  response:
+    body:
+      string: '{"name":"sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7","type":"Microsoft.Batch/batchAccounts/certificates","etag":"W/\"0x8D8C3651E868712\"","properties":{"thumbprintAlgorithm":"sha1","thumbprint":"cff2ab63c8c955aaf71989efa641b906558d9fb7","provisioningState":"Succeeded","provisioningStateTransitionTime":"2021-01-28T08:17:14.4151117Z","format":"Pfx","publicData":"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1189'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 28 Jan 2021 08:17:15 GMT
+      etag:
+      - W/"0x8D8C3651E868712"
+      expires:
+      - '-1'
+      last-modified:
+      - Thu, 28 Jan 2021 08:17:14 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificates/SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7?api-version=2021-01-01
   response:
     body:
       string: ''
@@ -268,11 +268,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 23 Oct 2020 07:50:12 GMT
+      - Thu, 28 Jan 2021 08:17:15 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8D87728458B19AF?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8D8C3651FB2EB60?api-version=2021-01-01
       pragma:
       - no-cache
       server:
@@ -282,7 +282,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
+      - '14999'
     status:
       code: 202
       message: Accepted
@@ -296,9 +296,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8D87728458B19AF?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8D8C3651FB2EB60?api-version=2021-01-01
   response:
     body:
       string: ''
@@ -308,11 +308,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 23 Oct 2020 07:50:27 GMT
+      - Thu, 28 Jan 2021 08:17:31 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d87728458b19af?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
       pragma:
       - no-cache
       server:
@@ -334,9 +334,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d87728458b19af?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
   response:
     body:
       string: ''
@@ -346,11 +346,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 23 Oct 2020 07:50:42 GMT
+      - Thu, 28 Jan 2021 08:17:47 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d87728458b19af?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
       pragma:
       - no-cache
       server:
@@ -372,9 +372,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d87728458b19af?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
   response:
     body:
       string: ''
@@ -384,11 +384,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 23 Oct 2020 07:50:57 GMT
+      - Thu, 28 Jan 2021 08:18:02 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d87728458b19af?api-version=2020-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
       pragma:
       - no-cache
       server:
@@ -410,9 +410,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-batch/14.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d87728458b19af?api-version=2020-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
   response:
     body:
       string: ''
@@ -422,7 +422,45 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 23 Oct 2020 07:51:13 GMT
+      - Thu, 28 Jan 2021 08:18:17 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_certificates93b711ee/providers/Microsoft.Batch/batchAccounts/batch93b711ee/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8d8c3651fb2eb60?api-version=2021-01-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 28 Jan 2021 08:18:32 GMT
       expires:
       - '-1'
       pragma:
