@@ -30,6 +30,7 @@ import requests.utils
 
 from azure.core.pipeline.transport import HttpRequest, RequestsTransport, RequestsTransportResponse
 from azure.core.configuration import Configuration
+from azure.core.pipeline import Pipeline
 
 
 def test_threading_basic_requests():
@@ -93,3 +94,15 @@ def test_requests_response_json_error():
     res = _create_requests_response(b'this is not json serializable')
     with pytest.raises(json.decoder.JSONDecodeError):
         res.json()
+
+def test_requests_response_json_stream():
+    class MockTransport(RequestsTransport):
+        def send(self, request, **kwargs):
+            return _create_requests_response(b'{"key": "value"}')
+
+    pipeline = Pipeline(MockTransport())
+    pipeline_response = pipeline.run(HttpRequest('GET', 'http://127.0.0.1/'), stream=True)
+    res = pipeline_response.http_response
+    assert isinstance(res, RequestsTransportResponse)
+    assert res.json() == {"key": "value"}
+    assert json.dumps(res.json())

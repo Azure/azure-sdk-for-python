@@ -39,6 +39,7 @@ import trio
 
 import pytest
 from unittest import mock
+from azure.core.pipeline import Pipeline
 
 
 @pytest.mark.asyncio
@@ -131,3 +132,15 @@ def test_aiohttp_response_json_error():
     res = _create_aiohttp_response(b'this is not json serializable', {'Content-Type': 'application/json'})
     with pytest.raises(json.decoder.JSONDecodeError):
         res.json()
+
+def test_requests_response_json_stream():
+    class MockTransport(AioHttpTransport):
+        def send(self, request, **kwargs):
+            return _create_aiohttp_response(b'{"key": "value"}', {'Content-Type': 'application/json'})
+
+    pipeline = Pipeline(MockTransport())
+    pipeline_response = pipeline.run(HttpRequest('GET', 'http://127.0.0.1/'), stream=True)
+    res = pipeline_response.http_response
+    assert isinstance(res, AioHttpTransportResponse)
+    assert res.json() == {"key": "value"}
+    assert json.dumps(res.json())
