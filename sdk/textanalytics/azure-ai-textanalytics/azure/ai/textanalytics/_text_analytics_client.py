@@ -38,7 +38,6 @@ from ._lro import (
     TextAnalyticsOperationResourcePolling,
     AnalyzeBatchActionsLROPollingMethod,
     AnalyzeHealthcareEntitiesLROPollingMethod,
-    AnalyzeHealthcareEntitiesLROPoller
 )
 
 if TYPE_CHECKING:
