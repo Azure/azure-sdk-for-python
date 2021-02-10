@@ -76,7 +76,7 @@ class StorageTestCase(unittest.TestCase):
     def setUp(self):
         self.working_folder = os.path.dirname(__file__)
 
-        self.settings = fake_settings
+        self.settings = settings
         self.fake_settings = fake_settings
 
         if settings is None:
