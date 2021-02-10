@@ -9,7 +9,7 @@ import datetime
 import uuid
 import logging
 import copy
-from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any
+from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any, cast
 
 import six
 
@@ -320,6 +320,29 @@ class ServiceBusMessage(
         :rtype: bytes or Iterable[bytes]
         """
         return self.message.get_data()
+
+    @property
+    def body_as_str(self, encoding="UTF-8"):
+        # type: (str) -> str
+        """The content of the message as a string, if the data is of a compatible type.
+
+        :param encoding: The encoding to use for decoding message.
+         Default is 'UTF-8'
+        :rtype: str
+        """
+        data = self.body
+        try:
+            return "".join(b.decode(encoding) for b in cast(Iterable[bytes], data))
+        except TypeError:
+            return six.text_type(data)
+        except:  # pylint: disable=bare-except
+            pass
+        try:
+            return cast(bytes, data).decode(encoding)
+        except Exception as e:
+            raise TypeError(
+                "Message data is not compatible with string type: {}".format(e)
+            )
 
     @property
     def content_type(self):
