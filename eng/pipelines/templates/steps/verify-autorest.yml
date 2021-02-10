@@ -1,0 +1,26 @@
+parameters:
+  - name: ServiceToTest
+    type: string
+    default: ''
+  - name: SDKType
+    type: string
+    default: 'client'
+
+steps:
+
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.9'
+
+  - task: NodeTool@0
+    displayName: 'Install Node.js $(NodeVersion)'
+    inputs:
+      versionSpec: '$(NodeVersion)'
+
+  - script: |
+      npm install -g autorest
+      autorest --help
+    displayName: "Install autorest"
+
+  - script: |
+      python --version

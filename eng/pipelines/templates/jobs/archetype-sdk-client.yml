@@ -140,6 +140,11 @@ jobs:
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         Artifacts: ${{ parameters.Artifacts }}
 
+    - template: ../steps/verify-autorest.yml
+      parameters:
+        ServiceToTest: ${{ parameters.ServiceToTest }}
+        SDKType: ${{ parameters.SDKType }}
+
   - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
