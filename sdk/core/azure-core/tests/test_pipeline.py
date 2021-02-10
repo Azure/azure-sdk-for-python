@@ -234,7 +234,7 @@ class TestClientPipelineURLFormatting(unittest.TestCase):
         assert str(exp.value) == "The value provided for the url part Endpoint was incorrect, and resulted in an invalid url"
 
 class TestClientRequest(unittest.TestCase):
-    def test_request_json(self):
+    def test_set_json_body_no_content_type_header(self):
 
         request = HttpRequest("GET", "/")
         data = "Lots of dataaaa"
@@ -242,6 +242,30 @@ class TestClientRequest(unittest.TestCase):
 
         self.assertEqual(request.data, json.dumps(data))
         self.assertEqual(request.headers.get("Content-Length"), "17")
+        self.assertEqual(request.headers.get("Content-Type"), "application/json")
+
+    def test_set_json_body_content_type_header(self):
+        request = HttpRequest("GET", "/", headers={"Content-Type": "shouldBeMe"})
+        data = "Lots of dataaaa"
+        request.set_json_body(data)
+
+        self.assertEqual(request.data, json.dumps(data))
+        self.assertEqual(request.headers.get("Content-Length"), "17")
+        self.assertEqual(request.headers.get("Content-Type"), "shouldBeMe")
+
+    def test_request_json_kwarg_no_content_type_header(self):
+        request = HttpRequest("GET", "/", json={"documents": ["hello"]})
+
+        assert json.loads(request.data)
+        assert request.headers.get("Content-Length") == "24"
+        assert request.headers.get("Content-Type") == "application/json"
+
+    def test_request_json_kwarg_content_type_header(self):
+        request = HttpRequest("GET", "/", headers={"Content-Type": "shouldBeMe"}, json={"documents": ["hello"]})
+
+        assert json.loads(request.data)
+        assert request.headers.get("Content-Length") == "24"
+        assert request.headers.get("Content-Type") == "shouldBeMe"
 
     def test_request_data(self):
 
@@ -285,7 +309,7 @@ class TestClientRequest(unittest.TestCase):
         request.format_parameters({"g": "h"})
 
         self.assertIn(request.url, ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"])
-    
+
     def test_request_url_with_params_as_list(self):
 
         request = HttpRequest("GET", "/")
@@ -300,7 +324,7 @@ class TestClientRequest(unittest.TestCase):
         request.url = "a/b/c?t=y"
         with pytest.raises(ValueError):
             request.format_parameters({"g": ["h",None]})
-    
+
     def test_request_url_with_params_with_none(self):
 
         request = HttpRequest("GET", "/")

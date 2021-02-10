@@ -222,16 +222,22 @@ class HttpRequest(object):
     :param files: Files list.
     :param data: Body to be sent.
     :type data: bytes or str.
+    :keyword json: A JSON serializable object. Serializes your inputted object. Use this
+     instead of data if you wish for us to handle json serialization of your object for you.
+    :raises: TypeError
     """
 
-    def __init__(self, method, url, headers=None, files=None, data=None):
-        # type: (str, str, Mapping[str, str], Any, Any) -> None
+    def __init__(self, method, url, headers=None, files=None, data=None, **kwargs):
+        # type: (str, str, Mapping[str, str], Any, Any, Any) -> None
         self.method = method
         self.url = url
         self.headers = _case_insensitive_dict(headers)
         self.files = files
-        self.data = data
         self.multipart_mixed_info = None  # type: Optional[Tuple]
+        json_kwarg = kwargs.pop("json", None)
+        self.data = data or json_kwarg
+        if json_kwarg:
+            self.set_json_body(self.data)
 
     def __repr__(self):
         return "<HttpRequest [%s]>" % (self.method)
@@ -361,13 +367,19 @@ class HttpRequest(object):
     def set_json_body(self, data):
         """Set a JSON-friendly object as the body of the request.
 
+        Sets your content type header to "application/json" if you
+        didn't input any content type headers
+
         :param data: A JSON serializable object
+        :raises: TypeError
         """
         if data is None:
             self.data = None
         else:
             self.data = json.dumps(data)
             self.headers["Content-Length"] = str(len(self.data))
+        if not self.headers.get("content-type"):
+            self.headers["Content-Type"] = "application/json"
         self.files = None
 
     def set_formdata_body(self, data=None):
