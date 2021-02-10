@@ -476,12 +476,11 @@ for idx, doc in enumerate(docs):
             for data_source in entity.data_sources:
                 print("......Entity ID: {}".format(data_source.entity_id))
                 print("......Name: {}".format(data_source.name))
-    for relation in doc.relations:
-        print("Relation:")
-        print("...Source: {}".format(relation.source.text))
-        print("...Target: {}".format(relation.target.text))
-        print("...Type: {}".format(relation.relation_type))
-        print("...Bidirectional: {}".format(relation.is_bidirectional))
+        if len(entity.related_entities) > 0:
+            print("...Related Entities:")
+            for related_entity, relation_type in entity.related_entities.items():
+                print("......Entity Text: {}".format(related_entity.text))
+                print("......Relation Type: {}".format(relation_type))
     print("------------------------------------------")
 ```
 

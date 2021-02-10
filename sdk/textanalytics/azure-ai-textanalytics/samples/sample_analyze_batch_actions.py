@@ -61,7 +61,7 @@ class AnalyzeSample(object):
             display_name="Sample Text Analysis",
             actions=[
                 RecognizeEntitiesAction(),
-                RecognizePiiEntitiesAction(domain_filter=PiiEntityDomainType.PHI),
+                RecognizePiiEntitiesAction(domain_filter=PiiEntityDomainType.PROTECTED_HEALTH_INFORMATION),
                 ExtractKeyPhrasesAction()
             ],
         )
