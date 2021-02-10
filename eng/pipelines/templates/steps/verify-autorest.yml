@@ -5,17 +5,23 @@ parameters:
   - name: SDKType
     type: string
     default: 'client'
+  - name: ServiceDirectory
+    type: string
+
+variables:
+  NodeVersion: '12.x'
+  PythonVersion: '3.9'
+  auto_rest_clone_url: 'https://github.com/Azure/autorest.python.git'
 
 steps:
-
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '3.9'
+      versionSpec: '$(PythonVersion)'
 
   - task: NodeTool@0
     displayName: 'Install Node.js'
     inputs:
-      versionSpec: '12.x'
+      versionSpec: '$(NodeVersion_'
 
   - script: |
       npm install -g autorest
@@ -23,4 +29,13 @@ steps:
     displayName: "Install autorest"
 
   - script: |
-      python --version
+      pip install -r eng/autorest_req.txt
+      git clone $(auto_rest_clone_url)
+      cd autorest.python
+      git checkout $(repo_branch)
+      npm install
+      autorest --python --version
+    displayName: 'Prepare Environment'
+
+  - script: |
+      python scripts/devops_tasks/verify_autorest.py service_directory ${{ parameters.ServiceDirectory }}

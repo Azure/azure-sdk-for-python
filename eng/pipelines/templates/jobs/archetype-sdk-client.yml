@@ -142,6 +142,7 @@ jobs:
 
     - template: ../steps/verify-autorest.yml
       parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
         ServiceToTest: ''
         SDKType: ''
 
