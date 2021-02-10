@@ -4,9 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.communication.sms._generated.models import SendMessageRequest
-from azure.communication.sms._generated.models import SendSmsResponse
+from azure.core.tracing.decorator import distributed_trace
+from azure.communication.sms._generated.models import (
+    SendMessageRequest,
+    SmsSendResult,
+    SmsSendOptions,
+)
 
 from .._generated.aio._azure_communication_sms_service import AzureCommunicationSMSService
 from .._shared.utils import parse_connection_str, get_authentication_policy
@@ -72,35 +75,42 @@ class SmsClient(object):
 
         return cls(endpoint, access_key, **kwargs)
 
-    @distributed_trace_async()
-    async def send(self, from_phone_number,  # type: ~azure.communication.sms.PhoneNumberIdentifier
-             to_phone_numbers, # type: list[~azure.communication.sms.PhoneNumberIdentifier]
-             message,  # type: str
-             **kwargs  # type: Any
-             ):  # type: (...) -> SendSmsResponse
+    @distributed_trace()
+    def send(self, from_, # type: str
+             to, # type: Union[str, List[str]]
+             message, # type: str
+             **kwargs # type: Any
+             ): # type: (...) -> ItemPaged[SmsSendResult]
         """Sends SMSs to phone numbers.
 
-        :param from_phone_number: the sender of the SMS.
-        :type from_phone_number: ~azure.communication.sms.PhoneNumberIdentifier
-        :param to_phone_numbers: the list of recipients of the SMS.
-        :type to_phone_numbers: list[~azure.communication.sms.PhoneNumberIdentifier]
+        :param str from_: The sender of the SMS.
+        :param to: The single recipient or the list of recipients of the SMS.
+        :type to: Union[str, List[str]]
         :param str message: The message in the SMS
-        :keyword send_sms_options: the options object to configure delivery reporting.
-        :type send_sms_options: ~azure.communication.sms.models.SendSmsOptions
-        :return: The response object with the message_id
-        :rtype: SendMessageResponse: ~azure.communication.sms.models.SendMessageResponse
+        :keyword bool enable_delivery_report: Enable this flag to receive a delivery report for this
+         message on the Azure Resource EventGrid.
+        :keyword str tag: Use this field to provide metadata that will then be sent back in the corresponding
+         Delivery Report.
+        :return: An iterator like instance of SmsSendResult
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.sms.models.SmsSendResult]
         """
 
-        send_sms_options = kwargs.pop('send_sms_options', None)
+        enable_delivery_report = kwargs.pop('enable_delivery_report', False)
+        tag = kwargs.pop('tag', None)
+
+        sms_send_options = SmsSendOptions(
+            enable_delivery_report=enable_delivery_report,
+            tag=tag
+        )
 
         request = SendMessageRequest(
-            from_property=from_phone_number.phone_number,
-            to=[p.phone_number for p in to_phone_numbers],
+            from_property=from_,
+            to=[p for p in to],
             message=message,
-            send_sms_options=send_sms_options,
+            sms_send_options=sms_send_options,
             **kwargs)
 
-        return await self._sms_service_client.sms.send(request, **kwargs)
+        return self._sms_service_client.sms.send(request, **kwargs)
 
     async def __aenter__(self) -> "SMSClient":
         await self._sms_service_client.__aenter__()

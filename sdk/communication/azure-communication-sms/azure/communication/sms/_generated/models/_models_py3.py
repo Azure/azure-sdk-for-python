@@ -19,14 +19,14 @@ class SendMessageRequest(msrest.serialization.Model):
     :param from_property: Required. The sender's phone number in E.164 format that is owned by the
      authenticated account.
     :type from_property: str
-    :param to: Required. The recipients' phone number in E.164 format. In this version, only one
-     recipient in the list is supported.
+    :param to: Required. The recipient's phone number in E.164 format. In this version, a minimum
+     of 1 and upto 100 recipients in the list are supported.
     :type to: list[str]
     :param message: Required. The contents of the message that will be sent to the recipient. The
      allowable content is defined by RFC 5724.
     :type message: str
-    :param send_sms_options: Optional configuration for sending SMS messages.
-    :type send_sms_options: ~azure.communication.sms.models.SendSmsOptions
+    :param sms_send_options: Optional configuration for sending SMS messages.
+    :type sms_send_options: ~azure.communication.sms.models.SmsSendOptions
     """
 
     _validation = {
@@ -39,7 +39,7 @@ class SendMessageRequest(msrest.serialization.Model):
         'from_property': {'key': 'from', 'type': 'str'},
         'to': {'key': 'to', 'type': '[str]'},
         'message': {'key': 'message', 'type': 'str'},
-        'send_sms_options': {'key': 'sendSmsOptions', 'type': 'SendSmsOptions'},
+        'sms_send_options': {'key': 'smsSendOptions', 'type': 'SmsSendOptions'},
     }
 
     def __init__(
@@ -48,54 +48,121 @@ class SendMessageRequest(msrest.serialization.Model):
         from_property: str,
         to: List[str],
         message: str,
-        send_sms_options: Optional["SendSmsOptions"] = None,
+        sms_send_options: Optional["SmsSendOptions"] = None,
         **kwargs
     ):
         super(SendMessageRequest, self).__init__(**kwargs)
         self.from_property = from_property
         self.to = to
         self.message = message
-        self.send_sms_options = send_sms_options
+        self.sms_send_options = sms_send_options
 
 
-class SendSmsOptions(msrest.serialization.Model):
+class SmsSendOptions(msrest.serialization.Model):
     """Optional configuration for sending SMS messages.
 
     :param enable_delivery_report: Enable this flag to receive a delivery report for this message
      on the Azure Resource EventGrid.
     :type enable_delivery_report: bool
+    :param tag: Use this field to provide metadata that will then be sent back in the corresponding
+     Delivery Report.
+    :type tag: str
     """
 
     _attribute_map = {
         'enable_delivery_report': {'key': 'enableDeliveryReport', 'type': 'bool'},
+        'tag': {'key': 'tag', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        enable_delivery_report: Optional[bool] = None,
+        enable_delivery_report: Optional[bool] = False,
+        tag: Optional[str] = None,
         **kwargs
     ):
-        super(SendSmsOptions, self).__init__(**kwargs)
+        super(SmsSendOptions, self).__init__(**kwargs)
         self.enable_delivery_report = enable_delivery_report
+        self.tag = tag
 
 
-class SendSmsResponse(msrest.serialization.Model):
-    """Response for a successful send Sms request.
+class SmsSendResponse(msrest.serialization.Model):
+    """Response for a successful or multi status send Sms request.
 
-    :param message_id: The identifier of the outgoing SMS message.
-    :type message_id: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required.
+    :type value: list[~azure.communication.sms.models.SmsSendResult]
+    :param next_link:
+    :type next_link: str
     """
 
+    _validation = {
+        'value': {'required': True},
+    }
+
     _attribute_map = {
-        'message_id': {'key': 'messageId', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[SmsSendResult]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        message_id: Optional[str] = None,
+        value: List["SmsSendResult"],
+        next_link: Optional[str] = None,
         **kwargs
     ):
-        super(SendSmsResponse, self).__init__(**kwargs)
+        super(SmsSendResponse, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class SmsSendResult(msrest.serialization.Model):
+    """Response for a single recipient.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param to: Required. The recipients's phone number in E.164 format.
+    :type to: str
+    :param message_id: The identifier of the outgoing SMS message. Only present if message
+     processed.
+    :type message_id: str
+    :param http_status_code: Required. HTTP Status code.
+    :type http_status_code: int
+    :param succeeded: Required. Flag to check if message processing succeeded or not.
+    :type succeeded: bool
+    :param error_message: Optional error message in case of 4xx or 5xx errors.
+    :type error_message: str
+    """
+
+    _validation = {
+        'to': {'required': True},
+        'http_status_code': {'required': True},
+        'succeeded': {'required': True},
+    }
+
+    _attribute_map = {
+        'to': {'key': 'to', 'type': 'str'},
+        'message_id': {'key': 'messageId', 'type': 'str'},
+        'http_status_code': {'key': 'httpStatusCode', 'type': 'int'},
+        'succeeded': {'key': 'succeeded', 'type': 'bool'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        to: str,
+        http_status_code: int,
+        succeeded: bool,
+        message_id: Optional[str] = None,
+        error_message: Optional[str] = None,
+        **kwargs
+    ):
+        super(SmsSendResult, self).__init__(**kwargs)
+        self.to = to
         self.message_id = message_id
+        self.http_status_code = http_status_code
+        self.succeeded = succeeded
+        self.error_message = error_message
