@@ -15,7 +15,7 @@ stages:
       CloudConfig:
         Prod:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-          Location: 'westus2'
+          Location: $(LOCATION)
         Canary:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           Location: 'centraluseuap'
