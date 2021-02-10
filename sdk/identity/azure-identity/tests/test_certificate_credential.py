@@ -42,6 +42,15 @@ BOTH_CERTS = (
     (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD.encode("utf-8")),
 )
 
+EC_CERT_PATH = os.path.join(os.path.dirname(__file__), "ec-certificate.pem")
+
+def test_non_rsa_key():
+    """The credential should raise ValueError when given a cert without an RSA private key"""
+    with pytest.raises(ValueError, match=".*RS256.*"):
+        CertificateCredential("tenant-id", "client-id", EC_CERT_PATH)
+    with pytest.raises(ValueError, match=".*RS256.*"):
+        CertificateCredential("tenant-id", "client-id", certificate_bytes=open(EC_CERT_PATH, "rb").read())
+
 
 def test_tenant_id_validation():
     """The credential should raise ValueError when given an invalid tenant_id"""
