@@ -1,6 +1,6 @@
 # Release History
 
-## 5.1.0b5 (Unreleased)
+## 5.1.0b5 (2021-02-10)
 
 **Breaking Changes**
 
@@ -16,7 +16,7 @@ each action result.
 - Renamed `AnalyzeHealthcareResult` to `AnalyzeHealthcareEntitiesResult` and `AnalyzeHealthcareResultItem` to `AnalyzeHealthcareEntitiesResultItem`.
 - Renamed `HealthcareEntityLink` to `HealthcareEntityDataSource` and renamed its properties `id` to `entity_id` and `data_source` to `name`.
 - Removed `relations` from `AnalyzeHealthcareEntitiesResultItem` and added `related_entities` to `HealthcareEntity`.
-- Moved the cancellation logic for the Analyze Healthcare Entities service from 
+- Moved the cancellation logic for the Analyze Healthcare Entities service from
 the service client to the poller object returned from `begin_analyze_healthcare_entities`.
 - Exposed Analyze Healthcare Entities operation metadata on the poller object returned from `begin_analyze_healthcare_entities`.
 - No longer need to specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when calling `begin_analyze` and `begin_analyze_healthcare_entities`. `begin_analyze_healthcare_entities` is still in gated preview though.
