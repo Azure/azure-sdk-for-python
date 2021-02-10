@@ -204,8 +204,7 @@ async def test_send_list_partition_async(connstr_receivers):
 
 
 @pytest.mark.parametrize("to_send, exception_type",
-                         [([], EventDataSendError),
-                          ([EventData("A"*1024)]*1100, ValueError),
+                         [([EventData("A"*1024)]*1100, ValueError),
                           ("any str", AttributeError)
                           ])
 @pytest.mark.liveTest
