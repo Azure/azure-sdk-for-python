@@ -68,8 +68,6 @@ The following sections provide several code snippets covering some of the most c
 
 * [Send an Event Grid Event](#send-an-event-grid-event)
 * [Send a Cloud Event](#send-a-cloud-event)
-* [Consume an eventgrid Event](#consume-an-event-grid-event)
-* [Consume a cloud Event](#consume-a-cloud-event)
 
 ### Send an Event Grid Event
 

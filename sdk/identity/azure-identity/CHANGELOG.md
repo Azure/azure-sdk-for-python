@@ -1,5 +1,8 @@
 # Release History
 
+## 1.6.0b2 (Unreleased)
+
+
 ## 1.6.0b1 (2021-02-09)
 ### Changed
 - Raised minimum msal version to 1.7.0
@@ -80,12 +83,6 @@
 - Adopted msal-extensions 0.3.0
 ([#13107](https://github.com/Azure/azure-sdk-for-python/issues/13107))
 
-## 1.4.1 (2020-10-07)
-### Fixed
-- `AzureCliCredential.get_token` correctly sets token expiration time,
-  preventing clients from using expired tokens
-  ([#14345](https://github.com/Azure/azure-sdk-for-python/issues/14345))
-
 ## 1.5.0b1 (2020-09-08)
 ### Added
 - Application authentication APIs from 1.4.0b7
@@ -114,6 +111,12 @@
 ### Breaking changes
 - Removed `authentication_record` keyword argument from the async
   `SharedTokenCacheCredential`, i.e. `azure.identity.aio.SharedTokenCacheCredential`
+
+## 1.4.1 (2020-10-07)
+### Fixed
+- `AzureCliCredential.get_token` correctly sets token expiration time,
+  preventing clients from using expired tokens
+  ([#14345](https://github.com/Azure/azure-sdk-for-python/issues/14345))
 
 ## 1.4.0 (2020-08-10)
 ### Added
@@ -263,19 +266,19 @@ in the environment variable `AZURE_AUTHORITY_HOST`. See
 ([#8094](https://github.com/Azure/azure-sdk-for-python/issues/8094))
 
 
+## 1.4.0b1 (2020-03-10)
+- `DefaultAzureCredential` can now authenticate using the identity logged in to
+the Azure CLI, unless explicitly disabled with a keyword argument:
+`DefaultAzureCredential(exclude_cli_credential=True)`
+([#10092](https://github.com/Azure/azure-sdk-for-python/pull/10092))
+
+
 ## 1.3.1 (2020-03-30)
 
 - `ManagedIdentityCredential` raises `CredentialUnavailableError` when no
 identity is configured for an IMDS endpoint. This causes
 `ChainedTokenCredential` to correctly try the next credential in the chain.
 ([#10488](https://github.com/Azure/azure-sdk-for-python/issues/10488))
-
-
-## 1.4.0b1 (2020-03-10)
-- `DefaultAzureCredential` can now authenticate using the identity logged in to
-the Azure CLI, unless explicitly disabled with a keyword argument:
-`DefaultAzureCredential(exclude_cli_credential=True)`
-([#10092](https://github.com/Azure/azure-sdk-for-python/pull/10092))
 
 
 ## 1.3.0 (2020-02-11)
