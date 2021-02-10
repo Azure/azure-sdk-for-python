@@ -120,7 +120,7 @@ jobs:
 
       - template: ../steps/build-test.yml
         parameters:
-          BuildTargetingStringValue: $(BuildTargetingString)
+          BuildTargetingString: $(BuildTargetingStringValue)
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           CoverageArg: $(CoverageArg)
           TestSamples: ${{ parameters.TestSamples }}
