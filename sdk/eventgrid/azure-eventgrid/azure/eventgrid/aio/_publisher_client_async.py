@@ -93,6 +93,7 @@ class EventGridPublisherClient():
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
+            CloudEventDistributedTracingPolicy(),
             HttpLoggingPolicy(**kwargs)
         ]
         return policies

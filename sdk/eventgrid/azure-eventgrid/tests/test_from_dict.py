@@ -17,5 +17,4 @@ class EventGridDeserializerTests(AzureMgmtTestCase):
     def test_eg_storage_from_dict(self, **kwargs):
         event = EventGridEvent.from_dict(eg_storage_dict)
         assert event.__class__ == EventGridEvent
-        assert event.event_time == "2020-08-07T02:28:23.867525Z"
         assert event.event_type == "Microsoft.Storage.BlobCreated"
