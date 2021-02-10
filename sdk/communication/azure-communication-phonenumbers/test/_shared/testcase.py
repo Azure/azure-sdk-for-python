@@ -5,9 +5,11 @@
 # license information.
 # --------------------------------------------------------------------------
 import re
+import os
 from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import RecordingProcessor, ReplayableTest
 from azure_devtools.scenario_tests.utilities import is_text_payload
+from azure.communication.administration._shared.utils import parse_connection_str
 
 class ResponseReplacerProcessor(RecordingProcessor):
     def __init__(self, keys=None, replacement="sanitized"):
@@ -64,6 +66,16 @@ class BodyReplacerProcessor(RecordingProcessor):
 
 class CommunicationTestCase(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['x-azure-ref', 'x-ms-content-sha256', 'location']
-
     def __init__(self, method_name, *args, **kwargs):
         super(CommunicationTestCase, self).__init__(method_name, *args, **kwargs)
+
+    def setUp(self):
+        super(CommunicationTestCase, self).setUp()
+
+        if self.is_playback():
+            self.connection_str = "endpoint=https://sanitized/;accesskey=fake==="
+        else:
+            self.connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+            endpoint, _ = parse_connection_str(self.connection_str)
+            self._resource_name = endpoint.split(".")[0]
+            self.scrubber.register_name_pair(self._resource_name, "sanitized")

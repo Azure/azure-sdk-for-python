@@ -23,4 +23,4 @@ class PhoneNumberUriReplacer(RecordingProcessor):
             response['url'] = re.sub('phoneplans/([^/?&]+)', 'phoneplans/sanitized', response['url'])
             response['url'] = re.sub('releases/([^/?&]+)', 'releases/sanitized', response['url'])
             response['url'] = re.sub('searches/([^/?&]+)', 'searches/sanitized', response['url'])
-        return response
+        return response 
