@@ -21,18 +21,17 @@ from opentelemetry.sdk.metrics.export.aggregate import (
 )
 from opentelemetry.sdk.util import ns_to_iso_str
 
-from azure.opentelemetry.exporter.azuremonitor import ExporterOptions
-from azure.opentelemetry.exporter.azuremonitor.export._base import ExportResult
-from azure.opentelemetry.exporter.azuremonitor.export.metrics._exporter import (
+from azure.monitor.opentelemetry.exporter.export._base import ExportResult
+from azure.monitor.opentelemetry.exporter.export.metrics._exporter import (
     AzureMonitorMetricsExporter,
 )
-from azure.opentelemetry.exporter.azuremonitor._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.models import (
     MetricDataPoint,
     MetricsData,
     MonitorBase,
     TelemetryItem
 )
-from azure.opentelemetry.exporter.azuremonitor._utils import azure_monitor_context
+from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
 
 
 def throw(exc_type, *args, **kwargs):
@@ -58,11 +57,11 @@ class TestAzureMetricsExporter(unittest.TestCase):
             "testname", "testdesc", "unit", int, ["environment"]
         )
         cls._test_value_recorder = cls._meter.create_valuerecorder(
-            "testname", "testdesc", "unit", int, ["environment"]
+            "testname2", "testdesc", "unit", int, ["environment"]
         )
         cls._test_obs = cls._meter.register_valueobserver(
             lambda x: x,
-            "testname",
+            "testname3",
             "testdesc",
             "unit",
             int,
@@ -86,10 +85,10 @@ class TestAzureMetricsExporter(unittest.TestCase):
         )
 
     @mock.patch(
-        "azure.opentelemetry.exporter.azuremonitor.AzureMonitorMetricsExporter._transmit"
+        "azure.monitor.opentelemetry.exporter.AzureMonitorMetricsExporter._transmit"
     )
     @mock.patch(
-        "azure.opentelemetry.exporter.azuremonitor.AzureMonitorMetricsExporter._metric_to_envelope"
+        "azure.monitor.opentelemetry.exporter.AzureMonitorMetricsExporter._metric_to_envelope"
     )
     def test_export(self, mte, transmit):
         record = ExportRecord(
@@ -102,10 +101,10 @@ class TestAzureMetricsExporter(unittest.TestCase):
         self.assertEqual(result, MetricsExportResult.SUCCESS)
 
     @mock.patch(
-        "azure.opentelemetry.exporter.azuremonitor.AzureMonitorMetricsExporter._transmit"
+        "azure.monitor.opentelemetry.exporter.AzureMonitorMetricsExporter._transmit"
     )
     @mock.patch(
-        "azure.opentelemetry.exporter.azuremonitor.AzureMonitorMetricsExporter._metric_to_envelope"
+        "azure.monitor.opentelemetry.exporter.AzureMonitorMetricsExporter._metric_to_envelope"
     )
     def test_export_failed_retryable(self, mte, transmit):
         record = ExportRecord(
@@ -120,12 +119,12 @@ class TestAzureMetricsExporter(unittest.TestCase):
         self.assertEqual(result, MetricsExportResult.FAILURE)
         self.assertEqual(storage_mock.call_count, 1)
 
-    @mock.patch("azure.opentelemetry.exporter.azuremonitor.export.metrics._exporter.logger")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.logger")
     @mock.patch(
-        "azure.opentelemetry.exporter.azuremonitor.AzureMonitorMetricsExporter._transmit"
+        "azure.monitor.opentelemetry.exporter.AzureMonitorMetricsExporter._transmit"
     )
     @mock.patch(
-        "azure.opentelemetry.exporter.azuremonitor.AzureMonitorMetricsExporter._metric_to_envelope"
+        "azure.monitor.opentelemetry.exporter.AzureMonitorMetricsExporter._metric_to_envelope"
     )
     def test_export_exception(self, mte, transmit, logger_mock):
         record = ExportRecord(
@@ -216,7 +215,7 @@ class TestAzureMetricsExporter(unittest.TestCase):
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertIsInstance(envelope.data.base_data.metrics[0], MetricDataPoint)
         self.assertEqual(envelope.data.base_data.metrics[0].namespace, "testdesc")
-        self.assertEqual(envelope.data.base_data.metrics[0].name, "testname")
+        self.assertEqual(envelope.data.base_data.metrics[0].name, "testname3")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 123)
         self.assertEqual(
             envelope.data.base_data.properties["environment"], "staging"
@@ -248,7 +247,7 @@ class TestAzureMetricsExporter(unittest.TestCase):
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertIsInstance(envelope.data.base_data.metrics[0], MetricDataPoint)
         self.assertEqual(envelope.data.base_data.metrics[0].namespace, "testdesc")
-        self.assertEqual(envelope.data.base_data.metrics[0].name, "testname")
+        self.assertEqual(envelope.data.base_data.metrics[0].name, "testname2")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 400)
         self.assertEqual(envelope.data.base_data.metrics[0].min, 100)
         self.assertEqual(envelope.data.base_data.metrics[0].max, 300)
