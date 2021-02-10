@@ -6,26 +6,27 @@ from time import sleep
 
 import pytest
 
-from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError, HttpResponseError
-from _shared.asynctestcase import AsyncTableTestCase
-from _shared.testcase import SLEEP_DELAY
+from devtools_testutils import AzureTestCase
 
+from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError, HttpResponseError
 from azure.data.tables import (
     AccessPolicy,
     TableSasPermissions,
     ResourceTypes,
-    AccountSasPermissions
+    AccountSasPermissions,
+    generate_account_sas
 )
 from azure.data.tables.aio import TableServiceClient
-from azure.data.tables._table_shared_access_signature import generate_account_sas
 
+from _shared.asynctestcase import AsyncTableTestCase
+from _shared.testcase import SLEEP_DELAY
 from preparers import CosmosPreparer
 
 TEST_TABLE_PREFIX = 'pytableasync'
 
 # ------------------------------------------------------------------------------
 
-class TableTestAsync(AsyncTableTestCase):
+class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
         table_name = self.get_resource_name(prefix)
@@ -114,36 +115,6 @@ class TableTestAsync(AsyncTableTestCase):
 
         for i in range(5):
             await ts.delete_table(table_name + str(i))
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @CosmosPreparer()
-    async def test_create_table_invalid_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
-        invalid_table_name = "my_table"
-
-        with pytest.raises(ValueError) as excinfo:
-            await ts.create_table(table_name=invalid_table_name)
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
-            excinfo)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @CosmosPreparer()
-    async def test_delete_table_invalid_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
-        invalid_table_name = "my_table"
-
-        with pytest.raises(ValueError) as excinfo:
-            await ts.create_table(invalid_table_name)
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
-            excinfo)
 
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -274,23 +245,6 @@ class TableTestAsync(AsyncTableTestCase):
         # Act
         with pytest.raises(ResourceNotFoundError):
             await ts.delete_table(table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @CosmosPreparer()
-    async def test_unicode_create_table_unicode_name(self, tables_cosmos_account_name,
-                                                     tables_primary_cosmos_account_key):
-        # Arrange
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        ts = TableServiceClient(url, tables_primary_cosmos_account_key)
-        table_name = u'啊齄丂狛狜'
-
-        with pytest.raises(ValueError) as excinfo:
-            await ts.create_table(table_name=table_name)
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
-            excinfo)
 
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -492,3 +446,45 @@ class TableTestAsync(AsyncTableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
+
+
+class TestTableUnitTest(AsyncTableTestCase):
+    tables_cosmos_account_name = "fake_storage_account"
+    tables_primary_cosmos_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
+
+    @pytest.mark.asyncio
+    async def test_unicode_create_table_unicode_name(self):
+        # Arrange
+        url = self.account_url(self.tables_cosmos_account_name, "cosmos")
+        ts = TableServiceClient(url, self.tables_primary_cosmos_account_key)
+        table_name = u'啊齄丂狛狜'
+
+        with pytest.raises(ValueError) as excinfo:
+            await ts.create_table(table_name=table_name)
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            excinfo)
+
+    @pytest.mark.asyncio
+    async def test_create_table_invalid_name(self):
+        # Arrange
+        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), self.tables_primary_cosmos_account_key)
+        invalid_table_name = "my_table"
+
+        with pytest.raises(ValueError) as excinfo:
+            await ts.create_table(table_name=invalid_table_name)
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            excinfo)
+
+    @pytest.mark.asyncio
+    async def test_delete_table_invalid_name(self):
+        # Arrange
+        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), self.tables_primary_cosmos_account_key)
+        invalid_table_name = "my_table"
+
+        with pytest.raises(ValueError) as excinfo:
+            await ts.create_table(invalid_table_name)
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            excinfo)

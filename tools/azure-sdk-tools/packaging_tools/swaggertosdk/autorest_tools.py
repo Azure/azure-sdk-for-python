@@ -4,7 +4,6 @@ import os.path
 from pathlib import Path
 import shutil
 import subprocess
-import io
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -129,9 +128,10 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
                                    universal_newlines=True,
                                    cwd=cwd,
                                    shell=shell,
-                                   env=env)
+                                   env=env,
+                                   encoding='utf-8')
         output_buffer = []
-        for line in io.TextIOWrapper(process.stdout, encoding='utf-8'):
+        for line in process.stdout:
             output_buffer.append(line.rstrip())
             _LOGGER.info(f"==[autorest]"+output_buffer[-1])
         process.wait()

@@ -4,27 +4,25 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import (
-    Any,
-    Union,
-    TYPE_CHECKING
-)
+from typing import Any, Union, TYPE_CHECKING
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._api_versions import FormRecognizerApiVersion, validate_api_version
 from ._helpers import _get_deserialize, get_authentication_policy, POLLING_INTERVAL
 from ._user_agent import USER_AGENT
+
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 
 class FormRecognizerClientBase(object):
-
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         self._endpoint = endpoint
         self._credential = credential
-        self._api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V2_1_PREVIEW)
+        self._api_version = kwargs.pop(
+            "api_version", FormRecognizerApiVersion.V2_1_PREVIEW
+        )
         validate_api_version(self._api_version)
 
         authentication_policy = get_authentication_policy(credential)
@@ -40,18 +38,11 @@ class FormRecognizerClientBase(object):
                 "Strict-Transport-Security",
                 "x-content-type-options",
                 "ms-azure-ai-errorcode",
-                "x-ms-cs-error-code"
+                "x-ms-cs-error-code",
             }
         )
         http_logging_policy.allowed_query_params.update(
-            {
-                "includeTextDetails",
-                "locale",
-                "language",
-                "includeKeys",
-                "op",
-                "pages"
-            }
+            {"includeTextDetails", "locale", "language", "includeKeys", "op", "pages"}
         )
 
         self._client = FormRecognizer(
