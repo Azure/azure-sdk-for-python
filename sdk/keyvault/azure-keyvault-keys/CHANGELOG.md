@@ -3,6 +3,7 @@
 ## 4.4.0b1 (2021-2-10)
 ### Changed
 - Key Vault API version 7.2-preview is now the default
+- Updated msrest requirement to >=0.6.21
 
 ### Added
 - Support for Key Vault API version 7.2-preview
