@@ -1913,8 +1913,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = ServiceBusMessage("ServiceBusMessage")
                 message2 = ServiceBusMessage("Message2")
-                assert message.body_as_str == "ServiceBusMessage"
-                assert message2.body_as_str == "Message2"
+                assert message.body_as_str() == "ServiceBusMessage"
+                assert message2.body_as_str() == "Message2"
                 # first test batch message resending.
                 batch_message = sender.create_message_batch()
                 batch_message._from_list([message, message2])  # pylint: disable=protected-access
@@ -1932,7 +1932,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                     for message in receiver:
                         messages.append(message)
-                        assert message.body_as_str in ["ServiceBusMessage", "Message2"]
+                        assert message.body_as_str() in ["ServiceBusMessage", "Message2"]
                 assert len(messages) == 2
 
 
