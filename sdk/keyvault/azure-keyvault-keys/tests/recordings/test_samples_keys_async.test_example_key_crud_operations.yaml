@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:19 GMT
+      date: Sat, 06 Feb 2021 02:43:37 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -29,15 +29,15 @@ interactions:
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.2-preview
 - request:
-    body: '{"key_size": 2048, "kty": "RSA", "attributes": {"exp": 2527401600}, "key_ops":
-      ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]}'
+    body: '{"key_ops": ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"],
+      "kty": "RSA", "key_size": 2048, "attributes": {"exp": 2527401600}}'
     headers:
       Accept:
       - application/json
@@ -48,29 +48,29 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/9e1bb3e7b7914423bed8e1f7549fd551","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"27rEigGXXGH24aH-tYUG4DRKHDd8EWD5QJ9xt9nHBde8OEsi2FfJm6L7njH0Yvbwp8R-UueJKIIyVF6S9gVEU005nwnmbebC28v39lnqymnhXxqFzw-Pw3YsvuCnlhVcctWsjYVdGxNNmGCHuqkwxzaKWb8ZKQhSO3oQ-F__iYutGN3OVLeyGaRkewvs8PiZE22u9EZKPFFT_xqwfWRit4imSkI1eFxk0EjzROxw7XAuTZQqviuYZlcqyFdYGGh3HcYYWG_c0ZWCjs4Tc_IbwDQBl3sZDb61XSNlcT4jZ0EZj9jfoqor_1DJR8b6hCR8wS-It1KoCRRFbmYCUIBsZQ","e":"AQAB"},"attributes":{"enabled":true,"exp":2527401600,"created":1612518561,"updated":1612518561,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/0e3904b4754e4abbba5b61ef1743470b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"l2E8VI2uMA1rQr4MLCYiisSo8Iewcs33rR6MRvzaFS9vgSi1efQpaUZi_SyUZoN7AAfHQ6q7mJekezTtQ9ZBvrfxlp1p3B5hUoAckkUb470cWSwLRdY5i0PArmVb1lYqXKY6dQb9w-joN0aotfSqEd1QdFR8vv0LowDgNU1VSTI5dCXdIcSQW7vWPaSEZi91CTQwPSlEPDEkGvlqQW_C54lxIyUi9RObo1cZr3H2-t58sAGXa59PDH8f8z8Ex2ZFucwOsX3YFBXQPi7yJUfe2D25XaAsLVa42mpXRMxZuGpSQjgz-OYJ6EhfCCiFNy9FBoJJtUItkGUnFO_VeYravQ","e":"AQAB"},"attributes":{"enabled":true,"exp":2527401600,"created":1612579418,"updated":1612579418,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '711'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:20 GMT
+      date: Sat, 06 Feb 2021 02:43:38 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.2-preview
 - request:
-    body: '{"key_size": 2048, "kty": "RSA-HSM"}'
+    body: '{"kty": "RSA-HSM", "key_size": 2048}'
     headers:
       Accept:
       - application/json
@@ -81,27 +81,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/e093f4ab8394496f8abc3978a18f43f7","kty":"RSA-HSM","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"kaUFeeEyaZOxxEXqv9H3XzxU9LGQDHgkXaiZN4pdMXPmmzwDxAUsjxF0Wm9L6M9wFbV2tAA1DUlPJ8T3zdEd1em6YPZ_LADU4raX6cF32hULGCcGvyVrG9qtpQcXRSq-kqJvFXI76x2tFY9d67eqhwreAGLciUlygT0VRiz2RLBvNVCwjnu_CJ_QBa9-amSDV3mvk0QAM522x975-seFWba1JIsrYX2jlVBev_h20p1q6JNpzAYq9pZhj3FGl8b-RA9gUJG2uC5k0t71wko1yg6YcaQX7O30APTmv9-JXaCXXiwK3cRafZv47iWFL8XysRlw2mlHLwHW9HGJ8l860Q","e":"AAEAAQ"},"attributes":{"enabled":true,"created":1612518561,"updated":1612518561,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/1af4882aa3954e0ab86390a0a443fce4","kty":"RSA-HSM","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ogZsuo1zpsk1oSsWaX7KAwprSyzVwW3BiYTDWj-c5RQweHg9fpfhlHAIDpG2Zov7F-CkgCvwNvo7IcH21qWtcTzEavvv2aaShARRzDvqOoBabdt6DPmLSUQ9s1gJadg-GaaTjdg6pxHSQM2QxpT7q4bIFhyac22I_iujeykItYe7JAPNRbpui8yUMHc5mIUqrwfprWJyJZk-0i4PcauwTuK48S5L-0L_TN3sQKMFPbWtNv_u9dbmt2CK8evVArNeL3TDootkEyToeH5qboHeGP9BGq0lfcbepVEa9wx8ICBkahBlfsmijbo_8QUzZJ_7Svp3WdbMJe77Sau3VT2ReQ","e":"AAEAAQ"},"attributes":{"enabled":true,"created":1612579418,"updated":1612579418,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '700'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:21 GMT
+      date: Sat, 06 Feb 2021 02:43:39 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.2-preview
 - request:
     body: '{"kty": "EC", "crv": "P-256"}'
     headers:
@@ -114,27 +114,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/144b28ae300f4112870b8fa96c823d2b","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"1KJ0L10sXj2IUuMeInlLYpbZk3NAqBpWIvGvG39qCew","y":"XbXjHWLqHuDQtxZ0s5-hTJPPUsZVNqsVhLuDOB0f_f0"},"attributes":{"enabled":true,"created":1612518562,"updated":1612518562,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/dfcb7d90e98b40c89d9241314f04b9ba","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"5kniU1TD8HjKYR5QQSDd_Rl6Oo94h5oXLvx2GNzhIz4","y":"Bb20-F52VVu1SLeURIF8tsKqtmDlbTjM992dtRrjZmg"},"attributes":{"enabled":true,"created":1612579419,"updated":1612579419,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '405'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:21 GMT
+      date: Sat, 06 Feb 2021 02:43:39 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/create?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -143,27 +143,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/144b28ae300f4112870b8fa96c823d2b","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"1KJ0L10sXj2IUuMeInlLYpbZk3NAqBpWIvGvG39qCew","y":"XbXjHWLqHuDQtxZ0s5-hTJPPUsZVNqsVhLuDOB0f_f0"},"attributes":{"enabled":true,"created":1612518562,"updated":1612518562,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/dfcb7d90e98b40c89d9241314f04b9ba","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"5kniU1TD8HjKYR5QQSDd_Rl6Oo94h5oXLvx2GNzhIz4","y":"Bb20-F52VVu1SLeURIF8tsKqtmDlbTjM992dtRrjZmg"},"attributes":{"enabled":true,"created":1612579419,"updated":1612579419,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '405'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:21 GMT
+      date: Sat, 06 Feb 2021 02:43:39 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -172,29 +172,29 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/144b28ae300f4112870b8fa96c823d2b?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/dfcb7d90e98b40c89d9241314f04b9ba?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/144b28ae300f4112870b8fa96c823d2b","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"1KJ0L10sXj2IUuMeInlLYpbZk3NAqBpWIvGvG39qCew","y":"XbXjHWLqHuDQtxZ0s5-hTJPPUsZVNqsVhLuDOB0f_f0"},"attributes":{"enabled":true,"created":1612518562,"updated":1612518562,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/dfcb7d90e98b40c89d9241314f04b9ba","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"5kniU1TD8HjKYR5QQSDd_Rl6Oo94h5oXLvx2GNzhIz4","y":"Bb20-F52VVu1SLeURIF8tsKqtmDlbTjM992dtRrjZmg"},"attributes":{"enabled":true,"created":1612579419,"updated":1612579419,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '405'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:22 GMT
+      date: Sat, 06 Feb 2021 02:43:39 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/144b28ae300f4112870b8fa96c823d2b?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/dfcb7d90e98b40c89d9241314f04b9ba?api-version=7.2-preview
 - request:
-    body: '{"attributes": {"exp": 2524723200}, "tags": {"foo": "updated tag"}}'
+    body: '{"tags": {"foo": "updated tag"}, "attributes": {"exp": 2524723200}}'
     headers:
       Accept:
       - application/json
@@ -205,28 +205,28 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: PATCH
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/144b28ae300f4112870b8fa96c823d2b","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"1KJ0L10sXj2IUuMeInlLYpbZk3NAqBpWIvGvG39qCew","y":"XbXjHWLqHuDQtxZ0s5-hTJPPUsZVNqsVhLuDOB0f_f0"},"attributes":{"enabled":true,"exp":2524723200,"created":1612518562,"updated":1612518562,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/dfcb7d90e98b40c89d9241314f04b9ba","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"5kniU1TD8HjKYR5QQSDd_Rl6Oo94h5oXLvx2GNzhIz4","y":"Bb20-F52VVu1SLeURIF8tsKqtmDlbTjM992dtRrjZmg"},"attributes":{"enabled":true,"exp":2524723200,"created":1612579419,"updated":1612579420,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
         tag"}}'
     headers:
       cache-control: no-cache
       content-length: '451'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:22 GMT
+      date: Sat, 06 Feb 2021 02:43:40 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e/?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -235,28 +235,28 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey-name9627173e","deletedDate":1612518563,"scheduledPurgeDate":1620294563,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/144b28ae300f4112870b8fa96c823d2b","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"1KJ0L10sXj2IUuMeInlLYpbZk3NAqBpWIvGvG39qCew","y":"XbXjHWLqHuDQtxZ0s5-hTJPPUsZVNqsVhLuDOB0f_f0"},"attributes":{"enabled":true,"exp":2524723200,"created":1612518562,"updated":1612518562,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey-name9627173e","deletedDate":1612579420,"scheduledPurgeDate":1620355420,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/dfcb7d90e98b40c89d9241314f04b9ba","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"5kniU1TD8HjKYR5QQSDd_Rl6Oo94h5oXLvx2GNzhIz4","y":"Bb20-F52VVu1SLeURIF8tsKqtmDlbTjM992dtRrjZmg"},"attributes":{"enabled":true,"exp":2524723200,"created":1612579419,"updated":1612579420,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
         tag"}}'
     headers:
       cache-control: no-cache
       content-length: '599'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:22 GMT
+      date: Sat, 06 Feb 2021 02:43:40 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey-name9627173e?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -265,7 +265,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey-name9627173e?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey-name9627173e?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Deleted Key not found: livekvtestkey-name9627173e"}}'
@@ -273,19 +273,19 @@ interactions:
       cache-control: no-cache
       content-length: '94'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:22 GMT
+      date: Sat, 06 Feb 2021 02:43:40 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 404
       message: Not Found
-    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey-name9627173e?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey-name9627173e?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -294,26 +294,26 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey-name9627173e?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys/livekvtestkey-name9627173e?api-version=7.2-preview
   response:
     body:
-      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey-name9627173e","deletedDate":1612518563,"scheduledPurgeDate":1620294563,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/144b28ae300f4112870b8fa96c823d2b","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"1KJ0L10sXj2IUuMeInlLYpbZk3NAqBpWIvGvG39qCew","y":"XbXjHWLqHuDQtxZ0s5-hTJPPUsZVNqsVhLuDOB0f_f0"},"attributes":{"enabled":true,"exp":2524723200,"created":1612518562,"updated":1612518562,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
+      string: '{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey-name9627173e","deletedDate":1612579420,"scheduledPurgeDate":1620355420,"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e/dfcb7d90e98b40c89d9241314f04b9ba","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"5kniU1TD8HjKYR5QQSDd_Rl6Oo94h5oXLvx2GNzhIz4","y":"Bb20-F52VVu1SLeURIF8tsKqtmDlbTjM992dtRrjZmg"},"attributes":{"enabled":true,"exp":2524723200,"created":1612579419,"updated":1612579420,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
         tag"}}'
     headers:
       cache-control: no-cache
       content-length: '599'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:25 GMT
+      date: Sat, 06 Feb 2021 02:43:42 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey-name9627173e?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys/livekvtestkey-name9627173e?api-version=7.2-preview
 version: 1
