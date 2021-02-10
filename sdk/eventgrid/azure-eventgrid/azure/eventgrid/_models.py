@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
-from typing import Union, Any, Dict
+from typing import Any
 import datetime as dt
 import uuid
 from msrest.serialization import UTC
