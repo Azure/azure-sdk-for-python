@@ -1,7 +1,10 @@
 # Release History
 
-## 1.11.1 (Unreleased)
+## 1.12.0 (Unreleased)
 
+### Features
+
+- Add `json` kwarg to `HttpRequest` object. The `json` kwarg takes your data as input and json serializes it for you. Use instead of `data` if you want this behavior. #16695
 
 ## 1.11.0 (2021-02-08)
 

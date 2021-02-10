@@ -220,7 +220,8 @@ class HttpRequest(object):
     :param str url: At least complete scheme/host/path
     :param dict[str,str] headers: HTTP headers
     :param files: Files list.
-    :param data: Body to be sent.
+    :param data: Body to be sent. If you want to send a json body, you should use the
+     `json` kwarg instead. We will handle json serialization for your data.
     :type data: bytes or str.
     :keyword json: A JSON serializable object. Serializes your inputted object. Use this
      instead of data if you wish for us to handle json serialization of your object for you.
@@ -235,6 +236,13 @@ class HttpRequest(object):
         self.files = files
         self.multipart_mixed_info = None  # type: Optional[Tuple]
         json_kwarg = kwargs.pop("json", None)
+        if data and json_kwarg:
+            _LOGGER.warning(
+                "You have sent data through both parameter data and kwarg json. "
+                "We will use the data you sent through the data parameter, but "
+                "still conduct json serialization on your inputted data. "
+                "In the future, just use one of these parameters."
+            )
         self.data = data or json_kwarg
         if json_kwarg:
             self.set_json_body(self.data)
