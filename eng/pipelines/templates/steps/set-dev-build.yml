@@ -1,11 +1,13 @@
 parameters:
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
+  DumpPackageProperties: true
 
 steps:
   - template: /eng/common/pipelines/templates/steps/daily-dev-build-variable.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      DumpPackageProperties: ${{ parameters.DumpPackageProperties }}
 
   - task: PythonScript@0
     condition: and(succeededOrFailed(), eq(variables['SetDevVersion'],'true'))

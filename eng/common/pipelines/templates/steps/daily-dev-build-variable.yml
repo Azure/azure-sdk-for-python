@@ -2,8 +2,10 @@
 # is used when this pipeline is going to be generating and publishing daily dev builds.
 parameters:
   ServiceDirectory: ''
+  DumpPackageProperties: true
+
 steps:
-- ${{if ne(parameters.ServiceDirectory, '')}}:
+- ${{if and(ne(parameters.ServiceDirectory, ''), eq(parameters.DumpPackageProperties, true)) }}:
   - task: Powershell@2
     inputs:
       filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
