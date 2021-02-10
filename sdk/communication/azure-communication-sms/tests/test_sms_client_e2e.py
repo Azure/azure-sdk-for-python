@@ -6,9 +6,7 @@
 
 import os
 import pytest
-from azure.communication.sms import (
-    PhoneNumberIdentifier, SendSmsOptions, SmsClient
-)
+from azure.communication.sms import SmsClient
 from _shared.testcase import (
     CommunicationTestCase,
     BodyReplacerProcessor,
@@ -34,13 +32,36 @@ class SMSClientTest(CommunicationTestCase):
         self.sms_client = SmsClient.from_connection_string(self.connection_str)
 
     @pytest.mark.live_test_only
-    def test_send_sms(self):
+    def test_send_sms_single(self):
 
         # calling send() with sms values
-        sms_response = self.sms_client.send(
-            from_phone_number=PhoneNumberIdentifier(self.phone_number),
-            to_phone_numbers=[PhoneNumberIdentifier(self.phone_number)],
+        sms_responses = self.sms_client.send(
+            from_=self.phone_number,
+            to=[self.phone_number],
             message="Hello World via SMS",
-            send_sms_options=SendSmsOptions(enable_delivery_report=True))  # optional property
+            enable_delivery_report=True)  # optional property
+        
+        count = 0
+        for sms_response in sms_responses:
+            count += 1
+            assert sms_response.message_id is not None
+            assert sms_response.http_status_code is 202
+        assert count is 1
+    
+    @pytest.mark.live_test_only
+    def test_send_sms_multiple(self):
 
-        assert sms_response.message_id is not None
+        # calling send() with sms values
+        sms_responses = self.sms_client.send(
+            from_=self.phone_number,
+            to=[self.phone_number, self.phone_number],
+            message="Hello World via SMS",
+            enable_delivery_report=True)  # optional property
+        
+        count = 0
+        for sms_response in sms_responses:
+            count += 1
+            assert sms_response.message_id is not None
+            assert sms_response.http_status_code is 202
+        assert count is 2
+        
