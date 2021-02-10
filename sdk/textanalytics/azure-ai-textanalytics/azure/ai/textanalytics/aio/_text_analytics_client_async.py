@@ -56,6 +56,7 @@ from .._async_lro import (
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.credentials import AzureKeyCredential
+    from .._models import AnalyzeHealthcareEntitiesResultItem
 
 
 class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
