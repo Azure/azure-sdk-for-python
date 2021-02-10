@@ -4,7 +4,7 @@
 
 **Bug fixes**
 
-- Sending emtpy `event_data_batch` will be a no-op now instead of raising error.
+- Sending empty `event_data_batch` will be a no-op now instead of raising error.
 
 ## 5.3.0 (2021-02-08)
 
