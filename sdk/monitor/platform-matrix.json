@@ -1,18 +1,18 @@
 {
   "matrix": {
-    "Agent": {
-      "ubuntu-18.04": { "OSVmImage": "MMSUbuntu18.04", "Pool": "azsdk-pool-mms-ubuntu-1804-general" },
-      "macOS-10.15": { "OSVmImage": "macOS-10.15", "Pool": "Azure Pipelines" }
-    },
-    "PythonVersion": [ "3.5", "3.7" ],
-    "CoverageArg": [ "--disablecov" ]
+    "$IMPORT": "eng/pipelines/templates/stages/platform-matrix.json"
   },
+  "exclude": [
+    {
+      "PythonVersion": "2.7"
+    }
+  ],
   "include": [
     {
       "Agent": {
-          "ubuntu-18.04": { "OSVmImage": "MMSUbuntu18.04", "Pool": "azsdk-pool-mms-ubuntu-1804-general" }
+        "macOS-10.15": { "OSVmImage": "macOS-10.15", "Pool": "Azure Pipelines" }
       },
-      "PythonVersion": "3.9",
+      "PythonVersion": "3.7",
       "CoverageArg": ""
     }
   ]
