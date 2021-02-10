@@ -5,15 +5,14 @@
 # ------------------------------------
 
 import pytest
-
-from azure.ai.textanalytics._models import DictMixin
+from azure.ai.textanalytics import _models
 
 
 class TestDictMixin:
 
     def test_contains(self):
-        dict_mixin = DictMixin()
+        model = _models.DictMixin()
         key = "name"
         value = "steve"
-        dict_mixin.__setitem__(key, value)
-        assert dict_mixin.__contains__(key)
+        model.__setitem__(key, value)
+        assert model.__contains__(key)
