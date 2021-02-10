@@ -91,3 +91,26 @@ class EventGridEvent(InternalEventGridEvent):
         kwargs.setdefault('data_version', data_version)
 
         super(EventGridEvent, self).__init__(**kwargs)
+
+    @classmethod
+    def from_dict(cls, event, **kwargs):
+        # type: (Dict, Any) -> EventGridEvent
+        """
+        Returns the deserialized EventGridEvent object when a dict is provided.
+
+        :param event: The dict representation of the event which needs to be deserialized.
+        :type event: dict
+
+        :rtype: EventGridEvent
+        """
+        return cls(
+        id=event.get("id", None),
+        subject=event.get("subject", None),
+        topic=event.get("topic", None),
+        data_version=event.get("dataVersion", None),
+        data=event.get("data", None),
+        event_time=event.get("eventTime", None),
+        event_type=event.get("eventType", None),
+        metadata_version=event.get("metadataVersion", None),
+        **kwargs
+        )
