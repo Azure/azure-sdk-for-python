@@ -55,8 +55,6 @@ Some of the key concepts for the Azure monitor exporter include:
 
 * [AzureMonitorTraceExporter][client_reference]: This is the class that is initialized to send tracing related telemetry to Azure Monitor.
 
-* [Exporter Options][exporter_options]: Options to configure Azure exporters. Currently only includes connection_string.
-
 For more information about these resources, see [What is Azure Monitor?][product_docs].
 
 ## Examples
@@ -169,7 +167,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [virtualenv]: https://virtualenv.pypa.io
 [ot_sdk_python]: https://github.com/open-telemetry/opentelemetry-python
 [application_insights_namespace]: https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview#how-do-i-use-application-insights
-[exporter_options]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-opentelemetry-exporter/azure/monitor/opentelemetry/exporter/_options.py#L21
 [trace_concept]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md#trace
 [client_reference]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-opentelemetry-exporter/azure/monitor/opentelemetry/exporter/export/trace/_exporter.py#L30
 [opentelemtry_spec]: https://opentelemetry.io/

@@ -18,7 +18,6 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
     get_trace_export_result,
 )
-from azure.monitor.opentelemetry.exporter._options import ExporterOptions
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 
 
@@ -63,6 +62,7 @@ class TestBaseExporter(unittest.TestCase):
     def test_constructor(self):
         """Test the constructor."""
         base = BaseExporter(
+            api_version="2021-02-10_Preview",
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
         )
         self.assertEqual(
@@ -72,6 +72,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base.storage._max_size, 52428800)
         self.assertEqual(base.storage._retention_period, 604800)
         self.assertEqual(base._timeout, 10)
+        self.assertEqual(base._api_version, "2021-02-10_Preview")
 
     @unittest.skip("transient storage")
     def test_transmit_from_storage_failed_retryable(self):

@@ -18,7 +18,6 @@ from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
     AzureMonitorTraceExporter
 )
-from azure.monitor.opentelemetry.exporter._options import ExporterOptions
 
 
 def throw(exc_type, *args, **kwargs):
