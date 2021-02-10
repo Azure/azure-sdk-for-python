@@ -321,7 +321,6 @@ class ServiceBusMessage(
         """
         return self.message.get_data()
 
-    @property
     def body_as_str(self, encoding="UTF-8"):
         # type: (str) -> str
         """The content of the message as a string, if the data is of a compatible type.
