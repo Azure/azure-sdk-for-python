@@ -6,14 +6,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import sys
-import asyncio
-from azure.communication.sms import (
-    SendSmsOptions, PhoneNumberIdentifier
-)
-from azure.communication.sms.aio import SmsClient
-sys.path.append("..")
-
 """
 FILE: sms_sample_async.py
 DESCRIPTION:
@@ -24,6 +16,11 @@ USAGE:
     python sms_sample_async.py
 """
 
+import sys
+import asyncio
+from azure.communication.sms.aio import SmsClient
+sys.path.append("..")
+
 class SmsSamples(object):
 
     async def send_sms_async(self):
@@ -33,16 +30,23 @@ class SmsSamples(object):
         async with sms_client:
             try:
                 # calling send() with constructed request object
-                smsresponse = await sms_client.send(
-                    from_phone_number=PhoneNumberIdentifier("<leased-phone-number>"),
-                    to_phone_numbers=[PhoneNumberIdentifier("<to-phone-number>")],
+                sms_responses = await sms_client.send(
+                    from_phone_number="<leased-phone-number>",
+                    to_phone_numbers=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
                     message="Hello World via SMS",
-                    send_sms_options=SendSmsOptions(enable_delivery_report=True)) # optional property
+                    enable_delivery_report=True,
+                    tag="custom-tag") # optional property
             except Exception:
                 print(Exception)
                 pass
 
-            print(smsresponse)
+            async for sms_response in sms_responses:
+                if (sms_response.succeeded):
+                    print("Message with message id {} was successful sent to {}"
+                    .format(sms_response.message_id , sms_response.to))
+                else:
+                    print("Message with message id {} failed to send to {}"
+                    .format(sms_response.message_id , sms_response.to))
 
 if __name__ == '__main__':
     sample = SmsSamples()
