@@ -606,7 +606,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeHealthcareEntitiesAsyncLROPoller
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareEntitiesResultItem]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -633,14 +633,17 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AnalyzeHealthcareEntitiesAsyncLROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`].
+            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`.
+        :rtype:
+            ~azure.core.polling.AsyncLROPoller[~azure.core.paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_analyze_healthcare_async.py
-                :start-after: [START analyze_healthcare_async]
-                :end-before: [END analyze_healthcare_async]
+            .. literalinclude:: ../samples/async_samples/sample_analyze_healthcare_entities_async.py
+                :start-after: [START analyze_healthcare_entities_async]
+                :end-before: [END analyze_healthcare_entities_async]
                 :language: python
                 :dedent: 8
                 :caption: Analyze healthcare entities in a batch of documents.

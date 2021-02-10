@@ -451,7 +451,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller
+    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeHealthcareEntitiesResultItem]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -479,14 +479,17 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
-            object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem`].
+            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem`.
+        :rtype:
+            ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_analyze_healthcare.py
-                :start-after: [START analyze_healthcare]
-                :end-before: [END analyze_healthcare]
+            .. literalinclude:: ../samples/sample_analyze_healthcare_entities.py
+                :start-after: [START analyze_healthcare_entities]
+                :end-before: [END analyze_healthcare_entities]
                 :language: python
                 :dedent: 8
                 :caption: Recognize healthcare entities in a batch of documents.
