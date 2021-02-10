@@ -1,6 +1,10 @@
 # Release History
 
-## 1.11.1 (Unreleased)
+## 1.12.0 (Unreleased)
+
+### Features
+
+- Added `json()` method onto `HttpResponse`. Calling `json()` on the response will return the JSON-deserialized response body  #16692
 
 
 ## 1.11.0 (2021-02-08)
