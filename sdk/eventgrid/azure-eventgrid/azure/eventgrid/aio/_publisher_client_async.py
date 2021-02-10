@@ -19,11 +19,11 @@ from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
     DistributedTracingPolicy,
+    CloudEventDistributedTracingPolicy,
     HttpLoggingPolicy,
     UserAgentPolicy
 )
 from azure.core.messaging import CloudEvent
-from .._policies import CloudEventDistributedTracingPolicy
 from .._models import EventGridEvent
 from .._helpers import (
     _get_endpoint_only_fqdn,
@@ -93,7 +93,6 @@ class EventGridPublisherClient():
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
-            CloudEventDistributedTracingPolicy(),
             HttpLoggingPolicy(**kwargs)
         ]
         return policies

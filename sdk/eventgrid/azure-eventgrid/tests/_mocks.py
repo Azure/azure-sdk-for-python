@@ -21,20 +21,3 @@ eg_storage_dict = {
     "eventTime":"2020-08-07T02:28:23.867525Z",
     "topic":"/subscriptions/faa080af-c1d8-40ad-9cce-e1a450ca5b57/resourceGroups/t-swpill-test/providers/Microsoft.EventGrid/topics/eventgridegsub"
 }
-
-eg_storage_string = json.dumps(eg_storage_dict)
-eg_storage_bytes = eg_storage_string.encode("utf-8")
-
-# custom eg event
-eg_custom_dict = {
-    "id":"3a30afef-b604-4b67-973e-7dfff7e178a7",
-    "subject":"Test EG Custom Event",
-    "data":{"team":"event grid squad"},
-    "eventType":"Azure.Sdk.Sample",
-    "dataVersion":"2.0",
-    "metadataVersion":"1",
-    "eventTime":"2020-08-07T02:19:05.16916Z",
-    "topic":"/subscriptions/f8aa80ae-d1c8-60ad-9bce-e1a850ba5b67/resourceGroups/sample-resource-group-test/providers/Microsoft.EventGrid/topics/egtopicsamplesub"
-}
-eg_custom_string = json.dumps(eg_custom_dict)
-eg_custom_bytes = eg_custom_string.encode("utf-8")

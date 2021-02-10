@@ -7,9 +7,6 @@ import json
 from azure.eventgrid import EventGridEvent
 from devtools_testutils import AzureMgmtTestCase
 from _mocks import (
-    cloud_storage_dict,
-    cloud_custom_dict_base64,
-    cloud_custom_dict_with_extensions,
     eg_storage_dict
 )
 

@@ -19,7 +19,8 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
-    UserAgentPolicy
+    UserAgentPolicy,
+    CloudEventDistributedTracingPolicy
 )
 
 from azure.core.messaging import CloudEvent
@@ -33,7 +34,6 @@ from ._helpers import (
     _cloud_event_to_generated
 )
 from ._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
-from ._policies import CloudEventDistributedTracingPolicy
 from ._version import VERSION
 from ._generated.models import CloudEvent as InternalCloudEvent
 

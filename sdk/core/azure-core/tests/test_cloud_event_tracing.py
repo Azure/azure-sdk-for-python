@@ -13,7 +13,7 @@ from azure.core.pipeline import (
 )
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.messaging import CloudEvent
-from azure.eventgrid._policies import CloudEventDistributedTracingPolicy
+from azure.core.pipeline.policies import CloudEventDistributedTracingPolicy
 from _mocks import (
     cloud_storage_dict
 )
