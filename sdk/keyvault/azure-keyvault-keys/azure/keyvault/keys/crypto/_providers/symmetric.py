@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 class SymmetricCryptographyProvider(LocalCryptographyProvider):
     def _get_internal_key(self, key):
         # type: (KeyVaultKey) -> Key
-        if key.key_type != KeyType.oct:
-            raise ValueError('"key" must be an oct (symmetric) key')
+        if key.key_type not in (KeyType.oct, KeyType.oct_hsm):
+            raise ValueError('"key" must be an oct or oct-HSM (symmetric) key')
         return SymmetricKey.from_jwk(key.key)
 
     def supports(self, operation, algorithm):
