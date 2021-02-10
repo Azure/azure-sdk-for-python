@@ -537,6 +537,16 @@ class _HttpResponseBase(object):
             encoding = "utf-8-sig"
         return self.body().decode(encoding)
 
+    def json(self):
+        # type: () -> Dict[str, Any]
+        """Return the whole body as a json object.
+
+        :return: The JSON deserialized response body
+        :rtype: dict[str, any]
+        :raises json.decoder.JSONDecodeError
+        """
+        return json.loads(self.text())
+
     def _decode_parts(self, message, http_response_type, requests):
         # type: (Message, Type[_HttpResponseBase], List[HttpRequest]) -> List[HttpResponse]
         """Rebuild an HTTP response from pure string."""
