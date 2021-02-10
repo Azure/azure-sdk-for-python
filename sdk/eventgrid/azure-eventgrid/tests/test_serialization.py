@@ -14,14 +14,11 @@ import datetime as dt
 
 from devtools_testutils import AzureMgmtTestCase
 from msrest.serialization import UTC
-from azure.eventgrid import CloudEvent, EventGridEvent
+from azure.core.messaging import CloudEvent
+from azure.eventgrid import EventGridEvent
 from azure.eventgrid._generated import models as internal_models
+from azure.eventgrid._helpers import _cloud_event_to_generated
 from azure.eventgrid import SystemEventNames
-from _mocks import (
-    cloud_storage_dict,
-    cloud_storage_string,
-    cloud_storage_bytes,
-    )
 
 class EventGridSerializationTests(AzureMgmtTestCase):
 
@@ -45,7 +42,7 @@ class EventGridSerializationTests(AzureMgmtTestCase):
         
         cloud_event.subject = "subject" # to test explicit setting of prop
         encoded = base64.b64encode(data).decode('utf-8')
-        internal = cloud_event._to_generated()
+        internal = _cloud_event_to_generated(cloud_event)
 
         assert internal.additional_properties is not None
         assert 'foo' not in internal.additional_properties
@@ -77,7 +74,7 @@ class EventGridSerializationTests(AzureMgmtTestCase):
                 )
         
         cloud_event.subject = "subject" # to test explicit setting of prop
-        internal = cloud_event._to_generated()
+        internal = _cloud_event_to_generated(cloud_event)
 
         assert internal.additional_properties is not None
         assert 'foo' not in internal.additional_properties

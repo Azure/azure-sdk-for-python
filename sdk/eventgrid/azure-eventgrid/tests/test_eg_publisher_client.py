@@ -18,7 +18,9 @@ from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
-from azure.eventgrid import EventGridPublisherClient, CloudEvent, EventGridEvent, generate_sas
+from azure.core.messaging import CloudEvent
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas
+from azure.eventgrid._helpers import _cloud_event_to_generated
 
 from eventgrid_preparer import (
     CachedEventGridTopicPreparer
@@ -150,16 +152,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
 
         client.send(cloud_event, raw_response_hook=callback)
 
-
-    def test_send_cloud_event_fails_on_providing_data_and_b64(self):
-        with pytest.raises(ValueError, match="data and data_base64 cannot be provided at the same time*"):
-            cloud_event = CloudEvent(
-                    source = "http://samplesource.dev",
-                    data_base64 = b'cloudevent',
-                    data = "random data",
-                    type="Sample.Cloud.Event"
-                    )
-
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     def test_send_cloud_event_data_none(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -223,7 +215,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     }
                 )
         client.send([cloud_event])
-        internal = cloud_event._to_generated().serialize()
+        internal = _cloud_event_to_generated(cloud_event).serialize()
         assert 'reason_code' in internal
         assert 'extension' in internal
         assert internal['reason_code'] == 204
