@@ -6,6 +6,7 @@ stages:
       AllocateResourceGroup: false
       ServiceDirectory: eventhub
       BuildTargetingString: azure-eventhub*
+      DeployArmTemplate: true
       TestSamples: true
       Matrix:
         Linux_Python35:
@@ -29,16 +30,7 @@ stages:
           PythonVersion: '3.7'
           CoverageArg: '--disablecov'
       EnvVars:
-        AZURE_STORAGE_ACCOUNT: $(python-eh-livetest-event-hub-storage-account)
-        AZURE_STORAGE_ACCESS_KEY: $(python-eh-livetest-event-hub-storage-access-key)
-        AZURE_STORAGE_CONN_STR: $(python-eh-livetest-event-hub-storage-conn-str)
         AZURE_STORAGE_DATA_LAKE_ENABLED_CONN_STR: $(python-eh-livetest-event-hub-storage-data-lake-enabled-conn-str)
-        EVENT_HUB_CONN_STR: $(python-eh-livetest-event-hub-conn-str)
-        EVENT_HUB_HOSTNAME: $(python-eh-livetest-event-hub-hostname)
-        EVENT_HUB_NAME: $(python-eh-livetest-event-hub-name)
-        EVENT_HUB_SAS_POLICY: $(python-eh-livetest-event-hub-sas-policy)
-        EVENT_HUB_SAS_KEY: $(python-eh-livetest-event-hub-sas-key)
-        EVENT_HUB_NAMESPACE: $(python-eh-livetest-event-hub-namespace)
         IOTHUB_CONNECTION_STR: $(python-eh-livetest-event-hub-iothub-connection-str)
         IOTHUB_DEVICE: $(python-eh-livetest-event-hub-iothub-device)
         AZURE_CLIENT_ID: $(python-eh-livetest-event-hub-aad-client-id)

@@ -162,9 +162,9 @@
     }
   ],
   "outputs": {
-    "EVENT_HUB_NAMESPACE_CONNECTION_STRING": {
+    "EVENT_HUB_NAMESPACE": {
         "type": "string",
-        "value": "[listkeys(variables('eventHubsAuthRuleResourceId'), '2015-08-01').primaryConnectionString]"
+        "value": "[variables('eventHubsNamespace')]"
     },
     "EVENT_HUB_HOSTNAME": {
         "type": "string",
@@ -189,6 +189,14 @@
     "AZURE_STORAGE_CONN_STR": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccount'), ';AccountKey=', listKeys(variables('storageAccountId'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=', parameters('storageEndpointSuffix'))]"
+    },
+    "AZURE_STORAGE_ACCOUNT": {
+      "type": "string",
+      "value": "[variables('storageAccount')]"
+    },
+    "AZURE_STORAGE_ACCESS_KEY":{
+      "type": "string",
+      "value": "[listKeys(variables('storageAccountId'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
     }
   }
 }
