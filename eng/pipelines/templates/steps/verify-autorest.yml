@@ -13,9 +13,9 @@ steps:
       versionSpec: '3.9'
 
   - task: NodeTool@0
-    displayName: 'Install Node.js $(NodeVersion)'
+    displayName: 'Install Node.js'
     inputs:
-      versionSpec: '$(NodeVersion)'
+      versionSpec: '12.x'
 
   - script: |
       npm install -g autorest
