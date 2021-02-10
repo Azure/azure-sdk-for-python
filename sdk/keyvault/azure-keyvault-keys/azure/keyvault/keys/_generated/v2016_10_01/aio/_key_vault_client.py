@@ -11,15 +11,14 @@ from typing import Any
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
 
-from ._configuration_async import KeyVaultClientConfiguration
-from .operations_async import KeyVaultClientOperationsMixin
+from ._configuration import KeyVaultClientConfiguration
+from .operations import KeyVaultClientOperationsMixin
 from .. import models
 
 
 class KeyVaultClient(KeyVaultClientOperationsMixin):
     """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
 
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
