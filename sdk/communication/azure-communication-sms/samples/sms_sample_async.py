@@ -9,7 +9,8 @@
 """
 FILE: sms_sample_async.py
 DESCRIPTION:
-    These samples demonstrate sending an sms asynchronously.
+    These samples demonstrate sending mutiple sms messages and resending 
+    any failed messages.
     
     ///authenticating a client via a connection string
 USAGE:
@@ -19,6 +20,7 @@ USAGE:
 import sys
 import asyncio
 from azure.communication.sms.aio import SmsClient
+
 sys.path.append("..")
 
 class SmsSamples(object):
@@ -29,17 +31,18 @@ class SmsSamples(object):
 
         async with sms_client:
             try:
-                # calling send() with constructed request object
-                sms_responses = await sms_client.send(
-                    from_phone_number="<leased-phone-number>",
-                    to_phone_numbers=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
+                # calling send() with sms values 
+                sms_responses = sms_client.send(
+                    from_="<leased-phone-number>",
+                    to=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
                     message="Hello World via SMS",
-                    enable_delivery_report=True,
+                    enable_delivery_report=True, # optional property
                     tag="custom-tag") # optional property
             except Exception:
                 print(Exception)
                 pass
 
+            failed_recipients = []
             async for sms_response in sms_responses:
                 if (sms_response.succeeded):
                     print("Message with message id {} was successful sent to {}"
@@ -47,6 +50,19 @@ class SmsSamples(object):
                 else:
                     print("Message with message id {} failed to send to {}"
                     .format(sms_response.message_id , sms_response.to))
+                    failed_recipients.append(sms_response.to)
+            
+            try:
+                # calling send() with failed recipients
+                sms_responses = sms_client.send(
+                    from_="<leased-phone-number>",
+                    to=failed_recipients,
+                    message="Hello World via SMS",
+                    enable_delivery_report=True, # optional property
+                    tag="custom-tag") # optional property
+            except Exception:
+                print(Exception)
+                pass
 
 if __name__ == '__main__':
     sample = SmsSamples()

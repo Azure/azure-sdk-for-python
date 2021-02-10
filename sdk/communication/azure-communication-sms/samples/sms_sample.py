@@ -9,7 +9,8 @@
 """
 FILE: sms_sample.py
 DESCRIPTION:
-    These samples demonstrate sending an sms.
+    These samples demonstrate sending mutiple sms messages and resending 
+    any failed messages.
     
     ///authenticating a client via a connection string
 USAGE:
@@ -30,12 +31,13 @@ class SmsSamples(object):
 
         # calling send() with sms values
         sms_responses = sms_client.send(
-            from_phone_number="<leased-phone-number>",
-            to_phone_numbers=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
+            from_="<leased-phone-number>",
+            to=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
             message="Hello World via SMS",
             enable_delivery_report=True, # optional property
             tag="custom-tag") # optional property
         
+        failed_recipients = []
         for sms_response in sms_responses:
             if (sms_response.succeeded):
                 print("Message with message id {} was successful sent to {}"
@@ -43,7 +45,16 @@ class SmsSamples(object):
             else:
                 print("Message with message id {} failed to send to {}"
                 .format(sms_response.message_id , sms_response.to))
-            
+                failed_recipients.append(sms_response.to)
+
+        # calling send() with failed recipients
+        sms_responses = sms_client.send(
+            from_="<leased-phone-number>",
+            to=failed_recipients,
+            message="Hello World via SMS",
+            enable_delivery_report=True, # optional property
+            tag="custom-tag") # optional property
+
 if __name__ == '__main__':
     sample = SmsSamples()
     sample.send_sms()
