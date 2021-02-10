@@ -6,13 +6,13 @@
   - The package has been renamed to `azure-monitor-opentelemetry-exporter`
       ([#16621](https://github.com/Azure/azure-sdk-for-python/pull/16621))
   - Remove `ExporterOptions`
-      ([#16580](https://github.com/Azure/azure-sdk-for-python/pull/16580))
+      ([#16669](https://github.com/Azure/azure-sdk-for-python/pull/16669))
 
   **Features**
   - Add azure servicebus samples and docstrings to samples
       ([#16580](https://github.com/Azure/azure-sdk-for-python/pull/16580))
   - Support configuration of `api_version` in exporter
-      ([#16580](https://github.com/Azure/azure-sdk-for-python/pull/16580))
+      ([#16669](https://github.com/Azure/azure-sdk-for-python/pull/16669))
 
 ## 1.0.0b2 (2021-01-13)
 
