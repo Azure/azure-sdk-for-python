@@ -543,7 +543,7 @@ class _HttpResponseBase(object):
 
         :return: The JSON deserialized response body
         :rtype: dict[str, any]
-        :raises json.decoder.JSONDecodeError
+        :raises json.decoder.JSONDecodeError or ValueError (in python 2.7):
         """
         return json.loads(self.text())
 

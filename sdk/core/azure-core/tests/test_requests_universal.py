@@ -92,7 +92,8 @@ def test_requests_response_json():
 
 def test_requests_response_json_error():
     res = _create_requests_response(b'this is not json serializable')
-    with pytest.raises(json.decoder.JSONDecodeError):
+    # throw ValueError in 2.7
+    with pytest.raises( (json.decoder.JSONDecodeError, ValueError) ):
         res.json()
 
 def test_requests_response_json_stream():
