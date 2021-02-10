@@ -22,7 +22,7 @@ from msrest.serialization import UTC
 import datetime as dt
 
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient, CustomEvent
+from azure.eventgrid import EventGridPublisherClient
 
 key = os.environ["CUSTOM_SCHEMA_ACCESS_KEY"]
 endpoint = os.environ["CUSTOM_SCHEMA_TOPIC_HOSTNAME"]
@@ -47,11 +47,10 @@ def publish_event():
         event_list = []     # list of events to publish
         # create events and append to list
         for j in range(randint(1, 3)):
-            event = CustomEvent(custom_schema_event)
-            event_list.append(event)
+            event_list.append(custom_schema_event)
 
         # publish list of events
-        client.send_events(event_list)
+        client.send(event_list)
         print("Batch of size {} published".format(len(event_list)))
         time.sleep(randint(1, 5))
 

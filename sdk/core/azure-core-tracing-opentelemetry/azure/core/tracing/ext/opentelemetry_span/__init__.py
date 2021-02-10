@@ -9,6 +9,7 @@ from opentelemetry.trace import Span, Link, Tracer, SpanKind as OpenTelemetrySpa
 from opentelemetry.context import attach, detach, get_current
 from opentelemetry.propagators import extract, inject
 from opentelemetry.trace.propagation import get_current_span as get_span_from_context
+from opentelemetry.trace.propagation.textmap import DictGetter
 
 from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
 
@@ -202,8 +203,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :param headers: A key value pair dictionary
         :type headers: dict
         """
-        ctx = extract(_get_headers_from_http_request_headers, headers)
-        span_ctx = get_span_from_context(ctx).get_context()
+        ctx = extract(DictGetter(), headers)
+        span_ctx = get_span_from_context(ctx).get_span_context()
         current_span = cls.get_current_span()
         current_span.links.append(Link(span_ctx, attributes))
 

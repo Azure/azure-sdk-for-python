@@ -43,7 +43,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Both",
-                                companion_metric_id=data_feed.metric_ids[0],
+                                companion_metric_id=data_feed.metric_ids['cost'],
                                 lower=1.0,
                                 upper=5.0
                             )
@@ -104,7 +104,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Down",
-                                companion_metric_id=data_feed.metric_ids[0],
+                                companion_metric_id=data_feed.metric_ids['cost'],
                                 lower=1.0,
                             )
                         )
@@ -164,7 +164,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Up",
-                                companion_metric_id=data_feed.metric_ids[0],
+                                companion_metric_id=data_feed.metric_ids['cost'],
                                 upper=5.0,
                             )
                         )
@@ -325,7 +325,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Both",
-                                companion_metric_id=data_feed.metric_ids[0],
+                                companion_metric_id=data_feed.metric_ids['cost'],
                                 lower=1.0,
                                 upper=5.0
                             )
@@ -377,7 +377,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Down",
-                                companion_metric_id=data_feed.metric_ids[0],
+                                companion_metric_id=data_feed.metric_ids['cost'],
                                 lower=1.0,
                             )
                         )
@@ -428,7 +428,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Up",
-                                companion_metric_id=data_feed.metric_ids[0],
+                                companion_metric_id=data_feed.metric_ids['cost'],
                                 upper=5.0,
                             )
                         )
@@ -524,7 +524,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Both",
-                                companion_metric_id=data_feed.metric_ids[0],
+                                companion_metric_id=data_feed.metric_ids['cost'],
                                 lower=1.0,
                                 upper=5.0
                             )
@@ -578,7 +578,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Down",
-                                companion_metric_id=data_feed.metric_ids[0],
+                                companion_metric_id=data_feed.metric_ids['cost'],
                                 lower=1.0,
                             )
                         )
@@ -631,7 +631,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Up",
-                                companion_metric_id=data_feed.metric_ids[0],
+                                companion_metric_id=data_feed.metric_ids['cost'],
                                 upper=5.0,
                             )
                         )
@@ -735,7 +735,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Both",
-                                companion_metric_id=data_feed.metric_ids[0],
+                                companion_metric_id=data_feed.metric_ids['cost'],
                                 lower=1.0,
                                 upper=5.0
                             )
@@ -839,7 +839,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     lower=1
                 )
 
-            updated = self.admin_client.update_alert_configuration(alert_config)
+            self.admin_client.update_alert_configuration(alert_config)
+            updated = self.admin_client.get_alert_configuration(alert_config.id)
 
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.description, "update description")
@@ -859,7 +860,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
     def test_update_alert_config_with_kwargs(self):
         try:
             alert_config, data_feed, detection_config = self._create_alert_config_for_update("alertupdate")
-            updated = self.admin_client.update_alert_configuration(
+            self.admin_client.update_alert_configuration(
                 alert_config.id,
                 name="update",
                 description="update description",
@@ -878,7 +879,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Both",
-                                companion_metric_id=data_feed.metric_ids[0],
+                                companion_metric_id=data_feed.metric_ids['cost'],
                                 lower=1.0,
                                 upper=5.0
                             ),
@@ -922,7 +923,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 ]
             )
-
+            updated = self.admin_client.get_alert_configuration(alert_config.id)
             self.assertEqual(updated.name, "update")
             self.assertEqual(updated.description, "update description")
             self.assertEqual(updated.cross_metrics_operator, "OR")
@@ -949,7 +950,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             alert_config.metric_alert_configurations[1].alert_conditions.metric_boundary_condition = None
             alert_config.metric_alert_configurations[2].alert_conditions.metric_boundary_condition = None
 
-            updated = self.admin_client.update_alert_configuration(
+            self.admin_client.update_alert_configuration(
                 alert_config,
                 cross_metrics_operator="OR",
                 metric_alert_configurations=[
@@ -966,7 +967,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                         alert_conditions=MetricAnomalyAlertConditions(
                             metric_boundary_condition=MetricBoundaryCondition(
                                 direction="Both",
-                                companion_metric_id=data_feed.metric_ids[0],
+                                companion_metric_id=data_feed.metric_ids['cost'],
                                 lower=1.0,
                                 upper=5.0
                             ),
@@ -1010,7 +1011,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 ]
             )
-
+            updated = self.admin_client.get_alert_configuration(alert_config.id)
             self.assertEqual(updated.name, "updateMe")
             self.assertEqual(updated.description, "updateMe")
             self.assertEqual(updated.cross_metrics_operator, "OR")
@@ -1029,7 +1030,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
     def test_update_anomaly_alert_by_resetting_properties(self):
         try:
             alert_config, data_feed, detection_config = self._create_alert_config_for_update("alertupdate")
-            updated = self.admin_client.update_alert_configuration(
+            self.admin_client.update_alert_configuration(
                 alert_config.id,
                 name="reset",
                 description="",  # can't pass None currently, bug says description is required
@@ -1048,7 +1049,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     )
                 ]
             )
-
+            updated = self.admin_client.get_alert_configuration(alert_config.id)
             self.assertEqual(updated.name, "reset")
             self.assertEqual(updated.description, "")
             self.assertEqual(updated.cross_metrics_operator, None)

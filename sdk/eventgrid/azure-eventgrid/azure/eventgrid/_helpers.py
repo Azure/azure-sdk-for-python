@@ -93,6 +93,14 @@ def _is_cloud_event(event):
     except TypeError:
         return False
 
+def _is_eventgrid_event(event):
+    # type: (Any) -> bool
+    required = ('subject', 'eventType', 'data', 'dataVersion', 'id', 'eventTime')
+    try:
+        return all([prop in event for prop in required])
+    except TypeError:
+        return False
+
 def _eventgrid_data_typecheck(event):
     try:
         data = event.get('data')

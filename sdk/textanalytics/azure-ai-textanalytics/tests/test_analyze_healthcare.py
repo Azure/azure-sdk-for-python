@@ -33,7 +33,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = client.begin_analyze_healthcare("hello world").result()
+            response = client.begin_analyze_healthcare_entities("hello world").result()
 
     @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
@@ -42,15 +42,26 @@ class TestHealth(TextAnalyticsTest):
         docs = [{"id": "1", "language": "en", "text": "Patient does not suffer from high blood pressure."},
                 {"id": "2", "language": "en", "text": "Prescribed 100mg ibuprofen, taken twice daily."}]
 
-        response = client.begin_analyze_healthcare(docs, show_stats=True, polling_interval=self._interval()).result()
-
+        poller = client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval())
+        response = poller.result()
         self.assertIsNotNone(response.statistics)
+        response = list(response)
 
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
-            self.assertIsNotNone(doc.relations)
+
+        self.assertEqual(len(response[0].entities), 2)
+        entity1 = list(filter(lambda x: x.text == "high", response[0].entities))[0]
+        entity2 = list(filter(lambda x: x.text == "blood pressure", response[0].entities))[0]
+
+        self.assertEqual(len(entity1.related_entities), 1)
+        related_entity, relation_type = entity1.related_entities.popitem()
+        self.assertEqual(related_entity, entity2)
+        self.assertEqual(relation_type, "ValueOfExamination")
+
+        self.assertEqual(len(entity2.related_entities), 0)
 
     @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
@@ -61,14 +72,14 @@ class TestHealth(TextAnalyticsTest):
             TextDocumentInput(id="2", text="Prescribed 100mg ibuprofen, taken twice daily."),
         ]
 
-        response = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+        response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
+
         self.assertIsNone(response.statistics) # show_stats=False by default
 
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
-            self.assertIsNotNone(doc.relations)
 
     @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
@@ -80,13 +91,12 @@ class TestHealth(TextAnalyticsTest):
             u""
         ]
 
-        response = list(client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result())
+        response = list(client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result())
 
         for i in range(2):
             self.assertIsNotNone(response[i].id)
             self.assertIsNone(response[i].statistics)
             self.assertIsNotNone(response[i].entities)
-            self.assertIsNotNone(response[i].relations)
 
         self.assertTrue(response[2].is_error)
 
@@ -98,7 +108,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "Patient does not suffer from high blood pressure."},
                 {"id": "3", "language": "en", "text": "Prescribed 100mg ibuprofen, taken twice daily."}]
 
-        response = list(client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result())
+        response = list(client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result())
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -111,7 +121,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "Patient does not suffer from high blood pressure."},
                 {"id": "3", "language": "en", "text": ""}]
 
-        response = list(client.begin_analyze_healthcare(docs).result())
+        response = list(client.begin_analyze_healthcare_entities(docs).result())
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
         self.assertTrue(response[2].is_error)
@@ -123,7 +133,7 @@ class TestHealth(TextAnalyticsTest):
         docs = list(itertools.repeat("input document", 11))  # Maximum number of documents per request is 10
 
         with pytest.raises(HttpResponseError) as excinfo:
-            client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+            client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
 
         assert excinfo.value.status_code == 400
 
@@ -146,7 +156,7 @@ class TestHealth(TextAnalyticsTest):
         docs = list(itertools.repeat(large_doc, 500))
 
         with pytest.raises(HttpResponseError) as excinfo:
-            client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+            client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
         assert excinfo.value.status_code == 413
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -157,7 +167,7 @@ class TestHealth(TextAnalyticsTest):
             {"id": "1", "text": "This won't actually create a warning :'("},
         ]
 
-        result = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+        result = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
         response = list(result)
         for doc in response:
             doc_warnings = doc.warnings
@@ -174,7 +184,7 @@ class TestHealth(TextAnalyticsTest):
             TextDocumentInput(id="5", text="five")
         ]
 
-        response = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+        response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
 
         for idx, doc in enumerate(response):
             self.assertEqual(str(idx + 1), doc.id)
@@ -186,7 +196,7 @@ class TestHealth(TextAnalyticsTest):
     })
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze_healthcare(
+            response = client.begin_analyze_healthcare_entities(
                 ["This is written in English."],
                 polling_interval=self._interval()
             ).result()
@@ -198,7 +208,7 @@ class TestHealth(TextAnalyticsTest):
     })
     def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze_healthcare(
+            response = client.begin_analyze_healthcare_entities(
                 ["This is written in English."],
                 polling_interval=self._interval()
             )
@@ -210,7 +220,7 @@ class TestHealth(TextAnalyticsTest):
         docs = "This is the wrong type"
 
         with self.assertRaises(TypeError):
-            response = client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+            response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -221,7 +231,7 @@ class TestHealth(TextAnalyticsTest):
             u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
-            response = client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+            response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -232,7 +242,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = list(client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result())
+        response = list(client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result())
         expected_order = ["56", "0", "22", "19", "1"]
         actual_order = [x.id for x in response]
 
@@ -248,7 +258,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = client.begin_analyze_healthcare(
+        response = client.begin_analyze_healthcare_entities(
             docs,
             show_stats=True,
             model_version="2020-09-03",
@@ -277,7 +287,7 @@ class TestHealth(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = list(client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval()).result())
+        response = list(client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval()).result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -291,7 +301,7 @@ class TestHealth(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = list(client.begin_analyze_healthcare(docs, language="", polling_interval=self._interval()).result())
+        response = list(client.begin_analyze_healthcare_entities(docs, language="", polling_interval=self._interval()).result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -304,7 +314,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = list(client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result())
+        response = list(client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -319,7 +329,7 @@ class TestHealth(TextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = list(client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval()).result())
+        response = list(client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval()).result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -331,7 +341,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = list(client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval()).result())
+        response = list(client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval()).result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -344,7 +354,7 @@ class TestHealth(TextAnalyticsTest):
             TextDocumentInput(id="2", text="猫は幸せ"),
         ]
 
-        response = list(client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval()).result())
+        response = list(client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval()).result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
 
@@ -355,7 +365,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = list(client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval()).result())
+        response = list(client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval()).result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -369,7 +379,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        result = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+        result = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
         response = list(result)
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -378,7 +388,7 @@ class TestHealth(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_invalid_language_hint_method(self, client):
-        response = list(client.begin_analyze_healthcare(
+        response = list(client.begin_analyze_healthcare_entities(
             ["This should fail because we're passing in an invalid language hint"], language="notalanguage", polling_interval=self._interval()
         ).result())
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
@@ -387,7 +397,7 @@ class TestHealth(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_invalid_language_hint_docs(self, client):
-        response = list(client.begin_analyze_healthcare(
+        response = list(client.begin_analyze_healthcare_entities(
             [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}],
             polling_interval=self._interval()
         ).result())
@@ -403,15 +413,15 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+        response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
         self.assertIsNotNone(response)
 
         credential.update("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+            response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
 
         credential.update(text_analytics_account_key)  # Authenticate successfully again
-        response = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+        response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
         self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -421,7 +431,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        poller = client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+        poller = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
         self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()),
                 poller._polling_method._initial_response.http_request.headers["User-Agent"]
@@ -433,7 +443,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        result = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+        result = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
         response = list(result)
 
         # Attributes on DocumentError
@@ -457,7 +467,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        result = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+        result = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
         response = list(result)
 
         # Attribute not found on DocumentError or result obj, default behavior/message
@@ -475,7 +485,7 @@ class TestHealth(TextAnalyticsTest):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
-            result = client.begin_analyze_healthcare(docs, model_version="bad", polling_interval=self._interval()).result()
+            result = client.begin_analyze_healthcare_entities(docs, model_version="bad", polling_interval=self._interval()).result()
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
@@ -491,7 +501,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": text}]
 
-        result = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+        result = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
         doc_errors = list(result)
         self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
@@ -506,7 +516,7 @@ class TestHealth(TextAnalyticsTest):
     def test_not_passing_list_for_docs(self, client):
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
-            client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+            client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
         assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -514,14 +524,14 @@ class TestHealth(TextAnalyticsTest):
     def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
-            client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+            client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
-            client.begin_analyze_healthcare(None, polling_interval=self._interval())
+            client.begin_analyze_healthcare_entities(None, polling_interval=self._interval())
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -531,7 +541,7 @@ class TestHealth(TextAnalyticsTest):
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
-            result = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+            result = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
 
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocument")
@@ -542,7 +552,7 @@ class TestHealth(TextAnalyticsTest):
     def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
             return "cls result"
-        res = client.begin_analyze_healthcare(
+        res = client.begin_analyze_healthcare_entities(
             documents=["Test passing cls to endpoint"],
             cls=callback,
             polling_interval=self._interval()
@@ -559,7 +569,7 @@ class TestHealth(TextAnalyticsTest):
         # for records per page is 20, pagination logic will never be activated.  This is intended to change
         # in the future but for now this test actually won't hit the pagination logic now.
 
-        result = client.begin_analyze_healthcare(docs, show_stats=True, polling_interval=self._interval()).result()
+        result = client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval()).result()
         response = list(result)
 
         self.assertEqual(len(docs), len(response))
@@ -580,7 +590,7 @@ class TestHealth(TextAnalyticsTest):
         # in the future but for now this test actually won't hit the pagination logic now.
 
 
-        result = client.begin_analyze_healthcare(docs, show_stats=True, polling_interval=self._interval()).result()
+        result = client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval()).result()
         response = list(result)
 
         self.assertEqual(len(docs), len(response))
@@ -602,9 +612,49 @@ class TestHealth(TextAnalyticsTest):
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
 
-        poller = client.begin_analyze_healthcare(docs, polling_interval=self._interval())
-        cancellation_result = client.begin_cancel_analyze_healthcare(poller, polling_interval=self._interval()).result()
+        poller = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
 
-        self.assertIsNone(cancellation_result)
+        try:
+            cancellation_poller = poller.cancel()
+            cancellation_poller.wait()
 
-        poller.wait()
+        except HttpResponseError:
+            pass # expected if the operation was already in a terminal state.
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_default_string_index_type_is_UnicodeCodePoint(self, client):
+        poller = client.begin_analyze_healthcare_entities(documents=["Hello world"])
+        actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
+        self.assertEqual(actual_string_index_type, "UnicodeCodePoint")
+        poller.result()
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_explicit_set_string_index_type(self, client):
+        poller = client.begin_analyze_healthcare_entities(
+            documents=["Hello world"],
+            string_index_type="TextElements_v8"
+        )
+        actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
+        self.assertEqual(actual_string_index_type, "TextElements_v8")
+        poller.result()
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_bidirectional_relation_type(self, client):
+        result = list(client.begin_analyze_healthcare_entities(
+            documents=["The patient was diagnosed with Parkinsons Disease (PD)"]
+        ).result())
+
+        self.assertEqual(len(result[0].entities), 2)
+        entity1 = list(filter(lambda x: x.text == "Parkinsons Disease", result[0].entities))[0]
+        entity2 = list(filter(lambda x: x.text == "PD", result[0].entities))[0]
+
+        related_entity1, relation_type1 = entity1.related_entities.popitem()
+        self.assertEqual(related_entity1, entity2)
+        self.assertEqual(relation_type1, "Abbreviation")
+        related_entity2, relation_type2 = entity2.related_entities.popitem()
+        self.assertEqual(related_entity2, entity1)
+        self.assertEqual(relation_type2, "Abbreviation")
+

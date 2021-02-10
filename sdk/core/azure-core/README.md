@@ -112,25 +112,42 @@ class TooManyRedirectsError(HttpResponseError):
 
 *kwargs* are keyword arguments to include with the exception.
 
-### Transport
+### Configurations
 
-Some common properties can be configured on transports. They must be passed
-as kwargs arguments while building the transport instance.
-
-#### Transport configurations
+When calling the methods, some properties can be configured by passing in as kwargs arguments.
 
 | Parameters | Description |
 | --- | --- |
-| connection_timeout | A single float in seconds for the connection timeout. Defaults to 300 seconds. |
-| read_timeout | A single float in seconds for the read timeout. Defaults to 300 seconds. |
+| headers | The HTTP Request headers. |
+| request_id | The request id to be added into header. |
+| user_agent | If specified, this will be added in front of the user agent string. |
+| logging_enable| Use to enable per operation. Defaults to `False`. |
+| logger | If specified, it will be used to log information. |
+| response_encoding | The encoding to use if known for this service (will disable auto-detection). |
+| proxies | Maps protocol or protocol and hostname to the URL of the proxy. |
+| raw_request_hook | Callback function. Will be invoked on request. |
+| raw_response_hook | Callback function. Will be invoked on response. |
+| network_span_namer | A callable to customize the span name. |
+| tracing_attributes | Attributes to set on all created spans. |
+| permit_redirects | Whether the client allows redirects. Defaults to `True`. |
+| redirect_max | The maximum allowed redirects. Defaults to `30`. |
+| retry_total | Total number of retries to allow. Takes precedence over other counts. Default value is `10`. |
+| retry_connect | How many connection-related errors to retry on. These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request. Default value is `3`. |
+| retry_read | How many times to retry on read errors. These errors are raised after the request was sent to the server, so the request may have side-effects. Default value is `3`. |
+| retry_status | How many times to retry on bad status codes. Default value is `3`. |
+| retry_backoff_factor | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is `0.8`. |
+| retry_backoff_max | The maximum back off time. Default value is `120` seconds (2 minutes). |
+| retry_mode | Fixed or exponential delay between attemps, default is `Exponential`. |
+| timeout | Timeout setting for the operation in seconds, default is `604800`s (7 days). |
+| connection_timeout | A single float in seconds for the connection timeout. Defaults to `300` seconds. |
+| read_timeout | A single float in seconds for the read timeout. Defaults to `300` seconds. |
 | connection_verify | SSL certificate verification. Enabled by default. Set to False to disable, alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs. |
 | connection_cert | Client-side certificates. You can specify a local cert to use as client side certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths. |
 | proxies | Dictionary mapping protocol or protocol and hostname to the URL of the proxy. |
 | cookies | Dict or CookieJar object to send with the `Request`. |
-| stream | whether to immediately download the response content. Defaults to ``False``. |
-| connection_data_block_size | The block size of data sent over the connection. Defaults to 4096 bytes. |
+| connection_data_block_size | The block size of data sent over the connection. Defaults to `4096` bytes. |
 
-#### Async transport
+### Async transport
 
 The async transport is designed to be opt-in. [AioHttp](https://pypi.org/project/aiohttp/) is one of the supported implementations of async transport. It is not installed by default. You need to install it separately.
 
@@ -146,6 +163,20 @@ class MatchConditions(Enum):
     IfModified = 3
     IfPresent = 4
     IfMissing = 5
+```
+
+#### CaseInsensitiveEnumMeta
+
+A metaclass to support case-insensitive enums.
+```python
+from enum import Enum
+from six import with_metaclass
+
+from azure.core import CaseInsensitiveEnumMeta
+
+class MyCustomEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    FOO = 'foo'
+    BAR = 'bar'
 ```
 
 ## Contributing

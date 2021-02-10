@@ -44,6 +44,8 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :type role_assignment_name: str or uuid.UUID
         :rtype: KeyVaultRoleAssignment
         """
+        role_assignment_name = kwargs.pop("role_assignment_name", None) or uuid4()
+
         create_parameters = self._client.role_assignments.models.RoleAssignmentCreateParameters(
             properties=self._client.role_assignments.models.RoleAssignmentProperties(
                 principal_id=principal_id, role_definition_id=str(role_definition_id)
@@ -52,7 +54,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         assignment = self._client.role_assignments.create(
             vault_base_url=self._vault_url,
             scope=role_scope,
-            role_assignment_name=kwargs.pop("role_assignment_name", None) or uuid4(),
+            role_assignment_name=str(role_assignment_name),
             parameters=create_parameters,
             **kwargs
         )
@@ -66,7 +68,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :param role_scope: the assignment's scope, for example "/", "/keys", or "/keys/<specific key identifier>"
             :class:`KeyVaultRoleScope` defines common broad scopes. Specify a narrower scope as a string.
         :type role_scope: str or KeyVaultRoleScope
-        :param role_assignment_name: the assignment's name. Must be a UUID.
+        :param role_assignment_name: the assignment's name.
         :type role_assignment_name: str or uuid.UUID
         :returns: the deleted assignment
         :rtype: KeyVaultRoleAssignment
@@ -116,19 +118,22 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         """Creates or updates a custom role definition.
 
         :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
-            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.global_value.
+            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.GLOBAL.
         :type role_scope: str or KeyVaultRoleScope
         :param permissions: the role definition's permissions. An empty list results in a role definition with no action
             permissions.
         :type permissions: Iterable[KeyVaultPermission]
+        :keyword str role_name: the role's name. If unspecified when creating or updating a role definition, the role
+            name will be set to an empty string.
         :keyword role_definition_name: the role definition's name. Must be a UUID.
         :type role_definition_name: str or uuid.UUID
-        :keyword assignable_scopes: the role definition's assignable scopes.
-        :type assignable_scopes: list[str]
+        :keyword str description: a description of the role definition. If unspecified when creating or updating a role
+            definition, the description will be set to an empty string.
         :returns: The created or updated role definition
         :rtype: KeyVaultRoleDefinition
         """
         role_definition_name = kwargs.pop("role_definition_name", None) or uuid4()
+
         permissions = [
             self._client.role_definitions.models.Permission(
                 actions=p.allowed_actions,
@@ -140,14 +145,16 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         ]
 
         properties = self._client.role_definitions.models.RoleDefinitionProperties(
-            role_name=role_definition_name, permissions=permissions, **kwargs
+            role_name=kwargs.pop("role_name", None),
+            description=kwargs.pop("description", None),
+            permissions=permissions
         )
         parameters = self._client.role_definitions.models.RoleDefinitionCreateParameters(properties=properties)
 
         definition = self._client.role_definitions.create_or_update(
             vault_base_url=self._vault_url,
             scope=role_scope,
-            role_definition_name=role_definition_name,
+            role_definition_name=str(role_definition_name),
             parameters=parameters,
             **kwargs
         )
@@ -159,7 +166,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         """Get the specified role definition.
 
         :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
-            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.global_value.
+            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.GLOBAL.
         :type role_scope: str or KeyVaultRoleScope
         :param role_definition_name: the role definition's name.
         :type role_definition_name: str or uuid.UUID
@@ -176,9 +183,9 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         """Deletes a custom role definition.
 
         :param role_scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
-            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.global_value.
+            Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.GLOBAL.
         :type role_scope: str or KeyVaultRoleScope
-        :param role_definition_name: the role definition's name. Must be a UUID.
+        :param role_definition_name: the role definition's name.
         :type role_definition_name: str or uuid.UUID
         :returns: the deleted role definition
         :rtype: KeyVaultRoleDefinition

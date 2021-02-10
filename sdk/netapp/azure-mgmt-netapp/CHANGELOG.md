@@ -1,5 +1,29 @@
 # Release History
 
+## 1.0.0 (2021-02-04)
+
+**Features**
+
+  - Model VolumeList has a new parameter next_link
+  - Model BackupPatch has a new parameter failure_reason
+  - Model Backup has a new parameter failure_reason
+  - Model NetAppAccountList has a new parameter next_link
+  - Model ActiveDirectory has a new parameter security_operators
+  - Model ActiveDirectory has a new parameter ldap_over_tls
+  - Model NetAppAccountPatch has a new parameter encryption
+  - Model CapacityPoolList has a new parameter next_link
+  - Model Volume has a new parameter encryption_key_source
+  - Model Volume has a new parameter smb_encryption
+  - Model Volume has a new parameter smb_continuously_available
+  - Model Volume has a new parameter name_properties_name
+  - Model NetAppAccount has a new parameter system_data
+  - Model NetAppAccount has a new parameter encryption
+  - Added operation SnapshotPoliciesOperations.begin_update
+
+**Breaking changes**
+
+  - Removed operation SnapshotPoliciesOperations.update
+
 ## 1.0.0b1 (2020-12-01)
 
 This is beta preview version.

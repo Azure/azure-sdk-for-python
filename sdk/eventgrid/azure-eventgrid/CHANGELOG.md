@@ -1,17 +1,14 @@
 # Release History
 
-## 2.0.0b5 (Unreleased)
+## 2.0.0b5 (2021-02-10)
 
   **Breaking Changes**
   - `EventGridSharedAccessSignatureCredential` is deprecated in favor of `AzureSasCredential`.
-  - `EventGridConsumer` is now renamed to `EventGridDeserializer`.
-  - `decode_cloud_event` is renamed to `deserialize_cloud_events`.
-  - `decode_eventgrid_event` is renamed to `deserialize_eventgrid_events`.
-  - The system events now exist in the `azure.eventgrid.systemevents` namespace instead of `azure.eventgrid.models` namespace.
-  - The `send` method in the `EventGridPubliserClient` is now replaced by the `send_events`.
+  - `azure.eventgrid.models` namespace along with all the models in it are now removed. `azure.eventgrid.SystemEventNames` can be used to get the event model type mapping.
   - `topic_hostname` is renamed to `endpoint` in the `EventGridPublisherClient`.
-  - `data` is now a required param for `CloudEvent`.
   - `azure.eventgrid.generate_shared_access_signature` method is now renamed to `generate_sas`.
+  - `EventGridConsumer`is now removed. Please see the samples to see how events can be deserialized.
+  - `CustomEvent` model is removed. Dictionaries must be used to send a custom schema.
   
   **Bug Fixes**
   - `EventGridEvent` has two additional required positional parameters namely, `data` and `data_version`.

@@ -67,7 +67,7 @@ class PoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-11-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -100,7 +100,7 @@ class PoolsOperations:
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -146,7 +146,7 @@ class PoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-11-01"
         accept = "application/json"
 
         # Construct URL
@@ -190,13 +190,13 @@ class PoolsOperations:
         pool_name: str,
         body: "_models.CapacityPool",
         **kwargs
-    ) -> Optional["_models.CapacityPool"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CapacityPool"]]
+    ) -> "_models.CapacityPool":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CapacityPool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -226,11 +226,10 @@ class PoolsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('CapacityPool', pipeline_response)
 
@@ -307,7 +306,7 @@ class PoolsOperations:
             'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
         }
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -334,7 +333,7 @@ class PoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -468,7 +467,7 @@ class PoolsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-01"
+        api_version = "2020-11-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore

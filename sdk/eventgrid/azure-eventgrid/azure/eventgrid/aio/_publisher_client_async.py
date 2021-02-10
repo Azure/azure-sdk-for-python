@@ -23,32 +23,30 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy
 )
 from .._policies import CloudEventDistributedTracingPolicy
-from .._models import CloudEvent, EventGridEvent, CustomEvent
+from .._models import CloudEvent, EventGridEvent
 from .._helpers import (
     _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
+    _is_eventgrid_event,
     _eventgrid_data_typecheck
 )
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
-from .._generated.models import CloudEvent as InternalCloudEvent, EventGridEvent as InternalEventGridEvent
+from .._generated.models import CloudEvent as InternalCloudEvent
 from .._version import VERSION
 
 SendType = Union[
     CloudEvent,
     EventGridEvent,
-    CustomEvent,
     Dict,
     List[CloudEvent],
     List[EventGridEvent],
-    List[CustomEvent],
     List[Dict]
 ]
 
 ListEventType = Union[
     List[CloudEvent],
     List[EventGridEvent],
-    List[CustomEvent],
     List[Dict]
 ]
 
@@ -59,6 +57,7 @@ class EventGridPublisherClient():
     :param credential: The credential object used for authentication which implements
      SAS key authentication or SAS token authentication.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
+    :rtype: None
     """
 
     def __init__(
@@ -98,13 +97,16 @@ class EventGridPublisherClient():
         return policies
 
     @distributed_trace_async
-    async def send_events(
+    async def send(
         self,
         events: SendType,
         **kwargs: Any) -> None:
         """Sends event data to topic hostname specified during client initialization.
+        Multiple events can be published at once by seding a list of events. It is very
+        inefficient to loop the send method for each event instead of just using a list
+        and we highly recommend against it.
 
-        :param  events: A list or an instance of CloudEvent/EventGridEvent/CustomEvent to be sent.
+        :param  events: A list of CloudEvent/EventGridEvent to be sent.
         :type events: SendType
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
@@ -115,37 +117,22 @@ class EventGridPublisherClient():
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
 
-        if all(isinstance(e, CloudEvent) for e in events) or all(_is_cloud_event(e) for e in events):
+        if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
-                events = [
-                    cast(CloudEvent, e)._to_generated(**kwargs) for e in events # pylint: disable=protected-access
-                    ]
+                events = [cast(CloudEvent, e)._to_generated(**kwargs) for e in events] # pylint: disable=protected-access
             except AttributeError:
                 pass # means it's a dictionary
             kwargs.setdefault("content_type", "application/cloudevents-batch+json; charset=utf-8")
-            await self._client.publish_cloud_event_events(
+            return await self._client.publish_cloud_event_events(
                 self._endpoint,
                 cast(List[InternalCloudEvent], events),
                 **kwargs
                 )
-        elif all(isinstance(e, EventGridEvent) for e in events) or all(isinstance(e, dict) for e in events):
-            kwargs.setdefault("content_type", "application/json; charset=utf-8")
+        kwargs.setdefault("content_type", "application/json; charset=utf-8")
+        if isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
-            await self._client.publish_events(
-                self._endpoint,
-                cast(List[InternalEventGridEvent], events),
-                **kwargs
-                )
-        elif all(isinstance(e, CustomEvent) for e in events):
-            serialized_events = [dict(e) for e in events] # type: ignore
-            await self._client.publish_custom_event_events(
-                self._endpoint,
-                cast(List, serialized_events),
-                **kwargs
-                )
-        else:
-            raise ValueError("Event schema is not correct.")
+        return await self._client.publish_custom_event_events(self._endpoint, cast(List, events), **kwargs)
 
     async def __aenter__(self) -> "EventGridPublisherClient":
         await self._client.__aenter__()

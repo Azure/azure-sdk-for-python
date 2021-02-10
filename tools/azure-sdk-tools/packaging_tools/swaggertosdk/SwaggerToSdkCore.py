@@ -24,7 +24,7 @@ from azure_devtools.ci_tools.github_tools import (
 
 _LOGGER = logging.getLogger(__name__)
 
-CONFIG_FILE = 'swagger_to_sdk_config.json'
+CONFIG_FILE = 'swagger_to_sdk_config_autorest.json'
 
 DEFAULT_COMMIT_MESSAGE = 'Generated from {hexsha}'
 

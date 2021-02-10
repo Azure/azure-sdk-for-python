@@ -24,23 +24,23 @@ domain_hostname = os.environ["EG_DOMAIN_TOPIC_HOSTNAME"]
 credential = AzureKeyCredential(domain_key)
 client = EventGridPublisherClient(domain_hostname, credential)
 
-client.send_events([
-	EventGridEvent(
-		topic="MyCustomDomainTopic1",
-		event_type="Contoso.Items.ItemReceived",
-		data={
-			"itemSku": "Contoso Item SKU #1"
-		},
-		subject="Door1",
-		data_version="2.0"
-	),
-	EventGridEvent(
-		topic="MyCustomDomainTopic2",
-		event_type="Contoso.Items.ItemReceived",
-		data={
-			"itemSku": "Contoso Item SKU #2"
-		},
-		subject="Door1",
-		data_version="2.0"
-	)
+client.send([
+    EventGridEvent(
+        topic="MyCustomDomainTopic1",
+        event_type="Contoso.Items.ItemReceived",
+        data={
+            "itemSku": "Contoso Item SKU #1"
+        },
+        subject="Door1",
+        data_version="2.0"
+    ),
+    EventGridEvent(
+        topic="MyCustomDomainTopic2",
+        event_type="Contoso.Items.ItemReceived",
+        data={
+            "itemSku": "Contoso Item SKU #2"
+        },
+        subject="Door1",
+        data_version="2.0"
+    )
 ])

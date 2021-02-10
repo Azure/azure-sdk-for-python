@@ -9,13 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core import PipelineClient
-from msrest import Serializer, Deserializer
+from typing import TYPE_CHECKING
 
+from azure.core import PipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+from msrest import Deserializer, Serializer
+
 from ._configuration import KeyVaultClientConfiguration
 from ._operations_mixin import KeyVaultClientOperationsMixin
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Optional
+
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
@@ -33,11 +40,10 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
     The profile sets a mapping between an operation group and its API version.
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = '7.1'
@@ -110,14 +116,14 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
 
     def __init__(
         self,
-        api_version=None,
-        profile=KnownProfiles.default,
+        api_version=None, # type: Optional[str]
+        profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if api_version == '2016-10-01' or api_version == '7.0' or api_version == '7.1':
+        if api_version == '2016-10-01' or api_version == '7.0' or api_version == '7.1' or api_version == '7.2-preview':
             base_url = '{vaultBaseUrl}'
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} is not available".format(api_version))
         self._config = KeyVaultClientConfiguration(**kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(KeyVaultClient, self).__init__(
@@ -136,6 +142,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
            * 2016-10-01: :mod:`v2016_10_01.models<azure.keyvault.v2016_10_01.models>`
            * 7.0: :mod:`v7_0.models<azure.keyvault.v7_0.models>`
            * 7.1: :mod:`v7_1.models<azure.keyvault.v7_1.models>`
+           * 7.2-preview: :mod:`v7_2_preview.models<azure.keyvault.v7_2_preview.models>`
         """
         if api_version == '2016-10-01':
             from .v2016_10_01 import models
@@ -146,7 +153,10 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
         elif api_version == '7.1':
             from .v7_1 import models
             return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        elif api_version == '7.2-preview':
+            from .v7_2_preview import models
+            return models
+        raise ValueError("API version {} is not available".format(api_version))
 
     def close(self):
         self._client.close()

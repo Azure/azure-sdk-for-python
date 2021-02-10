@@ -113,6 +113,7 @@ azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.in
 azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e whl
 azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e sdist
 azure-sdk-for-python\sdk\my_directory\my_library> tox -c ../../../eng/tox/tox.ini -e samples
+azure-sdk-for-python\sdk\my_directory\my_library> tox -c ../../../eng/tox/tox.ini -e apistub
 ```
 A quick description of the five commands above:
 * sphinx: documentation generation using the inline comments written in our code
@@ -121,9 +122,10 @@ A quick description of the five commands above:
 * whl: creates a whl package for installing our package
 * sdist: creates a zipped distribution of our files that the end user could install with pip
 * samples: runs all of the samples in the `samples` directory and verifies they are working correctly
+* apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/master/packages/python-packages/api-stub-generator) tool on your code
 
 ## `devtools_testutils` Package
-The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the `AzureTestCase` object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history) and authenticating clients for test methods.
+The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the [`AzureTestCase`](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L99-L350) object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history) and authenticating clients for test methods.
 
 ## Writing New Tests
 SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-for-python/tools/azure-devtools/src/azure_devtools`](https://pypi.org/project/azure-devtools/). `scenario_tests` is a general, mostly abstracted framework which provides several useful features for writing SDK tests, ie:
@@ -264,32 +266,64 @@ From your terminal run the `pytest` command to run all the tests that you have w
 
 Your update should run smooth and have green dots representing passing tests. Now if you look at the contents of your `tests` directory there should be a new directory called `recording` with four `.yaml` files. Each `yaml` file is a recording for a single test. To run a test in playback mode change the `testsettings_local.cfg` to `live-mode: false` and rerun the tests with the same command. The test infrastructure will use the automatically created `.yaml` recordings to mock the HTTP traffic and run the tests.
 
+## Functional vs. Unit Tests
+
+The test written above is a functional test, it generates HTTP traffic and sends data to the service. Most of our clients have some client-side validation for account names, formatting, or properties that do not generate HTTP traffic. For unit tests, the best practice is to have a separate test class from the `AzureTestCase` class which tests client side validation methods. For example, the `azure-data-tables` library has client-side validation for the table name and properties of the entity, below is an example of how these could be tested:
+
+```python
+import pytest
+from azure.data.tables import TableServiceClient, EntityProperty, EdmType
+
+class TestTablesUnitTest(object):
+
+    def test_invalid_table_name(self):
+        account_name = 'fake_account_name'
+        account_key = 'fake_account_key1234567890'
+        tsc = TableServiceClient(
+            account_url='https://{}.table.core.windows.net/'.format(account_name),
+            credential=account_key
+        )
+
+        invalid_table_name = "bad_table_name" # table name cannot have an '_' character
+
+        with pytest.raises(ValueError):
+            tsc.create_table(invalid_table_name)
+
+    def test_entity_properties(self):
+        ep = EntityProperty('abc', EdmType.STRING)
+        ep = EntityProperty(b'abc', EdmType.BINARY)
+        ep = EntityProperty(1.2345, EdmType.DOUBLE)
+
+        with pytest.raises(ValueError):
+            ep = EntityProperty(2 ** 75, EdmType.Int64) # Tables can only handle integers up to 2 ^ 63
+```
+
+Async tests need to be marked with a `@pytest.mark.asyncio` to be properly handled. For example:
+```python
+import pytest
+from azure.data.tables.aio import TableServiceClient
+
+class TestTablesUnitTest(object):
+
+    @pytest.mark.asyncio
+    async def test_invalid_table_name(self):
+        account_name = 'fake_account_name'
+        account_key = 'fake_account_key1234567890'
+        tsc = TableServiceClient(
+            account_url='https://{}.table.core.windows.net/'.format(account_name),
+            credential=account_key
+        )
+
+        invalid_table_name = "bad_table_name" # table name cannot have an '_' character
+
+        with pytest.raises(ValueError):
+            await tsc.create_table(invalid_table_name)
+```
+
 
 ## More Test Examples
 
 This section will demonstrate how to write tests with the `devtools_testutils` package with a few samples to showcase the features of the test framework.
-
-### Example 1: Basic Recording and Interactions
-
-```python
-import os
-import pytest
-
-from azure.data.tables import TableServiceClient
-from devtools_testutils import AzureTestCase
-
-class ExampleStorageTestCase(AzureTestCase):
-
-    def test_create_table(self):
-        credential = self.get_credential(TableServiceClient)
-        client = self.create_client_from_credential(TableServiceClient, credential, account_url=self.account_url)
-
-        with pytest.raises(ValueError):
-            table_name = "an_invalid_table"
-            created = client.create_table(table_name)
-```
-
-This simple tests that the client verifies a valid table name before sending the HTTP request (Azure Data Tables can only be alphanumeric values). This test will have no recording associated with it.
 
 For more information, refer to the [advanced tests notes][advanced_tests_notes] on more advanced scenarios and additional information.
 

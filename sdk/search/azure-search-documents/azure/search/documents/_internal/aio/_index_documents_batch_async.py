@@ -132,18 +132,15 @@ class IndexDocumentsBatch(object):
         return result
 
     async def enqueue_actions(self, new_actions):
-        # type: (List[IndexAction]) -> None
+        # type: (Union[IndexAction, List[IndexAction]]) -> None
         """Enqueue a list of index actions to index.
         """
-        async with self._lock:
-            self._actions.extend(new_actions)
-
-    async def enqueue_action(self, new_action):
-        # type: (IndexAction) -> None
-        """Enqueue a single index action to index.
-        """
-        async with self._lock:
-            self._actions.append(new_action)
+        if isinstance(new_actions, IndexAction):
+            async with self._lock:
+                self._actions.append(new_actions)
+        else:
+            async with self._lock:
+                self._actions.extend(new_actions)
 
     async def _extend_batch(self, documents, action_type):
         # type: (List[dict], str) -> List[IndexAction]

@@ -16,17 +16,16 @@ interactions:
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
   response:
     body:
-      string: '{"error":{"code":"InvalidArgument","message":"At least one document
-        is missing a Text attribute.","innerError":{"code":"InvalidDocument","message":"Document
+      string: '{"error":{"code":"InvalidRequest","message":"Missing input documents.","innerError":{"code":"InvalidDocument","message":"Document
         text is empty."}}}'
     headers:
-      apim-request-id: b560adf7-776f-4030-9c61-6e88c3540bd2
+      apim-request-id: 8e43234a-f0fc-41eb-be43-21bf47e53a91
       content-type: application/json; charset=utf-8
-      date: Wed, 27 Jan 2021 02:22:22 GMT
+      date: Tue, 02 Feb 2021 04:33:49 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4'
+      x-envoy-upstream-service-time: '3'
     status:
       code: 400
       message: Bad Request

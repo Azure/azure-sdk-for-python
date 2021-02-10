@@ -87,6 +87,7 @@ As of August 2020 the features below are **not supported**.
 
 * Group By queries (in roadmap for 2021)
 * Language Native async i/o (in roadmap for 2021)
+* Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
 * Bulk/Transactional batch processing
 * Direct TCP Mode access
 * Continuation token for cross partitions queries

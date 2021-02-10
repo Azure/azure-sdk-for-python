@@ -1,5 +1,43 @@
 interactions:
 - request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"identity": {"id": "sanitized"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-03-07
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 29 Jan 2021 22:24:21 GMT
+      ms-cv:
+      - 8Dz7rbKlnUyC0X9hMkHkGg.0
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 203ms
+    status:
+      code: 201
+      message: Created
+- request:
     body: null
     headers:
       Accept:
@@ -11,59 +49,23 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2020-07-20-preview2
-  response:
-    body:
-      string: '{"id": "sanitized"}'
-    headers:
-      api-supported-versions:
-      - 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 22 Dec 2020 18:30:23 GMT
-      ms-cv:
-      - eSMH8ZATxUWO5OamG49Wdg.0
-      strict-transport-security:
-      - max-age=2592000
-      transfer-encoding:
-      - chunked
-      x-processing-time:
-      - 811ms
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-communication-identity/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
+    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized?api-version=2021-03-07
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - 2020-01-15-preview3, 2020-07-20-preview1, 2020-07-20-preview2
+      - 2020-07-20-preview2, 2021-03-07
       date:
-      - Tue, 22 Dec 2020 18:30:24 GMT
+      - Fri, 29 Jan 2021 22:24:21 GMT
       ms-cv:
-      - 91lJNqPMP0+hZnY0ay0tXA.0
+      - 573z+Dhr+UOuJm8r75diNA.0
       strict-transport-security:
       - max-age=2592000
       x-processing-time:
-      - 741ms
+      - 479ms
     status:
       code: 204
       message: No Content

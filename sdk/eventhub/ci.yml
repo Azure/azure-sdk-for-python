@@ -42,3 +42,4 @@ extends:
       safeName: azureeventhubcheckpointstoreblob
     - name: azure_mgmt_eventhub
       safeName: azuremgmteventhub
+    SkipPythonVersion: 'pypy3'

@@ -60,10 +60,7 @@ Information about the key concepts on Event Grid, see [Concepts in Azure Event G
 
 ### EventGridPublisherClient
 `EventGridPublisherClient` provides operations to send event data to topic hostname specified during client initialization.
-Either a list or a single instance of CloudEvent/EventGridEvent/CustomEvent can be sent.
-
-### EventGridDeserializer
-`EventGridDeserializer` is used to desrialize an event received.
+CloudEvents and EventGridEvents can be sent either as a single event or a list of respective typed objects or their equivalent dict representations. To send a custom schema, a dict representation can be used. Please have a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples) for detailed examples.
 
 ## Examples
 
@@ -71,8 +68,6 @@ The following sections provide several code snippets covering some of the most c
 
 * [Send an Event Grid Event](#send-an-event-grid-event)
 * [Send a Cloud Event](#send-a-cloud-event)
-* [Consume an eventgrid Event](#consume-an-event-grid-event)
-* [Consume a cloud Event](#consume-a-cloud-event)
 
 ### Send an Event Grid Event
 
@@ -96,7 +91,7 @@ event = EventGridEvent(
 credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(endpoint, credential)
 
-client.send_events(event)
+client.send(event)
 ```
 
 ### Send a Cloud Event
@@ -120,63 +115,7 @@ event = CloudEvent(
 credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(endpoint, credential)
 
-client.send_events(event)
-```
-
-### Consume an Event Grid Event
-
-This example demonstrates consuming and deserializing an eventgrid event.
-
-```Python
-import os
-from azure.eventgrid import EventGridDeserializer
-
-consumer = EventGridDeserializer()
-
-eg_storage_dict = {
-    "id":"bbab625-dc56-4b22-abeb-afcc72e5290c",
-    "subject":"/blobServices/default/containers/oc2d2817345i200097container/blobs/oc2d2817345i20002296blob",
-    "data":{
-        "api":"PutBlockList",
-    },
-    "eventType":"Microsoft.Storage.BlobCreated",
-    "dataVersion":"2.0",
-    "metadataVersion":"1",
-    "eventTime":"2020-08-07T02:28:23.867525Z",
-    "topic":"/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.EventGrid/topics/eventgridegsub"
-}
-
-deserialized_event = consumer.deserialize_eventgrid_events(eg_storage_dict)
-
-# both allow access to raw properties as strings
-time_string = deserialized_event.event_time
-```
-
-### Consume a Cloud Event
-
-This example demonstrates consuming and deserializing a cloud event.
-
-```Python
-import os
-from azure.eventgrid import EventGridDeserializer
-
-consumer = EventGridDeserializer()
-
-cloud_storage_dict = {
-    "id":"a0517898-9fa4-4e70-b4a3-afda1dd68672",
-    "source":"/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Storage/storageAccounts/{storage-account}",
-    "data":{
-        "api":"PutBlockList",
-    },
-    "type":"Microsoft.Storage.BlobCreated",
-    "time":"2020-08-07T01:11:49.765846Z",
-    "specversion":"1.0"
-}
-
-deserialized_event = consumer.deserialize_cloud_events(cloud_storage_dict)
-
-# both allow access to raw properties as strings
-time_string = deserialized_event.time
+client.send(event)
 ```
 
 ## Troubleshooting
@@ -208,9 +147,6 @@ These code samples show common champion scenario operations with the Azure Event
 
 * Publish Custom Events to a topic: [cs1_publish_custom_events_to_a_topic.py][python-eg-sample-customevent]
 * Publish Custom events to a domain topic: [cs2_publish_custom_events_to_a_domain_topic.py][python-eg-sample-customevent-to-domain]
-* Deserialize a System Event: [cs3_consume_system_events.py][python-eg-sample-consume-systemevent]
-* Deserialize a Custom Event: [cs4_consume_custom_events.py][python-eg-sample-consume-customevent]
-* Deserialize a Cloud Event: [cs5_consume_events_using_cloud_events_1.0_schema.py][python-eg-sample-consume-cloudevent]
 * Publish a Cloud Event: [cs6_publish_events_using_cloud_events_1.0_schema.py][python-eg-sample-send-cloudevent]
 
 More samples can be found [here][python-eg-samples].
@@ -246,10 +182,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [python-eg-sample-customevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs1_publish_custom_events_to_a_topic.py
 [python-eg-sample-customevent-to-domain]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs2_publish_custom_events_to_a_domain_topic.py
-[python-eg-sample-consume-systemevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs3_consume_system_events.py
-[python-eg-sample-consume-customevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs4_consume_custom_events.py
 [python-eg-sample-send-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs5_publish_events_using_cloud_events_1.0_schema.py
-[python-eg-sample-consume-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs6_consume_events_using_cloud_events_1.0_schema.py
 [publisher-service-doc]: https://docs.microsoft.com/azure/event-grid/concepts
 
 [cla]: https://cla.microsoft.com
