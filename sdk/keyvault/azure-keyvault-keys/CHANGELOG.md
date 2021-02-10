@@ -1,6 +1,6 @@
 # Release History
 
-## 4.3.2 (2021-2-10)
+## 4.4.0b1 (2021-2-10)
 ### Changed
 - Key Vault API version 7.2-preview is now the default
 

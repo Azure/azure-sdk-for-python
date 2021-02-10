@@ -11,18 +11,6 @@ and other secrets
 create, manage, and deploy public and private SSL/TLS certificates
 - Vault administration ([azure-keyvault-administration](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-administration)) - role-based access control (RBAC), and vault-level backup and restore options
 
-[Azure Key Vault][keyvault_docs] is a cloud service that provides secure storage of keys for encrypting your data. Multiple keys, and 
-multiple versions of the same key, can be kept in the Azure Key Vault. Cryptographic keys in Azure Key Vault are 
-represented as [JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) objects.
-
-[Azure Key Vault Managed HSM][managed_hsm_docs] is a fully-managed, highly-available, single-tenant, standards-compliant
-cloud service that enables you to safeguard cryptographic keys for your cloud applications using FIPS 140-2 Level 3 
-validated HSMs.
-
-The Azure Key Vault keys library client supports RSA keys, Elliptic Curve (EC), and octet sequence (oct) keys, each with
-corresponding support in hardware security modules (HSM). It offers operations to create, retrieve, update, delete, 
-purge, backup, restore, and list the keys and its versions.
-
 [Source code][key_client_src] | [Package (PyPI)][pypi_package_keys] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs] | [Samples][key_samples]
 
 ## Getting started
@@ -79,8 +67,6 @@ names):
   ```
 
   > The `"vaultUri"` property is the `vault_url` used by [KeyClient][key_client_docs]
-
-* (Optional) a [Managed HSM](https://docs.microsoft.com/azure/key-vault/managed-hsm/quick-create-template)
 
 ### Authenticate the client
 This document demonstrates using [DefaultAzureCredential][default_cred_ref]
@@ -149,7 +135,7 @@ key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", creden
 
 ## Key concepts
 ### Keys
-Azure Key Vault can create and store RSA, elliptic curve, and octet sequence (symmetric) keys. All can
+Azure Key Vault can create and store RSA and elliptic curve keys. Both can
 optionally be protected by hardware security modules (HSMs). Azure Key Vault
 can also perform cryptographic operations with them. For more information about
 keys and supported operations and algorithms, see the
@@ -174,15 +160,11 @@ This section contains code snippets covering common tasks:
 ### Create a Key
 [create_rsa_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.create_rsa_key) and
 [create_ec_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.create_ec_key)
-create RSA and elliptic curve keys in the vault, respectively.
-[create_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.create_key)
-creates any key type from the [KeyType](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyType) 
-enum, including octet sequence (symmetric) keys when using a Managed HSM.
-If a key with the same name already exists, a new version
+create RSA and elliptic curve keys in the vault, respectively. If a key with the same name already exists, a new version
 of that key is created.
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.keys import KeyClient, KeyType
+from azure.keyvault.keys import KeyClient
 
 credential = DefaultAzureCredential()
 
@@ -197,12 +179,6 @@ print(rsa_key.key_type)
 ec_key = key_client.create_ec_key("ec-key-name", curve="P-256")
 print(ec_key.name)
 print(ec_key.key_type)
-
-# If using a Managed HSM:
-# Create a symmetric key
-oct_hsm_key = key_client.create_key("oct-key-name", KeyType.oct_hsm)
-print(oct_hsm_key.name)
-print(oct_hsm_key.key_type)
 ```
 
 ### Retrieve a Key
@@ -468,7 +444,6 @@ contact opencode@microsoft.com with any additional questions or comments.
 [recover_purge_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/recover_purge_operations.py
 [recover_purge_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/recover_purge_operations_async.py
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
-[managed_hsm_docs]: https://docs.microsoft.com/azure/key-vault/managed-hsm/
 [pip]: https://pypi.org/project/pip/
 [pypi_package_keys]: https://pypi.org/project/azure-keyvault-keys/
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-keys/docs
