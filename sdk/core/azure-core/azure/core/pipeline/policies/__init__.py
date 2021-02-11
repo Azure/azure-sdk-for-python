@@ -29,7 +29,7 @@ from ._authentication import BearerTokenCredentialPolicy, AzureKeyCredentialPoli
 from ._custom_hook import CustomHookPolicy
 from ._redirect import RedirectPolicy
 from ._retry import RetryPolicy, RetryMode
-from ._distributed_tracing import DistributedTracingPolicy, CloudEventDistributedTracingPolicy
+from ._distributed_tracing import DistributedTracingPolicy
 from ._universal import (
     HeadersPolicy,
     UserAgentPolicy,
@@ -56,7 +56,6 @@ __all__ = [
     'ProxyPolicy',
     'CustomHookPolicy',
     'DistributedTracingPolicy',
-    'CloudEventDistributedTracingPolicy',
     'RequestHistory',
     'HttpLoggingPolicy',
     'RequestIdPolicy',
