@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import base64
-from typing import cast, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
@@ -28,7 +28,7 @@ class AadClientCertificate(object):
         private_key = serialization.load_pem_private_key(pem_bytes, password=password, backend=default_backend())
         if not isinstance(private_key, RSAPrivateKey):
             raise ValueError("CertificateCredential requires an RSA private key because it uses RS256 for signing")
-        self._private_key = cast(RSAPrivateKey, private_key)
+        self._private_key = private_key
 
         cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
         fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
