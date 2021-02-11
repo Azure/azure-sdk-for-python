@@ -49,7 +49,11 @@ IGNORED_SAMPLES = {
         "recv_with_checkpoint_by_time_interval_async.py",
         "recv_with_checkpoint_store_async.py",
         "recv_with_custom_starting_position_async.py",
-        "sample_code_eventhub_async.py"
+        "sample_code_eventhub_async.py",
+        "receive_events_using_checkpoint_store.py",
+        "receive_events_using_checkpoint_store_storage_api_version.py",
+        "receive_events_using_checkpoint_store_async.py",
+        "receive_events_using_checkpoint_store_storage_api_version_async.py"
     ]
 }
 
