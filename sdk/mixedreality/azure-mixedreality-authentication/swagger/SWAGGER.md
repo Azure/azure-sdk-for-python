@@ -10,7 +10,7 @@ npm install -g autorest
 
 ```ps
 cd <swagger-folder>
-autorest README.md
+autorest SWAGGER.md
 ```
 
 ### Code generation settings

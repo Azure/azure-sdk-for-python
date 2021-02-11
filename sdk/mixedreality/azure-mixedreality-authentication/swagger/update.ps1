@@ -1,6 +1,6 @@
 Push-Location $PSScriptRoot
 try {
-    & autorest README.md
+    & autorest SWAGGER.md
 } finally {
     Pop-Location
 }
