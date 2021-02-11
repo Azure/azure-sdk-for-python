@@ -15,7 +15,8 @@ USAGE:
     "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
 """
 import os
-from azure.eventgrid import EventGridPublisherClient, CloudEvent
+from azure.eventgrid import EventGridPublisherClient
+from azure.core.messaging import CloudEvent
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["CLOUD_ACCESS_KEY"]
