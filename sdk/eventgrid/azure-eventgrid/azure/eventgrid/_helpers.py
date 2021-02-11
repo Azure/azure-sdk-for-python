@@ -125,7 +125,7 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         type=cloud_event.type,
         specversion=cloud_event.specversion,
         data=data,
-        data_base64=cloud_event.data_base64 or data_base64,
+        data_base64=data_base64,
         time=cloud_event.time,
         dataschema=cloud_event.dataschema,
         datacontenttype=cloud_event.datacontenttype,

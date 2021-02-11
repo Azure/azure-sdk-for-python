@@ -40,6 +40,5 @@ def test_cloud_custom_dict_with_extensions():
 def test_cloud_custom_dict_base64():
     event = CloudEvent.from_dict(cloud_custom_dict_base64)
     assert event.data == b'cloudevent'
-    assert event.data_base64 == 'Y2xvdWRldmVudA=='
     assert event.specversion == "1.0"
     assert event.__class__ == CloudEvent
