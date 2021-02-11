@@ -13,6 +13,7 @@ from azure.data.tables import (
     TableServiceClient,
     TableClient,
     EdmType,
+    EntityProperty
 )
 from azure.core.exceptions import ResourceExistsError
 
@@ -166,6 +167,42 @@ class StorageTableEntityTest(TableTestCase):
             u"PartitionKey": u"pk",
             u"RowKey": u"rk",
             u"Birthday": u"2020-01-01T12:59:59.0123456Z",
+        }
+        try:
+            with table_client as tc:
+                tc.create_entity(entity)
+                entity = tc.get_entity(
+                    partition_key=entity[u"PartitionKey"],
+                    row_key=entity[u"RowKey"],
+                    entity_hook=MyEntity,
+                )
+
+                assert isinstance(entity.properties["Birthday"], datetime)
+                assert "milliseconds" in entity.keys()
+                assert entity.properties["milliseconds"] == 0.0123456
+                assert entity.properties["Birthday"] == datetime(2020, 1, 1, 12, 59, 59)
+
+        finally:
+            self._tear_down(
+                tables_storage_account_name, tables_primary_storage_account_key
+            )
+
+    # @pytest.mark.xfail
+    @TablesPreparer()
+    def test_custom_entity_edmtype(
+        self, tables_storage_account_name, tables_primary_storage_account_key
+    ):
+        table_client = self._set_up(
+            tables_storage_account_name, tables_primary_storage_account_key
+        )
+
+        entity = {
+            u"PartitionKey": u"pk",
+            u"RowKey": u"rk",
+            u"Birthday": EntityProperty(
+                type=EdmType.DATETIME,
+                value=u"2020-01-01T12:59:59.0123456Z"
+            )
         }
         try:
             with table_client as tc:

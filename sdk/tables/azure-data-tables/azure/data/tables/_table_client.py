@@ -427,7 +427,7 @@ class TableClient(TableClientBase):
 
         :keyword int results_per_page: Number of entities per page in returned ItemPaged
         :keyword select: Specify desired properties of an entity to return certain entities
-        :keywork entity_hook: Callable for custom deserialization
+        :keyword Callable[Mapping] entity_hook: for custom deserialization
         :paramtype select: str or list[str]
         :return: Query of table entities
         :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableEntity]
@@ -443,11 +443,6 @@ class TableClient(TableClientBase):
                 :caption: List all entities held within a table
         """
         entity_hook = kwargs.pop("entity_hook", None)
-        page_iterator_class = TableEntityPropertiesPaged
-        if entity_hook:
-            page_iterator_class = functools.partial(
-                TableEntityPropertiesPaged, entity_hook=entity_hook
-            )
 
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
@@ -460,7 +455,9 @@ class TableClient(TableClientBase):
             table=self.table_name,
             results_per_page=top,
             select=user_select,
-            page_iterator_class=page_iterator_class,
+            page_iterator_class=functools.partial(
+                TableEntityPropertiesPaged, entity_hook=entity_hook
+            ),
         )
 
     @distributed_trace
@@ -475,7 +472,7 @@ class TableClient(TableClientBase):
         :param str filter: Specify a filter to return certain entities
         :keyword int results_per_page: Number of entities per page in return ItemPaged
         :keyword select: Specify desired properties of an entity to return certain entities
-        :keywork entity_hook: Callable for custom deserialization
+        :keyword Callable[Mapping] entity_hook: for custom deserialization
         :paramtype select: str or list[str]
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
@@ -492,11 +489,6 @@ class TableClient(TableClientBase):
                 :caption: Query entities held within a table
         """
         entity_hook = kwargs.pop("entity_hook", None)
-        page_iterator_class = TableEntityPropertiesPaged
-        if entity_hook:
-            page_iterator_class = functools.partial(
-                TableEntityPropertiesPaged, entity_hook=entity_hook
-            )
 
         parameters = kwargs.pop("parameters", None)
         filter = self._parameter_filter_substitution(
@@ -514,7 +506,9 @@ class TableClient(TableClientBase):
             results_per_page=top,
             filter=filter,
             select=user_select,
-            page_iterator_class=page_iterator_class,
+            page_iterator_class=functools.partial(
+                TableEntityPropertiesPaged, entity_hook=entity_hook
+            ),
         )
 
     @distributed_trace

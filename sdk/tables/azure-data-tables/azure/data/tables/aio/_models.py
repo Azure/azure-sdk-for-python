@@ -95,7 +95,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
         self.filter = kwargs.get("filter")
         self.select = kwargs.get("select")
         self.location_mode = None
-        self.entity_hook = kwargs.pop("entity_hook", _convert_to_entity)
+        self.entity_hook = kwargs.pop("entity_hook", None) or _convert_to_entity
 
     async def _get_next_cb(self, continuation_token, **kwargs):
         next_partition_key, next_row_key = _extract_continuation_token(
