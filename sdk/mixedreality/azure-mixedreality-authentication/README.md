@@ -141,7 +141,7 @@ client = MixedRealityStsClient(account_id, account_domain, key_credential)
 token = await client.get_token()
 ```
 
-## Sample Code
+# Examples
 
 These are code samples that show common scenario operations with the Azure Mixed Reality Authentication client library.
 The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations,
