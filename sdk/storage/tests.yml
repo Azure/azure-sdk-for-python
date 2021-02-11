@@ -5,7 +5,7 @@ parameters:
     type: object
     default:
       - azure-storage-blob
-      - azure-storage-changefeed
+      - azure-storage-blob-changefeed
       - azure-storage-queue
       - azure-storage-file-datalake
       - azure-storage-file-share
