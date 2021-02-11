@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Wed, 10 Feb 2021 19:32:35 GMT
+      - Wed, 10 Feb 2021 20:42:56 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -77,15 +77,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 10 Feb 2021 19:32:35 GMT
+      - Wed, 10 Feb 2021 20:42:56 GMT
       ms-cv:
-      - xp5wSjznyUuxsog/ctcTNg.0
+      - yNG8+L4mgES/2SWSBOrQjQ.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 1460ms
+      - 903ms
     status:
       code: 200
       message: OK
