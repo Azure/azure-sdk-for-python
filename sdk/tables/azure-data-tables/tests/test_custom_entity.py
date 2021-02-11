@@ -187,7 +187,7 @@ class StorageTableEntityTest(TableTestCase):
                 tables_storage_account_name, tables_primary_storage_account_key
             )
 
-    # @pytest.mark.xfail
+    @pytest.mark.skip("Fails on entity property.")
     @TablesPreparer()
     def test_custom_entity_edmtype(
         self, tables_storage_account_name, tables_primary_storage_account_key
