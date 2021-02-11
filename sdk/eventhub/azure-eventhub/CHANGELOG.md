@@ -2,6 +2,9 @@
 
 ## 5.3.1 (Unreleased)
 
+**New Features**
+
+- `azure.eventhub.exceptions.EventHubError` and `azure.eventhub.exceptions.OwnershipLostError` now inherit from `azure.core.exceptions.AzureError`.
 
 ## 5.3.0 (2021-02-08)
 
@@ -19,10 +22,6 @@ the identity of the connection endpoint.
 - Updated uAMQP dependency to 1.2.14.
 
 ## 5.2.1 (2021-01-11)
-
-**New Features**
-
-- `azure.eventhub.exceptions.EventHubError` and `azure.eventhub.exceptions.OwnershipLostError` now inherit from `azure.core.exceptions.AzureError`.
 
 **Bug fixes**
 
