@@ -1,5 +1,8 @@
 # Release History
 
+## 4.4.0b3 (Unreleased)
+
+
 ## 4.4.0b2 (2021-2-10)
 ### Fixed
 - API versions older than 7.2-preview no longer raise `ImportError` when
