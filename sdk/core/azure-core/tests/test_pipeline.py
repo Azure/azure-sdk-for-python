@@ -240,30 +240,32 @@ class TestClientRequest(unittest.TestCase):
         data = "Lots of dataaaa"
         request.set_json_body(data)
 
-        self.assertEqual(request.data, json.dumps(data))
-        self.assertEqual(request.headers.get("Content-Length"), "17")
-        self.assertEqual(request.headers.get("Content-Type"), "application/json")
+        assert request.data == json.dumps(data)
+        assert request.headers.get("Content-Length") == "17"
+        assert request.headers.get("Content-Type") == "application/json"
 
     def test_set_json_body_content_type_header(self):
         request = HttpRequest("GET", "/", headers={"Content-Type": "shouldBeMe"})
         data = "Lots of dataaaa"
         request.set_json_body(data)
 
-        self.assertEqual(request.data, json.dumps(data))
-        self.assertEqual(request.headers.get("Content-Length"), "17")
-        self.assertEqual(request.headers.get("Content-Type"), "shouldBeMe")
+        assert request.data == json.dumps(data)
+        assert request.headers.get("Content-Length") == "17"
+        assert request.headers.get("Content-Type") == "shouldBeMe"
 
     def test_request_json_kwarg_no_content_type_header(self):
-        request = HttpRequest("GET", "/", json={"documents": ["hello"]})
+        json_input = {"documents": ["hello"]}
+        request = HttpRequest("GET", "/", json=json_input)
 
-        assert json.loads(request.data)
+        assert json.loads(request.data) == json_input
         assert request.headers.get("Content-Length") == "24"
         assert request.headers.get("Content-Type") == "application/json"
 
     def test_request_json_kwarg_content_type_header(self):
-        request = HttpRequest("GET", "/", headers={"Content-Type": "shouldBeMe"}, json={"documents": ["hello"]})
+        json_input = {"documents": ["hello"]}
+        request = HttpRequest("GET", "/", headers={"Content-Type": "shouldBeMe"}, json=json_input)
 
-        assert json.loads(request.data)
+        assert json.loads(request.data) == json_input
         assert request.headers.get("Content-Length") == "24"
         assert request.headers.get("Content-Type") == "shouldBeMe"
 
