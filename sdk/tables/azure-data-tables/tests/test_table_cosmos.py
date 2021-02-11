@@ -17,6 +17,7 @@ from datetime import (
 
 from devtools_testutils import AzureTestCase
 
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -302,8 +303,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-
-
     @pytest.mark.skip("Cosmos does not support table access policy")
     @CosmosPreparer()
     def test_get_table_acl(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -499,6 +498,42 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("Cosmos does not support table access policy")
+    @CosmosPreparer()
+    def test_azure_sas_credential(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        token = generate_account_sas(
+            tables_cosmos_account_name,
+            tables_primary_cosmos_account_key,
+            ResourceTypes(object=True, container=True, service=True),
+            AccountSasPermissions(read=True, list=True, create=True, delete=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        entity = {
+            u"PartitionKey": u"pk",
+            u"RowKey": u"rk",
+            u"Value": 10,
+        }
+
+        table_name = self._get_table_reference()
+
+        client = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "table"),
+            credential=AzureSasCredential(token)
+        )
+
+        table_client = client.create_table(table_name)
+
+        assert client is not None
+        total = 0
+        for table in client.list_tables():
+            total += 1
+
+        assert total == 1
+
+        assert table_client is not None
+
+        client.delete_table(table_name)
 
 class TestTableUnitTest(TableTestCase):
     tables_cosmos_account_name = "fake_storage_account"

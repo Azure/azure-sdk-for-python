@@ -37,7 +37,7 @@ if TYPE_CHECKING:
         List,
         Type,
         Tuple,
-)
+    )
 
 
 def url_quote(url):

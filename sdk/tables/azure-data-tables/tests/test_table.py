@@ -520,28 +520,39 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
     @TablesPreparer()
     def test_azure_sas_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-
         token = generate_account_sas(
             tables_storage_account_name,
             tables_primary_storage_account_key,
-            ResourceTypes(),
-            AccountSasPermissions(read=True),
+            ResourceTypes(object=True, container=True, service=True),
+            AccountSasPermissions(read=True, list=True, create=True, delete=True),
             datetime.utcnow() + timedelta(hours=1),
         )
+
+        entity = {
+            u"PartitionKey": u"pk",
+            u"RowKey": u"rk",
+            u"Value": 10,
+        }
+
+        table_name = self._get_table_reference()
 
         client = TableServiceClient(
             self.account_url(tables_storage_account_name, "table"),
             credential=AzureSasCredential(token)
         )
 
+        table_client = client.create_table(table_name)
+
         assert client is not None
         total = 0
         for table in client.list_tables():
             total += 1
 
-        assert total
+        assert total == 1
 
+        assert table_client is not None
+
+        client.delete_table(table_name)
 
 class TestTablesUnitTest(TableTestCase):
     tables_storage_account_name = "fake_storage_account"

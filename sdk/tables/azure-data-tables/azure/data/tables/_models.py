@@ -611,11 +611,12 @@ class ResourceTypes(object):
     """
 
     def __init__(
-        self, service=False, object=False
+        self, service=False, object=False, container=False
     ):  # pylint: disable=redefined-builtin
         self.service = service
         self.object = object
-        self._str = ("s" if self.service else "") + ("o" if self.object else "")
+        self.container = container
+        self._str = ("s" if self.service else "") + ("o" if self.object else "") + ("c" if self.container else "")
 
     def __str__(self):
         return self._str
