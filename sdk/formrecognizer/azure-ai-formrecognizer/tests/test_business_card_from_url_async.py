@@ -54,13 +54,6 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
                 poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_authentication_successful_key(self, client):
-        async with client:
-            poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
-            result = await poller.result()
-
-    @FormRecognizerPreparer()
     async def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         async with client:

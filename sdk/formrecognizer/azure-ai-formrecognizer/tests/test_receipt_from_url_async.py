@@ -68,15 +68,6 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
                 result = await poller.result()
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_receipt_url_auth_successful_key(self, client):
-        async with client:
-            poller = await client.begin_recognize_receipts_from_url(
-                self.receipt_url_jpg
-            )
-            result = await poller.result()
-
-    @FormRecognizerPreparer()
     async def test_receipt_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):

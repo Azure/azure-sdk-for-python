@@ -34,15 +34,6 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
                 poller = await client.begin_recognize_business_cards(myfile)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_authentication_successful_key(self, client):
-        with open(self.business_card_jpg, "rb") as fd:
-            myfile = fd.read()
-        async with client:
-            poller = await client.begin_recognize_business_cards(myfile)
-            result = await poller.result()
-
-    @FormRecognizerPreparer()
     async def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
@@ -105,7 +96,6 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_blank_page(self, client):
-
         with open(self.blank_pdf, "rb") as fd:
             blank = fd.read()
         async with client:
@@ -137,7 +127,6 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_auto_detect_unsupported_stream_content(self, client):
-
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
@@ -361,7 +350,6 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_multipage_pdf(self, client):
-
         with open(self.business_card_multipage_pdf, "rb") as fd:
             receipt = fd.read()
 

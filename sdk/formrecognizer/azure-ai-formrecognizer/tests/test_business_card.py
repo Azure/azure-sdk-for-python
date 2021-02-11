@@ -32,14 +32,6 @@ class TestBusinessCard(FormRecognizerTest):
             poller = client.begin_recognize_business_cards(myfile)
 
     @FormRecognizerPreparer()
-    def test_authentication_successful_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with open(self.business_card_jpg, "rb") as fd:
-            myfile = fd.read()
-        poller = client.begin_recognize_business_cards(myfile)
-        result = poller.result()
-
-    @FormRecognizerPreparer()
     def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
