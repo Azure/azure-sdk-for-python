@@ -44,6 +44,7 @@ BOTH_CERTS = (
 
 EC_CERT_PATH = os.path.join(os.path.dirname(__file__), "ec-certificate.pem")
 
+
 def test_non_rsa_key():
     """The credential should raise ValueError when given a cert without an RSA private key"""
     with pytest.raises(ValueError, match=".*RS256.*"):
