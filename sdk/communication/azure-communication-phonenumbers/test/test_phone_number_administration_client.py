@@ -8,7 +8,9 @@ class NewTests(CommunicationTestCase):
         super(NewTests, self).setUp()
         self.phone_number_client = PhoneNumbersClient.from_connection_string(self.connection_str)
         self.recording_processors.extend([
-            BodyReplacerProcessor(),
+            BodyReplacerProcessor(
+                keys=["id", "token", "phoneNumber", "phonenumbers"]
+            ),
             ResponseReplacerProcessor(keys=[self._resource_name])])
 
     def test_list_acquired_phone_numbers(self):
@@ -50,7 +52,7 @@ class NewTests(CommunicationTestCase):
     
     def test_update_phone_number_capabilities(self):
         poller = self.phone_number_client.begin_update_phone_number_capabilities(
-          "+16194895842",
+          "+16194895875",
           PhoneNumberCapabilityValue.OUTBOUND,
           PhoneNumberCapabilityValue.OUTBOUND,
           polling = True
@@ -74,5 +76,5 @@ class NewTests(CommunicationTestCase):
         phone_number_to_buy = search_poller.result()
         purchase_poller = self.phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
         assert purchase_poller.result()
-        release_poller = self.phone_number_client.begin_release_phone_number("+")
+        release_poller = self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_number)
         assert release_poller.status() == 'succeeded'
