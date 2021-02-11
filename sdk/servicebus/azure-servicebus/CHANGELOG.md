@@ -4,7 +4,7 @@
 
 **New Features**
 
-* Added a `body_as_str` method on `ServiceBusMessage` which returns the content of the message as a string.
+* Added a `body_as_str` method on `ServiceBusMessage` and `ServiceBusReceivedMessage` which returns the content of the message as a string.
 
 ## 7.0.1 (2021-01-12)
 
