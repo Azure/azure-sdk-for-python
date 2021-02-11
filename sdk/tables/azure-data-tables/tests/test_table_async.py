@@ -424,6 +424,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         await ts.delete_table(table)
         locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
 
+    @pytest.mark.live_test_only
     @TablesPreparer()
     async def test_azure_sas_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
         token = generate_account_sas(
