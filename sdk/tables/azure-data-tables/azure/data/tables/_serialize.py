@@ -8,6 +8,7 @@ from uuid import UUID
 from datetime import datetime
 from math import isnan
 from enum import Enum
+import six
 import sys
 import uuid
 import isodate
@@ -112,7 +113,12 @@ def _to_entity_bool(value):
 
 
 def _to_entity_datetime(value):
-    return EdmType.DATETIME, _to_utc_datetime(value)
+    try:
+        return EdmType.DATETIME, _to_utc_datetime(value)
+    except AttributeError:
+        if not isinstance(value, six.string_types):
+            raise
+        return EdmType.DATETIME, value
 
 
 def _to_entity_float(value):
