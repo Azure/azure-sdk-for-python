@@ -8,7 +8,9 @@
 
 from enum import Enum
 
-from azure.core.paging import PageIterator, ItemPaged
+from azure.core.paging import PageIterator
+from azure.core.exceptions import HttpResponseError
+from ._generated.models import ArrowField
 
 from ._shared import decode_base64_to_text
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -19,9 +21,6 @@ from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
-from ._generated.models import StorageErrorException
-from ._generated.models import BlobPrefix as GenBlobPrefix
-from ._generated.models import BlobItem
 
 
 class BlobType(str, Enum):
@@ -197,8 +196,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     """
 
     def __init__(self, enabled=False, days=None):
-        self.enabled = enabled
-        self.days = days
+        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
@@ -222,6 +220,8 @@ class StaticWebsite(GeneratedStaticWebsite):
         The default name of the index page under each directory.
     :keyword str error_document404_path:
         The absolute path of the custom 404 page.
+    :keyword str default_index_document_path:
+        Absolute path of the default index page.
     """
 
     def __init__(self, **kwargs):
@@ -229,9 +229,11 @@ class StaticWebsite(GeneratedStaticWebsite):
         if self.enabled:
             self.index_document = kwargs.get('index_document')
             self.error_document404_path = kwargs.get('error_document404_path')
+            self.default_index_document_path = kwargs.get('default_index_document_path')
         else:
             self.index_document = None
             self.error_document404_path = None
+            self.default_index_document_path = None
 
     @classmethod
     def _from_generated(cls, generated):
@@ -241,6 +243,7 @@ class StaticWebsite(GeneratedStaticWebsite):
             enabled=generated.enabled,
             index_document=generated.index_document,
             error_document404_path=generated.error_document404_path,
+            default_index_document_path=generated.default_index_document_path
         )
 
 
@@ -323,6 +326,8 @@ class ContainerProperties(DictMixin):
         self.lease = LeaseProperties(**kwargs)
         self.public_access = kwargs.get('x-ms-blob-public-access')
         self.has_immutability_policy = kwargs.get('x-ms-has-immutability-policy')
+        self.deleted = None
+        self.version = None
         self.has_legal_hold = kwargs.get('x-ms-has-legal-hold')
         self.metadata = kwargs.get('metadata')
         self.encryption_scope = None
@@ -342,6 +347,8 @@ class ContainerProperties(DictMixin):
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
+        props.deleted = generated.deleted
+        props.version = generated.version
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
         props.encryption_scope = ContainerEncryptionScope._from_generated(generated)  #pylint: disable=protected-access
@@ -389,7 +396,7 @@ class ContainerPropertiesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
@@ -435,6 +442,11 @@ class BlobProperties(DictMixin):
         requested a subset of the blob.
     :ivar int append_blob_committed_block_count:
         (For Append Blobs) Number of committed blocks in the blob.
+    :ivar bool is_append_blob_sealed:
+        Indicate if the append blob is sealed or not.
+
+        .. versionadded:: 12.4.0
+
     :ivar int page_blob_sequence_number:
         (For Page Blobs) Sequence number for page blob used for coordinating
         concurrent writes.
@@ -453,6 +465,8 @@ class BlobProperties(DictMixin):
         for at least a month. The archive tier is optimized for storing
         data that is rarely accessed and stored for at least six months
         with flexible latency requirements.
+    :ivar str rehydrate_priority:
+        Indicates the priority with which to rehydrate an archived blob
     :ivar ~datetime.datetime blob_tier_change_time:
         Indicates when the access tier was last changed.
     :ivar bool blob_tier_inferred:
@@ -468,12 +482,48 @@ class BlobProperties(DictMixin):
         Indicates when the blob was created, in UTC.
     :ivar str archive_status:
         Archive status of blob.
+    :ivar str encryption_key_sha256:
+        The SHA-256 hash of the provided encryption key.
+    :ivar str encryption_scope:
+        A predefined encryption scope used to encrypt the data on the service. An encryption
+        scope can be created using the Management API and referenced here by name. If a default
+        encryption scope has been defined at the container, this value will override it if the
+        container-level scope is configured to allow overrides. Otherwise an error will be raised.
+    :ivar bool request_server_encrypted:
+        Whether this blob is encrypted.
+    :ivar list(~azure.storage.blob.ObjectReplicationPolicy) object_replication_source_properties:
+        Only present for blobs that have policy ids and rule ids applied to them.
+
+        .. versionadded:: 12.4.0
+
+    :ivar str object_replication_destination_policy:
+        Represents the Object Replication Policy Id that created this blob.
+
+        .. versionadded:: 12.4.0
+
+    :ivar ~datetime.datetime last_accessed_on:
+        Indicates when the last Read/Write operation was performed on a Blob.
+
+        .. versionadded:: 12.6.0
+
+    :ivar int tag_count:
+        Tags count on this blob.
+
+        .. versionadded:: 12.4.0
+
+    :ivar dict(str, str) tags:
+        Key value pair of tags on this blob.
+
+        .. versionadded:: 12.4.0
+
     """
 
     def __init__(self, **kwargs):
         self.name = kwargs.get('name')
         self.container = None
         self.snapshot = kwargs.get('x-ms-snapshot')
+        self.version_id = kwargs.get('x-ms-version-id')
+        self.is_current_version = kwargs.get('x-ms-is-current-version')
         self.blob_type = BlobType(kwargs['x-ms-blob-type']) if kwargs.get('x-ms-blob-type') else None
         self.metadata = kwargs.get('metadata')
         self.encrypted_metadata = kwargs.get('encrypted_metadata')
@@ -482,12 +532,14 @@ class BlobProperties(DictMixin):
         self.size = kwargs.get('Content-Length')
         self.content_range = kwargs.get('Content-Range')
         self.append_blob_committed_block_count = kwargs.get('x-ms-blob-committed-block-count')
+        self.is_append_blob_sealed = kwargs.get('x-ms-blob-sealed')
         self.page_blob_sequence_number = kwargs.get('x-ms-blob-sequence-number')
         self.server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.copy = CopyProperties(**kwargs)
         self.content_settings = ContentSettings(**kwargs)
         self.lease = LeaseProperties(**kwargs)
         self.blob_tier = kwargs.get('x-ms-access-tier')
+        self.rehydrate_priority = kwargs.get('x-ms-rehydrate-priority')
         self.blob_tier_change_time = kwargs.get('x-ms-access-tier-change-time')
         self.blob_tier_inferred = kwargs.get('x-ms-access-tier-inferred')
         self.deleted = False
@@ -498,187 +550,27 @@ class BlobProperties(DictMixin):
         self.encryption_key_sha256 = kwargs.get('x-ms-encryption-key-sha256')
         self.encryption_scope = kwargs.get('x-ms-encryption-scope')
         self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
-
-    @classmethod
-    def _from_generated(cls, generated):
-        blob = BlobProperties()
-        blob.name = generated.name
-        blob_type = get_enum_value(generated.properties.blob_type)
-        blob.blob_type = BlobType(blob_type) if blob_type else None
-        blob.etag = generated.properties.etag
-        blob.deleted = generated.deleted
-        blob.snapshot = generated.snapshot
-        blob.metadata = generated.metadata.additional_properties if generated.metadata else {}
-        blob.encrypted_metadata = generated.metadata.encrypted if generated.metadata else None
-        blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
-        blob.copy = CopyProperties._from_generated(generated)  # pylint: disable=protected-access
-        blob.last_modified = generated.properties.last_modified
-        blob.creation_time = generated.properties.creation_time
-        blob.content_settings = ContentSettings._from_generated(generated)  # pylint: disable=protected-access
-        blob.size = generated.properties.content_length
-        blob.page_blob_sequence_number = generated.properties.blob_sequence_number
-        blob.server_encrypted = generated.properties.server_encrypted
-        blob.encryption_scope = generated.properties.encryption_scope
-        blob.deleted_time = generated.properties.deleted_time
-        blob.remaining_retention_days = generated.properties.remaining_retention_days
-        blob.blob_tier = generated.properties.access_tier
-        blob.blob_tier_inferred = generated.properties.access_tier_inferred
-        blob.archive_status = generated.properties.archive_status
-        blob.blob_tier_change_time = generated.properties.access_tier_change_time
-        return blob
+        self.object_replication_source_properties = kwargs.get('object_replication_source_properties')
+        self.object_replication_destination_policy = kwargs.get('x-ms-or-policy-id')
+        self.last_accessed_on = kwargs.get('x-ms-last-access-time')
+        self.tag_count = kwargs.get('x-ms-tag-count')
+        self.tags = None
 
 
-class BlobPropertiesPaged(PageIterator):
-    """An Iterable of Blob properties.
+class FilteredBlob(DictMixin):
+    """Blob info from a Filter Blobs API call.
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.BlobProperties)
-    :ivar str container: The container that the blobs are listed from.
-    :ivar str delimiter: A delimiting character used for hierarchy listing.
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str container: The name of the container.
-    :param str prefix: Filters the results to return only blobs whose names
-        begin with the specified prefix.
-    :param int results_per_page: The maximum number of blobs to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
-    :param str delimiter:
-        Used to capture blobs whose names begin with the same substring up to
-        the appearance of the delimiter character. The delimiter may be a single
-        character or a string.
-    :param location_mode: Specifies the location the request should be sent to.
-        This mode only applies for RA-GRS accounts which allow secondary read access.
-        Options include 'primary' or 'secondary'.
+    :ivar name: Blob name
+    :type name: str
+    :ivar container_name: Container name.
+    :type container_name: str
+    :ivar tags: Key value pairs of blob tags.
+    :type tags: Dict[str, str]
     """
-    def __init__(
-            self, command,
-            container=None,
-            prefix=None,
-            results_per_page=None,
-            continuation_token=None,
-            delimiter=None,
-            location_mode=None):
-        super(BlobPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
-        )
-        self._command = command
-        self.service_endpoint = None
-        self.prefix = prefix
-        self.marker = None
-        self.results_per_page = results_per_page
-        self.container = container
-        self.delimiter = delimiter
-        self.current_page = None
-        self.location_mode = location_mode
-
-    def _get_next_cb(self, continuation_token):
-        try:
-            return self._command(
-                prefix=self.prefix,
-                marker=continuation_token or None,
-                maxresults=self.results_per_page,
-                cls=return_context_and_deserialized,
-                use_location=self.location_mode)
-        except StorageErrorException as error:
-            process_storage_error(error)
-
-    def _extract_data_cb(self, get_next_return):
-        self.location_mode, self._response = get_next_return
-        self.service_endpoint = self._response.service_endpoint
-        self.prefix = self._response.prefix
-        self.marker = self._response.marker
-        self.results_per_page = self._response.max_results
-        self.container = self._response.container_name
-        self.current_page = [self._build_item(item) for item in self._response.segment.blob_items]
-
-        return self._response.next_marker or None, self.current_page
-
-    def _build_item(self, item):
-        if isinstance(item, BlobProperties):
-            return item
-        if isinstance(item, BlobItem):
-            blob = BlobProperties._from_generated(item)  # pylint: disable=protected-access
-            blob.container = self.container
-            return blob
-        return item
-
-
-class BlobPrefix(ItemPaged, DictMixin):
-    """An Iterable of Blob properties.
-
-    Returned from walk_blobs when a delimiter is used.
-    Can be thought of as a virtual blob directory.
-
-    :ivar str name: The prefix, or "directory name" of the blob.
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.BlobProperties)
-    :ivar str container: The container that the blobs are listed from.
-    :ivar str delimiter: A delimiting character used for hierarchy listing.
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only blobs whose names
-        begin with the specified prefix.
-    :param int results_per_page: The maximum number of blobs to retrieve per
-        call.
-    :param str marker: An opaque continuation token.
-    :param str delimiter:
-        Used to capture blobs whose names begin with the same substring up to
-        the appearance of the delimiter character. The delimiter may be a single
-        character or a string.
-    :param location_mode: Specifies the location the request should be sent to.
-        This mode only applies for RA-GRS accounts which allow secondary read access.
-        Options include 'primary' or 'secondary'.
-    """
-    def __init__(self, *args, **kwargs):
-        super(BlobPrefix, self).__init__(*args, page_iterator_class=BlobPrefixPaged, **kwargs)
-        self.name = kwargs.get('prefix')
-        self.prefix = kwargs.get('prefix')
-        self.results_per_page = kwargs.get('results_per_page')
-        self.container = kwargs.get('container')
-        self.delimiter = kwargs.get('delimiter')
-        self.location_mode = kwargs.get('location_mode')
-
-
-class BlobPrefixPaged(BlobPropertiesPaged):
-    def __init__(self, *args, **kwargs):
-        super(BlobPrefixPaged, self).__init__(*args, **kwargs)
-        self.name = self.prefix
-
-    def _extract_data_cb(self, get_next_return):
-        continuation_token, _ = super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
-        self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
-        self.current_page = [self._build_item(item) for item in self.current_page]
-        self.delimiter = self._response.delimiter
-
-        return continuation_token, self.current_page
-
-    def _build_item(self, item):
-        item = super(BlobPrefixPaged, self)._build_item(item)
-        if isinstance(item, GenBlobPrefix):
-            return BlobPrefix(
-                self._command,
-                container=self.container,
-                prefix=item.name,
-                results_per_page=self.results_per_page,
-                location_mode=self.location_mode)
-        return item
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.tags = kwargs.get('tags', None)
 
 
 class LeaseProperties(DictMixin):
@@ -930,18 +822,26 @@ class ContainerSasPermissions(object):
     :param bool delete:
         Delete any blob in the container. Note: You cannot grant permissions to
         delete a container with a container SAS. Use an account SAS instead.
+    :param bool delete_previous_version:
+        Delete the previous blob version for the versioning enabled storage account.
     :param bool list:
         List blobs in the container.
+    :param bool tag:
+        Set or get tags on the blobs in the container.
     """
-    def __init__(self, read=False, write=False, delete=False, list=False):  # pylint: disable=redefined-builtin
+    def __init__(self, read=False, write=False, delete=False, list=False, delete_previous_version=False, tag=False):  # pylint: disable=redefined-builtin
         self.read = read
         self.write = write
         self.delete = delete
         self.list = list
+        self.delete_previous_version = delete_previous_version
+        self.tag = tag
         self._str = (('r' if self.read else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
-                     ('l' if self.list else ''))
+                     ('x' if self.delete_previous_version else '') +
+                     ('l' if self.list else '') +
+                     ('t' if self.tag else ''))
 
     def __str__(self):
         return self._str
@@ -963,8 +863,11 @@ class ContainerSasPermissions(object):
         p_write = 'w' in permission
         p_delete = 'd' in permission
         p_list = 'l' in permission
-        parsed = cls(p_read, p_write, p_delete, p_list)
-        parsed._str = permission # pylint: disable = protected-access
+        p_delete_previous_version = 'x' in permission
+        p_tag = 't' in permission
+        parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
+                     delete_previous_version=p_delete_previous_version, tag=p_tag)
+
         return parsed
 
 
@@ -985,19 +888,27 @@ class BlobSasPermissions(object):
         destination of a copy operation within the same account.
     :param bool delete:
         Delete the blob.
+    :param bool delete_previous_version:
+        Delete the previous blob version for the versioning enabled storage account.
+    :param bool tag:
+        Set or get tags on the blob.
     """
     def __init__(self, read=False, add=False, create=False, write=False,
-                 delete=False):
+                 delete=False, delete_previous_version=False, tag=True):
         self.read = read
         self.add = add
         self.create = create
         self.write = write
         self.delete = delete
+        self.delete_previous_version = delete_previous_version
+        self.tag = tag
         self._str = (('r' if self.read else '') +
                      ('a' if self.add else '') +
                      ('c' if self.create else '') +
                      ('w' if self.write else '') +
-                     ('d' if self.delete else ''))
+                     ('d' if self.delete else '') +
+                     ('x' if self.delete_previous_version else '') +
+                     ('t' if self.tag else ''))
 
     def __str__(self):
         return self._str
@@ -1020,9 +931,12 @@ class BlobSasPermissions(object):
         p_create = 'c' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
+        p_delete_previous_version = 'x' in permission
+        p_tag = 't' in permission
 
-        parsed = cls(p_read, p_add, p_create, p_write, p_delete)
-        parsed._str = permission # pylint: disable = protected-access
+        parsed = cls(read=p_read, add=p_add, create=p_create, write=p_write, delete=p_delete,
+                     delete_previous_version=p_delete_previous_version, tag=p_tag)
+
         return parsed
 
 
@@ -1079,7 +993,115 @@ class ContainerEncryptionScope(object):
         if generated.properties.default_encryption_scope:
             scope = cls(
                 generated.properties.default_encryption_scope,
-                prevent_encryption_scope_override=generated.properties.deny_encryption_scope_override or False
+                prevent_encryption_scope_override=generated.properties.prevent_encryption_scope_override or False
             )
             return scope
         return None
+
+
+class DelimitedJsonDialect(object):
+    """Defines the input or output JSON serialization for a blob data query.
+
+    :keyword str delimiter: The line separator character, default value is '\n'
+    """
+
+    def __init__(self, **kwargs):
+        self.delimiter = kwargs.pop('delimiter', '\n')
+
+
+class DelimitedTextDialect(object):
+    """Defines the input or output delimited (CSV) serialization for a blob query request.
+
+    :keyword str delimiter:
+        Column separator, defaults to ','.
+    :keyword str quotechar:
+        Field quote, defaults to '"'.
+    :keyword str lineterminator:
+        Record separator, defaults to '\n'.
+    :keyword str escapechar:
+        Escape char, defaults to empty.
+    :keyword bool has_header:
+        Whether the blob data includes headers in the first line. The default value is False, meaning that the
+        data will be returned inclusive of the first line. If set to True, the data will be returned exclusive
+        of the first line.
+    """
+    def __init__(self, **kwargs):
+        self.delimiter = kwargs.pop('delimiter', ',')
+        self.quotechar = kwargs.pop('quotechar', '"')
+        self.lineterminator = kwargs.pop('lineterminator', '\n')
+        self.escapechar = kwargs.pop('escapechar', "")
+        self.has_header = kwargs.pop('has_header', False)
+
+
+class ArrowDialect(ArrowField):
+    """field of an arrow schema.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param ~azure.storage.blob.ArrowType type: Arrow field type.
+    :keyword str name: The name of the field.
+    :keyword int precision: The precision of the field.
+    :keyword int scale: The scale of the field.
+    """
+    def __init__(self, type, **kwargs):   # pylint: disable=redefined-builtin
+        super(ArrowDialect, self).__init__(type=type, **kwargs)
+
+
+class ArrowType(str, Enum):
+
+    INT64 = "int64"
+    BOOL = "bool"
+    TIMESTAMP_MS = "timestamp[ms]"
+    STRING = "string"
+    DOUBLE = "double"
+    DECIMAL = 'decimal'
+
+
+class ObjectReplicationPolicy(DictMixin):
+    """Policy id and rule ids applied to a blob.
+
+    :ivar str policy_id:
+        Policy id for the blob. A replication policy gets created (policy id) when creating a source/destination pair.
+    :ivar list(~azure.storage.blob.ObjectReplicationRule) rules:
+        Within each policy there may be multiple replication rules.
+        e.g. rule 1= src/container/.pdf to dst/container2/; rule2 = src/container1/.jpg to dst/container3
+    """
+
+    def __init__(self, **kwargs):
+        self.policy_id = kwargs.pop('policy_id', None)
+        self.rules = kwargs.pop('rules', None)
+
+
+class ObjectReplicationRule(DictMixin):
+    """Policy id and rule ids applied to a blob.
+
+    :ivar str rule_id:
+        Rule id.
+    :ivar str status:
+        The status of the rule. It could be "Complete" or "Failed"
+    """
+
+    def __init__(self, **kwargs):
+        self.rule_id = kwargs.pop('rule_id', None)
+        self.status = kwargs.pop('status', None)
+
+
+class BlobQueryError(object):
+    """The error happened during quick query operation.
+
+    :ivar str error:
+        The name of the error.
+    :ivar bool is_fatal:
+        If true, this error prevents further query processing. More result data may be returned,
+        but there is no guarantee that all of the original data will be processed.
+        If false, this error does not prevent further query processing.
+    :ivar str description:
+        A description of the error.
+    :ivar int position:
+        The blob offset at which the error occurred.
+    """
+    def __init__(self, error=None, is_fatal=False, description=None, position=None):
+        self.error = error
+        self.is_fatal = is_fatal
+        self.description = description
+        self.position = position
