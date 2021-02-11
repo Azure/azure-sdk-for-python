@@ -15,7 +15,7 @@ stages:
         ServiceDirectory: keyvault
         BuildTargetingString: ${{ service }}
         JobName: ${{ replace(service, '-', '_') }}
-        ${{ if eq(parameters.service, 'azure-keyvault-keys') }}:
+        ${{ if eq(service, 'azure-keyvault-keys') }}:
           DeployArmTemplate: true
           AllocateResourceGroup: true
         EnvVars:

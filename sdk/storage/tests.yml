@@ -17,9 +17,9 @@ stages:
         JobName: ${{ replace(service, '-', '_') }}
         AllocateResourceGroup: 'false'
         BuildTargetingString: ${{ service }}
-        ${{ if eq(parameters.service, 'azure-storage-file-datalake') }}:
+        ${{ if eq(service, 'azure-storage-file-datalake') }}:
           MaxParallel: 1
-        ${{ if ne(parameters.service, 'azure-storage-file-datalake') }}:
+        ${{ if ne(service, 'azure-storage-file-datalake') }}:
           # All 5 service stages run in parallel, and with no parallel limits the tests may get throttled.
           MaxParallel: 2
         ServiceDirectory: storage
