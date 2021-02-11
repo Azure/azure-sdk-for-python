@@ -92,33 +92,5 @@ def recursive_set_name(root):
         recursive_set_name(child)
 
 
-def create_new_node(package_tuple, packages_root):
-    directory, package_name = package_tuple
-    new_node = ET.Element('package')
-    name = 'sdk' + '.' + directory + '.' + package_name
-    create_default_attribs(new_node, name)
-
-    for package in packages_root.findall('package'):
-
-        if package_name in package.attrib['name']:
-
-            for classes in package:
-
-                if classes[0].tag == "class" and package_name in classes[0].attrib["filename"]:
-                    new_node.append(classes)
-                    break
-
-    ET.ElementTree(new_node).write("temp.xml")
-
-    return new_node
-
-
-def create_default_attribs(node, name):
-    node.set('branch-rate', '0')
-    node.set('complexity', '0')
-    node.set('line-rate', '0.0000')
-    node.set('name', name)
-
-
 if __name__ == "__main__":
     create_coverage_report()
