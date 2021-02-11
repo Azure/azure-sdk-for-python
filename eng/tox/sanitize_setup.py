@@ -92,7 +92,7 @@ def process_requires(setup_py_path):
 
         if not is_required_version_on_pypi(pkg_name, spec):
             old_req = str(req)
-            version = get_version(pkg_name)
+            version = get_version(pkg_name).base_version
             logging.info("Updating version {0} in requirement {1} to dev build version".format(version, old_req))
             new_req = old_req.replace(version, "{}{}".format(version, DEV_BUILD_IDENTIFIER))
             logging.info("New requirement for package {0}: {1}".format(pkg_name, new_req))
