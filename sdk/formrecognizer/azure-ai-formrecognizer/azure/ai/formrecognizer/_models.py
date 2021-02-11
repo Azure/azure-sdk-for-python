@@ -13,6 +13,17 @@ from ._helpers import (
     adjust_confidence,
     get_element
 )
+from ._models_gen import (
+    DateFormField,
+    DictionaryFormField,
+    FloatFormField,
+    IntegerFormField,
+    ListFormField,
+    PhoneNumberFormField,
+    SelectionMarkFormField,
+    StringFormField,
+    TimeFormField
+)
 
 
 def get_bounding_box(field):
@@ -1101,62 +1112,564 @@ class TextStyle(object):
         return "TextStyle(name={}, confidence={})".format(self.name, self.confidence)
 
 
-class SelectionMarkFormField(FormField):
-    def __init__(self, **kwargs):
-        super(SelectionMarkFormField, self).__init__(**kwargs)
-        self.value_type = "selectionMark"
+class WorkPhonesFormField(FormField):
+    """WorkPhonesFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param name: Any object.
+    :type name: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param value:
+    :type value: list[~body_polymorphic.models.StringFormField]
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[StringFormField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WorkPhonesFormField, self).__init__(**kwargs)
+        work_phones = kwargs.get("value", None)
+        self.value_type = 'list'  # type: str
+        self.value = [
+            StringFormField(**work_phone.__dict__ if work_phones else {})
+            for work_phone in work_phones
+        ] if work_phones else []
 
 
-class DateFormField(FormField):
-    def __init__(self, **kwargs):
-        super(DateFormField, self).__init__(**kwargs)
-        self.value_type = "date"
+class WebsitesFormField(FormField):
+    """WebsitesFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param name: Any object.
+    :type name: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param value:
+    :type value: list[~body_polymorphic.models.StringFormField]
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[StringFormField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WebsitesFormField, self).__init__(**kwargs)
+        websites = kwargs.get("value", None)
+        self.value_type = 'list'  # type: str
+        self.value = [
+            StringFormField(**website.__dict__ if websites else {})
+            for website in websites
+        ] if websites else []
 
 
-class TimeFormField(FormField):
-    def __init__(self, **kwargs):
-        super(TimeFormField, self).__init__(**kwargs)
-        self.value_type = "time"
+class OtherPhonesFormField(FormField):
+    """OtherPhonesFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param name: Any object.
+    :type name: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param value:
+    :type value: list[~body_polymorphic.models.StringFormField]
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[StringFormField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OtherPhonesFormField, self).__init__(**kwargs)
+        other_phones = kwargs.get("value", None)
+        self.value_type = 'list'  # type: str
+        self.value = [
+            StringFormField(**other_phone.__dict__ if other_phones else {})
+            for other_phone in other_phones
+        ] if other_phones else []
 
 
-class StringFormField(FormField):
-    def __init__(self, **kwargs):
-        super(StringFormField, self).__init__(**kwargs)
-        self.value_type = "string"
+class MobilePhonesFormField(FormField):
+    """MobilePhonesFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param name: Any object.
+    :type name: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param value:
+    :type value: list[~body_polymorphic.models.StringFormField]
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[StringFormField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MobilePhonesFormField, self).__init__(**kwargs)
+        mobile_phones = kwargs.get("value", None)
+        self.value_type = 'list'  # type: str
+        self.value = [
+            StringFormField(**mobile_phone.__dict__ if mobile_phones else {})
+            for mobile_phone in mobile_phones
+        ] if mobile_phones else []
 
 
-class IntegerFormField(FormField):
-    def __init__(self, **kwargs):
-        super(IntegerFormField, self).__init__(**kwargs)
-        self.value_type = "integer"
+class JobTitlesFormField(FormField):
+    """JobTitlesFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param name: Any object.
+    :type name: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param value:
+    :type value: list[~body_polymorphic.models.StringFormField]
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[StringFormField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(JobTitlesFormField, self).__init__(**kwargs)
+        job_titles = kwargs.get("value", None)
+        self.value_type = 'list'  # type: str
+        self.value = [
+            StringFormField(**job_title.__dict__ if job_titles else {})
+            for job_title in job_titles
+        ] if job_titles else []
 
 
-class FloatFormField(FormField):
-    def __init__(self, **kwargs):
-        super(FloatFormField, self).__init__(**kwargs)
-        self.value_type = "float"
+class EmailsFormField(FormField):
+    """EmailsFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param name: Any object.
+    :type name: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param value:
+    :type value: list[~body_polymorphic.models.StringFormField]
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[StringFormField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EmailsFormField, self).__init__(**kwargs)
+        emails = kwargs.get("value", None)
+        self.value_type = 'list'  # type: str
+        self.value = [
+            StringFormField(**email.__dict__ if emails else {})
+            for email in emails
+        ] if emails else []
 
 
-class DictionaryFormField(FormField):
-    def __init__(self, **kwargs):
-        super(DictionaryFormField, self).__init__(**kwargs)
-        self.value_type = "dictionary"
-        if self.value is None:
-            self.value = {}
+class AddressesFormField(FormField):
+    """AddressesFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param name: Any object.
+    :type name: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param value:
+    :type value: list[~body_polymorphic.models.StringFormField]
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[StringFormField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AddressesFormField, self).__init__(**kwargs)
+        addresses = kwargs.get("value", None)
+        self.value_type = 'list'  # type: str
+        self.value = [
+            StringFormField(**address.__dict__ if addresses else {})
+            for address in addresses
+        ] if addresses else []
 
 
-class ListFormField(FormField):
-    def __init__(self, **kwargs):
-        super(ListFormField, self).__init__(**kwargs)
-        self.value_type = "list"
-        if self.value is None:
-            self.value = []
+class ContactNameFormField(FormField):
+    """ContactNameFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param value: Any object.
+    :type value: object
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param name: Any object.
+    :type name: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param first_name:
+    :type first_name: ~body_polymorphic.models.StringFormField
+    :param last_name:
+    :type last_name: ~body_polymorphic.models.StringFormField
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'object'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'first_name': {'key': 'firstName', 'type': 'StringFormField'},
+        'last_name': {'key': 'lastName', 'type': 'StringFormField'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ContactNameFormField, self).__init__(**kwargs)
+        self.value_type = 'dictionary'  # type: str
+        contact_name = kwargs.get("value", None)
+        first_name = contact_name.get('FirstName', None)
+        last_name = contact_name.get('LastName', None)
+
+        self.first_name = StringFormField(**first_name.__dict__ if first_name else {})
+        self.last_name = StringFormField(**last_name.__dict__ if last_name else {})
 
 
-class PhoneNumberFormField(FormField):
-    def __init__(self, **kwargs):
-        super(PhoneNumberFormField, self).__init__(**kwargs)
-        self.value_type = "phoneNumber"
+class ContactNamesFormField(FormField):
+    """ContactNamesFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param name: Any object.
+    :type name: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param value:
+    :type value: list[~body_polymorphic.models.ContactNameFormField]
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[ContactNameFormField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ContactNamesFormField, self).__init__(**kwargs)
+        contact_names = kwargs.get("value", None)
+        self.value_type = 'list'  # type: str
+        self.value = [
+            ContactNameFormField(**contact_name.__dict__ if contact_names else {})
+            for contact_name in contact_names
+        ] if contact_names else []
+
+
+
+class FaxesFormField(FormField):
+    """FaxesFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param name: Any object.
+    :type name: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param value:
+    :type value: list[~body_polymorphic.models.StringFormField]
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[StringFormField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FaxesFormField, self).__init__(**kwargs)
+        faxes = kwargs.get("value", None)
+        self.value_type = 'list'  # type: str
+        self.value = [
+            StringFormField(**fax.__dict__ if faxes else {})
+            for fax in faxes
+        ] if faxes else []
+
+
+class CompanyNamesFormField(FormField):
+    """CompanyNamesFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param name: Any object.
+    :type name: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param value:
+    :type value: list[~body_polymorphic.models.StringFormField]
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[StringFormField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CompanyNamesFormField, self).__init__(**kwargs)
+        company_names = kwargs.get("value", None)
+        self.value_type = 'list'  # type: str
+        self.value = [
+            StringFormField(**company_name.__dict__ if company_names else {})
+            for company_name in company_names
+        ] if company_names else []
+
+
+class DepartmentsFormField(FormField):
+    """DepartmentsFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param name: Any object.
+    :type name: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param value:
+    :type value: list[~body_polymorphic.models.StringFormField]
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[StringFormField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DepartmentsFormField, self).__init__(**kwargs)
+        departments = kwargs.get("value", None)
+        self.value_type = 'list'  # type: str
+        self.value = [
+            StringFormField(**dept.__dict__ if departments else {})
+            for dept in departments
+        ] if departments else []
 
 
 class RecognizedBusinessCardFields(dict):
@@ -1175,17 +1688,17 @@ class RecognizedBusinessCardFields(dict):
         work_phones = self.get("WorkPhones", None)
         other_phones = self.get("OtherPhones", None)
 
-        self.contact_names = ListFormField(**contact_names.__dict__ if contact_names else {})
-        self.company_names = ListFormField(**company_names.__dict__ if company_names else {})
-        self.departments = ListFormField(**departments.__dict__ if departments else {})
-        self.job_titles = ListFormField(**job_titles.__dict__ if job_titles else {})
-        self.emails = ListFormField(**emails.__dict__ if emails else {})
-        self.websites = ListFormField(**websites.__dict__ if websites else {})
-        self.addresses = ListFormField(**addresses.__dict__ if addresses else {})
-        self.mobile_phones = ListFormField(**mobile_phones.__dict__ if mobile_phones else {})
-        self.faxes = ListFormField(**faxes.__dict__ if faxes else {})
-        self.work_phones = ListFormField(**work_phones.__dict__ if work_phones else {})
-        self.other_phones = ListFormField(**other_phones.__dict__ if other_phones else {})
+        self.contact_names = ContactNamesFormField(**contact_names.__dict__ if contact_names else {})
+        self.company_names = CompanyNamesFormField(**company_names.__dict__ if company_names else {})
+        self.departments = DepartmentsFormField(**departments.__dict__ if departments else {})
+        self.job_titles = JobTitlesFormField(**job_titles.__dict__ if job_titles else {})
+        self.emails = EmailsFormField(**emails.__dict__ if emails else {})
+        self.websites = WebsitesFormField(**websites.__dict__ if websites else {})
+        self.addresses = AddressesFormField(**addresses.__dict__ if addresses else {})
+        self.mobile_phones = MobilePhonesFormField(**mobile_phones.__dict__ if mobile_phones else {})
+        self.faxes = FaxesFormField(**faxes.__dict__ if faxes else {})
+        self.work_phones = WorkPhonesFormField(**work_phones.__dict__ if work_phones else {})
+        self.other_phones = OtherPhonesFormField(**other_phones.__dict__ if other_phones else {})
 
 
 class RecognizedBusinessCard(RecognizedForm):
@@ -1338,6 +1851,112 @@ class RecognizedInvoice(RecognizedForm):
             )[:1024]
 
 
+class ReceiptItemFormField(FormField):
+    """ReceiptItemFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param value: Any object.
+    :type value: object
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param name:
+    :type name: ~body_polymorphic.models.StringFormField
+    :param quantity:
+    :type quantity: ~body_polymorphic.models.FloatFormField
+    :param price:
+    :type price: ~body_polymorphic.models.FloatFormField
+    :param total_price:
+    :type total_price: ~body_polymorphic.models.FloatFormField
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'object'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'StringFormField'},
+        'quantity': {'key': 'quantity', 'type': 'FloatFormField'},
+        'price': {'key': 'price', 'type': 'FloatFormField'},
+        'total_price': {'key': 'totalPrice', 'type': 'FloatFormField'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ReceiptItemFormField, self).__init__(**kwargs)
+        self.value_type = 'dictionary'  # type: str
+        receipt_item = kwargs.get("value", None)
+        name = receipt_item.get('Name', None)
+        quantity = receipt_item.get('Quantity', None)
+        price = receipt_item.get('Price', None)
+        total_price = receipt_item.get('TotalPrice', None)
+
+        self.name = StringFormField(**name.__dict__ if name else {})
+        self.quantity = FloatFormField(**quantity.__dict__ if quantity else {})
+        self.price = FloatFormField(**price.__dict__ if price else {})
+        self.total_price = FloatFormField(**total_price.__dict__ if total_price else {})
+
+
+class ReceiptItemsFormField(FormField):
+    """ReceiptItemsFormField.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value_type: Required. Constant filled by server.  Possible values include: "string",
+     "date", "time", "phoneNumber", "float", "integer", "list", "dictionary", "selectionMark".
+    :type value_type: str or ~body_polymorphic.models.ValueType
+    :param label_data: Any object.
+    :type label_data: object
+    :param value_data: Any object.
+    :type value_data: object
+    :param name: Any object.
+    :type name: object
+    :param confidence: Any object.
+    :type confidence: object
+    :param value:
+    :type value: list[~body_polymorphic.models.ReceiptItemFormField]
+    """
+
+    _validation = {
+        'value_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'label_data': {'key': 'label_data', 'type': 'object'},
+        'value_data': {'key': 'value_data', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'object'},
+        'confidence': {'key': 'confidence', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[ReceiptItemFormField]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ReceiptItemsFormField, self).__init__(**kwargs)
+        receipt_items = kwargs.get("value", None)
+        self.value_type = 'list'  # type: str
+        self.value = [
+            ReceiptItemFormField(**receipt_item.__dict__ if receipt_items else {})
+            for receipt_item in receipt_items
+        ] if receipt_items else []
+
+
 class RecognizedReceiptFields(dict):
 
     def __init__(self, **kwargs):
@@ -1365,7 +1984,7 @@ class RecognizedReceiptFields(dict):
         self.sub_total = FloatFormField(**sub_total.__dict__ if sub_total else {})
         self.tax = FloatFormField(**tax.__dict__ if tax else {})
         self.tip = FloatFormField(**tip.__dict__ if tip else {})
-        self.receipt_items = ListFormField(**receipt_items.__dict__ if receipt_items else {})
+        self.receipt_items = ReceiptItemsFormField(**receipt_items.__dict__ if receipt_items else {})
 
 
 class RecognizedReceipt(RecognizedForm):

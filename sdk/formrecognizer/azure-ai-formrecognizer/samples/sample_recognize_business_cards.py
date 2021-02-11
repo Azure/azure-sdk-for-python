@@ -119,10 +119,10 @@ class RecognizeBusinessCardSample(object):
             print("--------Recognizing business card #{}--------".format(idx+1))
             for contact_name in business_card.fields.contact_names.value:
                 print("Contact First Name: {} has confidence: {}".format(
-                    contact_name.value["FirstName"].value, contact_name.value["FirstName"].confidence
+                    contact_name.first_name.value, contact_name.first_name.confidence
                 ))
                 print("Contact Last Name: {} has confidence: {}".format(
-                    contact_name.value["LastName"].value, contact_name.value["LastName"].confidence
+                    contact_name.last_name.value, contact_name.last_name.confidence
                 ))
             for dept in business_card.fields.departments.value:
                 print("Departments: {} has confidence {}".format(dept.value, dept.confidence))

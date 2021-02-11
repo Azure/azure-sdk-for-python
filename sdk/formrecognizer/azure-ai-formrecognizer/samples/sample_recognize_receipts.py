@@ -114,18 +114,10 @@ class RecognizeReceiptsSample(object):
             print("Receipt items:")
             for idx, item in enumerate(receipt.fields.receipt_items.value):
                 print("...Item #{}".format(idx+1))
-                item_name = item.value.get("Name")
-                if item_name:
-                    print("......Item Name: {} has confidence: {}".format(item_name.value, item_name.confidence))
-                item_quantity = item.value.get("Quantity")
-                if item_quantity:
-                    print("......Item Quantity: {} has confidence: {}".format(item_quantity.value, item_quantity.confidence))
-                item_price = item.value.get("Price")
-                if item_price:
-                    print("......Individual Item Price: {} has confidence: {}".format(item_price.value, item_price.confidence))
-                item_total_price = item.value.get("TotalPrice")
-                if item_total_price:
-                    print("......Total Item Price: {} has confidence: {}".format(item_total_price.value, item_total_price.confidence))
+                print("......Item Name: {} has confidence: {}".format(item.name.value, item.name.confidence))
+                print("......Item Quantity: {} has confidence: {}".format(item.quantity.value, item.quantity.confidence))
+                print("......Individual Item Price: {} has confidence: {}".format(item.price.value, item.price.confidence))
+                print("......Total Item Price: {} has confidence: {}".format(item.total_price.value, item.total_price.confidence))
             print("Subtotal: {} has confidence: {}".format(receipt.fields.sub_total.value, receipt.fields.sub_total.confidence))
             print("Tax: {} has confidence: {}".format(receipt.fields.tax.value, receipt.fields.tax.confidence))
             print("Tip: {} has confidence: {}".format(receipt.fields.tip.value, receipt.fields.tip.confidence))
