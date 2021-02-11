@@ -225,7 +225,7 @@ class HttpRequest(object):
     :type data: bytes or str.
     :keyword json: A JSON serializable object. Serializes your inputted object. Use this
      instead of data if you wish for us to handle json serialization of your object for you.
-    :raises: TypeError
+    :raises: TypeError if you input a non json serializable object through kwarg `json`
     """
 
     def __init__(self, method, url, headers=None, files=None, data=None, **kwargs):
@@ -379,14 +379,14 @@ class HttpRequest(object):
         didn't input any content type headers
 
         :param data: A JSON serializable object
-        :raises: TypeError
+        :raises: TypeError if the object you input is not JSON serializable
         """
         if data is None:
             self.data = None
         else:
             self.data = json.dumps(data)
             self.headers["Content-Length"] = str(len(self.data))
-        if not self.headers.get("content-type"):
+        if not self.headers.get("Content-Type"):
             self.headers["Content-Type"] = "application/json"
         self.files = None
 
