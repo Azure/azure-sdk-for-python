@@ -145,13 +145,14 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
             try:
                 try:
                     import asyncio
+                except ImportError:
+                    fn(test_class_instance, **trimmed_kwargs)
+                else:
                     if asyncio.iscoroutinefunction(fn):
                         loop = asyncio.get_event_loop()
                         loop.run_until_complete(fn(test_class_instance, **trimmed_kwargs))
                     else:
                         fn(test_class_instance, **trimmed_kwargs)
-                except (ImportError, SyntaxError): # ImportError for if asyncio isn't available, syntaxerror on some versions of 2.7
-                    fn(test_class_instance, **trimmed_kwargs)
             finally:
                 # If we use cache we delay deletion for the end.
                 # This won't guarantee deletion order, but it will guarantee everything delayed
