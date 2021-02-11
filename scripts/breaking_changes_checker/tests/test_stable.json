@@ -1,0 +1,2586 @@
+{
+  "azure.storage.queue": {
+    "class_nodes": {
+      "AccessPolicy": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "permission": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "expiry": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "start": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "as_dict": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": true,
+                "param_type": "positional_or_keyword"
+              },
+              "key_transformer": {
+                "default": "attribute_transformer",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "deserialize": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "enable_additional_properties_sending": {
+            "parameters": {},
+            "is_async": false
+          },
+          "from_dict": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key_extractors": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "is_xml_model": {
+            "parameters": {},
+            "is_async": false
+          },
+          "serialize": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "validate": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "start": "start",
+          "expiry": "expiry",
+          "permission": "permission"
+        }
+      },
+      "AccountSasPermissions": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "read": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "write": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "delete": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "list": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "add": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "create": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "update": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "process": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "delete_previous_version": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "from_string": {
+            "parameters": {
+              "permission": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "read": "read",
+          "write": "write",
+          "delete": "delete",
+          "delete_previous_version": "delete_previous_version",
+          "list": "list",
+          "add": "add",
+          "create": "create",
+          "update": "update",
+          "process": "process",
+          "tag": "tag",
+          "filter_by_tags": "filter_by_tags"
+        }
+      },
+      "BinaryBase64DecodePolicy": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "configure": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "require_encryption": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key_encryption_key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resolver": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "decode": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "response": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "require_encryption": "require_encryption",
+          "key_encryption_key": "key_encryption_key",
+          "resolver": "resolver"
+        }
+      },
+      "BinaryBase64EncodePolicy": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "configure": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "require_encryption": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key_encryption_key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resolver": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "encode": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "require_encryption": "require_encryption",
+          "key_encryption_key": "key_encryption_key",
+          "resolver": "resolver"
+        }
+      },
+      "CorsRule": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "allowed_origins": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "allowed_methods": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "as_dict": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": true,
+                "param_type": "positional_or_keyword"
+              },
+              "key_transformer": {
+                "default": "attribute_transformer",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "deserialize": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "enable_additional_properties_sending": {
+            "parameters": {},
+            "is_async": false
+          },
+          "from_dict": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key_extractors": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "is_xml_model": {
+            "parameters": {},
+            "is_async": false
+          },
+          "serialize": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "validate": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "allowed_origins": "allowed_origins",
+          "allowed_methods": "allowed_methods",
+          "allowed_headers": "allowed_headers",
+          "exposed_headers": "exposed_headers",
+          "max_age_in_seconds": "max_age_in_seconds"
+        }
+      },
+      "ExponentialRetry": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "initial_backoff": {
+                "default": 15,
+                "param_type": "positional_or_keyword"
+              },
+              "increment_base": {
+                "default": 3,
+                "param_type": "positional_or_keyword"
+              },
+              "retry_total": {
+                "default": 3,
+                "param_type": "positional_or_keyword"
+              },
+              "retry_to_secondary": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "random_jitter_range": {
+                "default": 3,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "configure_retries": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "request": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "get_backoff_time": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "settings": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "increment": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "settings": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "request": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "response": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "error": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "send": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "request": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "sleep": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "settings": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "transport": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "initial_backoff": "initial_backoff",
+          "increment_base": "increment_base",
+          "random_jitter_range": "random_jitter_range"
+        }
+      },
+      "LinearRetry": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "backoff": {
+                "default": 15,
+                "param_type": "positional_or_keyword"
+              },
+              "retry_total": {
+                "default": 3,
+                "param_type": "positional_or_keyword"
+              },
+              "retry_to_secondary": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "random_jitter_range": {
+                "default": 3,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "configure_retries": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "request": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "get_backoff_time": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "settings": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "increment": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "settings": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "request": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "response": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "error": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "send": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "request": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "sleep": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "settings": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "transport": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "backoff": "backoff",
+          "random_jitter_range": "random_jitter_range"
+        }
+      },
+      "LocationMode": {
+        "type": null,
+        "methods": {},
+        "properties": {}
+      },
+      "Metrics": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "as_dict": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": true,
+                "param_type": "positional_or_keyword"
+              },
+              "key_transformer": {
+                "default": "attribute_transformer",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "deserialize": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "enable_additional_properties_sending": {
+            "parameters": {},
+            "is_async": false
+          },
+          "from_dict": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key_extractors": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "is_xml_model": {
+            "parameters": {},
+            "is_async": false
+          },
+          "serialize": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "validate": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "version": "version",
+          "enabled": "enabled",
+          "include_apis": "include_apis",
+          "retention_policy": "retention_policy"
+        }
+      },
+      "QueueAnalyticsLogging": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "as_dict": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": true,
+                "param_type": "positional_or_keyword"
+              },
+              "key_transformer": {
+                "default": "attribute_transformer",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "deserialize": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "enable_additional_properties_sending": {
+            "parameters": {},
+            "is_async": false
+          },
+          "from_dict": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key_extractors": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "is_xml_model": {
+            "parameters": {},
+            "is_async": false
+          },
+          "serialize": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "validate": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "version": "version",
+          "delete": "delete",
+          "read": "read",
+          "write": "write",
+          "retention_policy": "retention_policy"
+        }
+      },
+      "QueueClient": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "account_url": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "queue_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "credential": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "clear_messages": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "close": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "create_queue": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "delete_message": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "message": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "pop_receipt": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "delete_queue": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "from_connection_string": {
+            "parameters": {
+              "conn_str": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "queue_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "credential": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "from_queue_url": {
+            "parameters": {
+              "queue_url": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "credential": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "get_queue_access_policy": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "get_queue_properties": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "peek_messages": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "max_messages": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "receive_message": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "receive_messages": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "send_message": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "set_queue_access_policy": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "signed_identifiers": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "set_queue_metadata": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "metadata": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "update_message": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "message": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "pop_receipt": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "content": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "queue_name": "queue_name",
+          "message_encode_policy": "message_encode_policy",
+          "message_decode_policy": "message_decode_policy",
+          "version": "version"
+        }
+      },
+      "QueueMessage": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "has_key": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "k": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "items": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "keys": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "values": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "id": "id",
+          "inserted_on": "inserted_on",
+          "expires_on": "expires_on",
+          "dequeue_count": "dequeue_count",
+          "content": "content",
+          "pop_receipt": "pop_receipt",
+          "next_visible_on": "next_visible_on"
+        }
+      },
+      "QueueProperties": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "has_key": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "k": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "items": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "keys": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "values": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "name": "name",
+          "metadata": "metadata",
+          "approximate_message_count": "approximate_message_count"
+        }
+      },
+      "QueueSasPermissions": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "read": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "add": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "update": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "process": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "from_string": {
+            "parameters": {
+              "permission": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "read": "read",
+          "add": "add",
+          "update": "update",
+          "process": "process"
+        }
+      },
+      "QueueServiceClient": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "account_url": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "credential": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "close": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "create_queue": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "metadata": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "delete_queue": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "queue": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "from_connection_string": {
+            "parameters": {
+              "conn_str": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "credential": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "get_queue_client": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "queue": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "get_service_properties": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "get_service_stats": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "list_queues": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "name_starts_with": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "include_metadata": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "set_service_properties": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "analytics_logging": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "hour_metrics": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "minute_metrics": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "cors": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "version": "version"
+        }
+      },
+      "ResourceTypes": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "service": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "container": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "object": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "from_string": {
+            "parameters": {
+              "string": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "service": "service",
+          "container": "container",
+          "object": "object"
+        }
+      },
+      "RetentionPolicy": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "enabled": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "days": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "as_dict": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": true,
+                "param_type": "positional_or_keyword"
+              },
+              "key_transformer": {
+                "default": "attribute_transformer",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "deserialize": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "enable_additional_properties_sending": {
+            "parameters": {},
+            "is_async": false
+          },
+          "from_dict": {
+            "parameters": {
+              "data": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key_extractors": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "is_xml_model": {
+            "parameters": {},
+            "is_async": false
+          },
+          "serialize": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "keep_readonly": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "validate": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "enabled": "enabled",
+          "days": "days"
+        }
+      },
+      "StorageErrorCode": {
+        "type": "Enum",
+        "methods": {},
+        "properties": {
+          "account_already_exists": "account_already_exists",
+          "account_being_created": "account_being_created",
+          "account_is_disabled": "account_is_disabled",
+          "append_position_condition_not_met": "append_position_condition_not_met",
+          "authentication_failed": "authentication_failed",
+          "authorization_failure": "authorization_failure",
+          "blob_already_exists": "blob_already_exists",
+          "blob_archived": "blob_archived",
+          "blob_being_rehydrated": "blob_being_rehydrated",
+          "blob_not_archived": "blob_not_archived",
+          "blob_not_found": "blob_not_found",
+          "blob_overwritten": "blob_overwritten",
+          "blob_tier_inadequate_for_content_length": "blob_tier_inadequate_for_content_length",
+          "block_count_exceeds_limit": "block_count_exceeds_limit",
+          "block_list_too_long": "block_list_too_long",
+          "cannot_change_to_lower_tier": "cannot_change_to_lower_tier",
+          "cannot_delete_file_or_directory": "cannot_delete_file_or_directory",
+          "cannot_verify_copy_source": "cannot_verify_copy_source",
+          "client_cache_flush_delay": "client_cache_flush_delay",
+          "condition_headers_not_supported": "condition_headers_not_supported",
+          "condition_not_met": "condition_not_met",
+          "container_already_exists": "container_already_exists",
+          "container_being_deleted": "container_being_deleted",
+          "container_disabled": "container_disabled",
+          "container_not_found": "container_not_found",
+          "container_quota_downgrade_not_allowed": "container_quota_downgrade_not_allowed",
+          "content_length_larger_than_tier_limit": "content_length_larger_than_tier_limit",
+          "content_length_must_be_zero": "content_length_must_be_zero",
+          "copy_across_accounts_not_supported": "copy_across_accounts_not_supported",
+          "copy_id_mismatch": "copy_id_mismatch",
+          "delete_pending": "delete_pending",
+          "destination_path_is_being_deleted": "destination_path_is_being_deleted",
+          "directory_not_empty": "directory_not_empty",
+          "empty_metadata_key": "empty_metadata_key",
+          "feature_version_mismatch": "feature_version_mismatch",
+          "file_lock_conflict": "file_lock_conflict",
+          "file_system_already_exists": "file_system_already_exists",
+          "file_system_being_deleted": "file_system_being_deleted",
+          "file_system_not_found": "file_system_not_found",
+          "incremental_copy_blob_mismatch": "incremental_copy_blob_mismatch",
+          "incremental_copy_of_eralier_version_snapshot_not_allowed": "incremental_copy_of_eralier_version_snapshot_not_allowed",
+          "incremental_copy_source_must_be_snapshot": "incremental_copy_source_must_be_snapshot",
+          "infinite_lease_duration_required": "infinite_lease_duration_required",
+          "insufficient_account_permissions": "insufficient_account_permissions",
+          "internal_error": "internal_error",
+          "invalid_authentication_info": "invalid_authentication_info",
+          "invalid_blob_or_block": "invalid_blob_or_block",
+          "invalid_blob_tier": "invalid_blob_tier",
+          "invalid_blob_type": "invalid_blob_type",
+          "invalid_block_id": "invalid_block_id",
+          "invalid_block_list": "invalid_block_list",
+          "invalid_destination_path": "invalid_destination_path",
+          "invalid_file_or_directory_path_name": "invalid_file_or_directory_path_name",
+          "invalid_flush_position": "invalid_flush_position",
+          "invalid_header_value": "invalid_header_value",
+          "invalid_http_verb": "invalid_http_verb",
+          "invalid_input": "invalid_input",
+          "invalid_marker": "invalid_marker",
+          "invalid_md5": "invalid_md5",
+          "invalid_metadata": "invalid_metadata",
+          "invalid_operation": "invalid_operation",
+          "invalid_page_range": "invalid_page_range",
+          "invalid_property_name": "invalid_property_name",
+          "invalid_query_parameter_value": "invalid_query_parameter_value",
+          "invalid_range": "invalid_range",
+          "invalid_rename_source_path": "invalid_rename_source_path",
+          "invalid_resource_name": "invalid_resource_name",
+          "invalid_source_blob_type": "invalid_source_blob_type",
+          "invalid_source_blob_url": "invalid_source_blob_url",
+          "invalid_source_or_destination_resource_type": "invalid_source_or_destination_resource_type",
+          "invalid_source_uri": "invalid_source_uri",
+          "invalid_uri": "invalid_uri",
+          "invalid_version_for_page_blob_operation": "invalid_version_for_page_blob_operation",
+          "invalid_xml_document": "invalid_xml_document",
+          "invalid_xml_node_value": "invalid_xml_node_value",
+          "lease_already_broken": "lease_already_broken",
+          "lease_already_present": "lease_already_present",
+          "lease_id_mismatch_with_blob_operation": "lease_id_mismatch_with_blob_operation",
+          "lease_id_mismatch_with_container_operation": "lease_id_mismatch_with_container_operation",
+          "lease_id_mismatch_with_lease_operation": "lease_id_mismatch_with_lease_operation",
+          "lease_id_missing": "lease_id_missing",
+          "lease_is_already_broken": "lease_is_already_broken",
+          "lease_is_breaking_and_cannot_be_acquired": "lease_is_breaking_and_cannot_be_acquired",
+          "lease_is_breaking_and_cannot_be_changed": "lease_is_breaking_and_cannot_be_changed",
+          "lease_is_broken_and_cannot_be_renewed": "lease_is_broken_and_cannot_be_renewed",
+          "lease_lost": "lease_lost",
+          "lease_name_mismatch": "lease_name_mismatch",
+          "lease_not_present_with_blob_operation": "lease_not_present_with_blob_operation",
+          "lease_not_present_with_container_operation": "lease_not_present_with_container_operation",
+          "lease_not_present_with_lease_operation": "lease_not_present_with_lease_operation",
+          "max_blob_size_condition_not_met": "max_blob_size_condition_not_met",
+          "md5_mismatch": "md5_mismatch",
+          "message_not_found": "message_not_found",
+          "message_too_large": "message_too_large",
+          "metadata_too_large": "metadata_too_large",
+          "missing_content_length_header": "missing_content_length_header",
+          "missing_required_header": "missing_required_header",
+          "missing_required_query_parameter": "missing_required_query_parameter",
+          "missing_required_xml_node": "missing_required_xml_node",
+          "multiple_condition_headers_not_supported": "multiple_condition_headers_not_supported",
+          "no_authentication_information": "no_authentication_information",
+          "no_pending_copy_operation": "no_pending_copy_operation",
+          "operation_not_allowed_on_incremental_copy_blob": "operation_not_allowed_on_incremental_copy_blob",
+          "operation_timed_out": "operation_timed_out",
+          "out_of_range_input": "out_of_range_input",
+          "out_of_range_query_parameter_value": "out_of_range_query_parameter_value",
+          "parent_not_found": "parent_not_found",
+          "path_already_exists": "path_already_exists",
+          "path_conflict": "path_conflict",
+          "path_not_found": "path_not_found",
+          "pending_copy_operation": "pending_copy_operation",
+          "pop_receipt_mismatch": "pop_receipt_mismatch",
+          "previous_snapshot_cannot_be_newer": "previous_snapshot_cannot_be_newer",
+          "previous_snapshot_not_found": "previous_snapshot_not_found",
+          "previous_snapshot_operation_not_supported": "previous_snapshot_operation_not_supported",
+          "queue_already_exists": "queue_already_exists",
+          "queue_being_deleted": "queue_being_deleted",
+          "queue_disabled": "queue_disabled",
+          "queue_not_empty": "queue_not_empty",
+          "queue_not_found": "queue_not_found",
+          "read_only_attribute": "read_only_attribute",
+          "rename_destination_parent_path_not_found": "rename_destination_parent_path_not_found",
+          "request_body_too_large": "request_body_too_large",
+          "request_url_failed_to_parse": "request_url_failed_to_parse",
+          "resource_already_exists": "resource_already_exists",
+          "resource_not_found": "resource_not_found",
+          "resource_type_mismatch": "resource_type_mismatch",
+          "sequence_number_condition_not_met": "sequence_number_condition_not_met",
+          "sequence_number_increment_too_large": "sequence_number_increment_too_large",
+          "server_busy": "server_busy",
+          "share_already_exists": "share_already_exists",
+          "share_being_deleted": "share_being_deleted",
+          "share_disabled": "share_disabled",
+          "share_has_snapshots": "share_has_snapshots",
+          "share_not_found": "share_not_found",
+          "share_snapshot_count_exceeded": "share_snapshot_count_exceeded",
+          "share_snapshot_in_progress": "share_snapshot_in_progress",
+          "share_snapshot_operation_not_supported": "share_snapshot_operation_not_supported",
+          "sharing_violation": "sharing_violation",
+          "snaphot_operation_rate_exceeded": "snaphot_operation_rate_exceeded",
+          "snapshot_count_exceeded": "snapshot_count_exceeded",
+          "snapshots_present": "snapshots_present",
+          "source_condition_not_met": "source_condition_not_met",
+          "source_path_is_being_deleted": "source_path_is_being_deleted",
+          "source_path_not_found": "source_path_not_found",
+          "system_in_use": "system_in_use",
+          "target_condition_not_met": "target_condition_not_met",
+          "unauthorized_blob_overwrite": "unauthorized_blob_overwrite",
+          "unsupported_header": "unsupported_header",
+          "unsupported_http_verb": "unsupported_http_verb",
+          "unsupported_query_parameter": "unsupported_query_parameter",
+          "unsupported_rest_version": "unsupported_rest_version",
+          "unsupported_xml_node": "unsupported_xml_node"
+        }
+      },
+      "TextBase64DecodePolicy": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "configure": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "require_encryption": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key_encryption_key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resolver": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "decode": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "response": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "require_encryption": "require_encryption",
+          "key_encryption_key": "key_encryption_key",
+          "resolver": "resolver"
+        }
+      },
+      "TextBase64EncodePolicy": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "configure": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "require_encryption": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key_encryption_key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resolver": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "encode": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false
+          }
+        },
+        "properties": {
+          "require_encryption": "require_encryption",
+          "key_encryption_key": "key_encryption_key",
+          "resolver": "resolver"
+        }
+      }
+    },
+    "function_nodes": {
+      "generate_account_sas": {
+        "parameters": {
+          "account_name": {
+            "default": null,
+            "param_type": "positional_or_keyword"
+          },
+          "account_key": {
+            "default": null,
+            "param_type": "positional_or_keyword"
+          },
+          "resource_types": {
+            "default": null,
+            "param_type": "positional_or_keyword"
+          },
+          "permission": {
+            "default": null,
+            "param_type": "positional_or_keyword"
+          },
+          "expiry": {
+            "default": null,
+            "param_type": "positional_or_keyword"
+          },
+          "start": {
+            "default": "none",
+            "param_type": "positional_or_keyword"
+          },
+          "ip": {
+            "default": "none",
+            "param_type": "positional_or_keyword"
+          },
+          "kwargs": {
+            "default": null,
+            "param_type": "var_keyword"
+          }
+        },
+        "is_async": false
+      },
+      "generate_queue_sas": {
+        "parameters": {
+          "account_name": {
+            "default": null,
+            "param_type": "positional_or_keyword"
+          },
+          "queue_name": {
+            "default": null,
+            "param_type": "positional_or_keyword"
+          },
+          "account_key": {
+            "default": null,
+            "param_type": "positional_or_keyword"
+          },
+          "permission": {
+            "default": "none",
+            "param_type": "positional_or_keyword"
+          },
+          "expiry": {
+            "default": "none",
+            "param_type": "positional_or_keyword"
+          },
+          "start": {
+            "default": "none",
+            "param_type": "positional_or_keyword"
+          },
+          "policy_id": {
+            "default": "none",
+            "param_type": "positional_or_keyword"
+          },
+          "ip": {
+            "default": "none",
+            "param_type": "positional_or_keyword"
+          },
+          "kwargs": {
+            "default": null,
+            "param_type": "var_keyword"
+          }
+        },
+        "is_async": false
+      }
+    }
+  },
+  "azure.storage.queue.aio": {
+    "class_nodes": {
+      "QueueClient": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "account_url": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "queue_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "credential": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "clear_messages": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "close": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "create_queue": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "delete_message": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "message": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "pop_receipt": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "delete_queue": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "from_connection_string": {
+            "parameters": {
+              "conn_str": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "queue_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "credential": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "from_queue_url": {
+            "parameters": {
+              "queue_url": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "credential": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "get_queue_access_policy": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "get_queue_properties": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "peek_messages": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "max_messages": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "receive_message": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "receive_messages": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "send_message": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "content": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "set_queue_access_policy": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "signed_identifiers": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "set_queue_metadata": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "metadata": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "update_message": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "message": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "pop_receipt": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "content": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          }
+        },
+        "properties": {
+          "version": "version"
+        }
+      },
+      "QueueServiceClient": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "account_url": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "credential": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "close": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "create_queue": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "metadata": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "delete_queue": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "queue": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "from_connection_string": {
+            "parameters": {
+              "conn_str": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "credential": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "get_queue_client": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "queue": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "get_service_properties": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "get_service_stats": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          },
+          "list_queues": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "name_starts_with": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "include_metadata": {
+                "default": false,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false
+          },
+          "set_service_properties": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "analytics_logging": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "hour_metrics": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "minute_metrics": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "cors": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": true
+          }
+        },
+        "properties": {
+          "version": "version"
+        }
+      }
+    },
+    "function_nodes": {}
+  }
+}

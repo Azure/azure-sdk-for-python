@@ -17,9 +17,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&opinionMining=true&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/sentiment?showStats=false&opinionMining=true&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"0","sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"offset":0,"length":25,"text":"The
@@ -33,16 +33,16 @@ interactions:
         rooms but bathrooms were old and the toilet was dirty when we arrived.","aspects":[{"sentiment":"positive","confidenceScores":{"positive":1.0,"negative":0.0},"offset":5,"length":5,"text":"rooms","relations":[{"relationType":"opinion","ref":"#/documents/5/sentences/0/opinions/0"}]},{"sentiment":"negative","confidenceScores":{"positive":0.0,"negative":1.0},"offset":15,"length":9,"text":"bathrooms","relations":[{"relationType":"opinion","ref":"#/documents/5/sentences/0/opinions/1"}]},{"sentiment":"negative","confidenceScores":{"positive":0.0,"negative":1.0},"offset":42,"length":6,"text":"toilet","relations":[{"relationType":"opinion","ref":"#/documents/5/sentences/0/opinions/2"}]}],"opinions":[{"sentiment":"positive","confidenceScores":{"positive":1.0,"negative":0.0},"offset":0,"length":4,"text":"nice","isNegated":false},{"sentiment":"negative","confidenceScores":{"positive":0.0,"negative":1.0},"offset":30,"length":3,"text":"old","isNegated":false},{"sentiment":"negative","confidenceScores":{"positive":0.0,"negative":1.0},"offset":53,"length":5,"text":"dirty","isNegated":false}]}],"warnings":[]},{"id":"6","sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.63,"negative":0.34},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.63,"negative":0.34},"offset":0,"length":19,"text":"The
         toilet smelled.","aspects":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"negative":0.99},"offset":4,"length":6,"text":"toilet","relations":[{"relationType":"opinion","ref":"#/documents/6/sentences/0/opinions/0"}]}],"opinions":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"negative":0.99},"offset":11,"length":7,"text":"smelled","isNegated":false}]}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 4e858215-6f6c-436c-b10e-0c4af6fd2876
+      apim-request-id: 389ae37e-fcc6-41d0-8a03-956d557a1b3a
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=7
-      date: Thu, 19 Nov 2020 21:29:57 GMT
+      date: Wed, 27 Jan 2021 02:24:41 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '120'
+      x-envoy-upstream-service-time: '1039'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.2/sentiment?showStats=false&opinionMining=true&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/sentiment?showStats=false&opinionMining=true&stringIndexType=UnicodeCodePoint
 version: 1

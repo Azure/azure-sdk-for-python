@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class AutoscaleSettingsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class AutoscaleSettingsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AutoscaleSettingResourceCollection"]
+        # type: (...) -> Iterable["_models.AutoscaleSettingResourceCollection"]
         """Lists the autoscale settings for a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -60,7 +60,7 @@ class AutoscaleSettingsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2015_04_01.models.AutoscaleSettingResourceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutoscaleSettingResourceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutoscaleSettingResourceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -106,7 +106,7 @@ class AutoscaleSettingsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -121,10 +121,10 @@ class AutoscaleSettingsOperations(object):
         self,
         resource_group_name,  # type: str
         autoscale_setting_name,  # type: str
-        parameters,  # type: "models.AutoscaleSettingResource"
+        parameters,  # type: "_models.AutoscaleSettingResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AutoscaleSettingResource"
+        # type: (...) -> "_models.AutoscaleSettingResource"
         """Creates or updates an autoscale setting.
 
         :param resource_group_name: The name of the resource group.
@@ -138,7 +138,7 @@ class AutoscaleSettingsOperations(object):
         :rtype: ~$(python-base-namespace).v2015_04_01.models.AutoscaleSettingResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutoscaleSettingResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutoscaleSettingResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -174,7 +174,7 @@ class AutoscaleSettingsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -238,7 +238,7 @@ class AutoscaleSettingsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -252,7 +252,7 @@ class AutoscaleSettingsOperations(object):
         autoscale_setting_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AutoscaleSettingResource"
+        # type: (...) -> "_models.AutoscaleSettingResource"
         """Gets an autoscale setting.
 
         :param resource_group_name: The name of the resource group.
@@ -264,7 +264,7 @@ class AutoscaleSettingsOperations(object):
         :rtype: ~$(python-base-namespace).v2015_04_01.models.AutoscaleSettingResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutoscaleSettingResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutoscaleSettingResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -295,7 +295,7 @@ class AutoscaleSettingsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AutoscaleSettingResource', pipeline_response)
@@ -310,10 +310,10 @@ class AutoscaleSettingsOperations(object):
         self,
         resource_group_name,  # type: str
         autoscale_setting_name,  # type: str
-        autoscale_setting_resource,  # type: "models.AutoscaleSettingResourcePatch"
+        autoscale_setting_resource,  # type: "_models.AutoscaleSettingResourcePatch"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AutoscaleSettingResource"
+        # type: (...) -> "_models.AutoscaleSettingResource"
         """Updates an existing AutoscaleSettingsResource. To update other fields use the CreateOrUpdate
         method.
 
@@ -328,7 +328,7 @@ class AutoscaleSettingsOperations(object):
         :rtype: ~$(python-base-namespace).v2015_04_01.models.AutoscaleSettingResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutoscaleSettingResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutoscaleSettingResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -364,7 +364,7 @@ class AutoscaleSettingsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AutoscaleSettingResource', pipeline_response)
@@ -379,7 +379,7 @@ class AutoscaleSettingsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AutoscaleSettingResourceCollection"]
+        # type: (...) -> Iterable["_models.AutoscaleSettingResourceCollection"]
         """Lists the autoscale settings for a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -387,7 +387,7 @@ class AutoscaleSettingsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2015_04_01.models.AutoscaleSettingResourceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutoscaleSettingResourceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutoscaleSettingResourceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -432,7 +432,7 @@ class AutoscaleSettingsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

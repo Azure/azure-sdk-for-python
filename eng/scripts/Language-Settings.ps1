@@ -1,4 +1,5 @@
 $Language = "python"
+$LanguageDisplayName = "Python"
 $PackageRepository = "PyPI"
 $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
@@ -12,11 +13,21 @@ function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
   {
     $setupLocation = $pkgPath.Replace('\','/')
     pushd $RepoRoot
-    $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import parse_setup; obj=parse_setup('$setupLocation'); print('{0},{1}'.format(obj[0], obj[1]));") -split ","
+    $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import get_package_properties; obj=get_package_properties('$setupLocation'); print('{0},{1},{2}'.format(obj[0], obj[1], obj[2]));") -split ","
     popd
     if (($setupProps -ne $null) -and ($setupProps[0] -eq $pkgName))
     {
-      return [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceDirectory)
+      $pkgProp = [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceDirectory)
+      if ($pkgName -match "mgmt")
+      {
+        $pkgProp.SdkType = "mgmt"
+      }
+      else
+      {
+        $pkgProp.SdkType = "client"
+      }
+      $pkgProp.IsNewSdk = $setupProps[3]
+      return $pkgProp
     }
   }
   return $null
@@ -54,6 +65,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
 
   $pkgId = $matches["package"]
+  $docsReadMeName = $pkgId -replace "^azure-" , ""
   $pkgVersion = $matches["versionstring"]
 
   $workFolder = "$workingDirectory$($pkg.Basename)"
@@ -84,6 +96,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
     Deployable     = $forceCreate -or !(IsPythonPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
+    DocsReadMeName = $docsReadMeName
   }
 }
 
@@ -225,4 +238,18 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
   }
   pip install -r "$EngDir/versioning/requirements.txt" -q -I
   python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceDirectory --release-date $ReleaseDate
+}
+
+function GetExistingPackageVersions ($PackageName, $GroupId=$null)
+{
+  try
+  {
+    $existingVersion = Invoke-RestMethod -Method GET -Uri "https://pypi.python.org/pypi/${PackageName}/json"
+    return ($existingVersion.releases | Get-Member -MemberType NoteProperty).Name
+  }
+  catch
+  {
+    LogError "Failed to retrieve package versions. `n$_"
+    return $null
+  }
 }

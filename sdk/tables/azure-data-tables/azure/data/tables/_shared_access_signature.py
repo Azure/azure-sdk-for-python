@@ -176,7 +176,7 @@ class _SharedAccessHelper(object):
     def add_resource(self, resource):
         self._add_query(QueryStringConstants.SIGNED_RESOURCE, resource)
 
-    def add_id(self, id):  # pylint:disable=W0622
+    def add_id(self, id):  # pylint: disable=redefined-builtin
         self._add_query(QueryStringConstants.SIGNED_IDENTIFIER, id)
 
     def add_account(self, services, resource_types):
@@ -222,7 +222,7 @@ class _SharedAccessHelper(object):
             + get_value_to_append(QueryStringConstants.SIGNED_VERSION)
         )
 
-        if service == "blob" or service == "file":  # pylint:disable=R1714
+        if service in ["blob", "file"]:
             string_to_sign += (
                 get_value_to_append(QueryStringConstants.SIGNED_CACHE_CONTROL)
                 + get_value_to_append(QueryStringConstants.SIGNED_CONTENT_DISPOSITION)

@@ -1626,15 +1626,15 @@ class MediaGraphSignalGateProcessor(MediaGraphProcessor):
     :param activation_evaluation_window: The period of time over which the gate gathers input
      events before evaluating them.
     :type activation_evaluation_window: str
-    :param activation_signal_offset: Required. Signal offset once the gate is activated (can be
-     negative). It is an offset between the time the event is received, and the timestamp of the
-     first media sample (eg. video frame) that is allowed through by the gate.
+    :param activation_signal_offset: Signal offset once the gate is activated (can be negative). It
+     is an offset between the time the event is received, and the timestamp of the first media
+     sample (eg. video frame) that is allowed through by the gate.
     :type activation_signal_offset: str
-    :param minimum_activation_time: Required. The minimum period for which the gate remains open in
-     the absence of subsequent triggers (events).
+    :param minimum_activation_time: The minimum period for which the gate remains open in the
+     absence of subsequent triggers (events).
     :type minimum_activation_time: str
-    :param maximum_activation_time: Required. The maximum period for which the gate remains open in
-     the presence of subsequent events.
+    :param maximum_activation_time: The maximum period for which the gate remains open in the
+     presence of subsequent events.
     :type maximum_activation_time: str
     """
 
@@ -1642,9 +1642,6 @@ class MediaGraphSignalGateProcessor(MediaGraphProcessor):
         'type': {'required': True},
         'name': {'required': True},
         'inputs': {'required': True},
-        'activation_signal_offset': {'required': True},
-        'minimum_activation_time': {'required': True},
-        'maximum_activation_time': {'required': True},
     }
 
     _attribute_map = {
@@ -1664,9 +1661,9 @@ class MediaGraphSignalGateProcessor(MediaGraphProcessor):
         super(MediaGraphSignalGateProcessor, self).__init__(**kwargs)
         self.type = '#Microsoft.Media.MediaGraphSignalGateProcessor'  # type: str
         self.activation_evaluation_window = kwargs.get('activation_evaluation_window', None)
-        self.activation_signal_offset = kwargs['activation_signal_offset']
-        self.minimum_activation_time = kwargs['minimum_activation_time']
-        self.maximum_activation_time = kwargs['maximum_activation_time']
+        self.activation_signal_offset = kwargs.get('activation_signal_offset', None)
+        self.minimum_activation_time = kwargs.get('minimum_activation_time', None)
+        self.maximum_activation_time = kwargs.get('maximum_activation_time', None)
 
 
 class MediaGraphSystemData(msrest.serialization.Model):

@@ -1,5 +1,47 @@
 # Release History
 
+## 10.0.0 (2021-01-19)
+
+**Features**
+
+  - Model ProxyResource has a new parameter system_data
+  - Model OriginGroup has a new parameter system_data
+  - Model Endpoint has a new parameter system_data
+  - Model EdgeNode has a new parameter system_data
+  - Model Origin has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+  - Model Profile has a new parameter system_data
+  - Model Profile has a new parameter frontdoor_id
+  - Model CdnWebApplicationFirewallPolicy has a new parameter system_data
+  - Model CustomDomain has a new parameter system_data
+  - Added operation group AFDOriginsOperations
+  - Added operation group AFDProfilesOperations
+  - Added operation group AFDEndpointsOperations
+  - Added operation group RoutesOperations
+  - Added operation group LogAnalyticsOperations
+  - Added operation group RulesOperations
+  - Added operation group ValidateOperations
+  - Added operation group AFDOriginGroupsOperations
+  - Added operation group SecretsOperations
+  - Added operation group SecurityPoliciesOperations
+  - Added operation group AFDCustomDomainsOperations
+  - Added operation group RuleSetsOperations
+
+**Breaking changes**
+
+  - Parameter odata_type of model UrlSigningActionParameters is now required
+  - Operation PoliciesOperations.begin_update has a new signature
+  - Operation EndpointsOperations.validate_custom_domain has a new signature
+  - Operation EndpointsOperations.begin_load_content has a new signature
+  - Operation EndpointsOperations.begin_purge_content has a new signature
+  - Operation ProfilesOperations.begin_update has a new signature
+  - Operation CdnManagementClientOperationsMixin.check_name_availability has a new signature
+  - Operation CdnManagementClientOperationsMixin.check_name_availability_with_subscription has a new signature
+  - Operation CdnManagementClientOperationsMixin.validate_probe has a new signature
+  - Operation CustomDomainsOperations.begin_create has a new signature
+  - Model UrlSigningActionParameters no longer has parameter ip_subnets
+  - Model UrlSigningActionParameters no longer has parameter key_id
+
 ## 10.0.0b1 (2020-10-31)
 This is beta preview version.
 For detailed changelog please refer to equivalent stable version 5.1.0 (https://pypi.org/project/azure-mgmt-cdn/5.1.0/)

@@ -77,7 +77,7 @@ class NetAppResourceOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         _body = _models.ResourceNameAvailabilityRequest(name=name, type=type, resource_group=resource_group)
-        api_version = "2020-08-01"
+        api_version = "2020-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -150,7 +150,7 @@ class NetAppResourceOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         _body = _models.ResourceNameAvailabilityRequest(name=name, type=type, resource_group=resource_group)
-        api_version = "2020-08-01"
+        api_version = "2020-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -223,7 +223,7 @@ class NetAppResourceOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         _body = _models.QuotaAvailabilityRequest(name=name, type=type, resource_group=resource_group)
-        api_version = "2020-08-01"
+        api_version = "2020-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

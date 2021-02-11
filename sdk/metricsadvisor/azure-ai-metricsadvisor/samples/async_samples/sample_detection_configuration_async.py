@@ -199,7 +199,7 @@ async def sample_update_detection_config_async(detection_config):
     )
 
     async with client:
-        updated = await client.update_detection_configuration(
+        await client.update_detection_configuration(
             detection_config,
             series_group_detection_conditions=[
                 MetricSeriesGroupDetectionCondition(
@@ -214,6 +214,7 @@ async def sample_update_detection_config_async(detection_config):
                 )
             ]
         )
+        updated = await client.get_detection_configuration(detection_config.id)
         print("Updated detection name: {}".format(updated.name))
         print("Updated detection description: {}".format(updated.description))
         print("Updated detection condition for series group: {}".format(

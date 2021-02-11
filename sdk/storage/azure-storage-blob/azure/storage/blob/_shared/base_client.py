@@ -26,6 +26,7 @@ except ImportError:
 import six
 
 from azure.core.configuration import Configuration
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport
@@ -36,7 +37,8 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
-    UserAgentPolicy
+    UserAgentPolicy,
+    AzureSasCredentialPolicy
 )
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
@@ -208,6 +210,9 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             query_str += "snapshot={}&".format(self.snapshot)
         if share_snapshot:
             query_str += "sharesnapshot={}&".format(self.snapshot)
+        if sas_token and isinstance(credential, AzureSasCredential):
+            raise ValueError(
+                "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
         if sas_token and not credential:
             query_str += sas_token
         elif is_credential_sastoken(credential):
@@ -222,6 +227,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
+        elif isinstance(credential, AzureSasCredential):
+            self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -255,7 +262,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return config, Pipeline(config.transport, policies=policies)
 
     def _batch_send(
-        self, *reqs,  # type: HttpRequest
+        self,
+        *reqs,  # type: HttpRequest
         **kwargs
     ):
         """Given a series of request, do a Storage batch call.
@@ -263,9 +271,11 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='{}://{}/?comp=batch{}{}'.format(
+            url='{}://{}/{}?{}comp=batch{}{}'.format(
                 self.scheme,
                 self.primary_hostname,
+                kwargs.pop('path', ""),
+                kwargs.pop('restype', ""),
                 kwargs.pop('sas', ""),
                 kwargs.pop('timeout', "")
             ),

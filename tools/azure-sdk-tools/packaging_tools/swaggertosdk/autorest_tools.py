@@ -5,7 +5,6 @@ from pathlib import Path
 import shutil
 import subprocess
 
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -129,14 +128,19 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
                                    universal_newlines=True,
                                    cwd=cwd,
                                    shell=shell,
-                                   env=env)
+                                   env=env,
+                                   encoding='utf-8')
         output_buffer = []
         for line in process.stdout:
             output_buffer.append(line.rstrip())
-            _LOGGER.info(output_buffer[-1])
+            _LOGGER.info(f"==[autorest]"+output_buffer[-1])
         process.wait()
         output = "\n".join(output_buffer)
         if process.returncode:
+            # print necessary error info
+            for i in range(-min(len(output_buffer), 5), 0):
+                print(f'[Autorest] {output_buffer[i]}')
+                
             raise subprocess.CalledProcessError(
                 process.returncode,
                 cmd_line,

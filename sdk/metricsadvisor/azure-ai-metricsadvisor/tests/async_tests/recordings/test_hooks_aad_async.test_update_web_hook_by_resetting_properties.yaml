@@ -1,0 +1,139 @@
+interactions:
+- request:
+    body: '{"hookType": "Webhook", "hookName": "testhook70bd1add", "description":
+      "my web hook", "externalLink": "external link", "hookParameter": {"endpoint":
+      "https://httpbin.org/post", "username": "krista", "password": "123"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '218'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 3b89d6c6-3b6a-4fe7-94ba-74cae1fd1292
+      content-length: '0'
+      date: Fri, 22 Jan 2021 01:07:30 GMT
+      location: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/16ca7168-9f55-47e3-8e2e-47cee01bf5f0
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '712'
+      x-request-id: 3b89d6c6-3b6a-4fe7-94ba-74cae1fd1292
+    status:
+      code: 201
+      message: Created
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/16ca7168-9f55-47e3-8e2e-47cee01bf5f0
+  response:
+    body:
+      string: '{"hookId":"16ca7168-9f55-47e3-8e2e-47cee01bf5f0","hookName":"testhook70bd1add","hookType":"Webhook","externalLink":"external
+        link","description":"my web hook","admins":["f850650c-1fcf-4489-b46f-71af2e30d360"],"hookParameter":{"endpoint":"https://httpbin.org/post","username":"krista","password":"123","headers":{},"certificateKey":"","certificatePassword":""}}'
+    headers:
+      apim-request-id: 0a3056ea-3ce6-446a-982c-5151d2512c64
+      content-length: '360'
+      content-type: application/json; charset=utf-8
+      date: Fri, 22 Jan 2021 01:07:30 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '106'
+      x-request-id: 0a3056ea-3ce6-446a-982c-5151d2512c64
+    status:
+      code: 200
+      message: OK
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/16ca7168-9f55-47e3-8e2e-47cee01bf5f0
+- request:
+    body: '{"hookName": "reset", "description": null, "externalLink": null, "hookType":
+      "Webhook", "hookParameter": {"endpoint": "https://httpbin.org/post", "username":
+      "myusername", "password": null}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '190'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: PATCH
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/16ca7168-9f55-47e3-8e2e-47cee01bf5f0
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 9b0c0069-6a30-4deb-b9c5-8fbc661a301b
+      content-length: '0'
+      date: Fri, 22 Jan 2021 01:07:31 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '668'
+      x-request-id: 9b0c0069-6a30-4deb-b9c5-8fbc661a301b
+    status:
+      code: 204
+      message: No Content
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/16ca7168-9f55-47e3-8e2e-47cee01bf5f0
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/16ca7168-9f55-47e3-8e2e-47cee01bf5f0
+  response:
+    body:
+      string: '{"hookId":"16ca7168-9f55-47e3-8e2e-47cee01bf5f0","hookName":"reset","hookType":"Webhook","externalLink":"external
+        link","description":"my web hook","admins":["f850650c-1fcf-4489-b46f-71af2e30d360"],"hookParameter":{"endpoint":"https://httpbin.org/post","username":"myusername","password":"","headers":{},"certificateKey":"","certificatePassword":""}}'
+    headers:
+      apim-request-id: 693e19bb-57d9-48c3-a9ce-c4b0a86fe003
+      content-length: '350'
+      content-type: application/json; charset=utf-8
+      date: Fri, 22 Jan 2021 01:07:31 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '86'
+      x-request-id: 693e19bb-57d9-48c3-a9ce-c4b0a86fe003
+    status:
+      code: 200
+      message: OK
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/16ca7168-9f55-47e3-8e2e-47cee01bf5f0
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/16ca7168-9f55-47e3-8e2e-47cee01bf5f0
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 856de46e-f264-4a5e-882f-cea1e902382a
+      content-length: '0'
+      date: Fri, 22 Jan 2021 01:07:31 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '113'
+      x-request-id: 856de46e-f264-4a5e-882f-cea1e902382a
+    status:
+      code: 204
+      message: No Content
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/16ca7168-9f55-47e3-8e2e-47cee01bf5f0
+version: 1

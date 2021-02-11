@@ -80,8 +80,7 @@ setup(
     ]),
     install_requires=[
         "azure-core<2.0.0,>=1.6.0",
-        "msrest>=0.6.10"
-        # azure-data-tables
+        "msrest>=0.6.19"
     ],
     extras_require={
         ":python_version<'3.0'": ['futures', 'azure-data-nspkg<2.0.0,>=1.0.0'],

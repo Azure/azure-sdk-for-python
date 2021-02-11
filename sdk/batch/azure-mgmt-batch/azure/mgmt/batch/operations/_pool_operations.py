@@ -93,7 +93,7 @@ class PoolOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -151,7 +151,7 @@ class PoolOperations(object):
         )
     list_by_batch_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/pools'}  # type: ignore
 
-    def _create_initial(
+    def create(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
@@ -162,17 +162,39 @@ class PoolOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Pool"
+        """Creates a new pool inside the specified account.
+
+        :param resource_group_name: The name of the resource group that contains the Batch account.
+        :type resource_group_name: str
+        :param account_name: The name of the Batch account.
+        :type account_name: str
+        :param pool_name: The pool name. This must be unique within the account.
+        :type pool_name: str
+        :param parameters: Additional parameters for pool creation.
+        :type parameters: ~azure.mgmt.batch.models.Pool
+        :param if_match: The entity state (ETag) version of the pool to update. A value of "*" can be
+         used to apply the operation only if the pool already exists. If omitted, this operation will
+         always be applied.
+        :type if_match: str
+        :param if_none_match: Set to '*' to allow a new pool to be created, but to prevent updating an
+         existing pool. Other values will be ignored.
+        :type if_none_match: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Pool, or the result of cls(response)
+        :rtype: ~azure.mgmt.batch.models.Pool
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Pool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self._create_initial.metadata['url']  # type: ignore
+        url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
@@ -213,98 +235,7 @@ class PoolOperations(object):
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/pools/{poolName}'}  # type: ignore
-
-    def begin_create(
-        self,
-        resource_group_name,  # type: str
-        account_name,  # type: str
-        pool_name,  # type: str
-        parameters,  # type: "_models.Pool"
-        if_match=None,  # type: Optional[str]
-        if_none_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.Pool"]
-        """Creates a new pool inside the specified account.
-
-        :param resource_group_name: The name of the resource group that contains the Batch account.
-        :type resource_group_name: str
-        :param account_name: The name of the Batch account.
-        :type account_name: str
-        :param pool_name: The pool name. This must be unique within the account.
-        :type pool_name: str
-        :param parameters: Additional parameters for pool creation.
-        :type parameters: ~azure.mgmt.batch.models.Pool
-        :param if_match: The entity state (ETag) version of the pool to update. A value of "*" can be
-         used to apply the operation only if the pool already exists. If omitted, this operation will
-         always be applied.
-        :type if_match: str
-        :param if_none_match: Set to '*' to allow a new pool to be created, but to prevent updating an
-         existing pool. Other values will be ignored.
-        :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either Pool or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.batch.models.Pool]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Pool"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._create_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                pool_name=pool_name,
-                parameters=parameters,
-                if_match=if_match,
-                if_none_match=if_none_match,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-        kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-            deserialized = self._deserialize('Pool', pipeline_response)
-
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)
-            return deserialized
-
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
-            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9_-]+$'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-
-        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/pools/{poolName}'}  # type: ignore
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/pools/{poolName}'}  # type: ignore
 
     def update(
         self,
@@ -340,7 +271,7 @@ class PoolOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -399,7 +330,7 @@ class PoolOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -494,7 +425,7 @@ class PoolOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
 
-        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -534,7 +465,7 @@ class PoolOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -599,7 +530,7 @@ class PoolOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -671,7 +602,7 @@ class PoolOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL

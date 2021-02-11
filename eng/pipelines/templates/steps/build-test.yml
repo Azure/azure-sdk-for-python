@@ -24,8 +24,6 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
-  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
-
   - script: |
       python -m pip install pip==20.1
       pip install -r eng/ci_tools.txt
@@ -35,7 +33,7 @@ steps:
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: ../steps/auth-dev-feed.yml
-      parameters: 
+      parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
 
   - ${{ parameters.BeforeTestSteps }}
@@ -57,16 +55,28 @@ steps:
 
   - ${{ parameters.AfterTestSteps }}
 
+  - pwsh: |
+      Get-ChildItem .\_coverage\ |
+      Foreach-Object {
+        Get-Content $_
+      }
+    displayName: 'Show .coverage files'
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish .coverage files'
+    continueOnError: true
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+    inputs:
+      targetPath: '$(Build.SourcesDirectory)/_coverage'
+      artifactType: 'pipeline'
+
   - task: PublishTestResults@2
     condition: always()
     inputs:
       testResultsFiles: '**/*test*.xml'
       testRunTitle: '$(OSName) Python ${{ parameters.PythonVersion }}'
       failTaskOnFailedTests: true
-
-  - template: publish-coverage.yml
-    parameters:
-      RunCoverage: ${{ parameters.RunCoverage }}
 
   - ${{ if eq(parameters['TestSamples'], true) }}:
     - task: PythonScript@0

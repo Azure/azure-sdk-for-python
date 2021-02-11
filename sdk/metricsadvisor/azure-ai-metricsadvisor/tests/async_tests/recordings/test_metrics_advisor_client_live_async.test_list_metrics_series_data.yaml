@@ -10,7 +10,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/data/query
   response:
@@ -18,14 +18,14 @@ interactions:
       string: '{"value":[{"id":{"metricId":"metric_id","dimension":{"dimension_name":"Los
         Angeles","category":"Homemade"}},"timestampList":[],"valueList":[]}]}'
     headers:
-      apim-request-id: dda7e307-4bfc-4cd5-9ad8-bdce0612aaab
+      apim-request-id: 0a907ef9-927e-49a1-b68b-6cf76dc32d78
       content-length: '161'
       content-type: application/json; charset=utf-8
-      date: Mon, 26 Oct 2020 17:54:29 GMT
+      date: Fri, 22 Jan 2021 01:10:23 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '309'
-      x-request-id: dda7e307-4bfc-4cd5-9ad8-bdce0612aaab
+      x-envoy-upstream-service-time: '416'
+      x-request-id: 0a907ef9-927e-49a1-b68b-6cf76dc32d78
     status:
       code: 200
       message: OK

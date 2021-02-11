@@ -751,8 +751,13 @@ class BatchAccountIdentity(msrest.serialization.Model):
      provided for a system assigned identity.
     :vartype tenant_id: str
     :param type: Required. The type of identity used for the Batch account. Possible values
-     include: "SystemAssigned", "None".
+     include: "SystemAssigned", "UserAssigned", "None".
     :type type: str or ~azure.mgmt.batch.models.ResourceIdentityType
+    :param user_assigned_identities: The list of user identities associated with the Batch account.
+     The user identity dictionary key references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.batch.models.Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties]
     """
 
     _validation = {
@@ -765,6 +770,7 @@ class BatchAccountIdentity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
     }
 
     def __init__(
@@ -775,6 +781,7 @@ class BatchAccountIdentity(msrest.serialization.Model):
         self.principal_id = None
         self.tenant_id = None
         self.type = kwargs['type']
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
 class BatchAccountKeys(msrest.serialization.Model):
@@ -918,6 +925,39 @@ class BatchLocationQuota(msrest.serialization.Model):
     ):
         super(BatchLocationQuota, self).__init__(**kwargs)
         self.account_quota = None
+
+
+class BatchPoolIdentity(msrest.serialization.Model):
+    """The identity of the Batch pool, if configured. If the pool identity is updated during update an existing pool, only the new vms which are created after the pool shrinks to 0 will have the updated identities.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of identity used for the Batch Pool. Possible values include:
+     "UserAssigned", "None".
+    :type type: str or ~azure.mgmt.batch.models.PoolIdentityType
+    :param user_assigned_identities: The list of user identities associated with the Batch pool.
+     The user identity dictionary key references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.batch.models.Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties]
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BatchPoolIdentity, self).__init__(**kwargs)
+        self.type = kwargs['type']
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
 class Certificate(ProxyResource):
@@ -1432,6 +1472,66 @@ class CloudServiceConfiguration(msrest.serialization.Model):
         super(CloudServiceConfiguration, self).__init__(**kwargs)
         self.os_family = kwargs['os_family']
         self.os_version = kwargs.get('os_version', None)
+
+
+class Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
+    """Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Components19E4Rl9SchemasBatchaccountidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
+class Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
+    """Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Components81XseeSchemasBatchpoolidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class ContainerConfiguration(msrest.serialization.Model):
@@ -2259,6 +2359,26 @@ class NFSMountConfiguration(msrest.serialization.Model):
         self.mount_options = kwargs.get('mount_options', None)
 
 
+class NodePlacementConfiguration(msrest.serialization.Model):
+    """Allocation configuration used by Batch Service to provision the nodes.
+
+    :param policy: Allocation policy used by Batch Service to provision the nodes. If not
+     specified, Batch will use the regional policy. Possible values include: "Regional", "Zonal".
+    :type policy: str or ~azure.mgmt.batch.models.NodePlacementPolicyType
+    """
+
+    _attribute_map = {
+        'policy': {'key': 'policy', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NodePlacementConfiguration, self).__init__(**kwargs)
+        self.policy = kwargs.get('policy', None)
+
+
 class Operation(msrest.serialization.Model):
     """A REST API operation.
 
@@ -2357,6 +2477,8 @@ class Pool(ProxyResource):
     :vartype type: str
     :ivar etag: The ETag of the resource, used for concurrency statements.
     :vartype etag: str
+    :param identity: The type of identity used for the Batch Pool.
+    :type identity: ~azure.mgmt.batch.models.BatchPoolIdentity
     :param display_name: The display name need not be unique and can contain any Unicode characters
      up to a maximum length of 1024.
     :type display_name: str
@@ -2471,6 +2593,7 @@ class Pool(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'BatchPoolIdentity'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
@@ -2503,6 +2626,7 @@ class Pool(ProxyResource):
         **kwargs
     ):
         super(Pool, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
         self.display_name = kwargs.get('display_name', None)
         self.last_modified = None
         self.creation_time = None
@@ -2794,7 +2918,7 @@ class ResizeOperationStatus(msrest.serialization.Model):
 
     :param target_dedicated_nodes: The desired number of dedicated compute nodes in the pool.
     :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: The desired number of low-priority compute nodes in the pool.
+    :param target_low_priority_nodes: The desired number of low priority compute nodes in the pool.
     :type target_low_priority_nodes: int
     :param resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If you
      specify a value less than 5 minutes, the Batch service returns an error; if you are calling the
@@ -3157,6 +3281,12 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
     :param disk_encryption_configuration: If specified, encryption is performed on each node in the
      pool during node provisioning.
     :type disk_encryption_configuration: ~azure.mgmt.batch.models.DiskEncryptionConfiguration
+    :param node_placement_configuration: This configuration will specify rules on how nodes in the
+     pool will be physically allocated.
+    :type node_placement_configuration: ~azure.mgmt.batch.models.NodePlacementConfiguration
+    :param extensions: If specified, the extensions mentioned in this configuration will be
+     installed on each node.
+    :type extensions: list[~azure.mgmt.batch.models.VMExtension]
     """
 
     _validation = {
@@ -3172,6 +3302,8 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'container_configuration': {'key': 'containerConfiguration', 'type': 'ContainerConfiguration'},
         'disk_encryption_configuration': {'key': 'diskEncryptionConfiguration', 'type': 'DiskEncryptionConfiguration'},
+        'node_placement_configuration': {'key': 'nodePlacementConfiguration', 'type': 'NodePlacementConfiguration'},
+        'extensions': {'key': 'extensions', 'type': '[VMExtension]'},
     }
 
     def __init__(
@@ -3186,6 +3318,8 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
         self.license_type = kwargs.get('license_type', None)
         self.container_configuration = kwargs.get('container_configuration', None)
         self.disk_encryption_configuration = kwargs.get('disk_encryption_configuration', None)
+        self.node_placement_configuration = kwargs.get('node_placement_configuration', None)
+        self.extensions = kwargs.get('extensions', None)
 
 
 class VirtualMachineFamilyCoreQuota(msrest.serialization.Model):
@@ -3216,6 +3350,65 @@ class VirtualMachineFamilyCoreQuota(msrest.serialization.Model):
         super(VirtualMachineFamilyCoreQuota, self).__init__(**kwargs)
         self.name = None
         self.core_quota = None
+
+
+class VMExtension(msrest.serialization.Model):
+    """The configuration for virtual machine extensions.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the virtual machine extension.
+    :type name: str
+    :param publisher: Required. The name of the extension handler publisher.
+    :type publisher: str
+    :param type: Required. The type of the extensions.
+    :type type: str
+    :param type_handler_version: The version of script handler.
+    :type type_handler_version: str
+    :param auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+     version if one is available at deployment time. Once deployed, however, the extension will not
+     upgrade minor versions unless redeployed, even with this property set to true.
+    :type auto_upgrade_minor_version: bool
+    :param settings: Any object.
+    :type settings: object
+    :param protected_settings: The extension can contain either protectedSettings or
+     protectedSettingsFromKeyVault or no protected settings at all.
+    :type protected_settings: object
+    :param provision_after_extensions: Collection of extension names after which this extension
+     needs to be provisioned.
+    :type provision_after_extensions: list[str]
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'publisher': {'required': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'publisher': {'key': 'publisher', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
+        'auto_upgrade_minor_version': {'key': 'autoUpgradeMinorVersion', 'type': 'bool'},
+        'settings': {'key': 'settings', 'type': 'object'},
+        'protected_settings': {'key': 'protectedSettings', 'type': 'object'},
+        'provision_after_extensions': {'key': 'provisionAfterExtensions', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VMExtension, self).__init__(**kwargs)
+        self.name = kwargs['name']
+        self.publisher = kwargs['publisher']
+        self.type = kwargs['type']
+        self.type_handler_version = kwargs.get('type_handler_version', None)
+        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
+        self.settings = kwargs.get('settings', None)
+        self.protected_settings = kwargs.get('protected_settings', None)
+        self.provision_after_extensions = kwargs.get('provision_after_extensions', None)
 
 
 class WindowsConfiguration(msrest.serialization.Model):
