@@ -4,6 +4,7 @@ import errno
 import shutil
 import re
 import multiprocessing
+import glob
 
 if sys.version_info < (3, 0):
     from Queue import Queue
@@ -307,12 +308,13 @@ def collect_log_files(working_dir):
     except OSError:
         logging.info("'{}' directory already exists".format(log_directory))
 
-    for test_env in test_envs:
-        log_files = os.path.join(working_dir, ".tox", test_env, "log")
+    for test_env in glob.glob(os.path.join(working_dir, ".tox", "*")):
+        log_files = os.path.join(test_env, "log")
+        logging.info("Copying log files from {}".format(test_env))
 
         if os.path.exists(log_files):
-            temp_dir = os.path.join(log_directory, test_env)
-            logging.info("TEMPDIR: {}".format(temp_dir))
+            temp_dir = os.path.join(log_directory, test_env.split()[-2])
+            logging.info("TEMP DIR: {}".format(temp_dir))
             try:
                 os.mkdir(temp_dir)
             except OSError:
@@ -326,6 +328,9 @@ def collect_log_files(working_dir):
                     shutil.move(file_location, temp_dir)
         else:
             logging.info("Could not find {} directory".format(log_files))
+
+    for f in glob.glob(os.path.join(root_dir, "_tox_logs", "*")):
+        logging.info("Log file: {}".format(f))
 
 
 def execute_tox_serial(tox_command_tuples):
@@ -346,9 +351,8 @@ def execute_tox_serial(tox_command_tuples):
         if result is not None and result != 0:
             return_code = result
 
-        collect_log_files(cmd_tuple[1])
-
         if in_ci():
+            collect_log_files(cmd_tuple[1])
             shutil.rmtree(tox_dir)
 
     return return_code
