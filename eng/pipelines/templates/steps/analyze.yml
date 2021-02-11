@@ -6,8 +6,6 @@ parameters:
   Artifacts: []
 
 steps:
-  - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
-
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
 
   - ${{ each artifact in parameters.Artifacts }}:
