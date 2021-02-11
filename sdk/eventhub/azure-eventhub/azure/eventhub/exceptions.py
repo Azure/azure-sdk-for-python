@@ -127,12 +127,8 @@ class OperationTimeoutError(EventHubError):
     """Operation timed out."""
 
 
-class OwnershipLostError(EventHubError):
+class OwnershipLostError(AzureError):
     """Raised when `update_checkpoint` detects the ownership to a partition has been lost."""
-
-    def __init__(self, message=None, details=None):
-        message = message or 'The ownership to a partition has been lost.'
-        super(OwnershipLostError, self).__init__(message=message, details=details)
 
 
 def _create_eventhub_exception(exception):

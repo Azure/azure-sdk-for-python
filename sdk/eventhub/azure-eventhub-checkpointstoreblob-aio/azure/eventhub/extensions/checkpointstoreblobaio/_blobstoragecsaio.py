@@ -149,7 +149,7 @@ class BlobCheckpointStore(CheckpointStore):
                 consumer_group,
                 partition_id,
             )
-            raise OwnershipLostError(message=str(error), details=error)
+            raise OwnershipLostError(message=str(error), error=error)
         except Exception as error:  # pylint:disable=broad-except
             logger.warning(
                 "An exception occurred when EventProcessor instance %r claim_ownership for "
