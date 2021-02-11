@@ -309,11 +309,12 @@ def collect_log_files(working_dir):
         logging.info("'{}' directory already exists".format(log_directory))
 
     for test_env in glob.glob(os.path.join(working_dir, ".tox", "*")):
+        env = test_env.split()[-1]
         log_files = os.path.join(test_env, "log")
         logging.info("Copying log files from {}".format(test_env))
 
         if os.path.exists(log_files):
-            temp_dir = os.path.join(log_directory, test_env.split()[-2])
+            temp_dir = os.path.join(log_directory, env)
             logging.info("TEMP DIR: {}".format(temp_dir))
             try:
                 os.mkdir(temp_dir)
