@@ -96,6 +96,11 @@ def test_requests_response_json_error():
     with pytest.raises( (json.decoder.JSONDecodeError, ValueError) ):
         res.json()
 
+def test_requests_response_json_encoding():
+    res = _create_requests_response(b'{"key": "value"}')
+    res.json(encoding="hello")
+    assert res.internal_response.encoding == "hello"
+
 def test_requests_response_json_stream():
     class MockTransport(RequestsTransport):
         def send(self, request, **kwargs):

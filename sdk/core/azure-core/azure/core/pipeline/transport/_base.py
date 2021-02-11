@@ -527,7 +527,7 @@ class _HttpResponseBase(object):
         raise NotImplementedError()
 
     def text(self, encoding=None):
-        # type: (str) -> str
+        # type: (Optional[str]) -> str
         """Return the whole body as a string.
 
         :param str encoding: The encoding to apply. If None, use "utf-8" with BOM parsing (utf-8-sig).
@@ -537,15 +537,17 @@ class _HttpResponseBase(object):
             encoding = "utf-8-sig"
         return self.body().decode(encoding)
 
-    def json(self):
-        # type: () -> Dict[str, Any]
+    def json(self, encoding=None):
+        # type: (Optional[str]) -> Any
         """Return the whole body as a json object.
 
+        :param str encoding: The encoding to apply. If None, use "utf-8" with BOM parsing (utf-8-sig).
+         Implementation can be smarter if they want (using headers or chardet).
         :return: The JSON deserialized response body
-        :rtype: dict[str, any]
-        :raises json.decoder.JSONDecodeError or ValueError (in python 2.7):
+        :rtype: any
+        :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
         """
-        return json.loads(self.text())
+        return json.loads(self.text(encoding))
 
     def _decode_parts(self, message, http_response_type, requests):
         # type: (Message, Type[_HttpResponseBase], List[HttpRequest]) -> List[HttpResponse]

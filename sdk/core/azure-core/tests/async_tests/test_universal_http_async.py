@@ -133,6 +133,12 @@ def test_aiohttp_response_json_error():
     with pytest.raises(json.decoder.JSONDecodeError):
         res.json()
 
+def test_aiohttp_response_json_encoding():
+    res = _create_aiohttp_response(b'this is not json serializable', {'Content-Type': 'application/json'})
+    with pytest.raises(LookupError) as ex:
+        res.json(encoding="hello")
+    assert "hello" in str(ex.value)
+
 def test_requests_response_json_stream():
     class MockTransport(AioHttpTransport):
         def send(self, request, **kwargs):
