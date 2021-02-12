@@ -65,6 +65,30 @@ from azure.core.pipeline.transport import (
 
 from azure.core.exceptions import AzureError
 
+
+def test_policy_wrapping():
+    """Pipeline should wrap only policies that implement the SansIOHTTPPolicy protocol and not send()"""
+
+    # this policy implements send(), so Pipeline should not wrap it with a runner
+    class Policy(SansIOHTTPPolicy):
+        def send(self, request):
+            pass
+
+    policy = mock.MagicMock(wraps=Policy())
+    pipeline = Pipeline(mock.Mock(), [policy])
+    pipeline.run(HttpRequest("GET", "http://localhost"))
+    assert policy.send.call_count == 1
+    assert not policy.on_exception.called
+    assert not policy.on_request.called
+    assert not policy.on_response.called
+
+    policy = mock.MagicMock(wraps=SansIOHTTPPolicy())
+    pipeline = Pipeline(mock.Mock(), [policy])
+    pipeline.run(HttpRequest("GET", "http://localhost"))
+    assert policy.on_request.called
+    assert policy.on_response.called
+
+
 def test_default_http_logging_policy():
     config = Configuration()
     pipeline_client = PipelineClient(base_url="test")

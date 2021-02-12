@@ -23,7 +23,9 @@
 # THE SOFTWARE.
 #
 #--------------------------------------------------------------------------
+import asyncio
 import sys
+from unittest import mock
 
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
@@ -54,6 +56,34 @@ import aiohttp
 import trio
 
 import pytest
+
+
+@pytest.mark.asyncio
+async def test_policy_wrapping():
+    """AsyncPipeline should wrap only policies that implement the SansIOHTTPPolicy protocol and not send()"""
+
+    completed_future = asyncio.Future()
+    completed_future.set_result(None)
+
+    # this policy implements send(), so Pipeline should not wrap it with a runner
+    class Policy(SansIOHTTPPolicy):
+        def send(self, request):
+            return completed_future
+
+    policy = mock.MagicMock(wraps=Policy())
+    pipeline = AsyncPipeline(mock.Mock(), [policy])
+    await pipeline.run(HttpRequest("GET", "http://localhost"))
+    assert policy.send.call_count == 1
+    assert not policy.on_exception.called
+    assert not policy.on_request.called
+    assert not policy.on_response.called
+
+    policy = mock.MagicMock(wraps=SansIOHTTPPolicy())
+    transport = mock.Mock(send=mock.Mock(return_value=completed_future))
+    pipeline = AsyncPipeline(transport, [policy])
+    await pipeline.run(HttpRequest("GET", "http://localhost"))
+    assert policy.on_request.called
+    assert policy.on_response.called
 
 
 @pytest.mark.asyncio
