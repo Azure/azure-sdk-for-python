@@ -29,14 +29,12 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: identity
-    AdditionalTestMatrix:
-      Linux_Python35_msal:
-        OSVmImage: 'ubuntu-18.04'
-        PythonVersion: '3.5'
-        CoverageArg: ''
-        RunForPR: false
-        InjectedPackages: 'git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev'
-          
+    AdditionalMatrixConfigs:
+      - Name: Identity_live_test
+        Path: sdk/identity/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
+
     Artifacts:
     - name: azure_identity
       safeName: azureidentity
