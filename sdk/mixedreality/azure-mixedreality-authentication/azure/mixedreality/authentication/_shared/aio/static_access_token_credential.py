@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import asyncio
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -21,7 +20,11 @@ class StaticAccessTokenCredential(object):
     def __init__(self, access_token: "AccessToken"):
         self._access_token = access_token
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(
+        self,
+        #pylint: disable=unused-argument
+        *scopes: str,
+        **kwargs: "Any") -> "AccessToken":
         return self._access_token
 
     async def close(self) -> None:

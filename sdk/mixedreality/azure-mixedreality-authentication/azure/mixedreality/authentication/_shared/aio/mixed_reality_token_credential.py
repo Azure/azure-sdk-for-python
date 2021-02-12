@@ -5,13 +5,13 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
+from .static_access_token_credential import StaticAccessTokenCredential
+from ...aio._client_async import MixedRealityStsClient
+
 if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
-
-from .static_access_token_credential import StaticAccessTokenCredential
-from ...aio._client_async import MixedRealityStsClient
 
 def get_mixedreality_credential(
     account_id: str,
@@ -19,15 +19,15 @@ def get_mixedreality_credential(
     endpoint_url: str,
     credential: "AsyncTokenCredential",
     **kwargs):
-        if isinstance(credential, StaticAccessTokenCredential):
-            return credential
+    if isinstance(credential, StaticAccessTokenCredential):
+        return credential
 
-        return MixedRealityTokenCredential(
-            account_id=account_id,
-            account_domain=account_domain,
-            endpoint_url=endpoint_url,
-            credential=credential,
-            **kwargs)
+    return MixedRealityTokenCredential(
+        account_id=account_id,
+        account_domain=account_domain,
+        endpoint_url=endpoint_url,
+        credential=credential,
+        **kwargs)
 
 
 class MixedRealityTokenCredential(object):
@@ -39,7 +39,13 @@ class MixedRealityTokenCredential(object):
     :param TokenCredential credential: The credential used to access the Mixed Reality service.
     """
 
-    def __init__(self, account_id: str, account_domain: str, endpoint_url: str, credential: "AsyncTokenCredential", **kwargs):
+    def __init__(
+        self,
+        account_id: str,
+        account_domain: str,
+        endpoint_url: str,
+        credential: "AsyncTokenCredential",
+        **kwargs):
         self.stsClient = MixedRealityStsClient(
             account_id=account_id,
             account_domain=account_domain,
@@ -47,7 +53,7 @@ class MixedRealityTokenCredential(object):
             credential=credential,
             **kwargs)
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken": #pylint: disable=unused-argument
         return await self.stsClient.get_token(**kwargs)
 
     async def close(self) -> None:

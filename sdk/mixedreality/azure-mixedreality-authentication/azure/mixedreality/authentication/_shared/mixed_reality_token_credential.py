@@ -5,25 +5,26 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
+from .static_access_token_credential import StaticAccessTokenCredential
+from .._client import MixedRealityStsClient
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Union
     from azure.core.credentials import AccessToken, TokenCredential
 
-from .static_access_token_credential import StaticAccessTokenCredential
-from .._client import MixedRealityStsClient
 
 def get_mixedreality_credential(account_id, account_domain, endpoint_url, credential, **kwargs):
-        # type: (str, str, str, TokenCredential, Any) -> TokenCredential
-        if isinstance(credential, StaticAccessTokenCredential):
-            return credential
+    # type: (str, str, str, TokenCredential, Any) -> TokenCredential
+    if isinstance(credential, StaticAccessTokenCredential):
+        return credential
 
-        return MixedRealityTokenCredential(
-            account_id=account_id,
-            account_domain=account_domain,
-            endpoint_url=endpoint_url,
-            credential=credential,
-            **kwargs)
+    return MixedRealityTokenCredential(
+        account_id=account_id,
+        account_domain=account_domain,
+        endpoint_url=endpoint_url,
+        credential=credential,
+        **kwargs)
 
 
 class MixedRealityTokenCredential(object):
@@ -44,6 +45,6 @@ class MixedRealityTokenCredential(object):
             credential=credential,
             **kwargs)
 
-    def get_token(self, *scopes, **kwargs):
+    def get_token(self, *scopes, **kwargs): #pylint: disable=unused-argument
         # type: (*str, **Any) -> AccessToken
         return self.stsClient.get_token(**kwargs)

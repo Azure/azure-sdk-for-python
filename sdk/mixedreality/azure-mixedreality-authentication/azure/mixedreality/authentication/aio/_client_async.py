@@ -3,15 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+
+# pylint: disable=unused-import,ungrouped-imports
+from typing import Any, TYPE_CHECKING, Union
 
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse # type: ignore
-
-# pylint: disable=unused-import,ungrouped-imports
-from typing import Any, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -45,7 +44,7 @@ class MixedRealityStsClient(object):
     def __init__(self,
         account_id: str,
         account_domain: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"], #pylint: disable=unsubscriptable-object
         **kwargs) -> None:
         if not account_id:
             raise ValueError("account_id can not be None")
@@ -70,6 +69,7 @@ class MixedRealityStsClient(object):
             if not endpoint_url.lower().startswith('http'):
                 endpoint_url = "https://" + endpoint_url
         except AttributeError:
+            #pylint: disable=raise-missing-from
             raise ValueError("Host URL must be a string")
 
         parsed_url = urlparse(endpoint_url.rstrip('/'))

@@ -45,11 +45,13 @@ def retrieve_jwt_expiration_timestamp(jwt_value):
         padded_base64_payload = base64.b64decode(parts[1])
         payload = json.loads(padded_base64_payload)
     except ValueError:
+        #pylint: disable=raise-missing-from
         raise ValueError("Unable to decode the JWT.")
 
     try:
         exp = payload['exp']
     except KeyError:
+        #pylint: disable=raise-missing-from
         raise ValueError("Invalid JWT payload structure. No expiration.")
 
     return int(exp)
@@ -65,6 +67,7 @@ def generate_cv_base():
     """
     result = ''
 
+    #pylint: disable=unused-variable
     for i in range(CV_BASE_LENGTH):
         random_index = random.randint(0, len(BASE_64_CHAR_SET) - 1)
         result += BASE_64_CHAR_SET[random_index]

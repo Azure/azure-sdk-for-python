@@ -10,7 +10,7 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
 
-from azure.core.credentials import AccessToken, AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
@@ -24,7 +24,6 @@ from ._utils import convert_to_access_token, generate_cv_base
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Union
-    from azure.core.credentials import TokenCredential
 
 
 class MixedRealityStsClient(object):
@@ -65,6 +64,7 @@ class MixedRealityStsClient(object):
             if not endpoint_url.lower().startswith('http'):
                 endpoint_url = "https://" + endpoint_url
         except AttributeError:
+            #pylint: disable=raise-missing-from
             raise ValueError("Host URL must be a string")
 
         parsed_url = urlparse(endpoint_url.rstrip('/'))

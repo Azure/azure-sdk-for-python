@@ -21,6 +21,6 @@ class StaticAccessTokenCredential(object):
         # type: (AccessToken) -> None
         self._access_token = access_token
 
-    def get_token(self, *scopes, **kwargs):
+    def get_token(self, *scopes, **kwargs): #pylint: disable=unused-argument
         # type: (*str, **Any) -> AccessToken
         return self._access_token

@@ -23,7 +23,7 @@ class MixedRealityAccountKeyCredential(object):
         self.account_id = account_id
         self.account_key = account_key
 
-    def get_token(self, *scopes, **kwargs):
+    def get_token(self, *scopes, **kwargs): #pylint: disable=unused-argument
         # type: (*str, **Any) -> azure.core.credentials.AccessToken
 
         token = self.account_id + ":" + self.account_key.key

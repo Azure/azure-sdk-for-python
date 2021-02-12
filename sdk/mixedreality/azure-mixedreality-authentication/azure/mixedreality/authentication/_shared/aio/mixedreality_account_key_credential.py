@@ -28,7 +28,7 @@ class MixedRealityAccountKeyCredential(object):
         self.account_id = account_id
         self.account_key = account_key
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken": #pylint: disable=unused-argument
         token = self.account_id + ":" + self.account_key.key
 
         # No way to know when an access token might expire, so we'll set it to be
