@@ -330,11 +330,16 @@ def collect_log_files(working_dir):
                 # return
                 break
 
-            for filename in os.listdir(temp_dir):
+            for filename in os.listdir(log_files):
                 if filename.endswith(".log"):
                     logging.info("LOG FILE: ", filename)
-                    file_location = os.pth.join(temp_dir, filename)
-                    shutil.move(file_location, temp_dir)
+
+                    file_location = os.path.join(log_files, filename)
+                    shutil.move(
+                        file_location,
+                        os.path.join(temp_dir, filename)
+                    )
+                    logging.info("Moved file to {}".format(os.path.join(temp_dir, filename)))
         else:
             logging.info("Could not find {} directory".format(log_files))
 
