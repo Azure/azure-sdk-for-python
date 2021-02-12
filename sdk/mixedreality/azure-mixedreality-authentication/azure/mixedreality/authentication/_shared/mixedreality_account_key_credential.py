@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 from datetime import date, datetime
+import time
 
 from azure.core.credentials import AzureKeyCredential, AccessToken
 
@@ -23,14 +24,14 @@ class MixedRealityAccountKeyCredential(object):
         self.account_key = account_key
 
     def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+        # type: (*str, **Any) -> azure.core.credentials.AccessToken
 
         token = self.account_id + ":" + self.account_key.key
 
         # No way to know when an access token might expire, so we'll set it to be
         # 10 years in the future.
         expiration_date = _add_years(datetime.now(), ACCOUNT_KEY_VALID_YEARS)
-        expiration_timestamp = int(expiration_date.timestamp())
+        expiration_timestamp = int(time.mktime(expiration_date.timetuple()))
 
         return AccessToken(token, expiration_timestamp)
 
