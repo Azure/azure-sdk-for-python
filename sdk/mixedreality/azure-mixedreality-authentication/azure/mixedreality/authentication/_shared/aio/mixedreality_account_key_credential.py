@@ -49,6 +49,6 @@ class MixedRealityAccountKeyCredential(object):
 
 def _add_years(date_to_update, years):
     try:
-        return date_to_update.replace(year = date_to_update.year + years)
+        return date_to_update.replace(year=date_to_update.year + years)
     except ValueError:
         return date_to_update + (date(date_to_update.year + years, 1, 1) - date(date_to_update.year, 1, 1))

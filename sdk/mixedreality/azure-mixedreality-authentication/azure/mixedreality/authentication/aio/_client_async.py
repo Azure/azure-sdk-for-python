@@ -94,7 +94,7 @@ class MixedRealityStsClient(object):
         :rtype: :class:`azure.core.credentials.AccessToken`
         """
         token_request_options = TokenRequestOptions()
-        token_request_options.client_request_id=generate_cv_base()
+        token_request_options.client_request_id = generate_cv_base()
 
         response = await self._client.get_token(
             self._account_id,
