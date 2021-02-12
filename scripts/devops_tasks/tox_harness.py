@@ -314,23 +314,26 @@ def collect_log_files(working_dir):
     for test_env in glob.glob(os.path.join(working_dir, ".tox", "*")):
         env = test_env.split()[-1]
         log_files = os.path.join(test_env, "log")
-        logging.info("Copying log files from {}".format(log_files))
 
         if os.path.exists(log_files):
-            shutil.copytree(log_files, log_directory)
-            # temp_dir = os.path.join(log_directory, env)
-            # logging.info("TEMP DIR: {}".format(temp_dir))
-            # try:
-            #     os.mkdir(temp_dir)
-            # except OSError:
-            #     logging.info("Could not create '{}' directory".format(temp_dir))
-            #     return
+            logging.info("Copying log files from {} to {}".format(log_files, log_directory))
 
-            # for filename in os.listdir(temp_dir):
-            #     if filename.endswith(".log"):
-            #         logging.info("LOG FILE: ", filename)
-            #         file_location = os.pth.join(temp_dir, filename)
-            #         shutil.move(file_location, temp_dir)
+            # shutil.copytree(log_files, log_directory)
+            temp_dir = os.path.join(log_directory, env)
+            logging.info("TEMP DIR: {}".format(temp_dir))
+            try:
+                os.mkdir(temp_dir)
+                logging.info("Created log directory: {}".format(log_directory))
+            except OSError:
+                logging.info("Could not create '{}' directory".format(temp_dir))
+                # return
+                break
+
+            for filename in os.listdir(temp_dir):
+                if filename.endswith(".log"):
+                    logging.info("LOG FILE: ", filename)
+                    file_location = os.pth.join(temp_dir, filename)
+                    shutil.move(file_location, temp_dir)
         else:
             logging.info("Could not find {} directory".format(log_files))
 
