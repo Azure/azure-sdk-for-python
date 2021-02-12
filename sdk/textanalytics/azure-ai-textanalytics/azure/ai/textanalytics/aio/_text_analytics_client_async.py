@@ -13,8 +13,8 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 from functools import partial
-from azure.core.async_paging import AsyncItemPaged
 from azure.core.polling import AsyncLROPoller
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from ._base_client_async import AsyncTextAnalyticsClientBase
@@ -40,7 +40,6 @@ from .._models import (
     AnalyzeSentimentResult,
     DocumentError,
     RecognizePiiEntitiesResult,
-    AnalyzeHealthcareResultItem,
     RecognizeEntitiesAction,
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
@@ -48,11 +47,15 @@ from .._models import (
     AnalyzeBatchActionsType,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
-from .._async_lro import AsyncAnalyzeBatchActionsLROPollingMethod, TextAnalyticsAsyncLROPollingMethod
+from .._async_lro import (
+    AnalyzeHealthcareEntitiesAsyncLROPollingMethod,
+    AsyncAnalyzeBatchActionsLROPollingMethod
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.credentials import AzureKeyCredential
+    from .._models import AnalyzeHealthcareEntitiesResultItem
 
 
 class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
@@ -145,6 +148,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResult`
@@ -210,6 +214,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -287,6 +292,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
@@ -377,6 +383,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -455,6 +462,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResult` and
@@ -526,6 +534,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -599,11 +608,11 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
-    async def begin_analyze_healthcare(  # type: ignore
+    async def begin_analyze_healthcare_entities(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareResultItem]]
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareEntitiesResultItem]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -622,6 +631,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
@@ -629,15 +639,18 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`].
+        :return: An instance of an AnalyzeHealthcareEntitiesAsyncLROPoller. Call `result()` on the poller
+            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`.
+        :rtype:
+            ~azure.core.polling.AsyncLROPoller[~azure.core.paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_analyze_healthcare_async.py
-                :start-after: [START analyze_healthcare_async]
-                :end-before: [END analyze_healthcare_async]
+            .. literalinclude:: ../samples/async_samples/sample_analyze_healthcare_entities_async.py
+                :start-after: [START analyze_healthcare_entities_async]
+                :end-before: [END analyze_healthcare_entities_async]
                 :language: python
                 :dedent: 8
                 :caption: Analyze healthcare entities in a batch of documents.
@@ -659,7 +672,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 model_version=model_version,
                 string_index_type=string_index_type,
                 cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
-                polling=TextAnalyticsAsyncLROPollingMethod(
+                polling=AnalyzeHealthcareEntitiesAsyncLROPollingMethod(
+                    text_analytics_client=self._client,
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
@@ -672,48 +686,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
-                    "'begin_analyze_healthcare' endpoint is only available for API version v3.1-preview and up"
+                    "'begin_analyze_healthcare_entities' endpoint is only available for API version v3.1-preview and up"
                 )
             raise error
-
-        except HttpResponseError as error:
-            process_http_response_error(error)
-
-    async def begin_cancel_analyze_healthcare( # type: ignore
-        self,
-        poller,  # type: AsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareResultItem]]
-        **kwargs
-    ):
-        # type: (...) -> AsyncLROPoller[None]
-        """Cancel an existing health operation.
-
-        :param poller: The LRO poller object associated with the health operation.
-        :return: An instance of an LROPoller that returns None.
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_health_with_cancellation_async.py
-                :start-after: [START health_with_cancellation_async]
-                :end-before: [END health_with_cancellation_async]
-                :language: python
-                :dedent: 8
-                :caption: Cancel an existing health operation.
-        """
-        polling_interval = kwargs.pop("polling_interval", 5) # pylint: disable=protected-access
-
-        initial_response = getattr(poller._polling_method, "_initial_response") # pylint: disable=protected-access
-        operation_location = initial_response.http_response.headers["Operation-Location"]
-
-        from urllib.parse import urlparse
-        job_id = urlparse(operation_location).path.split("/")[-1]
-
-        try:
-            return await self._client.begin_cancel_health_job(
-                job_id,
-                polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
-            )
 
         except HttpResponseError as error:
             process_http_response_error(error)

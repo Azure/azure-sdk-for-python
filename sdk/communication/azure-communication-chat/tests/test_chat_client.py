@@ -11,7 +11,7 @@ from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.communication.chat import (
     ChatClient,
-    ChatThreadMember,
+    ChatThreadParticipant,
     CommunicationUserIdentifier,
     CommunicationTokenCredential
 )
@@ -37,19 +37,62 @@ class TestChatClient(unittest.TestCase):
         raised = False
 
         def mock_send(*_, **__):
-            return mock_response(status_code=207, json_payload={"multipleStatus": [{"id": thread_id, "statusCode": 201, "type": "Thread"}]})
+            return mock_response(status_code=201, json_payload={
+                "chatThread": {
+                    "id": thread_id,
+                    "topic": "test topic",
+                    "createdOn": "2020-12-03T21:09:17Z",
+                    "createdBy": "8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+                }
+            })
         
         chat_client = ChatClient("https://endpoint", TestChatClient.credential, transport=Mock(send=mock_send))
 
         topic="test topic"
         user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
-        members=[ChatThreadMember(
+        participants=[ChatThreadParticipant(
             user=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
         try:
-            chat_thread_client = chat_client.create_chat_thread(topic, members)
+            chat_thread_client = chat_client.create_chat_thread(topic, participants)
+        except:
+            raised = True
+            raise
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+        assert chat_thread_client.thread_id == thread_id
+
+    def test_create_chat_thread_w_repeatability_request_id(self):
+        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+        chat_thread_client = None
+        raised = False
+        repeatability_request_id="b66d6031-fdcc-41df-8306-e524c9f226b8"
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=201, json_payload={
+                "chatThread": {
+                    "id": thread_id,
+                    "topic": "test topic",
+                    "createdOn": "2020-12-03T21:09:17Z",
+                    "createdBy": "8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+                }
+            })
+
+        chat_client = ChatClient("https://endpoint", TestChatClient.credential, transport=Mock(send=mock_send))
+
+        topic = "test topic"
+        user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
+        participants = [ChatThreadParticipant(
+            user=user,
+            display_name='name',
+            share_history_time=datetime.utcnow()
+        )]
+        try:
+            chat_thread_client = chat_client.create_chat_thread(topic=topic,
+                                                                thread_participants=participants,
+                                                                repeatability_request_id=repeatability_request_id)
         except:
             raised = True
             raise
@@ -64,13 +107,13 @@ class TestChatClient(unittest.TestCase):
 
         topic="test topic",
         user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
-        thread_members=[ChatThreadMember(
+        thread_participants=[ChatThreadParticipant(
             user=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
 
-        self.assertRaises(HttpResponseError, chat_client.create_chat_thread, topic=topic, thread_members=thread_members)
+        self.assertRaises(HttpResponseError, chat_client.create_chat_thread, topic=topic, thread_participants=thread_participants)
 
     def test_delete_chat_thread(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
@@ -95,7 +138,7 @@ class TestChatClient(unittest.TestCase):
             return mock_response(status_code=200, json_payload={
                 "id": thread_id,
                 "created_by": "8:acs:resource_user",
-                "members": [{"id": "", "display_name": "name", "share_history_time": "1970-01-01T00:00:00Z"}]
+                "participants": [{"id": "", "display_name": "name", "share_history_time": "1970-01-01T00:00:00Z"}]
                 })
         chat_client = ChatClient("https://endpoint", TestChatClient.credential, transport=Mock(send=mock_send))
 

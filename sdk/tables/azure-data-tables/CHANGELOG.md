@@ -2,6 +2,7 @@
 
 ## 12.0.0b5 (Unreleased)
 
+* Bumped minimum requirement of msrest from `0.6.10` to `0.6.19`.
 
 ## 12.0.0b4 (2020-01-12)
 * Fixes an [issue](https://github.com/Azure/azure-sdk-for-python/issues/15554) where `query_entities` kwarg `parameters` would not work with multiple parameters or with non-string parameters. This now works with multiple parameters and numeric, string, boolean, UUID, and datetime objects.

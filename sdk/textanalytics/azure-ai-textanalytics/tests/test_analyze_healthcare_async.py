@@ -47,7 +47,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
             async with client:
-                response = await (await client.begin_analyze_healthcare("hello world", polling_interval=self._interval())).result()
+                response = await (await client.begin_analyze_healthcare_entities("hello world", polling_interval=self._interval())).result()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -56,7 +56,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "en", "text": "Prescribed 100mg ibuprofen, taken twice daily."}]
 
         async with client:
-            poller = await client.begin_analyze_healthcare(docs, show_stats=True, polling_interval=self._interval())
+            poller = await client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval())
             response = await poller.result()
 
         self.assertIsNotNone(response.statistics)
@@ -65,7 +65,6 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
-            self.assertIsNotNone(doc.relations)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -76,15 +75,29 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            result = await (await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
 
-        self.assertIsNone(response.statistics) # show_stats=False by default
+        self.assertIsNone(result.statistics) # show_stats=False by default
 
-        async for doc in response:
+        response = []
+        async for r in result:
+            response.append(r)
+
+        for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
-            self.assertIsNotNone(doc.relations)
+
+        self.assertEqual(len(response[0].entities), 2)
+        entity1 = list(filter(lambda x: x.text == "high", response[0].entities))[0]
+        entity2 = list(filter(lambda x: x.text == "blood pressure", response[0].entities))[0]
+
+        self.assertEqual(len(entity1.related_entities), 1)
+        related_entity, relation_type = entity1.related_entities.popitem()
+        self.assertEqual(related_entity, entity2)
+        self.assertEqual(relation_type, "ValueOfExamination")
+
+        self.assertEqual(len(entity2.related_entities), 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -96,7 +109,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -105,7 +118,6 @@ class TestHealth(AsyncTextAnalyticsTest):
         for i in range(2):
             self.assertIsNotNone(response[i].id)
             self.assertIsNotNone(response[i].entities)
-            self.assertIsNotNone(response[i].relations)
 
         self.assertTrue(response[2].is_error)
 
@@ -117,7 +129,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "language": "en", "text": "Prescribed 100mg ibuprofen, taken twice daily."}]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -134,7 +146,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "language": "en", "text": ""}]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -150,7 +162,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as excinfo:
             async with client:
-                await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+                await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
 
         assert excinfo.value.status_code == 400
 
@@ -174,7 +186,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as excinfo:
             async with client:
-                await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+                await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
 
         assert excinfo.value.status_code == 413
 
@@ -187,7 +199,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            result = await (await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            result = await (await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
 
         async for doc in result:
             doc_warnings = doc.warnings
@@ -205,7 +217,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -221,7 +233,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
-                response = await client.begin_analyze_healthcare(
+                response = await client.begin_analyze_healthcare_entities(
                     ["This is written in English."],
                     polling_interval=self._interval()
                 )
@@ -234,7 +246,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
-                response = await client.begin_analyze_healthcare(
+                response = await client.begin_analyze_healthcare_entities(
                     ["This is written in English."],
                     polling_interval=self._interval()
                 )
@@ -247,7 +259,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         with self.assertRaises(TypeError):
             async with client:
-                response = await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+                response = await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -259,7 +271,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
         with self.assertRaises(TypeError):
             async with client:
-                response = await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+                response = await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -271,7 +283,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "1", "text": ":D"}]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -291,7 +303,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "1", "text": ":D"}]
 
         async with client:
-            response = await (await client.begin_analyze_healthcare(
+            response = await (await client.begin_analyze_healthcare_entities(
                 docs,
                 show_stats=True,
                 model_version="2020-09-03",
@@ -321,7 +333,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -340,7 +352,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, language="", polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, language="", polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -357,7 +369,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -376,7 +388,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -394,7 +406,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -412,7 +424,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -429,7 +441,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -448,7 +460,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -463,7 +475,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         docs = ["This should fail because we're passing in an invalid language hint"]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, language="notalanguage", polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, language="notalanguage", polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -476,7 +488,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -494,15 +506,15 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = await (await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            response = await (await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
             self.assertIsNotNone(response)
 
             credential.update("xxx")  # Make authentication fail
             with self.assertRaises(ClientAuthenticationError):
-                response = await (await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+                response = await (await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
 
             credential.update(text_analytics_account_key)  # Authenticate successfully again
-            response = await (await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            response = await (await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
             self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -519,7 +531,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            poller = await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+            poller = await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
             self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                     VERSION, platform.python_version(), platform.platform()),
                     poller._polling_method._initial_response.http_request.headers["User-Agent"]
@@ -533,7 +545,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     async def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -559,7 +571,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     async def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -581,7 +593,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         try:
             async with client:
-                result = await(await client.begin_analyze_healthcare(docs, model_version="bad", polling_interval=self._interval())).result()
+                result = await(await client.begin_analyze_healthcare_entities(docs, model_version="bad", polling_interval=self._interval())).result()
                 response = []
                 async for r in result:
                     response.append(r)
@@ -601,7 +613,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": text}]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
             doc_errors = []
             async for r in result:
                 doc_errors.append(r)
@@ -619,7 +631,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
             async with client:
-                await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+                await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
         assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -628,7 +640,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         docs = []
         with pytest.raises(ValueError) as excinfo:
             async with client:
-                await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+                await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -636,7 +648,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     async def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
             async with client:
-                await client.begin_analyze_healthcare(None, polling_interval=self._interval())
+                await client.begin_analyze_healthcare_entities(None, polling_interval=self._interval())
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @pytest.mark.playback_test_only
@@ -648,7 +660,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
             async with client:
-                result = await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+                result = await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocument")
             self.assertIsNotNone(err.error.message)
@@ -660,7 +672,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             return "cls result"
 
         async with client:
-            res = await (await client.begin_analyze_healthcare(
+            res = await (await client.begin_analyze_healthcare_entities(
                 documents=["Test passing cls to endpoint"],
                 cls=callback,
                 polling_interval=self._interval()
@@ -678,7 +690,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         # in the future but for now this test actually won't hit the pagination logic now.
 
         async with client:
-            poller = await client.begin_analyze_healthcare(docs, show_stats=True, polling_interval=self._interval())
+            poller = await client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval())
             result = await poller.result()
             response = []
             async for r in result:
@@ -701,7 +713,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         # in the future but for now this test actually won't hit the pagination logic now.
 
         async with client:
-            result = await (await client.begin_analyze_healthcare(docs, show_stats=True, polling_interval=self._interval())).result()
+            result = await (await client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval())).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -726,15 +738,20 @@ class TestHealth(AsyncTextAnalyticsTest):
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
 
         async with client:
-            poller = await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
-            cancellation_result = await (await client.begin_cancel_analyze_healthcare(poller, polling_interval=self._interval())).result()
+            poller = await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
 
-            self.assertIsNone(cancellation_result)
+            try:
+                cancellation_poller = await poller.cancel()
+                cancellation_poller.wait()
+
+            except HttpResponseError:
+                pass # expected if the operation was already in a terminal state.
+
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
-        poller = await client.begin_analyze_healthcare(documents=["Hello world"])
+        poller = await client.begin_analyze_healthcare_entities(documents=["Hello world"])
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
         self.assertEqual(actual_string_index_type, "UnicodeCodePoint")
         await poller.result()
@@ -742,10 +759,34 @@ class TestHealth(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_explicit_set_string_index_type(self, client):
-        poller = await client.begin_analyze_healthcare(
+        poller = await client.begin_analyze_healthcare_entities(
             documents=["Hello world"],
             string_index_type="TextElements_v8"
         )
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
         self.assertEqual(actual_string_index_type, "TextElements_v8")
         await poller.result()
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_bidirectional_relation_type(self, client):
+        response = await (await client.begin_analyze_healthcare_entities(
+            documents=["The patient was diagnosed with Parkinsons Disease (PD)"]
+        )).result()
+
+        result = []
+        async for r in response:
+            result.append(r)
+
+        self.assertEqual(len(result[0].entities), 2)
+        entity1 = list(filter(lambda x: x.text == "Parkinsons Disease", result[0].entities))[0]
+        entity2 = list(filter(lambda x: x.text == "PD", result[0].entities))[0]
+
+        related_entity1, relation_type1 = entity1.related_entities.popitem()
+        self.assertEqual(related_entity1, entity2)
+        self.assertEqual(relation_type1, "Abbreviation")
+        related_entity2, relation_type2 = entity2.related_entities.popitem()
+        self.assertEqual(related_entity2, entity1)
+        self.assertEqual(relation_type2, "Abbreviation")
+
+

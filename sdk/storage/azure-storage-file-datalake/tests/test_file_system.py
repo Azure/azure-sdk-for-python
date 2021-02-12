@@ -200,7 +200,7 @@ class FileSystemTest(StorageTestCase):
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                restored_fs_client = self.dsc.undelete_file_system(filesystem.name, filesystem.version,
+                restored_fs_client = self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
                                                                    new_name="restored" + name + str(restored_version))
                 restored_version += 1
 
@@ -232,7 +232,7 @@ class FileSystemTest(StorageTestCase):
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
                 with self.assertRaises(HttpResponseError):
-                    self.dsc.undelete_file_system(filesystem.name, filesystem.version,
+                    self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
                                                   new_name=existing_filesystem_client.file_system_name)
 
     @record
@@ -261,7 +261,7 @@ class FileSystemTest(StorageTestCase):
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                restored_fs_client = dsc.undelete_file_system(filesystem.name, filesystem.version,
+                restored_fs_client = dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
                                                               new_name="restored" + name + str(restored_version))
                 restored_version += 1
 
@@ -451,6 +451,24 @@ class FileSystemTest(StorageTestCase):
 
         # there are 24 subpaths in total
         self.assertEqual(len(paths), 24)
+
+    @record
+    def test_list_paths_pages_correctly(self):
+        # Arrange
+        file_system = self._create_file_system(file_system_prefix="fs1")
+        for i in range(0, 6):
+            file_system.create_directory("dir1{}".format(i))
+        for i in range(0, 6):
+            file_system.create_file("file{}".format(i))
+
+        generator = file_system.get_paths(max_results=6, upn=True).by_page()
+        paths1 = list(next(generator))
+        paths2 = list(next(generator))
+        with self.assertRaises(StopIteration):
+            list(next(generator))
+
+        self.assertEqual(len(paths1), 6)
+        self.assertEqual(len(paths2), 6)
 
     @record
     def test_create_directory_from_file_system_client(self):
