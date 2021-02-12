@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Wed, 10 Feb 2021 20:42:56 GMT
+      - Thu, 11 Feb 2021 23:15:40 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -20,72 +20,62 @@ interactions:
     body:
       string: '{"phoneNumbers": [{"id": "16194895875", "phoneNumber": "+16194895875",
         "countryCode": "US", "phoneNumberType": "Geographic", "capabilities": {"calling":
-        "outbound", "sms": "none"}, "assignmentType": "User", "callbackUri": null,
-        "applicationId": null}, {"id": "16194895877", "phoneNumber": "+16194895877",
-        "countryCode": "US", "phoneNumberType": "Geographic", "capabilities": {"calling":
-        "outbound", "sms": "none"}, "assignmentType": "User", "callbackUri": null,
-        "applicationId": null}, {"id": "16194895878", "phoneNumber": "+16194895878",
-        "countryCode": "US", "phoneNumberType": "Geographic", "capabilities": {"calling":
-        "outbound", "sms": "none"}, "assignmentType": "User", "callbackUri": null,
-        "applicationId": null}, {"id": "16194895879", "phoneNumber": "+16194895879",
-        "countryCode": "US", "phoneNumberType": "Geographic", "capabilities": {"calling":
-        "outbound", "sms": "none"}, "assignmentType": "User", "callbackUri": null,
-        "applicationId": null}, {"id": "16194895880", "phoneNumber": "+16194895880",
-        "countryCode": "US", "phoneNumberType": "Geographic", "capabilities": {"calling":
-        "outbound", "sms": "none"}, "assignmentType": "User", "callbackUri": null,
-        "applicationId": null}, {"id": "16194895882", "phoneNumber": "+16194895882",
-        "countryCode": "US", "phoneNumberType": "Geographic", "capabilities": {"calling":
-        "outbound", "sms": "none"}, "assignmentType": "User", "callbackUri": null,
-        "applicationId": null}, {"id": "16194895885", "phoneNumber": "+16194895885",
-        "countryCode": "US", "phoneNumberType": "Geographic", "capabilities": {"calling":
-        "outbound", "sms": "none"}, "assignmentType": "User", "callbackUri": null,
-        "applicationId": null}, {"id": "16194895887", "phoneNumber": "+16194895887",
-        "countryCode": "US", "phoneNumberType": "Geographic", "capabilities": {"calling":
-        "outbound", "sms": "none"}, "assignmentType": "User", "callbackUri": null,
-        "applicationId": null}, {"id": "16194895889", "phoneNumber": "+16194895889",
-        "countryCode": "US", "phoneNumberType": "Geographic", "capabilities": {"calling":
-        "outbound", "sms": "none"}, "assignmentType": "User", "callbackUri": null,
-        "applicationId": null}, {"id": "18332271680", "phoneNumber": "+18332271680",
-        "countryCode": "US", "phoneNumberType": "TollFree", "capabilities": {"calling":
-        "none", "sms": "outbound"}, "assignmentType": "Application", "callbackUri":
-        null, "applicationId": null}, {"id": "18332272412", "phoneNumber": "+18332272412",
-        "countryCode": "US", "phoneNumberType": "TollFree", "capabilities": {"calling":
-        "inbound", "sms": "inbound+outbound"}, "assignmentType": "Application", "callbackUri":
-        null, "applicationId": null}, {"id": "18332272430", "phoneNumber": "+18332272430",
-        "countryCode": "US", "phoneNumberType": "TollFree", "capabilities": {"calling":
-        "inbound", "sms": "inbound+outbound"}, "assignmentType": "Application", "callbackUri":
-        null, "applicationId": null}, {"id": "18332272445", "phoneNumber": "+18332272445",
-        "countryCode": "US", "phoneNumberType": "TollFree", "capabilities": {"calling":
-        "inbound", "sms": "inbound+outbound"}, "assignmentType": "Application", "callbackUri":
-        null, "applicationId": null}, {"id": "18332321209", "phoneNumber": "+18332321209",
-        "countryCode": "US", "phoneNumberType": "TollFree", "capabilities": {"calling":
-        "none", "sms": "inbound+outbound"}, "assignmentType": "Application", "callbackUri":
-        null, "applicationId": null}, {"id": "18332321221", "phoneNumber": "+18332321221",
-        "countryCode": "US", "phoneNumberType": "TollFree", "capabilities": {"calling":
-        "none", "sms": "inbound+outbound"}, "assignmentType": "Application", "callbackUri":
-        null, "applicationId": null}, {"id": "18332321226", "phoneNumber": "+18332321226",
-        "countryCode": "US", "phoneNumberType": "TollFree", "capabilities": {"calling":
-        "none", "sms": "inbound+outbound"}, "assignmentType": "Application", "callbackUri":
-        null, "applicationId": null}, {"id": "18335260208", "phoneNumber": "+18335260208",
-        "countryCode": "US", "phoneNumberType": "TollFree", "capabilities": {"calling":
-        "inbound", "sms": "inbound+outbound"}, "assignmentType": "Application", "callbackUri":
-        null, "applicationId": null}, {"id": "18336369501", "phoneNumber": "+18336369501",
-        "countryCode": "US", "phoneNumberType": "TollFree", "capabilities": {"calling":
-        "inbound+outbound", "sms": "none"}, "assignmentType": "Application", "callbackUri":
-        null, "applicationId": null}]}'
+        "outbound", "sms": "none"}, "assignmentType": "User"}, {"id": "16194895877",
+        "phoneNumber": "+16194895877", "countryCode": "US", "phoneNumberType": "Geographic",
+        "capabilities": {"calling": "outbound", "sms": "none"}, "assignmentType":
+        "User"}, {"id": "16194895878", "phoneNumber": "+16194895878", "countryCode":
+        "US", "phoneNumberType": "Geographic", "capabilities": {"calling": "outbound",
+        "sms": "none"}, "assignmentType": "User"}, {"id": "16194895879", "phoneNumber":
+        "+16194895879", "countryCode": "US", "phoneNumberType": "Geographic", "capabilities":
+        {"calling": "outbound", "sms": "none"}, "assignmentType": "User"}, {"id":
+        "16194895880", "phoneNumber": "+16194895880", "countryCode": "US", "phoneNumberType":
+        "Geographic", "capabilities": {"calling": "outbound", "sms": "none"}, "assignmentType":
+        "User"}, {"id": "16194895882", "phoneNumber": "+16194895882", "countryCode":
+        "US", "phoneNumberType": "Geographic", "capabilities": {"calling": "outbound",
+        "sms": "none"}, "assignmentType": "User"}, {"id": "16194895885", "phoneNumber":
+        "+16194895885", "countryCode": "US", "phoneNumberType": "Geographic", "capabilities":
+        {"calling": "outbound", "sms": "none"}, "assignmentType": "User"}, {"id":
+        "16194895887", "phoneNumber": "+16194895887", "countryCode": "US", "phoneNumberType":
+        "Geographic", "capabilities": {"calling": "outbound", "sms": "none"}, "assignmentType":
+        "User"}, {"id": "16194895889", "phoneNumber": "+16194895889", "countryCode":
+        "US", "phoneNumberType": "Geographic", "capabilities": {"calling": "outbound",
+        "sms": "none"}, "assignmentType": "User"}, {"id": "18332271680", "phoneNumber":
+        "+18332271680", "countryCode": "US", "phoneNumberType": "TollFree", "capabilities":
+        {"calling": "none", "sms": "outbound"}, "assignmentType": "Application"},
+        {"id": "18332272412", "phoneNumber": "+18332272412", "countryCode": "US",
+        "phoneNumberType": "TollFree", "capabilities": {"calling": "inbound", "sms":
+        "inbound+outbound"}, "assignmentType": "Application"}, {"id": "18332272430",
+        "phoneNumber": "+18332272430", "countryCode": "US", "phoneNumberType": "TollFree",
+        "capabilities": {"calling": "inbound", "sms": "inbound+outbound"}, "assignmentType":
+        "Application"}, {"id": "18332272445", "phoneNumber": "+18332272445", "countryCode":
+        "US", "phoneNumberType": "TollFree", "capabilities": {"calling": "inbound",
+        "sms": "inbound+outbound"}, "assignmentType": "Application"}, {"id": "18332321209",
+        "phoneNumber": "+18332321209", "countryCode": "US", "phoneNumberType": "TollFree",
+        "capabilities": {"calling": "none", "sms": "inbound+outbound"}, "assignmentType":
+        "Application"}, {"id": "18332321221", "phoneNumber": "+18332321221", "countryCode":
+        "US", "phoneNumberType": "TollFree", "capabilities": {"calling": "none", "sms":
+        "inbound+outbound"}, "assignmentType": "Application"}, {"id": "18332321226",
+        "phoneNumber": "+18332321226", "countryCode": "US", "phoneNumberType": "TollFree",
+        "capabilities": {"calling": "none", "sms": "inbound+outbound"}, "assignmentType":
+        "Application"}, {"id": "18335260208", "phoneNumber": "+18335260208", "countryCode":
+        "US", "phoneNumberType": "TollFree", "capabilities": {"calling": "inbound",
+        "sms": "inbound+outbound"}, "assignmentType": "Application"}, {"id": "18336369501",
+        "phoneNumber": "+18336369501", "countryCode": "US", "phoneNumberType": "TollFree",
+        "capabilities": {"calling": "inbound+outbound", "sms": "none"}, "assignmentType":
+        "Application"}]}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 10 Feb 2021 20:42:56 GMT
+      - Thu, 11 Feb 2021 23:15:40 GMT
       ms-cv:
-      - yNG8+L4mgES/2SWSBOrQjQ.0
+      - 0k/4PQ1Ca0WmrSBuPE9Svg.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 903ms
+      - 815ms
     status:
       code: 200
       message: OK

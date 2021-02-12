@@ -7,9 +7,15 @@
 # --------------------------------------------------------------------------
 
 """
+<<<<<<< HEAD
 FILE: list_acquired_phone_numbers_sample.py
 DESCRIPTION:
     This sample demonstrates how to get all off you acquired phone numbers using your connection string
+=======
+FILE: phone_number_area_codes_sample.py
+DESCRIPTION:
+    This sample demonstrates how to get all area codes via a connection string, country code and phone plan id.
+>>>>>>> 798b57943... Regenerated code
 USAGE:
     python list_acquired_phone_numbers_sample.py
     Set the environment variables with your own values before running the sample:
@@ -27,8 +33,12 @@ phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 def list_acquired_phone_numbers():
     acquired_phone_numbers = phone_numbers_client.list_acquired_phone_numbers()
     print('Acquired phone numbers:')
+<<<<<<< HEAD
     for acquired_phone_number in acquired_phone_numbers:
         print(acquired_phone_number.phone_number)
+=======
+    print(acquired_phone_numbers)
+>>>>>>> 798b57943... Regenerated code
 
 
 if __name__ == '__main__':

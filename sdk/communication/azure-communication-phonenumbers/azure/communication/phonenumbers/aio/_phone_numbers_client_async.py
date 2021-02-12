@@ -16,6 +16,7 @@ from .._version import SDK_MONIKER
 class PhoneNumbersClient(object):
     def __init__(
                 self,
+<<<<<<< HEAD
                 endpoint, # type: str
                 credential, # type: str
                 **kwargs # type: Any
@@ -49,11 +50,50 @@ class PhoneNumbersClient(object):
             A connection string to an Azure Communication Service resource.
         :returns: Instance of PhoneNumbersClient.
         :rtype: ~azure.communication.phonenumbers.aio.PhoneNumbersClient
+=======
+                endpoint,  # type: str
+                credential,  # type: str
+                **kwargs  # type: Any
+        ):
+            # type: (...) -> None
+            try:
+                if not endpoint.lower().startswith('http'):
+                    endpoint = "https://" + endpoint
+            except AttributeError:
+                raise ValueError("Account URL must be a string.")
+
+            if not credential:
+                raise ValueError(
+                    "You need to provide account shared key to authenticate.")
+
+            self._endpoint = endpoint
+            self._phone_number_client = PhoneNumbersClientGen(
+                self._endpoint,
+                authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
+                sdk_moniker=SDK_MONIKER,
+                **kwargs)
+
+    @classmethod
+    def from_connection_string(
+            cls, conn_str,  # type: str
+            **kwargs  # type: Any
+    ):  # type: (...) -> PhoneNumbersAdministrationClient
+        """Create PhoneNumbersAdministrationClient from a Connection String.
+        :param str conn_str:
+            A connection string to an Azure Communication Service resource.
+        :returns: Instance of PhoneNumbersAdministrationClient.
+        :rtype: ~azure.communication.PhoneNumbersAdministrationClient
+>>>>>>> 798b57943... Regenerated code
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
         return cls(endpoint, access_key, **kwargs)
+<<<<<<< HEAD
 
+=======
+    
+    
+>>>>>>> 798b57943... Regenerated code
     @distributed_trace_async
     async def begin_purchase_phone_numbers(
             self,
@@ -77,7 +117,11 @@ class PhoneNumbersClient(object):
             search_id,
             **kwargs
         )
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 798b57943... Regenerated code
     @distributed_trace_async
     async def begin_release_phone_number(
             self,
@@ -209,8 +253,13 @@ class PhoneNumbersClient(object):
 
     @distributed_trace
     def list_acquired_phone_numbers(
+<<<<<<< HEAD
         self,
         **kwargs # type: Any
+=======
+        self, 
+        **kwargs
+>>>>>>> 798b57943... Regenerated code
     ):
         # type: (...) -> AsyncItemPaged[AcquiredPhoneNumbers]
         """Gets the list of all acquired phone numbers.
@@ -226,6 +275,41 @@ class PhoneNumbersClient(object):
         return self._phone_number_client.phone_numbers.list_phone_numbers(
             **kwargs
         )
+<<<<<<< HEAD
+=======
+    
+    @distributed_trace_async
+    async def update_phone_number(
+            self, 
+            phone_number,
+            callback_uri,
+            application_id,
+            **kwargs
+    ):
+        # type: (...) -> AcquiredPhoneNumber
+        """Updates the configuration of a phone number.
+>>>>>>> 798b57943... Regenerated code
+
+    async def __aenter__(self) -> "PhoneNumbersClient":
+        await self._phone_number_client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args: "Any") -> None:
+        await self.close()
+
+    async def close(self) -> None:
+        """Close the :class:
+        `~azure.communication.phonenumbers.aio.PhoneNumbersClient` session.
+        """
+<<<<<<< HEAD
+        await self._phone_number_client.__aexit__()
+=======
+        return await self._phone_number_client.phone_numbers.update(
+            phone_number,
+            callback_uri,
+            application_id,
+            **kwargs
+        )
 
     async def __aenter__(self) -> "PhoneNumbersClient":
         await self._phone_number_client.__aenter__()
@@ -239,3 +323,4 @@ class PhoneNumbersClient(object):
         `~azure.communication.phonenumbers.aio.PhoneNumbersClient` session.
         """
         await self._phone_number_client.__aexit__()
+>>>>>>> 798b57943... Regenerated code

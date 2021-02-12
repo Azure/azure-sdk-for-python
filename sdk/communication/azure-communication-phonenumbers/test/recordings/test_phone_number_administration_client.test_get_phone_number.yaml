@@ -10,6 +10,7 @@ interactions:
       - keep-alive
       Date:
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:sdk/communication/azure-communication-phonenumbers/test/recordings/test_phone_number_administration_client.test_get_phone_number.yaml
       - Mon, 22 Feb 2021 19:48:24 GMT
 =======
@@ -18,6 +19,9 @@ interactions:
 =======
       - Wed, 10 Feb 2021 20:42:54 GMT
 >>>>>>> 8bb023cc3... Added sanitization
+=======
+      - Thu, 11 Feb 2021 23:15:38 GMT
+>>>>>>> 798b57943... Regenerated code
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -43,12 +47,17 @@ interactions:
 =======
       string: '{"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US",
         "phoneNumberType": "Geographic", "capabilities": {"calling": "outbound", "sms":
+<<<<<<< HEAD
         "none"}, "assignmentType": "User", "callbackUri": null, "applicationId": null}'
 >>>>>>> 8bb023cc3... Added sanitization
+=======
+        "none"}, "assignmentType": "User"}'
+>>>>>>> 798b57943... Regenerated code
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD:sdk/communication/azure-communication-phonenumbers/test/recordings/test_phone_number_administration_client.test_get_phone_number.yaml
       - Mon, 22 Feb 2021 19:48:23 GMT
@@ -64,11 +73,17 @@ interactions:
       ms-cv:
       - NloH7B1nGEu+4ADVEcl9Rw.0
 >>>>>>> 8bb023cc3... Added sanitization
+=======
+      - Thu, 11 Feb 2021 23:15:39 GMT
+      ms-cv:
+      - 0Fa+iu/NaEivjqj8QV7AwQ.0
+>>>>>>> 798b57943... Regenerated code
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD:sdk/communication/azure-communication-phonenumbers/test/recordings/test_phone_number_administration_client.test_get_phone_number.yaml
       - 847ms
@@ -78,6 +93,9 @@ interactions:
 =======
       - 778ms
 >>>>>>> 8bb023cc3... Added sanitization
+=======
+      - 828ms
+>>>>>>> 798b57943... Regenerated code
     status:
       code: 200
       message: OK

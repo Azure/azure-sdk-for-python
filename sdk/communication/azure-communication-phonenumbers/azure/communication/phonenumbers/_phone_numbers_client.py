@@ -151,7 +151,11 @@ class PhoneNumbersClient(object):
             search_request,
             **kwargs
         )
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 798b57943... Regenerated code
     @distributed_trace
     def begin_update_phone_number_capabilities(
             self,
