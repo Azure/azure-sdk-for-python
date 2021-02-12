@@ -188,6 +188,13 @@
                 "description": "Certificate Thumbprint"
             }
         },
+        "sshKeyData": {
+            "type": "string",
+            "defaultValue": "ssh-rsa {base64 content} {user}@{machine}",
+            "metadata": {
+                "description": "An SSH public key (the content of the key's .pub file, with no trailing whitespace)"
+            }
+        },
         "storageAccountType": {
             "type": "string",
             "allowedValues": [
