@@ -4,7 +4,7 @@ import errno
 import shutil
 import re
 import multiprocessing
-import json
+import glob
 
 if sys.version_info < (3, 0):
     from Queue import Queue
@@ -25,7 +25,6 @@ from common_tasks import (
     find_whl,
     parse_setup
 )
-from code_cov_report import create_coverage_report
 
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
@@ -276,11 +275,81 @@ def replace_dev_reqs(file, pkg_root):
         f.write("\n".join(adjusted_req_lines))
 
 
+def collect_log_files(working_dir):
+    logging.info("Collecting log files from {}".format(working_dir))
+    package = working_dir.split('/')[-1]
+    # collect all the log files into one place for publishing in case of tox failure
+
+    log_directory = os.path.join(
+        root_dir, "_tox_logs"
+    )
+
+    try:
+        os.mkdir(log_directory)
+        logging.info("Created log directory: {}".format(log_directory))
+    except OSError:
+        logging.info("'{}' directory already exists".format(log_directory))
+
+    log_directory = os.path.join(
+        log_directory, package
+    )
+
+    try:
+        os.mkdir(log_directory)
+        logging.info("Created log directory: {}".format(log_directory))
+    except OSError:
+        logging.info("'{}' directory already exists".format(log_directory))
+
+    log_directory = os.path.join(
+        log_directory, sys.version.split()[0]
+    )
+
+    try:
+        os.mkdir(log_directory)
+        logging.info("Created log directory: {}".format(log_directory))
+    except OSError:
+        logging.info("'{}' directory already exists".format(log_directory))
+
+    for test_env in glob.glob(os.path.join(working_dir, ".tox", "*")):
+        env = os.path.split(test_env)[-1]
+        logging.info("env: {}".format(env))
+        log_files = os.path.join(test_env, "log")
+
+        if os.path.exists(log_files):
+            logging.info("Copying log files from {} to {}".format(log_files, log_directory))
+
+            temp_dir = os.path.join(log_directory, env)
+            logging.info("TEMP DIR: {}".format(temp_dir))
+            try:
+                os.mkdir(temp_dir)
+                logging.info("Created log directory: {}".format(temp_dir))
+            except OSError:
+                logging.info("Could not create '{}' directory".format(temp_dir))
+                break
+
+            for filename in os.listdir(log_files):
+                if filename.endswith(".log"):
+                    logging.info("LOG FILE: ", filename)
+
+                    file_location = os.path.join(log_files, filename)
+                    shutil.move(
+                        file_location,
+                        os.path.join(temp_dir, filename)
+                    )
+                    logging.info("Moved file to {}".format(os.path.join(temp_dir, filename)))
+        else:
+            logging.info("Could not find {} directory".format(log_files))
+
+    for f in glob.glob(os.path.join(root_dir, "_tox_logs", "*")):
+        logging.info("Log file: {}".format(f))
+
+
 def execute_tox_serial(tox_command_tuples):
     return_code = 0
 
     for index, cmd_tuple in enumerate(tox_command_tuples):
         tox_dir = os.path.abspath(os.path.join(cmd_tuple[1], "./.tox/"))
+        logging.info("tox_dir: {}".format(tox_dir))
 
         logging.info(
             "Running tox for {}. {} of {}.".format(
@@ -294,6 +363,7 @@ def execute_tox_serial(tox_command_tuples):
             return_code = result
 
         if in_ci():
+            collect_log_files(cmd_tuple[1])
             shutil.rmtree(tox_dir)
 
     return return_code

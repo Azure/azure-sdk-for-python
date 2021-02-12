@@ -76,13 +76,14 @@ def test_rsa_wrap_unwrap(key, algorithm):
     assert unwrap_result.key == plaintext
 
 
-def test_symmetric_wrap_unwrap():
+@pytest.mark.parametrize("algorithm", (a for a in KeyWrapAlgorithm if a.startswith("AES")))
+def test_symmetric_wrap_unwrap(algorithm):
     jwk = {"k": os.urandom(32), "kty": "oct", "key_ops": ("unwrapKey", "wrapKey")}
     key = KeyVaultKey(key_id="http://localhost/keys/key/version", jwk=jwk)
     provider = get_local_cryptography_provider(key)
     key_bytes = os.urandom(32)
 
-    wrap_result = provider.wrap_key(KeyWrapAlgorithm.aes_256, key_bytes)
+    wrap_result = provider.wrap_key(algorithm, key_bytes)
     assert wrap_result.key_id == key.id
 
     unwrap_result = provider.unwrap_key(wrap_result.algorithm, wrap_result.encrypted_key)
@@ -145,7 +146,7 @@ def test_unsupported_ec_operations(key, algorithm):
 
 @pytest.mark.parametrize(
     "algorithm",
-    [a for a in KeyWrapAlgorithm if a != KeyWrapAlgorithm.aes_256]
+    [a for a in KeyWrapAlgorithm if a.startswith("RSA")]
     + list(SignatureAlgorithm)
     + list(EncryptionAlgorithm),
 )

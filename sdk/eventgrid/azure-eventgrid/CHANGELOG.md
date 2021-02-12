@@ -1,6 +1,9 @@
 # Release History
 
-## 2.0.0b5 (Unreleased)
+## 2.0.0b6 (Unreleased)
+
+
+## 2.0.0b5 (2021-02-10)
 
   **Breaking Changes**
   - `EventGridSharedAccessSignatureCredential` is deprecated in favor of `AzureSasCredential`.
