@@ -312,7 +312,7 @@ def collect_log_files(working_dir):
         logging.info("'{}' directory already exists".format(log_directory))
 
     for test_env in glob.glob(os.path.join(working_dir, ".tox", "*")):
-        env = test_env.split()[-1]
+        env = os.path.split(test_env)[-1]
         logging.info("env: {}".format(env))
         log_files = os.path.join(test_env, "log")
 
