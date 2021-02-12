@@ -147,6 +147,7 @@ class PhoneNumbersClient(object):
             **kwargs
         )
     
+    @distributed_trace
     def begin_update_phone_number_capabilities(
             self, 
             phone_number, 

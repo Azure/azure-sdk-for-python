@@ -1,15 +1,11 @@
 interactions:
 - request:
-    body: null
+    body: ''
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Date:
-      - Thu, 11 Feb 2021 23:15:40 GMT
+      - Thu, 11 Feb 2021 20:20:13 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -64,19 +60,14 @@ interactions:
         "capabilities": {"calling": "inbound+outbound", "sms": "none"}, "assignmentType":
         "Application"}]}'
     headers:
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 11 Feb 2021 23:15:40 GMT
-      ms-cv:
-      - 0k/4PQ1Ca0WmrSBuPE9Svg.0
-      request-context:
-      - appId=
-      transfer-encoding:
-      - chunked
-      x-processing-time:
-      - 815ms
+      content-type: application/json; charset=utf-8
+      date: Thu, 11 Feb 2021 20:20:15 GMT
+      ms-cv: /PDnQzArpkm1GBLVqCNyKg.0
+      request-context: appId=
+      transfer-encoding: chunked
+      x-processing-time: 2257ms
     status:
       code: 200
       message: OK
+    url: https://sanitized.communication.azure.com/phoneNumbers?skip=0&top=100&api-version=2021-03-07
 version: 1

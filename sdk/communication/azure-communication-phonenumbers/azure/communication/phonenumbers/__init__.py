@@ -18,7 +18,6 @@ from ._generated.models import (
     PhoneNumberPurchaseRequest,
     PhoneNumberSearchRequest,
     PhoneNumberSearchResult,
-    PhoneNumberUpdateRequest,
     BillingFrequency,
     PhoneNumberAssignmentType,
     PhoneNumberCapabilityValue,

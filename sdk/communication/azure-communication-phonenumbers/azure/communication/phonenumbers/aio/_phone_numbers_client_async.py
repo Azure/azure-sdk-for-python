@@ -1,7 +1,8 @@
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
-from .._generated._phone_numbers_client import PhoneNumbersClient as PhoneNumbersClientGen
+from .._generated.aio._phone_numbers_client import PhoneNumbersClient as PhoneNumbersClientGen
 from .._generated.models import PhoneNumberSearchRequest
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
@@ -10,47 +11,46 @@ import pytest
 
 class PhoneNumbersClient(object):
     def __init__(
-        self,
-        endpoint, # type: str
-        credential, # type: str
-        **kwargs # type: Any
-    ):
-        # type: (...) -> None
-        try:
-            if not endpoint.lower().startswith('http'):
-                endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+                self,
+                endpoint,  # type: str
+                credential,  # type: str
+                **kwargs  # type: Any
+        ):
+            # type: (...) -> None
+            try:
+                if not endpoint.lower().startswith('http'):
+                    endpoint = "https://" + endpoint
+            except AttributeError:
+                raise ValueError("Account URL must be a string.")
 
-        if not credential:
-            raise ValueError(
-                "You need to provide account shared key to authenticate.")
+            if not credential:
+                raise ValueError(
+                    "You need to provide account shared key to authenticate.")
 
-        self._endpoint = endpoint
-        self._phone_number_client = PhoneNumbersClientGen(
-            self._endpoint,
-            authentication_policy=get_authentication_policy(endpoint, credential),
-            sdk_moniker=SDK_MONIKER,
-            **kwargs)
-    
+            self._endpoint = endpoint
+            self._phone_number_client = PhoneNumbersClientGen(
+                self._endpoint,
+                authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
+                sdk_moniker=SDK_MONIKER,
+                **kwargs)
+
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
             **kwargs  # type: Any
-    ):
-        # type: (...) -> PhoneNumbersClient
-        """Create PhoneNumbersClient from a Connection String.
+    ):  # type: (...) -> PhoneNumbersAdministrationClient
+        """Create PhoneNumbersAdministrationClient from a Connection String.
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
-        :returns: Instance of PhoneNumbersClient.
-        :rtype: ~azure.communication.PhoneNumbersClient
+        :returns: Instance of PhoneNumbersAdministrationClient.
+        :rtype: ~azure.communication.PhoneNumbersAdministrationClient
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
         return cls(endpoint, access_key, **kwargs)
     
     
-    @distributed_trace
+    @distributed_trace_async
     async def begin_purchase_phone_numbers(
             self, 
             search_id,
@@ -73,7 +73,7 @@ class PhoneNumbersClient(object):
             **kwargs
         )
     
-    @distributed_trace
+    @distributed_trace_async
     async def begin_release_phone_number(
             self, 
             phone_number, 
@@ -97,7 +97,7 @@ class PhoneNumbersClient(object):
             **kwargs
         )
 
-    @distributed_trace
+    @distributed_trace_async
     async def begin_search_available_phone_numbers(
             self, 
             country_code, 
@@ -146,7 +146,8 @@ class PhoneNumbersClient(object):
             search_request,
             **kwargs
         )
-    
+
+    @distributed_trace_async
     async def begin_update_phone_number_capabilities(
             self, 
             phone_number, 
@@ -179,7 +180,7 @@ class PhoneNumbersClient(object):
             **kwargs
         ) 
 
-    @distributed_trace
+    @distributed_trace_async
     async def get_phone_number(
             self, 
             phone_number,
@@ -200,7 +201,7 @@ class PhoneNumbersClient(object):
         )
 
     @distributed_trace
-    async def list_acquired_phone_numbers(
+    def list_acquired_phone_numbers(
         self, 
         **kwargs
     ):
@@ -215,11 +216,11 @@ class PhoneNumbersClient(object):
         :type top: int
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.communication.phonenumbers.models.AcquiredPhoneNumbers]
         """
-        return await self._phone_number_client.phone_numbers.list_phone_numbers(
+        return self._phone_number_client.phone_numbers.list_phone_numbers(
             **kwargs
         )
     
-    @distributed_trace
+    @distributed_trace_async
     async def update_phone_number(
             self, 
             phone_number,
@@ -248,3 +249,16 @@ class PhoneNumbersClient(object):
             application_id,
             **kwargs
         )
+
+    async def __aenter__(self) -> "PhoneNumbersClient":
+        await self._phone_number_client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args: "Any") -> None:
+        await self.close()
+
+    async def close(self) -> None:
+        """Close the :class:
+        `~azure.communication.phonenumbers.aio.PhoneNumbersClient` session.
+        """
+        await self._phone_number_client.__aexit__()

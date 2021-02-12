@@ -38,12 +38,6 @@ class AcquiredPhoneNumber(msrest.serialization.Model):
      ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
     :param purchase_date: The date and time that the phone number was purchased.
     :type purchase_date: ~datetime.datetime
-    :param callback_uri: The webhook for receiving incoming events, e.g. https://{{site-
-     name}}.azurewebsites.net/api/updates.
-    :type callback_uri: str
-    :param application_id: The application id of the server application the phone number is
-     assigned to. The property is empty if the phone number is assigned to a person.
-    :type application_id: str
     :param cost: The incurred cost for a single phone number.
     :type cost: ~azure.communication.phonenumbers.models.PhoneNumberCost
     """
@@ -65,8 +59,6 @@ class AcquiredPhoneNumber(msrest.serialization.Model):
         'capabilities': {'key': 'capabilities', 'type': 'PhoneNumberCapabilities'},
         'assignment_type': {'key': 'assignmentType', 'type': 'str'},
         'purchase_date': {'key': 'purchaseDate', 'type': 'iso-8601'},
-        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
-        'application_id': {'key': 'applicationId', 'type': 'str'},
         'cost': {'key': 'cost', 'type': 'PhoneNumberCost'},
     }
 
@@ -80,8 +72,6 @@ class AcquiredPhoneNumber(msrest.serialization.Model):
         capabilities: "PhoneNumberCapabilities",
         assignment_type: Union[str, "PhoneNumberAssignmentType"],
         purchase_date: Optional[datetime.datetime] = None,
-        callback_uri: Optional[str] = None,
-        application_id: Optional[str] = None,
         cost: Optional["PhoneNumberCost"] = None,
         **kwargs
     ):
@@ -93,8 +83,6 @@ class AcquiredPhoneNumber(msrest.serialization.Model):
         self.capabilities = capabilities
         self.assignment_type = assignment_type
         self.purchase_date = purchase_date
-        self.callback_uri = callback_uri
-        self.application_id = application_id
         self.cost = cost
 
 
@@ -468,10 +456,11 @@ class PhoneNumberSearchResult(msrest.serialization.Model):
      ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
     :param capabilities: Required. Capabilities of a phone number.
     :type capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
-    :param cost: The incurred cost for a single phone number.
+    :param cost: Required. The incurred cost for a single phone number.
     :type cost: ~azure.communication.phonenumbers.models.PhoneNumberCost
-    :param search_expires_by: The date that this search result expires and phone numbers are no
-     longer on hold. A search result expires in less than 15min, e.g. 2020-11-19T16:31:49.048Z.
+    :param search_expires_by: Required. The date that this search result expires and phone numbers
+     are no longer on hold. A search result expires in less than 15min, e.g.
+     2020-11-19T16:31:49.048Z.
     :type search_expires_by: ~datetime.datetime
     """
 
@@ -481,6 +470,8 @@ class PhoneNumberSearchResult(msrest.serialization.Model):
         'phone_number_type': {'required': True},
         'assignment_type': {'required': True},
         'capabilities': {'required': True},
+        'cost': {'required': True},
+        'search_expires_by': {'required': True},
     }
 
     _attribute_map = {
@@ -501,8 +492,8 @@ class PhoneNumberSearchResult(msrest.serialization.Model):
         phone_number_type: Union[str, "PhoneNumberType"],
         assignment_type: Union[str, "PhoneNumberAssignmentType"],
         capabilities: "PhoneNumberCapabilities",
-        cost: Optional["PhoneNumberCost"] = None,
-        search_expires_by: Optional[datetime.datetime] = None,
+        cost: "PhoneNumberCost",
+        search_expires_by: datetime.datetime,
         **kwargs
     ):
         super(PhoneNumberSearchResult, self).__init__(**kwargs)
@@ -513,33 +504,3 @@ class PhoneNumberSearchResult(msrest.serialization.Model):
         self.capabilities = capabilities
         self.cost = cost
         self.search_expires_by = search_expires_by
-
-
-class PhoneNumberUpdateRequest(msrest.serialization.Model):
-    """Property updates for a phone number.
-
-    :param callback_uri: The webhook for receiving incoming events.
-     e.g. "https://{{site-name}}.azurewebsites.net/api/updates".
-     Please read https://docs.microsoft.com/en-us/azure/communication-services/concepts/event-
-     handling
-     for integration with Azure Event Grid to deliver real-time event notifications.
-    :type callback_uri: str
-    :param application_id: The application id of the application to which to configure.
-    :type application_id: str
-    """
-
-    _attribute_map = {
-        'callback_uri': {'key': 'callbackUri', 'type': 'str'},
-        'application_id': {'key': 'applicationId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        callback_uri: Optional[str] = None,
-        application_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(PhoneNumberUpdateRequest, self).__init__(**kwargs)
-        self.callback_uri = callback_uri
-        self.application_id = application_id

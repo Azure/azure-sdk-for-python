@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Wed, 10 Feb 2021 20:42:54 GMT
+      - Thu, 11 Feb 2021 23:15:38 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -20,20 +20,20 @@ interactions:
     body:
       string: '{"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US",
         "phoneNumberType": "Geographic", "capabilities": {"calling": "outbound", "sms":
-        "none"}, "assignmentType": "User", "callbackUri": null, "applicationId": null}'
+        "none"}, "assignmentType": "User"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 10 Feb 2021 20:42:54 GMT
+      - Thu, 11 Feb 2021 23:15:39 GMT
       ms-cv:
-      - NloH7B1nGEu+4ADVEcl9Rw.0
+      - 0Fa+iu/NaEivjqj8QV7AwQ.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 778ms
+      - 828ms
     status:
       code: 200
       message: OK

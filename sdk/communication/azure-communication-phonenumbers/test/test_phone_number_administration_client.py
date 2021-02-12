@@ -20,19 +20,10 @@ class NewTests(CommunicationTestCase):
     def test_get_phone_number(self):
         phone_number = self.phone_number_client.get_phone_number("+16194895875")
         assert phone_number.phone_number == "+16194895875"
-    
-    def test_update_phone_number(self):
-        updated_phone_number = self.phone_number_client.update_phone_number(
-            "+16194895842",
-            "",
-            ""
-        )
-        assert updated_phone_number.application_id == ""
 
     def test_release_phone_number(self):
         poller = self.phone_number_client.begin_release_phone_number("+16194895886")
         assert poller.status() == 'succeeded'
-    
 
     def test_search_available_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(
@@ -49,7 +40,7 @@ class NewTests(CommunicationTestCase):
             polling = True
         )
         assert poller.result()
-    
+
     def test_update_phone_number_capabilities(self):
         poller = self.phone_number_client.begin_update_phone_number_capabilities(
           "+16194895875",
@@ -58,6 +49,7 @@ class NewTests(CommunicationTestCase):
           polling = True
         )
         assert poller.result()
+
 
     def test_purchase_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(

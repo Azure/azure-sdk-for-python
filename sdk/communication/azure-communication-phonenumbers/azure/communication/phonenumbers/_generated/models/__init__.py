@@ -18,7 +18,6 @@ try:
     from ._models_py3 import PhoneNumberPurchaseRequest
     from ._models_py3 import PhoneNumberSearchRequest
     from ._models_py3 import PhoneNumberSearchResult
-    from ._models_py3 import PhoneNumberUpdateRequest
 except (SyntaxError, ImportError):
     from ._models import AcquiredPhoneNumber  # type: ignore
     from ._models import AcquiredPhoneNumbers  # type: ignore
@@ -31,7 +30,6 @@ except (SyntaxError, ImportError):
     from ._models import PhoneNumberPurchaseRequest  # type: ignore
     from ._models import PhoneNumberSearchRequest  # type: ignore
     from ._models import PhoneNumberSearchResult  # type: ignore
-    from ._models import PhoneNumberUpdateRequest  # type: ignore
 
 from ._phone_numbers_client_enums import (
     BillingFrequency,
@@ -54,7 +52,6 @@ __all__ = [
     'PhoneNumberPurchaseRequest',
     'PhoneNumberSearchRequest',
     'PhoneNumberSearchResult',
-    'PhoneNumberUpdateRequest',
     'BillingFrequency',
     'PhoneNumberAssignmentType',
     'PhoneNumberCapabilityValue',
