@@ -279,7 +279,7 @@ def collect_log_files(working_dir):
     logging.info("Collecting log files from {}".format(working_dir))
     package = working_dir.split('/')[-1]
     # collect all the log files into one place for publishing in case of tox failure
-    test_envs = ["whl", "sdist", "depends", "latestdependency", "mindependency"]
+    # test_envs = ["whl", "sdist", "depends", "latestdependency", "mindependency"]
 
     log_directory = os.path.join(
         root_dir, "_tox_logs"
@@ -287,6 +287,7 @@ def collect_log_files(working_dir):
 
     try:
         os.mkdir(log_directory)
+        logging.info("Created log directory: {}".format(log_directory))
     except OSError:
         logging.info("'{}' directory already exists".format(log_directory))
 
@@ -296,6 +297,7 @@ def collect_log_files(working_dir):
 
     try:
         os.mkdir(log_directory)
+        logging.info("Created log directory: {}".format(log_directory))
     except OSError:
         logging.info("'{}' directory already exists".format(log_directory))
 
@@ -305,6 +307,7 @@ def collect_log_files(working_dir):
 
     try:
         os.mkdir(log_directory)
+        logging.info("Created log directory: {}".format(log_directory))
     except OSError:
         logging.info("'{}' directory already exists".format(log_directory))
 
