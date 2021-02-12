@@ -279,7 +279,6 @@ def collect_log_files(working_dir):
     logging.info("Collecting log files from {}".format(working_dir))
     package = working_dir.split('/')[-1]
     # collect all the log files into one place for publishing in case of tox failure
-    # test_envs = ["whl", "sdist", "depends", "latestdependency", "mindependency"]
 
     log_directory = os.path.join(
         root_dir, "_tox_logs"
@@ -319,7 +318,6 @@ def collect_log_files(working_dir):
         if os.path.exists(log_files):
             logging.info("Copying log files from {} to {}".format(log_files, log_directory))
 
-            # shutil.copytree(log_files, log_directory)
             temp_dir = os.path.join(log_directory, env)
             logging.info("TEMP DIR: {}".format(temp_dir))
             try:
@@ -327,7 +325,6 @@ def collect_log_files(working_dir):
                 logging.info("Created log directory: {}".format(temp_dir))
             except OSError:
                 logging.info("Could not create '{}' directory".format(temp_dir))
-                # return
                 break
 
             for filename in os.listdir(log_files):

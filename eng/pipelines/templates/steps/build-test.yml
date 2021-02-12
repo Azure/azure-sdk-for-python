@@ -53,10 +53,6 @@ steps:
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
 
-  - pwsh: |
-      Get-ChildItem .\_tox_logs\ -Recurse
-    displayName: 'Show tox logs files'
-
   - task: PublishPipelineArtifact@1
     displayName: Publish Tox Logs
     condition: failed()
