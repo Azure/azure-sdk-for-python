@@ -144,8 +144,8 @@ def update_change_log(setup_py_location, version, service, package, is_unrelease
         service,
         "--PackageName",
         package,
-        f"--Unreleased:${is_unreleased}",
-        f"--ReplaceLatestEntryTitle:${replace_latest_entry_title}",
+        "--Unreleased:${}".format(is_unreleased),
+        "--ReplaceLatestEntryTitle:${}".format(replace_latest_entry_title),
     ]
     if release_date is not None:
         commands.append("--ReleaseDate")
