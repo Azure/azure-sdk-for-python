@@ -98,3 +98,6 @@ def test_update_cached_sync_token():
     assert sync_token.token_id == 'syncToken1'
     assert sync_token.value == 'val2'
     assert sync_token.sequence_number == 10
+
+def test_failure():
+    assert 1 == 0
