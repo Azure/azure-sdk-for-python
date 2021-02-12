@@ -53,20 +53,22 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
-        'azure'
+        'azure',
+        'azure.mixedreality'
     ]),
     install_requires=[
-        #'msrest>=0.5.0',
-        #'msrestazure>=0.4.32,<2.0.0',
-        #'azure-common~=1.1',
+        'azure-core<2.0.0,>=1.9.0'
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
+        ":python_version<'3.0'": ['azure-mixedreality-nspkg'],
+        ":python_version<'3.5'": ["typing"]
     },
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',

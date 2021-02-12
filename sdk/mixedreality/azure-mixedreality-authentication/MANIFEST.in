@@ -1,3 +1,6 @@
 include *.md
 include azure/__init__.py
-recursive-include tests *.py
+include azure/mixedreality/__init__.py
+include LICENSE.txt
+recursive-include tests *.py *.yaml
+recursive-include samples *.py *.md
