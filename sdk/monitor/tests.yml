@@ -12,8 +12,3 @@ stages:
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
         AZURE_TEST_RUN_LIVE: 'true'
-      MatrixConfigs:
-        - Name: Monitor_live_test
-          Path: sdk/monitor/platform-matrix.json
-          Selection: sparse
-          GenerateVMJobs: true
