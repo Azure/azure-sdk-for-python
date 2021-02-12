@@ -1,0 +1,220 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "baseName": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "The base resource name."
+      }
+    },
+    "subscriptionId": {
+      "type": "string",
+      "defaultValue": "[subscription().subscriptionId]",
+      "metadata": {
+        "description": "The subscription ID to which the application and resources belong."
+      }
+    },
+    "tenantId": {
+      "type": "string",
+      "defaultValue": "[subscription().tenantId]",
+      "metadata": {
+        "description": "The tenant ID to which the application and resources belong."
+      }
+    },
+    "testApplicationOid": {
+      "type": "string",
+      "metadata": {
+        "description": "The client OID to grant access to test resources."
+      }
+    },
+    "testApplicationId": {
+      "type": "string",
+      "metadata": {
+        "description": "The application client ID used to run tests."
+      }
+    },
+    "testApplicationSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "The application client secret used to run tests."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "The location of the resources. By default, this is the same as the resource group."
+      }
+    }
+  },
+  "variables": {
+    "serviceBusNamespace": "[concat('sb-', parameters('baseName'))]",
+    "serviceBusSubscriptionName": "[concat('sb-', parameters('baseName'), '-subscription')]",
+    "serviceBusTopicName": "[concat('sb-', parameters('baseName'), '-topic')]",
+    "serviceBusQueueName": "[concat('sb-', parameters('baseName'), '-queue')]",
+    "serviceBusSessionQueueName": "[concat('sb-', parameters('baseName'), '-session-queue')]",
+    "sessionQueueAuthorizationRuleName": "[concat('sb-', parameters('baseName'), '-session-queue-auth')]",
+    "serviceBusSessionId": "[concat('sb-', parameters('baseName'), '-session-queue-id')]",
+    "defaultSASKeyName": "RootManageSharedAccessKey",
+    "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespace'), variables('defaultSASKeyName'))]",
+    "sbVersion": "2017-04-01",
+    "contributorRoleId": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+    "serviceBusDataOwnerRoleId": "090c5cfd-751d-490a-894a-3ce6f1109419"
+  },
+  "resources": [
+    {
+      "apiVersion": "[variables('sbVersion')]",
+      "name": "[variables('serviceBusNamespace')]",
+      "type": "Microsoft.ServiceBus/Namespaces",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "resources": [
+        {
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[variables('serviceBusTopicName')]",
+            "type": "Topics",
+            "dependsOn": [
+                "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusNamespace'))]"
+            ],
+            "properties": {
+                "path": "[variables('serviceBusTopicName')]"
+            },
+            "resources": [{
+                "apiVersion": "[variables('sbVersion')]",
+                "name": "[variables('serviceBusSubscriptionName')]",
+                "type": "Subscriptions",
+                "dependsOn": [
+                    "[variables('serviceBusTopicName')]"
+                ],
+                "properties": {}
+            }]
+        },
+        {
+          "type": "Queues",
+          "apiVersion": "[variables('sbVersion')]",
+          "name": "[variables('serviceBusQueueName')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace'))]"
+          ],
+          "properties": {
+            "lockDuration": "PT5M",
+            "maxSizeInMegabytes": 1024,
+            "requiresDuplicateDetection": false,
+            "requiresSession": false,
+            "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+            "deadLetteringOnMessageExpiration": false,
+            "duplicateDetectionHistoryTimeWindow": "PT10M",
+            "maxDeliveryCount": 10,
+            "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+            "enablePartitioning": false,
+            "enableExpress": false
+          }
+        },
+        {
+          "type": "Queues",
+          "apiVersion": "[variables('sbVersion')]",
+          "name": "[variables('serviceBusSessionQueueName')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace'))]"
+          ],
+          "properties": {
+            "lockDuration": "PT5M",
+            "maxSizeInMegabytes": 1024,
+            "requiresDuplicateDetection": false,
+            "requiresSession": true,
+            "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+            "deadLetteringOnMessageExpiration": false,
+            "duplicateDetectionHistoryTimeWindow": "PT10M",
+            "maxDeliveryCount": 10,
+            "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+            "enablePartitioning": false,
+            "enableExpress": false
+          },
+          "resources": [
+            {
+              "apiVersion": "[variables('sbVersion')]",
+              "name": "[variables('sessionQueueAuthorizationRuleName')]",
+              "type": "authorizationRules",
+              "dependsOn": [
+                  "[variables('serviceBusSessionQueueName')]"
+              ],
+              "properties": {
+                  "Rights": ["Manage", "Send", "Listen"]
+              }
+            }
+          ]
+        }
+      ],
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2019-04-01-preview",
+      "name": "[guid(resourceGroup().id, parameters('testApplicationOid'), variables('serviceBusDataOwnerRoleId'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/Namespaces', variables('serviceBusNamespace'))]"
+      ],
+      "properties": {
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('serviceBusDataOwnerRoleId'))]",
+        "principalId": "[parameters('testApplicationOid')]",
+        "scope": "[resourceGroup().id]"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2019-04-01-preview",
+      "name": "[guid(resourceGroup().id, parameters('testApplicationOid'), variables('contributorRoleId'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/Namespaces', variables('serviceBusNamespace'))]"
+      ],
+      "properties": {
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('contributorRoleId'))]",
+        "principalId": "[parameters('testApplicationOid')]",
+        "scope": "[resourceGroup().id]"
+      }
+    }
+  ],
+  "outputs": {
+    "SERVICE_BUS_CONNECTION_STR": {
+      "type": "string",
+      "value": "[listkeys(variables('authRuleResourceId'), variables('sbVersion')).primaryConnectionString]"
+    },
+    "SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE": {
+      "type": "string",
+      "value": "[concat(variables('serviceBusNamespace'), '.servicebus.windows.net')]"
+    },
+    "SERVICE_BUS_TOPIC_NAME": {
+      "type": "string",
+      "value": "[variables('serviceBusTopicName')]"
+    },
+    "SERVICE_BUS_SUBSCRIPTION_NAME": {
+      "type": "string",
+      "value": "[variables('serviceBusSubscriptionName')]"
+    },
+    "SERVICE_BUS_QUEUE_NAME": {
+      "type": "string",
+      "value": "[variables('serviceBusQueueName')]"
+    },
+    "SERVICE_BUS_SESSION_QUEUE_NAME": {
+      "type": "string",
+      "value": "[variables('serviceBusSessionQueueName')]"
+    },
+    "SERVICE_BUS_SESSION_ID":{
+      "type": "string",
+      "value": "[variables('serviceBusSessionId')]"
+    },
+    "SERVICE_BUS_SAS_POLICY":{
+      "type": "string",
+      "value": "[variables('sessionQueueAuthorizationRuleName')]"
+    },
+    "SERVICE_BUS_SAS_KEY":{
+      "type": "string",
+      "value": "[listkeys(variables('sessionQueueAuthorizationRuleName'), variables('sbVersion')).primaryKey]"
+    }
+
+  }
+}
