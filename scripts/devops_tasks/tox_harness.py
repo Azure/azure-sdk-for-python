@@ -313,6 +313,7 @@ def collect_log_files(working_dir):
 
     for test_env in glob.glob(os.path.join(working_dir, ".tox", "*")):
         env = test_env.split()[-1]
+        logging.info("env: {}".format(env))
         log_files = os.path.join(test_env, "log")
 
         if os.path.exists(log_files):
@@ -323,7 +324,7 @@ def collect_log_files(working_dir):
             logging.info("TEMP DIR: {}".format(temp_dir))
             try:
                 os.mkdir(temp_dir)
-                logging.info("Created log directory: {}".format(log_directory))
+                logging.info("Created log directory: {}".format(temp_dir))
             except OSError:
                 logging.info("Could not create '{}' directory".format(temp_dir))
                 # return
