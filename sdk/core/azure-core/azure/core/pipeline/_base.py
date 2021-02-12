@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import Generic, TypeVar, List, Union, Any, Dict
+from typing import cast, Generic, TypeVar, List, Union, Any, Dict
 from azure.core.pipeline import (
     AbstractContextManager,
     PipelineRequest,
@@ -105,6 +105,12 @@ class _TransportRunner(HTTPPolicy):
         )
 
 
+def _implements_sansio_policy_protocol(obj):
+    # type: (Any) -> bool
+    """Returns a bool indicating whether an object implements SansIOHTTPPolicy's methods"""
+    return all(callable(getattr(obj, method, None)) for method in ("on_exception", "on_request", "on_response"))
+
+
 class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType]):
     """A pipeline implementation.
 
@@ -130,10 +136,11 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         self._transport = transport
 
         for policy in policies or []:
-            if isinstance(policy, SansIOHTTPPolicy):
+            if callable(getattr(policy, "send", None)):
+                self._impl_policies.append(cast(HTTPPolicy, policy))
+            elif _implements_sansio_policy_protocol(policy):
+                policy = cast(SansIOHTTPPolicy, policy)
                 self._impl_policies.append(_SansIOHTTPPolicyRunner(policy))
-            elif policy:
-                self._impl_policies.append(policy)
         for index in range(len(self._impl_policies) - 1):
             self._impl_policies[index].next = self._impl_policies[index + 1]
         if self._impl_policies:

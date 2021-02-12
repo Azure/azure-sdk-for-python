@@ -25,10 +25,11 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Any, Union, List, Generic, TypeVar, Dict
+from typing import Any, cast, Union, List, Generic, TypeVar, Dict
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
+from ._base import _implements_sansio_policy_protocol
 from ._tools_async import await_result as _await_result
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
@@ -144,10 +145,11 @@ class AsyncPipeline(
         self._transport = transport
 
         for policy in policies or []:
-            if isinstance(policy, SansIOHTTPPolicy):
+            if callable(getattr(policy, "send", None)):
+                self._impl_policies.append(cast(AsyncHTTPPolicy, policy))
+            elif _implements_sansio_policy_protocol(policy):
+                policy = cast(SansIOHTTPPolicy, policy)
                 self._impl_policies.append(_SansIOAsyncHTTPPolicyRunner(policy))
-            elif policy:
-                self._impl_policies.append(policy)
         for index in range(len(self._impl_policies) - 1):
             self._impl_policies[index].next = self._impl_policies[index + 1]
         if self._impl_policies:
