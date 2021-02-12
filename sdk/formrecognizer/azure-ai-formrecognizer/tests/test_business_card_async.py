@@ -379,9 +379,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         for name, field in business_card.fields.items():
             for f in field.value:
                 self.assertFieldElementsHasValues(f.value_data.field_elements, business_card.page_range.first_page_number)
-        
-        self.assertEqual(len(result), 1)
-        business_card = result[0]
+
         # check dict values
         self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
         self.assertEqual(business_card.fields.get("ContactNames").value[0].value_data.page_number, 1)
