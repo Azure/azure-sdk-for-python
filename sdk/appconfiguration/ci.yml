@@ -13,6 +13,7 @@ trigger:
     - sdk/core/
     - tools/
     - eng/
+    - scripts/
 
 pr:
   branches:
