@@ -24,6 +24,8 @@ from ._utils import convert_to_access_token, generate_cv_base
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Union
+    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import AccessToken
 
 
 class MixedRealityStsClient(object):
@@ -73,7 +75,7 @@ class MixedRealityStsClient(object):
 
         self._endpoint_url = endpoint_url
 
-        authentication_policy = BearerTokenCredentialPolicy(credential, [endpoint_url + '/.default'])
+        authentication_policy = BearerTokenCredentialPolicy(credential, endpoint_url + '/.default')
 
         self._client = MixedRealityStsRestClient(
             base_url=endpoint_url,
@@ -83,7 +85,7 @@ class MixedRealityStsClient(object):
 
     @distributed_trace
     def get_token(self, **kwargs):
-        # type: (Any) -> azure.core.credentials.AccessToken
+        # type: (Any) -> AccessToken
         """
         Retrieve a token from the STS service for the specified account identifier asynchronously.
         :return: Instance of azure.core.credentials.AccessToken - token and expiry date of it

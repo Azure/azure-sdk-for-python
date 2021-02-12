@@ -3,11 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+from typing import TYPE_CHECKING
 from datetime import date, datetime
 import time
 
 from azure.core.credentials import AzureKeyCredential, AccessToken
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any
 
 ACCOUNT_KEY_VALID_YEARS = 10
 
@@ -24,7 +28,7 @@ class MixedRealityAccountKeyCredential(object):
         self.account_key = account_key
 
     def get_token(self, *scopes, **kwargs): #pylint: disable=unused-argument
-        # type: (*str, **Any) -> azure.core.credentials.AccessToken
+        # type: (*str, **Any) -> AccessToken
 
         token = self.account_id + ":" + self.account_key.key
 
