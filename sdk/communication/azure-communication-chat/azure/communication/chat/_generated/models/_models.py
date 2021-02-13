@@ -294,6 +294,10 @@ class ChatParticipant(msrest.serialization.Model):
 
     :param id: Required. The id of the chat participant.
     :type id: str
+    :param identifier: Identifies a participant in Azure Communication services. A participant is,
+     for example, a phone number or an Azure communication user. This model must be interpreted as a
+     union: Apart from rawId, at most one further property may be set.
+    :type identifier: ~azure.communication.chat.models.CommunicationIdentifierModel
     :param display_name: Display name for the chat participant.
     :type display_name: str
     :param share_history_time: Time from which the chat history is shared with the participant. The
@@ -307,6 +311,7 @@ class ChatParticipant(msrest.serialization.Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'share_history_time': {'key': 'shareHistoryTime', 'type': 'iso-8601'},
     }
@@ -317,6 +322,7 @@ class ChatParticipant(msrest.serialization.Model):
     ):
         super(ChatParticipant, self).__init__(**kwargs)
         self.id = kwargs['id']
+        self.identifier = kwargs.get('identifier', None)
         self.display_name = kwargs.get('display_name', None)
         self.share_history_time = kwargs.get('share_history_time', None)
 
@@ -548,6 +554,62 @@ class CommunicationErrorResponse(msrest.serialization.Model):
         self.error = kwargs['error']
 
 
+class CommunicationIdentifierModel(msrest.serialization.Model):
+    """Identifies a participant in Azure Communication services. A participant is, for example, a phone number or an Azure communication user. This model must be interpreted as a union: Apart from rawId, at most one further property may be set.
+
+    :param raw_id: Raw Id of the identifier. Optional in requests, required in responses.
+    :type raw_id: str
+    :param communication_user: The communication user.
+    :type communication_user: ~azure.communication.chat.models.CommunicationUserIdentifierModel
+    :param phone_number: The phone number.
+    :type phone_number: ~azure.communication.chat.models.PhoneNumberIdentifierModel
+    :param microsoft_teams_user: The Microsoft Teams user.
+    :type microsoft_teams_user: ~azure.communication.chat.models.MicrosoftTeamsUserIdentifierModel
+    """
+
+    _attribute_map = {
+        'raw_id': {'key': 'rawId', 'type': 'str'},
+        'communication_user': {'key': 'communicationUser', 'type': 'CommunicationUserIdentifierModel'},
+        'phone_number': {'key': 'phoneNumber', 'type': 'PhoneNumberIdentifierModel'},
+        'microsoft_teams_user': {'key': 'microsoftTeamsUser', 'type': 'MicrosoftTeamsUserIdentifierModel'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommunicationIdentifierModel, self).__init__(**kwargs)
+        self.raw_id = kwargs.get('raw_id', None)
+        self.communication_user = kwargs.get('communication_user', None)
+        self.phone_number = kwargs.get('phone_number', None)
+        self.microsoft_teams_user = kwargs.get('microsoft_teams_user', None)
+
+
+class CommunicationUserIdentifierModel(msrest.serialization.Model):
+    """A user that got created with an Azure Communication Services resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The Id of the communication user.
+    :type id: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommunicationUserIdentifierModel, self).__init__(**kwargs)
+        self.id = kwargs['id']
+
+
 class CreateChatThreadErrors(msrest.serialization.Model):
     """Errors encountered during the creation of the chat thread.
 
@@ -624,6 +686,67 @@ class CreateChatThreadResult(msrest.serialization.Model):
         super(CreateChatThreadResult, self).__init__(**kwargs)
         self.chat_thread = kwargs.get('chat_thread', None)
         self.errors = kwargs.get('errors', None)
+
+
+class MicrosoftTeamsUserIdentifierModel(msrest.serialization.Model):
+    """A Microsoft Teams user.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param user_id: Required. The Id of the Microsoft Teams user. If not anonymous, this is the AAD
+     object Id of the user.
+    :type user_id: str
+    :param is_anonymous: True if the Microsoft Teams user is anonymous. By default false if
+     missing.
+    :type is_anonymous: bool
+    :param cloud: The cloud that the Microsoft Teams user belongs to. By default 'public' if
+     missing. Possible values include: "public", "dod", "gcch".
+    :type cloud: str or ~azure.communication.chat.models.CommunicationCloudEnvironmentModel
+    """
+
+    _validation = {
+        'user_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'user_id': {'key': 'userId', 'type': 'str'},
+        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
+        'cloud': {'key': 'cloud', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MicrosoftTeamsUserIdentifierModel, self).__init__(**kwargs)
+        self.user_id = kwargs['user_id']
+        self.is_anonymous = kwargs.get('is_anonymous', None)
+        self.cloud = kwargs.get('cloud', None)
+
+
+class PhoneNumberIdentifierModel(msrest.serialization.Model):
+    """A phone number.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. The phone number in E.164 format.
+    :type value: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PhoneNumberIdentifierModel, self).__init__(**kwargs)
+        self.value = kwargs['value']
 
 
 class SendChatMessageRequest(msrest.serialization.Model):
