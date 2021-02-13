@@ -4,15 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .models import (
+from .._generated.models import (
     CommunicationIdentifierModel,
+    CommunicationUserIdentifierModel,
+    PhoneNumberIdentifierModel,
+    MicrosoftTeamsUserIdentifierModel
+)
+from .models import (
     CommunicationUserIdentifier,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier,
     UnknownIdentifier,
-    CommunicationUserIdentifierModel,
-    PhoneNumberIdentifierModel,
-    MicrosoftTeamsUserIdentifierModel
 )
 
 class CommunicationUserIdentifierSerializer(object):
