@@ -96,6 +96,23 @@ class FileSystemTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_system_async())
 
+    async def _test_file_system_exists(self):
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+
+        # Act
+        file_system_client1 = self.dsc.get_file_system_client(file_system_name)
+        file_system_client2 = self.dsc.get_file_system_client("badfilesystem")
+        await file_system_client1.create_file_system()
+
+        self.assertTrue(await file_system_client1.exists())
+        self.assertFalse(await file_system_client2.exists())
+
+    @record
+    def test_file_system_exists(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_file_system_exists())
+
     async def _test_create_file_system_with_metadata_async(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
