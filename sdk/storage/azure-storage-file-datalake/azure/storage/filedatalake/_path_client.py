@@ -11,6 +11,7 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 import six
+from typing import Any, Dict
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob import BlobClient
@@ -657,9 +658,8 @@ class PathClient(StorageAccountHostsMixin):
         options.update(kwargs)
         return options
 
-    def _rename_path(self, rename_source,
-                     **kwargs):
-        # type: (**Any) -> Dict[str, Any]
+    def _rename_path(self, rename_source, **kwargs):
+        # type: (str, **Any) -> Dict[str, Any]
         """
         Rename directory or file
 
@@ -763,6 +763,17 @@ class PathClient(StorageAccountHostsMixin):
         """
         path_properties = self._blob_client.get_blob_properties(**kwargs)
         return path_properties
+
+    def _exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a path exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return self._blob_client.exists(**kwargs)
 
     def set_metadata(self, metadata,  # type: Dict[str, str]
                      **kwargs):

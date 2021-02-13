@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Any
+
 try:
     from urllib.parse import quote, unquote
 except ImportError:
@@ -241,9 +243,19 @@ class DataLakeDirectoryClient(PathClient):
         """
         return self._get_path_properties(cls=deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
 
-    def rename_directory(self, new_name,  # type: str
-                         **kwargs):
-        # type: (**Any) -> DataLakeDirectoryClient
+    def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a directory exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return self._exists(**kwargs)
+
+    def rename_directory(self, new_name, **kwargs):
+        # type: (str, **Any) -> DataLakeDirectoryClient
         """
         Rename the source directory.
 
