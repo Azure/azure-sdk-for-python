@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Any, Dict
 
 try:
     from urllib.parse import urlparse, quote
@@ -11,7 +12,6 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 import six
-from typing import Any, Dict
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob import BlobClient

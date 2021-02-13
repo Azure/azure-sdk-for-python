@@ -4,14 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-from azure.core.exceptions import HttpResponseError
-
 from typing import Any
 try:
     from urllib.parse import quote, unquote
 except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
+from azure.core.exceptions import HttpResponseError
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
 from .._data_lake_file_client import DataLakeFileClient as DataLakeFileClientBase
