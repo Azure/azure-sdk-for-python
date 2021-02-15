@@ -1,8 +1,7 @@
 interactions:
 - request:
     body: '{"phoneNumberType": "tollFree", "assignmentType": "application", "capabilities":
-      {"calling": "inbound", "sms": "inbound+outbound"}, "areaCode": "844", "quantity":
-      1}'
+      {"calling": "inbound", "sms": "inbound+outbound"}, "quantity": 1}'
     headers:
       Accept:
       - application/json
@@ -11,11 +10,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '165'
+      - '146'
       Content-Type:
       - application/json
       Date:
-      - Mon, 15 Feb 2021 16:48:55 GMT
+      - Mon, 15 Feb 2021 18:57:45 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -30,15 +29,15 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 15 Feb 2021 16:48:53 GMT
+      - Mon, 15 Feb 2021 18:57:46 GMT
       ms-cv:
-      - 2YSqApoKaEOE7TviEFBpMA.0
+      - e7d7aFdMpkmwL0Jwb7LJuQ.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 777ms
+      - 720ms
     status:
       code: 400
       message: Bad Request

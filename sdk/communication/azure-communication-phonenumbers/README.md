@@ -123,6 +123,7 @@ poller = self.phone_number_client.begin_release_phone_number(
     polling = True
 )
 ```
+<<<<<<< HEAD
 
 ### Updating Phone Number Capabilities
 
@@ -142,6 +143,8 @@ poller = self.phone_number_client.begin_update_phone_number_capabilities(
 )
 ```
 
+=======
+>>>>>>> 968de8d7e... Added README and samples
 # Troubleshooting
 The Phone Numbers Administration client will raise exceptions defined in [Azure Core][azure_core].
 

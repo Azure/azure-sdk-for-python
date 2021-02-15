@@ -22,7 +22,7 @@ USAGE:
 >>>>>>> 798b57943... Regenerated code
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
-    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER - The phone number you want to get its information
+    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_INFORMATION - The phone number you want to get its information
 """
 
 import os
@@ -32,10 +32,14 @@ from azure.communication.phonenumbers import (
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 <<<<<<< HEAD
+<<<<<<< HEAD
 phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER") # e.g. "+18001234567"
 =======
 phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
 >>>>>>> 798b57943... Regenerated code
+=======
+phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_INFORMATION")
+>>>>>>> 968de8d7e... Added README and samples
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 def get_phone_number_information():

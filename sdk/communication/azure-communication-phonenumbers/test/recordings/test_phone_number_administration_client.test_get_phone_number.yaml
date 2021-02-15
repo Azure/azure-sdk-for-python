@@ -11,6 +11,7 @@ interactions:
       Date:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:sdk/communication/azure-communication-phonenumbers/test/recordings/test_phone_number_administration_client.test_get_phone_number.yaml
       - Mon, 22 Feb 2021 19:48:24 GMT
 =======
@@ -22,11 +23,15 @@ interactions:
 =======
       - Thu, 11 Feb 2021 23:15:38 GMT
 >>>>>>> 798b57943... Regenerated code
+=======
+      - Mon, 15 Feb 2021 17:03:10 GMT
+>>>>>>> 968de8d7e... Added README and samples
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
+<<<<<<< HEAD
 <<<<<<< HEAD:sdk/communication/azure-communication-phonenumbers/test/recordings/test_phone_number_administration_client.test_get_phone_number.yaml
     uri: https://sanitized.communication.azure.com/phoneNumbers/%2B18335260208?api-version=2021-03-07
   response:
@@ -53,10 +58,19 @@ interactions:
 =======
         "none"}, "assignmentType": "User"}'
 >>>>>>> 798b57943... Regenerated code
+=======
+    uri: https://sanitized.communication.azure.com/phoneNumbers/%2B18332272412?api-version=2021-03-07
+  response:
+    body:
+      string: '{"id": "18332272412", "phoneNumber": "+18332272412", "countryCode":
+        "US", "phoneNumberType": "TollFree", "capabilities": {"calling": "inbound",
+        "sms": "inbound+outbound"}, "assignmentType": "Application"}'
+>>>>>>> 968de8d7e... Added README and samples
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD:sdk/communication/azure-communication-phonenumbers/test/recordings/test_phone_number_administration_client.test_get_phone_number.yaml
@@ -78,11 +92,17 @@ interactions:
       ms-cv:
       - 0Fa+iu/NaEivjqj8QV7AwQ.0
 >>>>>>> 798b57943... Regenerated code
+=======
+      - Mon, 15 Feb 2021 17:03:08 GMT
+      ms-cv:
+      - Sz35r6+6dUyc5CXXRpte2A.0
+>>>>>>> 968de8d7e... Added README and samples
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD:sdk/communication/azure-communication-phonenumbers/test/recordings/test_phone_number_administration_client.test_get_phone_number.yaml
@@ -96,6 +116,9 @@ interactions:
 =======
       - 828ms
 >>>>>>> 798b57943... Regenerated code
+=======
+      - 970ms
+>>>>>>> 968de8d7e... Added README and samples
     status:
       code: 200
       message: OK

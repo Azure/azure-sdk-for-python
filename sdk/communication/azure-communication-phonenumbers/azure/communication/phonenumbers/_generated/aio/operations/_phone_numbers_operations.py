@@ -89,9 +89,13 @@ class PhoneNumbersOperations:
         response_headers = {}
         response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
 <<<<<<< HEAD
+<<<<<<< HEAD
         response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 =======
 >>>>>>> 798b57943... Regenerated code
+=======
+        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+>>>>>>> 968de8d7e... Added README and samples
         response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
         response_headers['search-id']=self._deserialize('str', response.headers.get('search-id'))
         deserialized = self._deserialize('PhoneNumberSearchResult', pipeline_response)
@@ -149,9 +153,13 @@ class PhoneNumbersOperations:
             response = pipeline_response.http_response
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
 <<<<<<< HEAD
+<<<<<<< HEAD
             response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 =======
 >>>>>>> 798b57943... Regenerated code
+=======
+            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+>>>>>>> 968de8d7e... Added README and samples
             response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
             response_headers['search-id']=self._deserialize('str', response.headers.get('search-id'))
             deserialized = self._deserialize('PhoneNumberSearchResult', pipeline_response)
@@ -281,12 +289,16 @@ class PhoneNumbersOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
+<<<<<<< HEAD
         response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 <<<<<<< HEAD
         response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
         response_headers['purchase-id']=self._deserialize('str', response.headers.get('purchase-id'))
 =======
+=======
+>>>>>>> 968de8d7e... Added README and samples
         response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
         response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
         response_headers['purchase-id']=self._deserialize('str', response.headers.get('purchase-id'))
         deserialized = self._deserialize('PhoneNumberSearchResult', pipeline_response)
@@ -340,8 +352,8 @@ class PhoneNumbersOperations:
 =======
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
             response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
             response_headers['purchase-id']=self._deserialize('str', response.headers.get('purchase-id'))
             deserialized = self._deserialize('PhoneNumberSearchResult', pipeline_response)
@@ -580,9 +592,12 @@ class PhoneNumbersOperations:
         response_headers = {}
         response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
 >>>>>>> 798b57943... Regenerated code
+=======
+>>>>>>> 968de8d7e... Added README and samples
         response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
         response_headers['release-id']=self._deserialize('str', response.headers.get('release-id'))
 
@@ -790,9 +805,13 @@ class PhoneNumbersOperations:
         response_headers = {}
         response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
 <<<<<<< HEAD
+<<<<<<< HEAD
         response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 =======
 >>>>>>> 798b57943... Regenerated code
+=======
+        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+>>>>>>> 968de8d7e... Added README and samples
         response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
         response_headers['capabilities-id']=self._deserialize('str', response.headers.get('capabilities-id'))
         deserialized = self._deserialize('AcquiredPhoneNumber', pipeline_response)
@@ -855,9 +874,13 @@ class PhoneNumbersOperations:
             response = pipeline_response.http_response
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
 <<<<<<< HEAD
+<<<<<<< HEAD
             response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 =======
 >>>>>>> 798b57943... Regenerated code
+=======
+            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+>>>>>>> 968de8d7e... Added README and samples
             response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
             response_headers['capabilities-id']=self._deserialize('str', response.headers.get('capabilities-id'))
             deserialized = self._deserialize('AcquiredPhoneNumber', pipeline_response)

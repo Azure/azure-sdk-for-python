@@ -1,0 +1,40 @@
+interactions:
+- request:
+    body: '{"calling": "inbound+outbound", "sms": "outbound"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '50'
+      Content-Type:
+      - application/merge-patch+json
+      Date:
+      - Fri, 12 Feb 2021 20:30:01 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.communication.azure.com/phoneNumbers/%2B16194895875/capabilities?api-version=2021-03-07
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 12 Feb 2021 20:30:01 GMT
+      ms-cv:
+      - xXho9u+Ns0WcHR62IoSwNA.0
+      request-context:
+      - appId=
+      x-processing-time:
+      - 412ms
+    status:
+      code: 404
+      message: Not Found
+version: 1
