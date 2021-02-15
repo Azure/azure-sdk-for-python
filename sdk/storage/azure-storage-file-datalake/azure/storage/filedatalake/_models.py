@@ -41,7 +41,7 @@ class FileSystemProperties(object):
         file system as metadata.
     :ivar bool deleted:
         Whether this file system was deleted.
-    :ivar str version:
+    :ivar str deleted_version:
         The version of a deleted file system.
 
     Returned ``FileSystemProperties`` instances expose these values through a
@@ -59,7 +59,7 @@ class FileSystemProperties(object):
         self.has_legal_hold = None
         self.metadata = None
         self.deleted = None
-        self.version = None
+        self.deleted_version = None
 
     @classmethod
     def _from_generated(cls, generated):
@@ -67,7 +67,7 @@ class FileSystemProperties(object):
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
         props.deleted = generated.deleted
-        props.version = generated.version
+        props.deleted_version = generated.version
         props.etag = generated.properties.etag
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = PublicAccess._from_generated(  # pylint: disable=protected-access

@@ -43,6 +43,9 @@ class DictMixin(object):
         """Compare objects by comparing all attributes."""
         return not self.__eq__(other)
 
+    def __contains__(self, key):
+        return key in self.__dict__
+
     def __str__(self):
         return str({k: v for k, v in self.__dict__.items() if not k.startswith('_')})
 
@@ -184,7 +187,7 @@ class RecognizePiiEntitiesResult(DictMixin):
 
 class AnalyzeHealthcareEntitiesResultItem(DictMixin):
     """
-    AnalyzeHealthcareEntitiesResultItem contains the Healthcare entities and relations from a
+    AnalyzeHealthcareEntitiesResultItem contains the Healthcare entities from a
     particular document.
 
     :ivar str id: Unique, non-empty document identifier that matches the
@@ -193,9 +196,6 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
     :ivar entities: Identified Healthcare entities in the document.
     :vartype entities:
         list[~azure.ai.textanalytics.HealthcareEntity]
-    :ivar relations: A list of detected relations between recognized entities.
-    :vartype relations:
-        list[~azure.ai.textanalytics.HealthcareRelation]
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -412,14 +412,18 @@ class HealthcareEntity(DictMixin):
     """HealthcareEntity contains information about a Healthcare entity found in text.
 
     :ivar str text: Entity text as appears in the request.
-    :ivar str category: Entity category, such as Dosage or MedicationName, etc.
-    :ivar str subcategory: Entity subcategory.  # TODO: add subcategory examples
+    :ivar str category: Entity category, see the following link for health's named
+        entity types: https://aka.ms/text-analytics-health-entities
+    :ivar str subcategory: Entity subcategory.
     :ivar int length: The entity text length.  This value depends on the value
         of the `string_index_type` parameter specified in the original request, which is
         UnicodeCodePoints by default.
     :ivar int offset: The entity text offset from the start of the document.
         This value depends on the value of the `string_index_type` parameter specified
         in the original request, which is UnicodeCodePoints by default.
+    :ivar related_entities: Other healthcare entities that are related to this
+        specific entity.
+    :vartype related_entities: list[~azure.ai.textanalytics.HealthcareEntity]
     :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :ivar data_sources: A collection of entity references in known data sources.
@@ -1292,6 +1296,11 @@ class RecognizeEntitiesAction(DictMixin):
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
     """
 
     def __init__(self, **kwargs):
@@ -1321,8 +1330,15 @@ class RecognizePiiEntitiesAction(DictMixin):
 
     :keyword str model_version: The model version to use for the analysis.
     :keyword str domain_filter: An optional string to set the PII domain to include only a
-    subset of the PII entity categories. Possible values include 'phi' or None.
+        subset of the PII entity categories. Possible values include 'phi' or None.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar str domain_filter: An optional string to set the PII domain to include only a
+        subset of the PII entity categories. Possible values include 'phi' or None.
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
@@ -1356,6 +1372,7 @@ class ExtractKeyPhrasesAction(DictMixin):
     of interfacing with this model.
 
     :keyword str model_version: The model version to use for the analysis.
+    :ivar str model_version: The model version to use for the analysis.
     """
 
     def __init__(self, **kwargs):

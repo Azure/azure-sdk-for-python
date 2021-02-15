@@ -128,7 +128,7 @@ avro<2.0.0,>=1.10.0
 #override azure-identity azure-core<2.0.0,>=1.0.0
 #override azure-keyvault-administration msrest>=0.6.21
 #override azure-keyvault-certificates msrest>=0.6.0
-#override azure-keyvault-keys msrest>=0.6.0
+#override azure-keyvault-keys msrest>=0.6.21
 #override azure-keyvault-secrets msrest>=0.6.0
 #override azure-keyvault-certificates azure-core<2.0.0,>=1.7.0
 #override azure-keyvault-keys azure-core<2.0.0,>=1.7.0
@@ -148,17 +148,19 @@ avro<2.0.0,>=1.10.0
 #override azure-storage-file-share azure-core<2.0.0,>=1.10.0
 #override azure-storage-file-datalake azure-core<2.0.0,>=1.10.0
 #override azure-storage-file-datalake msrest>=0.6.18
-#override azure-storage-file-datalake azure-storage-blob<13.0.0,>=12.7.0
+#override azure-storage-file-datalake azure-storage-blob<13.0.0,>=12.8.0b1
 #override azure-security-attestation msrest>=0.6.0
 #override azure-security-attestation azure-core<2.0.0,>=1.8.2
-#override azure-data-tables msrest>=0.6.11
+#override azure-data-tables msrest>=0.6.19
 opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
 opentelemetry-api==0.17b0
 opentelemetry-sdk==0.17b0
-#override azure-eventhub-checkpointstoreblob msrest>=0.6.10
-#override azure-eventhub-checkpointstoreblob-aio msrest>=0.6.10
+#override azure-eventhub-checkpointstoreblob msrest>=0.6.18
+#override azure-eventhub-checkpointstoreblob-aio msrest>=0.6.18
+#override azure-eventhub-checkpointstoreblob azure-core<2.0.0,>=1.10.0
+#override azure-eventhub-checkpointstoreblob-aio azure-core<2.0.0,>=1.10.0
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
 #override azure-eventhub uamqp>=1.2.14,<2.0.0
 #override azure-appconfiguration msrest>=0.6.10
@@ -178,16 +180,16 @@ opentelemetry-sdk==0.17b0
 #override azure-eventgrid azure-core<2.0.0,>=1.10.0
 #override azure-communication-chat msrest>=0.6.0
 #override azure-communication-sms msrest>=0.6.0
-#override azure-communication-administration msrest>=0.6.0
+#override azure-communication-phonenumbers msrest>=0.6.0
 #override azure-communication-chat azure-core<2.0.0,>=1.9.0
 #override azure-communication-sms azure-core<2.0.0,>=1.9.0
-#override azure-communication-administration azure-core<2.0.0,>=1.9.0
+#override azure-communication-phonenumbers azure-core<2.0.0,>=1.9.0
 #override azure-communication-identity azure-core<2.0.0,>=1.9.0
 #override azure-mgmt-communication azure-core<2.0.0,>=1.9.0
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.6.0
 #override azure-ai-metricsadvisor msrest>=0.6.12
-#override azure-opentelemetry-exporter-azuremonitor azure-core<2.0.0,>=1.6.0
-#override azure-opentelemetry-exporter-azuremonitor msrest>=0.6.10
+#override azure-monitor-opentelemetry-exporter azure-core<2.0.0,>=1.6.0
+#override azure-monitor-opentelemetry-exporter msrest>=0.6.10
 #override azure-core-tracing-opentelemetry opentelemetry-api==0.17b0
 #override azure-identity six>=1.12.0
 #override azure-ai-formrecognizer

@@ -102,8 +102,8 @@ known_content_issues:
   - ['sdk/storage/azure-storage-queue/swagger/README.md', '#4554']
   - ['sdk/storage/README.md', '#4554']
   - ['sdk/textanalytics/azure-ai-textanalytics/samples/README.md', '#4554']
-  - ['sdk/monitor/azure-opentelemetry-exporter-azuremonitor/swagger/README.md', '#4554']
-  - ['sdk/monitor/azure-opentelemetry-exporter-azuremonitor/README.md', '#4554']
+  - ['sdk/monitor/azure-monitor-opentelemetry-exporter/swagger/README.md', '#4554']
+  - ['sdk/monitor/azure-monitor-opentelemetry-exporter/README.md', '#4554']
   - ['sdk/digitaltwins/azure-digitaltwins-core/swagger/README.md', '#4554']
   - ['sdk/media/azure-media-nspkg/README.md', '#4554']
 

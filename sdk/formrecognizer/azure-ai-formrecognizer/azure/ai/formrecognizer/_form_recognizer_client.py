@@ -6,25 +6,20 @@
 
 # pylint: disable=protected-access
 
-from typing import (
-    Any,
-    IO,
-    Union,
-    List,
-    TYPE_CHECKING
-)
+from typing import Any, IO, Union, List, TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling.base_polling import LROBasePolling
 
 from ._response_handlers import (
     prepare_prebuilt_models,
     prepare_content_result,
-    prepare_form_result
+    prepare_form_result,
 )
 from ._helpers import get_content_type
 from ._api_versions import FormRecognizerApiVersion
 from ._form_base_client import FormRecognizerClientBase
 from ._polling import AnalyzePolling
+
 if TYPE_CHECKING:
     from azure.core.polling import LROPoller
     from ._models import FormPage, RecognizedForm
@@ -65,8 +60,12 @@ class FormRecognizerClient(FormRecognizerClientBase):
             :caption: Creating the FormRecognizerClient with a token credential.
     """
 
-    def _prebuilt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
+    def _prebuilt_callback(
+        self, raw_response, _, headers
+    ):  # pylint: disable=unused-argument
+        analyze_result = self._deserialize(
+            self._generated_models.AnalyzeOperationResult, raw_response
+        )
         return prepare_prebuilt_models(analyze_result)
 
     @distributed_trace
@@ -114,7 +113,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         content_type = kwargs.pop("content_type", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
+            raise TypeError(
+                "Call begin_recognize_receipts_from_url() to analyze a receipt from a URL."
+            )
         cls = kwargs.pop("cls", self._prebuilt_callback)
         if content_type is None and kwargs.get("continuation_token", None) is None:
             content_type = get_content_type(receipt)
@@ -125,7 +126,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"locale": locale})
             else:
-                raise ValueError("'locale' is only available for API version V2_1_PREVIEW and up")
+                raise ValueError(
+                    "'locale' is only available for API version V2_1_PREVIEW and up"
+                )
 
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream=receipt,
@@ -182,7 +185,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"locale": locale})
             else:
-                raise ValueError("'locale' is only available for API version V2_1_PREVIEW and up")
+                raise ValueError(
+                    "'locale' is only available for API version V2_1_PREVIEW and up"
+                )
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
             include_text_details=include_field_elements,
@@ -192,11 +197,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_recognize_business_cards(
-            self,
-            business_card,
-            **kwargs
-    ):
+    def begin_recognize_business_cards(self, business_card, **kwargs):
         # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given business card.
         The input document must be of one of the supported content types - 'application/pdf',
@@ -238,7 +239,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         """
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_business_cards_from_url() to analyze a business card from a URL.")
+            raise TypeError(
+                "Call begin_recognize_business_cards_from_url() to analyze a business card from a URL."
+            )
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
@@ -262,11 +265,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise e
 
     @distributed_trace
-    def begin_recognize_business_cards_from_url(
-            self,
-            business_card_url,
-            **kwargs
-    ):
+    def begin_recognize_business_cards_from_url(self, business_card_url, **kwargs):
         # type: (str, Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given business card.
         The input document must be the location (URL) of the card to be analyzed.
@@ -313,11 +312,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise e
 
     @distributed_trace
-    def begin_recognize_invoices(
-        self,
-        invoice,
-        **kwargs
-    ):
+    def begin_recognize_invoices(self, invoice, **kwargs):
         # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given invoice.
         The input document must be of one of the supported content types - 'application/pdf',
@@ -358,7 +353,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         """
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_invoice_from_url() to analyze an invoice from a URL.")
+            raise TypeError(
+                "Call begin_recognize_invoice_from_url() to analyze an invoice from a URL."
+            )
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
@@ -382,11 +379,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise e
 
     @distributed_trace
-    def begin_recognize_invoices_from_url(
-        self,
-        invoice_url,
-        **kwargs
-    ):
+    def begin_recognize_invoices_from_url(self, invoice_url, **kwargs):
         # type: (str, Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given invoice.
         The input document must be the location (URL) of the invoice to be analyzed.
@@ -430,8 +423,12 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 )
             raise e
 
-    def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
+    def _content_callback(
+        self, raw_response, _, headers
+    ):  # pylint: disable=unused-argument
+        analyze_result = self._deserialize(
+            self._generated_models.AnalyzeOperationResult, raw_response
+        )
         return prepare_content_result(analyze_result)
 
     @distributed_trace
@@ -480,7 +477,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         language = kwargs.pop("language", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a URL.")
+            raise TypeError(
+                "Call begin_recognize_content_from_url() to analyze a document from a URL."
+            )
 
         if content_type is None and kwargs.get("continuation_token", None) is None:
             content_type = get_content_type(form)
@@ -491,13 +490,17 @@ class FormRecognizerClient(FormRecognizerClientBase):
             if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError("'pages' is only available for API version V2_1_PREVIEW and up")
+                raise ValueError(
+                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
 
         if language:
             if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"language": language})
             else:
-                raise ValueError("'language' is only available for API version V2_1_PREVIEW and up")
+                raise ValueError(
+                    "'language' is only available for API version V2_1_PREVIEW and up"
+                )
 
         return self._client.begin_analyze_layout_async(  # type: ignore
             file_stream=form,
@@ -544,13 +547,17 @@ class FormRecognizerClient(FormRecognizerClientBase):
             if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"pages": pages})
             else:
-                raise ValueError("'pages' is only available for API version V2_1_PREVIEW and up")
+                raise ValueError(
+                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
 
         if language:
             if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"language": language})
             else:
-                raise ValueError("'language' is only available for API version V2_1_PREVIEW and up")
+                raise ValueError(
+                    "'language' is only available for API version V2_1_PREVIEW and up"
+                )
 
         return self._client.begin_analyze_layout_async(  # type: ignore
             file_stream={"source": form_url},
@@ -598,18 +605,26 @@ class FormRecognizerClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        polling_interval = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
+        )
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a URL.")
+            raise TypeError(
+                "Call begin_recognize_custom_forms_from_url() to analyze a document from a URL."
+            )
 
         include_field_elements = kwargs.pop("include_field_elements", False)
         if content_type is None and continuation_token is None:
             content_type = get_content_type(form)
 
-        def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
+        def analyze_callback(
+            raw_response, _, headers
+        ):  # pylint: disable=unused-argument
+            analyze_result = self._deserialize(
+                self._generated_models.AnalyzeOperationResult, raw_response
+            )
             return prepare_form_result(analyze_result, model_id)
 
         return self._client.begin_analyze_with_custom_model(  # type: ignore
@@ -618,7 +633,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             include_text_details=include_field_elements,
             content_type=content_type,
             cls=kwargs.pop("cls", analyze_callback),
-            polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
+            polling=LROBasePolling(
+                timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+            ),
             continuation_token=continuation_token,
             **kwargs
         )
@@ -648,12 +665,18 @@ class FormRecognizerClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        polling_interval = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
+        )
         continuation_token = kwargs.pop("continuation_token", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
 
-        def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
+        def analyze_callback(
+            raw_response, _, headers
+        ):  # pylint: disable=unused-argument
+            analyze_result = self._deserialize(
+                self._generated_models.AnalyzeOperationResult, raw_response
+            )
             return prepare_form_result(analyze_result, model_id)
 
         return self._client.begin_analyze_with_custom_model(  # type: ignore
@@ -661,15 +684,16 @@ class FormRecognizerClient(FormRecognizerClientBase):
             model_id=model_id,
             include_text_details=include_field_elements,
             cls=kwargs.pop("cls", analyze_callback),
-            polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
+            polling=LROBasePolling(
+                timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+            ),
             continuation_token=continuation_token,
             **kwargs
         )
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.ai.formrecognizer.FormRecognizerClient` session.
-        """
+        """Close the :class:`~azure.ai.formrecognizer.FormRecognizerClient` session."""
         return self._client.close()
 
     def __enter__(self):

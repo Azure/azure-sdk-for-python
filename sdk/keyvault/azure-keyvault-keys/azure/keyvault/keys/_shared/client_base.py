@@ -23,11 +23,12 @@ class ApiVersion(str, Enum):
     """Key Vault API versions supported by this package"""
 
     #: this is the default version
+    V7_2_preview = "7.2-preview"
     V7_1 = "7.1"
     V7_0 = "7.0"
     V2016_10_01 = "2016-10-01"
 
-DEFAULT_VERSION = ApiVersion.V7_1
+DEFAULT_VERSION = ApiVersion.V7_2_preview
 
 
 class KeyVaultClientBase(object):
@@ -71,7 +72,7 @@ class KeyVaultClientBase(object):
                 **kwargs
             )
             self._models = _KeyVaultClient.models(api_version=self.api_version)
-        except NotImplementedError:
+        except ValueError:
             raise NotImplementedError(
                 "This package doesn't support API version '{}'. ".format(self.api_version)
                 + "Supported versions: {}".format(", ".join(v.value for v in ApiVersion))

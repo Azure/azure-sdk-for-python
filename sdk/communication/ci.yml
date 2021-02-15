@@ -31,8 +31,6 @@ extends:
     Artifacts:
     - name: azure_communication_nspkg
       safeName: azurecommunicationnspkg
-    - name: azure_communication_administration
-      safeName: azurecommunicationadministration
     - name: azure_communication_identity
       safeName: azurecommunicationidentity
     - name: azure_communication_chat
@@ -41,3 +39,5 @@ extends:
       safeName: azuremgmtcommunication
     - name: azure_communication_sms
       safeName: azurecommunicationsms
+    - name: azure_communication_phonenumbers
+      safeName: azurecommunicationphonenumbers
