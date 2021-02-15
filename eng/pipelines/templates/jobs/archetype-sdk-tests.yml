@@ -92,6 +92,9 @@ jobs:
       container: $[ variables['Container'] ]
 
     steps:
+      - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+        parameters:
+          AgentImage: $(OSVmImage)
       - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
 
       - ${{ if eq(parameters['AllocateResourceGroup'], true) }}:
