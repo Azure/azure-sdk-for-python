@@ -37,7 +37,7 @@ class PhoneNumberAssignmentType(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     person, or to an application.
     """
 
-    USER = "user"
+    PERSON = "person"
     APPLICATION = "application"
 
 class PhoneNumberCapabilityValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):

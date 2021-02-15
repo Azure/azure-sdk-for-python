@@ -87,8 +87,8 @@ class PhoneNumbersOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
         response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
         response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
         response_headers['search-id']=self._deserialize('str', response.headers.get('search-id'))
         deserialized = self._deserialize('PhoneNumberSearchResult', pipeline_response)
@@ -144,8 +144,8 @@ class PhoneNumbersOperations:
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
             response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
             response_headers['search-id']=self._deserialize('str', response.headers.get('search-id'))
             deserialized = self._deserialize('PhoneNumberSearchResult', pipeline_response)
@@ -275,8 +275,8 @@ class PhoneNumbersOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
         response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
         response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
         response_headers['purchase-id']=self._deserialize('str', response.headers.get('purchase-id'))
         deserialized = self._deserialize('PhoneNumberSearchResult', pipeline_response)
@@ -328,8 +328,8 @@ class PhoneNumbersOperations:
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
             response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
             response_headers['purchase-id']=self._deserialize('str', response.headers.get('purchase-id'))
             deserialized = self._deserialize('PhoneNumberSearchResult', pipeline_response)
@@ -459,7 +459,7 @@ class PhoneNumbersOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
@@ -560,14 +560,13 @@ class PhoneNumbersOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
         response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
         response_headers['release-id']=self._deserialize('str', response.headers.get('release-id'))
 
@@ -767,14 +766,14 @@ class PhoneNumbersOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
         response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
         response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
         response_headers['capabilities-id']=self._deserialize('str', response.headers.get('capabilities-id'))
         deserialized = self._deserialize('AcquiredPhoneNumber', pipeline_response)
@@ -835,8 +834,8 @@ class PhoneNumbersOperations:
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
             response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
             response_headers['capabilities-id']=self._deserialize('str', response.headers.get('capabilities-id'))
             deserialized = self._deserialize('AcquiredPhoneNumber', pipeline_response)

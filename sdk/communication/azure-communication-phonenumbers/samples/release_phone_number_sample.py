@@ -14,7 +14,7 @@ USAGE:
     python list_acquired_phone_numbers_sample.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
-    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_INFORMATION - The phone number you want to get its information
+    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_RELEASE - The phone number you want to release
 """
 
 import os
@@ -23,14 +23,15 @@ from azure.communication.phonenumbers import (
 )
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_INFORMATION")
+phone_number_to_release = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_RELEASE")
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
-def get_phone_number_information():
-    phone_number_information = phone_numbers_client.get_phone_number(phone_number)
-    print('Phone number information:')
-    print(phone_number_information)
+def release_phone_number():
+    poller = phone_numbers_client.begin_release_phone_number(phone_number_to_release)
+    poller.result()
+    print('Status of the operation:')
+    print(poller.status())
 
 
 if __name__ == '__main__':
-    get_phone_number_information()
+    release_phone_number()

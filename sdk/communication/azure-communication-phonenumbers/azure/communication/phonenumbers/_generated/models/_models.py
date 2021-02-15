@@ -28,7 +28,8 @@ class AcquiredPhoneNumber(msrest.serialization.Model):
     :param capabilities: Required. Capabilities of a phone number.
     :type capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
     :param assignment_type: Required. The assignment type of the phone number. A phone number can
-     be assigned to a person, or to an application. Possible values include: "user", "application".
+     be assigned to a person, or to an application. Possible values include: "person",
+     "application".
     :type assignment_type: str or
      ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
     :param purchase_date: The date and time that the phone number was purchased.
@@ -352,7 +353,7 @@ class PhoneNumberSearchRequest(msrest.serialization.Model):
     :type phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
     :param assignment_type: Required. The assignment type of the phone numbers to search for. A
      phone number can be assigned to a person, or to an application. Possible values include:
-     "user", "application".
+     "person", "application".
     :type assignment_type: str or
      ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
     :param capabilities: Required. Capabilities of a phone number.
@@ -404,7 +405,7 @@ class PhoneNumberSearchResult(msrest.serialization.Model):
      Possible values include: "geographic", "tollFree".
     :type phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
     :param assignment_type: Required. Phone number's assignment type. Possible values include:
-     "user", "application".
+     "person", "application".
     :type assignment_type: str or
      ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
     :param capabilities: Required. Capabilities of a phone number.

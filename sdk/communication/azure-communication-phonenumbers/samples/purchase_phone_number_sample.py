@@ -14,7 +14,7 @@ USAGE:
     python list_acquired_phone_numbers_sample.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
-    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_INFORMATION - The phone number you want to get its information
+    2) AZURE_COMMUNICATION_SERVICE_SEARCH_ID_TO_PURCHASE - The search id for the phone number you reserved and want to purchase
 """
 
 import os
