@@ -18,7 +18,7 @@ from typing import (
     TYPE_CHECKING,
 )  # pylint: disable=unused-import
 
-from uamqp import types, constants, errors
+from uamqp import types, constants, errors, utils
 from uamqp import SendClient
 
 from azure.core.tracing import AbstractSpan
@@ -33,7 +33,13 @@ from ._utils import (
     send_context_manager,
     add_link_to_send,
 )
-from ._constants import TIMEOUT_SYMBOL
+from ._constants import (
+    TIMEOUT_SYMBOL,
+    IDEMPOTENT_PRODUCER_SYMBOL,
+    PRODUCER_EPOCH_SYMBOL,
+    PRODUCER_SEQUENCE_NUMBER_SYMBOL,
+    PRODUCER_ID_SYMBOL,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -118,9 +124,34 @@ class EventHubProducer(
         self._link_properties = {
             types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))
         }
+        self._enable_idempotent_partitions = kwargs.get("enable_idempotent_partitions", False)
+        # the following instance variables are for idempotent producer,
+        # client is expected to keep and manage these data during the life cycle of the producer instance.
+        self._producer_epoch = None
+        self._producer_id = None
+        self._producer_sequence_number = None
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
+
+        desired_capabilities = None
+        if self._enable_idempotent_partitions:
+            symbol_array = [types.AMQPSymbol(IDEMPOTENT_PRODUCER_SYMBOL)]
+            desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
+
+        if self._producer_id is not None:
+            # In case of idempotent producer, at the attach operation a producer-id can be given.
+            # The producer-id should not exist in the case of new connection
+            # if it exists, it is considered existing connection scenario.
+            self._link_properties[types.AMQPSymbol(PRODUCER_ID_SYMBOL)] = types.AMQPLong(self._producer_id)
+
+        if self._producer_epoch is not None:
+            # In case of idempotent producer, at the attach operation, an epoch can be given.
+            # Whenever link is recreated but producer instance is to be maintained,
+            # then link recreation should contain same producer-id but increment epoch.
+            self._producer_epoch += 1
+            self._link_properties[types.AMQPSymbol(PRODUCER_EPOCH_SYMBOL)] = types.AMQPShort(self._producer_epoch)
+
         self._handler = SendClient(
             self._target,
             auth=auth,
@@ -132,6 +163,8 @@ class EventHubProducer(
             client_name=self._name,
             link_properties=self._link_properties,
             properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
+            desired_capabilities=desired_capabilities,
+            on_attach=self._on_attach
         )
 
     def _open_with_retry(self):
@@ -216,6 +249,13 @@ class EventHubProducer(
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # type: ignore  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         return wrapper_event_data
+
+    def _on_attach(self, source, target, properties, error):
+        if not self._enable_idempotent_partitions or str(target) != self._target:
+            return
+        self._producer_epoch = properties.get(PRODUCER_EPOCH_SYMBOL)
+        self._producer_id = properties.get(PRODUCER_ID_SYMBOL)
+        self._producer_sequence_number = properties.get(PRODUCER_SEQUENCE_NUMBER_SYMBOL)
 
     def send(
         self,

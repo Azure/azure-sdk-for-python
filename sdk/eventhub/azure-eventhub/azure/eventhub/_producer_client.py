@@ -55,6 +55,7 @@ class EventHubProducerClient(ClientBase):
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :keyword bool enable_idempotent_partitions: Default is False.
 
     .. admonition:: Example:
 
@@ -136,11 +137,18 @@ class EventHubProducerClient(ClientBase):
                 or cast(EventHubProducer, self._producers[partition_id]).closed
             ):
                 self._producers[partition_id] = self._create_producer(
-                    partition_id=partition_id, send_timeout=send_timeout
+                    partition_id=partition_id,
+                    send_timeout=send_timeout,
+                    enable_idempotent_partitions=self._config.enable_idempotent_partitions
                 )
 
-    def _create_producer(self, partition_id=None, send_timeout=None):
-        # type: (Optional[str], Optional[Union[int, float]]) -> EventHubProducer
+    def _create_producer(
+        self,
+        partition_id=None,
+        send_timeout=None,
+        enable_idempotent_partitions=False
+    ):
+        # type: (Optional[str], Optional[Union[int, float]], bool) -> EventHubProducer
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
         send_timeout = (
             self._config.send_timeout if send_timeout is None else send_timeout
@@ -152,6 +160,7 @@ class EventHubProducerClient(ClientBase):
             partition=partition_id,
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
+            enable_idempotent_partitions=enable_idempotent_partitions
         )
         return handler
 
@@ -185,6 +194,7 @@ class EventHubProducerClient(ClientBase):
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
+        :keyword bool enable_idempotent_partitions: Default is False.
         :rtype: ~azure.eventhub.EventHubProducerClient
 
         .. admonition:: Example:

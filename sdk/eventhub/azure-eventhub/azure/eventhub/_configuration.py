@@ -35,6 +35,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.connection_verify = kwargs.get("connection_verify")  # type: Optional[str]
         self.connection_port = DEFAULT_AMQPS_PORT
         self.custom_endpoint_hostname = None
+        self.enable_idempotent_partitions = kwargs.get("enable_idempotent_partitions", False)  # type: bool
 
         if self.http_proxy or self.transport_type == TransportType.AmqpOverWebsocket:
             self.transport_type = TransportType.AmqpOverWebsocket

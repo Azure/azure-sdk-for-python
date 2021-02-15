@@ -19,7 +19,7 @@ from ._common import EventData
 from ._client_base import ConsumerProducerMixin
 from ._utils import create_properties, trace_link_message, event_position_selector
 from ._constants import (
-    EPOCH_SYMBOL,
+    CONSUMER_EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
     RECEIVER_RUNTIME_METRIC_SYMBOL,
 )
@@ -109,7 +109,7 @@ class EventHubConsumer(
         self._partition = partition
         self._name = "EHConsumer-{}-partition{}".format(uuid.uuid4(), partition)
         if owner_level is not None:
-            self._link_properties[types.AMQPSymbol(EPOCH_SYMBOL)] = types.AMQPLong(
+            self._link_properties[types.AMQPSymbol(CONSUMER_EPOCH_SYMBOL)] = types.AMQPLong(
                 int(owner_level)
             )
         link_property_timeout_ms = (
