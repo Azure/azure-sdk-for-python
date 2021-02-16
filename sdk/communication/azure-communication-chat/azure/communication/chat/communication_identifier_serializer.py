@@ -4,13 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .._generated.models import (
+from ._generated.models import (
     CommunicationIdentifierModel,
     CommunicationUserIdentifierModel,
     PhoneNumberIdentifierModel,
     MicrosoftTeamsUserIdentifierModel
 )
-from .models import (
+from ._shared.models import (
     CommunicationUserIdentifier,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier,
