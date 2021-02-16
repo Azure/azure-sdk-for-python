@@ -189,19 +189,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         for name, field in receipt.fields.items():
             if field.value_type not in ["list", "dictionary"] and name != "ReceiptType":  # receipt cases where value_data is None
                 self.assertFieldElementsHasValues(field.value_data.field_elements, receipt.page_range.first_page_number)
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    async def test_receipt_url_jpg(self, client):
-
-        async with client:
-            poller = await client.begin_recognize_receipts_from_url(
-                self.receipt_url_jpg
-            )
-            result = await poller.result()
-
-        self.assertEqual(len(result), 1)
-        receipt = result[0]
+        
         self.assertEqual(receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond, WA 98052')
         self.assertEqual(receipt.fields.get("MerchantName").value, 'Contoso Contoso')
         self.assertEqual(receipt.fields.get("MerchantPhoneNumber").value, '+19876543210')
@@ -217,7 +205,6 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         receipt_type = receipt.fields.get("ReceiptType")
         self.assertIsNotNone(receipt_type.confidence)
         self.assertEqual(receipt_type.value, 'Itemized')
-        self.assertReceiptItemsHasValues(receipt.fields["Items"].value, receipt.page_range.first_page_number, False)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
