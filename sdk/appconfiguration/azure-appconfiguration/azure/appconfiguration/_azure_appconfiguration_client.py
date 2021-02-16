@@ -76,6 +76,7 @@ class AzureAppConfigurationClient:
         self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
         )
+        self._sync_token_policy = SyncTokenPolicy()
 
         pipeline = kwargs.get("pipeline")
 
@@ -139,7 +140,7 @@ class AzureAppConfigurationClient:
                 self._config.user_agent_policy,
                 credential_policy,
                 self._config.retry_policy,
-                SyncTokenPolicy(),
+                self._sync_token_policy,
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),
                 HttpLoggingPolicy(**kwargs)
@@ -577,3 +578,14 @@ class AzureAppConfigurationClient:
             raise HttpResponseError(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
+
+    def add_sync_token(
+        self, token
+    ):  # type: (str) -> None
+
+        """Add a sync token to the internal list of tokens.
+        :param token: The sync token to be added to the internal list of tokens
+        :type token: str
+        """
+
+        self._sync_token_policy.add_token(token)

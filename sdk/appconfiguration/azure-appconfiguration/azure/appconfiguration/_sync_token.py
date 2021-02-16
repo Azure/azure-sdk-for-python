@@ -88,11 +88,22 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
             return
         for sync_token_string in sync_token_strings:
             sync_token = SyncToken.from_sync_token_string(sync_token_string)
-            if not sync_token:
-                continue
-            existing_token = self._sync_tokens.get(sync_token.token_id, None)
-            if not existing_token:
-                self._sync_tokens[sync_token.token_id] = sync_token
-                continue
-            if existing_token.sequence_number < sync_token.sequence_number:
-                self._sync_tokens[sync_token.token_id] = sync_token
+            self._update_sync_token(sync_token)
+
+    def add_token(self, full_raw_tokens):
+        # type: (str) -> None
+        raw_tokens = full_raw_tokens.split(',')
+        for raw_token in raw_tokens:
+            sync_token = SyncToken.from_sync_token_string(raw_token)
+            self._update_sync_token(sync_token)
+
+    def _update_sync_token(self, token):
+        # type: (SyncToken) -> None
+        if not sync_token:
+            return
+        existing_token = self._sync_tokens.get(sync_token.token_id, None)
+        if not existing_token:
+            self._sync_tokens[sync_token.token_id] = sync_token
+            return
+        if existing_token.sequence_number < sync_token.sequence_number:
+            self._sync_tokens[sync_token.token_id] = sync_token
