@@ -97,7 +97,7 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
             sync_token = SyncToken.from_sync_token_string(raw_token)
             self._update_sync_token(sync_token)
 
-    def _update_sync_token(self, token):
+    def _update_sync_token(self, sync_token):
         # type: (SyncToken) -> None
         if not sync_token:
             return

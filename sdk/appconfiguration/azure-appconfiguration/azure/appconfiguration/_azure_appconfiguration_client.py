@@ -45,7 +45,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from typing import Any, Optional, Union
 
 class AzureAppConfigurationClient:
     """Represents an client that calls restful API of Azure App Configuration service.
@@ -202,7 +202,7 @@ class AzureAppConfigurationClient:
                 label=label_filter,
                 key=key_filter,
                 select=select,
-                cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
+                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 error_map=error_map,
                 **kwargs
             )
@@ -262,7 +262,7 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
                 **kwargs
             )
-            return ConfigurationSetting._from_key_value(key_value)
+            return ConfigurationSetting._from_generated(key_value)
         except ResourceNotModifiedError:
             return None
         except ErrorException as error:
@@ -271,8 +271,12 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def add_configuration_setting(self, configuration_setting, **kwargs):
-        # type: (ConfigurationSetting, dict) -> ConfigurationSetting
+    def add_configuration_setting(
+        self,
+        configuration_setting, # type: Union[ConfigurationSetting,SecretReferenceConfigurationSetting,FeatureFlagConfigurationSetting] # pylint: disable=line-too-long
+        **kwargs # type: dict
+    ):
+        # type: (...) -> ConfigurationSetting
 
         """Add a ConfigurationSetting into the Azure App Configuration service.
 
@@ -317,7 +321,7 @@ class AzureAppConfigurationClient:
                 headers=custom_headers,
                 error_map=error_map,
             )
-            return ConfigurationSetting._from_key_value(key_value_added)
+            return ConfigurationSetting._from_generated(key_value_added)
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
         except binascii.Error:
@@ -387,7 +391,7 @@ class AzureAppConfigurationClient:
                 headers=custom_headers,
                 error_map=error_map,
             )
-            return ConfigurationSetting._from_key_value(key_value_set)
+            return ConfigurationSetting._from_generated(key_value_set)
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
         except binascii.Error:
@@ -445,7 +449,7 @@ class AzureAppConfigurationClient:
                 headers=custom_headers,
                 error_map=error_map,
             )
-            return ConfigurationSetting._from_key_value(key_value_deleted)
+            return ConfigurationSetting._from_generated(key_value_deleted)
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
         except binascii.Error:
@@ -502,7 +506,7 @@ class AzureAppConfigurationClient:
                 label=label_filter,
                 key=key_filter,
                 select=select,
-                cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
+                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 error_map=error_map,
                 **kwargs
             )
@@ -573,7 +577,7 @@ class AzureAppConfigurationClient:
                     error_map=error_map,
                     **kwargs
                 )
-            return ConfigurationSetting._from_key_value(key_value)
+            return ConfigurationSetting._from_generated(key_value)
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
         except binascii.Error:
