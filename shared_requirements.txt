@@ -84,6 +84,7 @@ azure-mgmt-storage~=2.0
 azure-mgmt-subscription~=0.2.0
 azure-mgmt-trafficmanager~=0.50.0
 azure-mgmt-web~=0.35.0
+azure-mixedreality-nspkg
 azure-nspkg
 azure-keyvault-nspkg
 azure-media-nspkg
