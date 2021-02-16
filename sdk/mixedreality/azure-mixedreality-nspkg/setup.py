@@ -10,7 +10,7 @@ from setuptools import setup
 
 setup(
     name='azure-mixedreality-nspkg',
-    version='0.0.0b1',
+    version='1.0.0',
     description='Microsoft Azure Mixed Reality Namespace Package [Internal]',
     long_description=open('README.md', 'r').read(),
     license='MIT License',
@@ -18,7 +18,7 @@ setup(
     author_email='azurepysdk@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
 
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
@@ -28,6 +28,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,

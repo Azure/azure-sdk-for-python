@@ -3,11 +3,11 @@ import os
 from io import open
 import re
 
-# example setup.py Feel free to copy the entire "azure-template" folder into a package folder named 
-# with "azure-<yourpackagename>". Ensure that the below arguments to setup() are updated to reflect 
+# example setup.py Feel free to copy the entire "azure-template" folder into a package folder named
+# with "azure-<yourpackagename>". Ensure that the below arguments to setup() are updated to reflect
 # your package.
 
-# this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way 
+# this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
 # up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
 
 PACKAGE_NAME = "azure-mixedreality-authentication"
@@ -26,7 +26,10 @@ if not version:
     raise RuntimeError('Cannot find version information')
 
 with open('README.md', encoding='utf-8') as f:
-    long_description = f.read()
+    readme = f.read()
+
+with open('CHANGELOG.md', encoding='utf-8') as f:
+    changelog = f.read()
 
 setup(
     name=PACKAGE_NAME,
@@ -34,7 +37,7 @@ setup(
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
 
     # ensure that these are updated to reflect the package owners' information
-    long_description=long_description,
+    long_description=readme + "\n\n" + changelog,
     long_description_content_type='text/markdown',
     url='https://github.com/Azure/azure-sdk-for-python',
     author='Microsoft Corporation',
@@ -49,7 +52,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',

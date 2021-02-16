@@ -12,7 +12,7 @@ token from the STS that can be used to access Mixed Reality services.
 
 ## Currently supported environments
 
-This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
+This package has been tested with Python 2.7, 3.5, 3.6, 3.7, 3.8, and 3.9.
 
 ## Prerequisites
 
@@ -25,7 +25,7 @@ This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
 
 ## Install the package
 
-Install the Azure Communication Service Chat SDK.
+Install the Azure Mixed Reality Authentication SDK.
 
 ```bash
 pip install --pre azure-mixedreality-authentication

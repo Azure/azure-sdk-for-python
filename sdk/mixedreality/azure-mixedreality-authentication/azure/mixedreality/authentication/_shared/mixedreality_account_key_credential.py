@@ -32,8 +32,8 @@ class MixedRealityAccountKeyCredential(object):
 
         token = self.account_id + ":" + self.account_key.key
 
-        # No way to know when an access token might expire, so we'll set it to be
-        # 10 years in the future.
+        # No way to know when an account key might expire, so we'll set the
+        # access token wrapping it to expire 10 years in the future.
         expiration_date = _add_years(datetime.now(), ACCOUNT_KEY_VALID_YEARS)
         expiration_timestamp = int(time.mktime(expiration_date.timetuple()))
 

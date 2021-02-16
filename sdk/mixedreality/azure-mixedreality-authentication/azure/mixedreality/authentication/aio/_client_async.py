@@ -97,7 +97,6 @@ class MixedRealityStsClient(object):
 
         response = await self._client.get_token(
             self._account_id,
-            api_version=None,
             token_request_options=token_request_options,
             **kwargs)
         return convert_to_access_token(response)
