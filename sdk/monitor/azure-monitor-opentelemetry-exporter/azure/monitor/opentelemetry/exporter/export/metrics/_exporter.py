@@ -36,10 +36,6 @@ __all__ = ["AzureMonitorMetricsExporter"]
 class AzureMonitorMetricsExporter(BaseExporter, MetricsExporter):
     """Azure Monitor metrics exporter for OpenTelemetry."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        """Azure Monitor metrics exporter for OpenTelemetry."""
-
-
     def export(
         self, export_records: Sequence[ExportRecord]
     ) -> MetricsExportResult:
