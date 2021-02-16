@@ -6,10 +6,14 @@ interactions:
       - application/json
       Date:
 <<<<<<< HEAD
+<<<<<<< HEAD
       - Tue, 16 Feb 2021 19:45:38 GMT
 =======
       - Thu, 11 Feb 2021 20:34:10 GMT
 >>>>>>> 798b57943... Regenerated code
+=======
+      - Tue, 16 Feb 2021 19:28:29 GMT
+>>>>>>> 2deb4f44c... Tests work with new area code
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -40,11 +44,11 @@ interactions:
       string: '{"error": {"code": "Denied", "message": "Denied by the resource provider."}}'
     headers:
       content-type: application/json
-      date: Thu, 11 Feb 2021 20:34:11 GMT
-      ms-cv: 1vN1Av5Jp02JawMoV/kpYQ.0
+      date: Tue, 16 Feb 2021 19:28:29 GMT
+      ms-cv: t32QEy5Lvky+yflBUjWr8w.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 169ms
+      x-processing-time: 152ms
     status:
       code: 401
       message: Unauthorized

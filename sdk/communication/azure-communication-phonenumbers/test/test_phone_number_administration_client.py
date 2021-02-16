@@ -129,14 +129,15 @@ class NewTests(CommunicationTestCase):
             PhoneNumberType.TOLL_FREE,
             PhoneNumberAssignmentType.APPLICATION,
             capabilities,
-            None,
+            "844",
             polling = True
         )
         assert poller.result()
+
     @pytest.mark.live_test_only
     def test_update_phone_number_capabilities(self):
         poller = self.phone_number_client.begin_update_phone_number_capabilities(
-          "+16194895875",
+          "+18335260208",
           PhoneNumberCapabilityValue.OUTBOUND,
           PhoneNumberCapabilityValue.INBOUND_OUTBOUND,
           polling = True
