@@ -47,10 +47,10 @@ class TestTableClient(AzureTestCase, TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback))
         assert isinstance(tables,  list)
 
+        # The count doesn't matter, going through the PagedItem calls `callback`
         count = 0
         for table in tables:
             count += 1
-        assert count == 0
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
@@ -62,11 +62,10 @@ class TestTableClient(AzureTestCase, TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
         assert isinstance(tables,  list)
 
+        # The count doesn't matter, going through the PagedItem calls `callback`
         count = 0
         for table in tables:
             count += 1
-        assert count == 0
-
 
     @TablesPreparer()
     def test_user_agent_append(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -79,10 +78,10 @@ class TestTableClient(AzureTestCase, TableTestCase):
         custom_headers = {'User-Agent': 'customer_user_agent'}
         tables = service.list_tables(raw_response_hook=callback, headers=custom_headers)
 
+        # The count doesn't matter, going through the PagedItem calls `callback`
         count = 0
         for table in tables:
             count += 1
-        assert count == 0
 
     @TablesPreparer()
     def test_user_agent_default(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -98,10 +97,10 @@ class TestTableClient(AzureTestCase, TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback))
         assert isinstance(tables,  list)
 
+        # The count doesn't matter, going through the PagedItem calls `callback`
         count = 0
         for table in tables:
             count += 1
-        assert count == 0
 
 
 class TestTableUnitTests(TableTestCase):
