@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 05 Feb 2021 20:19:38 GMT
+      - Fri, 05 Feb 2021 20:18:37 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - customer_user_agent
       x-ms-date:
-      - Fri, 05 Feb 2021 20:19:38 GMT
+      - Fri, 05 Feb 2021 20:18:37 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -27,7 +27,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 05 Feb 2021 20:19:39 GMT
+      - Fri, 05 Feb 2021 20:18:38 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

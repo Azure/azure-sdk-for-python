@@ -33,13 +33,18 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
-            assert response.http_request.headers['User-Agent'] in "azsdk-python-data-tables/{} Python/{} ({})".format(
+            assert "azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
-                    platform.platform())
+                    platform.platform()) in response.http_request.headers['User-Agent']
 
         tables = service.list_tables(raw_response_hook=callback)
         assert tables is not None
+
+        count = 0
+        async for table in tables:
+            count += 1
+        assert count == 0
 
     @TablesPreparer()
     async def test_user_agent_custom_async(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -57,6 +62,11 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         tables = service.list_tables(raw_response_hook=callback)
         assert tables is not None
 
+        count = 0
+        async for table in tables:
+            count += 1
+        assert count == 0
+
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
             assert "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
@@ -67,20 +77,26 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         tables = service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0")
         assert tables is not None
 
+        count = 0
+        async for table in tables:
+            count += 1
+        assert count == 0
+
     @TablesPreparer()
     async def test_user_agent_append(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # TODO: fix this one
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
-            assert response.http_request.headers['User-Agent'] == "azsdk-python-data-tables/{} Python/{} ({}) customer_user_agent".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform())
+            assert response.http_request.headers['User-Agent'] == 'customer_user_agent'
 
         custom_headers = {'User-Agent': 'customer_user_agent'}
         tables = service.list_tables(raw_response_hook=callback, headers=custom_headers)
+
+        count = 0
+        async for table in tables:
+            count += 1
+        assert count == 0
 
 
 class TestTableClientUnit(AsyncTableTestCase):
