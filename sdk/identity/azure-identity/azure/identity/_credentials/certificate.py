@@ -6,7 +6,8 @@ from binascii import hexlify
 from typing import TYPE_CHECKING
 
 from cryptography import x509
-from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from cryptography.hazmat.backends import default_backend
 import six
 
@@ -19,6 +20,8 @@ if TYPE_CHECKING:
 
 class CertificateCredential(ClientCredentialBase):
     """Authenticates as a service principal using a certificate.
+
+    The certificate must have an RSA private key, because this credential signs assertions using RS256.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str client_id: the service principal's client ID
@@ -73,10 +76,14 @@ def get_client_credential(certificate_path, password=None, certificate_bytes=Non
         with open(certificate_path, "rb") as f:
             certificate_bytes = f.read()
     elif not certificate_bytes:
-        raise ValueError('This credential requires a value for "certificate_path" or "certificate_bytes"')
+        raise ValueError('CertificateCredential requires a value for "certificate_path" or "certificate_bytes"')
 
     if isinstance(password, six.text_type):
         password = password.encode(encoding="utf-8")
+
+    private_key = serialization.load_pem_private_key(certificate_bytes, password=password, backend=default_backend())
+    if not isinstance(private_key, RSAPrivateKey):
+        raise ValueError("CertificateCredential requires an RSA private key because it uses RS256 for signing")
 
     cert = x509.load_pem_x509_certificate(certificate_bytes, default_backend())
     fingerprint = cert.fingerprint(hashes.SHA1())  # nosec

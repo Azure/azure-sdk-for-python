@@ -1,5 +1,8 @@
 # Release History
 
+## 2.0.0b6 (Unreleased)
+
+
 ## 2.0.0b5 (2021-02-10)
 
   **Breaking Changes**

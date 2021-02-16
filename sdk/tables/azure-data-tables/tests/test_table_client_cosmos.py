@@ -46,6 +46,11 @@ class TestTableClient(AzureTestCase, TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback))
         assert isinstance(tables,  list)
 
+        count = 0
+        for table in tables:
+            count += 1
+        assert count == 0
+
         if self.is_live:
             sleep(SLEEP_DELAY)
 
@@ -66,6 +71,11 @@ class TestTableClient(AzureTestCase, TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback))
         assert isinstance(tables,  list)
 
+        count = 0
+        for table in tables:
+            count += 1
+        assert count == 0
+
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
             assert "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
@@ -75,6 +85,11 @@ class TestTableClient(AzureTestCase, TableTestCase):
 
         tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
         assert isinstance(tables,  list)
+
+        count = 0
+        for table in tables:
+            count += 1
+        assert count == 0
 
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -88,13 +103,15 @@ class TestTableClient(AzureTestCase, TableTestCase):
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
-            assert response.http_request.headers['User-Agent'] == "azsdk-python-data-tables/{} Python/{} ({}) customer_user_agent".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform())
+            assert response.http_request.headers['User-Agent'] == 'customer_user_agent'
 
         custom_headers = {'User-Agent': 'customer_user_agent'}
         tables = service.list_tables(raw_response_hook=callback, headers=custom_headers)
+
+        count = 0
+        for table in tables:
+            count += 1
+        assert count == 0
 
         if self.is_live:
             sleep(SLEEP_DELAY)

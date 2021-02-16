@@ -15,7 +15,15 @@ import pytest
 
 from helpers import build_aad_response, urlsafeb64_decode, mock_response, Request
 from helpers_async import async_validating_transport, AsyncMockTransport
-from test_certificate_credential import BOTH_CERTS, CERT_PATH, validate_jwt
+from test_certificate_credential import BOTH_CERTS, CERT_PATH, EC_CERT_PATH, validate_jwt
+
+
+def test_non_rsa_key():
+    """The credential should raise ValueError when given a cert without an RSA private key"""
+    with pytest.raises(ValueError, match=".*RS256.*"):
+        CertificateCredential("tenant-id", "client-id", EC_CERT_PATH)
+    with pytest.raises(ValueError, match=".*RS256.*"):
+        CertificateCredential("tenant-id", "client-id", certificate_bytes=open(EC_CERT_PATH, "rb").read())
 
 
 def test_tenant_id_validation():

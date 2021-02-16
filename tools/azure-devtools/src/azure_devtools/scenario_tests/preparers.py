@@ -46,6 +46,11 @@ class AbstractPreparer(object):
         # In cached mode we need to avoid this because then for tests with recordings, they would not have a moniker.
         if (self.live_test or test_class_instance.in_recording) \
                 and not (not test_class_instance.is_live and test_class_instance.in_recording and self._use_cache):
+                _logger.warning("This test (%s) does not generate a recording file, you should not inherit from AzureTestCase \
+                    for these tests, please remove this dependency.", test_class_instance.qualified_test_name)
+
+        if (self.live_test or test_class_instance.in_recording) \
+                and not (not self.live_test and test_class_instance.in_recording and self._use_cache):
             resource_name = self.random_name
             if not self.live_test and isinstance(self, RecordingProcessor):
                 test_class_instance.recording_processors.append(self)
@@ -145,13 +150,14 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
             try:
                 try:
                     import asyncio
+                except ImportError:
+                    fn(test_class_instance, **trimmed_kwargs)
+                else:
                     if asyncio.iscoroutinefunction(fn):
                         loop = asyncio.get_event_loop()
                         loop.run_until_complete(fn(test_class_instance, **trimmed_kwargs))
                     else:
                         fn(test_class_instance, **trimmed_kwargs)
-                except (ImportError, SyntaxError): # ImportError for if asyncio isn't available, syntaxerror on some versions of 2.7
-                    fn(test_class_instance, **trimmed_kwargs)
             finally:
                 # If we use cache we delay deletion for the end.
                 # This won't guarantee deletion order, but it will guarantee everything delayed
@@ -224,7 +230,7 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
                 preparer.remove_resource_with_record_override(resource_name, **kwargs)
             except Exception as e: #pylint: disable=broad-except
                 # Intentionally broad exception to attempt to leave as few orphan resources as possible even on error.
-                _logger.warn("Exception while performing delayed deletes (this can happen): %s", e)
+                _logger.warning("Exception while performing delayed deletes (this can happen): %s", e)
 
 class SingleValueReplacer(RecordingProcessor):
     # pylint: disable=no-member

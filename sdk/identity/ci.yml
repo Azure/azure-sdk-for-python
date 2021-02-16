@@ -36,7 +36,8 @@ extends:
         CoverageArg: ''
         RunForPR: false
         InjectedPackages: 'git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev'
-          
+
+
     Artifacts:
     - name: azure_identity
       safeName: azureidentity

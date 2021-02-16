@@ -6,7 +6,9 @@
 - Added auto-collection + standard metrics from previous repository
     ([#16417](https://github.com/Azure/azure-sdk-for-python/pull/16417))
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b4 (Unreleased)
+
+## 1.0.0b3 (2021-02-11)
 
   **Breaking Changes**
   - The package has been renamed to `azure-monitor-opentelemetry-exporter`
