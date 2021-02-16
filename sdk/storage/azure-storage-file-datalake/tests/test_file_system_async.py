@@ -102,7 +102,7 @@ class FileSystemTest(StorageTestCase):
 
         # Act
         file_system_client1 = self.dsc.get_file_system_client(file_system_name)
-        file_system_client2 = self.dsc.get_file_system_client("badfilesystem")
+        file_system_client2 = self.dsc.get_file_system_client("nonexistentfs")
         await file_system_client1.create_file_system()
 
         self.assertTrue(await file_system_client1.exists())

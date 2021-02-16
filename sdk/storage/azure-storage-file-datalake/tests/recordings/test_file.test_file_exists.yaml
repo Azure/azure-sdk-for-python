@@ -173,7 +173,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/filesystem8ebf0aac/directory8ebf0aac/badfilename
+    uri: https://storagename.blob.core.windows.net/filesystem8ebf0aac/directory8ebf0aac/nonexistentfile
   response:
     body:
       string: ''

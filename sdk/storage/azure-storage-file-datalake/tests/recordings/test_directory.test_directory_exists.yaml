@@ -131,7 +131,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/filesystem14f20f16/baddirectory
+    uri: https://storagename.blob.core.windows.net/filesystem14f20f16/nonexistentdir
   response:
     body:
       string: ''

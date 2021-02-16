@@ -110,7 +110,7 @@ class FileTest(StorageTestCase):
         directory_client.create_directory()
 
         file_client1 = directory_client.get_file_client('filename')
-        file_client2 = directory_client.get_file_client('badfilename')
+        file_client2 = directory_client.get_file_client('nonexistentfile')
         file_client1.create_file()
 
         self.assertTrue(file_client1.exists())

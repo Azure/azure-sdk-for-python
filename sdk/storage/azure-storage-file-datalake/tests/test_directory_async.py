@@ -128,7 +128,7 @@ class DirectoryTest(StorageTestCase):
         directory_name = self._get_directory_reference()
 
         directory_client1 = self.dsc.get_directory_client(self.file_system_name, directory_name)
-        directory_client2 = self.dsc.get_directory_client(self.file_system_name, "baddirectory")
+        directory_client2 = self.dsc.get_directory_client(self.file_system_name, "nonexistentdir")
         await directory_client1.create_directory()
 
         self.assertTrue(await directory_client1.exists())

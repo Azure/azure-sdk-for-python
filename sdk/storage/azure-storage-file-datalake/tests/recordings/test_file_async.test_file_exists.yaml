@@ -123,7 +123,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/filesystemd8210d29/directoryd8210d29/badfilename
+    uri: https://storagename.blob.core.windows.net/filesystemd8210d29/directoryd8210d29/nonexistentfile
   response:
     body:
       string: ''
@@ -137,5 +137,5 @@ interactions:
     status:
       code: 404
       message: The specified blob does not exist.
-    url: https://seanprodhierarchical.blob.core.windows.net/filesystemd8210d29/directoryd8210d29/badfilename
+    url: https://seanprodhierarchical.blob.core.windows.net/filesystemd8210d29/directoryd8210d29/nonexistentfile
 version: 1

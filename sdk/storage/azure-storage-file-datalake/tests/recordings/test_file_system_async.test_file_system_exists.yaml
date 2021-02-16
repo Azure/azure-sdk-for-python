@@ -79,7 +79,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/badfilesystem?restype=container
+    uri: https://storagename.blob.core.windows.net/nonexistentfs?restype=container
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
@@ -95,5 +95,5 @@ interactions:
     status:
       code: 404
       message: The specified container does not exist.
-    url: https://seanprodhierarchical.blob.core.windows.net/badfilesystem?restype=container
+    url: https://seanprodhierarchical.blob.core.windows.net/nonexistentfs?restype=container
 version: 1

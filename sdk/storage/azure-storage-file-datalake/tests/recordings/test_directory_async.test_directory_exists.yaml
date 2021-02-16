@@ -92,7 +92,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/filesystem78031193/baddirectory
+    uri: https://storagename.blob.core.windows.net/filesystem78031193/nonexistentdir
   response:
     body:
       string: ''
@@ -106,5 +106,5 @@ interactions:
     status:
       code: 404
       message: The specified blob does not exist.
-    url: https://seanprodhierarchical.blob.core.windows.net/filesystem78031193/baddirectory
+    url: https://seanprodhierarchical.blob.core.windows.net/filesystem78031193/nonexistentdir
 version: 1

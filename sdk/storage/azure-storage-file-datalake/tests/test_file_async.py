@@ -122,7 +122,7 @@ class FileTest(StorageTestCase):
         await directory_client.create_directory()
 
         file_client1 = directory_client.get_file_client('filename')
-        file_client2 = directory_client.get_file_client('badfilename')
+        file_client2 = directory_client.get_file_client('nonexistentfile')
         await file_client1.create_file()
 
         self.assertTrue(await file_client1.exists())
