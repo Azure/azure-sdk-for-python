@@ -7,11 +7,11 @@ from unittest import mock
 from opentelemetry import metrics
 from opentelemetry.sdk.metrics import MeterProvider
 
-from azure.opentelemetry.sdk.auto_collection import (
+from azure.monitor.opentelemetry.sdk.auto_collection import (
     AutoCollection,
     standard_metrics_processor
 )
-from azure.opentelemetry.sdk.auto_collection._performance_metrics import (
+from azure.monitor.opentelemetry.sdk.auto_collection._performance_metrics import (
     PerformanceMetrics
 )
 

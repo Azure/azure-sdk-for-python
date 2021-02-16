@@ -5,10 +5,10 @@ from typing import Dict
 
 from opentelemetry.metrics import Meter
 
-from azure.opentelemetry.sdk.auto_collection._performance_metrics import (
+from azure.monitor.opentelemetry.sdk.auto_collection._performance_metrics import (
     PerformanceMetrics,
 )
-from azure.opentelemetry.sdk.auto_collection._utils import AutoCollectionType
+from azure.monitor.opentelemetry.sdk.auto_collection._utils import AutoCollectionType
 
 
 __all__ = [

@@ -6,7 +6,7 @@ from typing import Dict
 import psutil
 from opentelemetry.metrics import Meter, Observer
 
-from azure.opentelemetry.sdk.auto_collection._utils import AutoCollectionType
+from azure.monitor.opentelemetry.sdk.auto_collection._utils import AutoCollectionType
 
 logger = logging.getLogger(__name__)
 PROCESS = psutil.Process()

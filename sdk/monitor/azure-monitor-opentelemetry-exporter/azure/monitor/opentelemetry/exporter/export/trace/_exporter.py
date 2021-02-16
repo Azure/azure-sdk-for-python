@@ -28,11 +28,7 @@ __all__ = ["AzureMonitorTraceExporter"]
 
 
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
-    """Azure Monitor trace exporter for OpenTelemetry.
-
-    :param options: Exporter configuration options.
-    :type options: ~azure.monitor.opentelemetry.exporter.options.ExporterOptions
-    """
+    """Azure Monitor trace exporter for OpenTelemetry."""
 
     def export(self, spans: Sequence[Span], **kwargs: Any) -> SpanExportResult: # pylint: disable=unused-argument
         """Export data

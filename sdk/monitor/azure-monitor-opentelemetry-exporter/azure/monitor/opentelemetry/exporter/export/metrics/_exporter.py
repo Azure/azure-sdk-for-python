@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import logging
-from typing import Sequence
+from typing import Any, Sequence
 
 from opentelemetry.sdk.metrics.export import (
     ExportRecord,
@@ -34,11 +34,11 @@ __all__ = ["AzureMonitorMetricsExporter"]
 
 
 class AzureMonitorMetricsExporter(BaseExporter, MetricsExporter):
-    """Azure Monitor metrics exporter for OpenTelemetry.
+    """Azure Monitor metrics exporter for OpenTelemetry."""
 
-    :param options: Exporter configuration options.
-    :type options: ~azure.opentelemetry.exporter.azuremonitor.options.ExporterOptions
-    """
+    def __init__(self, **kwargs: Any) -> None:
+        """Azure Monitor metrics exporter for OpenTelemetry."""
+
 
     def export(
         self, export_records: Sequence[ExportRecord]
