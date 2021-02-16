@@ -45,50 +45,6 @@ class UnknownIdentifier(object):
     def __init__(self, identifier):
         self.identifier = identifier
 
-class CommunicationIdentifierModel(msrest.serialization.Model):
-    """Communication Identifier Model.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param kind: Required. Kind of Communication Identifier.
-    :type kind: CommunicationIdentifierKind
-    :param id: Full id of the identifier.
-    :type id: str
-    :param phone_number: phone number in case the identifier is a phone number.
-    :type phone_number: str
-    :param is_anonymous: True if the identifier is anonymous.
-    :type is_anonymous: bool
-    :param microsoft_teams_user_id: Microsoft Teams user id.
-    :type microsoft_teams_user_id: str
-    :param communication_cloud_environment: Cloud environment that the user belongs to.
-    :type communication_cloud_environment: CommunicationCloudEnvironment
-    """
-
-    _validation = {
-        'kind': {'required': True},
-    }
-
-    _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'phone_number': {'key': 'phoneNumber', 'type': 'str'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'microsoft_teams_user_id': {'key': 'microsoftTeamsUserId', 'type': 'str'},
-        'communication_cloud_environment': {'key': 'communicationCloudEnvironment', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CommunicationIdentifierModel, self).__init__(**kwargs)
-        self.kind = kwargs['kind']
-        self.id = kwargs.get('id', None)
-        self.phone_number = kwargs.get('phone_number', None)
-        self.is_anonymous = kwargs.get('is_anonymous', None)
-        self.microsoft_teams_user_id = kwargs.get('microsoft_teams_user_id', None)
-        self.communication_cloud_environment = kwargs.get('communication_cloud_environment', None)
-
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(cls, name):
         return super().__getitem__(name.upper())

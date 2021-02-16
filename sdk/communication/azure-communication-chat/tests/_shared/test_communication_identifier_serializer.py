@@ -4,17 +4,19 @@
 # license information.
 # -------------------------------------------------------------------------
 import unittest
-from azure.communication.chat._shared.communication_identifier_serializer import CommunicationUserIdentifierSerializer
-from azure.communication.chat._shared.models import(
+from azure.communication.chat.communication_identifier_serializer import CommunicationUserIdentifierSerializer
+from azure.communication.chat._generated.models import(
     CommunicationIdentifierModel,
+    MicrosoftTeamsUserIdentifierModel,
+    CommunicationUserIdentifierModel,
+    PhoneNumberIdentifierModel
+)
+from azure.communication.chat._shared.models import(
     CommunicationUserIdentifier,
     CommunicationCloudEnvironment,
     UnknownIdentifier,
     PhoneNumberIdentifier,
-    MicrosoftTeamsUserIdentifier,
-    MicrosoftTeamsUserIdentifierModel,
-    CommunicationUserIdentifierModel,
-    PhoneNumberIdentifierModel
+    MicrosoftTeamsUserIdentifier
 )
 
 class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
