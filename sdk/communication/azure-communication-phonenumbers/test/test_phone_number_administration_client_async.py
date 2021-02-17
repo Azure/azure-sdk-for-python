@@ -139,8 +139,8 @@ class NewTests(AsyncCommunicationTestCase):
 =======
     async def test_get_phone_number(self):
         async with self.phone_number_client:
-            phone_number = await self.phone_number_client.get_phone_number("+16194895875")
-        assert phone_number.phone_number == "+16194895875"
+            phone_number = await self.phone_number_client.get_phone_number("+18332272412")
+        assert phone_number.phone_number == "+18332272412"
         
     '''
     def test_update_phone_number(self):

@@ -17,6 +17,7 @@ class PhoneNumbersClient(object):
     def __init__(
                 self,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 endpoint, # type: str
                 credential, # type: str
                 **kwargs # type: Any
@@ -54,30 +55,36 @@ class PhoneNumbersClient(object):
                 endpoint,  # type: str
                 credential,  # type: str
                 **kwargs  # type: Any
+=======
+                endpoint, # type: str
+                credential, # type: str
+                **kwargs # type: Any
+>>>>>>> 2b281d8ce... Addresses comments
         ):
-            # type: (...) -> None
-            try:
-                if not endpoint.lower().startswith('http'):
-                    endpoint = "https://" + endpoint
-            except AttributeError:
-                raise ValueError("Account URL must be a string.")
+        # type: (...) -> None
+        try:
+            if not endpoint.lower().startswith('http'):
+                endpoint = "https://" + endpoint
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
 
-            if not credential:
-                raise ValueError(
-                    "You need to provide account shared key to authenticate.")
+        if not credential:
+            raise ValueError(
+                "You need to provide account shared key to authenticate.")
 
-            self._endpoint = endpoint
-            self._phone_number_client = PhoneNumbersClientGen(
-                self._endpoint,
-                authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
-                sdk_moniker=SDK_MONIKER,
-                **kwargs)
+        self._endpoint = endpoint
+        self._phone_number_client = PhoneNumbersClientGen(
+            self._endpoint,
+            authentication_policy=get_authentication_policy(endpoint, credential),
+            sdk_moniker=SDK_MONIKER,
+            **kwargs)
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
-            **kwargs  # type: Any
-    ):  # type: (...) -> PhoneNumbersAdministrationClient
+            cls, conn_str, # type: str
+            **kwargs # type: Any
+    ):
+        # type: (...) -> PhoneNumbersAdministrationClient
         """Create PhoneNumbersAdministrationClient from a Connection String.
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
@@ -89,11 +96,15 @@ class PhoneNumbersClient(object):
 
         return cls(endpoint, access_key, **kwargs)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
     
     
 >>>>>>> 798b57943... Regenerated code
+=======
+
+>>>>>>> 2b281d8ce... Addresses comments
     @distributed_trace_async
     async def begin_purchase_phone_numbers(
             self,
@@ -118,10 +129,14 @@ class PhoneNumbersClient(object):
             **kwargs
         )
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
     
 >>>>>>> 798b57943... Regenerated code
+=======
+
+>>>>>>> 2b281d8ce... Addresses comments
     @distributed_trace_async
     async def begin_release_phone_number(
             self,
@@ -154,7 +169,12 @@ class PhoneNumbersClient(object):
             phone_number_type, # type: str
             assignment_type, # type: str
             capabilities,
+<<<<<<< HEAD
             quantity=None, # type: int
+=======
+            area_code, # type: str
+            quantity=1, # type: int
+>>>>>>> 2b281d8ce... Addresses comments
             **kwargs
     ):
         # type: (...) -> AsyncLROPoller[PhoneNumberSearchResult]
@@ -188,8 +208,13 @@ class PhoneNumbersClient(object):
             phone_number_type=phone_number_type,
             assignment_type=assignment_type,
             capabilities=capabilities,
+<<<<<<< HEAD
             quantity=quantity,
             area_code=kwargs.pop('area_code', None)
+=======
+            area_code=area_code,
+            quantity=quantity
+>>>>>>> 2b281d8ce... Addresses comments
         )
         return await self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
@@ -201,8 +226,13 @@ class PhoneNumbersClient(object):
     async def begin_update_phone_number_capabilities(
             self,
             phone_number, # type: str
+<<<<<<< HEAD
             sms = None, # type: str
             calling = None, # type: str
+=======
+            sms, # type: str
+            calling, # type: str
+>>>>>>> 2b281d8ce... Addresses comments
             **kwargs # type: Any
     ):
         # type: (...) -> AsyncLROPoller["_models.AcquiredPhoneNumber"]
@@ -254,12 +284,17 @@ class PhoneNumbersClient(object):
     @distributed_trace
     def list_acquired_phone_numbers(
 <<<<<<< HEAD
+<<<<<<< HEAD
         self,
         **kwargs # type: Any
 =======
         self, 
         **kwargs
 >>>>>>> 798b57943... Regenerated code
+=======
+        self,
+        **kwargs # type: Any
+>>>>>>> 2b281d8ce... Addresses comments
     ):
         # type: (...) -> AsyncItemPaged[AcquiredPhoneNumbers]
         """Gets the list of all acquired phone numbers.
@@ -275,6 +310,7 @@ class PhoneNumbersClient(object):
         return self._phone_number_client.phone_numbers.list_phone_numbers(
             **kwargs
         )
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
     
@@ -310,6 +346,8 @@ class PhoneNumbersClient(object):
             application_id,
             **kwargs
         )
+=======
+>>>>>>> 2b281d8ce... Addresses comments
 
     async def __aenter__(self) -> "PhoneNumbersClient":
         await self._phone_number_client.__aenter__()
@@ -323,4 +361,7 @@ class PhoneNumbersClient(object):
         `~azure.communication.phonenumbers.aio.PhoneNumbersClient` session.
         """
         await self._phone_number_client.__aexit__()
+<<<<<<< HEAD
 >>>>>>> 798b57943... Regenerated code
+=======
+>>>>>>> 2b281d8ce... Addresses comments

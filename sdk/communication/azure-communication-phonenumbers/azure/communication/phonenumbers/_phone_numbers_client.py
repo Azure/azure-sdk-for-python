@@ -109,7 +109,12 @@ class PhoneNumbersClient(object):
             phone_number_type, # type: str
             assignment_type, # type: str
             capabilities, # type: PhoneNumberCapabilities
+<<<<<<< HEAD
             quantity=None, # type: int
+=======
+            area_code, # type: str
+            quantity=1, # type: int
+>>>>>>> 2b281d8ce... Addresses comments
             **kwargs # type: Any
     ):
         # type: (...) -> LROPoller[PhoneNumberSearchResult]
@@ -143,8 +148,13 @@ class PhoneNumbersClient(object):
             phone_number_type=phone_number_type,
             assignment_type=assignment_type,
             capabilities=capabilities,
+<<<<<<< HEAD
             quantity=quantity,
             area_code=kwargs.pop('area_code', None)
+=======
+            area_code=area_code,
+            quantity=quantity
+>>>>>>> 2b281d8ce... Addresses comments
         )
         return self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
@@ -152,10 +162,14 @@ class PhoneNumbersClient(object):
             **kwargs
         )
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
     
 >>>>>>> 798b57943... Regenerated code
+=======
+
+>>>>>>> 2b281d8ce... Addresses comments
     @distributed_trace
     def begin_update_phone_number_capabilities(
             self,
@@ -221,6 +235,12 @@ class PhoneNumbersClient(object):
         :param skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0.
         :type skip: int
+<<<<<<< HEAD
+=======
+        :param top: An optional parameter for how many entries to return, for pagination purposes. The
+         default value is 100.
+        :type top: int
+>>>>>>> 2b281d8ce... Addresses comments
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AcquiredPhoneNumber]
         """
         return self._phone_number_client.phone_numbers.list_phone_numbers(
