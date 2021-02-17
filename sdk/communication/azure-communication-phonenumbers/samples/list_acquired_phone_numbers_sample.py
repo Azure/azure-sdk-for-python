@@ -7,9 +7,9 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: phone_number_area_codes_sample.py
+FILE: list_acquired_phone_numbers_sample.py
 DESCRIPTION:
-    This sample demonstrates how to get all area codes via a connection string, country code and phone plan id.
+    This sample demonstrates how to get all off you acquired phone numbers using your connection string
 USAGE:
     python list_acquired_phone_numbers_sample.py
     Set the environment variables with your own values before running the sample:

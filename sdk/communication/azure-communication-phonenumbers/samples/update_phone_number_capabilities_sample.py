@@ -7,33 +7,38 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: release_phone_number_sample.py
+FILE: update_phone_number_capabilities_sample.py
 DESCRIPTION:
-    This sample demonstrates how to release a previously acquired phone number using your connection string.
+    This sample demonstrates how to updtae the capabilities of a phone number using your connection string.
 USAGE:
-    python release_phone_number_sample.py
+    python update_phone_number_capabilities_sample.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
-    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_TO_RELEASE - The phone number you want to release
+    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_TO_UPDATE - The phone number you want to update
 """
 
 import os
 from azure.communication.phonenumbers import (
-    PhoneNumbersClient
+    PhoneNumbersClient,
+    PhoneNumberCapabilityValue
 )
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 phone_number_to_release = os.getenv(
-    "AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_TO_RELEASE" # e.g. "+18001234567"
+    "AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_TO_UPDATE" # e.g. "+18001234567"
 ) 
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
-def release_phone_number():
-    poller = phone_numbers_client.begin_release_phone_number(phone_number_to_release)
+def update_phone_number_capabilities():
+    poller = phone_numbers_client.begin_update_phone_number_capabilities(
+        "+18335260208",
+        PhoneNumberCapabilityValue.OUTBOUND,
+        PhoneNumberCapabilityValue.INBOUND_OUTBOUND,
+        polling = True
+    )
     poller.result()
     print('Status of the operation:')
     print(poller.status())
 
-
 if __name__ == '__main__':
-    release_phone_number()
+    update_phone_number_capabilities()
