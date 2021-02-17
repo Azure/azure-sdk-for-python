@@ -399,7 +399,7 @@ class FileTest(StorageTestCase):
 
         # Get user delegation key
         token_credential = self.generate_oauth_token()
-        service_client = DataLakeServiceClient(self._get_account_url(datalake_storage_account_name), credential=token_credential)
+        service_client = DataLakeServiceClient(self._get_account_url(datalake_storage_account_name), credential=token_credential, logging_enable=True)
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -416,7 +416,7 @@ class FileTest(StorageTestCase):
         new_file_client = DataLakeFileClient(self._get_account_url(datalake_storage_account_name),
                                              file_client.file_system_name,
                                              file_client.path_name,
-                                             credential=sas_token)
+                                             credential=sas_token, logging_enable=True)
         downloaded_data = new_file_client.download_file().readall()
         self.assertEqual(data, downloaded_data)
 
