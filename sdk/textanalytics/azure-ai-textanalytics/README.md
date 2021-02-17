@@ -8,10 +8,6 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 - Personally Identifiable Information (PII) Entity Recognition
 - Language Detection
 - Key Phrase Extraction
-- Batch Analysis
-- Healthcare Entities Analysis (Gated Preview)
-
-[Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs]| [Product documentation][ta_product_documentation] | [Samples][ta_samples]
 
 ## Getting started
 
@@ -151,421 +147,154 @@ text_analytics_client = TextAnalyticsClient(endpoint="https://<my-custom-subdoma
 
 ### TextAnalyticsClient
 
-The Text Analytics client library provides a [TextAnalyticsClient][text_analytics_client] to do analysis on [batches of documents](#examples "Examples").
-It provides both synchronous and asynchronous operations to access a specific use of Text Analytics, such as language detection or key phrase extraction.
+The Text Analytics client library provides a `TextAnalyticsClient` for authentication and calls to the service to analyze on [batches of documents](#examples "Examples").
+It provides both a synchronous and asynchronous caller `send_request` to send requests to the Text Analytics Service.
+
+### Request Preparers
+
+We offer request preparers to help you create requests for each of the documented endpoints. With the request preparers, we handle things like
+the URL path and formatting query and header parameters.
+
+### API versions
+
+When using our main request preparers, you need to provide an API version to the request call. For example, if you want to use `v3.0` of the REST API,
+calls to each request preparer would need to include `api_version="v3.0"`.
 
 ### Input
 
-A **document** is a single unit to be analyzed by the predictive models in the Text Analytics service.
-The input for each operation is passed as a **list** of documents.
+A **document** is a single unit to be analyzed by the predictive models in the Text Analytics service. Each document needs to include an `id`
+and `text` entry. See the [REST API documentation][rest_api_docs] for more examples
 
-Each document can be passed as a string in the list, e.g.
-
+An example input is
 ```python
-documents = ["I hated the movie. It was so slow!", "The movie made it into my top ten favorites. What a great movie!"]
-```
-
-or, if you wish to pass in a per-item document `id` or `language`/`country_hint`, they can be passed as a list of
-[DetectLanguageInput][detect_language_input] or
-[TextDocumentInput][text_document_input]
-or a dict-like representation of the object:
-
-```python
-documents = [
-    {"id": "1", "language": "en", "text": "I hated the movie. It was so slow!"},
-    {"id": "2", "language": "en", "text": "The movie made it into my top ten favorites. What a great movie!"},
-]
+{
+  "documents": [
+    {
+      "countryHint": "US",
+      "id": "1",
+      "text": "Hello world"
+    },
+    {
+      "id": "2",
+      "text": "Bonjour tout le monde"
+    },
+    {
+      "id": "3",
+      "text": "La carretera estaba atascada. Había mucho tráfico el día de ayer."
+    }
+  ]
+}
 ```
 
 See [service limitations][service_limits] for the input, including document length limits, maximum batch size, and supported text encoding.
 
 ### Return Value
 
-The return value for a single document can be a result or error object.
-A heterogeneous list containing a collection of result and error objects is returned from each operation.
-These results/errors are index-matched with the order of the provided documents.
-
-A **result**, such as [AnalyzeSentimentResult][analyze_sentiment_result],
-is the result of a Text Analytics operation and contains a prediction or predictions about a document input.
-
-The **error** object, [DocumentError][document_error], indicates that the service had trouble processing the document and contains
-the reason it was unsuccessful.
-
-### Document Error Handling
-
-You can filter for a result or error object in the list by using the `is_error` attribute. For a result object this is always `False` and for a
-[DocumentError][document_error] this is `True`.
-
-For example, to filter out all DocumentErrors you might use list comprehension:
-
-```python
-response = text_analytics_client.analyze_sentiment(documents)
-successful_responses = [doc for doc in response if not doc.is_error]
-```
-
-### Long-Running Operations
-
-Long-running operations are operations which consist of an initial request sent to the service to start an operation,
-followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
-succeeded, to get the result.
-
-Methods that support Healthcare Analysis or batch operations over multiple Text Analytics APIs are modeled as long-running operations.
-The client exposes a `begin_<method-name>` method that returns an `LROPoller` or `AsyncLROPoller`. Callers should wait
-for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
-Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
+See the [REST API docs][rest_api_docs] for examples of good and bad responses.
 
 ## Examples
 
-The following section provides several code snippets covering some of the most common Text Analytics tasks, including:
+The following section show two ways of sending requests. Please see the [REST API docs][rest_api_docs] for more examples
+of what requests and responses should look like.
 
-- [Analyze Sentiment](#analyze-sentiment "Analyze sentiment")
-- [Recognize Entities](#recognize-entities "Recognize entities")
-- [Recognize Linked Entities](#recognize-linked-entities "Recognize linked entities")
-- [Recognize PII Entities](#recognize-pii-entities "Recognize pii entities")
-- [Extract Key Phrases](#extract-key-phrases "Extract key phrases")
-- [Detect Language](#detect-language "Detect language")
-- [Healthcare Entities Analysis](#healthcare-entities-analysis "Healthcare Entities Analysis")
-- [Batch Analysis](#batch-analysis "Batch analysis")
+- [Sending a Request](#sending-a-request "Sending a Request")
+- [Sending a Request with Preparers](#sending-a-request-with-preparers "Sending a Request with Preparers")
 
-### Analyze sentiment
+### Sending a Request
 
-[analyze_sentiment][analyze_sentiment] looks at its input text and determines whether its sentiment is positive, negative, neutral or mixed. It's response includes per-sentence sentiment analysis and confidence scores.
+For the lowest-level call, you can create your own request and send it through our `TextAnalyticsClient`s `send_request` caller.
+Here, we make the call shown in [this][rest_api_docs] REST API doc
 
 ```python
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
+from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.ai.textanalytics import TextAnalyticsClient
 
-credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
-
-text_analytics_client = TextAnalyticsClient(endpoint, credential)
-
-documents = [
-    "I did not like the restaurant. The food was somehow both too spicy and underseasoned. Additionally, I thought the location was too far away from the playhouse.",
-    "The restaurant was decorated beautifully. The atmosphere was unlike any other restaurant I've been to.",
-    "The food was yummy. :)"
-]
-
-response = text_analytics_client.analyze_sentiment(documents, language="en")
-result = [doc for doc in response if not doc.is_error]
-
-for doc in result:
-    print("Overall sentiment: {}".format(doc.sentiment))
-    print("Scores: positive={}; neutral={}; negative={} \n".format(
-        doc.confidence_scores.positive,
-        doc.confidence_scores.neutral,
-        doc.confidence_scores.negative,
-    ))
-```
-
-The returned response is a heterogeneous list of result and error objects: list[[AnalyzeSentimentResult][analyze_sentiment_result], [DocumentError][document_error]]
-
-Please refer to the service documentation for a conceptual discussion of [sentiment analysis][sentiment_analysis]. To see how to conduct more granular analysis into the opinions related to individual aspects (such as attributes of a product or service) in a text, see [here][opinion_mining_sample].
-
-### Recognize entities
-
-[recognize_entities][recognize_entities] recognizes and categories entities in its input text as people, places, organizations, date/time, quantities, percentages, currencies, and more.
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
-
-credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
-
-text_analytics_client = TextAnalyticsClient(endpoint, credential)
-
-documents = [
-    """
-    Microsoft was founded by Bill Gates and Paul Allen. Its headquarters are located in Redmond. Redmond is a
-    city in King County, Washington, United States, located 15 miles east of Seattle.
-    """,
-    "Jeff bought three dozen eggs because there was a 50% discount."
-]
-
-response = text_analytics_client.recognize_entities(documents, language="en")
-result = [doc for doc in response if not doc.is_error]
-
-for doc in result:
-    for entity in doc.entities:
-        print("Entity: {}".format(entity.text))
-        print("...Category: {}".format(entity.category))
-        print("...Confidence Score: {}".format(entity.confidence_score))
-        print("...Offset: {}".format(entity.offset))
-```
-
-The returned response is a heterogeneous list of result and error objects: list[[RecognizeEntitiesResult][recognize_entities_result], [DocumentError][document_error]]
-
-Please refer to the service documentation for a conceptual discussion of [named entity recognition][named_entity_recognition]
-and [supported types][named_entity_categories].
-
-### Recognize linked entities
-
-[recognize_linked_entities][recognize_linked_entities] recognizes and disambiguates the identity of each entity found in its input text (for example,
-determining whether an occurrence of the word Mars refers to the planet, or to the
-Roman god of war). Recognized entities are associated with URLs to a well-known knowledge base, like Wikipedia.
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
-
-credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
-
-text_analytics_client = TextAnalyticsClient(endpoint, credential)
-
-documents = [
-    "Microsoft was founded by Bill Gates and Paul Allen. Its headquarters are located in Redmond.",
-    "Easter Island, a Chilean territory, is a remote volcanic island in Polynesia."
-]
-
-response = text_analytics_client.recognize_linked_entities(documents, language="en")
-result = [doc for doc in response if not doc.is_error]
-
-for doc in result:
-    for entity in doc.entities:
-        print("Entity: {}".format(entity.name))
-        print("...URL: {}".format(entity.url))
-        print("...Data Source: {}".format(entity.data_source))
-        print("...Entity matches:")
-        for match in entity.matches:
-            print("......Entity match text: {}".format(match.text))
-            print("......Confidence Score: {}".format(match.confidence_score))
-            print("......Offset: {}".format(match.offset))
-```
-
-The returned response is a heterogeneous list of result and error objects: list[[RecognizeLinkedEntitiesResult][recognize_linked_entities_result], [DocumentError][document_error]]
-
-Please refer to the service documentation for a conceptual discussion of [entity linking][linked_entity_recognition]
-and [supported types][linked_entities_categories].
-
-### Recognize PII entities
-
-[recognize_pii_entities][recognize_pii_entities] recognizes and categorizes Personally Identifiable Information (PII) entities in its input text, such as
-Social Security Numbers, bank account information, credit card numbers, and more. This endpoint is only available for v3.1-preview and up.
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
-
-credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
-
-text_analytics_client = TextAnalyticsClient(endpoint, credential)
-
-documents = [
-    """
-    We have an employee called Parker who cleans up after customers. The employee's
-    SSN is 859-98-0987, and their phone number is 555-555-5555.
-    """
-]
-response = text_analytics_client.recognize_pii_entities(documents, language="en")
-result = [doc for doc in response if not doc.is_error]
-for idx, doc in enumerate(result):
-    print("Document text: {}".format(documents[idx]))
-    print("Redacted document text: {}".format(doc.redacted_text))
-    for entity in doc.entities:
-        print("...Entity: {}".format(entity.text))
-        print("......Category: {}".format(entity.category))
-        print("......Confidence Score: {}".format(entity.confidence_score))
-        print("......Offset: {}".format(entity.offset))
-```
-
-The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult][recognize_pii_entities_result], [DocumentError][document_error]]
-
-Please refer to the service documentation for [supported PII entity types][pii_entity_categories].
-
-### Extract key phrases
-
-[extract_key_phrases][extract_key_phrases] determines the main talking points in its input text. For example, for the input text "The food was delicious and there were wonderful staff", the API returns: "food" and "wonderful staff".
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
-
-credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
-
-text_analytics_client = TextAnalyticsClient(endpoint, credential)
-
-documents = [
-    "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle.",
-    """
-    I need to take my cat to the veterinarian. He has been sick recently, and I need to take him
-    before I travel to South America for the summer.
-    """,
-]
-
-response = text_analytics_client.extract_key_phrases(documents, language="en")
-result = [doc for doc in response if not doc.is_error]
-
-for doc in result:
-    print(doc.key_phrases)
-```
-
-The returned response is a heterogeneous list of result and error objects: list[[ExtractKeyPhrasesResult][extract_key_phrases_result], [DocumentError][document_error]]
-
-Please refer to the service documentation for a conceptual discussion of [key phrase extraction][key_phrase_extraction].
-
-### Detect language
-
-[detect_language][detect_language] determines the language of its input text, including the confidence score of the predicted language.
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
-
-credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
-
-text_analytics_client = TextAnalyticsClient(endpoint, credential)
-
-documents = [
-    """
-    This whole document is written in English. In order for the whole document to be written
-    in English, every sentence also has to be written in English, which it is.
-    """,
-    "Il documento scritto in italiano.",
-    "Dies ist in deutsche Sprache verfasst."
-]
-
-response = text_analytics_client.detect_language(documents)
-result = [doc for doc in response if not doc.is_error]
-
-for doc in result:
-    print("Language detected: {}".format(doc.primary_language.name))
-    print("ISO6391 name: {}".format(doc.primary_language.iso6391_name))
-    print("Confidence score: {}\n".format(doc.primary_language.confidence_score))
-```
-
-The returned response is a heterogeneous list of result and error objects: list[[DetectLanguageResult][detect_language_result], [DocumentError][document_error]]
-
-Please refer to the service documentation for a conceptual discussion of [language detection][language_detection]
-and [language and regional support][language_and_regional_support].
-
-### Healthcare Entities Analysis
-
-The example below extracts entities recognized within the healthcare domain, and identifies relationships between entities within the input document and links to known sources of information in various well known databases, such as UMLS, CHV, MSH, etc.  This sample demonstrates the usage for [long-running operations](#long-running-operations).
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
-
-credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
-
-text_analytics_client = TextAnalyticsClient(endpoint, credential)
-
-documents = ["Subject is taking 100mg of ibuprofen twice daily"]
-
-poller = text_analytics_client.begin_analyze_healthcare_entities(documents, show_stats=True)
-result = poller.result()
-
-docs = [doc for doc in result if not doc.is_error]
-
-print("Results of Healthcare Entities Analysis:")
-for idx, doc in enumerate(docs):
-    for entity in doc.entities:
-        print("Entity: {}".format(entity.text))
-        print("...Category: {}".format(entity.category))
-        print("...Subcategory: {}".format(entity.subcategory))
-        print("...Offset: {}".format(entity.offset))
-        print("...Confidence score: {}".format(entity.confidence_score))
-        if entity.data_sources is not None:
-            print("...Data Sources:")
-            for data_source in entity.data_sources:
-                print("......Entity ID: {}".format(data_source.entity_id))
-                print("......Name: {}".format(data_source.name))
-        if len(entity.related_entities) > 0:
-            print("...Related Entities:")
-            for related_entity, relation_type in entity.related_entities.items():
-                print("......Entity Text: {}".format(related_entity.text))
-                print("......Relation Type: {}".format(relation_type))
-    print("------------------------------------------")
-```
-
-Note: The Healthcare Entities Analysis service is currently available only in API version v3.1-preview.3 in gated preview. Since this is a gated preview, AAD is not supported. More information [here](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
-
-### Batch Analysis
-
-The example below demonstrates how to perform multiple analyses over one set of documents in a single request. Currently batching is supported using any combination of the following Text Analytics APIs in a single request:
-
-- Entities Recognition
-- PII Entities Recognition
-- Key Phrase Extraction
-
-This sample demonstrates the usage for [long-running operations](#long-running-operations)
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import (
-    TextAnalyticsClient, RecognizeEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction
+client = TextAnalyticsClient(
+    endpoint="<my endpoint>",
+    credential=DefaultAzureCredential(),
 )
 
-credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
-
-text_analytics_client = TextAnalyticsClient(endpoint, credential)
-
-documents = ["Microsoft was founded by Bill Gates and Paul Allen."]
-
-poller = text_analytics_client.begin_analyze_batch_actions(
-    documents,
-    display_name="Sample Text Analysis",
-    actions=[
-        RecognizeEntitiesAction(),
-        RecognizePiiEntitiesAction(),
-        ExtractKeyPhrasesAction(),
-    ]
+request = HttpRequest("POST", "/text/analytics/v3.0/languages",
+    json={
+        "documents": [
+            {
+                "countryHint": "US",
+                "id": "1",
+                "text": "Hello world"
+            },
+            {
+                "id": "2",
+                "text": "Bonjour tout le monde"
+            },
+            {
+                "id": "3",
+                "text": "La carretera estaba atascada. Había mucho tráfico el día de ayer."
+            }
+        ]
+    }
 )
 
-# returns batch actions results in the same order as the inputted actions
-result = poller.result()
+response: HttpResponse = client.send_request(request)
+response.raise_for_status()
 
-first_action_result = next(result)
-print("Results of Entities Recognition action:")
-docs = [doc for doc in first_action_result.document_results if not doc.is_error]
+json_response = response.json()
 
-for idx, doc in enumerate(docs):
-    print("\nDocument text: {}".format(documents[idx]))
-    for entity in doc.entities:
-        print("Entity: {}".format(entity.text))
-        print("...Category: {}".format(entity.category))
-        print("...Confidence Score: {}".format(entity.confidence_score))
-        print("...Offset: {}".format(entity.offset))
-    print("------------------------------------------")
+error_doc_ids = [error['id'] for error in json_response['errors']]
+good_docs = [doc for doc in json_response['documents'] if doc['id'] not in error_doc_ids]
 
-second_action_result = next(result)
-print("Results of PII Entities Recognition action:")
-docs = [doc for doc in second_action_result.document_results if not doc.is_error]
-
-for idx, doc in enumerate(docs):
-    print("Document text: {}".format(documents[idx]))
-    for entity in doc.entities:
-        print("Entity: {}".format(entity.text))
-        print("Category: {}".format(entity.category))
-        print("Confidence Score: {}\n".format(entity.confidence_score))
-    print("------------------------------------------")
-
-third_action_result = next(result)
-print("Results of Key Phrase Extraction action:")
-docs = [doc for doc in third_action_result.document_results if not doc.is_error]
-
-for idx, doc in enumerate(docs):
-    print("Document text: {}\n".format(documents[idx]))
-    print("Key Phrases: {}\n".format(doc.key_phrases))
-    print("------------------------------------------")
+doc_languages = [doc['detectedLanguage']['name'] for doc in good_docs]
 ```
 
-The returned response is an object encapsulating multiple iterables, each representing results of individual analyses.
+If you want a bit more support in creating your requests, please see how to [send a request with preparers](#sending-a-request-with-preparers).
 
-Note: Batch analysis is currently available only in API version v3.1-preview.3.
+### Sending a Request with Preparers
 
-## Optional Configuration
+We also offer request preparers to provide you with more support in crafting your requests. We will follow the same example flow as
+[above](#sending-a-request).
 
-Optional keyword arguments can be passed in at the client and per-operation level.
-The azure-core [reference documentation][azure_core_ref_docs]
-describes available configurations for retries, logging, transport protocols, and more.
+```python
+from azure.identity import DefaultAzureCredential
+from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.ai.textanalytics import TextAnalyticsClient
+from azure.ai.textanalytics.protocol import TextAnalyticsPreparers
+
+client = TextAnalyticsClient(
+    endpoint="<my endpoint>",
+    credential=DefaultAzureCredential(),
+)
+
+request: HttpRequest = TextAnalyticsPreparers.prepare_languages(
+    api_version='v3.1-preview.1',
+    body={
+        "documents": [
+            {
+                "countryHint": "US",
+                "id": "1",
+                "text": "Hello world"
+            },
+            {
+                "id": "2",
+                "text": "Bonjour tout le monde"
+            },
+            {
+                "id": "3",
+                "text": "La carretera estaba atascada. Había mucho tráfico el día de ayer."
+            }
+        ]
+    }
+)
+
+response: HttpResponse = client.send_request(request)
+response.raise_for_status()
+
+json_response = response.json()
+
+error_doc_ids = [error['id'] for error in json_response['errors']]
+good_docs = [doc for doc in json_response['documents'] if doc['id'] not in error_doc_ids]
+
+doc_languages = [doc['detectedLanguage']['name'] for doc in good_docs]
+```
 
 ## Troubleshooting
 
@@ -581,67 +310,23 @@ Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
 level.
 
 Detailed DEBUG level logging, including request/response bodies and unredacted
-headers, can be enabled on a client with the `logging_enable` keyword argument:
+headers, can be enabled on a client with the `logging_enable` keyword argument.
 
 ```python
-import sys
-import logging
 from azure.identity import DefaultAzureCredential
+from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.ai.textanalytics import TextAnalyticsClient
 
-# Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure')
-logger.setLevel(logging.DEBUG)
-
-# Configure a console output
-handler = logging.StreamHandler(stream=sys.stdout)
-logger.addHandler(handler)
-
-endpoint = "https://<region>.cognitiveservices.azure.com/"
-credential = DefaultAzureCredential()
-
-# This client will log detailed information about its HTTP sessions, at DEBUG level
-text_analytics_client = TextAnalyticsClient(endpoint, credential, logging_enable=True)
-result = text_analytics_client.analyze_sentiment(["I did not like the restaurant. The food was too spicy."])
+client = TextAnalyticsClient(
+    endpoint="<my endpoint>",
+    credential=DefaultAzureCredential(),
+    logging_enable=True
+)
 ```
-
-Similarly, `logging_enable` can enable detailed logging for a single operation,
-even when it isn't enabled for the client:
-
-```python
-result = text_analytics_client.analyze_sentiment(documents, logging_enable=True)
-```
-
-## Next steps
-
-### More sample code
-
-These code samples show common scenario operations with the Azure Text Analytics client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations
-with Text Analytics and require Python 3.5 or later.
-
-Authenticate the client with a Cognitive Services/Text Analytics API key or a token credential from [azure-identity][azure_identity]:
-
-- [sample_authentication.py][sample_authentication] ([async version][sample_authentication_async])
-
-Common scenarios
-
-- Analyze sentiment: [sample_analyze_sentiment.py][analyze_sentiment_sample] ([async version][analyze_sentiment_sample_async])
-- Recognize entities: [sample_recognize_entities.py][recognize_entities_sample] ([async version][recognize_entities_sample_async])
-- Recognize personally identifiable information: [sample_recognize_pii_entities.py][recognize_pii_entities_sample]([async version][recognize_pii_entities_sample_async])
-- Recognize linked entities: [sample_recognize_linked_entities.py][recognize_linked_entities_sample] ([async version][recognize_linked_entities_sample_async])
-- Extract key phrases: [sample_extract_key_phrases.py][extract_key_phrases_sample] ([async version][extract_key_phrases_sample_async])
-- Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
-- Healthcare Entities Analysis: [sample_analyze_healthcare_entities.py][analyze_healthcare_entities_sample] ([async version][analyze_healthcare_entities_sample_async])
-- Batch Analysis: [sample_analyze_batch_actions.py][analyze_sample] ([async version][analyze_sample_async])
-
-Advanced scenarios
-
-- Opinion Mining: [sample_analyze_sentiment_with_opinion_mining.py][opinion_mining_sample] ([async_version][opinion_mining_sample_async])
 
 ### Additional documentation
 
-For more extensive documentation on Azure Cognitive Services Text Analytics, see the [Text Analytics documentation][ta_product_documentation] on docs.microsoft.com.
+For more extensive documentation on Azure Cognitive Services Text Analytics' REST API endpoint, see [here][rest_api_docs]
 
 ## Contributing
 
@@ -707,27 +392,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [python_logging]: https://docs.python.org/3.5/library/logging.html
-[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_authentication.py
-[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_authentication_async.py
-[detect_language_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_detect_language.py
-[detect_language_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_detect_language_async.py
-[analyze_sentiment_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment.py
-[analyze_sentiment_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_async.py
-[extract_key_phrases_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_key_phrases.py
-[extract_key_phrases_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_key_phrases_async.py
-[recognize_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_entities.py
-[recognize_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_entities_async.py
-[recognize_linked_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_linked_entities.py
-[recognize_linked_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
-[recognize_pii_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py
-[recognize_pii_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
-[analyze_healthcare_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare_entities.py
-[analyze_healthcare_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_entities_async.py
-[analyze_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_batch_actions.py
-[analyze_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_batch_actions_async.py
-[opinion_mining_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment_with_opinion_mining.py
-[opinion_mining_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_with_opinion_mining_async.py
-[cla]: https://cla.microsoft.com
+[rest_api_docs]: https://westus2.dev.cognitive.microsoft.com/docs/services/TextAnalytics-v3-1-preview-1/operations/Languages
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
