@@ -65,13 +65,13 @@ print("Token issued with value: " + tokenresponse.token)
 
 ### Issuing or Refreshing an access token for a user
 
-Use the `issue_token` method to issue or refresh a scoped access token for the user. \
+Use the `get_token` method to issue or refresh a scoped access token for the user. \
 Pass in the user object as a parameter, and a list of `CommunicationTokenScope`. Scope options are:
 - `CHAT` (Chat)
 - `VOIP` (VoIP)
 
 ```python
-tokenresponse = identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
+tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
 print("Token issued with value: " + tokenresponse.token)
 ```
 
