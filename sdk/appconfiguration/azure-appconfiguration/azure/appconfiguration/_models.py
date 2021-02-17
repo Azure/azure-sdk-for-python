@@ -64,6 +64,15 @@ class ConfigurationSetting(Model):
             etag=key_value.etag,
         )
 
+    def _to_generated(self):
+        return KeyValue(
+            key=self.key,
+            label=self.label,
+            content_type=self.content_type,
+            value=self.value,
+            tags=self.tags
+        )
+
 
 class FeatureFlagConfigurationSetting(ConfigurationSetting):
     """A feature flag configuration value.
@@ -138,6 +147,14 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
             # etag=key_value.etag,
         )
 
+    def _to_generated(self):
+        return KeyValue(
+            key=self.key,
+            label=self.label,
+            content_type=self.content_type,
+            value=self.value,
+            tags=self.tags
+        )
 
 class SecretReferenceConfigurationSetting(Model):
     """A configuration value that references a KeyVault Secret
@@ -197,6 +214,15 @@ class SecretReferenceConfigurationSetting(Model):
             tags=key_value.tags,
             read_only=key_value.locked,
             etag=key_value.etag,
+        )
+
+    def _to_generated(self):
+        return KeyValue(
+            key=self.key,
+            label=self.label,
+            content_type=self.content_type,
+            value=self.value,
+            tags=self.tags
         )
 
 

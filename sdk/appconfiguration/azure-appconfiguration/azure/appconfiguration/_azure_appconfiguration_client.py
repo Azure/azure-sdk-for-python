@@ -300,13 +300,7 @@ class AzureAppConfigurationClient:
             )
             added_config_setting = client.add_configuration_setting(config_setting)
         """
-        key_value = KeyValue(
-            key=configuration_setting.key,
-            label=configuration_setting.label,
-            content_type=configuration_setting.content_type,
-            value=configuration_setting.value,
-            tags=configuration_setting.tags
-        )
+        key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {
             401: ClientAuthenticationError,
