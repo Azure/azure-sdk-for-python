@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
 import abc
+import json
 from email.message import Message
 
 try:
@@ -60,7 +61,8 @@ from typing import (
     Optional,
     Tuple,
     Iterator,
-    Type
+    Type,
+    Literal,
 )
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
@@ -85,6 +87,8 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
+
+HttpVerbs = Literal["GET", "PUT", "POST", "HEAD", "PATCH", "DELETE", "MERGE"]
 
 
 def _case_insensitive_dict(*args, **kwargs):
@@ -220,17 +224,35 @@ class HttpRequest(object):
     :param str url: At least complete scheme/host/path
     :param dict[str,str] headers: HTTP headers
     :param files: Files list.
-    :param data: Body to be sent.
-    :type data: bytes or str.
+    :param data: Body to be sent. If you want to send a json body, you should use the
+     `json` kwarg instead. We will handle json serialization for your data.
+    :keyword json: A JSON serializable object. Serializes your inputted object. Use this
+     instead of data if you wish for us to handle json serialization of your object for you.
+    :raises: TypeError if you input a non json serializable object through kwarg `json`
     """
 
-    def __init__(self, method, url, headers=None, files=None, data=None):
-        # type: (str, str, Mapping[str, str], Any, Any) -> None
+    def __init__(
+        self,
+        method: HttpVerbs,
+        url: str,
+        headers: Dict[str, Any] = None,
+        files: Any = None,
+        data: Any = None,
+        *,
+        json: Any = None,
+    ) -> None:
         self.method = method
         self.url = url
         self.headers = _case_insensitive_dict(headers)
         self.files = files
-        self.data = data
+        if data and json:
+            raise ValueError(
+                "Can not set both 'data' and 'json'. If you're want a JSON body, consider using 'json'"
+            )
+        if json:
+            self.set_json_body(json)
+        else:
+            self.data = data
         self.multipart_mixed_info = None  # type: Optional[Tuple]
 
     def __repr__(self):
@@ -287,8 +309,7 @@ class HttpRequest(object):
             return (data_name, data, "application/octet-stream")
         return (None, cast(str, data))
 
-    def format_parameters(self, params):
-        # type: (Dict[str, str]) -> None
+    def format_parameters(self, params: Dict[str, Any]) -> None:
         """Format parameters into a valid query string.
         It's assumed all parameters have already been quoted as
         valid URL strings.
@@ -368,6 +389,8 @@ class HttpRequest(object):
         else:
             self.data = json.dumps(data)
             self.headers["Content-Length"] = str(len(self.data))
+        if not self.headers.get("Content-Type"):
+            self.headers["Content-Type"] = "application/json"
         self.files = None
 
     def set_formdata_body(self, data=None):
@@ -510,8 +533,12 @@ class _HttpResponseBase(object):
     :param int block_size: Defaults to 4096 bytes.
     """
 
-    def __init__(self, request, internal_response, block_size=None):
-        # type: (HttpRequest, Any, Optional[int]) -> None
+    def __init__(
+        self,
+        request: HttpRequest,
+        internal_response: Any,
+        block_size: Optional[int] = None
+    ) -> None:
         self.request = request
         self.internal_response = internal_response
         self.status_code = None  # type: Optional[int]
@@ -526,8 +553,7 @@ class _HttpResponseBase(object):
         """
         raise NotImplementedError()
 
-    def text(self, encoding=None):
-        # type: (str) -> str
+    def text(self, encoding: Optional[str] = None) -> str:
         """Return the whole body as a string.
 
         :param str encoding: The encoding to apply. If None, use "utf-8" with BOM parsing (utf-8-sig).
@@ -536,6 +562,16 @@ class _HttpResponseBase(object):
         if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"
         return self.body().decode(encoding)
+
+    def json(self, encoding: Optional[str] = None) -> Any:
+        """Return the whole body as a json object.
+        :param str encoding: The encoding to apply. If None, use "utf-8" with BOM parsing (utf-8-sig).
+         Implementation can be smarter if they want (using headers or chardet).
+        :return: The JSON deserialized response body
+        :rtype: any
+        :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
+        """
+        return json.loads(self.text(encoding))
 
     def _decode_parts(self, message, http_response_type, requests):
         # type: (Message, Type[_HttpResponseBase], List[HttpRequest]) -> List[HttpResponse]
