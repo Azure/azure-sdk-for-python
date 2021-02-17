@@ -123,6 +123,25 @@ poller = self.phone_number_client.begin_release_phone_number(
     polling = True
 )
 ```
+
+### Updating Phone Number Capabilities
+
+Updates the specified phone number capabilities for Calling and SMS to one of: 
+
+- `PhoneNumberCapabilityValue.NONE`
+- `PhoneNumberCapabilityValue.INBOUND`
+- `PhoneNumberCapabilityValue.OUTBOUND`
+- `PhoneNumberCapabilityValue.INBOUND_OUTBOUND`
+
+```python
+poller = self.phone_number_client.begin_update_phone_number_capabilities(
+    "+18335260208",
+    PhoneNumberCapabilityValue.OUTBOUND,
+    PhoneNumberCapabilityValue.INBOUND_OUTBOUND,
+    polling = True
+)
+```
+
 # Troubleshooting
 The Phone Numbers Administration client will raise exceptions defined in [Azure Core][azure_core].
 

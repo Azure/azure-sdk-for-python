@@ -1,3 +1,9 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.paging import ItemPaged
@@ -6,39 +12,38 @@ from .._generated.aio._phone_numbers_client import PhoneNumbersClient as PhoneNu
 from .._generated.models import PhoneNumberSearchRequest
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
-import pytest
-
 
 class PhoneNumbersClient(object):
     def __init__(
                 self,
-                endpoint,  # type: str
-                credential,  # type: str
-                **kwargs  # type: Any
+                endpoint, # type: str
+                credential, # type: str
+                **kwargs # type: Any
         ):
-            # type: (...) -> None
-            try:
-                if not endpoint.lower().startswith('http'):
-                    endpoint = "https://" + endpoint
-            except AttributeError:
-                raise ValueError("Account URL must be a string.")
+        # type: (...) -> None
+        try:
+            if not endpoint.lower().startswith('http'):
+                endpoint = "https://" + endpoint
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
 
-            if not credential:
-                raise ValueError(
-                    "You need to provide account shared key to authenticate.")
+        if not credential:
+            raise ValueError(
+                "You need to provide account shared key to authenticate.")
 
-            self._endpoint = endpoint
-            self._phone_number_client = PhoneNumbersClientGen(
-                self._endpoint,
-                authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
-                sdk_moniker=SDK_MONIKER,
-                **kwargs)
+        self._endpoint = endpoint
+        self._phone_number_client = PhoneNumbersClientGen(
+            self._endpoint,
+            authentication_policy=get_authentication_policy(endpoint, credential),
+            sdk_moniker=SDK_MONIKER,
+            **kwargs)
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
-            **kwargs  # type: Any
-    ):  # type: (...) -> PhoneNumbersAdministrationClient
+            cls, conn_str, # type: str
+            **kwargs # type: Any
+    ):
+        # type: (...) -> PhoneNumbersAdministrationClient
         """Create PhoneNumbersAdministrationClient from a Connection String.
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
@@ -48,15 +53,14 @@ class PhoneNumbersClient(object):
         endpoint, access_key = parse_connection_str(conn_str)
 
         return cls(endpoint, access_key, **kwargs)
-    
-    
+
     @distributed_trace_async
     async def begin_purchase_phone_numbers(
-            self, 
-            search_id,
-            **kwargs
+            self,
+            search_id, # type: str
+            **kwargs # type: Any
     ):
-         # type: (...) -> AsyncLROPollerLROPoller[PhoneNumberSearchResult]
+        # type: (...) -> AsyncLROPoller[PhoneNumberSearchResult]
         """Purchases phone numbers.
 
         :param search_id: The search id.
@@ -65,19 +69,20 @@ class PhoneNumbersClient(object):
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls
+            for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
         """
         return await self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
             search_id,
             **kwargs
         )
-    
+
     @distributed_trace_async
     async def begin_release_phone_number(
-            self, 
-            phone_number, 
-            **kwargs
+            self,
+            phone_number, # type: str
+            **kwargs # type: Any
     ):
         # type: (...) -> AsyncLROPoller[None]
         """Releases an acquired phone number.
@@ -89,7 +94,8 @@ class PhoneNumbersClient(object):
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls
+            for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
         return await self._phone_number_client.phone_numbers.begin_release_phone_number(
@@ -99,13 +105,13 @@ class PhoneNumbersClient(object):
 
     @distributed_trace_async
     async def begin_search_available_phone_numbers(
-            self, 
-            country_code, 
-            phone_number_type, 
-            assignment_type, 
-            capabilities, 
-            area_code, 
-            quantity = 1,
+            self,
+            country_code, # type: str
+            phone_number_type, # type: str
+            assignment_type, # type: str
+            capabilities,
+            area_code, # type: str
+            quantity=1, # type: int
             **kwargs
     ):
         # type: (...) -> AsyncLROPoller[PhoneNumberSearchResult]
@@ -131,15 +137,16 @@ class PhoneNumbersClient(object):
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls
+            for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
         """
         search_request = PhoneNumberSearchRequest(
-            phone_number_type = phone_number_type,
-            assignment_type = assignment_type,
-            capabilities = capabilities,
-            area_code = area_code,
-            quantity = quantity
+            phone_number_type=phone_number_type,
+            assignment_type=assignment_type,
+            capabilities=capabilities,
+            area_code=area_code,
+            quantity=quantity
         )
         return await self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
@@ -149,11 +156,11 @@ class PhoneNumbersClient(object):
 
     @distributed_trace_async
     async def begin_update_phone_number_capabilities(
-            self, 
-            phone_number, 
-            sms, 
-            calling, 
-            **kwargs
+            self,
+            phone_number, # type: str
+            sms, # type: str
+            calling, # type: str
+            **kwargs # type: Any
     ):
         # type: (...) -> AsyncLROPoller["_models.AcquiredPhoneNumber"]
         """Updates the capabilities of a phone number.
@@ -170,7 +177,8 @@ class PhoneNumbersClient(object):
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls
+            for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.AsyncLROPoller[AcquiredPhoneNumber]
         """
         return await self._phone_number_client.phone_numbers.begin_update_capabilities(
@@ -178,13 +186,13 @@ class PhoneNumbersClient(object):
             calling,
             sms,
             **kwargs
-        ) 
+        )
 
     @distributed_trace_async
     async def get_phone_number(
-            self, 
-            phone_number,
-            **kwargs
+            self,
+            phone_number, # type: str
+            **kwargs # type: Any
     ):
         # type: (...) -> AcquiredPhoneNumber
         """Gets the details of the given acquired phone number.
@@ -202,51 +210,21 @@ class PhoneNumbersClient(object):
 
     @distributed_trace
     def list_acquired_phone_numbers(
-        self, 
-        **kwargs
+        self,
+        **kwargs # type: Any
     ):
-         # type: (...) -> AsyncItemPaged[AcquiredPhoneNumbers]
+        # type: (...) -> AsyncItemPaged[AcquiredPhoneNumbers]
         """Gets the list of all acquired phone numbers.
 
         :param skip: An optional parameter for how many entries to skip, for pagination purposes. The
-         default value is 0.
+            default value is 0.
         :type skip: int
         :param top: An optional parameter for how many entries to return, for pagination purposes. The
-         default value is 100.
+            default value is 100.
         :type top: int
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.communication.phonenumbers.models.AcquiredPhoneNumbers]
         """
         return self._phone_number_client.phone_numbers.list_phone_numbers(
-            **kwargs
-        )
-    
-    @distributed_trace_async
-    async def update_phone_number(
-            self, 
-            phone_number,
-            callback_uri,
-            application_id,
-            **kwargs
-    ):
-        # type: (...) -> AcquiredPhoneNumber
-        """Updates the configuration of a phone number.
-
-        :param phone_number: Phone number to be updated, e.g. +11234567890.
-        :type phone_number: str
-        :param callback_uri: The webhook for receiving incoming events.
-         e.g. "https://{{site-name}}.azurewebsites.net/api/updates".
-         Please read https://docs.microsoft.com/en-us/azure/communication-services/concepts/event-
-         handling
-         for integration with Azure Event Grid to deliver real-time event notifications.
-        :type callback_uri: str
-        :param application_id: The application id of the application to which to configure.
-        :type application_id: str
-        :rtype: ~azure.communication.phonenumbers.models.AcquiredPhoneNumber
-        """
-        return await self._phone_number_client.phone_numbers.update(
-            phone_number,
-            callback_uri,
-            application_id,
             **kwargs
         )
 

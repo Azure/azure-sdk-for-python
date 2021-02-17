@@ -38,7 +38,6 @@ __all__ = [
     'PhoneNumberPurchaseRequest',
     'PhoneNumberSearchRequest',
     'PhoneNumberSearchResult',
-    'PhoneNumberUpdateRequest',
     'BillingFrequency',
     'PhoneNumberAssignmentType',
     'PhoneNumberCapabilityValue',

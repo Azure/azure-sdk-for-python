@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Thu, 11 Feb 2021 20:20:13 GMT
+      - Tue, 16 Feb 2021 19:45:32 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -16,26 +16,26 @@ interactions:
     body:
       string: '{"phoneNumbers": [{"id": "16194895875", "phoneNumber": "+16194895875",
         "countryCode": "US", "phoneNumberType": "Geographic", "capabilities": {"calling":
-        "outbound", "sms": "none"}, "assignmentType": "User"}, {"id": "16194895877",
+        "outbound", "sms": "none"}, "assignmentType": "Person"}, {"id": "16194895877",
         "phoneNumber": "+16194895877", "countryCode": "US", "phoneNumberType": "Geographic",
         "capabilities": {"calling": "outbound", "sms": "none"}, "assignmentType":
-        "User"}, {"id": "16194895878", "phoneNumber": "+16194895878", "countryCode":
+        "Person"}, {"id": "16194895878", "phoneNumber": "+16194895878", "countryCode":
         "US", "phoneNumberType": "Geographic", "capabilities": {"calling": "outbound",
-        "sms": "none"}, "assignmentType": "User"}, {"id": "16194895879", "phoneNumber":
+        "sms": "none"}, "assignmentType": "Person"}, {"id": "16194895879", "phoneNumber":
         "+16194895879", "countryCode": "US", "phoneNumberType": "Geographic", "capabilities":
-        {"calling": "outbound", "sms": "none"}, "assignmentType": "User"}, {"id":
+        {"calling": "outbound", "sms": "none"}, "assignmentType": "Person"}, {"id":
         "16194895880", "phoneNumber": "+16194895880", "countryCode": "US", "phoneNumberType":
         "Geographic", "capabilities": {"calling": "outbound", "sms": "none"}, "assignmentType":
-        "User"}, {"id": "16194895882", "phoneNumber": "+16194895882", "countryCode":
+        "Person"}, {"id": "16194895882", "phoneNumber": "+16194895882", "countryCode":
         "US", "phoneNumberType": "Geographic", "capabilities": {"calling": "outbound",
-        "sms": "none"}, "assignmentType": "User"}, {"id": "16194895885", "phoneNumber":
+        "sms": "none"}, "assignmentType": "Person"}, {"id": "16194895885", "phoneNumber":
         "+16194895885", "countryCode": "US", "phoneNumberType": "Geographic", "capabilities":
-        {"calling": "outbound", "sms": "none"}, "assignmentType": "User"}, {"id":
+        {"calling": "outbound", "sms": "none"}, "assignmentType": "Person"}, {"id":
         "16194895887", "phoneNumber": "+16194895887", "countryCode": "US", "phoneNumberType":
         "Geographic", "capabilities": {"calling": "outbound", "sms": "none"}, "assignmentType":
-        "User"}, {"id": "16194895889", "phoneNumber": "+16194895889", "countryCode":
+        "Person"}, {"id": "16194895889", "phoneNumber": "+16194895889", "countryCode":
         "US", "phoneNumberType": "Geographic", "capabilities": {"calling": "outbound",
-        "sms": "none"}, "assignmentType": "User"}, {"id": "18332271680", "phoneNumber":
+        "sms": "none"}, "assignmentType": "Person"}, {"id": "18332271680", "phoneNumber":
         "+18332271680", "countryCode": "US", "phoneNumberType": "TollFree", "capabilities":
         {"calling": "none", "sms": "outbound"}, "assignmentType": "Application"},
         {"id": "18332272412", "phoneNumber": "+18332272412", "countryCode": "US",
@@ -54,18 +54,18 @@ interactions:
         "phoneNumber": "+18332321226", "countryCode": "US", "phoneNumberType": "TollFree",
         "capabilities": {"calling": "none", "sms": "inbound+outbound"}, "assignmentType":
         "Application"}, {"id": "18335260208", "phoneNumber": "+18335260208", "countryCode":
-        "US", "phoneNumberType": "TollFree", "capabilities": {"calling": "inbound",
-        "sms": "inbound+outbound"}, "assignmentType": "Application"}, {"id": "18336369501",
+        "US", "phoneNumberType": "TollFree", "capabilities": {"calling": "inbound+outbound",
+        "sms": "outbound"}, "assignmentType": "Application"}, {"id": "18336369501",
         "phoneNumber": "+18336369501", "countryCode": "US", "phoneNumberType": "TollFree",
         "capabilities": {"calling": "inbound+outbound", "sms": "none"}, "assignmentType":
         "Application"}]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Thu, 11 Feb 2021 20:20:15 GMT
-      ms-cv: /PDnQzArpkm1GBLVqCNyKg.0
+      date: Tue, 16 Feb 2021 19:45:33 GMT
+      ms-cv: 64fjFm+18EKAQ/UkeQyQuQ.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 2257ms
+      x-processing-time: 908ms
     status:
       code: 200
       message: OK
