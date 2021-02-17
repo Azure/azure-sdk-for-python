@@ -59,6 +59,23 @@ import pytest
 
 
 @pytest.mark.asyncio
+async def test_ignores_none_policies():
+    """Pipeline shouldn't raise when a policy list includes None"""
+
+    completed_future = asyncio.Future()
+    completed_future.set_result(None)
+
+    transport = mock.Mock(send=mock.Mock(return_value=completed_future))
+    policy = mock.Mock(wraps=SansIOHTTPPolicy())
+    pipeline = AsyncPipeline(transport, policies=[None, policy, None])
+    await pipeline.run(HttpRequest("GET", "http://localhost"))
+
+    assert policy.on_request.called
+    assert policy.on_response.called
+    assert transport.send.called
+
+
+@pytest.mark.asyncio
 async def test_policy_wrapping():
     """AsyncPipeline should wrap only policies that implement the SansIOHTTPPolicy protocol and not send()"""
 

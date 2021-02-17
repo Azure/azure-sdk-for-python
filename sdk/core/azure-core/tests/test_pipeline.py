@@ -66,6 +66,19 @@ from azure.core.pipeline.transport import (
 from azure.core.exceptions import AzureError
 
 
+def test_ignores_none_policies():
+    """Pipeline shouldn't raise when a policy list includes None"""
+
+    transport = mock.Mock()
+    policy = mock.Mock(wraps=SansIOHTTPPolicy())
+    pipeline = Pipeline(transport, policies=[None, policy, None])
+    pipeline.run(HttpRequest("GET", "http://localhost"))
+
+    assert policy.on_request.called
+    assert policy.on_response.called
+    assert transport.send.called
+
+
 def test_policy_wrapping():
     """Pipeline should wrap only policies that implement the SansIOHTTPPolicy protocol and not send()"""
 
