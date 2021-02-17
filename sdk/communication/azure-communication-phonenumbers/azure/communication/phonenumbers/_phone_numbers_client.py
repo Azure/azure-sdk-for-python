@@ -218,9 +218,6 @@ class PhoneNumbersClient(object):
         :param skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0.
         :type skip: int
-        :param top: An optional parameter for how many entries to return, for pagination purposes. The
-         default value is 100.
-        :type top: int
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AcquiredPhoneNumber]
         """
         return self._phone_number_client.phone_numbers.list_phone_numbers(

@@ -23,7 +23,7 @@ from azure.communication.phonenumbers import (
 )
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_INFORMATION")
+phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 def get_phone_number_information():
