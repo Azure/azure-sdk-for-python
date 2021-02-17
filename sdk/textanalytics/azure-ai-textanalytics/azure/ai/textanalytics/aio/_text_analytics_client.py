@@ -34,7 +34,7 @@ class TextAnalyticsClient:
         endpoint: str,
         **kwargs: Any
     ) -> None:
-        base_url = '{Endpoint}/text/analytics/v3.0'
+        base_url = '{Endpoint}'
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
