@@ -9,19 +9,17 @@
 from typing import Any, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
+from msrest import Serializer
 
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import TextAnalyticsClientConfiguration
-from .operations import TextAnalyticsClientOperationsMixin
-from . import models
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
+class TextAnalyticsClient:
     """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. No training data is needed to use this API; just bring your text data. This API uses advanced natural language processing techniques to deliver best in class predictions. Further documentation can be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview.
 
     :param credential: Credential needed for the client to connect to Azure.
@@ -40,11 +38,6 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
         self._client: PipelineClient = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
-        self._deserialize = Deserializer(client_models)
-
 
     def send_request(self, http_request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -56,7 +49,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
         :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'Endpoint': Serializer().url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)
