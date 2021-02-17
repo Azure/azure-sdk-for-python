@@ -3099,16 +3099,16 @@ class PrivateEndpoint(msrest.serialization.Model):
         self.id = None
 
 
-class PrivateEndpointConnection(ProxyOnlyResource):
+class PrivateEndpointConnection(msrest.serialization.Model):
     """The Private Endpoint Connection resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: private endpoint connection Id.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: private endpoint connection name.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: private endpoint connection type.
     :vartype type: str
     :param private_endpoint: The resource of private end point.
     :type private_endpoint: ~azure.mgmt.compute.v2020_09_30.models.PrivateEndpoint
@@ -3146,6 +3146,9 @@ class PrivateEndpointConnection(ProxyOnlyResource):
         **kwargs
     ):
         super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None

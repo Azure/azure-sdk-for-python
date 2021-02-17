@@ -45,7 +45,7 @@
 /sdk/loganalytics/                                                   @alexeldeib
 
 # PRLabel: %Monitor - Exporter
-/sdk/monitor/azure-opentelemetry-exporter-azuremonitor               @rakshith91 @lmazuel @hectorhdzg @lzchen
+/sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen
 
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
@@ -102,7 +102,7 @@
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft @abhahn
 
 # PRLabel: %Cognitive - Form Recognizer
-/sdk/formrecognizer/                                                 @kristapratico @iscai-msft
+/sdk/formrecognizer/                                                 @kristapratico @iscai-msft @catalinaperalta
 
 # PRLabel: %Cognitive - Metrics Advisor
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico

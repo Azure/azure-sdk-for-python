@@ -1,42 +1,17 @@
 trigger: none
 
-jobs:
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      AllocateResourceGroup: 'false'
+      AllocateResourceGroup: false
       ServiceDirectory: eventhub
-      Matrix:
-        Linux_Python35:
-          Pool: azsdk-pool-mms-ubuntu-1804-general
-          OSVmImage: MMSUbuntu18.04
-          PythonVersion: '3.5'
-          CoverageArg: '--disablecov'
-        Linux_Python39:
-          Pool: azsdk-pool-mms-ubuntu-1804-general
-          OSVmImage: MMSUbuntu18.04
-          PythonVersion: '3.9'
-          CoverageArg: ''
-        Windows_Python27:
-          Pool: azsdk-pool-mms-win-2019-general
-          OSVmImage: MMS2019
-          PythonVersion: '2.7'
-          CoverageArg: '--disablecov'
-        MacOs_Python37:
-          Pool: Azure Pipelines
-          OSVmImage: 'macOS-10.15'
-          PythonVersion: '3.7'
-          CoverageArg: '--disablecov'
+      BuildTargetingString: azure-eventhub*
+      DeployArmTemplate: true
+      TestSamples: true
+      MatrixFilters:
+        - PythonVersion=^(?!pypy3).*
       EnvVars:
-        AZURE_STORAGE_ACCOUNT: $(python-eh-livetest-event-hub-storage-account)
-        AZURE_STORAGE_ACCESS_KEY: $(python-eh-livetest-event-hub-storage-access-key)
-        AZURE_STORAGE_CONN_STR: $(python-eh-livetest-event-hub-storage-conn-str)
         AZURE_STORAGE_DATA_LAKE_ENABLED_CONN_STR: $(python-eh-livetest-event-hub-storage-data-lake-enabled-conn-str)
-        EVENT_HUB_CONN_STR: $(python-eh-livetest-event-hub-conn-str)
-        EVENT_HUB_HOSTNAME: $(python-eh-livetest-event-hub-hostname)
-        EVENT_HUB_NAME: $(python-eh-livetest-event-hub-name)
-        EVENT_HUB_SAS_POLICY: $(python-eh-livetest-event-hub-sas-policy)
-        EVENT_HUB_SAS_KEY: $(python-eh-livetest-event-hub-sas-key)
-        EVENT_HUB_NAMESPACE: $(python-eh-livetest-event-hub-namespace)
         IOTHUB_CONNECTION_STR: $(python-eh-livetest-event-hub-iothub-connection-str)
         IOTHUB_DEVICE: $(python-eh-livetest-event-hub-iothub-device)
         AZURE_CLIENT_ID: $(python-eh-livetest-event-hub-aad-client-id)

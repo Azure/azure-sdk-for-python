@@ -30,7 +30,7 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
         self._batch_action_count = kwargs.pop('initial_batch_action_count', self._DEFAULT_INITIAL_BATCH_ACTION_COUNT)
         self._auto_flush_interval = kwargs.pop('auto_flush_interval', self._DEFAULT_AUTO_FLUSH_INTERVAL)
         if self._auto_flush_interval <= 0:
-            self._auto_flush_interval = 86400
+            raise ValueError("auto_flush_interval must be a positive number.")
         self._max_retries_per_action = kwargs.pop('max_retries_per_action ', self._DEFAULT_MAX_RETRIES)
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str

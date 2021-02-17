@@ -8,15 +8,18 @@
 import pytest
 from time import sleep
 
-from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
+from devtools_testutils import AzureTestCase
+
+from azure.data.tables import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
 from azure.data.tables.aio import TableServiceClient
 from azure.core.exceptions import HttpResponseError
 
-from _shared.testcase import TableTestCase, SLEEP_DELAY
+from _shared.testcase import SLEEP_DELAY
+from _shared.asynctestcase import AsyncTableTestCase
 from preparers import CosmosPreparer
 # ------------------------------------------------------------------------------
 
-class TableServicePropertiesTest(TableTestCase):
+class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None
@@ -197,15 +200,6 @@ class TableServicePropertiesTest(TableTestCase):
 
     # --Test cases for errors ---------------------------------------
     @CosmosPreparer()
-    async def test_retention_no_days_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Assert
-        pytest.raises(ValueError,
-                          RetentionPolicy,
-                          True, None)
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @CosmosPreparer()
     async def test_too_many_cors_rules_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -231,3 +225,11 @@ class TableServicePropertiesTest(TableTestCase):
             await tsc.set_service_properties(None, None, minute_metrics)
         if self.is_live:
             sleep(SLEEP_DELAY)
+
+
+class TestTableUnitTest(AsyncTableTestCase):
+
+    @pytest.mark.asyncio
+    async def test_retention_no_days_async(self):
+        # Assert
+        pytest.raises(ValueError, RetentionPolicy, True, None)

@@ -3,11 +3,11 @@ import os
 from io import open
 import re
 
-# example setup.py Feel free to copy the entire "azure-template" folder into a package folder named 
-# with "azure-<yourpackagename>". Ensure that the below arguments to setup() are updated to reflect 
+# example setup.py Feel free to copy the entire "azure-template" folder into a package folder named
+# with "azure-<yourpackagename>". Ensure that the below arguments to setup() are updated to reflect
 # your package.
 
-# this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way 
+# this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
 # up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
 
 PACKAGE_NAME = "azure-communication-chat"
@@ -61,7 +61,7 @@ setup(
     install_requires=[
         'azure-core<2.0.0,>=1.9.0',
         'msrest>=0.6.0',
-        'six>=1.6'
+        'six>=1.11.0'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-communication-nspkg'],

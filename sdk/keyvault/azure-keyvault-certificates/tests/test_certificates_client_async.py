@@ -8,6 +8,7 @@ import logging
 import json
 
 from azure.core.exceptions import ResourceExistsError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure_devtools.scenario_tests import RecordingProcessor
 from azure.keyvault.certificates import (
     AdministratorContact,
@@ -708,7 +709,7 @@ def test_service_headers_allowed_in_logs():
 
 
 def test_custom_hook_policy():
-    class CustomHookPolicy(object):
+    class CustomHookPolicy(SansIOHTTPPolicy):
         pass
 
     client = CertificateClient("...", object(), custom_hook_policy=CustomHookPolicy())

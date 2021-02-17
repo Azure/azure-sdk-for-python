@@ -64,27 +64,32 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         self.account_key = account_key
         super(SharedKeyCredentialPolicy, self).__init__()
 
-    def _get_headers(self, request, headers_to_sign):
+    @staticmethod
+    def _get_headers(request, headers_to_sign):
         headers = dict((name.lower(), value) for name, value in request.http_request.headers.items() if value)
         if 'content-length' in headers and headers['content-length'] == '0':
             del headers['content-length']
         return '\n'.join(headers.get(x, '') for x in headers_to_sign) + '\n'
 
-    def _get_verb(self, request):
+    @staticmethod
+    def _get_verb(request):
         return request.http_request.method + '\n'
 
     def _get_canonicalized_resource(self, request):
         uri_path = urlparse(request.http_request.url).path
         try:
             if isinstance(request.context.transport, AioHttpTransport) or \
-                isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport):
+                    isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport) or \
+                    isinstance(getattr(getattr(request.context.transport, "_transport", None), "_transport", None),
+                               AioHttpTransport):
                 uri_path = URL(uri_path)
                 return '/' + self.account_name + str(uri_path)
         except TypeError:
             pass
         return '/' + self.account_name + uri_path
 
-    def _get_canonicalized_headers(self, request):
+    @staticmethod
+    def _get_canonicalized_headers(request):
         string_to_sign = ''
         x_ms_headers = []
         for name, value in request.http_request.headers.items():
@@ -96,8 +101,9 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
                 string_to_sign += ''.join([name, ':', value, '\n'])
         return string_to_sign
 
-    def _get_canonicalized_resource_query(self, request):
-        sorted_queries = [(name, value) for name, value in request.http_request.query.items()]
+    @staticmethod
+    def _get_canonicalized_resource_query(request):
+        sorted_queries = list(request.http_request.query.items())
         sorted_queries.sort()
 
         string_to_sign = ''

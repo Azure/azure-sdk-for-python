@@ -22,7 +22,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy
 )
 
-from ._models import CloudEvent, EventGridEvent, CustomEvent
+from ._models import CloudEvent, EventGridEvent
 from ._helpers import (
     _get_endpoint_only_fqdn,
     _get_authentication_policy,
@@ -41,18 +41,15 @@ if TYPE_CHECKING:
     SendType = Union[
         CloudEvent,
         EventGridEvent,
-        CustomEvent,
         Dict,
         List[CloudEvent],
         List[EventGridEvent],
-        List[CustomEvent],
         List[Dict]
     ]
 
 ListEventType = Union[
     List[CloudEvent],
     List[EventGridEvent],
-    List[CustomEvent],
     List[Dict]
 ]
 
@@ -106,7 +103,7 @@ class EventGridPublisherClient(object):
         inefficient to loop the send method for each event instead of just using a list
         and we highly recommend against it.
 
-        :param events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent.
+        :param events: A list of CloudEvent/EventGridEvent to be sent.
         :type events: SendType
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
@@ -132,8 +129,6 @@ class EventGridPublisherClient(object):
         if isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
-        elif isinstance(events[0], CustomEvent):
-            events = [dict(e) for e in events] # type: ignore
         return self._client.publish_custom_event_events(self._endpoint, cast(List, events), **kwargs)
 
     def close(self):

@@ -7,15 +7,18 @@
 # --------------------------------------------------------------------------
 import unittest
 from datetime import datetime, timedelta
+import pytest
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from azure.core import MatchConditions
 
-from azure.storage.filedatalake import DataLakeServiceClient, PublicAccess
+from azure.storage.filedatalake import DataLakeServiceClient, PublicAccess, generate_account_sas, ResourceTypes, \
+    AccountSasPermissions
 from testcase import (
     StorageTestCase,
     record,
+    TestMode
 )
 
 # ------------------------------------------------------------------------------
@@ -66,6 +69,19 @@ class FileSystemTest(StorageTestCase):
 
         # Assert
         self.assertTrue(created)
+
+    @record
+    def test_file_system_exists(self):
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+
+        # Act
+        file_system_client1 = self.dsc.get_file_system_client(file_system_name)
+        file_system_client2 = self.dsc.get_file_system_client("nonexistentfs")
+        file_system_client1.create_file_system()
+
+        self.assertTrue(file_system_client1.exists())
+        self.assertFalse(file_system_client2.exists())
 
     @record
     def test_create_file_system_with_metadata(self):
@@ -121,6 +137,150 @@ class FileSystemTest(StorageTestCase):
         self.assertNamedItemInContainer(file_systems, file_system.file_system_name)
         self.assertIsNotNone(file_systems[0].has_immutability_policy)
         self.assertIsNotNone(file_systems[0].has_legal_hold)
+
+    @record
+    def test_rename_file_system(self):
+        if not self.is_playback():
+            return
+        old_name1 = self._get_file_system_reference(prefix="oldcontainer1")
+        old_name2 = self._get_file_system_reference(prefix="oldcontainer2")
+        new_name = self._get_file_system_reference(prefix="newcontainer")
+        filesystem1 = self.dsc.create_file_system(old_name1)
+        self.dsc.create_file_system(old_name2)
+
+        new_filesystem = self.dsc._rename_file_system(name=old_name1, new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            self.dsc._rename_file_system(name=old_name2, new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            filesystem1.get_file_system_properties()
+        with self.assertRaises(HttpResponseError):
+            self.dsc._rename_file_system(name="badfilesystem", new_name="filesystem")
+        self.assertEqual(new_name, new_filesystem.get_file_system_properties().name)
+
+    @record
+    def test_rename_file_system_with_file_system_client(self):
+        pytest.skip("Feature not yet enabled. Make sure to record this test once enabled.")
+        old_name1 = self._get_file_system_reference(prefix="oldcontainer1")
+        old_name2 = self._get_file_system_reference(prefix="oldcontainer2")
+        new_name = self._get_file_system_reference(prefix="newcontainer")
+        bad_name = self._get_file_system_reference(prefix="badcontainer")
+        filesystem1 = self.dsc.create_file_system(old_name1)
+        file_system2 = self.dsc.create_file_system(old_name2)
+        bad_file_system = self.dsc.get_file_system_client(bad_name)
+
+        new_filesystem = filesystem1._rename_file_system(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            file_system2._rename_file_system(new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            filesystem1.get_file_system_properties()
+        with self.assertRaises(HttpResponseError):
+            bad_file_system._rename_file_system(new_name="filesystem")
+        self.assertEqual(new_name, new_filesystem.get_file_system_properties().name)
+
+    @record
+    def test_rename_file_system_with_source_lease(self):
+        if not self.is_playback():
+            return
+        old_name = self._get_file_system_reference(prefix="old")
+        new_name = self._get_file_system_reference(prefix="new")
+        filesystem = self.dsc.create_file_system(old_name)
+        filesystem_lease_id = filesystem.acquire_lease()
+        with self.assertRaises(HttpResponseError):
+            self.dsc._rename_file_system(name=old_name, new_name=new_name)
+        with self.assertRaises(HttpResponseError):
+            self.dsc._rename_file_system(name=old_name, new_name=new_name, lease="bad_id")
+        new_filesystem = self.dsc._rename_file_system(name=old_name, new_name=new_name, lease=filesystem_lease_id)
+        self.assertEqual(new_name, new_filesystem.get_file_system_properties().name)
+
+    @record
+    def test_undelete_file_system(self):
+        # Needs soft delete enabled account.
+        if not self.is_playback():
+            return
+        name = self._get_file_system_reference()
+        filesystem_client = self.dsc.create_file_system(name)
+
+        # Act
+        filesystem_client.delete_file_system()
+        # to make sure the filesystem deleted
+        with self.assertRaises(ResourceNotFoundError):
+            filesystem_client.get_file_system_properties()
+
+        filesystem_list = list(self.dsc.list_file_systems(include_deleted=True))
+        self.assertTrue(len(filesystem_list) >= 1)
+
+        restored_version = 0
+        for filesystem in filesystem_list:
+            # find the deleted filesystem and restore it
+            if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
+                restored_fs_client = self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
+                                                                   new_name="restored" + name + str(restored_version))
+                restored_version += 1
+
+                # to make sure the deleted filesystem is restored
+                props = restored_fs_client.get_file_system_properties()
+                self.assertIsNotNone(props)
+
+    @record
+    def test_restore_to_existing_file_system(self):
+        # Needs soft delete enabled account.
+        if not self.is_playback():
+            return
+        # get an existing filesystem
+        existing_name = self._get_file_system_reference(prefix="existing2")
+        name = self._get_file_system_reference(prefix="filesystem2")
+        existing_filesystem_client = self.dsc.create_file_system(existing_name)
+        filesystem_client = self.dsc.create_file_system(name)
+
+        # Act
+        filesystem_client.delete_file_system()
+        # to make sure the filesystem deleted
+        with self.assertRaises(ResourceNotFoundError):
+            filesystem_client.get_file_system_properties()
+
+        filesystem_list = list(self.dsc.list_file_systems(include_deleted=True))
+        self.assertTrue(len(filesystem_list) >= 1)
+
+        for filesystem in filesystem_list:
+            # find the deleted filesystem and restore it
+            if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
+                with self.assertRaises(HttpResponseError):
+                    self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
+                                                  new_name=existing_filesystem_client.file_system_name)
+
+    @record
+    def test_restore_file_system_with_sas(self):
+        pytest.skip(
+            "We are generating a SAS token therefore play only live but we also need a soft delete enabled account.")
+        token = generate_account_sas(
+            self.dsc.account_name,
+            self.dsc.credential.account_key,
+            ResourceTypes(service=True, file_system=True),
+            AccountSasPermissions(read=True, write=True, list=True, delete=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+        dsc = DataLakeServiceClient(self.dsc.url, token)
+        name = self._get_file_system_reference(prefix="filesystem")
+        filesystem_client = dsc.create_file_system(name)
+        filesystem_client.delete_file_system()
+        # to make sure the filesystem is deleted
+        with self.assertRaises(ResourceNotFoundError):
+            filesystem_client.get_file_system_properties()
+
+        filesystem_list = list(dsc.list_file_systems(include_deleted=True))
+        self.assertTrue(len(filesystem_list) >= 1)
+
+        restored_version = 0
+        for filesystem in filesystem_list:
+            # find the deleted filesystem and restore it
+            if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
+                restored_fs_client = dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
+                                                              new_name="restored" + name + str(restored_version))
+                restored_version += 1
+
+                # to make sure the deleted filesystem is restored
+                props = restored_fs_client.get_file_system_properties()
+                self.assertIsNotNone(props)
 
     @record
     def test_delete_file_system_with_existing_file_system(self):
@@ -304,6 +464,24 @@ class FileSystemTest(StorageTestCase):
 
         # there are 24 subpaths in total
         self.assertEqual(len(paths), 24)
+
+    @record
+    def test_list_paths_pages_correctly(self):
+        # Arrange
+        file_system = self._create_file_system(file_system_prefix="fs1")
+        for i in range(0, 6):
+            file_system.create_directory("dir1{}".format(i))
+        for i in range(0, 6):
+            file_system.create_file("file{}".format(i))
+
+        generator = file_system.get_paths(max_results=6, upn=True).by_page()
+        paths1 = list(next(generator))
+        paths2 = list(next(generator))
+        with self.assertRaises(StopIteration):
+            list(next(generator))
+
+        self.assertEqual(len(paths1), 6)
+        self.assertEqual(len(paths2), 6)
 
     @record
     def test_create_directory_from_file_system_client(self):

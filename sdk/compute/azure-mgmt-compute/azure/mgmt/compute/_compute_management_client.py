@@ -122,6 +122,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-06-01: :mod:`v2020_06_01.models<azure.mgmt.compute.v2020_06_01.models>`
            * 2020-06-30: :mod:`v2020_06_30.models<azure.mgmt.compute.v2020_06_30.models>`
            * 2020-09-30: :mod:`v2020_09_30.models<azure.mgmt.compute.v2020_09_30.models>`
+           * 2020-10-01-preview: :mod:`v2020_10_01_preview.models<azure.mgmt.compute.v2020_10_01_preview.models>`
         """
         if api_version == '2015-06-15':
             from .v2015_06_15 import models
@@ -180,6 +181,9 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-09-30':
             from .v2020_09_30 import models
             return models
+        elif api_version == '2020-10-01-preview':
+            from .v2020_10_01_preview import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -226,6 +230,58 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2020_06_01.operations import AvailabilitySetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'availability_sets'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def cloud_service_role_instances(self):
+        """Instance depends on the API version:
+
+           * 2020-10-01-preview: :class:`CloudServiceRoleInstancesOperations<azure.mgmt.compute.v2020_10_01_preview.operations.CloudServiceRoleInstancesOperations>`
+        """
+        api_version = self._get_api_version('cloud_service_role_instances')
+        if api_version == '2020-10-01-preview':
+            from .v2020_10_01_preview.operations import CloudServiceRoleInstancesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'cloud_service_role_instances'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def cloud_service_roles(self):
+        """Instance depends on the API version:
+
+           * 2020-10-01-preview: :class:`CloudServiceRolesOperations<azure.mgmt.compute.v2020_10_01_preview.operations.CloudServiceRolesOperations>`
+        """
+        api_version = self._get_api_version('cloud_service_roles')
+        if api_version == '2020-10-01-preview':
+            from .v2020_10_01_preview.operations import CloudServiceRolesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'cloud_service_roles'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def cloud_services(self):
+        """Instance depends on the API version:
+
+           * 2020-10-01-preview: :class:`CloudServicesOperations<azure.mgmt.compute.v2020_10_01_preview.operations.CloudServicesOperations>`
+        """
+        api_version = self._get_api_version('cloud_services')
+        if api_version == '2020-10-01-preview':
+            from .v2020_10_01_preview.operations import CloudServicesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'cloud_services'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def cloud_services_update_domain(self):
+        """Instance depends on the API version:
+
+           * 2020-10-01-preview: :class:`CloudServicesUpdateDomainOperations<azure.mgmt.compute.v2020_10_01_preview.operations.CloudServicesUpdateDomainOperations>`
+        """
+        api_version = self._get_api_version('cloud_services_update_domain')
+        if api_version == '2020-10-01-preview':
+            from .v2020_10_01_preview.operations import CloudServicesUpdateDomainOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'cloud_services_update_domain'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property

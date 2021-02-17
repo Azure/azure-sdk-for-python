@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from enum import Enum
 
-class SystemEventMappings(str, Enum):
+class SystemEventNames(str, Enum):
     """
     This enum represents the names of the various event types for the system events published to
     Azure Event Grid. To check the list of recognizable system topics,

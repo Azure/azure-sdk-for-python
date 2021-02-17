@@ -708,7 +708,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     def update_data_feed(
             self, data_feed,  # type: Union[str, DataFeed]
             **kwargs  # type: Any
-    ):  # type: (...) -> DataFeed
+    ):  # type: (...) -> None
         """Update a data feed. Either pass the entire DataFeed object with the chosen updates
         or the ID to your data feed with updates passed via keyword arguments. If you pass both
         the DataFeed object and keyword arguments, the keyword arguments will take precedence.
@@ -754,8 +754,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
             InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
             ElasticsearchDataFeed]
-        :return: DataFeed
-        :rtype: ~azure.ai.metricsadvisor.models.DataFeed
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -802,8 +801,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             data_feed_patch_type = DATA_FEED_PATCH[data_feed.source.data_source_type]
             data_feed_patch = data_feed._to_generated_patch(data_feed_patch_type, update)
 
-        self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
-        return self.get_data_feed(data_feed_id)
+        return self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
 
     @distributed_trace
     def update_alert_configuration(
@@ -811,7 +809,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         alert_configuration,  # type: Union[str, AnomalyAlertConfiguration]
         **kwargs  # type: Any
     ):
-        # type: (...) -> AnomalyAlertConfiguration
+        # type: (...) -> None
         """Update anomaly alerting configuration. Either pass the entire AnomalyAlertConfiguration object
         with the chosen updates or the ID to your alert configuration with updates passed via keyword arguments.
         If you pass both the AnomalyAlertConfiguration object and keyword arguments, the keyword arguments
@@ -828,8 +826,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :paramtype cross_metrics_operator: str or
             ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
         :keyword str description: Anomaly alert configuration description.
-        :return: AnomalyAlertConfiguration
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -865,12 +862,11 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 description=update.pop("description", None),
             )
 
-        self._client.update_anomaly_alerting_configuration(
+        return self._client.update_anomaly_alerting_configuration(
             alert_configuration_id,
             alert_configuration_patch,
             **kwargs
         )
-        return self.get_alert_configuration(alert_configuration_id)
 
     @distributed_trace
     def update_detection_configuration(
@@ -878,7 +874,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         detection_configuration,  # type: Union[str, AnomalyDetectionConfiguration]
         **kwargs  # type: Any
     ):
-        # type: (...) -> AnomalyDetectionConfiguration
+        # type: (...) -> None
         """Update anomaly metric detection configuration. Either pass the entire AnomalyDetectionConfiguration object
         with the chosen updates or the ID to your detection configuration with updates passed via keyword arguments.
         If you pass both the AnomalyDetectionConfiguration object and keyword arguments, the keyword arguments
@@ -899,8 +895,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword series_detection_conditions: detection configuration for specific series.
         :paramtype series_detection_conditions:
             list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
-        :return: AnomalyDetectionConfiguration
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -936,12 +931,11 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 series_detection_conditions=update.pop("seriesOverrideConfigurations", None)
             )
 
-        self._client.update_anomaly_detection_configuration(
+        return self._client.update_anomaly_detection_configuration(
             detection_configuration_id,
             detection_config_patch,
             **kwargs
         )
-        return self.get_detection_configuration(detection_configuration_id)
 
     @distributed_trace
     def update_hook(
@@ -949,7 +943,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         hook,  # type: Union[str, EmailNotificationHook, WebNotificationHook]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
+        # type: (...) -> None
         """Update a hook. Either pass the entire EmailNotificationHook or WebNotificationHook object with the chosen
         updates, or the ID to your hook configuration with the updates passed via keyword arguments.
         If you pass both the hook object and keyword arguments, the keyword arguments will take precedence.
@@ -970,10 +964,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword str certificate_key: client certificate. Only should be passed to update WebNotificationHook.
         :keyword str certificate_password: client certificate password. Only should be passed to update
             WebNotificationHook.
-        :return: EmailNotificationHook or WebNotificationHook
-        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
-            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
-            ~azure.ai.metricsadvisor.models.WebNotificationHook]
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -1032,12 +1023,11 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                     certificate_password=update.pop("certificatePassword", None)
                 )
 
-        self._client.update_hook(
+        return self._client.update_hook(
             hook_id,
             hook_patch,
             **kwargs
         )
-        return self.get_hook(hook_id)
 
     @distributed_trace
     def list_hooks(

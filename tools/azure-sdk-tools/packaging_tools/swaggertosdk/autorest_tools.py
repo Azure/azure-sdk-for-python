@@ -5,7 +5,6 @@ from pathlib import Path
 import shutil
 import subprocess
 
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -129,7 +128,8 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
                                    universal_newlines=True,
                                    cwd=cwd,
                                    shell=shell,
-                                   env=env)
+                                   env=env,
+                                   encoding='utf-8')
         output_buffer = []
         for line in process.stdout:
             output_buffer.append(line.rstrip())

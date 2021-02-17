@@ -11,25 +11,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 17:08:50 GMT
+      - Fri, 05 Feb 2021 20:18:34 GMT
       User-Agent:
-      - TestApp/v1.0 azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - TestApp/v1.0 azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:08:50 GMT
+      - Fri, 05 Feb 2021 20:18:34 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable0cac14c3"},{"TableName":"listtable1cac14c3"},{"TableName":"listtable2cac14c3"},{"TableName":"listtable3cac14c3"}]}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[]}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 18 Dec 2020 17:08:50 GMT
+      - Fri, 05 Feb 2021 20:18:35 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -53,26 +53,26 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 17:08:51 GMT
+      - Fri, 05 Feb 2021 20:18:35 GMT
       User-Agent:
-      - TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1
+      - TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1
         (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:08:51 GMT
+      - Fri, 05 Feb 2021 20:18:35 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable0cac14c3"},{"TableName":"listtable1cac14c3"},{"TableName":"listtable2cac14c3"},{"TableName":"listtable3cac14c3"}]}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[]}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 18 Dec 2020 17:08:51 GMT
+      - Fri, 05 Feb 2021 20:18:35 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

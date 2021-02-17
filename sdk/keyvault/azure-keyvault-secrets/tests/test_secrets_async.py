@@ -8,6 +8,7 @@ import logging
 import json
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.secrets.aio import SecretClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
@@ -334,7 +335,7 @@ def test_service_headers_allowed_in_logs():
 
 
 def test_custom_hook_policy():
-    class CustomHookPolicy(object):
+    class CustomHookPolicy(SansIOHTTPPolicy):
         pass
 
     client = SecretClient("...", object(), custom_hook_policy=CustomHookPolicy())

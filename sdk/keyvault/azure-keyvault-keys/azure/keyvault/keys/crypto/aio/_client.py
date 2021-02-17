@@ -9,6 +9,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
+from .._client import _validate_arguments
 from .._key_validity import raise_if_time_invalid
 from .._providers import get_local_cryptography_provider, NoLocalCryptography
 from ... import KeyOperation
@@ -113,7 +114,11 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :param algorithm: encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
         :param bytes plaintext: bytes to encrypt
+        :keyword bytes iv: optional initialization vector. For use with AES-CBC encryption.
+        :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
+            with AES-GCM encryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
+        :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
 
         .. literalinclude:: ../tests/test_examples_crypto_async.py
             :start-after: [START encrypt]
@@ -122,7 +127,11 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             :language: python
             :dedent: 8
         """
+        iv = kwargs.pop("iv", None)
+        aad = kwargs.pop("additional_authenticated_data", None)
+        _validate_arguments(operation=KeyOperation.encrypt, algorithm=algorithm, iv=iv, aad=aad)
         await self._initialize(**kwargs)
+
         if self._local_provider.supports(KeyOperation.encrypt, algorithm):
             raise_if_time_invalid(self._key)
             try:
@@ -134,11 +143,18 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
-            parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=plaintext),
+            parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=plaintext, iv=iv, aad=aad),
             **kwargs
         )
 
-        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=operation_result.result)
+        return EncryptResult(
+            key_id=self.key_id,
+            algorithm=algorithm,
+            ciphertext=operation_result.result,
+            iv=operation_result.iv,
+            authentication_tag=operation_result.authentication_tag,
+            additional_authenticated_data=operation_result.additional_authenticated_data,
+        )
 
     @distributed_trace_async
     async def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs: "Any") -> DecryptResult:
@@ -149,7 +165,13 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :param algorithm: encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
         :param bytes ciphertext: encrypted bytes to decrypt
+        :keyword bytes iv: the initialization vector used during encryption. For use with AES encryption.
+        :keyword bytes authentication_tag: the authentication tag generated during encryption. For use with AES-GCM
+            encryption.
+        :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
+            with AES-GCM encryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
+        :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
 
         .. literalinclude:: ../tests/test_examples_crypto_async.py
             :start-after: [START decrypt]
@@ -158,7 +180,12 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             :language: python
             :dedent: 8
         """
+        iv = kwargs.pop("iv", None)
+        tag = kwargs.pop("authentication_tag", None)
+        aad = kwargs.pop("additional_authenticated_data", None)
+        _validate_arguments(operation=KeyOperation.decrypt, algorithm=algorithm, iv=iv, tag=tag, aad=aad)
         await self._initialize(**kwargs)
+
         if self._local_provider.supports(KeyOperation.decrypt, algorithm):
             try:
                 return self._local_provider.decrypt(algorithm, ciphertext)
@@ -169,7 +196,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
-            parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=ciphertext),
+            parameters=self._models.KeyOperationsParameters(
+                algorithm=algorithm, value=ciphertext, iv=iv, tag=tag, aad=aad
+            ),
             **kwargs
         )
 

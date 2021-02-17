@@ -1,7 +1,28 @@
 # Release History
 
-## 1.5.1 (Unreleased)
-- Bumped `six` requirement from `1.6` to `1.12.0`.
+## 1.6.0b2 (Unreleased)
+
+
+## 1.6.0b1 (2021-02-09)
+### Changed
+- Raised minimum msal version to 1.7.0
+- Raised minimum six version to 1.12.0
+
+### Added
+- `InteractiveBrowserCredential` uses PKCE internally to protect authorization
+  codes
+- `CertificateCredential` can load a certificate from bytes instead of a file
+  path. To provide a certificate as bytes, use the keyword argument
+  `certificate_bytes` instead of `certificate_path`, for example:
+  `CertificateCredential(tenant_id, client_id, certificate_bytes=cert_bytes)`
+  ([#14055](https://github.com/Azure/azure-sdk-for-python/issues/14055))
+- User credentials support Continuous Access Evaluation (CAE)
+- Application authentication APIs from 1.5.0b2
+
+### Fixed
+- `ManagedIdentityCredential` correctly parses responses from the current
+  (preview) version of Azure ML managed identity
+  ([#15361](https://github.com/Azure/azure-sdk-for-python/issues/15361))
 
 ## 1.5.0 (2020-11-11)
 ### Breaking Changes
@@ -62,12 +83,6 @@
 - Adopted msal-extensions 0.3.0
 ([#13107](https://github.com/Azure/azure-sdk-for-python/issues/13107))
 
-## 1.4.1 (2020-10-07)
-### Fixed
-- `AzureCliCredential.get_token` correctly sets token expiration time,
-  preventing clients from using expired tokens
-  ([#14345](https://github.com/Azure/azure-sdk-for-python/issues/14345))
-
 ## 1.5.0b1 (2020-09-08)
 ### Added
 - Application authentication APIs from 1.4.0b7
@@ -96,6 +111,12 @@
 ### Breaking changes
 - Removed `authentication_record` keyword argument from the async
   `SharedTokenCacheCredential`, i.e. `azure.identity.aio.SharedTokenCacheCredential`
+
+## 1.4.1 (2020-10-07)
+### Fixed
+- `AzureCliCredential.get_token` correctly sets token expiration time,
+  preventing clients from using expired tokens
+  ([#14345](https://github.com/Azure/azure-sdk-for-python/issues/14345))
 
 ## 1.4.0 (2020-08-10)
 ### Added
@@ -245,19 +266,19 @@ in the environment variable `AZURE_AUTHORITY_HOST`. See
 ([#8094](https://github.com/Azure/azure-sdk-for-python/issues/8094))
 
 
+## 1.4.0b1 (2020-03-10)
+- `DefaultAzureCredential` can now authenticate using the identity logged in to
+the Azure CLI, unless explicitly disabled with a keyword argument:
+`DefaultAzureCredential(exclude_cli_credential=True)`
+([#10092](https://github.com/Azure/azure-sdk-for-python/pull/10092))
+
+
 ## 1.3.1 (2020-03-30)
 
 - `ManagedIdentityCredential` raises `CredentialUnavailableError` when no
 identity is configured for an IMDS endpoint. This causes
 `ChainedTokenCredential` to correctly try the next credential in the chain.
 ([#10488](https://github.com/Azure/azure-sdk-for-python/issues/10488))
-
-
-## 1.4.0b1 (2020-03-10)
-- `DefaultAzureCredential` can now authenticate using the identity logged in to
-the Azure CLI, unless explicitly disabled with a keyword argument:
-`DefaultAzureCredential(exclude_cli_credential=True)`
-([#10092](https://github.com/Azure/azure-sdk-for-python/pull/10092))
 
 
 ## 1.3.0 (2020-02-11)

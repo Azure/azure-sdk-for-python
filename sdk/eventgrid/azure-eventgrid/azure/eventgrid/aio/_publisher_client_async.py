@@ -23,7 +23,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy
 )
 from .._policies import CloudEventDistributedTracingPolicy
-from .._models import CloudEvent, EventGridEvent, CustomEvent
+from .._models import CloudEvent, EventGridEvent
 from .._helpers import (
     _get_endpoint_only_fqdn,
     _get_authentication_policy,
@@ -38,18 +38,15 @@ from .._version import VERSION
 SendType = Union[
     CloudEvent,
     EventGridEvent,
-    CustomEvent,
     Dict,
     List[CloudEvent],
     List[EventGridEvent],
-    List[CustomEvent],
     List[Dict]
 ]
 
 ListEventType = Union[
     List[CloudEvent],
     List[EventGridEvent],
-    List[CustomEvent],
     List[Dict]
 ]
 
@@ -60,6 +57,7 @@ class EventGridPublisherClient():
     :param credential: The credential object used for authentication which implements
      SAS key authentication or SAS token authentication.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
+    :rtype: None
     """
 
     def __init__(
@@ -108,7 +106,7 @@ class EventGridPublisherClient():
         inefficient to loop the send method for each event instead of just using a list
         and we highly recommend against it.
 
-        :param  events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent.
+        :param  events: A list of CloudEvent/EventGridEvent to be sent.
         :type events: SendType
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
@@ -134,8 +132,6 @@ class EventGridPublisherClient():
         if isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
-        elif isinstance(events[0], CustomEvent):
-            events = [dict(e) for e in events] # type: ignore
         return await self._client.publish_custom_event_events(self._endpoint, cast(List, events), **kwargs)
 
     async def __aenter__(self) -> "EventGridPublisherClient":

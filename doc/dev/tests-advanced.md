@@ -1,9 +1,79 @@
 # Setup Python Development Environment - Advanced
 In this document we will provide additional information about the test environments:
 
+- [Test Mixin Classes](#test-mixin-classes)
 - [Resource Preparers](#preparers)
 - [Examples with Preparers](#examples-with-preparers)
 - [mgmt_settings_real.py](#mgmt_settings_real-file)
+
+## Test Mixin Classes
+Many of our test suites use a mixin class to reduce re-writing code in multiple test files. For example, in the Tables test suite there is a `_shared` directory containing two of these mixin classes, a [sync one](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/tests/_shared/testcase.py) and an [async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/tests/_shared/asynctestcase.py). These classes will often have ways to create connection strings from an account name and key, formulate the account url, configure logging, or validate service responses. In order for these mixin classes to be used by both the functional and unit tests they should inherit from `object`. For example:
+
+```python
+
+class TablesTestMixin(object):
+    def connection_string(self, account, key):
+        return "DefaultEndpointsProtocol=https;AccountName=" + account + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
+
+    def account_url(self, account, endpoint_type):
+        """Return an url of storage account.
+        :param str storage_account: Storage account name
+        :param str storage_type: The Storage type part of the URL. Should be "table", or "cosmos", etc.
+        """
+        try:
+            if endpoint_type == "table":
+                return account.primary_endpoints.table.rstrip("/")
+            if endpoint_type == "cosmos":
+                return "https://{}.table.cosmos.azure.com".format(account.name)
+            else:
+                raise ValueError("Unknown storage type {}".format(storage_type))
+        except AttributeError: # Didn't find "primary_endpoints"
+            if endpoint_type == "table":
+                return 'https://{}.{}.core.windows.net'.format(account, endpoint_type)
+            if endpoint_type == "cosmos":
+                return "https://{}.table.cosmos.azure.com".format(account)
+
+    def enable_logging(self):
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+        self.logger.handlers = [handler]
+        self.logger.setLevel(logging.INFO)
+        self.logger.propagate = True
+        self.logger.disabled = False
+```
+
+In action this class can be used in functional tests:
+
+```python
+class TestTablesFunctional(AzureTestCase, TablesTestMixin):
+    ...
+    def test_with_mixin(self, account, key):
+        conn_str = self.connection_string(account, key)
+        client = TableClient.from_connection_string(conn_str)
+        client.create_table('first')
+        client.create_table('second')
+        tables = 0
+        for table in client.list_tables():
+            tables += 1
+
+        assert tables == 2
+```
+
+Or can be used in a unit test:
+```python
+class TestTablesUnit(TablesTestMixin):
+    ...
+    def test_valid_url(self):
+        account = "fake_tables_account"
+        credential = "fake_tables_account_key_0123456789"
+
+        url = self.account_url(account, "tables")
+        client = TableClient(account_url=url, credential=credential)
+
+        assert client is not None
+        assert client.account_url == "https://{}.tables.core.windows.net/".format(account)
+```
+
 
 ## Preparers
 The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package are the preparers that will be commonly used throughout the repository to test various resources. A preparer is a way to programmatically create fresh resources to run our tests against and then deleting them after running a test suite. These help guarantee standardized behavior by starting each test group from a fresh resource and account.

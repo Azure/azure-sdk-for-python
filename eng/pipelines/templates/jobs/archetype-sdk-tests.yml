@@ -1,120 +1,153 @@
 parameters:
-  ServiceDirectory: ''
-  EnvVars: {}
-  MaxParallel: 0
-  BeforeTestSteps: []
-  AfterTestSteps: []
-  BuildTargetingString: 'azure-*'
-  AdditionalTestArgs: ''
-  TestMarkArgument: ''
-  InjectedPackages: ''
-  BuildDocs: true
-  JobName: Test
-  AllocateResourceGroup: true
-  DeployArmTemplate: false
-  TestTimeoutInMinutes: 120
-  TestSamples: false
-  Location: ''
-  Matrix:
-    Linux_Python35:
-      Pool: azsdk-pool-mms-ubuntu-1804-general
-      OSVmImage: MMSUbuntu18.04
-      PythonVersion: '3.5'
-      CoverageArg: '--disablecov'
-    MacOs_Python37:
-      Pool: Azure Pipelines
-      OSVmImage: 'macOS-10.15'
-      PythonVersion: '3.7'
-      CoverageArg: '--disablecov'
-    Windows_Python27:
-      Pool: azsdk-pool-mms-win-2019-general
-      OSVmImage: MMS2019
-      PythonVersion: '2.7'
-      CoverageArg: '--disablecov'
-    Linux_PyPy3:
-      Pool: azsdk-pool-mms-ubuntu-1804-general
-      OSVmImage: MMSUbuntu18.04
-      PythonVersion: 'pypy3'
-      CoverageArg: '--disablecov'
-    Linux_Python39:
-      Pool: azsdk-pool-mms-ubuntu-1804-general
-      OSVmImage: MMSUbuntu18.04
-      PythonVersion: '3.9'
-      CoverageArg: ''
-  CloudConfigurations:
-    AzureCloud:
-      SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: PreSteps
+    type: object
+    default: []
+  - name: PostSteps
+    type: object
+    default: []
+  - name: EnvVars
+    type: object
+    default: {}
+  - name: MaxParallel
+    type: number
+    default: 0
+  - name: BeforeTestSteps
+    type: object
+    default: []
+  - name: AfterTestSteps
+    type: object
+    default: []
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+  - name: AdditionalTestArgs
+    type: string
+    default: ''
+  - name: TestMarkArgument
+    type: string
+    default: ''
+  - name: InjectedPackages
+    type: string
+    default: ''
+  - name: BuildDocs
+    type: boolean
+    default: true
+  - name: AllocateResourceGroup
+    type: boolean
+    default: true
+  - name: DeployArmTemplate
+    type: boolean
+    default: false
+  - name: TestTimeoutInMinutes
+    type: number
+    default: 120
+  - name: TestSamples
+    type: boolean
+    default: false
+  - name: Location
+    type: string
+    default: ''
+  - name: CloudConfig
+    type: object
+    default: {}
+  - name: Matrix
+    type: string
+  - name: DependsOn
+    type: string
+    default: ''
+  - name: UsePlatformContainer
+    type: boolean
+    default: false
 
 jobs:
-  - ${{ each cloudConfig in parameters.CloudConfigurations }}:
-    - job: ${{ parameters.JobName }}
-      variables:
-        skipComponentGovernanceDetection: true
+  - job:
+    dependsOn: ${{ parameters.DependsOn }}
+    condition: ne(${{ parameters.Matrix }}, '{}')
+    strategy:
+      maxParallel: ${{ parameters.MaxParallel }}
+      matrix: $[ ${{ parameters.Matrix }} ]
 
-      timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-      strategy:
-        maxParallel: ${{ parameters.MaxParallel }}
-        matrix: ${{ parameters.Matrix }}
-      continueOnError: false
+    variables:
+      - template: ../variables/globals.yml
 
-      pool:
-        name: $(Pool)
-        vmImage: $(OSVmImage)
+      - name: skipComponentGovernanceDetection
+        value: true
+      - name: ArmTemplateParameters
+        value: '@{}'
+      - name: BuildTargetingStringValue
+        value: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
 
-      steps:
-        - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+    continueOnError: false
 
-        - ${{ if eq(parameters['AllocateResourceGroup'], true) }}:
-          - pwsh: |
-              $BaseName = 't' + (New-Guid).ToString('n').Substring(0, 16)
-              $RgName = "rg-${{ parameters.ServiceDirectory }}-$($BaseName)"
-              $ResourceGroupExpiration = (Get-Date).ToUniversalTime().AddHours(24).ToString("o")
-              Write-Host "Creating Resource Group: $($RgName)"
-              Write-Host "##vso[task.setvariable variable=AZURE_RESOURCEGROUP_NAME]$RgName"
+    pool:
+      name: $(Pool)
+      vmImage: $(OSVmImage)
 
-              az login --service-principal -u $(provisioner-aad-id) -p $(provisioner-aad-secret) --tenant $(provisioner-aad-tenant)
-              az account set --subscription $(provisioner-subscription)
+    ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
+      # Add a default so the job doesn't fail when the matrix is empty
+      container: $[ variables['Container'] ]
 
-              az group create --location westus2 --name $RgName --tags DeleteAfter=$ResourceGroupExpiration BuildId='$(Build.BuildId)' BuildJob='$(Agent.JobName)' BuildNumber='$(Build.BuildNumber)' BuildReason='$(Build.Reason)'
-              az group wait --created --resource-group $RgName
-            displayName: Create resource group and environment variable for tests
+    steps:
+      - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+        parameters:
+          AgentImage: $(OSVmImage)
+      - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
 
-          # figure out what's up with the create resource group above
-        - ${{ if eq(parameters['DeployArmTemplate'], true) }}:
-          - template: ../../../common/TestResources/deploy-test-resources.yml
-            parameters:
-              Location: ${{ coalesce(parameters.Location, cloudConfig.value.Location) }}
-              ServiceDirectory: '${{ parameters.ServiceDirectory }}'
-              SubscriptionConfiguration: ${{ cloudConfig.value.SubscriptionConfiguration }}
-              ArmTemplateParameters: ${{ coalesce(cloudConfig.value.ArmTemplateParameters, '@{}') }}
+      - ${{ if eq(parameters['AllocateResourceGroup'], true) }}:
+        - pwsh: |
+            $BaseName = 't' + (New-Guid).ToString('n').Substring(0, 16)
+            $RgName = "rg-${{ parameters.ServiceDirectory }}-$($BaseName)"
+            $ResourceGroupExpiration = (Get-Date).ToUniversalTime().AddHours(24).ToString("o")
+            Write-Host "Creating Resource Group: $($RgName)"
+            Write-Host "##vso[task.setvariable variable=AZURE_RESOURCEGROUP_NAME]$RgName"
 
-        - template: ../steps/build-test.yml
+            az login --service-principal -u $(provisioner-aad-id) -p $(provisioner-aad-secret) --tenant $(provisioner-aad-tenant)
+            az account set --subscription $(provisioner-subscription)
+
+            az group create --location westus2 --name $RgName --tags DeleteAfter=$ResourceGroupExpiration BuildId='$(Build.BuildId)' BuildJob='$(Agent.JobName)' BuildNumber='$(Build.BuildNumber)' BuildReason='$(Build.Reason)'
+            az group wait --created --resource-group $RgName
+          displayName: Create resource group and environment variable for tests
+
+        # figure out what's up with the create resource group above
+      - ${{ if eq(parameters['DeployArmTemplate'], true) }}:
+        - template: ../../../common/TestResources/deploy-test-resources.yml
           parameters:
-            BuildTargetingString: ${{ parameters.BuildTargetingString }}
-            ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            CoverageArg: $(CoverageArg)
-            TestSamples: ${{ parameters.TestSamples }}
-            EnvVars:
-              AZURE_RUN_MODE: 'Live' #Record, Playback
-              ${{ insert }}: ${{ parameters.EnvVars }}
-            BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
-            AfterTestSteps: ${{ parameters.AfterTestSteps }}
-            PythonVersion: $(PythonVersion)
-            OSVmImage: $(OSVmImage)
-            ToxTestEnv: "whl"
-            AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
-            TestMarkArgument: ${{ parameters.TestMarkArgument }}
-            InjectedPackages: ${{ parameters.InjectedPackages }}
-            BuildDocs: ${{parameters.BuildDocs}}
+            Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
+            ServiceDirectory: '${{ parameters.ServiceDirectory }}'
+            SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
+            ArmTemplateParameters: ${{ coalesce(parameters.CloudConfig.ArmTemplateParameters, '@{}') }}
 
-        - ${{ if eq(parameters['AllocateResourceGroup'], true) }}:
-          - pwsh: |
-              az group delete --resource-group $env:AZURE_RESOURCEGROUP_NAME -y --no-wait
-            displayName: Delete resource group
-            condition: ne(variables['AZURE_RESOURCEGROUP_NAME'], '')
+      - template: ../steps/build-test.yml
+        parameters:
+          BuildTargetingString: $(BuildTargetingStringValue)
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          CoverageArg: $(CoverageArg)
+          TestSamples: ${{ parameters.TestSamples }}
+          EnvVars:
+            AZURE_RUN_MODE: 'Live' #Record, Playback
+            ${{ insert }}: ${{ parameters.EnvVars }}
+          PreSteps: ${{ parameters.PreSteps }}
+          PostSteps: ${{ parameters.PostSteps }}
+          PythonVersion: $(PythonVersion)
+          OSVmImage: $(OSVmImage)
+          ToxTestEnv: "whl"
+          AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+          TestMarkArgument: ${{ parameters.TestMarkArgument }}
+          InjectedPackages: ${{ parameters.InjectedPackages }}
+          BuildDocs: ${{parameters.BuildDocs}}
 
-        - ${{ if eq(parameters['DeployArmTemplate'], true) }}:
-          - template: /eng/common/TestResources/remove-test-resources.yml
-            parameters:
-              ServiceDirectory: '${{ parameters.ServiceDirectory }}'
-              SubscriptionConfiguration: ${{ cloudConfig.value.SubscriptionConfiguration }}
+      - ${{ if eq(parameters['AllocateResourceGroup'], true) }}:
+        - pwsh: |
+            az group delete --resource-group $env:AZURE_RESOURCEGROUP_NAME -y --no-wait
+          displayName: Delete resource group
+          condition: ne(variables['AZURE_RESOURCEGROUP_NAME'], '')
+
+      - ${{ if eq(parameters['DeployArmTemplate'], true) }}:
+        - template: /eng/common/TestResources/remove-test-resources.yml
+          parameters:
+            ServiceDirectory: '${{ parameters.ServiceDirectory }}'
+            SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}

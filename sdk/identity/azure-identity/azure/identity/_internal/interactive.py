@@ -103,6 +103,8 @@ class InteractiveCredential(MsalCredential):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+          claims challenge following an authorization failure
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
           required data, state, or platform support
@@ -187,7 +189,9 @@ class InteractiveCredential(MsalCredential):
                     continue
 
                 now = int(time.time())
-                result = app.acquire_token_silent_with_error(list(scopes), account=account, **kwargs)
+                result = app.acquire_token_silent_with_error(
+                    list(scopes), account=account, claims_challenge=kwargs.get("claims")
+                )
                 if result and "access_token" in result and "expires_in" in result:
                     return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
@@ -200,7 +204,7 @@ class InteractiveCredential(MsalCredential):
     def _get_app(self):
         # type: () -> msal.PublicClientApplication
         if not self._msal_app:
-            self._msal_app = self._create_app(msal.PublicClientApplication)
+            self._msal_app = self._create_app(msal.PublicClientApplication, client_capabilities=["CP1"])
         return self._msal_app
 
     @abc.abstractmethod

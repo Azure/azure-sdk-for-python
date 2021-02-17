@@ -1,15 +1,14 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b5 (2021-02-09)
 ### Added
-
-- Added support for Azure Active Directory authentication
+- Added support for Azure Active Directory authentication.
 
 ## 1.0.0b4 (2020-11-16)
 - Updated `azure-communication-sms` version.
 ### Breaking Changes
 - Replaced CommunicationUser with CommunicationUserIdentifier.
-- Replaced PhoneNumber with PhoneNumberIdentifier
+- Replaced PhoneNumber with PhoneNumberIdentifier.
 
 ## 1.0.0b3 (2020-10-07)
 - Add dependency to `azure-communication-nspkg` package, to support py2

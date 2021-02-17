@@ -1,6 +1,11 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0-beta.5 (Unreleased)
+
+### Breaking
+- CommunicationIdentityClient's (synchronous and asynchronous) `issue_token` function is now renamed to `get_token`.
+
+## 1.0.0b4 (2021-02-09)
 
 ### Added
 - Added CommunicationIdentityClient (originally was part of the azure.communication.administration package).
