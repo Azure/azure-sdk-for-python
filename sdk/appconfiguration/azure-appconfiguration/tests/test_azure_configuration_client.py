@@ -15,6 +15,8 @@ from azure.appconfiguration import (
     ResourceReadOnlyError,
     AzureAppConfigurationClient,
     ConfigurationSetting,
+    FeatureFlagConfigurationSetting,
+    SecretReferenceConfigurationSetting
 )
 
 from consts import (
@@ -417,3 +419,33 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         set_kv.etag = "bad"
         with pytest.raises(ResourceModifiedError):
             client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
+
+    def _assert_same_keys(self, key1, key2):
+        assert type(key1) == type(key2)
+        assert key1.key == key2.key
+        assert key1.label == key2.label
+        assert key1.value == key2.value
+
+    @app_config_decorator
+    def test_config_setting_feature_flag(self, client):
+        feature_flag = FeatureFlagConfigurationSetting("test_feature", True)
+        set_flag = client.set_configuration_setting(feature_flag)
+
+        self._assert_same_keys(feature_flag, set_flag)
+        print(set_flag)
+        assert feature_flag.key == set_flag.key
+        print(set_flag.key, feature_flag.key)
+        print(type(set_flag), type(feature_flag))
+
+    # @pytest.mark.skip("pending")
+    @app_config_decorator
+    def test_config_setting_secret_reference(self, client):
+        secret_reference = SecretReferenceConfigurationSetting(
+            "ConnectionString", "https://pakrym.vault.azure.net/secrets/connectionString")
+        set_flag = client.set_configuration_setting(secret_reference)
+
+        self._assert_same_keys(secret_reference, set_flag)
+        # print(set_flag, secret_reference)
+        assert secret_reference.key == set_flag.key
+        print(set_flag.key, secret_reference.key)
+        print(type(set_flag), type(secret_reference))

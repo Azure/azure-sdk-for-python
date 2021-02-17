@@ -10,9 +10,19 @@
 # --------------------------------------------------------------------------
 
 from ._azure_appconfiguration_client import AzureAppConfigurationClient
-from ._models import ConfigurationSetting
+from ._models import (
+    ConfigurationSetting,
+    FeatureFlagConfigurationSetting,
+    SecretReferenceConfigurationSetting
+)
 from ._version import VERSION
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 
 __version__ = VERSION
-__all__ = ["AzureAppConfigurationClient", "ConfigurationSetting", "ResourceReadOnlyError"]
+__all__ = [
+    "AzureAppConfigurationClient",
+    "ConfigurationSetting",
+    "ResourceReadOnlyError",
+    "FeatureFlagConfigurationSetting",
+    "SecretReferenceConfigurationSetting"
+]

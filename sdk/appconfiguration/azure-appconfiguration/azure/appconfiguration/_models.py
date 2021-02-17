@@ -53,6 +53,12 @@ class ConfigurationSetting(Model):
         # type: (KeyValue) -> ConfigurationSetting
         if key_value is None:
             return None
+        if key_value.content_type is not None:
+            if key_value.content_type.startswith(FeatureFlagConfigurationSetting.feature_flag_content_type):
+                return FeatureFlagConfigurationSetting._from_generated(key_value)
+            if key_value.content_type.startswith(SecretReferenceConfigurationSetting.secret_reference_content_type):
+                return SecretReferenceConfigurationSetting._from_generated(key_value)
+
         return cls(
             key=key_value.key,
             label=key_value.label,
@@ -68,9 +74,12 @@ class ConfigurationSetting(Model):
         return KeyValue(
             key=self.key,
             label=self.label,
-            content_type=self.content_type,
             value=self.value,
-            tags=self.tags
+            content_type=self.content_type,
+            last_modified=self.last_modified,
+            tags=self.tags,
+            locked=self.read_only,
+            etag=self.etag
         )
 
 
@@ -109,24 +118,23 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
     feature_flag_content_type = "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
 
 
-    def __init__(self, feature_id, is_enabled, label, **kwargs):
+    def __init__(self, feature_id, is_enabled, **kwargs):
+        # type: (str, bool, str) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
-        self.feature_id = feature_id
+        self.key = feature_id
+        if not feature_id.startswith(self.key_prefix):
+            self.key = self.key_prefix + feature_id
         self.is_enabled = is_enabled
-        self.label = label
-        self.key = self.key_prefix + self.feature_id
+        self.label = kwargs.get('label', None)
         self.content_type = self.feature_flag_content_type
-
-        # self.description = kwargs.get('description', None)
-        # self.display_name = kwargs.get('display_name', None)
-        # self.key_prefix = kwargs.get('key_prefix', None)
-        # self.etag = kwargs.get('etag', None)
-        # self.key = kwargs.get('key', None)
-        # self.content_type = kwargs.get('content_type', None)
-        # self.value = kwargs.get('value', None)
-        # self.last_modified = kwargs.get('last_modified', None)
-        # self.read_only = kwargs.get('read_only', None)
-        # self.tags = kwargs.get('tags', None)
+        self.feature_id = feature_id
+        self.description = kwargs.get('description', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.etag = kwargs.get('etag', None)
+        self.value = kwargs.get('value', None)
+        self.last_modified = kwargs.get('last_modified', None)
+        self.read_only = kwargs.get('read_only', None)
+        self.tags = kwargs.get('tags', None)
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -134,26 +142,26 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
         if key_value is None:
             return None
         return cls(
-            feature_id=None,
-            is_enabled=None,
-            label=None
-            # key=key_value.key,
-            # label=key_value.label,
-            # content_type=key_value.content_type,
-            # value=key_value.value,
-            # last_modified=key_value.last_modified,
-            # tags=key_value.tags,
-            # read_only=key_value.locked,
-            # etag=key_value.etag,
+            feature_id=key_value.key,
+            is_enabled=key_value.value,
+            label=key_value.label,
+            content_type=key_value.content_type,
+            last_modified=key_value.last_modified,
+            tags=key_value.tags,
+            read_only=key_value.locked,
+            etag=key_value.etag,
         )
 
     def _to_generated(self):
         return KeyValue(
             key=self.key,
             label=self.label,
-            content_type=self.content_type,
             value=self.value,
-            tags=self.tags
+            content_type=self.content_type,
+            last_modified=key_value.last_modified,
+            tags=self.tags,
+            locked=self.read_only,
+            etag=self.etag
         )
 
 class SecretReferenceConfigurationSetting(Model):
@@ -187,14 +195,16 @@ class SecretReferenceConfigurationSetting(Model):
         'read_only': {'key': 'read_only', 'type': 'bool'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
+    secret_reference_content_type = "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8";
 
-    def __init__(self, **kwargs):
+    def __init__(self, key, secret_id, label=None, **kwargs):
+        # type: (str, str, str) -> None
         super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
-        self.secret_id = kwargs.get('secret_id', None)
+        self.key = key
+        self.label = label
+        self._secret_id = secret_id
+        self.content_type = self.secret_reference_content_type
         self.etag = kwargs.get('etag', None)
-        self.key = kwargs.get('key', None)
-        self.label = kwargs.get('label', None)
-        self.content_type = kwargs.get('content_type', None)
         self.value = kwargs.get('value', None)
         self.last_modified = kwargs.get('last_modified', None)
         self.read_only = kwargs.get('read_only', None)
@@ -208,8 +218,7 @@ class SecretReferenceConfigurationSetting(Model):
         return cls(
             key=key_value.key,
             label=key_value.label,
-            content_type=key_value.content_type,
-            value=key_value.value,
+            secret_id=key_value.value,
             last_modified=key_value.last_modified,
             tags=key_value.tags,
             read_only=key_value.locked,
@@ -220,11 +229,13 @@ class SecretReferenceConfigurationSetting(Model):
         return KeyValue(
             key=self.key,
             label=self.label,
-            content_type=self.content_type,
             value=self.value,
-            tags=self.tags
+            content_type=self.content_type,
+            last_modified=key_value.last_modified,
+            tags=self.tags,
+            locked=self.read_only,
+            etag=self.etag
         )
-
 
 class FeatureFlagFilter(object):
     """ A configuration setting that controls a feature flag
