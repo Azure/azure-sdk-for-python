@@ -1,0 +1,18 @@
+[
+    {
+        "text": "The employee's SSN is 555-55-5555.",
+        "id": 1
+    },
+    {
+        "text": "Il documento scritto in italiano.",
+        "id": 2
+    },
+    {
+        "text": "Dies ist in englischer Sprache verfasst.",
+        "id": 3
+    },
+    {
+        "text": "Le numéro de téléphone de l'employé est le 532-511-5555.",
+        "id": 4
+    }
+]
