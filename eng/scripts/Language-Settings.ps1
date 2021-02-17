@@ -13,7 +13,15 @@ function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
   {
     $setupLocation = $pkgPath.Replace('\','/')
     pushd $RepoRoot
-    $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import get_package_properties; obj=get_package_properties('$setupLocation'); print('{0},{1},{2}'.format(obj[0], obj[1], obj[2]));") -split ","
+    $setupProps = $null
+    try{
+      $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import get_package_properties; obj=get_package_properties('$setupLocation'); print('{0},{1},{2}'.format(obj[0], obj[1], obj[2]));") -split ","
+    }
+    catch
+    {
+      # This is soft error and failure is expected for python metapackages
+      Write-Host "Failed to parse package properties for " $pkgName
+    }
     popd
     if (($setupProps -ne $null) -and ($setupProps[0] -eq $pkgName))
     {
@@ -27,6 +35,7 @@ function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
         $pkgProp.SdkType = "client"
       }
       $pkgProp.IsNewSdk = $setupProps[3]
+      $pkgProp.ArtifactName = $pkgName
       return $pkgProp
     }
   }
