@@ -57,9 +57,9 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
     :param requests_response: The object returned from the HTTP library.
     :param int block_size: Size in bytes.
     """
-    def __init__(self, request, requests_response, block_size=None):
+    def __init__(self, request: HttpRequest, requests_response: Any, block_size: Optional[int] = None):
         super(_RequestsTransportResponseBase, self).__init__(request, requests_response, block_size=block_size)
-        self.status_code = requests_response.status_code
+        self.status_code: str = requests_response.status_code
         self.headers = requests_response.headers
         self.reason = requests_response.reason
         self.content_type = requests_response.headers.get('content-type')
@@ -158,8 +158,7 @@ class StreamDownloadGenerator(object):
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
-    def stream_download(self, pipeline):
-        # type: (PipelineType) -> Iterator[bytes]
+    def stream_download(self, pipeline: PipelineType) -> Iterator[bytes]:
         """Generator for streaming request body data."""
         return StreamDownloadGenerator(pipeline, self)
 

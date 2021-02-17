@@ -541,14 +541,13 @@ class _HttpResponseBase(object):
     ) -> None:
         self.request = request
         self.internal_response = internal_response
-        self.status_code = None  # type: Optional[int]
-        self.headers = {}  # type: MutableMapping[str, str]
-        self.reason = None  # type: Optional[str]
-        self.content_type = None  # type: Optional[str]
-        self.block_size = block_size or 4096  # Default to same as Requests
+        self.status_code: Optional[int] = None
+        self.headers: MutableMapping[str, str] = {}
+        self.reason: Optional[str] = None
+        self.content_type: Optional[str] = None
+        self.block_size: int = block_size or 4096  # Default to same as Requests
 
-    def body(self):
-        # type: () -> bytes
+    def body(self) -> bytes:
         """Return the whole body as bytes in memory.
         """
         raise NotImplementedError()
@@ -620,8 +619,7 @@ class _HttpResponseBase(object):
         requests = self.request.multipart_mixed_info[0]  # type: List[HttpRequest]
         return self._decode_parts(message, http_response_type, requests)
 
-    def raise_for_status(self):
-        # type () -> None
+    def raise_for_status(self) -> None:
         """Raises an HttpResponseError if the response has an error status code.
         If response is good, does nothing.
         """
@@ -630,8 +628,7 @@ class _HttpResponseBase(object):
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
-    def stream_download(self, pipeline):
-        # type: (PipelineType) -> Iterator[bytes]
+    def stream_download(self, pipeline: PipelineType) -> Iterator[bytes]:
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download
@@ -640,8 +637,7 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         :rtype: iterator[bytes]
         """
 
-    def parts(self):
-        # type: () -> Iterator[HttpResponse]
+    def parts(self) -> Iterator["HttpResponse"]:
         """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
         :rtype: iterator[HttpResponse]
