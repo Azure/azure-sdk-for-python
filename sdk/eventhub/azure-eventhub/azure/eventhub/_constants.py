@@ -31,17 +31,18 @@ PROP_GROUP_ID = b"group-id"
 PROP_GROUP_SEQUENCE = b"group-sequence"
 PROP_REPLY_TO_GROUP_ID = b"reply-to-group-id"
 
-CONSUMER_EPOCH_SYMBOL = b"com.microsoft:epoch"
+CONSUMER_EPOCH = b"com.microsoft:epoch"
+CONSUMER_EPOCH_SYMBOL = types.AMQPSymbol(CONSUMER_EPOCH)
 TIMEOUT_SYMBOL = b"com.microsoft:timeout"
 RECEIVER_RUNTIME_METRIC_SYMBOL = b"com.microsoft:enable-receiver-runtime-metric"
 IDEMPOTENT_PRODUCER = b"com.microsoft:idempotent-producer"
 PRODUCER_EPOCH = b"com.microsoft:producer-epoch"
 PRODUCER_SEQUENCE_NUMBER = b"com.microsoft:producer-sequence-number"
 PRODUCER_ID = b"com.microsoft:producer-id"
-IDEMPOTENT_PRODUCER_SYMBOL = types.AMQPSymbol(b"com.microsoft:idempotent-producer")
-PRODUCER_EPOCH_SYMBOL = types.AMQPSymbol(b"com.microsoft:producer-epoch")
-PRODUCER_SEQUENCE_NUMBER_SYMBOL = types.AMQPSymbol(b"com.microsoft:producer-sequence-number")
-PRODUCER_ID_SYMBOL = types.AMQPSymbol(b"com.microsoft:producer-id")
+IDEMPOTENT_PRODUCER_SYMBOL = types.AMQPSymbol(IDEMPOTENT_PRODUCER)
+PRODUCER_EPOCH_SYMBOL = types.AMQPSymbol(PRODUCER_EPOCH)
+PRODUCER_SEQUENCE_NUMBER_SYMBOL = types.AMQPSymbol(PRODUCER_SEQUENCE_NUMBER)
+PRODUCER_ID_SYMBOL = types.AMQPSymbol(PRODUCER_ID)
 
 MAX_USER_AGENT_LENGTH = 512
 ALL_PARTITIONS = "all-partitions"

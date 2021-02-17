@@ -109,7 +109,7 @@ class EventHubConsumer(
         self._partition = partition
         self._name = "EHConsumer-{}-partition{}".format(uuid.uuid4(), partition)
         if owner_level is not None:
-            self._link_properties[types.AMQPSymbol(CONSUMER_EPOCH_SYMBOL)] = types.AMQPLong(
+            self._link_properties[CONSUMER_EPOCH_SYMBOL] = types.AMQPLong(
                 int(owner_level)
             )
         link_property_timeout_ms = (
