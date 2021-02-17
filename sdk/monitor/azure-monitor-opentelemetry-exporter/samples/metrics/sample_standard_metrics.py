@@ -3,6 +3,7 @@
 # pylint: disable=import-error
 # pylint: disable=no-member
 # pylint: disable=no-name-in-module
+import os
 import time
 
 import requests
@@ -10,7 +11,7 @@ from opentelemetry import metrics
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.metrics import MeterProvider
 
-from azure.opentelemetry.exporter.azuremonitor import AzureMonitorMetricsExporter
+from azure.monitor.opentelemetry.exporter import AzureMonitorMetricsExporter
 
 # Use the default sdk implementation
 metrics.set_meter_provider(MeterProvider(stateful=False))
@@ -19,7 +20,7 @@ metrics.set_meter_provider(MeterProvider(stateful=False))
 RequestsInstrumentor().instrument()
 meter = RequestsInstrumentor().meter
 exporter = AzureMonitorMetricsExporter(
-    connection_string="InstrumentationKey=<INSTRUMENTATION KEY HERE>"
+    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 # Export standard metrics from requests library to Azure Monitor
 metrics.get_meter_provider().start_pipeline(meter, exporter, 5)
