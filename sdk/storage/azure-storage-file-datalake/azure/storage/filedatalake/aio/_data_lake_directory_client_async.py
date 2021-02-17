@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+from typing import Any
+
 try:
     from urllib.parse import quote, unquote
 except ImportError:
@@ -127,6 +129,17 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :caption: Create directory.
         """
         return await self._create('directory', metadata=metadata, **kwargs)
+
+    async def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a directory exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return await self._exists(**kwargs)
 
     async def delete_directory(self, **kwargs):
         # type: (...) -> None
