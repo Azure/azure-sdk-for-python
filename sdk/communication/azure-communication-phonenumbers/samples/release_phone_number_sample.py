@@ -8,6 +8,7 @@
 
 """
 <<<<<<< HEAD
+<<<<<<< HEAD
 FILE: release_phone_number_sample.py
 DESCRIPTION:
     This sample demonstrates how to release a previously acquired phone number using your connection string.
@@ -18,14 +19,21 @@ USAGE:
     2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_TO_RELEASE - The phone number you want to release
 =======
 FILE: phone_number_area_codes_sample.py
+=======
+FILE: release_phone_number_sample.py
+>>>>>>> cb958a482... Added fixed samples
 DESCRIPTION:
-    This sample demonstrates how to get all area codes via a connection string, country code and phone plan id.
+    This sample demonstrates how to release a previously acquired phone number using your connection string.
 USAGE:
-    python list_acquired_phone_numbers_sample.py
+    python release_phone_number_sample.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
+<<<<<<< HEAD
     2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_RELEASE - The phone number you want to release
 >>>>>>> 968de8d7e... Added README and samples
+=======
+    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_TO_RELEASE - The phone number you want to release
+>>>>>>> cb958a482... Added fixed samples
 """
 
 import os

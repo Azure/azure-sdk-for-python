@@ -20,7 +20,11 @@ USAGE:
 import os
 from azure.communication.phonenumbers import (
     PhoneNumbersClient,
+<<<<<<< HEAD
     PhoneNumberCapabilityType
+=======
+    PhoneNumberCapabilityValue
+>>>>>>> cb958a482... Added fixed samples
 )
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
@@ -32,12 +36,22 @@ phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 def update_phone_number_capabilities():
     poller = phone_numbers_client.begin_update_phone_number_capabilities(
         "+18335260208",
+<<<<<<< HEAD
         PhoneNumberCapabilityType.OUTBOUND,
         PhoneNumberCapabilityType.INBOUND_OUTBOUND,
         polling = True
     )
     poller.result()
     print('Status of the operation: ' + poller.status())
+=======
+        PhoneNumberCapabilityValue.OUTBOUND,
+        PhoneNumberCapabilityValue.INBOUND_OUTBOUND,
+        polling = True
+    )
+    poller.result()
+    print('Status of the operation:')
+    print(poller.status())
+>>>>>>> cb958a482... Added fixed samples
 
 if __name__ == '__main__':
     update_phone_number_capabilities()

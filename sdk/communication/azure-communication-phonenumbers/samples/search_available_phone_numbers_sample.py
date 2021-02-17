@@ -8,6 +8,7 @@
 
 """
 <<<<<<< HEAD
+<<<<<<< HEAD
 FILE: search_available_phone_numbers_sample.py
 DESCRIPTION:
     This sample demonstrates how to search for available numbers you can buy with the respective API.
@@ -15,11 +16,18 @@ USAGE:
     python search_available_phone_numbers_sample.py
 =======
 FILE: phone_number_area_codes_sample.py
+=======
+FILE: search_available_phone_numbers_sample.py
+>>>>>>> cb958a482... Added fixed samples
 DESCRIPTION:
-    This sample demonstrates how to get all area codes via a connection string, country code and phone plan id.
+    This sample demonstrates how to search for available numbers you can buy with the respective API.
 USAGE:
+<<<<<<< HEAD
     python list_acquired_phone_numbers_sample.py
 >>>>>>> 968de8d7e... Added README and samples
+=======
+    python search_available_phone_numbers_sample.py
+>>>>>>> cb958a482... Added fixed samples
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
     2) AZURE_COMMUNICATION_SERVICE_AREA_CODE - The area code you want the number to be in
@@ -73,5 +81,9 @@ if __name__ == '__main__':
 
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     list_acquired_phone_numbers()
 >>>>>>> 968de8d7e... Added README and samples
+=======
+    search_available_phone_numbers()
+>>>>>>> cb958a482... Added fixed samples
