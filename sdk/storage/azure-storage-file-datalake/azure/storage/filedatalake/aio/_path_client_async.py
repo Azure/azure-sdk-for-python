@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+from typing import Any, Dict
+
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob.aio import BlobClient
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
@@ -489,9 +491,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             error.continuation_token = last_continuation_token
             raise error
 
-    async def _rename_path(self, rename_source,
-                           **kwargs):
-        # type: (**Any) -> Dict[str, Any]
+    async def _rename_path(self, rename_source, **kwargs):
+        # type: (str, **Any) -> Dict[str, Any]
         """
         Rename directory or file
 
@@ -584,6 +585,17 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         """
         path_properties = await self._blob_client.get_blob_properties(**kwargs)
         return path_properties
+
+    async def _exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a path exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return await self._blob_client.exists(**kwargs)
 
     async def set_metadata(self, metadata,  # type: Dict[str, str]
                            **kwargs):

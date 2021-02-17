@@ -71,6 +71,19 @@ class FileSystemTest(StorageTestCase):
         self.assertTrue(created)
 
     @record
+    def test_file_system_exists(self):
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+
+        # Act
+        file_system_client1 = self.dsc.get_file_system_client(file_system_name)
+        file_system_client2 = self.dsc.get_file_system_client("nonexistentfs")
+        file_system_client1.create_file_system()
+
+        self.assertTrue(file_system_client1.exists())
+        self.assertFalse(file_system_client2.exists())
+
+    @record
     def test_create_file_system_with_metadata(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
