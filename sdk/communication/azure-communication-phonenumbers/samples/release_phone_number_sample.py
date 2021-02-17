@@ -35,12 +35,18 @@ from azure.communication.phonenumbers import (
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 <<<<<<< HEAD
+<<<<<<< HEAD
 phone_number_to_release = os.getenv(
     "AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_TO_RELEASE" # e.g. "+18001234567"
 ) 
 =======
 phone_number_to_release = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_RELEASE")
 >>>>>>> 968de8d7e... Added README and samples
+=======
+phone_number_to_release = os.getenv(
+    "AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_TO_RELEASE" # e.g. "+18001234567"
+) 
+>>>>>>> a11fa64fb... Corrected samples
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 def release_phone_number():

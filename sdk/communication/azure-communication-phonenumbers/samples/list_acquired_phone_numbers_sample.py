@@ -34,11 +34,16 @@ def list_acquired_phone_numbers():
     acquired_phone_numbers = phone_numbers_client.list_acquired_phone_numbers()
     print('Acquired phone numbers:')
 <<<<<<< HEAD
+<<<<<<< HEAD
     for acquired_phone_number in acquired_phone_numbers:
         print(acquired_phone_number.phone_number)
 =======
     print(acquired_phone_numbers)
 >>>>>>> 798b57943... Regenerated code
+=======
+    for acquired_phone_number in acquired_phone_numbers:
+        print(acquired_phone_number)
+>>>>>>> a11fa64fb... Corrected samples
 
 
 if __name__ == '__main__':

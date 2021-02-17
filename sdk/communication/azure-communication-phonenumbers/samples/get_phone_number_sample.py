@@ -33,6 +33,7 @@ from azure.communication.phonenumbers import (
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER") # e.g. "+18001234567"
 =======
 phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
@@ -40,6 +41,9 @@ phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
 =======
 phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_INFORMATION")
 >>>>>>> 968de8d7e... Added README and samples
+=======
+phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
+>>>>>>> a11fa64fb... Corrected samples
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 def get_phone_number_information():

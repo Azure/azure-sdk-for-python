@@ -236,11 +236,14 @@ class PhoneNumbersClient(object):
          default value is 0.
         :type skip: int
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         :param top: An optional parameter for how many entries to return, for pagination purposes. The
          default value is 100.
         :type top: int
 >>>>>>> 2b281d8ce... Addresses comments
+=======
+>>>>>>> a11fa64fb... Corrected samples
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AcquiredPhoneNumber]
         """
         return self._phone_number_client.phone_numbers.list_phone_numbers(
