@@ -703,6 +703,8 @@ class SkuDescription(msrest.serialization.Model):
     :type name: str
     :param description: Description about this sku.
     :type description: str
+    :param restricted_access_uri: Uri to subscribe to the restricted access sku.
+    :type restricted_access_uri: str
     :param targets: The list of targets available for this sku.
     :type targets: list[str]
     :param quota_dimensions: The list of quota dimensions for this sku.
@@ -715,6 +717,7 @@ class SkuDescription(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
+        'restricted_access_uri': {'key': 'restrictedAccessUri', 'type': 'str'},
         'targets': {'key': 'targets', 'type': '[str]'},
         'quota_dimensions': {'key': 'quotaDimensions', 'type': '[QuotaDimension]'},
         'pricing_details': {'key': 'pricingDetails', 'type': '[PricingDetail]'},
@@ -728,6 +731,7 @@ class SkuDescription(msrest.serialization.Model):
         self.id = kwargs.get('id', None)
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
+        self.restricted_access_uri = kwargs.get('restricted_access_uri', None)
         self.targets = kwargs.get('targets', None)
         self.quota_dimensions = kwargs.get('quota_dimensions', None)
         self.pricing_details = kwargs.get('pricing_details', None)
