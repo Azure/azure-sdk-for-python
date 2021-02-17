@@ -77,6 +77,12 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
         """
 
 
+def _implements_sansio_policy_protocol(obj):
+    # type: (Any) -> bool
+    """Returns a bool indicating whether an object implements SansIOHTTPPolicy's methods"""
+    return all(callable(getattr(obj, method, None)) for method in ("on_exception", "on_request", "on_response"))
+
+
 class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     """Represents a sans I/O policy.
 

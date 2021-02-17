@@ -33,6 +33,7 @@ from azure.core.pipeline import (
     PipelineContext,
 )
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
+from .policies._base import _implements_sansio_policy_protocol
 from ._tools import await_result as _await_result
 
 HTTPResponseType = TypeVar("HTTPResponseType")
@@ -103,12 +104,6 @@ class _TransportRunner(HTTPPolicy):
             self._sender.send(request.http_request, **request.context.options),
             context=request.context,
         )
-
-
-def _implements_sansio_policy_protocol(obj):
-    # type: (Any) -> bool
-    """Returns a bool indicating whether an object implements SansIOHTTPPolicy's methods"""
-    return all(callable(getattr(obj, method, None)) for method in ("on_exception", "on_request", "on_response"))
 
 
 class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType]):

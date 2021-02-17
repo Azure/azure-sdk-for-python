@@ -29,7 +29,7 @@ from typing import Any, cast, Union, List, Generic, TypeVar, Dict
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
-from ._base import _implements_sansio_policy_protocol
+from .policies._base import _implements_sansio_policy_protocol
 from ._tools_async import await_result as _await_result
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
