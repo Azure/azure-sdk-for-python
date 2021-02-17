@@ -50,7 +50,7 @@ class FileSystemTest(StorageTestCase):
     def _setUp(self, account_name, account_key):
         url = self._get_account_url(account_name)
         self.dsc = DataLakeServiceClient(url, credential=account_key,
-                                         transport=AiohttpTestTransport())
+                                         transport=AiohttpTestTransport(), logging_enable=True)
         self.config = self.dsc._config
         self.test_file_systems = []
 
@@ -609,7 +609,7 @@ class FileSystemTest(StorageTestCase):
 
         url = self._get_account_url(datalake_storage_account_name)
         token_credential = self.generate_oauth_token()
-        dsc = DataLakeServiceClient(url, token_credential)
+        dsc = DataLakeServiceClient(url, token_credential, logging_enable=True)
         file_system_name = self._get_file_system_reference()
         directory_client_name = '/'
         (await dsc.create_file_system(file_system_name)).get_directory_client(directory_client_name)
@@ -632,7 +632,7 @@ class FileSystemTest(StorageTestCase):
             agent_object_id=random_guid
         )
         sas_directory_client = DataLakeDirectoryClient(self.dsc.url, file_system_name, directory_client_name,
-                                                       credential=token)
+                                                       credential=token, logging_enable=True)
         access_control = await sas_directory_client.get_access_control()
 
         self.assertIsNotNone(access_control)

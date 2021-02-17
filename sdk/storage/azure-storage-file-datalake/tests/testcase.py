@@ -123,7 +123,7 @@ class StorageTestCase(AzureTestCase):
     #     self.configure_logging()
 
     def configure_logging(self):
-        self.enable_logging() if self.settings.ENABLE_LOGGING else self.disable_logging()
+        self.enable_logging() if True else self.disable_logging()
 
     def enable_logging(self):
         handler = logging.StreamHandler()
@@ -195,9 +195,9 @@ class StorageTestCase(AzureTestCase):
             account_name
         )
 
-    def _get_oauth_account_url(self):
+    def _get_oauth_account_url(self, account_name):
         return "https://{}.blob.core.windows.net".format(
-            "emilydevtest"
+            account_name
         )
 
     def assertNamedItemInContainer(self, container, item_name, msg=None):
