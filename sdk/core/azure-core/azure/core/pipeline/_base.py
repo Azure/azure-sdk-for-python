@@ -141,6 +141,8 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
             elif _implements_sansio_policy_protocol(policy):
                 policy = cast(SansIOHTTPPolicy, policy)
                 self._impl_policies.append(_SansIOHTTPPolicyRunner(policy))
+            elif policy is not None:
+                raise ValueError('A Pipeline policy must implement a "send" method or the SansIOHTTPPolicy protocol')
         for index in range(len(self._impl_policies) - 1):
             self._impl_policies[index].next = self._impl_policies[index + 1]
         if self._impl_policies:
