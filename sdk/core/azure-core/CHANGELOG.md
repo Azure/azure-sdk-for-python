@@ -2,6 +2,9 @@
 
 ## 1.11.1 (Unreleased)
 
+### Bug Fixes
+
+- Raise exception rather than swallowing it if there is something wrong in retry stream downloading  #16723
 
 ## 1.11.0 (2021-02-08)
 

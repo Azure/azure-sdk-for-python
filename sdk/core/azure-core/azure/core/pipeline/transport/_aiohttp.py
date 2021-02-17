@@ -228,17 +228,24 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             except _ResponseStopIteration:
                 self.response.internal_response.close()
                 raise StopAsyncIteration()
-            except (ChunkedEncodingError, ConnectionError):
+            except (ChunkedEncodingError, ConnectionError) as ex:
                 retry_total -= 1
                 if retry_total <= 0:
                     retry_active = False
                 else:
                     await asyncio.sleep(retry_interval)
                     headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
-                    resp = await self.pipeline.run(self.request, stream=True, headers=headers)
-                    if resp.http_response.status_code == 416:
-                        raise
-                    chunk = await self.response.internal_response.content.read(self.block_size)
+                    try:
+                        resp = await self.pipeline.run(self.request, stream=True, headers=headers)
+                        if not resp.http_response:
+                            raise
+                        if resp.http_response.status_code == 416:
+                            raise
+                        chunk = await self.response.internal_response.content.read(self.block_size)
+                    except Exception as err:  # pylint: disable=broad-except
+                        _LOGGER.warning("Unable to stream download: %s", err)
+                        self.response.internal_response.close()
+                        raise ex
                     if not chunk:
                         raise StopAsyncIteration()
                     self.downloaded += len(chunk)

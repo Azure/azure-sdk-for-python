@@ -130,17 +130,24 @@ class StreamDownloadGenerator(object):
                 self.response.internal_response.close()
                 raise StopIteration()
             except (requests.exceptions.ChunkedEncodingError,
-                    requests.exceptions.ConnectionError):
+                    requests.exceptions.ConnectionError) as ex:
                 retry_total -= 1
                 if retry_total <= 0:
                     retry_active = False
                 else:
                     time.sleep(retry_interval)
                     headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
-                    resp = self.pipeline.run(self.request, stream=True, headers=headers)
-                    if resp.http_response.status_code == 416:
-                        raise
-                    chunk = next(self.iter_content_func)
+                    try:
+                        resp = self.pipeline.run(self.request, stream=True, headers=headers)
+                        if not resp.http_response:
+                            raise
+                        if resp.http_response.status_code == 416:
+                            raise
+                        chunk = next(self.iter_content_func)
+                    except Exception as err:   # pylint: disable=broad-except
+                        _LOGGER.warning("Unable to stream download: %s", err)
+                        self.response.internal_response.close()
+                        raise ex
                     if not chunk:
                         raise StopIteration()
                     self.downloaded += len(chunk)

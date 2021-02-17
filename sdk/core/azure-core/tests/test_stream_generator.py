@@ -7,6 +7,8 @@ from azure.core.pipeline.transport import (
     HttpRequest,
     HttpResponse,
     HttpTransport,
+    RequestsTransport,
+    RequestsTransportResponse,
 )
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.transport._requests_basic import StreamDownloadGenerator
@@ -99,3 +101,48 @@ def test_connection_error_416():
     with mock.patch('time.sleep', return_value=None):
         with pytest.raises(requests.exceptions.ConnectionError):
             stream.__next__()
+
+def test_response_streaming_error_behavior():
+    # Test to reproduce https://github.com/Azure/azure-sdk-for-python/issues/16723
+    block_size = 103
+    total_response_size = 500
+    req_response = requests.Response()
+    req_request = requests.Request()
+
+    class FakeStreamWithConnectionError:
+        # fake object for urllib3.response.HTTPResponse
+
+        def stream(self, chunk_size, decode_content=False):
+            assert chunk_size == block_size
+            left = total_response_size
+            while left > 0:
+                if left <= block_size:
+                    raise requests.exceptions.ConnectionError()
+                data = b"X" * min(chunk_size, left)
+                left -= len(data)
+                yield data
+
+        def close(self):
+            pass
+
+    req_response.raw = FakeStreamWithConnectionError()
+
+    response = RequestsTransportResponse(
+        req_request,
+        req_response,
+        block_size,
+    )
+
+    def mock_run(self, *args, **kwargs):
+        return PipelineResponse(
+            None,
+            requests.Response(),
+            None,
+        )
+
+    transport = RequestsTransport()
+    pipeline = Pipeline(transport)
+    pipeline.run = mock_run
+    downloader = response.stream_download(pipeline)
+    with pytest.raises(requests.exceptions.ConnectionError):
+        full_response = b"".join(downloader)
