@@ -20,7 +20,7 @@ from typing import (
 
 import six
 
-from uamqp import BatchMessage, Message, constants
+from uamqp import BatchMessage, Message, constants, types
 
 from ._utils import set_message_partition_key, trace_message, utc_from_timestamp
 from ._constants import (
@@ -42,6 +42,12 @@ from ._constants import (
     PROP_TO,
     PROP_USER_ID,
     PROP_CREATION_TIME,
+    PRODUCER_SEQUENCE_NUMBER_SYMBOL,
+    PRODUCER_ID_SYMBOL,
+    PRODUCER_EPOCH_SYMBOL,
+    MAX_SHORT,
+    MAX_INT,
+    MAX_LONG
 )
 
 if TYPE_CHECKING:
@@ -100,6 +106,8 @@ class EventData(object):
             self.message = Message(body)
         self.message.annotations = {}
         self.message.application_properties = {}
+        self._published_sequence_number = None
+        self._pending_published_sequence_number = None
 
     def __repr__(self):
         # type: () -> str
@@ -179,6 +187,21 @@ class EventData(object):
         :rtype: int
         """
         return self.message.annotations.get(PROP_SEQ_NUMBER, None)
+
+    @property
+    def published_sequence_number(self):
+        # type: () -> Optional[int]
+        """
+        The publishing sequence number assigned to the event at the time it was successfully published.
+
+        The sequence number that was assigned during publishing, if the event was successfully
+        published by a sequence-aware producer. If the producer was not configured to apply
+        sequence numbering or if the event has not yet been successfully published, the value
+        will be None.
+
+        :rtype: int
+        """
+        return self._published_sequence_number
 
     @property
     def offset(self):
@@ -344,16 +367,18 @@ class EventDataBatch(object):
      Event Hub decided by the service.
     """
 
-    def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None):
-        # type: (Optional[int], Optional[str], Optional[Union[str, bytes]]) -> None
+    def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None, **kwargs):
+        # type: (Optional[int], Optional[str], Optional[Union[str, bytes]], Any) -> None
         self.max_size_in_bytes = max_size_in_bytes or constants.MAX_MESSAGE_LENGTH_BYTES
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
         self._partition_id = partition_id
         self._partition_key = partition_key
+        self._is_idempotent_batch = kwargs.pop("is_idempotent_batch", False)
 
         set_message_partition_key(self.message, self._partition_key)
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
+        self._starting_published_sequence_number = None
 
     def __repr__(self):
         # type: () -> str
@@ -392,6 +417,20 @@ class EventDataBatch(object):
         """
         return self._size
 
+    @property
+    def starting_published_sequence_number(self):
+        # type() -> Optional[int]
+        """
+        The publishing sequence number assigned to the first event in the batch at the time
+        the batch was successfully published.
+
+        The sequence number of the first event in the batch, if the batch was successfully
+        published by a sequence-aware producer.  If the producer was not configured to apply
+        sequence numbering or if the batch has not yet been successfully published, the value
+        will be None.
+        """
+        return self._starting_published_sequence_number
+
     def add(self, event_data):
         # type: (EventData) -> None
         """Try to add an EventData to the batch.
@@ -417,6 +456,12 @@ class EventDataBatch(object):
                 set_message_partition_key(event_data.message, self._partition_key)
 
         trace_message(event_data)
+        if self._is_idempotent_batch:
+            # Reserve space for producer-owned fields that correspond to the idempotent publishing, if enabled.
+            event_data.message.annotations[PRODUCER_EPOCH_SYMBOL] = MAX_SHORT
+            event_data.message.annotations[PRODUCER_ID_SYMBOL] = MAX_LONG
+            event_data.message.annotations[PRODUCER_SEQUENCE_NUMBER_SYMBOL] = MAX_INT
+
         event_data_size = event_data.message.get_message_encoded_size()
 
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
@@ -437,6 +482,7 @@ class EventDataBatch(object):
         self.message._body_gen.append(event_data)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1
+
 
 class DictMixin(object):
     def __setitem__(self, key, item):

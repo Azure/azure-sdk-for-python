@@ -29,13 +29,19 @@ from ._constants import (
     PROP_LAST_ENQUEUED_TIME_UTC,
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
     PROP_LAST_ENQUEUED_OFFSET,
-    PROP_TIMESTAMP)
+    PROP_TIMESTAMP,
+    PRODUCER_EPOCH_SYMBOL,
+    PRODUCER_ID_SYMBOL,
+    PRODUCER_SEQUENCE_NUMBER_SYMBOL
+)
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from uamqp import Message
     from azure.core.tracing import AbstractSpan
-    from ._common import EventData
+    from ._common import EventData, EventDataBatch
+    from ._producer import EventHubProducer
+    from .aio._producer_async import EventHubProducer as EventHubProducerAsync
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -262,3 +268,35 @@ def get_last_enqueued_event_properties(event_data):
         }
         return event_data._last_enqueued_event_properties
     return None
+
+
+def commit_idempotent_sending_events(producer, event_data_batch):
+    # type: (Union[EventHubProducer, EventHubProducerAsync], EventDataBatch) -> None
+    """
+    Update the sequence number of events and producer after idempotent sending succeeds
+    """
+    # pylint: disable=protected-access
+    event_data_batch._starting_published_sequence_number = producer._starting_sequence_number
+    producer._starting_sequence_number += len(event_data_batch)
+    producer._last_published_sequence_number = producer._starting_sequence_number - 1
+    for i in range(len(event_data_batch)):
+        event = event_data_batch.message._body_gen[i]
+        event._published_sequence_number = event._pending_published_sequence_number
+        event._pending_published_sequence_number = None
+
+
+def rollback_idempotent_sending_events(event_data_batch):
+    # type: (EventDataBatch) -> None
+    """
+    Unset the sequence number of events after idempotent sending fails
+    """
+    # pylint: disable=protected-access
+    if not event_data_batch:
+        return
+
+    for i in range(len(event_data_batch)):
+        event = event_data_batch.message._body_gen[i]
+        del event.message.annotations[PRODUCER_EPOCH_SYMBOL]
+        del event.message.annotations[PRODUCER_ID_SYMBOL]
+        del event.message.annotations[PRODUCER_SEQUENCE_NUMBER_SYMBOL]
+        event._pending_published_sequence_number = None

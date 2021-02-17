@@ -10,7 +10,6 @@ import time
 import threading
 from typing import (
     Iterable,
-    Union,
     Optional,
     Any,
     AnyStr,
@@ -32,9 +31,14 @@ from ._utils import (
     trace_message,
     send_context_manager,
     add_link_to_send,
+    commit_idempotent_sending_events,
+    rollback_idempotent_sending_events
 )
 from ._constants import (
     TIMEOUT_SYMBOL,
+    PRODUCER_EPOCH,
+    PRODUCER_SEQUENCE_NUMBER,
+    PRODUCER_ID,
     IDEMPOTENT_PRODUCER_SYMBOL,
     PRODUCER_EPOCH_SYMBOL,
     PRODUCER_SEQUENCE_NUMBER_SYMBOL,
@@ -86,6 +90,11 @@ class EventHubProducer(
      periods of inactivity. The default value is `None`, i.e. no keep alive pings.
     :keyword bool auto_reconnect: Whether to automatically reconnect the producer if a retryable error occurs.
      Default value is `True`.
+    :keyword bool enable_idempotent_partitions: Indicates whether or not the producer should enable idempotent
+     publishing to the Event Hub partitions.
+    :keyword dict partition_option: The optional producer configuration. This must be a dictionary that
+     contains the following optional configurations for the partition: `'owner_level'` (int value),
+     `'producer_group_id '` (int value) and `'starting_sequence_number'` (int value).
     """
 
     def __init__(self, client, target, **kwargs):
@@ -127,30 +136,29 @@ class EventHubProducer(
         self._enable_idempotent_partitions = kwargs.get("enable_idempotent_partitions", False)
         # the following instance variables are for idempotent producer,
         # client is expected to keep and manage these data during the life cycle of the producer instance.
-        self._producer_epoch = None
-        self._producer_id = None
-        self._producer_sequence_number = None
+        self._partition_option = kwargs.get("partition_option") or {}
+        self._owner_level = self._partition_option.get("owner_level")
+        self._producer_group_id = self._partition_option.get("producer_group_id")
+        self._starting_sequence_number = self._partition_option.get("starting_sequence_number")
+        self._last_published_sequence_number = None
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
 
         desired_capabilities = None
         if self._enable_idempotent_partitions:
-            symbol_array = [types.AMQPSymbol(IDEMPOTENT_PRODUCER_SYMBOL)]
+            symbol_array = [IDEMPOTENT_PRODUCER_SYMBOL]
             desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
 
-        if self._producer_id is not None:
-            # In case of idempotent producer, at the attach operation a producer-id can be given.
-            # The producer-id should not exist in the case of new connection
-            # if it exists, it is considered existing connection scenario.
-            self._link_properties[types.AMQPSymbol(PRODUCER_ID_SYMBOL)] = types.AMQPLong(self._producer_id)
-
-        if self._producer_epoch is not None:
-            # In case of idempotent producer, at the attach operation, an epoch can be given.
-            # Whenever link is recreated but producer instance is to be maintained,
-            # then link recreation should contain same producer-id but increment epoch.
-            self._producer_epoch += 1
-            self._link_properties[types.AMQPSymbol(PRODUCER_EPOCH_SYMBOL)] = types.AMQPShort(self._producer_epoch)
+        if self._producer_group_id is not None or\
+                self._owner_level is not None or\
+                self._starting_sequence_number is not None:
+            self._link_properties[PRODUCER_ID_SYMBOL] =\
+                types.AMQPLong(self._producer_group_id) if self._producer_group_id is not None else None
+            self._link_properties[PRODUCER_EPOCH_SYMBOL] =\
+                types.AMQPShort(self._owner_level) if self._owner_level is not None else None
+            self._link_properties[PRODUCER_SEQUENCE_NUMBER_SYMBOL] =\
+                types.AMQPInt(self._starting_sequence_number) if self._starting_sequence_number is not None else None
 
         self._handler = SendClient(
             self._target,
@@ -218,48 +226,40 @@ class EventHubProducer(
 
     def _wrap_eventdata(
         self,
-        event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
+        event_data_batch,  # type: EventDataBatch
         span,  # type: Optional[AbstractSpan]
         partition_key,  # type: Optional[AnyStr]
     ):
-        # type: (...) -> Union[EventData, EventDataBatch]
-        if isinstance(event_data, EventData):
-            if partition_key:
-                set_message_partition_key(event_data.message, partition_key)
-            wrapper_event_data = event_data
-            trace_message(wrapper_event_data, span)
-            add_link_to_send(wrapper_event_data, span)
-        else:
-            if isinstance(
-                event_data, EventDataBatch
-            ):  # The partition_key in the param will be omitted.
-                if (
-                    partition_key and partition_key != event_data._partition_key  # pylint: disable=protected-access
-                ):
-                    raise ValueError(
-                        "The partition_key does not match the one of the EventDataBatch"
-                    )
-                for message in event_data.message._body_gen:  # pylint: disable=protected-access
-                    add_link_to_send(message, span)
-                wrapper_event_data = event_data  # type:ignore
-            else:
-                if partition_key:
-                    event_data = _set_partition_key(event_data, partition_key)
-                event_data = _set_trace_message(event_data, span)
-                wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # type: ignore  # pylint: disable=protected-access
-        wrapper_event_data.message.on_send_complete = self._on_outcome
-        return wrapper_event_data
+        # type: (...) -> EventDataBatch
+        if (
+            partition_key and partition_key != event_data_batch._partition_key  # pylint: disable=protected-access
+        ):
+            raise ValueError(
+                "The partition_key does not match the one of the EventDataBatch"
+            )
+        for i in range(len(event_data_batch)):
+            event = event_data_batch.message._body_gen[i]  # pylint: disable=protected-access
+            add_link_to_send(event, span)
+            if self._enable_idempotent_partitions:
+                event._pending_published_sequence_number = self._starting_sequence_number + i
+                event.message.annotations[PRODUCER_EPOCH_SYMBOL] = self._owner_level
+                event.message.annotations[PRODUCER_ID_SYMBOL] = self._producer_group_id
+                event.message.annotations[PRODUCER_SEQUENCE_NUMBER_SYMBOL] =\
+                    event._pending_published_sequence_number
+
+        event_data_batch.message.on_send_complete = self._on_outcome
+        return event_data_batch
 
     def _on_attach(self, source, target, properties, error):
         if not self._enable_idempotent_partitions or str(target) != self._target:
             return
-        self._producer_epoch = properties.get(PRODUCER_EPOCH_SYMBOL)
-        self._producer_id = properties.get(PRODUCER_ID_SYMBOL)
-        self._producer_sequence_number = properties.get(PRODUCER_SEQUENCE_NUMBER_SYMBOL)
+        self._owner_level = properties.get(PRODUCER_EPOCH)
+        self._producer_group_id = properties.get(PRODUCER_ID)
+        self._starting_sequence_number = properties.get(PRODUCER_SEQUENCE_NUMBER)
 
     def send(
         self,
-        event_data,  # type: Union[EventData, EventDataBatch, Iterable[EventData]]
+        event_data,  # type: EventDataBatch
         partition_key=None,  # type: Optional[AnyStr]
         timeout=None,  # type: Optional[float]
     ):
@@ -290,16 +290,26 @@ class EventHubProducer(
         # Tracing code
         with self._lock:
             with send_context_manager() as child:
-                self._check_closed()
-                wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
-                self._unsent_events = [wrapper_event_data.message]
+                try:
+                    wrapper_event_data = None
+                    self._check_closed()
+                    self._open_with_retry()
+                    wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
+                    self._unsent_events = [wrapper_event_data.message]
+                    if child:
+                        self._client._add_span_request_attributes(  # pylint: disable=protected-access
+                            child
+                        )
 
-                if child:
-                    self._client._add_span_request_attributes(  # pylint: disable=protected-access
-                        child
-                    )
-
-                self._send_event_data_with_retry(timeout=timeout)
+                    self._send_event_data_with_retry(timeout=timeout)
+                    if self._enable_idempotent_partitions:
+                        # commit the changes of the properties on each event and update producer
+                        commit_idempotent_sending_events(self, wrapper_event_data)
+                except:
+                    if self._enable_idempotent_partitions:
+                        # idempotent sending failed, unset the properties on each event
+                        rollback_idempotent_sending_events(wrapper_event_data)
+                    raise
 
     def close(self):
         # type:() -> None

@@ -34,10 +34,14 @@ PROP_REPLY_TO_GROUP_ID = b"reply-to-group-id"
 CONSUMER_EPOCH_SYMBOL = b"com.microsoft:epoch"
 TIMEOUT_SYMBOL = b"com.microsoft:timeout"
 RECEIVER_RUNTIME_METRIC_SYMBOL = b"com.microsoft:enable-receiver-runtime-metric"
-IDEMPOTENT_PRODUCER_SYMBOL = b"com.microsoft:idempotent-producer"
-PRODUCER_EPOCH_SYMBOL = b"com.microsoft:producer-epoch";
-PRODUCER_SEQUENCE_NUMBER_SYMBOL = b"com.microsoft:producer-sequence-number"
-PRODUCER_ID_SYMBOL = b"com.microsoft:producer-id"
+IDEMPOTENT_PRODUCER = b"com.microsoft:idempotent-producer"
+PRODUCER_EPOCH = b"com.microsoft:producer-epoch"
+PRODUCER_SEQUENCE_NUMBER = b"com.microsoft:producer-sequence-number"
+PRODUCER_ID = b"com.microsoft:producer-id"
+IDEMPOTENT_PRODUCER_SYMBOL = types.AMQPSymbol(b"com.microsoft:idempotent-producer")
+PRODUCER_EPOCH_SYMBOL = types.AMQPSymbol(b"com.microsoft:producer-epoch")
+PRODUCER_SEQUENCE_NUMBER_SYMBOL = types.AMQPSymbol(b"com.microsoft:producer-sequence-number")
+PRODUCER_ID_SYMBOL = types.AMQPSymbol(b"com.microsoft:producer-id")
 
 MAX_USER_AGENT_LENGTH = 512
 ALL_PARTITIONS = "all-partitions"
@@ -55,8 +59,10 @@ NO_RETRY_ERRORS = (
     b"com.microsoft:auth-failed",
     b"com.microsoft:precondition-failed",
     b"com.microsoft:argument-error",
+    b"com.microsoft:out-of-order-sequence",
+    b"com.microsoft:producer-epoch-stolen"
 )
 
-# TODO new error code for idempotent producer
-# b"com.microsoft:out-of-order-sequence"
-# b"com.microsoft:producer-epoch-stolen"
+MAX_SHORT = 2**15 - 1
+MAX_INT = 2**31 - 1
+MAX_LONG = 2**63 - 1
