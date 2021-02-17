@@ -12,13 +12,16 @@ from azure.keyvault.certificates import (
     CertificateContentType,
     WellKnownIssuerNames,
 )
-from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+from azure.keyvault.certificates._shared import HttpChallengeCache
+from devtools_testutils import PowerShellPreparer
 
-from _shared.preparer import KeyVaultClientPreparer as _KeyVaultClientPreparer
 from _shared.test_case import KeyVaultTestCase
 
-# pre-apply the client_cls positional argument so it needn't be explicitly passed below
-KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, CertificateClient)
+KeyVaultPreparer = functools.partial(
+    PowerShellPreparer,
+    "keyvault",
+    azure_keyvault_url="https://vaultname.vault.azure.net"
+)
 
 
 def print(*args):
@@ -39,11 +42,22 @@ def test_create_certificate_client():
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
-    @ResourceGroupPreparer(random_name_enabled=True)
+    def tearDown(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        super(TestExamplesKeyVault, self).tearDown()
+
+    def create_client(self, vault_uri, **kwargs):
+        credential = self.get_credential(CertificateClient)
+        return self.create_client_from_credential(
+            CertificateClient, credential=credential, vault_url=vault_uri, **kwargs
+        )
+
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_example_certificate_crud_operations(self, client, **kwargs):
+    def test_example_certificate_crud_operations(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         certificate_client = client
+        cert_name = self.get_resource_name("cert-name")
 
         # [START create_certificate]
         from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
@@ -61,7 +75,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
         )
 
-        cert_name = "cert-name"
         # create a certificate with optional arguments, returns a long running operation poller
         certificate_operation_poller = certificate_client.begin_create_certificate(
             certificate_name=cert_name, policy=cert_policy
@@ -121,10 +134,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_certificate.recovery_id)
         # [END delete_certificate]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_example_certificate_list_operations(self, client, **kwargs):
+    def test_example_certificate_list_operations(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         certificate_client = client
 
         # specify the certificate policy
@@ -140,7 +152,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
         )
 
-        certificate_name = self.get_replayable_random_resource_name("cert")
+        certificate_name = self.get_resource_name("cert")
         certificate_client.begin_create_certificate(certificate_name, cert_policy).wait()
 
         # [START list_properties_of_certificates]
@@ -182,10 +194,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.deleted_on)
         # [END list_deleted_certificates]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_example_certificate_backup_restore(self, client, **kwargs):
+    def test_example_certificate_backup_restore(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         certificate_client = client
 
         # specify the certificate policy
@@ -201,7 +212,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
         )
         polling_interval = 0 if self.is_playback() else None
-        cert_name = "cert-name"
+        cert_name = self.get_resource_name("cert-name")
         certificate_client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy).wait()
 
         # [START backup_certificate]
@@ -227,10 +238,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(restored_certificate.properties.version)
         # [END restore_certificate]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_example_certificate_recover(self, client, **kwargs):
+    def test_example_certificate_recover(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         certificate_client = client
 
         # specify the certificate policy
@@ -246,7 +256,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
         )
 
-        cert_name = "cert-name"
+        cert_name = self.get_resource_name("cert-name")
 
         polling_interval = 0 if self.is_playback() else None
         certificate_client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy).wait()
@@ -272,10 +282,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(recovered_certificate.name)
         # [END recover_deleted_certificate]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_example_contacts(self, client, **kwargs):
+    def test_example_contacts(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         certificate_client = client
 
         # [START set_contacts]
@@ -313,10 +322,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(deleted_contact.phone)
         # [END delete_contacts]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_example_issuers(self, client, **kwargs):
+    def test_example_issuers(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         certificate_client = client
 
         # [START create_issuer]
