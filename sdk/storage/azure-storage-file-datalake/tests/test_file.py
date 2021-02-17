@@ -100,21 +100,21 @@ class FileTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(response)
 
-    # @DataLakePreparer()
-    # def test_create_file_using_oauth_token_credential(self, datalake_storage_account_name, datalake_storage_account_key):
-    #     self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-    #     # Arrange
-    #     file_name = self._get_file_reference()
-    #     token_credential = self.generate_oauth_token()
-    #
-    #     # Create a directory to put the file under that
-    #     file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, file_name,
-    #                                      credential=token_credential)
-    #
-    #     response = file_client.create_file()
-    #
-    #     # Assert
-    #     self.assertIsNotNone(response)
+    @DataLakePreparer()
+    def test_create_file_using_oauth_token_credential(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_name = self._get_file_reference()
+        token_credential = self.generate_oauth_token()
+
+        # Create a directory to put the file under that
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, file_name,
+                                         credential=token_credential)
+
+        response = file_client.create_file()
+
+        # Assert
+        self.assertIsNotNone(response)
 
     @DataLakePreparer()
     def test_create_file_with_existing_name(self, datalake_storage_account_name, datalake_storage_account_key):
@@ -359,7 +359,7 @@ class FileTest(StorageTestCase):
 
         # Get user delegation key
         token_credential = self.generate_oauth_token()
-        service_client = DataLakeServiceClient(self._get_account_url(datalake_storage_account_name), credential=token_credential)
+        service_client = DataLakeServiceClient(self._get_account_url(datalake_storage_account_name), credential=token_credential, logging_enable=True)
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -376,7 +376,7 @@ class FileTest(StorageTestCase):
         new_file_client = DataLakeFileClient(self._get_account_url(datalake_storage_account_name),
                                              file_client.file_system_name,
                                              file_client.path_name,
-                                             credential=sas_token)
+                                             credential=sas_token, logging_enable=True)
         downloaded_data = new_file_client.download_file().readall()
         self.assertEqual(data, downloaded_data)
 

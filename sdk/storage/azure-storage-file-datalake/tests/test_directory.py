@@ -34,7 +34,7 @@ REMOVE_ACL = "mask," + "default:user,default:group," + \
 class DirectoryTest(StorageTestCase):
     def _setUp(self, account_name, account_key):
         url = self._get_account_url(account_name)
-        self.dsc = DataLakeServiceClient(url, credential=account_key)
+        self.dsc = DataLakeServiceClient(url, credential=account_key, logging_enable=True)
         self.config = self.dsc._config
 
         self.file_system_name = self.get_resource_name('filesystem')

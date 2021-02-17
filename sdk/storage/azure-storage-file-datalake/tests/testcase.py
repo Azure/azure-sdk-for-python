@@ -102,7 +102,8 @@ class StorageTestCase(AzureTestCase):
     def __init__(self, *args, **kwargs):
         super(StorageTestCase, self).__init__(*args, **kwargs)
         self.replay_processors.append(XMSRequestIDBody())
-        self._RESOURCE_GROUP = None,
+        self.logger = logging.getLogger('azure.storage')
+        self.configure_logging()
 
     # def setUp(self):
     #     self.working_folder = os.path.dirname(__file__)
@@ -246,79 +247,6 @@ class StorageTestCase(AzureTestCase):
     #         def _nop_context_manager():
     #             yield
     #         return _nop_context_manager()
-
-    def _scrub_sensitive_request_info(self, request):
-        if not TestMode.is_playback(self.test_mode):
-            request.uri = self._scrub(request.uri)
-            if request.body is not None:
-                request.body = self._scrub(request.body)
-        return request
-
-    def _scrub_sensitive_response_info(self, response):
-        if not TestMode.is_playback(self.test_mode):
-            # We need to make a copy because vcr doesn't make one for us.
-            # Without this, changing the contents of the dicts would change
-            # the contents returned to the caller - not just the contents
-            # getting saved to disk. That would be a problem with headers
-            # such as 'location', often used in the request uri of a
-            # subsequent service call.
-            response = copy.deepcopy(response)
-            headers = response.get('headers')
-            if headers:
-                headers.pop('x-ms-client-request-id', None)
-
-                def internal_scrub(key, val):
-                    if key.lower() == 'retry-after':
-                        return '0'
-                    return self._scrub(val)
-
-                for name, val in headers.items():
-                    if isinstance(val, list):
-                        for i, e in enumerate(val):
-                            val[i] = internal_scrub(name, e)
-                    else:
-                        headers[name] = internal_scrub(name, val)
-
-            body = response.get('body')
-            if body:
-                body_str = body.get('string')
-                if body_str:
-                    response['body']['string'] = self._scrub(body_str)
-
-                    content_type = response.get('headers', {}).get('Content-Type', '')
-                    if content_type:
-                        content_type = (content_type[0] if isinstance(content_type, list) else content_type).lower()
-                        if 'multipart/mixed' in content_type:
-                            response['body']['string'] = re.sub("x-ms-client-request-id: [a-f0-9-]+\r\n", "", body_str.decode()).encode()
-
-        return response
-
-    def _scrub(self, val):
-        old_to_new_dict = {
-            self.settings.STORAGE_DATA_LAKE_ACCOUNT_NAME: self.fake_settings.STORAGE_DATA_LAKE_ACCOUNT_NAME,
-            self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY: self.fake_settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID: self.fake_settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET: self.fake_settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID: self.fake_settings.ACTIVE_DIRECTORY_TENANT_ID,
-        }
-        replacements = list(old_to_new_dict.keys())
-
-        # if we have 'val1' and 'val10', we want 'val10' to be replaced first
-        replacements.sort(reverse=True)
-
-        for old_value in replacements:
-            if old_value:
-                new_value = old_to_new_dict[old_value]
-                if old_value != new_value:
-                    if isinstance(val, bytes):
-                        val = val.replace(old_value.encode(), new_value.encode())
-                    elif isinstance(val, dict):
-                        val2 = str(val).replace(old_value, new_value)
-                        val = eval(val2)    # nosec
-                    else:
-                        val = val.replace(old_value, new_value)
-        return val
-
     def assert_upload_progress(self, size, max_chunk_size, progress, unknown_size=False):
         '''Validates that the progress chunks align with our chunking procedure.'''
         index = 0
@@ -351,6 +279,10 @@ class StorageTestCase(AzureTestCase):
     def generate_oauth_token(self):
         if self.is_live:
             from azure.identity import ClientSecretCredential
+            self.logger.debug("tenant_id, %r, client_id, %r, client_sec, %r",
+                self.get_settings_value("TENANT_ID"),
+                self.get_settings_value("CLIENT_ID"),
+                self.get_settings_value("CLIENT_SECRET"),)
             return ClientSecretCredential(
                 self.get_settings_value("TENANT_ID"),
                 self.get_settings_value("CLIENT_ID"),
