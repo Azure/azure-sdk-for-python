@@ -129,7 +129,7 @@ class CommunicationIdentityClient(object):
             communication_user.identifier, **kwargs)
 
     @distributed_trace
-    def issue_token(
+    def get_token(
             self,
             user, # type: CommunicationUserIdentifier
             scopes, # List[Union[str, "_model.CommunicationTokenScope"]]
