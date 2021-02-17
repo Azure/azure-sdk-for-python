@@ -15,7 +15,7 @@ from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -28,7 +28,7 @@ class FormRecognizerClientOperationsMixin(object):
 
     def _train_custom_model_async_initial(
         self,
-        train_request,  # type: "models.TrainRequest"
+        train_request,  # type: "_models.TrainRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -64,7 +64,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -77,7 +77,7 @@ class FormRecognizerClientOperationsMixin(object):
 
     def begin_train_custom_model_async(
         self,
-        train_request,  # type: "models.TrainRequest"
+        train_request,  # type: "_models.TrainRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -90,15 +90,15 @@ class FormRecognizerClientOperationsMixin(object):
         configuration setting value e.g., if '{Mounts:Input}' configuration setting value is '/input'
         then a valid source path would be '/input/contosodataset'. All data to be trained is expected
         to be under the source folder or sub folders under it. Models are trained using documents that
-        are of the following content type - 'application/pdf', 'image/jpeg', 'image/png', 'image/tiff'.
-        Other type of content is ignored.
+        are of the following content type - 'application/pdf', 'image/jpeg', 'image/png', 'image/tiff'
+        or 'image/bmp'. Other type of content is ignored.
 
         :param train_request: Training request parameters.
-        :type train_request: ~azure.ai.formrecognizer.models.TrainRequest
+        :type train_request: ~azure.ai.formrecognizer.v2_1_preview_3.models.TrainRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -150,7 +150,7 @@ class FormRecognizerClientOperationsMixin(object):
         include_keys=False,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Model"
+        # type: (...) -> "_models.Model"
         """Get Custom Model.
 
         Get detailed information about a custom model.
@@ -161,10 +161,10 @@ class FormRecognizerClientOperationsMixin(object):
         :type include_keys: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Model, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.Model
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.Model
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Model"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Model"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -194,7 +194,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('Model', pipeline_response)
@@ -251,7 +251,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -263,7 +263,8 @@ class FormRecognizerClientOperationsMixin(object):
         self,
         model_id,  # type: str
         include_text_details=False,  # type: Optional[bool]
-        file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
+        page_range=None,  # type: Optional[List[str]]
+        file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -287,6 +288,8 @@ class FormRecognizerClientOperationsMixin(object):
         query_parameters = {}  # type: Dict[str, Any]
         if include_text_details is not None:
             query_parameters['includeTextDetails'] = self._serialize.query("include_text_details", include_text_details, 'bool')
+        if page_range is not None:
+            query_parameters['PageRange'] = self._serialize.query("page_range", page_range, '[str]', div=',')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -294,7 +297,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if header_parameters['Content-Type'].split(";")[0] in ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff']:
+        if header_parameters['Content-Type'].split(";")[0] in ['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff']:
             body_content_kwargs['stream_content'] = file_stream
         elif header_parameters['Content-Type'].split(";")[0] in ['application/json']:
             if file_stream is not None:
@@ -305,7 +308,7 @@ class FormRecognizerClientOperationsMixin(object):
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/pdf', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(header_parameters['Content-Type'])
+                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(header_parameters['Content-Type'])
             )
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -313,7 +316,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -328,29 +331,34 @@ class FormRecognizerClientOperationsMixin(object):
         self,
         model_id,  # type: str
         include_text_details=False,  # type: Optional[bool]
-        file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
+        page_range=None,  # type: Optional[List[str]]
+        file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
         """Analyze Form.
 
         Extract key-value pairs, tables, and semantic values from a given document. The input document
-        must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or
-        'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local
-        path) of the document to be analyzed.
+        must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png',
+        'image/tiff' or 'image/bmp'. Alternatively, use 'application/json' type to specify the location
+        (Uri or local path) of the document to be analyzed.
 
         :param model_id: Model identifier.
         :type model_id: str
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
+        :param page_range: Custom page numbers for multi-page documents(PDF/TIFF), input the number of
+         the pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+         range with a comma or space.
+        :type page_range: list[str]
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
-         Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
+         Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -368,6 +376,7 @@ class FormRecognizerClientOperationsMixin(object):
             raw_result = self._analyze_with_custom_model_initial(
                 model_id=model_id,
                 include_text_details=include_text_details,
+                page_range=page_range,
                 file_stream=file_stream,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -405,7 +414,7 @@ class FormRecognizerClientOperationsMixin(object):
         result_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AnalyzeOperationResult"
+        # type: (...) -> "_models.AnalyzeOperationResult"
         """Get Analyze Form Result.
 
         Obtain current status and the result of the analyze form operation.
@@ -416,10 +425,10 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalyzeOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -448,7 +457,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
@@ -462,7 +471,7 @@ class FormRecognizerClientOperationsMixin(object):
     def _copy_custom_model_initial(
         self,
         model_id,  # type: str
-        copy_request,  # type: "models.CopyRequest"
+        copy_request,  # type: "_models.CopyRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -499,7 +508,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -513,7 +522,7 @@ class FormRecognizerClientOperationsMixin(object):
     def begin_copy_custom_model(
         self,
         model_id,  # type: str
-        copy_request,  # type: "models.CopyRequest"
+        copy_request,  # type: "_models.CopyRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -525,11 +534,11 @@ class FormRecognizerClientOperationsMixin(object):
         :param model_id: Model identifier.
         :type model_id: str
         :param copy_request: Copy request parameters.
-        :type copy_request: ~azure.ai.formrecognizer.models.CopyRequest
+        :type copy_request: ~azure.ai.formrecognizer.v2_1_preview_3.models.CopyRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -583,7 +592,7 @@ class FormRecognizerClientOperationsMixin(object):
         result_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CopyOperationResult"
+        # type: (...) -> "_models.CopyOperationResult"
         """Get Custom Model Copy Result.
 
         Obtain current status and the result of a custom model copy operation.
@@ -594,10 +603,10 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CopyOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.CopyOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.CopyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CopyOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CopyOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -626,7 +635,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CopyOperationResult', pipeline_response)
@@ -641,17 +650,17 @@ class FormRecognizerClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CopyAuthorizationResult"
+        # type: (...) -> "_models.CopyAuthorizationResult"
         """Generate Copy Authorization.
 
         Generate authorization to copy a model into the target Form Recognizer resource.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CopyAuthorizationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.CopyAuthorizationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.CopyAuthorizationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CopyAuthorizationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CopyAuthorizationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -678,7 +687,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -693,7 +702,7 @@ class FormRecognizerClientOperationsMixin(object):
 
     def _compose_custom_models_async_initial(
         self,
-        compose_request,  # type: "models.ComposeRequest"
+        compose_request,  # type: "_models.ComposeRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -729,7 +738,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -742,7 +751,7 @@ class FormRecognizerClientOperationsMixin(object):
 
     def begin_compose_custom_models_async(
         self,
-        compose_request,  # type: "models.ComposeRequest"
+        compose_request,  # type: "_models.ComposeRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -753,11 +762,11 @@ class FormRecognizerClientOperationsMixin(object):
         It would validate limit of models put together.
 
         :param compose_request: Compose models.
-        :type compose_request: ~azure.ai.formrecognizer.models.ComposeRequest
+        :type compose_request: ~azure.ai.formrecognizer.v2_1_preview_3.models.ComposeRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -806,8 +815,9 @@ class FormRecognizerClientOperationsMixin(object):
     def _analyze_business_card_async_initial(
         self,
         include_text_details=False,  # type: Optional[bool]
-        locale=None,  # type: Optional[Union[str, "models.Locale"]]
-        file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
+        locale=None,  # type: Optional[Union[str, "_models.Locale"]]
+        page_range=None,  # type: Optional[List[str]]
+        file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -832,6 +842,8 @@ class FormRecognizerClientOperationsMixin(object):
             query_parameters['includeTextDetails'] = self._serialize.query("include_text_details", include_text_details, 'bool')
         if locale is not None:
             query_parameters['locale'] = self._serialize.query("locale", locale, 'str')
+        if page_range is not None:
+            query_parameters['PageRange'] = self._serialize.query("page_range", page_range, '[str]', div=',')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -858,7 +870,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -872,31 +884,36 @@ class FormRecognizerClientOperationsMixin(object):
     def begin_analyze_business_card_async(
         self,
         include_text_details=False,  # type: Optional[bool]
-        locale=None,  # type: Optional[Union[str, "models.Locale"]]
-        file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
+        locale=None,  # type: Optional[Union[str, "_models.Locale"]]
+        page_range=None,  # type: Optional[List[str]]
+        file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
         """Analyze Business Card.
 
         Extract field text and semantic values from a given business card document. The input document
-        must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or
-        'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri) of the
-        document to be analyzed.
+        must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png',
+        'image/tiff' or 'image/bmp'. Alternatively, use 'application/json' type to specify the location
+        (Uri) of the document to be analyzed.
 
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
         :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
          en-IN, en-US(default).
-        :type locale: str or ~azure.ai.formrecognizer.models.Locale
+        :type locale: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Locale
+        :param page_range: Custom page numbers for multi-page documents(PDF/TIFF), input the number of
+         the pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+         range with a comma or space.
+        :type page_range: list[str]
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -914,6 +931,7 @@ class FormRecognizerClientOperationsMixin(object):
             raw_result = self._analyze_business_card_async_initial(
                 include_text_details=include_text_details,
                 locale=locale,
+                page_range=page_range,
                 file_stream=file_stream,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -949,7 +967,7 @@ class FormRecognizerClientOperationsMixin(object):
         result_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AnalyzeOperationResult"
+        # type: (...) -> "_models.AnalyzeOperationResult"
         """Get Analyze Business Card Result.
 
         Track the progress and obtain the result of the analyze business card operation.
@@ -958,10 +976,10 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalyzeOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -989,7 +1007,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
@@ -1003,8 +1021,9 @@ class FormRecognizerClientOperationsMixin(object):
     def _analyze_invoice_async_initial(
         self,
         include_text_details=False,  # type: Optional[bool]
-        locale=None,  # type: Optional[Union[str, "models.Locale"]]
-        file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
+        locale=None,  # type: Optional[Union[str, "_models.Locale"]]
+        page_range=None,  # type: Optional[List[str]]
+        file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1029,6 +1048,8 @@ class FormRecognizerClientOperationsMixin(object):
             query_parameters['includeTextDetails'] = self._serialize.query("include_text_details", include_text_details, 'bool')
         if locale is not None:
             query_parameters['locale'] = self._serialize.query("locale", locale, 'str')
+        if page_range is not None:
+            query_parameters['PageRange'] = self._serialize.query("page_range", page_range, '[str]', div=',')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -1055,7 +1076,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1069,31 +1090,36 @@ class FormRecognizerClientOperationsMixin(object):
     def begin_analyze_invoice_async(
         self,
         include_text_details=False,  # type: Optional[bool]
-        locale=None,  # type: Optional[Union[str, "models.Locale"]]
-        file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
+        locale=None,  # type: Optional[Union[str, "_models.Locale"]]
+        page_range=None,  # type: Optional[List[str]]
+        file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
         """Analyze Invoice Document.
 
         Extract field text and semantic values from a given invoice document. The input document must
-        be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or
-        'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri) of the
-        document to be analyzed.
+        be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png',
+        'image/tiff' or 'image/bmp'. Alternatively, use 'application/json' type to specify the location
+        (Uri) of the document to be analyzed.
 
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
         :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
          en-IN, en-US(default).
-        :type locale: str or ~azure.ai.formrecognizer.models.Locale
+        :type locale: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Locale
+        :param page_range: Custom page numbers for multi-page documents(PDF/TIFF), input the number of
+         the pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+         range with a comma or space.
+        :type page_range: list[str]
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -1111,6 +1137,7 @@ class FormRecognizerClientOperationsMixin(object):
             raw_result = self._analyze_invoice_async_initial(
                 include_text_details=include_text_details,
                 locale=locale,
+                page_range=page_range,
                 file_stream=file_stream,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -1146,7 +1173,7 @@ class FormRecognizerClientOperationsMixin(object):
         result_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AnalyzeOperationResult"
+        # type: (...) -> "_models.AnalyzeOperationResult"
         """Get Analyze Invoice Result.
 
         Track the progress and obtain the result of the analyze invoice operation.
@@ -1155,10 +1182,10 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalyzeOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1186,7 +1213,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
@@ -1197,11 +1224,10 @@ class FormRecognizerClientOperationsMixin(object):
         return deserialized
     get_analyze_invoice_result.metadata = {'url': '/prebuilt/invoice/analyzeResults/{resultId}'}  # type: ignore
 
-    def _analyze_receipt_async_initial(
+    def _analyze_id_async_initial(
         self,
         include_text_details=False,  # type: Optional[bool]
-        locale=None,  # type: Optional[Union[str, "models.Locale"]]
-        file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
+        file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1214,7 +1240,7 @@ class FormRecognizerClientOperationsMixin(object):
         accept = "application/json"
 
         # Construct URL
-        url = self._analyze_receipt_async_initial.metadata['url']  # type: ignore
+        url = self._analyze_id_async_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -1224,8 +1250,6 @@ class FormRecognizerClientOperationsMixin(object):
         query_parameters = {}  # type: Dict[str, Any]
         if include_text_details is not None:
             query_parameters['includeTextDetails'] = self._serialize.query("include_text_details", include_text_details, 'bool')
-        if locale is not None:
-            query_parameters['locale'] = self._serialize.query("locale", locale, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -1252,7 +1276,202 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    _analyze_id_async_initial.metadata = {'url': '/prebuilt/id/analyze'}  # type: ignore
+
+    def begin_analyze_id_async(
+        self,
+        include_text_details=False,  # type: Optional[bool]
+        file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller[None]
+        """Analyze ID.
+
+        Extract field text and semantic values from a given ID document. The input document must be of
+        one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png', 'image/tiff'
+        or 'image/bmp'. Alternatively, use 'application/json' type to specify the location (Uri) of the
+        document to be analyzed.
+
+        :param include_text_details: Include text lines and element references in the result.
+        :type include_text_details: bool
+        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
+        :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
+         Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._analyze_id_async_initial(
+                include_text_details=include_text_details,
+                file_stream=file_stream,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_analyze_id_async.metadata = {'url': '/prebuilt/id/analyze'}  # type: ignore
+
+    def get_analyze_id_result(
+        self,
+        result_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.AnalyzeOperationResult"
+        """Get Analyze ID Result.
+
+        Track the progress and obtain the result of the analyze ID operation.
+
+        :param result_id: Analyze operation result identifier.
+        :type result_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnalyzeOperationResult, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_analyze_id_result.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'resultId': self._serialize.url("result_id", result_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_analyze_id_result.metadata = {'url': '/prebuilt/id/analyzeResults/{resultId}'}  # type: ignore
+
+    def _analyze_receipt_async_initial(
+        self,
+        include_text_details=False,  # type: Optional[bool]
+        locale=None,  # type: Optional[Union[str, "_models.Locale"]]
+        page_range=None,  # type: Optional[List[str]]
+        file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self._analyze_receipt_async_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        if include_text_details is not None:
+            query_parameters['includeTextDetails'] = self._serialize.query("include_text_details", include_text_details, 'bool')
+        if locale is not None:
+            query_parameters['locale'] = self._serialize.query("locale", locale, 'str')
+        if page_range is not None:
+            query_parameters['PageRange'] = self._serialize.query("page_range", page_range, '[str]', div=',')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if header_parameters['Content-Type'].split(";")[0] in ['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff']:
+            body_content_kwargs['stream_content'] = file_stream
+        elif header_parameters['Content-Type'].split(";")[0] in ['application/json']:
+            if file_stream is not None:
+                body_content = self._serialize.body(file_stream, 'SourcePath')
+            else:
+                body_content = None
+            body_content_kwargs['content'] = body_content
+        else:
+            raise ValueError(
+                "The content_type '{}' is not one of the allowed values: "
+                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(header_parameters['Content-Type'])
+            )
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1266,31 +1485,36 @@ class FormRecognizerClientOperationsMixin(object):
     def begin_analyze_receipt_async(
         self,
         include_text_details=False,  # type: Optional[bool]
-        locale=None,  # type: Optional[Union[str, "models.Locale"]]
-        file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
+        locale=None,  # type: Optional[Union[str, "_models.Locale"]]
+        page_range=None,  # type: Optional[List[str]]
+        file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
         """Analyze Receipt.
 
         Extract field text and semantic values from a given receipt document. The input document must
-        be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or
-        'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri) of the
-        document to be analyzed.
+        be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png',
+        'image/tiff' or 'image/bmp'. Alternatively, use 'application/json' type to specify the location
+        (Uri) of the document to be analyzed.
 
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
         :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
          en-IN, en-US(default).
-        :type locale: str or ~azure.ai.formrecognizer.models.Locale
+        :type locale: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Locale
+        :param page_range: Custom page numbers for multi-page documents(PDF/TIFF), input the number of
+         the pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+         range with a comma or space.
+        :type page_range: list[str]
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -1308,6 +1532,7 @@ class FormRecognizerClientOperationsMixin(object):
             raw_result = self._analyze_receipt_async_initial(
                 include_text_details=include_text_details,
                 locale=locale,
+                page_range=page_range,
                 file_stream=file_stream,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -1343,7 +1568,7 @@ class FormRecognizerClientOperationsMixin(object):
         result_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AnalyzeOperationResult"
+        # type: (...) -> "_models.AnalyzeOperationResult"
         """Get Analyze Receipt Result.
 
         Track the progress and obtain the result of the analyze receipt operation.
@@ -1352,10 +1577,10 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalyzeOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1383,7 +1608,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
@@ -1396,9 +1621,10 @@ class FormRecognizerClientOperationsMixin(object):
 
     def _analyze_layout_async_initial(
         self,
-        language=None,  # type: Optional[Union[str, "models.Language"]]
-        pages=None,  # type: Optional[List[str]]
-        file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
+        page_range=None,  # type: Optional[List[str]]
+        language=None,  # type: Optional[Union[str, "_models.Language"]]
+        reading_order=None,  # type: Optional[Union[str, "_models.ReadingOrder"]]
+        file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1419,10 +1645,12 @@ class FormRecognizerClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        if page_range is not None:
+            query_parameters['PageRange'] = self._serialize.query("page_range", page_range, '[str]', div=',')
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
-        if pages is not None:
-            query_parameters['Pages'] = self._serialize.query("pages", pages, '[str]', div=',')
+        if reading_order is not None:
+            query_parameters['readingOrder'] = self._serialize.query("reading_order", reading_order, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -1449,7 +1677,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1462,9 +1690,10 @@ class FormRecognizerClientOperationsMixin(object):
 
     def begin_analyze_layout_async(
         self,
-        language=None,  # type: Optional[Union[str, "models.Language"]]
-        pages=None,  # type: Optional[List[str]]
-        file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
+        page_range=None,  # type: Optional[List[str]]
+        language=None,  # type: Optional[Union[str, "_models.Language"]]
+        reading_order=None,  # type: Optional[Union[str, "_models.ReadingOrder"]]
+        file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -1475,25 +1704,40 @@ class FormRecognizerClientOperationsMixin(object):
         'image/bmp'. Alternatively, use 'application/json' type to specify the location (Uri or local
         path) of the document to be analyzed.
 
-        :param language: The BCP-47 language code of the text in the document. Currently, only English
-         ('en'), Dutch (‘nl’), French (‘fr’), German (‘de’), Italian (‘it’), Portuguese (‘pt'),
-         simplified Chinese ('zh-Hans') and Spanish ('es') are supported (print – nine languages and
-         handwritten – English only). Layout supports auto language identification and multi language
-         documents, so only provide a language code if you would like to force the documented to be
-         processed as that specific language.
-        :type language: str or ~azure.ai.formrecognizer.models.Language
-        :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
-         pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+        :param page_range: Custom page numbers for multi-page documents(PDF/TIFF), input the number of
+         the pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
          range with a comma or space.
-        :type pages: list[str]
+        :type page_range: list[str]
+        :param language: Currently, only Afrikaans (‘af’), Albanian (‘sq’), Asturian (‘ast’), Basque
+         (‘eu’), Bislama (‘bi’), Breton (‘br’), Catalan (‘ca’), Cebuano (‘ceb’), Chamorro (‘ch’),
+         Cornish (‘kw’), Corsican (‘co’), Crimean Tatar - Latin script(‘crh’), Czech (‘cs’), Danish
+         (‘da’), Dutch (‘nl’), English ('en'), Estonian (‘et’), Fijian (‘fj’), Filipino (‘fil’), Finnish
+         (‘fi’), French (‘fr’), Friulian (‘fur’), Galician (‘gl’), German (‘de’), Gilbertese (‘gil’),
+         Greenlandic (‘kl’), Haitian Creole (‘ht’), Hani (‘hni’), Hmong Daw (‘mww’), Hungarian (‘hu’),
+         Indonesian (‘id’), Interlingua (‘ia’), Inuktitut (‘iu’), Irish (‘ga’), Italian (‘it’), Japanese
+         (‘ja’), Javanese (‘jv’), Kabuverdianu (‘kea’), Kachin (‘kac’), Kara-Kalpak (‘kaa’), Kashubian
+         (‘csb’), Khasi (‘kha’), Korean (‘ko’), Kurdish - Latin script (‘ku’), K’iche’ (‘quc’),
+         Luxembourgish (‘lb’), Malay (‘ms’), Manx (‘gv’), Neapolitan (‘nap’), Norwegian (‘no’), Occitan
+         (‘oc’), Polish (‘pl’), Portuguese (‘pt’), Romansh (‘rm’), Scots (‘sco’), Scottish Gaelic
+         (‘gd’), simplified Chinese (‘zh-Hans’), Slovenian (‘sl’), Spanish (‘es’), Swahili (‘sw’),
+         Swedish (‘sv’), Tatar - Latin script (‘tt’), Tetum (‘tet’), traditional Chinese (‘zh-Hant’),
+         Turkish (‘tr’), Upper Sorbian (‘hsb’), Uzbek (‘uz’), Volapük (‘vo’), Walser (‘wae’), Western
+         Frisian (‘fy’), Yucatec Maya (‘yua’), Zhuang (‘za’) and Zulu (‘zu’) are supported (print –
+         seventy-three languages and handwritten – English only). Layout supports auto language
+         identification and multi language documents, so only provide a language code if you would like
+         to force the documented to be processed as that specific language.
+        :type language: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Language
+        :param reading_order: Reading order algorithm to sort the text lines returned. Supported
+         reading orders include: Basic(default), Natural.
+        :type reading_order: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.ReadingOrder
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -1509,8 +1753,9 @@ class FormRecognizerClientOperationsMixin(object):
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._analyze_layout_async_initial(
+                page_range=page_range,
                 language=language,
-                pages=pages,
+                reading_order=reading_order,
                 file_stream=file_stream,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -1546,7 +1791,7 @@ class FormRecognizerClientOperationsMixin(object):
         result_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AnalyzeOperationResult"
+        # type: (...) -> "_models.AnalyzeOperationResult"
         """Get Analyze Layout Result.
 
         Track the progress and obtain the result of the analyze layout operation.
@@ -1555,10 +1800,10 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalyzeOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1586,7 +1831,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
@@ -1601,17 +1846,17 @@ class FormRecognizerClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.Models"]
+        # type: (...) -> Iterable["_models.Models"]
         """List Custom Models.
 
         Get information about all custom models.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Models or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.models.Models]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.v2_1_preview_3.models.Models]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Models"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Models"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1660,7 +1905,7 @@ class FormRecognizerClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -1675,17 +1920,17 @@ class FormRecognizerClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Models"
+        # type: (...) -> "_models.Models"
         """Get Custom Models.
 
         Get information about all custom models.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Models, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.models.Models
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.Models
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Models"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Models"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1714,7 +1959,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('Models', pipeline_response)
