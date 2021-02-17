@@ -424,28 +424,34 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert type(key1) == type(key2)
         assert key1.key == key2.key
         assert key1.label == key2.label
-        assert key1.value == key2.value
+        assert key1.content_type == key2.content_type
+        assert key1.tags == key2.tags
+        assert key1.etag != key2.etag
+        if isinstance(key1, FeatureFlagConfigurationSetting):
+            assert key1.value['conditions'] == key2.value['conditions']
+            assert key1.value['description'] == key2.value['description']
+            assert key1.value['enabled'] == key2.value['enabled']
+            assert key1.is_enabled == key2.is_enabled
+        else:
+            assert key1.value == key2.value
 
     @app_config_decorator
     def test_config_setting_feature_flag(self, client):
+        retrieved_flag = client.get_configuration_setting(".appconfig.featureflag/test_features")
+        retrieved_flag.value['enabled'] = False
+        sent_flag = client.set_configuration_setting(retrieved_flag)
+        print(retrieved_flag)
+        self._assert_same_keys(retrieved_flag, sent_flag)
+
         feature_flag = FeatureFlagConfigurationSetting("test_feature", True)
         set_flag = client.set_configuration_setting(feature_flag)
 
         self._assert_same_keys(feature_flag, set_flag)
-        print(set_flag)
-        assert feature_flag.key == set_flag.key
-        print(set_flag.key, feature_flag.key)
-        print(type(set_flag), type(feature_flag))
 
-    # @pytest.mark.skip("pending")
     @app_config_decorator
     def test_config_setting_secret_reference(self, client):
         secret_reference = SecretReferenceConfigurationSetting(
-            "ConnectionString", "https://pakrym.vault.azure.net/secrets/connectionString")
+            "ConnectionString", "https://test-test.vault.azure.net/secrets/connectionString")
         set_flag = client.set_configuration_setting(secret_reference)
 
         self._assert_same_keys(secret_reference, set_flag)
-        # print(set_flag, secret_reference)
-        assert secret_reference.key == set_flag.key
-        print(set_flag.key, secret_reference.key)
-        print(type(set_flag), type(secret_reference))

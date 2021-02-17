@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import ast
+import json
+import six
 from msrest.serialization import Model
 from ._generated.models import KeyValue
 
@@ -46,7 +49,7 @@ class ConfigurationSetting(Model):
         self.content_type = kwargs.get('content_type', None)
         self.last_modified = kwargs.get('last_modified', None)
         self.read_only = kwargs.get('read_only', None)
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get('tags', {})
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -126,15 +129,38 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
             self.key = self.key_prefix + feature_id
         self.is_enabled = is_enabled
         self.label = kwargs.get('label', None)
-        self.content_type = self.feature_flag_content_type
-        self.feature_id = feature_id
+        self.content_type = kwargs.get('content_type', self.feature_flag_content_type)
+        self._feature_id = feature_id
+        self.last_modified = kwargs.get('last_modified', None)
+        self.tags = kwargs.get('tags', {})
+        self.read_only = kwargs.get('read_only', None)
+        self.etag = kwargs.get('etag', None)
+
+        self.value = kwargs.get('value', None)
+        if isinstance(self.value, six.string_types):
+            try:
+                self.value = ast.literal_eval(self.value)
+            except ValueError:
+                self.value = json.loads(self.value)
+            except:
+                pass
+
+        # This is for instantiating a value itself
+        if isinstance(self.is_enabled, bool):
+            self.value = {
+                'id': self.key,
+                'description': kwargs.get('description', None),
+                'enabled': is_enabled,
+                'conditions': {
+                    'client_filters': []
+                }
+            }
+
+        self.is_enabled = self.value['enabled']
+
         self.description = kwargs.get('description', None)
         self.display_name = kwargs.get('display_name', None)
-        self.etag = kwargs.get('etag', None)
-        self.value = kwargs.get('value', None)
-        self.last_modified = kwargs.get('last_modified', None)
-        self.read_only = kwargs.get('read_only', None)
-        self.tags = kwargs.get('tags', None)
+
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -150,15 +176,19 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
             tags=key_value.tags,
             read_only=key_value.locked,
             etag=key_value.etag,
+            value=key_value.value
         )
 
     def _to_generated(self):
+        value = self.value
+        if isinstance(self.value, dict):
+            value = json.dumps(self.value)
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=self.value,
+            value=value,
             content_type=self.content_type,
-            last_modified=key_value.last_modified,
+            last_modified=self.last_modified,
             tags=self.tags,
             locked=self.read_only,
             etag=self.etag
@@ -203,12 +233,12 @@ class SecretReferenceConfigurationSetting(Model):
         self.key = key
         self.label = label
         self._secret_id = secret_id
-        self.content_type = self.secret_reference_content_type
+        self.content_type = kwargs.get('content_type', self.secret_reference_content_type)
         self.etag = kwargs.get('etag', None)
         self.value = kwargs.get('value', None)
         self.last_modified = kwargs.get('last_modified', None)
         self.read_only = kwargs.get('read_only', None)
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get('tags', {})
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -231,7 +261,7 @@ class SecretReferenceConfigurationSetting(Model):
             label=self.label,
             value=self.value,
             content_type=self.content_type,
-            last_modified=key_value.last_modified,
+            last_modified=self.last_modified,
             tags=self.tags,
             locked=self.read_only,
             etag=self.etag
@@ -243,6 +273,8 @@ class FeatureFlagFilter(object):
     :type name: string
     """
 
-    def __init__(self, name, **kwargs):
+    def __init__(self, name, parameters=dict()):
+        # type: (str, dict) -> None
         self.name = name
-        self.parameters = kwargs
+        self.parameters = parameters
+
