@@ -483,14 +483,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
 
         topic_name, to_update = create_properties_from_list_of_dicts_if_needed(topic, TopicProperties)
-        # is the below needed 6 lines? --> it's not in the management async client
-        if isinstance(topic, dict):
-            topic = to_update
-
-        to_update.default_message_time_to_live = kwargs.get(
-            "default_message_time_to_live") or topic.default_message_time_to_live
-        to_update.duplicate_detection_history_time_window = kwargs.get(
-            "duplicate_detection_history_time_window") or topic.duplicate_detection_history_time_window
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
