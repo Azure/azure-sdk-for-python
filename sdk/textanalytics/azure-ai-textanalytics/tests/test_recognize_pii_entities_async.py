@@ -578,7 +578,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
         self.assertEqual("My SSN is ***********.", result[0].redacted_text)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
+    @TextAnalyticsClientPreparer()
     async def test_phi_domain_filter(self, client):
         # without the domain filter, this should return two entities: Microsoft as an org,
         # and the phone number. With the domain filter, it should only return one.

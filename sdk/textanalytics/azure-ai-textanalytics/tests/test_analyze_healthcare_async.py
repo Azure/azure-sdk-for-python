@@ -303,7 +303,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertEqual(resp.id, expected_order[idx])
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
+    @TextAnalyticsClientPreparer()
     async def test_show_stats_and_model_version(self, client):
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
