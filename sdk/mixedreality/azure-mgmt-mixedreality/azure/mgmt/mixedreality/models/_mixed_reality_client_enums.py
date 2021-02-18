@@ -12,16 +12,15 @@
 from enum import Enum
 
 
-class NameAvailability(str, Enum):
-
-    true = "true"
-    false = "false"
-
-
 class NameUnavailableReason(str, Enum):
 
     invalid = "Invalid"
     already_exists = "AlreadyExists"
+
+
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
 
 
 class SkuTier(str, Enum):
@@ -32,6 +31,9 @@ class SkuTier(str, Enum):
     premium = "Premium"
 
 
-class ResourceIdentityType(str, Enum):
+class CreatedByType(str, Enum):
 
-    system_assigned = "SystemAssigned"
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"

@@ -41,8 +41,6 @@ class MixedRealityClientOperationsMixin(object):
         """
         check_name_availability = models.CheckNameAvailabilityRequest(name=name, type=type)
 
-        api_version = "2020-05-01"
-
         # Construct URL
         url = self.check_name_availability_local.metadata['url']
         path_format_arguments = {
@@ -53,7 +51,7 @@ class MixedRealityClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

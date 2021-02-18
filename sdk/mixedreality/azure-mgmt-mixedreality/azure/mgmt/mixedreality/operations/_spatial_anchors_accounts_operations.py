@@ -25,7 +25,7 @@ class SpatialAnchorsAccountsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2020-05-01".
+    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2021-01-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class SpatialAnchorsAccountsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-05-01"
+        self.api_version = "2021-01-01"
 
         self.config = config
 
@@ -289,17 +289,16 @@ class SpatialAnchorsAccountsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/spatialAnchorsAccounts/{accountName}'}
 
     def update(
-            self, resource_group_name, account_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, spatial_anchors_account, custom_headers=None, raw=False, **operation_config):
         """Updating a Spatial Anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Name of an Mixed Reality Account.
         :type account_name: str
-        :param location: The geo-location where the resource lives
-        :type location: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param spatial_anchors_account: Spatial Anchors Account parameter.
+        :type spatial_anchors_account:
+         ~azure.mgmt.mixedreality.models.SpatialAnchorsAccount
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -310,8 +309,6 @@ class SpatialAnchorsAccountsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        spatial_anchors_account = models.SpatialAnchorsAccount(tags=tags, location=location)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -360,17 +357,16 @@ class SpatialAnchorsAccountsOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/spatialAnchorsAccounts/{accountName}'}
 
     def create(
-            self, resource_group_name, account_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, spatial_anchors_account, custom_headers=None, raw=False, **operation_config):
         """Creating or Updating a Spatial Anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Name of an Mixed Reality Account.
         :type account_name: str
-        :param location: The geo-location where the resource lives
-        :type location: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
+        :param spatial_anchors_account: Spatial Anchors Account parameter.
+        :type spatial_anchors_account:
+         ~azure.mgmt.mixedreality.models.SpatialAnchorsAccount
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -381,8 +377,6 @@ class SpatialAnchorsAccountsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        spatial_anchors_account = models.SpatialAnchorsAccount(tags=tags, location=location)
-
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
