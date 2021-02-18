@@ -450,6 +450,8 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     @app_config_decorator
     def test_config_setting_secret_reference(self, client):
+        retrieved = client.get_configuration_setting("test")
+
         secret_reference = SecretReferenceConfigurationSetting(
             "ConnectionString", "https://test-test.vault.azure.net/secrets/connectionString")
         set_flag = client.set_configuration_setting(secret_reference)

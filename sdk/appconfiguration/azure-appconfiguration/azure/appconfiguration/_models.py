@@ -165,6 +165,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
     @classmethod
     def _from_generated(cls, key_value):
         # type: (KeyValue) -> FeatureFlagConfigurationSetting
+        # TODO: change the value to dict change to right here
         if key_value is None:
             return None
         return cls(
@@ -193,6 +194,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
             locked=self.read_only,
             etag=self.etag
         )
+
 
 class SecretReferenceConfigurationSetting(Model):
     """A configuration value that references a KeyVault Secret
@@ -227,15 +229,14 @@ class SecretReferenceConfigurationSetting(Model):
     }
     secret_reference_content_type = "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8";
 
-    def __init__(self, key, secret_id, label=None, **kwargs):
+    def __init__(self, key, value, label=None, **kwargs):
         # type: (str, str, str) -> None
         super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
         self.key = key
         self.label = label
-        self._secret_id = secret_id
+        self.value = value
         self.content_type = kwargs.get('content_type', self.secret_reference_content_type)
         self.etag = kwargs.get('etag', None)
-        self.value = kwargs.get('value', None)
         self.last_modified = kwargs.get('last_modified', None)
         self.read_only = kwargs.get('read_only', None)
         self.tags = kwargs.get('tags', {})
@@ -245,8 +246,14 @@ class SecretReferenceConfigurationSetting(Model):
         # type: (KeyValue) -> SecretReferenceConfigurationSetting
         if key_value is None:
             return None
+        if key_value.value:
+            try:
+                key_value.value = json.loads(key_value.value)
+            except json.decoder.JSONDecodeError:
+                pass
         return cls(
             key=key_value.key,
+            value=key_value.value,
             label=key_value.label,
             secret_id=key_value.value,
             last_modified=key_value.last_modified,
@@ -256,16 +263,20 @@ class SecretReferenceConfigurationSetting(Model):
         )
 
     def _to_generated(self):
+        value = self.value
+        if isinstance(self.value, dict):
+            value = json.dumps(self.value)
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=self.value,
+            value=value,
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,
             locked=self.read_only,
             etag=self.etag
         )
+
 
 class FeatureFlagFilter(object):
     """ A configuration setting that controls a feature flag
