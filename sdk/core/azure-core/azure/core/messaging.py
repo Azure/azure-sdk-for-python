@@ -100,7 +100,11 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
         self.dataschema = kwargs.pop("dataschema", None)
         self.subject = kwargs.pop("subject", None)
         self.extensions = {}
-        self.extensions.update(dict(kwargs.pop('extensions', {})))
+        extensions = dict(kwargs.pop('extensions', {}))
+        for key in extensions.keys():
+            if not key.islower() or not key.isalnum():
+                raise ValueError("Extensions must be lower case and alphanumeric.")
+        self.extensions.update(extensions)
         self.data = kwargs.pop("data", None)
 
     @classmethod
