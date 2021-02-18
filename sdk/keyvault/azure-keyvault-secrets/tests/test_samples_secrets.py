@@ -28,8 +28,8 @@ def test_create_secret_client():
     from azure.keyvault.secrets import SecretClient
 
     # Create a SecretClient using default Azure credentials
-    credentials = DefaultAzureCredential()
-    secret_client = SecretClient(vault_url, credentials)
+    credential = DefaultAzureCredential()
+    secret_client = SecretClient(vault_url, credential)
     # [END create_secret_client]
 
 
