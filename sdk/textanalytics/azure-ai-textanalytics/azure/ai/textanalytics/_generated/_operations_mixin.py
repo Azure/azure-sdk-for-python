@@ -12,7 +12,8 @@ from msrest import Serializer, Deserializer
 from typing import TYPE_CHECKING
 import warnings
 
-from ...._lro import AnalyzeBatchActionsLROPoller, AnalyzeBatchActionsLROPollingMethod, AnalyzeHealthcareEntitiesLROPoller, AnalyzeHealthcareEntitiesLROPollingMethod
+# FIXME: have to manually reconfigure import path for multiapi operation mixin
+from .._lro import AnalyzeBatchActionsLROPoller, AnalyzeBatchActionsLROPollingMethod, AnalyzeHealthcareEntitiesLROPoller, AnalyzeHealthcareEntitiesLROPollingMethod
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
