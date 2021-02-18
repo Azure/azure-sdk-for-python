@@ -42,7 +42,7 @@ def retrieve_jwt_expiration_timestamp(jwt_value):
         raise ValueError("Invalid JWT structure.")
 
     try:
-        padded_base64_payload = base64.b64decode(parts[1])
+        padded_base64_payload = base64.b64decode(parts[1]).decode('utf-8')
         payload = json.loads(padded_base64_payload)
     except ValueError:
         raise ValueError("Unable to decode the JWT.")
