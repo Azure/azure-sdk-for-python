@@ -100,11 +100,11 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
         self.dataschema = kwargs.pop("dataschema", None)
         self.subject = kwargs.pop("subject", None)
         self.extensions = {}
-        extensions = dict(kwargs.pop('extensions', {}))
-        for key in extensions.keys():
+        _extensions = dict(kwargs.pop('extensions', {}))
+        for key in _extensions.keys():
             if not key.islower() or not key.isalnum():
                 raise ValueError("Extensions must be lower case and alphanumeric.")
-        self.extensions.update(extensions)
+        self.extensions.update(_extensions)
         self.data = kwargs.pop("data", None)
 
     @classmethod
@@ -116,12 +116,16 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
         :type event: dict
         :rtype: CloudEvent
         """
+        data = event.pop("data", None)
+        data_base64 = event.pop("data_base64", None)
+        if data and data_base64:
+            raise ValueError("Invalid input. Only one of data and data_base64 must be present.")
         return cls(
         id=event.pop("id", None),
         source=event.pop("source", None),
         type=event.pop("type", None),
         specversion=event.pop("specversion", None),
-        data=event.pop("data", None) or base64.b64decode(event.pop("data_base64", None)),
+        data=data or base64.b64decode(data_base64),
         time=event.pop("time", None),
         dataschema=event.pop("dataschema", None),
         datacontenttype=event.pop("datacontenttype", None),
