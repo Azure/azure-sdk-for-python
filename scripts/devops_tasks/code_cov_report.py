@@ -80,6 +80,8 @@ def create_coverage_report():
         p = copy.deepcopy(package)
         print(p.attrib)
         temp_c = copy.deepcopy(p.find('classes')[0])
+        temp_c.remove(temp_c.find('lines'))
+        print(ET.dump(temp_c))
 
         p.remove(p.find('classes'))
 
