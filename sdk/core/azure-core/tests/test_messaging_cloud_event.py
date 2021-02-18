@@ -3,10 +3,24 @@ import sys
 import os
 import pytest
 import json
+from datetime import datetime
 
 from azure.core.messaging import CloudEvent
 
 # Cloud Event tests
+def test_cloud_event_constructor():
+    event = CloudEvent(
+        source='Azure.Core.Sample',
+        type='SampleType',
+        data='cloudevent'
+        )
+    
+    assert event.specversion == '1.0'
+    assert event.time.endswith('+00:00')
+    assert event.id is not None
+    assert event.source == 'Azure.Core.Sample'
+    assert event.data == 'cloudevent'
+
 def test_cloud_storage_dict():
     cloud_storage_dict = {
         "id":"a0517898-9fa4-4e70-b4a3-afda1dd68672",
@@ -84,6 +98,16 @@ def test_extensions_upper_case_value_error():
             extensions={"lowercase123": "accepted", "NOTlower123": "not allowed"}
         )
 
+
+def test_extensions_name_too_long_value_error():
+    with pytest.raises(ValueError):
+        event = CloudEvent(
+            source='sample',
+            type='type',
+            data='data',
+            extensions={"lowercase123": "accepted", "thisislowerandtoolongforaname": "not allowed"}
+        )
+
 def test_data_and_base64_both_exist_raises():
     with pytest.raises(ValueError):
         CloudEvent.from_dict(
@@ -93,3 +117,12 @@ def test_data_and_base64_both_exist_raises():
             "data_base64":'Y2kQ=='
             }
         )
+
+def test_cloud_event_repr():
+    event = CloudEvent(
+        source='Azure.Core.Sample',
+        type='SampleType',
+        data='cloudevent'
+        )
+
+    assert repr(event).startswith("CloudEvent(source=Azure.Core.Sample, type=SampleType, specversion=1.0,")

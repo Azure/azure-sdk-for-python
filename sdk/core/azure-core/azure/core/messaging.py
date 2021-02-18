@@ -12,22 +12,8 @@ try:
     from datetime import timezone
     TZ_UTC = timezone.utc  # type: ignore
 except ImportError:
-    class UTC(tzinfo):
-        """Time Zone info for handling UTC in python2"""
-
-        def utcoffset(self, dt):
-            """UTF offset for UTC is 0."""
-            return timedelta(0)
-
-        def tzname(self, dt):
-            """Timestamp representation."""
-            return "Z"
-
-        def dst(self, dt):
-            """No daylight saving for UTC."""
-            return timedelta(hours=1)
-
-    TZ_UTC = UTC() # type: ignore
+    from azure.core.pipeline.policies._utils import _FixedOffset
+    TZ_UTC = _FixedOffset(0) # type: ignore
 
 try:
     from typing import TYPE_CHECKING
@@ -102,10 +88,21 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
         self.extensions = {}
         _extensions = dict(kwargs.pop('extensions', {}))
         for key in _extensions.keys():
-            if not key.islower() or not key.isalnum():
+            if not key.islower() or not key.isalnum() or len(key) > 20:
                 raise ValueError("Extensions must be lower case and alphanumeric.")
         self.extensions.update(_extensions)
         self.data = kwargs.pop("data", None)
+
+    def __repr__(self):
+        return (
+            "CloudEvent(source={}, type={}, specversion={}, id={}, time={})".format(
+                self.source,
+                self.type,
+                self.specversion,
+                self.id,
+                self.time
+            )[:1024]
+        )
 
     @classmethod
     def from_dict(cls, event, **kwargs):
