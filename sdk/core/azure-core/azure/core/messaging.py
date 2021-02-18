@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 import uuid
 from  base64 import b64decode
-from datetime import tzinfo, timedelta, datetime
+from datetime import datetime
 
 try:
     from datetime import timezone
