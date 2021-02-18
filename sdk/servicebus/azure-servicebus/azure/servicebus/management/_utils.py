@@ -280,7 +280,7 @@ def _validate_topic_subscription_and_rule_types(topic_name, subscription_name, r
         raise TypeError("topic name, subscription name and rule name must be strings, not {} {} and {}".format(
             type(topic_name), type(subscription_name), type(rule_name)))
 
-def create_properties_from_list_of_dicts_if_needed(properties, sb_resource_type):
+def create_properties_from_dicts_if_needed(properties, sb_resource_type):
     """
     This method is used to create internal resource objects given their
     corresponding dict representations of resource properties.

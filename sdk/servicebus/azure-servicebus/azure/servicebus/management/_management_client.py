@@ -23,7 +23,7 @@ from ._generated.models import QueueDescriptionFeed, TopicDescriptionEntry, \
     CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent
 from ._utils import extract_data_template, get_next_template, deserialize_rule_key_values, serialize_rule_key_values, \
     extract_rule_data_template, _validate_entity_name_type, _validate_topic_and_subscription_types, \
-    _validate_topic_subscription_and_rule_types, create_properties_from_list_of_dicts_if_needed
+    _validate_topic_subscription_and_rule_types, create_properties_from_dicts_if_needed
 from ._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 
 from .._common.constants import JWT_TOKEN_SCOPE
@@ -281,7 +281,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
-        queue_name, to_update = create_properties_from_list_of_dicts_if_needed(queue, QueueProperties)
+        queue_name, to_update = create_properties_from_dicts_if_needed(queue, QueueProperties)
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
 
@@ -482,7 +482,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
-        topic_name, to_update = create_properties_from_list_of_dicts_if_needed(topic, TopicProperties)
+        topic_name, to_update = create_properties_from_dicts_if_needed(topic, TopicProperties)
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
@@ -687,7 +687,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         _validate_entity_name_type(topic_name, display_name='topic_name')
         
-        subscription_name, to_update = create_properties_from_list_of_dicts_if_needed(subscription, SubscriptionProperties)
+        subscription_name, to_update = create_properties_from_dicts_if_needed(subscription, SubscriptionProperties)
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
 
@@ -850,7 +850,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
-        rule_name, to_update = create_properties_from_list_of_dicts_if_needed(rule, RuleProperties)
+        rule_name, to_update = create_properties_from_dicts_if_needed(rule, RuleProperties)
 
         create_entity_body = CreateRuleBody(
             content=CreateRuleBodyContent(
