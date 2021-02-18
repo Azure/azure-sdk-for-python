@@ -33,6 +33,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional, Type
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,23 +53,32 @@ class ManagedIdentityCredential(object):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._credential = None
-        if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT) and os.environ.get(
-                EnvironmentVariables.IDENTITY_HEADER
-        ):
-            _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
-            from .app_service import AppServiceCredential
-
-            self._credential = AppServiceCredential(**kwargs)
-        elif os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+        self._credential = None  # type: Optional[TokenCredential]
+        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             if os.environ.get(EnvironmentVariables.MSI_SECRET):
                 _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
                 from .app_service import AppServiceCredential
 
                 self._credential = AppServiceCredential(**kwargs)
             else:
-                _LOGGER.info("%s will use MSI", self.__class__.__name__)
-                self._credential = MsiCredential(**kwargs)
+                _LOGGER.info("%s will use Cloud Shell managed identity", self.__class__.__name__)
+                from .cloud_shell import CloudShellCredential
+
+                self._credential = CloudShellCredential(**kwargs)
+        elif os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
+            if (
+                os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
+                and os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT)
+            ):
+                _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
+                from .service_fabric import ServiceFabricCredential
+
+                self._credential = ServiceFabricCredential(**kwargs)
+            elif os.environ.get(EnvironmentVariables.IMDS_ENDPOINT):
+                _LOGGER.info("%s will use Azure Arc managed identity", self.__class__.__name__)
+                from .azure_arc import AzureArcCredential
+
+                self._credential = AzureArcCredential(**kwargs)
         else:
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
@@ -223,65 +233,3 @@ class ImdsCredential(_ManagedIdentityBase):
             # any other error is unexpected
             six.raise_from(ClientAuthenticationError(message=ex.message, response=ex.response), None)
         return token
-
-
-class MsiCredential(_ManagedIdentityBase):
-    """Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
-
-    :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
-    """
-
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
-        self._endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
-        if self._endpoint:
-            super(MsiCredential, self).__init__(endpoint=self._endpoint, client_cls=AuthnClient, **kwargs)
-
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
-        """Request an access token for `scopes`.
-
-        This method is called automatically by Azure SDK clients.
-
-        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.identity.CredentialUnavailableError: the MSI endpoint is unavailable
-        """
-
-        if not self._endpoint:
-            message = "ManagedIdentityCredential authentication unavailable, no managed identity endpoint found."
-            raise CredentialUnavailableError(message=message)
-
-        if len(scopes) != 1:
-            raise ValueError("This credential requires exactly one scope per token request.")
-
-        token = self._client.get_cached_token(scopes)
-        if not token:
-            token = self._refresh_token(*scopes)
-        elif self._client.should_refresh(token):
-            try:
-                token = self._refresh_token(*scopes)
-            except Exception:  # pylint: disable=broad-except
-                pass
-        return token
-
-    def _refresh_token(self, *scopes):
-        resource = scopes[0]
-        if resource.endswith("/.default"):
-            resource = resource[: -len("/.default")]
-        secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
-        if secret:
-            # MSI_ENDPOINT and MSI_SECRET set -> App Service
-            token = self._request_app_service_token(scopes=scopes, resource=resource, secret=secret)
-        else:
-            # only MSI_ENDPOINT set -> legacy-style MSI (Cloud Shell)
-            token = self._request_legacy_token(scopes=scopes, resource=resource)
-        return token
-
-    def _request_app_service_token(self, scopes, resource, secret):
-        params = dict({"api-version": "2017-09-01", "resource": resource}, **self._identity_config)
-        return self._client.request_token(scopes, method="GET", headers={"secret": secret}, params=params)
-
-    def _request_legacy_token(self, scopes, resource):
-        form_data = dict({"resource": resource}, **self._identity_config)
-        return self._client.request_token(scopes, method="POST", form_data=form_data)

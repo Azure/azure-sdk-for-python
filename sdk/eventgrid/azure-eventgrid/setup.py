@@ -70,6 +70,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -81,7 +82,7 @@ setup(
     ]),
     install_requires=[
         'msrest>=0.6.19',
-        'azure-core<2.0.0,>=1.7.0',
+        'azure-core<2.0.0,>=1.10.0',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],

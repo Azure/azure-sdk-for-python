@@ -15,7 +15,7 @@ from azure.ai.textanalytics._models import (
 
 from azure.ai.textanalytics._response_handlers import sentiment_result
 
-from azure.ai.textanalytics._generated.v3_1_preview_2 import models as _generated_models
+from azure.ai.textanalytics._generated.v3_1_preview_3 import models as _generated_models
 
 
 @pytest.fixture
@@ -106,6 +106,6 @@ class TestJsonPointer():
         # the desired behavior is the first wrapped sentence object has an aspect, and it's opinion
         # is in the second sentence.
         # the second sentence will have no mined opinions, since we define that as an aspect and opinion duo
-        wrapped_sentiment = sentiment_result(response="not relevant", obj=generated_sentiment_response, response_headers={})[0]
+        wrapped_sentiment = sentiment_result("not relevant", generated_sentiment_response, {})[0]
         assert wrapped_sentiment.sentences[0].mined_opinions[0].opinions[0].text == "good"
         assert not wrapped_sentiment.sentences[1].mined_opinions

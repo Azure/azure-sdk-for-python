@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class DdosProtectionPlansOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -137,7 +137,13 @@ class DdosProtectionPlansOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'ddosProtectionPlanName': self._serialize.url("ddos_protection_plan_name", ddos_protection_plan_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -157,7 +163,7 @@ class DdosProtectionPlansOperations(object):
         ddos_protection_plan_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DdosProtectionPlan"
+        # type: (...) -> "_models.DdosProtectionPlan"
         """Gets information about the specified DDoS protection plan.
 
         :param resource_group_name: The name of the resource group.
@@ -169,7 +175,7 @@ class DdosProtectionPlansOperations(object):
         :rtype: ~azure.mgmt.network.v2020_06_01.models.DdosProtectionPlan
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlan"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosProtectionPlan"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -214,11 +220,11 @@ class DdosProtectionPlansOperations(object):
         self,
         resource_group_name,  # type: str
         ddos_protection_plan_name,  # type: str
-        parameters,  # type: "models.DdosProtectionPlan"
+        parameters,  # type: "_models.DdosProtectionPlan"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DdosProtectionPlan"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlan"]
+        # type: (...) -> "_models.DdosProtectionPlan"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosProtectionPlan"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -272,10 +278,10 @@ class DdosProtectionPlansOperations(object):
         self,
         resource_group_name,  # type: str
         ddos_protection_plan_name,  # type: str
-        parameters,  # type: "models.DdosProtectionPlan"
+        parameters,  # type: "_models.DdosProtectionPlan"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.DdosProtectionPlan"]
+        # type: (...) -> LROPoller["_models.DdosProtectionPlan"]
         """Creates or updates a DDoS protection plan.
 
         :param resource_group_name: The name of the resource group.
@@ -295,7 +301,7 @@ class DdosProtectionPlansOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlan"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosProtectionPlan"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -320,7 +326,13 @@ class DdosProtectionPlansOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'ddosProtectionPlanName': self._serialize.url("ddos_protection_plan_name", ddos_protection_plan_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -338,10 +350,10 @@ class DdosProtectionPlansOperations(object):
         self,
         resource_group_name,  # type: str
         ddos_protection_plan_name,  # type: str
-        parameters,  # type: "models.TagsObject"
+        parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DdosProtectionPlan"
+        # type: (...) -> "_models.DdosProtectionPlan"
         """Update a DDoS protection plan tags.
 
         :param resource_group_name: The name of the resource group.
@@ -355,7 +367,7 @@ class DdosProtectionPlansOperations(object):
         :rtype: ~azure.mgmt.network.v2020_06_01.models.DdosProtectionPlan
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlan"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosProtectionPlan"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -405,7 +417,7 @@ class DdosProtectionPlansOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DdosProtectionPlanListResult"]
+        # type: (...) -> Iterable["_models.DdosProtectionPlanListResult"]
         """Gets all DDoS protection plans in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -413,7 +425,7 @@ class DdosProtectionPlansOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_06_01.models.DdosProtectionPlanListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlanListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosProtectionPlanListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -473,7 +485,7 @@ class DdosProtectionPlansOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DdosProtectionPlanListResult"]
+        # type: (...) -> Iterable["_models.DdosProtectionPlanListResult"]
         """Gets all the DDoS protection plans in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -483,7 +495,7 @@ class DdosProtectionPlansOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_06_01.models.DdosProtectionPlanListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DdosProtectionPlanListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DdosProtectionPlanListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -41,24 +41,7 @@ from ._base import HTTPPolicy, RequestHistory
 
 _LOGGER = logging.getLogger(__name__)
 
-
-class RedirectPolicy(HTTPPolicy):
-    """A redirect policy.
-
-    A redirect policy in the pipeline can be configured directly or per operation.
-
-    :keyword bool permit_redirects: Whether the client allows redirects. Defaults to True.
-    :keyword int redirect_max: The maximum allowed redirects. Defaults to 30.
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/test_example_sync.py
-            :start-after: [START redirect_policy]
-            :end-before: [END redirect_policy]
-            :language: python
-            :dedent: 4
-            :caption: Configuring a redirect policy.
-    """
+class RedirectPolicyBase(object):
 
     REDIRECT_STATUSES = frozenset([300, 301, 302, 303, 307, 308])
 
@@ -72,7 +55,7 @@ class RedirectPolicy(HTTPPolicy):
         self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
         redirect_status = set(kwargs.get('redirect_on_status_codes', []))
         self._redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
-        super(RedirectPolicy, self).__init__()
+        super(RedirectPolicyBase, self).__init__()
 
     @classmethod
     def no_redirects(cls):
@@ -140,6 +123,24 @@ class RedirectPolicy(HTTPPolicy):
         for non_redirect_header in self._remove_headers_on_redirect:
             response.http_request.headers.pop(non_redirect_header, None)
         return settings['redirects'] >= 0
+
+class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
+    """A redirect policy.
+
+    A redirect policy in the pipeline can be configured directly or per operation.
+
+    :keyword bool permit_redirects: Whether the client allows redirects. Defaults to True.
+    :keyword int redirect_max: The maximum allowed redirects. Defaults to 30.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/test_example_sync.py
+            :start-after: [START redirect_policy]
+            :end-before: [END redirect_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring a redirect policy.
+    """
 
     def send(self, request):
         """Sends the PipelineRequest object to the next policy.

@@ -13,30 +13,22 @@ from testcase import FormRecognizerTest
 class TestResolveElements(FormRecognizerTest):
 
     def test_word_reference(self):
-        # unlabeled
         word_unlabeled_ref = "#/readResults/13/lines/91/words/1000"
         assert get_element_type(word_unlabeled_ref) == "word"
         indices = [int(s) for s in re.findall(r"\d+", word_unlabeled_ref)]
         assert [13, 91, 1000] == indices
 
-        # labeled
-        word_labeled_ref = "#/analyzeResult/readResults/0/lines/46/words/0"
-        assert get_element_type(word_labeled_ref) == "word"
-        indices = [int(s) for s in re.findall(r"\d+", word_labeled_ref)]
-        assert [0, 46, 0] == indices
-
     def test_line_reference(self):
-        # unlabeled
         line_unlabeled_ref = "#/readResults/3/lines/1"
         assert get_element_type(line_unlabeled_ref) == "line"
         indices = [int(s) for s in re.findall(r"\d+", line_unlabeled_ref)]
         assert [3, 1] == indices
 
-        # labeled
-        line_labeled_ref = "#/analyzeResult/readResults/100/lines/416"
-        assert get_element_type(line_labeled_ref) == "line"
-        indices = [int(s) for s in re.findall(r"\d+", line_labeled_ref)]
-        assert [100, 416] == indices
+    def test_selection_mark_reference(self):
+        selection_mark_ref = "#/readResults/0/selectionMarks/0"
+        assert get_element_type(selection_mark_ref) == "selectionMark"
+        indices = [int(s) for s in re.findall(r"\d+", selection_mark_ref)]
+        assert [0, 0] == indices
 
     def test_bad_ref(self):
         # None will raise in the function that calls get_element_type

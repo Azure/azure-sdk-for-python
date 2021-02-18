@@ -8,7 +8,8 @@
 import datetime
 from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import (
-    ReplayableTest
+    ReplayableTest,
+    create_random_name
 )
 
 from azure.ai.metricsadvisor import (
@@ -19,8 +20,8 @@ from azure.ai.metricsadvisor import (
 from azure.ai.metricsadvisor.models import (
     SQLServerDataFeed,
     DataFeedSchema,
-    Metric,
-    Dimension,
+    DataFeedMetric,
+    DataFeedDimension,
     DataFeedGranularity,
     DataFeedIngestionSettings,
     DataFeedMissingDataPointFillSettings,
@@ -39,8 +40,8 @@ from azure.ai.metricsadvisor.models import (
     SuppressCondition,
     ChangeThresholdCondition,
     HardThresholdCondition,
-    EmailHook,
-    WebHook
+    EmailNotificationHook,
+    WebNotificationHook,
 )
 
 
@@ -171,7 +172,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                                                                MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     def _create_data_feed(self, name):
-        name = self.create_random_name(name)
+        name = create_random_name(name)
         return self.admin_client.create_data_feed(
             name=name,
             source=SQLServerDataFeed(
@@ -181,23 +182,23 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             granularity="Daily",
             schema=DataFeedSchema(
                 metrics=[
-                    Metric(name="cost"),
-                    Metric(name="revenue")
+                    DataFeedMetric(name="cost"),
+                    DataFeedMetric(name="revenue")
                 ],
                 dimensions=[
-                    Dimension(name="category"),
-                    Dimension(name="city")
+                    DataFeedDimension(name="category"),
+                    DataFeedDimension(name="city")
                 ],
             ),
             ingestion_settings="2019-10-01T00:00:00Z",
         )
 
-    def _create_data_feed_and_anomaly_detection_config(self, name):
+    def _create_data_feed_and_detection_config(self, name):
         data_feed = self._create_data_feed(name)
-        detection_config_name = self.create_random_name(name)
-        detection_config = self.admin_client.create_metric_anomaly_detection_configuration(
+        detection_config_name = create_random_name(name)
+        detection_config = self.admin_client.create_detection_configuration(
             name=detection_config_name,
-            metric_id=data_feed.metric_ids[0],
+            metric_id=data_feed.metric_ids['cost'],
             description="testing",
             whole_series_detection_condition=MetricDetectionCondition(
                 smart_detection_condition=SmartDetectionCondition(
@@ -213,7 +214,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
         return detection_config, data_feed
 
     def _create_data_feed_for_update(self, name):
-        data_feed_name = self.create_random_name(name)
+        data_feed_name = create_random_name(name)
         return self.admin_client.create_data_feed(
             name=data_feed_name,
             source=SQLServerDataFeed(
@@ -225,12 +226,12 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             ),
             schema=DataFeedSchema(
                 metrics=[
-                    Metric(name="cost", display_name="display cost", description="the cost"),
-                    Metric(name="revenue", display_name="display revenue", description="the revenue")
+                    DataFeedMetric(name="cost", display_name="display cost", description="the cost"),
+                    DataFeedMetric(name="revenue", display_name="display revenue", description="the revenue")
                 ],
                 dimensions=[
-                    Dimension(name="category", display_name="display category"),
-                    Dimension(name="city", display_name="display city")
+                    DataFeedDimension(name="category", display_name="display category"),
+                    DataFeedDimension(name="city", display_name="display city")
                 ],
                 timestamp_column="Timestamp"
             ),
@@ -242,7 +243,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 stop_retry_after=-1,
             ),
             options=DataFeedOptions(
-                admins=["yournamehere@microsoft.com"],
+                admin_emails=["yournamehere@microsoft.com"],
                 data_feed_description="my first data feed",
                 missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
                     fill_type="SmartFilling"
@@ -251,17 +252,17 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                     rollup_type="NoRollup",
                     rollup_method="None",
                 ),
-                viewers=["viewers"],
+                viewer_emails=["viewers"],
                 access_mode="Private",
                 action_link_template="action link template"
             )
 
         )
 
-    def _create_anomaly_alert_config_for_update(self, name):
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(name)
-        alert_config_name = self.create_random_name(name)
-        alert_config = self.admin_client.create_anomaly_alert_configuration(
+    def _create_alert_config_for_update(self, name):
+        detection_config, data_feed = self._create_data_feed_and_detection_config(name)
+        alert_config_name = create_random_name(name)
+        alert_config = self.admin_client.create_alert_configuration(
             name=alert_config_name,
             cross_metrics_operator="AND",
             metric_alert_configurations=[
@@ -278,7 +279,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                     alert_conditions=MetricAnomalyAlertConditions(
                         metric_boundary_condition=MetricBoundaryCondition(
                             direction="Both",
-                            companion_metric_id=data_feed.metric_ids[0],
+                            companion_metric_id=data_feed.metric_ids['cost'],
                             lower=1.0,
                             upper=5.0
                         )
@@ -316,10 +317,10 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
 
     def _create_detection_config_for_update(self, name):
         data_feed = self._create_data_feed(name)
-        detection_config_name = self.create_random_name("testupdated")
-        detection_config = self.admin_client.create_metric_anomaly_detection_configuration(
+        detection_config_name = create_random_name("testupdated")
+        detection_config = self.admin_client.create_detection_configuration(
             name=detection_config_name,
-            metric_id=data_feed.metric_ids[0],
+            metric_id=data_feed.metric_ids['cost'],
             description="My test metric anomaly detection configuration",
             whole_series_detection_condition=MetricDetectionCondition(
                 cross_conditions_operator="AND",
@@ -378,8 +379,8 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
 
     def _create_email_hook_for_update(self, name):
         return self.admin_client.create_hook(
-            name=name,
-            hook=EmailHook(
+            hook=EmailNotificationHook(
+                name=name,
                 emails_to_alert=["yournamehere@microsoft.com"],
                 description="my email hook",
                 external_link="external link"
@@ -388,8 +389,8 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
 
     def _create_web_hook_for_update(self, name):
         return self.admin_client.create_hook(
-            name=name,
-            hook=WebHook(
+            hook=WebNotificationHook(
+                name=name,
                 endpoint="https://httpbin.org/post",
                 description="my web hook",
                 external_link="external link",

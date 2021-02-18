@@ -16,6 +16,10 @@ import sys
 
 from allowed_pylint_failures import PYLINT_ACCEPTABLE_FAILURES
 
+from tox_helper_tasks import (
+    get_package_details
+)
+
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -37,7 +41,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    package_name = os.path.basename(os.path.abspath(args.target_package))
+
+    pkg_dir = os.path.abspath(args.target_package)
+    package_name, namespace, ver = get_package_details(os.path.join(pkg_dir, "setup.py"))
+
+    top_level_module = namespace.split('.')[0]
 
     if package_name not in PYLINT_ACCEPTABLE_FAILURES:
         try:
@@ -48,7 +56,7 @@ if __name__ == "__main__":
                     "pylint",
                     "--rcfile={}".format(rcFileLocation),
                     "--output-format=parseable",
-                    os.path.join(args.target_package, "azure"),
+                    os.path.join(args.target_package, top_level_module),
                 ]
             )
         except CalledProcessError as e:

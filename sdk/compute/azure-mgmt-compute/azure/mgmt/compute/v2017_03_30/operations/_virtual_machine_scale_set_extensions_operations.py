@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class VirtualMachineScaleSetExtensionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,11 +52,11 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         resource_group_name,  # type: str
         vm_scale_set_name,  # type: str
         vmss_extension_name,  # type: str
-        extension_parameters,  # type: "models.VirtualMachineScaleSetExtension"
+        extension_parameters,  # type: "_models.VirtualMachineScaleSetExtension"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VirtualMachineScaleSetExtension"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetExtension"]
+        # type: (...) -> "_models.VirtualMachineScaleSetExtension"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetExtension"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -112,10 +112,10 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         resource_group_name,  # type: str
         vm_scale_set_name,  # type: str
         vmss_extension_name,  # type: str
-        extension_parameters,  # type: "models.VirtualMachineScaleSetExtension"
+        extension_parameters,  # type: "_models.VirtualMachineScaleSetExtension"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.VirtualMachineScaleSetExtension"]
+        # type: (...) -> LROPoller["_models.VirtualMachineScaleSetExtension"]
         """The operation to create or update an extension.
 
         :param resource_group_name: The name of the resource group.
@@ -139,7 +139,7 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetExtension"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetExtension"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -165,7 +165,14 @@ class VirtualMachineScaleSetExtensionsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'vmssExtensionName': self._serialize.url("vmss_extension_name", vmss_extension_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -186,8 +193,8 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         vmss_extension_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.OperationStatusResponse"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
+        # type: (...) -> Optional["_models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -238,7 +245,7 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         vmss_extension_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.OperationStatusResponse"]
+        # type: (...) -> LROPoller["_models.OperationStatusResponse"]
         """The operation to delete the extension.
 
         :param resource_group_name: The name of the resource group.
@@ -258,7 +265,7 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationStatusResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -283,7 +290,14 @@ class VirtualMachineScaleSetExtensionsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'vmssExtensionName': self._serialize.url("vmss_extension_name", vmss_extension_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -305,7 +319,7 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VirtualMachineScaleSetExtension"
+        # type: (...) -> "_models.VirtualMachineScaleSetExtension"
         """The operation to get the extension.
 
         :param resource_group_name: The name of the resource group.
@@ -321,7 +335,7 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         :rtype: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetExtension
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetExtension"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetExtension"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -371,7 +385,7 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         vm_scale_set_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.VirtualMachineScaleSetExtensionListResult"]
+        # type: (...) -> Iterable["_models.VirtualMachineScaleSetExtensionListResult"]
         """Gets a list of all extensions in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -383,7 +397,7 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetExtensionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetExtensionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetExtensionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

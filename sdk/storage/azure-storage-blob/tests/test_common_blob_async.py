@@ -17,6 +17,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -1452,7 +1453,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
 
         # Assert
-        with self.assertRaises(ResourceNotFoundError):
+        with self.assertRaises(ClientAuthenticationError):
             await target_blob.start_copy_from_url(source_blob.url)
 
 
@@ -1867,6 +1868,34 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertTrue(blob_response.ok)
         self.assertEqual(self.byte_data, blob_response.content)
         self.assertTrue(container_response.ok)
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    async def test_account_sas_credential(self, resource_group, location, storage_account, storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+
+        await self._setup(storage_account, storage_account_key)
+        blob_name = await self._create_block_blob()
+
+        token = generate_account_sas(
+            self.bsc.account_name,
+            self.bsc.credential.account_key,
+            ResourceTypes(container=True, object=True),
+            AccountSasPermissions(read=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        blob = BlobClient(
+            self.bsc.url, container_name=self.container_name, blob_name=blob_name, credential=AzureSasCredential(token))
+        container = ContainerClient(
+            self.bsc.url, container_name=self.container_name, credential=AzureSasCredential(token))
+        blob_properties = await blob.get_blob_properties()
+        container_properties = await container.get_container_properties()
+
+        # Assert
+        self.assertEqual(blob_name, blob_properties.name)
+        self.assertEqual(self.container_name, container_properties.name)
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()

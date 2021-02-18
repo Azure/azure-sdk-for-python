@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class HubRouteTablesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,10 +48,10 @@ class HubRouteTablesOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        route_table_parameters: "models.HubRouteTable",
+        route_table_parameters: "_models.HubRouteTable",
         **kwargs
-    ) -> "models.HubRouteTable":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HubRouteTable"]
+    ) -> "_models.HubRouteTable":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubRouteTable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -107,9 +107,9 @@ class HubRouteTablesOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        route_table_parameters: "models.HubRouteTable",
+        route_table_parameters: "_models.HubRouteTable",
         **kwargs
-    ) -> AsyncLROPoller["models.HubRouteTable"]:
+    ) -> AsyncLROPoller["_models.HubRouteTable"]:
         """Creates a RouteTable resource if it doesn't exist else updates the existing RouteTable.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -131,7 +131,7 @@ class HubRouteTablesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HubRouteTable"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubRouteTable"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -157,7 +157,14 @@ class HubRouteTablesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -177,7 +184,7 @@ class HubRouteTablesOperations:
         virtual_hub_name: str,
         route_table_name: str,
         **kwargs
-    ) -> "models.HubRouteTable":
+    ) -> "_models.HubRouteTable":
         """Retrieves the details of a RouteTable.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -191,7 +198,7 @@ class HubRouteTablesOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.HubRouteTable
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HubRouteTable"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HubRouteTable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -327,7 +334,14 @@ class HubRouteTablesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -346,7 +360,7 @@ class HubRouteTablesOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ListHubRouteTablesResult"]:
+    ) -> AsyncIterable["_models.ListHubRouteTablesResult"]:
         """Retrieves the details of all RouteTables.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -358,7 +372,7 @@ class HubRouteTablesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.ListHubRouteTablesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListHubRouteTablesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListHubRouteTablesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

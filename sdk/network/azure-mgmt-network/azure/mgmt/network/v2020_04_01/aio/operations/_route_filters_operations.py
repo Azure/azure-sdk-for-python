@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class RouteFiltersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -131,7 +131,13 @@ class RouteFiltersOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'routeFilterName': self._serialize.url("route_filter_name", route_filter_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -151,7 +157,7 @@ class RouteFiltersOperations:
         route_filter_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.RouteFilter":
+    ) -> "_models.RouteFilter":
         """Gets the specified route filter.
 
         :param resource_group_name: The name of the resource group.
@@ -165,7 +171,7 @@ class RouteFiltersOperations:
         :rtype: ~azure.mgmt.network.v2020_04_01.models.RouteFilter
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteFilter"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteFilter"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -212,10 +218,10 @@ class RouteFiltersOperations:
         self,
         resource_group_name: str,
         route_filter_name: str,
-        route_filter_parameters: "models.RouteFilter",
+        route_filter_parameters: "_models.RouteFilter",
         **kwargs
-    ) -> "models.RouteFilter":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteFilter"]
+    ) -> "_models.RouteFilter":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteFilter"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -269,9 +275,9 @@ class RouteFiltersOperations:
         self,
         resource_group_name: str,
         route_filter_name: str,
-        route_filter_parameters: "models.RouteFilter",
+        route_filter_parameters: "_models.RouteFilter",
         **kwargs
-    ) -> AsyncLROPoller["models.RouteFilter"]:
+    ) -> AsyncLROPoller["_models.RouteFilter"]:
         """Creates or updates a route filter in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -292,7 +298,7 @@ class RouteFiltersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteFilter"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteFilter"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -317,7 +323,13 @@ class RouteFiltersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'routeFilterName': self._serialize.url("route_filter_name", route_filter_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -335,9 +347,9 @@ class RouteFiltersOperations:
         self,
         resource_group_name: str,
         route_filter_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.RouteFilter":
+    ) -> "_models.RouteFilter":
         """Updates tags of a route filter.
 
         :param resource_group_name: The name of the resource group.
@@ -351,7 +363,7 @@ class RouteFiltersOperations:
         :rtype: ~azure.mgmt.network.v2020_04_01.models.RouteFilter
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteFilter"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteFilter"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -401,7 +413,7 @@ class RouteFiltersOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.RouteFilterListResult"]:
+    ) -> AsyncIterable["_models.RouteFilterListResult"]:
         """Gets all route filters in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -411,7 +423,7 @@ class RouteFiltersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_04_01.models.RouteFilterListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteFilterListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteFilterListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -470,7 +482,7 @@ class RouteFiltersOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.RouteFilterListResult"]:
+    ) -> AsyncIterable["_models.RouteFilterListResult"]:
         """Gets all route filters in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -478,7 +490,7 @@ class RouteFiltersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_04_01.models.RouteFilterListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteFilterListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteFilterListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

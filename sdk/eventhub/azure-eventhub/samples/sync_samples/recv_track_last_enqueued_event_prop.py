@@ -10,7 +10,6 @@ An example to show receiving events from an Event Hub partition with EventHubCon
 the last enqueued event properties of specific partition.
 """
 import os
-import time
 from azure.eventhub import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]

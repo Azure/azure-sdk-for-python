@@ -1,5 +1,68 @@
 # Release History
 
+## 8.0.0 (2020-12-28)
+
+- GA release
+
+## 8.0.0b1 (2020-11-05)
+
+This is beta preview version.
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
+## 3.1.0rc1 (2020-09-25)
+
+**Features**
+
+  - Model Operation has a new parameter is_data_action
+  - Model OperationListResult has a new parameter next_link
+
+## 3.0.0rc1 (2020-09-15)
+
+**Features**
+
+  - Model NameAvailability has a new parameter name
+  - Model NameAvailability has a new parameter type
+  - Added operation ServersOperations.start
+  - Added operation ServersOperations.stop
+  - Added operation ConfigurationsOperations.update
+  - Added operation group VirtualNetworkSubnetUsageOperations
+  - Added operation group LocationBasedCapabilitiesOperations
+  - Added operation group CheckVirtualNetworkSubnetUsageOperations
+
+**Breaking changes**
+
+  - Model NameAvailability no longer has parameter reason
+  - Model StorageProfile no longer has parameter geo_redundant_backup
+  - Model StorageProfile no longer has parameter storage_autogrow
+  - Model Server has a new signature
+  - Model Sku has a new signature
+  - Removed operation ConfigurationsOperations.create_or_update
+
 ## 2.2.0 (2020-03-25)
 
 **Features**

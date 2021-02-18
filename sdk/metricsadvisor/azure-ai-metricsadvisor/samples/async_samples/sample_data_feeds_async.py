@@ -37,11 +37,11 @@ async def sample_create_data_feed_async():
     from azure.ai.metricsadvisor.models import (
         SQLServerDataFeed,
         DataFeedSchema,
-        Metric,
-        Dimension,
+        DataFeedMetric,
+        DataFeedDimension,
         DataFeedOptions,
         DataFeedRollupSettings,
-        DataFeedMissingDataPointFillSettings
+        DataFeedMissingDataPointFillSettings,
     )
 
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
@@ -52,7 +52,6 @@ async def sample_create_data_feed_async():
 
     client = MetricsAdvisorAdministrationClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
-
     async with client:
         data_feed = await client.create_data_feed(
             name="My data feed",
@@ -63,12 +62,12 @@ async def sample_create_data_feed_async():
             granularity="Daily",
             schema=DataFeedSchema(
                 metrics=[
-                    Metric(name="cost", display_name="Cost"),
-                    Metric(name="revenue", display_name="Revenue")
+                    DataFeedMetric(name="cost", display_name="Cost"),
+                    DataFeedMetric(name="revenue", display_name="Revenue")
                 ],
                 dimensions=[
-                    Dimension(name="category", display_name="Category"),
-                    Dimension(name="city", display_name="City")
+                    DataFeedDimension(name="category", display_name="Category"),
+                    DataFeedDimension(name="city", display_name="City")
                 ],
                 timestamp_column="Timestamp"
             ),
@@ -176,13 +175,13 @@ async def sample_update_data_feed_async(data_feed):
     data_feed.options.data_feed_description = "updated description for data feed"
 
     async with client:
-        updated_data_feed = await client.update_data_feed(
+        await client.update_data_feed(
             data_feed,
             access_mode="Public",
             fill_type="CustomValue",
             custom_fill_value=1
         )
-
+        updated_data_feed = await client.get_data_feed(data_feed.id)
         print("Updated name: {}".format(updated_data_feed.name))
         print("Updated description: {}".format(updated_data_feed.options.data_feed_description))
         print("Updated access mode: {}".format(updated_data_feed.options.access_mode))

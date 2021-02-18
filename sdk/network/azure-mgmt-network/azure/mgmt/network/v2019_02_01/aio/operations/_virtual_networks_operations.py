@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class VirtualNetworksOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -129,7 +129,13 @@ class VirtualNetworksOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -149,7 +155,7 @@ class VirtualNetworksOperations:
         virtual_network_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.VirtualNetwork":
+    ) -> "_models.VirtualNetwork":
         """Gets the specified virtual network by resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -163,7 +169,7 @@ class VirtualNetworksOperations:
         :rtype: ~azure.mgmt.network.v2019_02_01.models.VirtualNetwork
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetwork"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetwork"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -210,10 +216,10 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: "models.VirtualNetwork",
+        parameters: "_models.VirtualNetwork",
         **kwargs
-    ) -> "models.VirtualNetwork":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetwork"]
+    ) -> "_models.VirtualNetwork":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetwork"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -267,9 +273,9 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: "models.VirtualNetwork",
+        parameters: "_models.VirtualNetwork",
         **kwargs
-    ) -> AsyncLROPoller["models.VirtualNetwork"]:
+    ) -> AsyncLROPoller["_models.VirtualNetwork"]:
         """Creates or updates a virtual network in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -289,7 +295,7 @@ class VirtualNetworksOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetwork"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetwork"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -314,7 +320,13 @@ class VirtualNetworksOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -332,10 +344,10 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.VirtualNetwork":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetwork"]
+    ) -> "_models.VirtualNetwork":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetwork"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -385,9 +397,9 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> AsyncLROPoller["models.VirtualNetwork"]:
+    ) -> AsyncLROPoller["_models.VirtualNetwork"]:
         """Updates a virtual network tags.
 
         :param resource_group_name: The name of the resource group.
@@ -407,7 +419,7 @@ class VirtualNetworksOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetwork"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetwork"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -432,7 +444,13 @@ class VirtualNetworksOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -449,7 +467,7 @@ class VirtualNetworksOperations:
     def list_all(
         self,
         **kwargs
-    ) -> AsyncIterable["models.VirtualNetworkListResult"]:
+    ) -> AsyncIterable["_models.VirtualNetworkListResult"]:
         """Gets all virtual networks in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -457,7 +475,7 @@ class VirtualNetworksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_02_01.models.VirtualNetworkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -516,7 +534,7 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.VirtualNetworkListResult"]:
+    ) -> AsyncIterable["_models.VirtualNetworkListResult"]:
         """Gets all virtual networks in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -526,7 +544,7 @@ class VirtualNetworksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_02_01.models.VirtualNetworkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -588,7 +606,7 @@ class VirtualNetworksOperations:
         virtual_network_name: str,
         ip_address: str,
         **kwargs
-    ) -> "models.IPAddressAvailabilityResult":
+    ) -> "_models.IPAddressAvailabilityResult":
         """Checks whether a private IP address is available for use.
 
         :param resource_group_name: The name of the resource group.
@@ -602,7 +620,7 @@ class VirtualNetworksOperations:
         :rtype: ~azure.mgmt.network.v2019_02_01.models.IPAddressAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IPAddressAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IPAddressAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -649,7 +667,7 @@ class VirtualNetworksOperations:
         resource_group_name: str,
         virtual_network_name: str,
         **kwargs
-    ) -> AsyncIterable["models.VirtualNetworkListUsageResult"]:
+    ) -> AsyncIterable["_models.VirtualNetworkListUsageResult"]:
         """Lists usage stats.
 
         :param resource_group_name: The name of the resource group.
@@ -661,7 +679,7 @@ class VirtualNetworksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_02_01.models.VirtualNetworkListUsageResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkListUsageResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkListUsageResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

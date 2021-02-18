@@ -1,0 +1,49 @@
+{
+    "chosen_version": "2020-01-13-preview",
+    "total_api_version_list": ["2020-01-13-preview"],
+    "client": {
+        "name": "WorkloadMonitorAPI",
+        "filename": "_workload_monitor_api",
+        "description": "Workload Monitor API.",
+        "base_url": "\u0027https://management.azure.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": true,
+        "has_lro_operations": false
+    },
+    "global_parameters": {
+        "sync_method": {
+            "credential": {
+                "method_signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            }
+        },
+        "async_method": {
+            "credential": {
+                "method_signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential"
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null
+    },
+    "operation_groups": {
+        "operations": "Operations",
+        "health_monitors": "HealthMonitorsOperations"
+    },
+    "operation_mixins": {
+    },
+    "sync_imports": "None",
+    "async_imports": "None"
+}

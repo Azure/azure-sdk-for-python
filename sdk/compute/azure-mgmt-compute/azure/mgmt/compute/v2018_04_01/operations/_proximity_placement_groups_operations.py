@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ProximityPlacementGroupsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class ProximityPlacementGroupsOperations(object):
         self,
         resource_group_name,  # type: str
         proximity_placement_group_name,  # type: str
-        parameters,  # type: "models.ProximityPlacementGroup"
+        parameters,  # type: "_models.ProximityPlacementGroup"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ProximityPlacementGroup"
+        # type: (...) -> "_models.ProximityPlacementGroup"
         """Create or update a proximity placement group.
 
         :param resource_group_name: The name of the resource group.
@@ -66,7 +66,7 @@ class ProximityPlacementGroupsOperations(object):
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.ProximityPlacementGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProximityPlacementGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProximityPlacementGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -120,10 +120,10 @@ class ProximityPlacementGroupsOperations(object):
         self,
         resource_group_name,  # type: str
         proximity_placement_group_name,  # type: str
-        parameters,  # type: "models.UpdateResource"
+        parameters,  # type: "_models.UpdateResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ProximityPlacementGroup"
+        # type: (...) -> "_models.ProximityPlacementGroup"
         """Update a proximity placement group.
 
         :param resource_group_name: The name of the resource group.
@@ -137,7 +137,7 @@ class ProximityPlacementGroupsOperations(object):
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.ProximityPlacementGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProximityPlacementGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProximityPlacementGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -243,7 +243,7 @@ class ProximityPlacementGroupsOperations(object):
         proximity_placement_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ProximityPlacementGroup"
+        # type: (...) -> "_models.ProximityPlacementGroup"
         """Retrieves information about a proximity placement group .
 
         :param resource_group_name: The name of the resource group.
@@ -255,7 +255,7 @@ class ProximityPlacementGroupsOperations(object):
         :rtype: ~azure.mgmt.compute.v2018_04_01.models.ProximityPlacementGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProximityPlacementGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProximityPlacementGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -300,7 +300,7 @@ class ProximityPlacementGroupsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProximityPlacementGroupListResult"]
+        # type: (...) -> Iterable["_models.ProximityPlacementGroupListResult"]
         """Lists all proximity placement groups in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -308,7 +308,7 @@ class ProximityPlacementGroupsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2018_04_01.models.ProximityPlacementGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProximityPlacementGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProximityPlacementGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -368,7 +368,7 @@ class ProximityPlacementGroupsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProximityPlacementGroupListResult"]
+        # type: (...) -> Iterable["_models.ProximityPlacementGroupListResult"]
         """Lists all proximity placement groups in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -378,7 +378,7 @@ class ProximityPlacementGroupsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2018_04_01.models.ProximityPlacementGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProximityPlacementGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProximityPlacementGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class VirtualMachineScaleSetExtensionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,10 +48,10 @@ class VirtualMachineScaleSetExtensionsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        extension_parameters: "models.VirtualMachineScaleSetExtension",
+        extension_parameters: "_models.VirtualMachineScaleSetExtension",
         **kwargs
-    ) -> "models.VirtualMachineScaleSetExtension":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetExtension"]
+    ) -> "_models.VirtualMachineScaleSetExtension":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetExtension"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -107,9 +107,9 @@ class VirtualMachineScaleSetExtensionsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        extension_parameters: "models.VirtualMachineScaleSetExtension",
+        extension_parameters: "_models.VirtualMachineScaleSetExtension",
         **kwargs
-    ) -> AsyncLROPoller["models.VirtualMachineScaleSetExtension"]:
+    ) -> AsyncLROPoller["_models.VirtualMachineScaleSetExtension"]:
         """The operation to create or update an extension.
 
         :param resource_group_name: The name of the resource group.
@@ -133,7 +133,7 @@ class VirtualMachineScaleSetExtensionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetExtension"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetExtension"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -159,7 +159,14 @@ class VirtualMachineScaleSetExtensionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'vmssExtensionName': self._serialize.url("vmss_extension_name", vmss_extension_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -178,10 +185,10 @@ class VirtualMachineScaleSetExtensionsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        extension_parameters: "models.VirtualMachineScaleSetExtensionUpdate",
+        extension_parameters: "_models.VirtualMachineScaleSetExtensionUpdate",
         **kwargs
-    ) -> "models.VirtualMachineScaleSetExtension":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetExtension"]
+    ) -> "_models.VirtualMachineScaleSetExtension":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetExtension"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -237,9 +244,9 @@ class VirtualMachineScaleSetExtensionsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        extension_parameters: "models.VirtualMachineScaleSetExtensionUpdate",
+        extension_parameters: "_models.VirtualMachineScaleSetExtensionUpdate",
         **kwargs
-    ) -> AsyncLROPoller["models.VirtualMachineScaleSetExtension"]:
+    ) -> AsyncLROPoller["_models.VirtualMachineScaleSetExtension"]:
         """The operation to update an extension.
 
         :param resource_group_name: The name of the resource group.
@@ -262,7 +269,7 @@ class VirtualMachineScaleSetExtensionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetExtension"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetExtension"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -288,7 +295,14 @@ class VirtualMachineScaleSetExtensionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'vmssExtensionName': self._serialize.url("vmss_extension_name", vmss_extension_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -394,7 +408,14 @@ class VirtualMachineScaleSetExtensionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'vmssExtensionName': self._serialize.url("vmss_extension_name", vmss_extension_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -415,7 +436,7 @@ class VirtualMachineScaleSetExtensionsOperations:
         vmss_extension_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.VirtualMachineScaleSetExtension":
+    ) -> "_models.VirtualMachineScaleSetExtension":
         """The operation to get the extension.
 
         :param resource_group_name: The name of the resource group.
@@ -431,7 +452,7 @@ class VirtualMachineScaleSetExtensionsOperations:
         :rtype: ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetExtension
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetExtension"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetExtension"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -480,7 +501,7 @@ class VirtualMachineScaleSetExtensionsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         **kwargs
-    ) -> AsyncIterable["models.VirtualMachineScaleSetExtensionListResult"]:
+    ) -> AsyncIterable["_models.VirtualMachineScaleSetExtensionListResult"]:
         """Gets a list of all extensions in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -492,7 +513,7 @@ class VirtualMachineScaleSetExtensionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetExtensionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetExtensionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetExtensionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

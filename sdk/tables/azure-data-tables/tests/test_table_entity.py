@@ -5,64 +5,51 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-import unittest
-import msrest
-
 import pytest
 
-import uuid
 from base64 import b64encode
 from datetime import datetime, timedelta
-from enum import Enum
-
-from azure.data.tables import TableServiceClient, TableClient, generate_table_sas
 from dateutil.tz import tzutc, tzoffset
+from enum import Enum
 from math import isnan
+import uuid
+
+from devtools_testutils import AzureTestCase
+
+from azure.data.tables import (
+    TableServiceClient,
+    TableClient,
+    generate_table_sas,
+    TableEntity,
+    EntityProperty,
+    EdmType,
+    TableSasPermissions,
+    AccessPolicy,
+    UpdateMode
+)
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError,
-    ResourceModifiedError)
-
-from azure.data.tables._entity import TableEntity, EntityProperty, EdmType
-from azure.data.tables._models import TableSasPermissions, AccessPolicy, UpdateMode
-
-from _shared.testcase import (
-    GlobalStorageAccountPreparer,
-    TableTestCase,
-    LogCaptured
+    ResourceModifiedError,
 )
 
-from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
-
+from _shared.testcase import TableTestCase
+from preparers import TablesPreparer
 
 # ------------------------------------------------------------------------------
-SERVICE_CLIENT_ENDPOINTS = [
-    # 'table',
-    'cosmos',
-]
-# {
-#     TableServiceClient: 'table',
-#     # TableClient: 'table',
-#     TableServiceClient: 'cosmos',
-#     # TableClient: 'cosmos',
-# }
-# ------------------------------------------------------------------------------
 
-class StorageTableEntityTest(TableTestCase):
+class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
-    def _set_up(self, storage_account, storage_account_key, url='table'):
+    def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='table'):
         self.table_name = self.get_resource_name('uttable')
         self.ts = TableServiceClient(
-            self.account_url(storage_account, url),
-            credential=storage_account_key,
+            self.account_url(tables_storage_account_name, url),
+            credential=tables_primary_storage_account_key,
             table_name = self.table_name
         )
-        # self.ts = TableServiceClient(self.account_url(storage_account, url), storage_account_key)
-        # self.table_name = self.get_resource_name('uttable')
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
             try:
@@ -104,18 +91,12 @@ class StorageTableEntityTest(TableTestCase):
         for i in range(1, entity_count + 1):
             entity['RowKey'] = entity['RowKey'] + str(i)
             client.create_entity(entity)
-        # with self.ts.batch(table_name) as batch:
-        #    for i in range(1, entity_count + 1):
-        #        entity['RowKey'] = entity['RowKey'] + str(i)
-        #        batch.create_entity(entity)
         return client
 
     def _create_random_base_entity_dict(self):
         """
         Creates a dict-based entity with only pk and rk.
         """
-        # partition = self.get_resource_name('pk')
-        # row = self.get_resource_name('rk')
         partition, row = self._create_pk_rk(None, None)
         return {
             'PartitionKey': partition,
@@ -131,14 +112,37 @@ class StorageTableEntityTest(TableTestCase):
             rk = rk if rk is not None else self.get_resource_name('rk')
         return pk, rk
 
+    def _insert_two_opposite_entities(self, pk=None, rk=None):
+        entity1 = self._create_random_entity_dict()
+        resp = self.table.create_entity(entity1)
+
+        partition, row = self._create_pk_rk(pk, rk)
+        properties = {
+            'PartitionKey': partition + u'1',
+            'RowKey': row + u'1',
+            'age': 49,
+            'sex': u'female',
+            'married': False,
+            'deceased': True,
+            'optional': None,
+            'ratio': 5.2,
+            'evenratio': 6.0,
+            'large': 39999011,
+            'Birthday': datetime(1993, 4, 1, tzinfo=tzutc()),
+            'birthday': datetime(1990, 4, 1, tzinfo=tzutc()),
+            'binary': b'binary-binary',
+            'other': EntityProperty(value=40, type=EdmType.INT32),
+            'clsid': uuid.UUID('c8da6455-213e-42d9-9b79-3f9149a57833')
+        }
+        entity = TableEntity(**properties)
+        self.table.create_entity(entity)
+        return entity1, resp
 
     def _create_random_entity_dict(self, pk=None, rk=None):
         """
         Creates a dictionary-based entity with fixed values, using all
         of the supported data types.
         """
-        # partition = pk if pk is not None else self.get_resource_name('pk').decode('utf-8')
-        # row = rk if rk is not None else self.get_resource_name('rk').decode('utf-8')
         partition, row = self._create_pk_rk(pk, rk)
         properties = {
             'PartitionKey': partition,
@@ -184,174 +188,329 @@ class StorageTableEntityTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'].value, 39)
-        self.assertEqual(entity['sex'].value, 'male')
-        self.assertEqual(entity['married'], True)
-        self.assertEqual(entity['deceased'], False)
-        self.assertFalse("optional" in entity)
-        self.assertFalse("aquarius" in entity)
-        self.assertEqual(entity['ratio'], 3.1)
-        self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'].value, 933311100)
-        self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
-        self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
-        self.assertEqual(entity['binary'].value, b'binary')
-        self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT32)
-        self.assertEqual(entity['other'].value, 20)
-        self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
-        # self.assertTrue('metadata' in entity.odata)
-        # self.assertIsNotNone(entity.metadata['timestamp'])
-        # self.assertIsInstance(entity.metadata['timestamp'], datetime)
-        # if headers:
-        #    self.assertTrue("etag" in headers)
+        assert entity['age'] ==  39
+        assert entity['sex'] ==  'male'
+        assert entity['married'] ==  True
+        assert entity['deceased'] ==  False
+        assert not "optional" in entity
+        assert not "aquarius" in entity
+        assert entity['ratio'] ==  3.1
+        assert entity['evenratio'] ==  3.0
+        assert entity['large'] ==  933311100
+        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
+        assert entity['birthday'] == datetime(1970, 10, 4, tzinfo=tzutc())
+        assert entity['binary'].value ==  b'binary'
+        assert entity['other'] ==  20
+        assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
 
     def _assert_default_entity_json_full_metadata(self, entity, headers=None):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'].value, 39)
-        self.assertEqual(entity['sex'].value, 'male')
-        self.assertEqual(entity['married'], True)
-        self.assertEqual(entity['deceased'], False)
-        self.assertFalse("optional" in entity)
-        self.assertFalse("aquarius" in entity)
-        self.assertEqual(entity['ratio'], 3.1)
-        self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'].value, 933311100)
-        self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
-        self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
-        self.assertEqual(entity['binary'].value, b'binary')
-        self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT32)
-        self.assertEqual(entity['other'].value, 20)
-        self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
-        # self.assertTrue('metadata' in entity.odata)
-        # self.assertTrue('id' in entity.odata)
-        # self.assertTrue('type' in entity.odata)
-        # self.assertTrue('etag' in entity.odata)
-        # self.assertTrue('editLink' in entity.odata)
+        assert entity['age'] ==  39
+        assert entity['sex'] ==  'male'
+        assert entity['married'] ==  True
+        assert entity['deceased'] ==  False
+        assert not "optional" in entity
+        assert not "aquarius" in entity
+        assert entity['ratio'] ==  3.1
+        assert entity['evenratio'] ==  3.0
+        assert entity['large'] ==  933311100
+        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
+        assert entity['birthday'] == datetime(1970, 10, 4, tzinfo=tzutc())
+        assert entity['binary'].value ==  b'binary'
+        assert entity['other'] ==  20
+        assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
 
     def _assert_default_entity_json_no_metadata(self, entity, headers=None):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'].value, 39)
-        self.assertEqual(entity['sex'].value, 'male')
-        self.assertEqual(entity['married'], True)
-        self.assertEqual(entity['deceased'], False)
-        self.assertFalse("optional" in entity)
-        self.assertFalse("aquarius" in entity)
-        self.assertEqual(entity['ratio'], 3.1)
-        self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'].value, 933311100)
-        self.assertTrue(entity['Birthday'].value.startswith('1973-10-04T00:00:00'))
-        self.assertTrue(entity['birthday'].value.startswith('1970-10-04T00:00:00'))
-        self.assertTrue(entity['Birthday'].value.endswith('00Z'))
-        self.assertTrue(entity['birthday'].value.endswith('00Z'))
-        self.assertEqual(entity['binary'].value, b64encode(b'binary').decode('utf-8'))
-        self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT32)
-        self.assertEqual(entity['other'].value, 20)
-        self.assertEqual(entity['clsid'].value, 'c9da6455-213d-42c9-9a79-3e9149a57833')
-        # self.assertIsNone(entity.odata)
-        # self.assertIsNotNone(entity.Timestamp)
+        assert entity['age'] ==  39
+        assert entity['sex'] ==  'male'
+        assert entity['married'] ==  True
+        assert entity['deceased'] ==  False
+        assert not "optional" in entity
+        assert not "aquarius" in entity
+        assert entity['ratio'] ==  3.1
+        assert entity['evenratio'] ==  3.0
+        assert entity['large'] ==  933311100
+        assert entity['Birthday'].startswith('1973-10-04T00:00:00')
+        assert entity['birthday'].startswith('1970-10-04T00:00:00')
+        assert entity['Birthday'].endswith('00Z')
+        assert entity['birthday'].endswith('00Z')
+        assert entity['binary'] ==  b64encode(b'binary').decode('utf-8')
+        assert entity['other'] ==  20
+        assert entity['clsid'] ==  'c9da6455-213d-42c9-9a79-3e9149a57833'
 
     def _assert_updated_entity(self, entity):
         '''
         Asserts that the entity passed in matches the updated entity.
         '''
-        self.assertEqual(entity.age.value, 'abc')
-        self.assertEqual(entity.sex.value, 'female')
-        self.assertFalse(hasattr(entity, "married"))
-        self.assertFalse(hasattr(entity, "deceased"))
-        self.assertEqual(entity.sign.value, 'aquarius')
-        self.assertFalse(hasattr(entity, "optional"))
-        self.assertFalse(hasattr(entity, "ratio"))
-        self.assertFalse(hasattr(entity, "evenratio"))
-        self.assertFalse(hasattr(entity, "large"))
-        self.assertFalse(hasattr(entity, "Birthday"))
-        self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
-        self.assertFalse(hasattr(entity, "other"))
-        self.assertFalse(hasattr(entity, "clsid"))
+        assert entity.age ==  'abc'
+        assert entity.sex ==  'female'
+        assert not hasattr(entity, "married")
+        assert not hasattr(entity, "deceased")
+        assert entity.sign ==  'aquarius'
+        assert not hasattr(entity, "optional")
+        assert not hasattr(entity, "ratio")
+        assert not hasattr(entity, "evenratio")
+        assert not hasattr(entity, "large")
+        assert not hasattr(entity, "Birthday")
+        assert entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc())
+        assert not hasattr(entity, "other")
+        assert not hasattr(entity, "clsid")
 
     def _assert_merged_entity(self, entity):
         '''
         Asserts that the entity passed in matches the default entity
         merged with the updated entity.
         '''
-        self.assertEqual(entity.age.value, 'abc')
-        self.assertEqual(entity.sex.value, 'female')
-        self.assertEqual(entity.sign.value, 'aquarius')
-        self.assertEqual(entity.married, True)
-        self.assertEqual(entity.deceased, False)
-        self.assertEqual(entity.sign.value, 'aquarius')
-        self.assertEqual(entity.ratio, 3.1)
-        self.assertEqual(entity.evenratio, 3.0)
-        self.assertEqual(entity.large.value, 933311100)
-        self.assertEqual(entity.Birthday, datetime(1973, 10, 4, tzinfo=tzutc()))
-        self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
-        self.assertIsInstance(entity.other, EntityProperty)
-        self.assertEqual(entity.other.type, EdmType.INT32)
-        self.assertEqual(entity.other.value, 20)
-        self.assertIsInstance(entity.clsid, uuid.UUID)
-        self.assertEqual(str(entity.clsid), 'c9da6455-213d-42c9-9a79-3e9149a57833')
+        assert entity.age ==  'abc'
+        assert entity.sex ==  'female'
+        assert entity.sign ==  'aquarius'
+        assert entity.married ==  True
+        assert entity.deceased ==  False
+        assert entity.ratio ==  3.1
+        assert entity.evenratio ==  3.0
+        assert entity.large ==  933311100
+        assert entity.Birthday, datetime(1973, 10, 4, tzinfo=tzutc())
+        assert entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc())
+        assert entity.other ==  20
+        assert isinstance(entity.clsid,  uuid.UUID)
+        assert str(entity.clsid) ==  'c9da6455-213d-42c9-9a79-3e9149a57833'
 
     def _assert_valid_metadata(self, metadata):
         keys = metadata.keys()
-        self.assertIn("version", keys)
-        self.assertIn("date", keys)
-        self.assertIn("etag", keys)
-        self.assertEqual(len(keys), 3)
+        assert "version" in  keys
+        assert "date" in  keys
+        assert "etag" in  keys
+        assert len(keys) ==  3
 
     # --Test cases for entities ------------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_etag(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_url_encoding_at_symbol(self, tables_storage_account_name, tables_primary_storage_account_key):
 
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity = {
+                u"PartitionKey": u"PK",
+                u"RowKey": u"table@storage.com",
+                u"Value": 100
+            }
+
+            for i in range(10):
+                entity[u"RowKey"] += str(i)
+                entity[u"Value"] += i
+                self.table.create_entity(entity)
+
+            f = u"RowKey eq '{}'".format(entity["RowKey"])
+            entities = self.table.query_entities(filter=f)
+            count = 0
+            for e in entities:
+                assert e.PartitionKey == entity[u"PartitionKey"]
+                assert e.RowKey == entity[u"RowKey"]
+                assert e.Value == entity[u"Value"]
+                count += 1
+                self.table.delete_entity(e.PartitionKey, e.RowKey)
+
+            assert count == 1
+
+            count = 0
+            for e in self.table.query_entities(filter=f):
+                count += 1
+            assert count == 0
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_insert_etag(self, tables_storage_account_name, tables_primary_storage_account_key):
+
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
 
             entity, _ = self._insert_random_entity()
 
             entity1 = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
 
-            with self.assertRaises(AttributeError):
+            with pytest.raises(AttributeError):
                 etag = entity1.etag
 
-            self.assertIsNotNone(entity1.metadata())
+            assert entity1.metadata() is not None
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_query_user_filter(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_query_user_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            entity = self._insert_random_entity()
+            entity, _ = self._insert_two_opposite_entities()
 
             # Act
-            # resp = self.table.create_item(entity)
-            resp = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': 'True'})
+            entities = self.table.query_entities(
+                filter="married eq @my_param",
+                parameters={'my_param': entity['married']}
+            )
 
-            # Assert  --- Does this mean insert returns nothing?
-            self.assertIsNotNone(resp)
+            assert entities is not None
+            length = 0
+            for e in entities:
+                self._assert_default_entity(e)
+                length += 1
+
+            assert length == 1
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_dictionary(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_query_user_filter_multiple_params(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': True,
+                'rk': entity['RowKey']
+            }
+            entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_integers(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': 40,
+            }
+            entities = self.table.query_entities(filter="age lt @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_floats(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['ratio'] + 1,
+            }
+            entities = self.table.query_entities(filter="ratio lt @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_datetimes(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['birthday'],
+            }
+            entities = self.table.query_entities(filter="birthday eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_guids(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['clsid']
+            }
+            entities = self.table.query_entities(filter="clsid eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_invalid_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            base_entity = {
+                u"PartitionKey": u"pk",
+                u"RowKey": u"rk",
+                u"value": 1
+            }
+
+            for i in range(5):
+                base_entity[u"RowKey"] += str(i)
+                base_entity[u"value"] += i
+                self.table.create_entity(base_entity)
+            # Act
+            with pytest.raises(HttpResponseError):
+                resp = self.table.query_entities(filter="aaa bbb ccc")
+                for row in resp:
+                    _ = row
+
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_insert_entity_dictionary(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
 
             # Act
-            # resp = self.table.create_item(entity)
             resp = self.table.create_entity(entity=entity)
 
             # Assert
@@ -359,12 +518,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_with_hook(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_insert_entity_with_hook(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
 
@@ -381,12 +538,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_with_no_metadata(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_insert_entity_with_no_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
             headers = {'Accept': 'application/json;odata=nometadata'}
@@ -408,12 +563,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_with_full_metadata(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_insert_entity_with_full_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
             headers = {'Accept': 'application/json;odata=fullmetadata'}
@@ -435,187 +588,181 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_conflict(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_insert_entity_conflict(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
             # Act
-            with self.assertRaises(ResourceExistsError):
+            with pytest.raises(ResourceExistsError):
                 self.table.create_entity(entity=entity)
 
             # Assert
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_with_large_int32_value_throws(self, resource_group, location, storage_account,
-                                                         storage_account_key):
+    @TablesPreparer()
+    def test_insert_entity_with_large_int32_value_throws(self, tables_storage_account_name,
+                                                         tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             dict32 = self._create_random_base_entity_dict()
             dict32['large'] = EntityProperty(2 ** 31, EdmType.INT32)
 
             # Assert
-            with self.assertRaises(TypeError):
+            with pytest.raises(TypeError):
                 self.table.create_entity(entity=dict32)
 
             dict32['large'] = EntityProperty(-(2 ** 31 + 1), EdmType.INT32)
-            with self.assertRaises(TypeError):
+            with pytest.raises(TypeError):
                 self.table.create_entity(entity=dict32)
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_with_large_int64_value_throws(self, resource_group, location, storage_account,
-                                                         storage_account_key):
+    @TablesPreparer()
+    def test_insert_entity_with_large_int64_value_throws(self, tables_storage_account_name,
+                                                         tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             dict64 = self._create_random_base_entity_dict()
             dict64['large'] = EntityProperty(2 ** 63, EdmType.INT64)
 
             # Assert
-            with self.assertRaises(TypeError):
+            with pytest.raises(TypeError):
                 self.table.create_entity(entity=dict64)
 
             dict64['large'] = EntityProperty(-(2 ** 63 + 1), EdmType.INT64)
-            with self.assertRaises(TypeError):
+            with pytest.raises(TypeError):
                 self.table.create_entity(entity=dict64)
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_missing_pk(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_insert_entity_with_large_int_success(self, tables_storage_account_name,
+                                                         tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            # Act
+            dict64 = self._create_random_base_entity_dict()
+            dict64['large'] = EntityProperty(2 ** 50, EdmType.INT64)
+
+            # Assert
+            self.table.create_entity(entity=dict64)
+
+            received_entity = self.table.get_entity(dict64['PartitionKey'], dict64['RowKey'])
+            assert received_entity['large'].value == dict64['large'].value
+
+            dict64['RowKey'] = u'negative'
+            dict64['large'] = EntityProperty(-(2 ** 50 + 1), EdmType.INT64)
+            self.table.create_entity(entity=dict64)
+
+            received_entity = self.table.get_entity(dict64['PartitionKey'], dict64['RowKey'])
+            assert received_entity['large'].value == dict64['large'].value
+
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_insert_entity_missing_pk(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = {'RowKey': 'rk'}
 
             # Act
-            with self.assertRaises(ValueError):
-                # resp = self.table.create_item(entity)
+            with pytest.raises(ValueError):
                 resp = self.table.create_entity(entity=entity)
             # Assert
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_empty_string_pk(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_insert_entity_empty_string_pk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = {'RowKey': u'rk', 'PartitionKey': u''}
 
             # Act
-            if 'cosmos' in self.table.url:
-                with self.assertRaises(HttpResponseError):
-                    self.table.create_entity(entity=entity)
-            else:
-                resp = self.table.create_entity(entity=entity)
-                self._assert_valid_metadata(resp)
+            resp = self.table.create_entity(entity=entity)
+            self._assert_valid_metadata(resp)
 
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_missing_rk(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_insert_entity_missing_rk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = {'PartitionKey': 'pk'}
 
             # Act
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 resp = self.table.create_entity(entity=entity)
 
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_empty_string_rk(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_insert_entity_empty_string_rk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = {'PartitionKey': u'pk', 'RowKey': u''}
 
             # Act
-            if 'cosmos' in self.table.url:
-                with self.assertRaises(HttpResponseError):
-                    self.table.create_entity(entity=entity)
-            else:
-                resp = self.table.create_entity(entity=entity)
-                self._assert_valid_metadata(resp)
+            resp = self.table.create_entity(entity=entity)
+            self._assert_valid_metadata(resp)
 
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_too_many_properties(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_insert_entity_too_many_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
-        if 'cosmos' in self.table.url:
-            pytest.skip("Cosmos supports large number of properties.")
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             for i in range(255):
                 entity['key{0}'.format(i)] = 'value{0}'.format(i)
 
             # Act
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError):
                 resp = self.table.create_entity(entity=entity)
 
             # Assert
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_property_name_too_long(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_insert_entity_property_name_too_long(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
-        if 'cosmos' in self.table.url:
-            pytest.skip("Cosmos supports large property names.")
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             entity['a' * 256] = 'badval'
 
             # Act
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError):
                 resp = self.table.create_entity(entity=entity)
 
             # Assert
         finally:
             self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_entity_with_enums(self, resource_group, location, storage_account,
-                                                         storage_account_key):
+    @TablesPreparer()
+    def test_insert_entity_with_enums(self, tables_storage_account_name,
+                                                         tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             class Color(Enum):
@@ -634,19 +781,17 @@ class StorageTableEntityTest(TableTestCase):
 
             self.table.create_entity(entity=entity)
             resp_entity = self.table.get_entity(partition_key=pk, row_key=rk)
-            assert str(entity.test1) == resp_entity.test1.value
-            assert str(entity.test2) == resp_entity.test2.value
-            assert str(entity.test3) == resp_entity.test3.value
+            assert str(entity.test1) == resp_entity.test1
+            assert str(entity.test2) == resp_entity.test2
+            assert str(entity.test3) == resp_entity.test3
 
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_get_entity(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_get_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
@@ -655,18 +800,16 @@ class StorageTableEntityTest(TableTestCase):
                                          row_key=entity['RowKey'])
 
             # Assert
-            self.assertEqual(resp['PartitionKey'], entity['PartitionKey'])
-            self.assertEqual(resp['RowKey'], entity['RowKey'])
+            assert resp['PartitionKey'] ==  entity['PartitionKey']
+            assert resp['RowKey'] ==  entity['RowKey']
             self._assert_default_entity(resp)
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_get_entity_with_hook(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_get_entity_with_hook(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
@@ -679,18 +822,16 @@ class StorageTableEntityTest(TableTestCase):
             )
 
             # Assert
-            self.assertEqual(resp['PartitionKey'], entity['PartitionKey'])
-            self.assertEqual(resp['RowKey'], entity['RowKey'])
+            assert resp['PartitionKey'] ==  entity['PartitionKey']
+            assert resp['RowKey'] ==  entity['RowKey']
             self._assert_default_entity(resp)
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_get_entity_if_match(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_get_entity_if_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, etag = self._insert_random_entity()
 
@@ -707,7 +848,7 @@ class StorageTableEntityTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified
             )
 
-            with self.assertRaises(ResourceNotFoundError):
+            with pytest.raises(ResourceNotFoundError):
                 resp = self.table.get_entity(partition_key=entity['PartitionKey'],
                                             row_key=entity['RowKey'])
 
@@ -715,12 +856,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_get_entity_full_metadata(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_get_entity_full_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
@@ -731,18 +870,16 @@ class StorageTableEntityTest(TableTestCase):
                 headers={'accept': 'application/json;odata=fullmetadata'})
 
             # Assert
-            self.assertEqual(resp.PartitionKey, entity.PartitionKey)
-            self.assertEqual(resp.RowKey, entity.RowKey)
+            assert resp.PartitionKey ==  entity.PartitionKey
+            assert resp.RowKey ==  entity.RowKey
             self._assert_default_entity_json_full_metadata(resp)
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_get_entity_no_metadata(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_get_entity_no_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
@@ -753,23 +890,21 @@ class StorageTableEntityTest(TableTestCase):
                 headers={'accept': 'application/json;odata=nometadata'})
 
             # Assert
-            self.assertEqual(resp.PartitionKey, entity.PartitionKey)
-            self.assertEqual(resp.RowKey, entity.RowKey)
+            assert resp.PartitionKey ==  entity.PartitionKey
+            assert resp.RowKey ==  entity.RowKey
             self._assert_default_entity_json_no_metadata(resp)
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_get_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_get_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
 
             # Act
-            with self.assertRaises(ResourceNotFoundError):
+            with pytest.raises(ResourceNotFoundError):
                 self.table.get_entity(partition_key=entity.PartitionKey,
                                       row_key=entity.RowKey)
 
@@ -777,12 +912,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_get_entity_with_special_doubles(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_get_entity_with_special_doubles(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({
@@ -797,18 +930,16 @@ class StorageTableEntityTest(TableTestCase):
                                          row_key=entity['RowKey'])
 
             # Assert
-            self.assertEqual(received_entity.inf, float('inf'))
-            self.assertEqual(received_entity.negativeinf, float('-inf'))
-            self.assertTrue(isnan(received_entity.nan))
+            assert received_entity.inf ==  float('inf')
+            assert received_entity.negativeinf ==  float('-inf')
+            assert isnan(received_entity.nan)
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_update_entity(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_update_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
@@ -819,41 +950,37 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
-            #  self.assertTrue(resp)
+            #  assert resp
             received_entity = self.table.get_entity(partition_key=entity.PartitionKey,
                                                     row_key=entity.RowKey)
 
-            with self.assertRaises(KeyError):
+            with pytest.raises(KeyError):
                 del received_entity['property_that_does_not_exist']
             self._assert_valid_metadata(resp)
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_update_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_update_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            with self.assertRaises(ResourceNotFoundError):
+            with pytest.raises(ResourceNotFoundError):
                 self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_update_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_update_entity_with_if_matches(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, etag = self._insert_random_entity()
 
@@ -871,17 +998,15 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_update_entity_with_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_update_entity_with_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError):
                 self.table.update_entity(
                     mode=UpdateMode.REPLACE,
                     entity=sent_entity,
@@ -891,13 +1016,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_or_merge_entity_with_existing_entity(self, resource_group, location, storage_account,
-                                                         storage_account_key):
+    @TablesPreparer()
+    def test_insert_or_merge_entity_with_existing_entity(self, tables_storage_account_name,
+                                                         tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
@@ -912,13 +1035,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_or_merge_entity_with_non_existing_entity(self, resource_group, location, storage_account,
-                                                             storage_account_key):
+    @TablesPreparer()
+    def test_insert_or_merge_entity_with_non_existing_entity(self, tables_storage_account_name,
+                                                             tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -934,13 +1055,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_or_replace_entity_with_existing_entity(self, resource_group, location, storage_account,
-                                                           storage_account_key):
+    @TablesPreparer()
+    def test_insert_or_replace_entity_with_existing_entity(self, tables_storage_account_name,
+                                                           tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
@@ -955,13 +1074,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_insert_or_replace_entity_with_non_existing_entity(self, resource_group, location, storage_account,
-                                                               storage_account_key):
+    @TablesPreparer()
+    def test_insert_or_replace_entity_with_non_existing_entity(self, tables_storage_account_name,
+                                                               tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -977,12 +1094,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_merge_entity(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_merge_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
@@ -997,30 +1112,26 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_merge_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_merge_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            with self.assertRaises(ResourceNotFoundError):
+            with pytest.raises(ResourceNotFoundError):
                 self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_merge_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_merge_entity_with_if_matches(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, etag = self._insert_random_entity()
 
@@ -1039,18 +1150,16 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_merge_entity_with_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_merge_entity_with_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError):
                 self.table.update_entity(mode=UpdateMode.MERGE,
                                          entity=sent_entity,
                                          etag='W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
@@ -1060,12 +1169,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_delete_entity(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_delete_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
@@ -1073,35 +1180,31 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.delete_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
 
             # Assert
-            self.assertIsNone(resp)
-            with self.assertRaises(ResourceNotFoundError):
+            assert resp is None
+            with pytest.raises(ResourceNotFoundError):
                 self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_delete_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_delete_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
 
             # Act
-            with self.assertRaises(ResourceNotFoundError):
+            with pytest.raises(ResourceNotFoundError):
                 self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_delete_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_delete_entity_with_if_matches(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, etag = self._insert_random_entity()
 
@@ -1110,23 +1213,21 @@ class StorageTableEntityTest(TableTestCase):
                                             match_condition=MatchConditions.IfNotModified)
 
             # Assert
-            self.assertIsNone(resp)
-            with self.assertRaises(ResourceNotFoundError):
+            assert resp is None
+            with pytest.raises(ResourceNotFoundError):
                 self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_delete_entity_with_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_delete_entity_with_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
             # Act
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError):
                 self.table.delete_entity(
                     entity.PartitionKey, entity.RowKey,
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
@@ -1136,12 +1237,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_unicode_property_value(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_unicode_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             entity1 = entity.copy()
@@ -1156,18 +1255,16 @@ class StorageTableEntityTest(TableTestCase):
                 filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
 
             # Assert
-            self.assertEqual(len(entities), 2)
-            self.assertEqual(entities[0].Description.value, u'ꀕ')
-            self.assertEqual(entities[1].Description.value, u'ꀕ')
+            assert len(entities) ==  2
+            assert entities[0].Description ==  u'ꀕ'
+            assert entities[1].Description ==  u'ꀕ'
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_unicode_property_name(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_unicode_property_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             entity1 = entity.copy()
@@ -1182,22 +1279,18 @@ class StorageTableEntityTest(TableTestCase):
                 filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
 
             # Assert
-            self.assertEqual(len(entities), 2)
-            self.assertEqual(entities[0][u'啊齄丂狛狜'].value, u'ꀕ')
-            self.assertEqual(entities[1][u'啊齄丂狛狜'].value, u'hello')
+            assert len(entities) ==  2
+            assert entities[0][u'啊齄丂狛狜'] ==  u'ꀕ'
+            assert entities[1][u'啊齄丂狛狜'] ==  u'hello'
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_operations_on_entity_with_partition_key_having_single_quote(self, resource_group, location,
-                                                                         storage_account, storage_account_key):
-
+    @TablesPreparer()
+    def test_operations_on_entity_with_partition_key_having_single_quote(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         partition_key_with_single_quote = u"a''''b"
         row_key_with_single_quote = u"a''''b"
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity(pk=partition_key_with_single_quote, rk=row_key_with_single_quote)
 
@@ -1219,22 +1312,20 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_valid_metadata(resp)
             received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
-            self.assertEqual(received_entity['newField'].value, 'newFieldValue')
+            assert received_entity['newField'] ==  'newFieldValue'
 
             # Act
             resp = self.table.delete_entity(entity.PartitionKey, entity.RowKey)
 
             # Assert
-            self.assertIsNone(resp)
+            assert resp is None
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_empty_and_spaces_property_value(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_empty_and_spaces_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({
@@ -1255,26 +1346,24 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
-            self.assertIsNotNone(resp)
-            self.assertEqual(resp.EmptyByte.value, b'')
-            self.assertEqual(resp.EmptyUnicode.value, u'')
-            self.assertEqual(resp.SpacesOnlyByte.value, b'   ')
-            self.assertEqual(resp.SpacesOnlyUnicode.value, u'   ')
-            self.assertEqual(resp.SpacesBeforeByte.value, b'   Text')
-            self.assertEqual(resp.SpacesBeforeUnicode.value, u'   Text')
-            self.assertEqual(resp.SpacesAfterByte.value, b'Text   ')
-            self.assertEqual(resp.SpacesAfterUnicode.value, u'Text   ')
-            self.assertEqual(resp.SpacesBeforeAndAfterByte.value, b'   Text   ')
-            self.assertEqual(resp.SpacesBeforeAndAfterUnicode.value, u'   Text   ')
+            assert resp is not None
+            assert resp.EmptyByte.value ==  b''
+            assert resp.EmptyUnicode ==  u''
+            assert resp.SpacesOnlyByte.value ==  b'   '
+            assert resp.SpacesOnlyUnicode ==  u'   '
+            assert resp.SpacesBeforeByte.value ==  b'   Text'
+            assert resp.SpacesBeforeUnicode ==  u'   Text'
+            assert resp.SpacesAfterByte.value ==  b'Text   '
+            assert resp.SpacesAfterUnicode ==  u'Text   '
+            assert resp.SpacesBeforeAndAfterByte.value ==  b'   Text   '
+            assert resp.SpacesBeforeAndAfterUnicode ==  u'   Text   '
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_none_property_value(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_none_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({'NoneValue': None})
@@ -1284,17 +1373,15 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
-            self.assertIsNotNone(resp)
-            self.assertFalse(hasattr(resp, 'NoneValue'))
+            assert resp is not None
+            assert not hasattr(resp, 'NoneValue')
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_binary_property_value(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_binary_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             binary_data = b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'
             entity = self._create_random_base_entity_dict()
@@ -1305,17 +1392,16 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
-            self.assertIsNotNone(resp)
-            self.assertEqual(resp.binary.value, binary_data)
+            assert resp is not None
+            assert resp.binary.value ==  binary_data
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_timezone(self, resource_group, location, storage_account, storage_account_key):
+    @pytest.mark.skip("response time is three hours before the given one")
+    @TablesPreparer()
+    def test_timezone(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             local_tz = tzoffset('BRST', -10800)
             local_date = datetime(2003, 9, 27, 9, 52, 43, tzinfo=local_tz)
@@ -1327,19 +1413,17 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
-            self.assertIsNotNone(resp)
+            assert resp is not None
             # times are not equal because request is made after
-            # self.assertEqual(resp.date.astimezone(tzutc()), local_date.astimezone(tzutc()))
-            self.assertEqual(resp.date.astimezone(local_tz), local_date)
+            # assert resp.date.astimezone(tzutc()) ==  local_date.astimezone(tzutc())
+            assert resp.date.astimezone(local_tz) ==  local_date
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_query_entities(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_query_entities(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = self._create_query_table(2)
 
@@ -1347,18 +1431,56 @@ class StorageTableEntityTest(TableTestCase):
             entities = list(table.list_entities())
 
             # Assert
-            self.assertEqual(len(entities), 2)
+            assert len(entities) ==  2
             for entity in entities:
                 self._assert_default_entity(entity)
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_query_zero_entities(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_query_entities_each_page(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            base_entity = {
+                "PartitionKey": u"pk",
+                "RowKey": u"1",
+            }
+
+            for i in range(10):
+                if i > 5:
+                    base_entity['PartitionKey'] += str(i)
+                base_entity['RowKey'] += str(i)
+                base_entity['value'] = i
+                try:
+                    self.table.create_entity(base_entity)
+                except ResourceExistsError:
+                    pass
+
+            query_filter = u"PartitionKey eq 'pk'"
+
+            entity_count = 0
+            page_count = 0
+            for entity_page in self.table.query_entities(filter=query_filter, results_per_page=2).by_page():
+
+                temp_count = 0
+                for ent in entity_page:
+                    temp_count += 1
+
+                assert temp_count <= 2
+                page_count += 1
+                entity_count += temp_count
+
+            assert entity_count == 6
+            assert page_count == 3
+
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_zero_entities(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = self._create_query_table(0)
 
@@ -1366,16 +1488,14 @@ class StorageTableEntityTest(TableTestCase):
             entities = list(table.list_entities())
 
             # Assert
-            self.assertEqual(len(entities), 0)
+            assert len(entities) ==  0
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_query_entities_full_metadata(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_query_entities_full_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = self._create_query_table(2)
 
@@ -1383,18 +1503,16 @@ class StorageTableEntityTest(TableTestCase):
             entities = list(table.list_entities(headers={'accept': 'application/json;odata=fullmetadata'}))
 
             # Assert
-            self.assertEqual(len(entities), 2)
+            assert len(entities) ==  2
             for entity in entities:
                 self._assert_default_entity_json_full_metadata(entity)
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_query_entities_no_metadata(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_query_entities_no_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = self._create_query_table(2)
 
@@ -1402,73 +1520,37 @@ class StorageTableEntityTest(TableTestCase):
             entities = list(table.list_entities(headers={'accept': 'application/json;odata=nometadata'}))
 
             # Assert
-            self.assertEqual(len(entities), 2)
+            assert len(entities) ==  2
             for entity in entities:
                 self._assert_default_entity_json_no_metadata(entity)
         finally:
             self._tear_down()
 
-    # TODO: move this over to the batch test file when merged
-    @pytest.mark.skip("Batch not implemented")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_query_entities_large(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_query_entities_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        table_name = self._create_query_table(0)
-        total_entities_count = 1000
-        entities_per_batch = 50
-
-        for j in range(total_entities_count // entities_per_batch):
-            batch = TableBatch()
-            for i in range(entities_per_batch):
-                entity = Entity()
-                entity.PartitionKey = 'large'
-                entity.RowKey = 'batch{0}-item{1}'.format(j, i)
-                entity.test = EntityProperty(True)
-                entity.test2 = 'hello world;' * 100
-                entity.test3 = 3
-                entity.test4 = EntityProperty(1234567890)
-                entity.test5 = datetime(2016, 12, 31, 11, 59, 59, 0)
-                batch.create_entity(entity)
-            self.ts.commit_batch(table_name, batch)
-
-        # Act
-        start_time = datetime.now()
-        entities = list(self.ts.query_entities(table_name))
-        elapsed_time = datetime.now() - start_time
-
-        # Assert
-        print('query_entities took {0} secs.'.format(elapsed_time.total_seconds()))
-        # azure allocates 5 seconds to execute a query
-        # if it runs slowly, it will return fewer results and make the test fail
-        self.assertEqual(len(entities), total_entities_count)
-
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_query_entities_with_filter(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
+            entity2, _ = self._insert_random_entity(pk="foo" + entity.PartitionKey)
+            entity3, _ = self._insert_random_entity(pk="bar" + entity.PartitionKey)
 
             # Act
             entities = list(self.table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity.PartitionKey)))
+                filter="PartitionKey eq '{}'".format(entity.PartitionKey),
+                results_per_page=1))
 
             # Assert
-            self.assertEqual(len(entities), 1)
-            self.assertEqual(entity.PartitionKey, entities[0].PartitionKey)
+            assert len(entities) ==  1
+            assert entity.PartitionKey ==  entities[0].PartitionKey
             self._assert_default_entity(entities[0])
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_query_entities_with_select(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_query_entities_with_select(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = self._create_query_table(2)
 
@@ -1476,21 +1558,19 @@ class StorageTableEntityTest(TableTestCase):
             entities = list(table.list_entities(select=['age', 'sex']))
 
             # Assert
-            self.assertEqual(len(entities), 2)
-            self.assertEqual(entities[0].age.value, 39)
-            self.assertEqual(entities[0].sex.value, 'male')
-            self.assertFalse(hasattr(entities[0], "birthday"))
-            self.assertFalse(hasattr(entities[0], "married"))
-            self.assertFalse(hasattr(entities[0], "deceased"))
+            assert len(entities) ==  2
+            assert entities[0].age ==  39
+            assert entities[0].sex ==  'male'
+            assert not hasattr(entities[0], "birthday")
+            assert not hasattr(entities[0], "married")
+            assert not hasattr(entities[0], "deceased")
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_query_entities_with_top(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_query_entities_with_top(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = self._create_query_table(3)
             # circular dependencies made this return a list not an item paged - problem when calling by page
@@ -1498,16 +1578,14 @@ class StorageTableEntityTest(TableTestCase):
             entities = list(next(table.list_entities(results_per_page=2).by_page()))
 
             # Assert
-            self.assertEqual(len(entities), 2)
+            assert len(entities) ==  2
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_query_entities_with_top_and_next(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_query_entities_with_top_and_next(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = self._create_query_table(5)
 
@@ -1526,9 +1604,9 @@ class StorageTableEntityTest(TableTestCase):
             entities3 = resp3._current_page
 
             # Assert
-            self.assertEqual(len(entities1), 2)
-            self.assertEqual(len(entities2), 2)
-            self.assertEqual(len(entities3), 1)
+            assert len(entities1) ==  2
+            assert len(entities2) ==  2
+            assert len(entities3) ==  1
             self._assert_default_entity(entities1[0])
             self._assert_default_entity(entities1[1])
             self._assert_default_entity(entities2[0])
@@ -1537,23 +1615,19 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_sas_query(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_sas_query(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
+        url = self.account_url(tables_storage_account_name, "table")
 
-        self._set_up(storage_account, storage_account_key)
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             entity, _ = self._insert_random_entity()
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(read=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1562,7 +1636,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
@@ -1570,26 +1644,22 @@ class StorageTableEntityTest(TableTestCase):
                 filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
 
             # Assert
-            self.assertEqual(len(entities), 1)
+            assert len(entities) ==  1
             self._assert_default_entity(entities[0])
         finally:
             self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_sas_add(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_sas_add(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
-        self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1598,7 +1668,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
@@ -1613,21 +1683,17 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_sas_add_inside_range(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_sas_add_inside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
-        self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1637,7 +1703,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
@@ -1650,21 +1716,17 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_sas_add_outside_range(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_sas_add_outside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
-        self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1674,11 +1736,11 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError):
                 entity = self._create_random_entity_dict()
                 table.create_entity(entity=entity)
 
@@ -1686,22 +1748,18 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_sas_update(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_sas_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
-        self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             entity, _ = self._insert_random_entity()
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(update=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1709,7 +1767,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
@@ -1718,27 +1776,23 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
-            self.assertIsNotNone(resp)
+            assert resp is not None
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_sas_delete(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_sas_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
-        self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             entity, _ = self._insert_random_entity()
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(delete=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1746,36 +1800,32 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
             table.delete_entity(entity.PartitionKey, entity.RowKey)
 
             # Assert
-            with self.assertRaises(ResourceNotFoundError):
+            with pytest.raises(ResourceNotFoundError):
                 self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_sas_upper_case_table_name(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_sas_upper_case_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
-        self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             entity, _ = self._insert_random_entity()
 
             # Table names are case insensitive, so simply upper case our existing table name to test
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name.upper(),
                 permission=TableSasPermissions(read=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1784,7 +1834,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
@@ -1792,21 +1842,18 @@ class StorageTableEntityTest(TableTestCase):
                 filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
 
             # Assert
-            self.assertEqual(len(entities), 1)
+            assert len(entities) ==  1
             self._assert_default_entity(entities[0])
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Header authorization is malformed")
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
-        self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             entity, _ = self._insert_random_entity()
@@ -1820,15 +1867,15 @@ class StorageTableEntityTest(TableTestCase):
             self.table.set_table_access_policy(identifiers)
 
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 policy_id='testid',
             )
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
@@ -1836,12 +1883,7 @@ class StorageTableEntityTest(TableTestCase):
                 filter="PartitionKey eq '{}'".format(entity.PartitionKey)))
 
             # Assert
-            self.assertEqual(len(entities), 1)
+            assert len(entities) ==  1
             self._assert_default_entity(entities[0])
         finally:
             self._tear_down()
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

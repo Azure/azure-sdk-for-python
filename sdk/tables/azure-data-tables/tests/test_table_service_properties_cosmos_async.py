@@ -5,27 +5,24 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import pytest
 from time import sleep
 
-from msrest.exceptions import ValidationError  # TODO This should be an azure-core error.
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import AzureTestCase
+
+from azure.data.tables import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
+from azure.data.tables.aio import TableServiceClient
 from azure.core.exceptions import HttpResponseError
 
-from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
-from azure.data.tables.aio import TableServiceClient
-
-from _shared.testcase import TableTestCase, RERUNS_DELAY, SLEEP_DELAY
-from _shared.cosmos_testcase import CachedCosmosAccountPreparer
-
-from devtools_testutils import CachedResourceGroupPreparer
+from _shared.testcase import SLEEP_DELAY
+from _shared.asynctestcase import AsyncTableTestCase
+from preparers import CosmosPreparer
 # ------------------------------------------------------------------------------
 
-class TableServicePropertiesTest(TableTestCase):
+class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
-        self.assertIsNotNone(prop)
+        assert prop is not None
 
         self._assert_logging_equal(prop['analytics_logging'], TableAnalyticsLogging())
         self._assert_metrics_equal(prop['hour_metrics'], Metrics())
@@ -34,79 +31,76 @@ class TableServicePropertiesTest(TableTestCase):
 
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
-            self.assertEqual(log1, log2)
+            assert log1 ==  log2
             return
 
-        self.assertEqual(log1.version, log2.version)
-        self.assertEqual(log1.read, log2.read)
-        self.assertEqual(log1.write, log2.write)
-        self.assertEqual(log1.delete, log2.delete)
+        assert log1.version ==  log2.version
+        assert log1.read ==  log2.read
+        assert log1.write ==  log2.write
+        assert log1.delete ==  log2.delete
         self._assert_retention_equal(log1.retention_policy, log2.retention_policy)
 
     def _assert_delete_retention_policy_equal(self, policy1, policy2):
         if policy1 is None or policy2 is None:
-            self.assertEqual(policy1, policy2)
+            assert policy1 ==  policy2
             return
 
-        self.assertEqual(policy1.enabled, policy2.enabled)
-        self.assertEqual(policy1.days, policy2.days)
+        assert policy1.enabled ==  policy2.enabled
+        assert policy1.days ==  policy2.days
 
     def _assert_static_website_equal(self, prop1, prop2):
         if prop1 is None or prop2 is None:
-            self.assertEqual(prop1, prop2)
+            assert prop1 ==  prop2
             return
 
-        self.assertEqual(prop1.enabled, prop2.enabled)
-        self.assertEqual(prop1.index_document, prop2.index_document)
-        self.assertEqual(prop1.error_document404_path, prop2.error_document404_path)
+        assert prop1.enabled ==  prop2.enabled
+        assert prop1.index_document ==  prop2.index_document
+        assert prop1.error_document404_path ==  prop2.error_document404_path
 
     def _assert_delete_retention_policy_not_equal(self, policy1, policy2):
         if policy1 is None or policy2 is None:
-            self.assertNotEqual(policy1, policy2)
+            assert policy1 != policy2
             return
 
-        self.assertFalse(policy1.enabled == policy2.enabled
-                         and policy1.days == policy2.days)
+        assert not (policy1.enabled == policy2.enabled) and (policy1.days == policy2.days)
 
     def _assert_metrics_equal(self, metrics1, metrics2):
         if metrics1 is None or metrics2 is None:
-            self.assertEqual(metrics1, metrics2)
+            assert metrics1 ==  metrics2
             return
 
-        self.assertEqual(metrics1.version, metrics2.version)
-        self.assertEqual(metrics1.enabled, metrics2.enabled)
-        self.assertEqual(metrics1.include_apis, metrics2.include_apis)
+        assert metrics1.version ==  metrics2.version
+        assert metrics1.enabled ==  metrics2.enabled
+        assert metrics1.include_apis ==  metrics2.include_apis
         self._assert_retention_equal(metrics1.retention_policy, metrics2.retention_policy)
 
     def _assert_cors_equal(self, cors1, cors2):
         if cors1 is None or cors2 is None:
-            self.assertEqual(cors1, cors2)
+            assert cors1 ==  cors2
             return
 
-        self.assertEqual(len(cors1), len(cors2))
+        assert len(cors1) ==  len(cors2)
 
         for i in range(0, len(cors1)):
             rule1 = cors1[i]
             rule2 = cors2[i]
-            self.assertEqual(len(rule1.allowed_origins), len(rule2.allowed_origins))
-            self.assertEqual(len(rule1.allowed_methods), len(rule2.allowed_methods))
-            self.assertEqual(rule1.max_age_in_seconds, rule2.max_age_in_seconds)
-            self.assertEqual(len(rule1.exposed_headers), len(rule2.exposed_headers))
-            self.assertEqual(len(rule1.allowed_headers), len(rule2.allowed_headers))
+            assert len(rule1.allowed_origins) ==  len(rule2.allowed_origins)
+            assert len(rule1.allowed_methods) ==  len(rule2.allowed_methods)
+            assert rule1.max_age_in_seconds ==  rule2.max_age_in_seconds
+            assert len(rule1.exposed_headers) ==  len(rule2.exposed_headers)
+            assert len(rule1.allowed_headers) ==  len(rule2.allowed_headers)
 
     def _assert_retention_equal(self, ret1, ret2):
-        self.assertEqual(ret1.enabled, ret2.enabled)
-        self.assertEqual(ret1.days, ret2.days)
+        assert ret1.enabled ==  ret2.enabled
+        assert ret1.days ==  ret2.days
 
     # --Test cases per service ---------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_table_service_properties_async(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
+    @CosmosPreparer()
+    async def test_table_service_properties_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
-        tsc = TableServiceClient(url, cosmos_account_key, logging_enable=True)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        tsc = TableServiceClient(url, tables_primary_cosmos_account_key, logging_enable=True)
         # Act
         resp = await tsc.set_service_properties(
             analytics_logging=TableAnalyticsLogging(),
@@ -115,20 +109,18 @@ class TableServicePropertiesTest(TableTestCase):
             cors=list())
 
         # Assert
-        self.assertIsNone(resp)
+        assert resp is None
         self._assert_properties_default(await tsc.get_service_properties())
         if self.is_live:
             sleep(SLEEP_DELAY)
 
     # --Test cases per feature ---------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_set_logging_async(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
+    @CosmosPreparer()
+    async def test_set_logging_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
-        tsc = TableServiceClient(url, cosmos_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
         logging = TableAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -140,14 +132,12 @@ class TableServicePropertiesTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_set_hour_metrics_async(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
+    @CosmosPreparer()
+    async def test_set_hour_metrics_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
-        tsc = TableServiceClient(url, cosmos_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -159,14 +149,12 @@ class TableServicePropertiesTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_set_minute_metrics_async(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
+    @CosmosPreparer()
+    async def test_set_minute_metrics_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
-        tsc = TableServiceClient(url, cosmos_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -179,14 +167,12 @@ class TableServicePropertiesTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_set_cors_async(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
+    @CosmosPreparer()
+    async def test_set_cors_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
-        tsc = TableServiceClient(url, cosmos_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -213,51 +199,37 @@ class TableServicePropertiesTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     # --Test cases for errors ---------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_retention_no_days_async(self, resource_group, location, cosmos_account, cosmos_account_key):
-        # Assert
-        self.assertRaises(ValueError,
-                          RetentionPolicy,
-                          True, None)
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_too_many_cors_rules_async(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    async def test_too_many_cors_rules_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
-        self.assertRaises(HttpResponseError,
-                          tsc.set_service_properties, None, None, None, cors)
+        with pytest.raises(HttpResponseError):
+            await tsc.set_service_properties(None, None, None, cors)
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-
-    @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_retention_too_long_async(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    async def test_retention_too_long_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 
-        await tsc.set_service_properties(None, None, minute_metrics)
         # Assert
-        self.assertRaises(HttpResponseError,
-                          tsc.set_service_properties,
-                          None, None, minute_metrics)
+        with pytest.raises(HttpResponseError):
+            await tsc.set_service_properties(None, None, minute_metrics)
         if self.is_live:
             sleep(SLEEP_DELAY)
 
 
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()
+class TestTableUnitTest(AsyncTableTestCase):
+
+    @pytest.mark.asyncio
+    async def test_retention_no_days_async(self):
+        # Assert
+        pytest.raises(ValueError, RetentionPolicy, True, None)

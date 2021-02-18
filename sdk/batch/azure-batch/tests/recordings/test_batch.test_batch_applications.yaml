@@ -9,28 +9,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Mar 2020 16:52:33 GMT
+      - Tue, 24 Nov 2020 18:31:34 GMT
     method: GET
-    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/applications?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/applications?api-version=2020-09-01.12.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/$metadata#listapplicationsummariesresponses\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"application_id\",\"versions\":[\r\n        \"v1.0\"\r\n
-        \     ]\r\n    }\r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#listapplicationsummariesresponses\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"application_id\",\"versions\":[\r\n\
+        \        \"v1.0\"\r\n      ]\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Mar 2020 16:52:33 GMT
+      - Tue, 24 Nov 2020 18:31:34 GMT
       request-id:
-      - 00629f19-1e69-4396-9ebf-e59dff7a5952
+      - e9e7f1af-1721-4a99-9fe7-51db647c2740
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -52,27 +52,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Mar 2020 16:52:33 GMT
+      - Tue, 24 Nov 2020 18:31:35 GMT
     method: GET
-    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/applications/application_id?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/applications/application_id?api-version=2020-09-01.12.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/$metadata#getapplicationsummaryresponse/@Element\",\"id\":\"application_id\",\"versions\":[\r\n
-        \   \"v1.0\"\r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#getapplicationsummaryresponse/@Element\"\
+        ,\"id\":\"application_id\",\"versions\":[\r\n    \"v1.0\"\r\n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Mar 2020 16:52:33 GMT
+      - Tue, 24 Nov 2020 18:31:34 GMT
       request-id:
-      - 278f3171-d98d-4530-8e96-f99f4fc845ce
+      - 71ea0aec-9b38-432a-b1c2-d34c5be9ca46
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -100,14 +100,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Mar 2020 16:52:33 GMT
+      - Tue, 24 Nov 2020 18:31:35 GMT
     method: POST
-    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/jobs/batch/tasks?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -117,15 +117,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Mar 2020 16:52:33 GMT
+      - Tue, 24 Nov 2020 18:31:35 GMT
       etag:
-      - '0x8D7D013BFC50EC9'
+      - '0x8D890A72C85C83A'
       last-modified:
-      - Tue, 24 Mar 2020 16:52:33 GMT
+      - Tue, 24 Nov 2020 18:31:35 GMT
       location:
-      - https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package
+      - https://batch.westcentralus.batch.azure.com/jobs/batch/tasks/python_task_with_app_package
       request-id:
-      - ea034570-ff83-4598-b68f-b85f1f8d2a1a
+      - 893ade93-3043-47d3-aedc-b9fbbce3e053
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -147,35 +147,41 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Mar 2020 16:52:33 GMT
+      - Tue, 24 Nov 2020 18:31:35 GMT
     method: GET
-    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package?api-version=2020-03-01.11.0
+    uri: https://batch.westcentralus.batch.azure.com/jobs/batch/tasks/python_task_with_app_package?api-version=2020-09-01.12.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"python_task_with_app_package\",\"url\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package\",\"eTag\":\"0x8D7D013BFC50EC9\",\"creationTime\":\"2020-03-24T16:52:33.6533193Z\",\"lastModified\":\"2020-03-24T16:52:33.6533193Z\",\"state\":\"active\",\"stateTransitionTime\":\"2020-03-24T16:52:33.6533193Z\",\"commandLine\":\"cmd
-        /c \\\"echo hello world\\\"\",\"applicationPackageReferences\":[\r\n    {\r\n
-        \     \"applicationId\":\"application_id\",\"version\":\"v1.0\"\r\n    }\r\n
-        \ ],\"userIdentity\":{\r\n    \"autoUser\":{\r\n      \"scope\":\"pool\",\"elevationLevel\":\"nonadmin\"\r\n
-        \   }\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P7D\",\"maxTaskRetryCount\":0\r\n
-        \ },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#tasks/@Element\"\
+        ,\"id\":\"python_task_with_app_package\",\"url\":\"https://batch.westcentralus.batch.azure.com/jobs/batch/tasks/python_task_with_app_package\"\
+        ,\"eTag\":\"0x8D890A72C85C83A\",\"creationTime\":\"2020-11-24T18:31:35.382841Z\"\
+        ,\"lastModified\":\"2020-11-24T18:31:35.382841Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2020-11-24T18:31:35.382841Z\",\"commandLine\":\"cmd\
+        \ /c \\\"echo hello world\\\"\",\"applicationPackageReferences\":[\r\n   \
+        \ {\r\n      \"applicationId\":\"application_id\",\"version\":\"v1.0\"\r\n\
+        \    }\r\n  ],\"userIdentity\":{\r\n    \"autoUser\":{\r\n      \"scope\"\
+        :\"pool\",\"elevationLevel\":\"nonadmin\"\r\n    }\r\n  },\"constraints\"\
+        :{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\"\
+        :\"P7D\",\"maxTaskRetryCount\":0\r\n  },\"requiredSlots\":1,\"executionInfo\"\
+        :{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Mar 2020 16:52:33 GMT
+      - Tue, 24 Nov 2020 18:31:35 GMT
       etag:
-      - '0x8D7D013BFC50EC9'
+      - '0x8D890A72C85C83A'
       last-modified:
-      - Tue, 24 Mar 2020 16:52:33 GMT
+      - Tue, 24 Nov 2020 18:31:35 GMT
       request-id:
-      - 0de0b714-3dda-40c9-8f7e-f898a82ba40a
+      - afe457ac-de1b-4aad-8690-ec9777032000
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

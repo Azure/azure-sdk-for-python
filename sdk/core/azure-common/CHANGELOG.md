@@ -1,7 +1,11 @@
 # Release History
 
-## 1.1.26 (Unreleased)
+## 1.1.27 (Unreleased)
 
+
+## 1.1.26 (2020-11-10)
+
+- get_client_from_cli_profile now supports azure-applicationinsights 0.1.0 package
 
 ## 1.1.25 (2020-03-09)
 

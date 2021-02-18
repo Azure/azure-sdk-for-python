@@ -9,7 +9,8 @@ import logging
 import pytest
 from azure.ai.formrecognizer import FormRecognizerClient, FormTrainingClient
 from azure.core.credentials import AzureKeyCredential
-from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
+from testcase import FormRecognizerTest
+from preparers import FormRecognizerPreparer
 
 class MockHandler(logging.Handler):
     def __init__(self):
@@ -22,17 +23,17 @@ class MockHandler(logging.Handler):
 
 class TestLogging(FormRecognizerTest):
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @pytest.mark.live_test_only
-    def test_logging_info_fr_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    def test_logging_info_fr_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.INFO)
 
-        poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
+        poller = client.begin_recognize_invoices_from_url(self.receipt_url_jpg)
         result = poller.result()
 
         for message in mock_handler.messages:
@@ -43,10 +44,10 @@ class TestLogging(FormRecognizerTest):
                 else:
                     assert message.message.find("REDACTED") == -1
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @pytest.mark.live_test_only
-    def test_logging_info_ft_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    def test_logging_info_ft_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormTrainingClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")

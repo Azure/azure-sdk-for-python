@@ -1,6 +1,44 @@
 # Release History
 
-## 5.1.0b3 (Unreleased)
+## 5.1.0b6 (Unreleased)
+
+
+## 5.1.0b5 (2021-02-10)
+
+**Breaking Changes**
+
+- Rename `begin_analyze` to `begin_analyze_batch_actions`.
+- Now instead of separate parameters for all of the different types of actions you can pass to `begin_analyze_batch_actions`, we accept one parameter `actions`,
+which is a list of actions you would like performed. The results of the actions are returned in the same order as when inputted.
+- The response object from `begin_analyze_batch_actions` has also changed. Now, after the completion of your long running operation, we return a paged iterable
+of action results, in the same order they've been inputted. The actual document results for each action are included under property `document_results` of
+each action result.
+
+**New Features**
+- Renamed `begin_analyze_healthcare` to `begin_analyze_healthcare_entities`.
+- Renamed `AnalyzeHealthcareResult` to `AnalyzeHealthcareEntitiesResult` and `AnalyzeHealthcareResultItem` to `AnalyzeHealthcareEntitiesResultItem`.
+- Renamed `HealthcareEntityLink` to `HealthcareEntityDataSource` and renamed its properties `id` to `entity_id` and `data_source` to `name`.
+- Removed `relations` from `AnalyzeHealthcareEntitiesResultItem` and added `related_entities` to `HealthcareEntity`.
+- Moved the cancellation logic for the Analyze Healthcare Entities service from
+the service client to the poller object returned from `begin_analyze_healthcare_entities`.
+- Exposed Analyze Healthcare Entities operation metadata on the poller object returned from `begin_analyze_healthcare_entities`.
+- No longer need to specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when calling `begin_analyze` and `begin_analyze_healthcare_entities`. `begin_analyze_healthcare_entities` is still in gated preview though.
+- Added a new parameter `string_index_type` to the service client methods `begin_analyze_healthcare_entities`, `analyze_sentiment`, `recognize_entities`, `recognize_pii_entities`, and `recognize_linked_entities` which tells the service how to interpret string offsets.
+- Added property `length` to `CategorizedEntity`, `SentenceSentiment`, `LinkedEntityMatch`, `AspectSentiment`, `OpinionSentiment`, `PiiEntity` and
+`HealthcareEntity`.
+
+## 5.1.0b4 (2021-01-12)
+
+**Bug Fixes**
+
+- Package requires [azure-core](https://pypi.org/project/azure-core/) version 1.8.2 or greater
+
+
+## 5.1.0b3 (2020-11-19)
+
+**New Features**
+- We have added method `begin_analyze`, which supports long-running batch process of Named Entity Recognition, Personally identifiable Information, and Key Phrase Extraction. To use, you must specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when creating your client.
+- We have added method `begin_analyze_healthcare`, which supports the service's Health API. Since the Health API is currently only available in a gated preview, you need to have your subscription on the service's allow list, and you must specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when creating your client. Note that since this is a gated preview, AAD is not supported. More information [here](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
 
 
 ## 5.1.0b2 (2020-10-06)
@@ -45,7 +83,7 @@ used in conjunction with the Bing Entity Search API to fetch additional relevant
 - Removed `grapheme_offset` and `grapheme_length` from `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`
 - `TextDocumentStatistics` attribute `grapheme_count` has been renamed to `character_count`
 
-## 1.0.0b5
+## 1.0.0b5 
 
 - This was a broken release
 

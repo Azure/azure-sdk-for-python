@@ -15,11 +15,10 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
-    ResourceModifiedError, ServiceRequestError
+    ResourceModifiedError, ServiceRequestError, AzureError
 from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions, generate_file_system_sas, \
     FileSystemSasPermissions
 from azure.storage.filedatalake import generate_directory_sas
-from azure.storage.filedatalake._models import DataLakeAclChangeFailedError
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient
 from azure.storage.filedatalake import AccessControlChangeResult, AccessControlChangeCounters
 
@@ -123,6 +122,22 @@ class DirectoryTest(StorageTestCase):
     def test_create_directory_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_directory())
+
+    async def _test_directory_exists(self):
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        directory_client1 = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client2 = self.dsc.get_directory_client(self.file_system_name, "nonexistentdir")
+        await directory_client1.create_directory()
+
+        self.assertTrue(await directory_client1.exists())
+        self.assertFalse(await directory_client2.exists())
+
+    @record
+    def test_directory_exists(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_directory_exists())
 
     async def _test_using_oauth_token_credential_to_create_directory(self):
         # generate a token with directory level create permission
@@ -404,12 +419,12 @@ class DirectoryTest(StorageTestCase):
                 raise ServiceRequestError("network problem")
         acl = 'user::rwx,group::r-x,other::rwx'
 
-        with self.assertRaises(DataLakeAclChangeFailedError) as acl_error:
+        with self.assertRaises(AzureError) as acl_error:
             await directory_client.set_access_control_recursive(acl=acl, batch_size=2, max_batches=2,
                                                                 raw_response_hook=callback, retry_total=0)
-            self.assertIsNotNone(acl_error.exception.continuation)
-            self.assertEqual(acl_error.exception.message, "network problem")
-            self.assertIsInstance(acl_error.exception.error, ServiceRequestError)
+        self.assertIsNotNone(acl_error.exception.continuation_token)
+        self.assertEqual(acl_error.exception.message, "network problem")
+        self.assertIsInstance(acl_error.exception, ServiceRequestError)
 
     @record
     def test_set_access_control_recursive_in_batches_async(self):

@@ -50,6 +50,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -58,7 +59,7 @@ setup(
     ],
     python_requires=">=3.5.0",
     install_requires=[
-        'opentelemetry-api==0.13b0',
+        'opentelemetry-api==0.17b0',
         'azure-core<2.0.0,>=1.0.0',
     ],
     extras_require={

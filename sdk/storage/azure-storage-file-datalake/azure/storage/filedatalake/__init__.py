@@ -32,7 +32,6 @@ from ._models import (
     ArrowDialect,
     ArrowType,
     DataLakeFileQueryError,
-    DataLakeAclChangeFailedError,
     AccessControlChangeResult,
     AccessControlChangeCounters,
     AccessControlChangeFailure,
@@ -86,7 +85,6 @@ __all__ = [
     'DelimitedTextDialect',
     'DelimitedJsonDialect',
     'DataLakeFileQueryError',
-    'DataLakeAclChangeFailedError',
     'ArrowDialect',
     'ArrowType',
     'DataLakeFileQueryError'

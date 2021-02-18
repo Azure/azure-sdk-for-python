@@ -64,7 +64,7 @@ def parse_resource_id(rid):
         - namespace:               Namespace for the resource provider (i.e. Microsoft.Compute)
         - type:                    Type of the root resource (i.e. virtualMachines)
         - name:                    Name of the root resource
-        - child_namespace_{level}: Namespace for the child resoure of that level
+        - child_namespace_{level}: Namespace for the child resource of that level
         - child_type_{level}:      Type of the child resource of that level
         - child_name_{level}:      Name of the child resource of that level
         - last_child_num:          Level of the last child
@@ -159,7 +159,7 @@ def resource_id(**kwargs):
             - type:                    Type of the resource (i.e. virtualMachines)
             - name:                    Name of the resource (or parent if child_name is also \
             specified)
-            - child_namespace_{level}: Namespace for the child resoure of that level (optional)
+            - child_namespace_{level}: Namespace for the child resource of that level (optional)
             - child_type_{level}:      Type of the child resource of that level
             - child_name_{level}:      Name of the child resource of that level
 

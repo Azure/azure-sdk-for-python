@@ -2,19 +2,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Any, List, TYPE_CHECKING, Optional
+from typing import Any, List, TYPE_CHECKING
 import logging
 
 import uamqp
 
 from .._base_handler import _parse_conn_str
-from ._base_handler_async import ServiceBusSharedKeyCredential, ServiceBusSASTokenCredential, BaseHandler
+from ._base_handler_async import (
+    ServiceBusSharedKeyCredential,
+    ServiceBusSASTokenCredential,
+    BaseHandler,
+)
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
-from ._servicebus_session_receiver_async import ServiceBusSessionReceiver
 from .._common._configuration import Configuration
-from .._common.utils import generate_dead_letter_entity_name
-from .._common.constants import SubQueue
+from .._common.utils import generate_dead_letter_entity_name, strip_protocol_from_uri
+from .._common.constants import ServiceBusSubQueue
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
@@ -61,13 +64,17 @@ class ServiceBusClient(object):
             :caption: Create a new instance of the ServiceBusClient.
 
     """
+
     def __init__(
         self,
         fully_qualified_namespace: str,
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        self.fully_qualified_namespace = fully_qualified_namespace
+        # If the user provided http:// or sb://, let's be polite and strip that.
+        self.fully_qualified_namespace = strip_protocol_from_uri(
+            fully_qualified_namespace.strip()
+        )
         self._credential = credential
         self._config = Configuration(**kwargs)
         self._connection = None
@@ -93,15 +100,11 @@ class ServiceBusClient(object):
         self._connection = uamqp.ConnectionAsync(
             hostname=self.fully_qualified_namespace,
             sasl=auth,
-            debug=self._config.logging_enable
+            debug=self._config.logging_enable,
         )
 
     @classmethod
-    def from_connection_string(
-        cls,
-        conn_str: str,
-        **kwargs: Any
-    ) -> "ServiceBusClient":
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusClient":
         """
         Create a ServiceBusClient from a connection string.
 
@@ -131,7 +134,9 @@ class ServiceBusClient(object):
                 :caption: Create a new instance of the ServiceBusClient from connection string.
 
         """
-        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(conn_str)
+        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(
+            conn_str
+        )
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif policy and key:
@@ -181,6 +186,13 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
+
+        if self._entity_name and queue_name != self._entity_name:
+            raise ValueError(
+                "The queue name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
+
         handler = ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
@@ -202,17 +214,27 @@ class ServiceBusClient(object):
         """Get ServiceBusReceiver for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
-        :keyword Optional[SubQueue] sub_queue: If specified, the subqueue this receiver will connect to.
-         This includes the DeadLetter and TransferDeadLetter queues, holds messages that can't be delivered to any
-         receiver or messages that can't be processed.  The default is None, meaning connect to the primary queue.
+        :keyword session_id: A specific session from which to receive. This must be specified for a
+         sessionful queue, otherwise it must be None. In order to receive messages from the next available
+         session, set this to ~azure.servicebus.NEXT_AVAILABLE_SESSION.
+        :paramtype session_id: Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]
+        :keyword Optional[Union[ServiceBusSubQueue, str]] sub_queue: If specified, the subqueue this receiver will
+         connect to.
+         This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any
+         receiver or messages that can't be processed.
+         The default is None, meaning connect to the primary queue.  Can be assigned values from `ServiceBusSubQueue`
+         enum or equivalent string values "deadletter" and "transferdeadletter".
         :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
-         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+         are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
+         lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-         the client fails to process the message. The default mode is PeekLock.
-        :paramtype receive_mode: ~azure.servicebus.ReceiveMode
-        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
-         automatically stop receiving. The default value is 0, meaning no timeout.
+         the client fails to process the message. The default mode is PEEK_LOCK.
+        :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
+        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
+         receiver will automatically stop receiving. The default value is None, meaning no timeout.
+        :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
+         ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
+         receipt. If the receiver is a session receiver, it will apply to the session instead.
         :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
          This setting is only for advanced performance tuning. Increasing this value will improve message throughput
          performance but increase the chance that messages will expire while they are cached if they're not
@@ -233,12 +255,33 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        sub_queue = kwargs.get('sub_queue', None)
-        if sub_queue and sub_queue in SubQueue:
+
+        if self._entity_name and queue_name != self._entity_name:
+            raise ValueError(
+                "The queue name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
+
+        sub_queue = kwargs.get("sub_queue", None)
+        if sub_queue and kwargs.get("session_id"):
+            raise ValueError(
+                "session_id and sub_queue can not be specified simultaneously. "
+                "To connect to the sub queue of a sessionful queue, "
+                "please set sub_queue only as sub_queue does not support session."
+            )
+        try:
             queue_name = generate_dead_letter_entity_name(
                 queue_name=queue_name,
-                transfer_deadletter=(sub_queue == SubQueue.TransferDeadLetter)
+                transfer_deadletter=(
+                    ServiceBusSubQueue(sub_queue)
+                    == ServiceBusSubQueue.TRANSFER_DEAD_LETTER
+                ),
             )
+        except ValueError:
+            if (
+                sub_queue
+            ):  # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
+                raise
         handler = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             entity_name=queue_name,
@@ -272,6 +315,13 @@ class ServiceBusClient(object):
                 :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
 
         """
+
+        if self._entity_name and topic_name != self._entity_name:
+            raise ValueError(
+                "The topic name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
+
         handler = ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             topic_name=topic_name,
@@ -289,23 +339,35 @@ class ServiceBusClient(object):
         self._handlers.append(handler)
         return handler
 
-    def get_subscription_receiver(self, topic_name: str, subscription_name: str, **kwargs: Any) -> ServiceBusReceiver:
+    def get_subscription_receiver(
+        self, topic_name: str, subscription_name: str, **kwargs: Any
+    ) -> ServiceBusReceiver:
         """Get ServiceBusReceiver for the specific subscription under the topic.
 
         :param str topic_name: The name of specific Service Bus Topic the client connects to.
         :param str subscription_name: The name of specific Service Bus Subscription
          under the given Service Bus Topic.
-        :keyword Optional[SubQueue] sub_queue: If specified, the subqueue this receiver will connect to.
-         This includes the DeadLetter and TransferDeadLetter queues, holds messages that can't be delivered to any
-         receiver or messages that can't be processed.  The default is None, meaning connect to the primary queue.
+        :keyword session_id: A specific session from which to receive. This must be specified for a
+         sessionful subscription, otherwise it must be None. In order to receive messages from the next available
+         session, set this to ~azure.servicebus.NEXT_AVAILABLE_SESSION.
+        :paramtype session_id: Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]
+        :keyword Optional[Union[ServiceBusSubQueue, str]] sub_queue: If specified, the subqueue this receiver will
+         connect to.
+         This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any
+         receiver or messages that can't be processed.
+         The default is None, meaning connect to the primary queue.  Can be assigned values from `ServiceBusSubQueue`
+         enum or equivalent string values "deadletter" and "transferdeadletter".
         :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
-         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period before they will be removed from the subscription. Messages received with ReceiveAndDelete
+         are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
+         lock period before they will be removed from the subscription. Messages received with RECEIVE_AND_DELETE
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
-         the client fails to process the message. The default mode is PeekLock.
-        :paramtype receive_mode: ~azure.servicebus.ReceiveMode
-        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
-         automatically stop receiving. The default value is 0, meaning no timeout.
+         the client fails to process the message. The default mode is PEEK_LOCK.
+        :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
+        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
+         receiver will automatically stop receiving. The default value is None, meaning no timeout.
+        :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
+         ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
+         receipt. If the receiver is a session receiver, it will apply to the session instead.
         :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
          This setting is only for advanced performance tuning. Increasing this value will improve message throughput
          performance but increase the chance that messages will expire while they are cached if they're not
@@ -327,12 +389,28 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        sub_queue = kwargs.get('sub_queue', None)
-        if sub_queue and sub_queue in SubQueue:
+
+        if self._entity_name and topic_name != self._entity_name:
+            raise ValueError(
+                "The topic name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
+
+        sub_queue = kwargs.get("sub_queue", None)
+        if sub_queue and kwargs.get("session_id"):
+            raise ValueError(
+                "session_id and sub_queue can not be specified simultaneously. "
+                "To connect to the sub queue of a sessionful subscription, "
+                "please set sub_queue only as sub_queue is not sessionful."
+            )
+        try:
             entity_name = generate_dead_letter_entity_name(
                 topic_name=topic_name,
                 subscription_name=subscription_name,
-                transfer_deadletter=(sub_queue == SubQueue.TransferDeadLetter)
+                transfer_deadletter=(
+                    ServiceBusSubQueue(sub_queue)
+                    == ServiceBusSubQueue.TRANSFER_DEAD_LETTER
+                ),
             )
             handler = ServiceBusReceiver(
                 fully_qualified_namespace=self.fully_qualified_namespace,
@@ -348,7 +426,11 @@ class ServiceBusClient(object):
                 retry_backoff_max=self._config.retry_backoff_max,
                 **kwargs
             )
-        else:
+        except ValueError:
+            if (
+                sub_queue
+            ):  # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
+                raise
             handler = ServiceBusReceiver(
                 fully_qualified_namespace=self.fully_qualified_namespace,
                 topic_name=topic_name,
@@ -364,126 +446,5 @@ class ServiceBusClient(object):
                 retry_backoff_max=self._config.retry_backoff_max,
                 **kwargs
             )
-        self._handlers.append(handler)
-        return handler
-
-    def get_subscription_session_receiver(
-        self,
-        topic_name: str,
-        subscription_name: str,
-        session_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> ServiceBusSessionReceiver:
-        """Get ServiceBusReceiver for the specific subscription under the topic.
-
-        :param str topic_name: The name of specific Service Bus Topic the client connects to.
-        :param str subscription_name: The name of specific Service Bus Subscription
-         under the given Service Bus Topic.
-        :param Optional[str] session_id: A specific session from which to receive. This must be specified for a
-         sessionful entity, otherwise it must be None. In order to receive messages from the next available
-         session, set this to None.  The default is None.
-        :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
-         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period before they will be removed from the subscription. Messages received with ReceiveAndDelete
-         will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
-         the client fails to process the message. The default mode is PeekLock.
-        :paramtype receive_mode: ~azure.servicebus.ReceiveMode
-        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
-         automatically stop receiving. The default value is 0, meaning no timeout.
-        :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
-         This setting is only for advanced performance tuning. Increasing this value will improve message throughput
-         performance but increase the chance that messages will expire while they are cached if they're not
-         processed fast enough.
-         The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
-         (if provided) within its request to the service.
-        :rtype: ~azure.servicebus.aio.ServiceBusSessionReceiver
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
-                :start-after: [START create_subscription_receiver_from_sb_client_async]
-                :end-before: [END create_subscription_receiver_from_sb_client_async]
-                :language: python
-                :dedent: 4
-                :caption: Create a new instance of the ServiceBusReceiver from ServiceBusClient.
-
-
-        """
-        # pylint: disable=protected-access
-        handler = ServiceBusSessionReceiver(
-            fully_qualified_namespace=self.fully_qualified_namespace,
-            topic_name=topic_name,
-            subscription_name=subscription_name,
-            credential=self._credential,
-            logging_enable=self._config.logging_enable,
-            transport_type=self._config.transport_type,
-            http_proxy=self._config.http_proxy,
-            connection=self._connection,
-            session_id=session_id,
-            user_agent=self._config.user_agent,
-            retry_total=self._config.retry_total,
-            retry_backoff_factor=self._config.retry_backoff_factor,
-            retry_backoff_max=self._config.retry_backoff_max,
-            **kwargs
-        )
-        self._handlers.append(handler)
-        return handler
-
-    def get_queue_session_receiver(
-        self,
-        queue_name: str,
-        session_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> ServiceBusSessionReceiver:
-        """Get ServiceBusSessionReceiver for the specific queue.
-
-        :param str queue_name: The path of specific Service Bus Queue the client connects to.
-        :param Optional[str] session_id: A specific session from which to receive. This must be specified for a
-         sessionful entity, otherwise it must be None. In order to receive messages from the next available
-         session, set this to None. The default is None.
-        :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
-         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
-         will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-         the client fails to process the message. The default mode is PeekLock.
-        :paramtype receive_mode: ~azure.servicebus.ReceiveMode
-        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
-         automatically stop receiving. The default value is 0, meaning no timeout.
-        :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
-         This setting is only for advanced performance tuning. Increasing this value will improve message throughput
-         performance but increase the chance that messages will expire while they are cached if they're not
-         processed fast enough.
-         The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
-         (if provided) within its request to the service.
-        :rtype: ~azure.servicebus.aio.ServiceBusSessionReceiver
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
-                :start-after: [START create_servicebus_sender_from_sb_client_async]
-                :end-before: [END create_servicebus_sender_from_sb_client_async]
-                :language: python
-                :dedent: 4
-                :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
-
-        """
-        # pylint: disable=protected-access
-        handler = ServiceBusSessionReceiver(
-            fully_qualified_namespace=self.fully_qualified_namespace,
-            queue_name=queue_name,
-            credential=self._credential,
-            logging_enable=self._config.logging_enable,
-            connection=self._connection,
-            session_id=session_id,
-            transport_type=self._config.transport_type,
-            http_proxy=self._config.http_proxy,
-            user_agent=self._config.user_agent,
-            retry_total=self._config.retry_total,
-            retry_backoff_factor=self._config.retry_backoff_factor,
-            retry_backoff_max=self._config.retry_backoff_max,
-            **kwargs
-        )
         self._handlers.append(handler)
         return handler

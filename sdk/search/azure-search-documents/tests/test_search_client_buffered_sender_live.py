@@ -39,7 +39,7 @@ class SearchIndexingBufferedSenderTest(AzureMgmtTestCase):
         batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client._batch_size = 2
+        batch_client._batch_action_count = 2
         DOCUMENTS = [
             {"hotelId": "1000", "rating": 5, "rooms": [], "hotelName": "Azure Inn"},
             {"hotelId": "1001", "rating": 4, "rooms": [], "hotelName": "Redmond Hotel"},
@@ -68,7 +68,7 @@ class SearchIndexingBufferedSenderTest(AzureMgmtTestCase):
         batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client._batch_size = 2
+        batch_client._batch_action_count = 2
         DOCUMENTS = [
             {"hotelId": "1000", "rating": 5, "rooms": [], "hotelName": "Azure Inn"},
             {"hotelId": "3", "rating": 4, "rooms": [], "hotelName": "Redmond Hotel"},
@@ -92,7 +92,7 @@ class SearchIndexingBufferedSenderTest(AzureMgmtTestCase):
         batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client._batch_size = 2
+        batch_client._batch_action_count = 2
         batch_client.delete_documents([{"hotelId": "3"}, {"hotelId": "4"}])
         batch_client.close()
 
@@ -117,7 +117,7 @@ class SearchIndexingBufferedSenderTest(AzureMgmtTestCase):
         batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client._batch_size = 2
+        batch_client._batch_action_count = 2
         batch_client.delete_documents([{"hotelId": "1000"}, {"hotelId": "4"}])
         batch_client.close()
 
@@ -142,7 +142,7 @@ class SearchIndexingBufferedSenderTest(AzureMgmtTestCase):
         batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client._batch_size = 2
+        batch_client._batch_action_count = 2
         batch_client.merge_documents(
             [{"hotelId": "3", "rating": 1}, {"hotelId": "4", "rating": 2}]
         )
@@ -169,7 +169,7 @@ class SearchIndexingBufferedSenderTest(AzureMgmtTestCase):
         batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client._batch_size = 2
+        batch_client._batch_action_count = 2
         batch_client.merge_documents(
             [{"hotelId": "1000", "rating": 1}, {"hotelId": "4", "rating": 2}]
         )
@@ -196,7 +196,7 @@ class SearchIndexingBufferedSenderTest(AzureMgmtTestCase):
         batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client._batch_size = 2
+        batch_client._batch_action_count = 2
         batch_client.merge_or_upload_documents(
             [{"hotelId": "1000", "rating": 1}, {"hotelId": "4", "rating": 2}]
         )

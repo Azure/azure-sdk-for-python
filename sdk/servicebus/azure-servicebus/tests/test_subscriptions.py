@@ -11,10 +11,10 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from azure.servicebus import ServiceBusClient, Message, ReceiveMode
+from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusReceiveMode
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
-from azure.servicebus._common.constants import SubQueue
+from azure.servicebus._common.constants import ServiceBusSubQueue
 
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -43,18 +43,32 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 logging_enable=False
         ) as sb_client:
             with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
-                message = Message(b"Sample topic message")
+                message = ServiceBusMessage(b"Sample topic message")
                 sender.send_messages(message)
+
+            with pytest.raises(ValueError):
+                sb_client.get_subscription_receiver(
+                    topic_name=servicebus_topic.name,
+                    subscription_name=servicebus_subscription.name,
+                    max_wait_time=0
+                )
 
             with sb_client.get_subscription_receiver(
                     topic_name=servicebus_topic.name,
                     subscription_name=servicebus_subscription.name,
                     max_wait_time=5
             ) as receiver:
+
+                with pytest.raises(ValueError):
+                    receiver.receive_messages(max_wait_time=-1)
+
+                with pytest.raises(ValueError):
+                    receiver._get_streaming_message_iter(max_wait_time=0)
+
                 count = 0
                 for message in receiver:
                     count += 1
-                    message.complete()
+                    receiver.complete_message(message)
             assert count == 1
 
     @pytest.mark.liveTest
@@ -75,7 +89,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
         ) as sb_client:
 
             with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
-                message = Message(b"Sample topic message")
+                message = ServiceBusMessage(b"Sample topic message")
                 sender.send_messages(message)
 
             with sb_client.get_subscription_receiver(
@@ -86,7 +100,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 count = 0
                 for message in receiver:
                     count += 1
-                    message.complete()
+                    receiver.complete_message(message)
             assert count == 1
 
     @pytest.mark.skip(reason="Pending management apis")
@@ -127,13 +141,13 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
                 max_wait_time=5,
-                receive_mode=ReceiveMode.PeekLock,
+                receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
                 prefetch_count=10
             ) as receiver:
 
                 with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                     for i in range(10):
-                        message = Message("Dead lettered message no. {}".format(i))
+                        message = ServiceBusMessage("Dead lettered message no. {}".format(i))
                         sender.send_messages(message)
 
                 count = 0
@@ -142,7 +156,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
-                        message.dead_letter(reason="Testing reason", error_description="Testing description")
+                        receiver.dead_letter_message(message, reason="Testing reason", error_description="Testing description")
                     messages = receiver.receive_messages()
 
             assert count == 10
@@ -151,28 +165,28 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
                 max_wait_time=5,
-                receive_mode=ReceiveMode.PeekLock
+                receive_mode=ServiceBusReceiveMode.PEEK_LOCK
             ) as receiver:
                 count = 0
                 for message in receiver:
                     print_message(_logger, message)
-                    message.complete()
+                    receiver.complete_message(message)
                     count += 1
             assert count == 0
 
             with sb_client.get_subscription_receiver(
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
-                sub_queue = SubQueue.DeadLetter,
+                sub_queue = ServiceBusSubQueue.DEAD_LETTER,
                 max_wait_time=5,
-                receive_mode=ReceiveMode.PeekLock
+                receive_mode=ServiceBusReceiveMode.PEEK_LOCK
             ) as dl_receiver:
                 count = 0
                 for message in dl_receiver:
-                    message.complete()
+                    dl_receiver.complete_message(message)
                     count += 1
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                 assert count == 10

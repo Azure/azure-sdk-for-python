@@ -23,9 +23,11 @@ from .._authn_client import AuthnClientBase
 from .._internal.user_agent import USER_AGENT
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Iterable, Mapping, Optional
-    from azure.core.pipeline.policies import HTTPPolicy
+    from typing import Any, Dict, Iterable, List, Mapping, Optional, Union
+    from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport
+
+    PolicyListType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
 class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
@@ -35,7 +37,7 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
     def __init__(
         self,
         config: "Optional[Configuration]" = None,
-        policies: "Optional[Iterable[HTTPPolicy]]" = None,
+        policies: "Optional[PolicyListType]" = None,
         transport: "Optional[AsyncHttpTransport]" = None,
         **kwargs: "Any"
     ) -> None:
@@ -51,7 +53,7 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
         ]
         if not transport:
             transport = AioHttpTransport(**kwargs)
-        self._pipeline = AsyncPipeline(transport=transport, policies=policies)
+        self._pipeline = AsyncPipeline(transport=transport, policies=policies)  # type: AsyncPipeline
         super().__init__(**kwargs)
 
     async def __aenter__(self):
@@ -67,7 +69,7 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
     async def request_token(  # pylint:disable=invalid-overridden-method
         self,
         scopes: "Iterable[str]",
-        method: "Optional[str]" = "POST",
+        method: str = "POST",
         headers: "Optional[Mapping[str, str]]" = None,
         form_data: "Optional[Mapping[str, str]]" = None,
         params: "Optional[Dict[str, str]]" = None,

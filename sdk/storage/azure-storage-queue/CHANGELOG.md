@@ -1,13 +1,25 @@
 # Release History
 
-## 12.1.4 (Unreleased)
+## 12.1.6 (Unreleased)
+
+
+## 12.1.5 (2021-01-13)
+**New features**
+- Added support for `AzureSasCredential` to allow SAS rotation in long living clients.
+
+## 12.1.4 (2020-11-10)
+**New feature**
+- Added `receive_message` on QueueClient to support receiving one message from queue (#14844, #14762)
+
+**Notes**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.6.0 to azure-core<2.0.0,>=1.9.0 to get continuation_token attr on AzureError.
 
 
 ## 12.1.3 (2020-09-10)
 **Fixes**
 - Fixed QueueClient type declaration (#11392). 
 
-## 12.1.2 (2020-6-12)
+## 12.1.2 
 **Notes**
 - Updated dependency from azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.6.0
 
@@ -120,7 +132,7 @@ https://aka.ms/azure-sdk-preview1-python.
     - `QueueClient`: The client handles operations within a particular queue. This includes creating or deleting that queue, as well as enqueueing and dequeueing messages.
 
     These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account or queue).
-    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/ref/Storage.html#azure-storage-queue).
+    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/storage.html#azure-storage-queue).
 - New message iterator, for receiving messages from a queue in a continuous stream.
 - New underlying REST pipeline implementation, based on the new `azure-core` library.
 - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See reference documentation for a full list of optional configuration arguments.
@@ -141,26 +153,26 @@ https://aka.ms/azure-sdk-preview1-python.
 - Operation `put_message` has been renamed to `enqueue_message`.
 - Operation `get_messages` has been renamed to `receive_messages`.
 
-## 2.0.1
+## 2.0.1 
 - Updated dependency on azure-storage-common.
 
-## 2.0.0
+## 2.0.0 
 - Support for 2018-11-09 REST version.
 
-## 1.4.0
+## 1.4.0 
 - azure-storage-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
 
-## 1.3.0
+## 1.3.0 
 - Support for 2018-03-28 REST version. Please see our REST API documentation and blog for information about the related added features.
 
-## 1.2.0rc1
+## 1.2.0rc1 
 - Support for 2017-11-09 REST version. Please see our REST API documentation and blog for information about the related added features.
 - Added support for OAuth authentication for HTTPS requests(Please note that this feature is available in preview).
 
-## 1.1.0
+## 1.1.0 
 - Support for 2017-07-29 REST version. Please see our REST API documentation and blogs for information about the related added features.
 - Queue messages can now have an arbitrarily large or infinite time to live.
 - Error message now contains the ErrorCode from the x-ms-error-code header value.
 
-## 1.0.0
+## 1.0.0 
 - The package has switched from Apache 2.0 to the MIT license.

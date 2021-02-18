@@ -5,11 +5,10 @@
 import abc
 
 import msal
-from azure.core.credentials import AccessToken
 
 from .msal_client import MsalClient
 from .persistent_cache import load_user_cache
-from .._internal import get_default_authority, normalize_authority
+from .._internal import get_default_authority, normalize_authority, validate_tenant_id
 
 try:
     ABC = abc.ABC
@@ -34,6 +33,7 @@ class MsalCredential(ABC):
         authority = kwargs.pop("authority", None)
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
+        validate_tenant_id(self._tenant_id)
 
         self._client_credential = client_credential
         self._client_id = client_id
@@ -57,14 +57,15 @@ class MsalCredential(ABC):
         # type: () -> msal.ClientApplication
         pass
 
-    def _create_app(self, cls):
-        # type: (Type[msal.ClientApplication]) -> msal.ClientApplication
+    def _create_app(self, cls, **kwargs):
+        # type: (Type[msal.ClientApplication], **Any) -> msal.ClientApplication
         app = cls(
             client_id=self._client_id,
             client_credential=self._client_credential,
             authority="{}/{}".format(self._authority, self._tenant_id),
             token_cache=self._cache,
             http_client=self._client,
+            **kwargs
         )
 
         return app

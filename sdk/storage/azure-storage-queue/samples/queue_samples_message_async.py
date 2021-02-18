@@ -149,6 +149,36 @@ class QueueMessageSamplesAsync(object):
                 # Delete the queue
                 await queue.delete_queue()
 
+    async def receive_one_message_from_queue(self):
+        # Instantiate a queue client
+        from azure.storage.queue.aio import QueueClient
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue3")
+
+        # Create the queue
+        async with queue:
+            await queue.create_queue()
+
+            try:
+                await asyncio.gather(
+                    queue.send_message(u"message1"),
+                    queue.send_message(u"message2"),
+                    queue.send_message(u"message3"))
+
+                # [START receive_one_message]
+                # Pop two messages from the front of the queue
+                message1 = await queue.receive_message()
+                message2 = await queue.receive_message()
+                # We should see message 3 if we peek
+                message3 = await queue.peek_messages()
+
+                print(message1.content)
+                print(message2.content)
+                print(message3[0].content)
+                # [END receive_one_message]
+
+            finally:
+                await queue.delete_queue()
+
     async def delete_and_clear_messages_async(self):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
@@ -256,6 +286,7 @@ async def main():
     await sample.set_access_policy_async()
     await sample.queue_metadata_async()
     await sample.send_and_receive_messages_async()
+    await sample.receive_one_message_from_queue()
     await sample.delete_and_clear_messages_async()
     await sample.peek_messages_async()
     await sample.update_message_async()

@@ -54,6 +54,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -67,7 +68,7 @@ setup(
     },
     install_requires=[
         'requests>=2.18.4',
-        'six>=1.6',
+        'six>=1.11.0',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],

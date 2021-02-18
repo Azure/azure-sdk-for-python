@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class AuthorizationCodeCredential(object):
     """Authenticates by redeeming an authorization code previously obtained from Azure Active Directory.
 
-    See https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow for more information
+    See https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow for more information
     about the authentication flow.
 
     :param str tenant_id: ID of the application's Azure Active Directory tenant. Also called its 'directory' ID.

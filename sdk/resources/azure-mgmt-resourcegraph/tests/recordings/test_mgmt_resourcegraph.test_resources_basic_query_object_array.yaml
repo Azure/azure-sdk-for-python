@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: 'b''b\''{"subscriptions": ["00000000-0000-0000-0000-000000000000"], "query":
-      "project id, tags, properties | limit 2", "options": {"resultFormat": "objectArray"}}\'''''
+    body: '{"subscriptions": ["00000000-0000-0000-0000-000000000000"], "query": "project
+      id, tags, properties | limit 2", "options": {"resultFormat": "objectArray"}}'
     headers:
       Accept:
       - application/json
@@ -12,26 +12,23 @@ interactions:
       Content-Length:
       - '154'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resourcegraph/2.1.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-resourcegraph/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2020-04-01-preview
   response:
     body:
-      string: '{"totalRecords":2,"count":2,"data":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_databoxgkhum4fgqffqfxfk2rxguyav7ee36zsnxb3hziamsre5gkdlyz56ani4l23/providers/Microsoft.DataBox/jobs/joblmlobzq6gap36m4h2suwq","tags":{},"properties":{"status":"DeviceOrdered","startTime":"2020-03-03T05:52:09.212Z","isCancellable":true,"isDeletable":false,"isShippingAddressEditable":true,"isPrepareToShipEnabled":false,"deliveryType":"NonScheduled","deliveryInfo":{"scheduledDateTime":"0001-01-01T00:00:00Z"},"isCancellableWithoutFee":true}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_mixed_realitygv2l3elh76a7brm66drgektfyzfsijxog6smmqzg6dnn2r7ofuf6c/providers/Microsoft.MixedReality/spatialAnchorsAccounts/MyAccount","tags":null,"properties":null}],"facets":[],"resultTruncated":"false"}'
+      string: '{"totalRecords":2,"count":2,"data":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/move_resource_name/providers/Microsoft.Migrate/moveCollections/move-collection-test6","tags":{},"properties":{"provisioningState":"Succeeded","targetRegion":"eastus","sourceRegion":"eastus2","errors":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/networkInterfaces/anf-sdknettestqa2vnet464-nic-2JBDNX","tags":null,"properties":{"provisioningState":"Succeeded","primary":true,"resourceGuid":"94219f98-9158-4ef7-ad73-93bc7df3acad","enableAcceleratedNetworking":false,"ipConfigurations":[{"properties":{"provisioningState":"Succeeded","privateIPAddressVersion":"IPv4","privateIPAllocationMethod":"Dynamic","privateIPAddress":"10.1.0.4","subnet":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/virtualNetworks/sdknettestqa2vnet464/subnets/default"},"primary":true},"type":"Microsoft.Network/networkInterfaces/ipConfigurations","name":"ipconfig1","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/networkInterfaces/anf-sdknettestqa2vnet464-nic-2JBDNX/ipConfigurations/ipconfig1","etag":"W/\"5a0cb003-a7fe-4d87-bcf4-cded6e155953\""}],"enableIPForwarding":false,"tapConfigurations":[],"hostedWorkloads":["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"],"dnsSettings":{"internalDomainNameSuffix":"m0jm1iggslrejebzfdjidfxjxe.bx.internal.cloudapp.net","appliedDnsServers":[],"dnsServers":[]},"macAddress":"","nicType":"Standard","linkedResourceType":"Microsoft.Netapp/volumes"}}],"facets":[],"resultTruncated":"false"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '848'
+      - '1896'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 19:28:32 GMT
+      - Tue, 15 Dec 2020 09:46:55 GMT
       expires:
       - '-1'
       pragma:

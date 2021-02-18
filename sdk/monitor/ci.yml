@@ -27,6 +27,9 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: monitor
+    BuildTargetingString: '*'
     Artifacts:
     - name: azure_mgmt_monitor
       safeName: azuremgmtmonitor
+    - name: azure_monitor_opentelemetry_exporter
+      safeName: azuremonitoropentelemetryexporter

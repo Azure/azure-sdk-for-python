@@ -1,0 +1,112 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable55891a7c"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 15:50:53 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 15:50:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttable55891a7c","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Fri, 18 Dec 2020 15:50:55 GMT
+      etag: W/"datetime'2020-12-18T15%3A50%3A54.5963016Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable55891a7c')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables
+- request:
+    body: "--batch_70d49d15-cc17-44dd-8be7-8968f1b7b670\r\nContent-Type: multipart/mixed;\
+      \ boundary=changeset_1ef51326-d6d5-40ae-a1b7-1bf349067f8b\r\n\r\n--changeset_1ef51326-d6d5-40ae-a1b7-1bf349067f8b\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 0\r\n\r\nDELETE https://seankaneprim.table.cosmos.azure.com/uttable55891a7c(PartitionKey='001',RowKey='batch_negative_1')\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nIf-Match:\
+      \ *\r\nAccept: application/json;odata=minimalmetadata\r\nx-ms-date: Fri, 18\
+      \ Dec 2020 15:50:54 GMT\r\nDate: Fri, 18 Dec 2020 15:50:54 GMT\r\nx-ms-client-request-id:\
+      \ d00f6502-4148-11eb-8e3d-58961df361d1\r\n\r\n\r\n--changeset_1ef51326-d6d5-40ae-a1b7-1bf349067f8b--\r\
+      \n\r\n--batch_70d49d15-cc17-44dd-8be7-8968f1b7b670--\r\n"
+    headers:
+      Content-Length:
+      - '752'
+      Content-Type:
+      - multipart/mixed; boundary=batch_70d49d15-cc17-44dd-8be7-8968f1b7b670
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 15:50:54 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 15:50:54 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/$batch
+  response:
+    body:
+      string: "--batchresponse_12efcb6e-4c36-49a2-ba29-511add565c81\nContent-Type:\
+        \ multipart/mixed; boundary=changesetresponse_2eb4e833-41d3-4dab-8ae3-ddbb63d2af88\r\
+        \n\r\n--changesetresponse_2eb4e833-41d3-4dab-8ae3-ddbb63d2af88\nContent-Type:\
+        \ application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1 404 Not\
+        \ Found\r\nContent-Type: application/json;odata=fullmetadata\r\n\r\n{\"odata.error\"\
+        :{\"code\":\"ResourceNotFound\",\"message\":{\"lang\":\"en-us\",\"value\"\
+        :\"0:The specified resource does not exist.\\n\\nRequestID:d00f6504-4148-11eb-9787-58961df361d1\\\
+        n\"}}}\r\n--changesetresponse_2eb4e833-41d3-4dab-8ae3-ddbb63d2af88--\n--batchresponse_12efcb6e-4c36-49a2-ba29-511add565c81--\r\
+        \n"
+    headers:
+      content-type: multipart/mixed; boundary=batchresponse_12efcb6e-4c36-49a2-ba29-511add565c81
+      date: Fri, 18 Dec 2020 15:50:55 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 202
+      message: Accepted
+    url: https://seankaneprim.table.cosmos.azure.com/$batch
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Fri, 18 Dec 2020 15:50:55 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 15:50:55 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable55891a7c')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 18 Dec 2020 15:50:55 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.cosmos.azure.com/Tables('uttable55891a7c')
+version: 1

@@ -11,7 +11,7 @@ FILE: sample_hooks_async.py
 
 DESCRIPTION:
     This sample demonstrates how to create, get, list, update, and delete hooks
-    under your Metrics Advisor account. EmailHook is used as an example in this sample.
+    under your Metrics Advisor account. EmailNotificationHook is used as an example in this sample.
 
 USAGE:
     python sample_hooks_async.py
@@ -30,7 +30,7 @@ async def sample_create_hook_async():
     # [START create_hook_async]
     from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
     from azure.ai.metricsadvisor.aio import MetricsAdvisorAdministrationClient
-    from azure.ai.metricsadvisor.models import EmailHook
+    from azure.ai.metricsadvisor.models import EmailNotificationHook
 
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
@@ -41,11 +41,11 @@ async def sample_create_hook_async():
 
     async with client:
         hook = await client.create_hook(
-            name="email hook",
-            hook=EmailHook(
+            hook=EmailNotificationHook(
+                name="email hook",
                 description="my email hook",
                 emails_to_alert=["alertme@alertme.com"],
-                external_link="https://adwiki.azurewebsites.net/articles/howto/alerts/create-hooks.html"
+                external_link="https://docs.microsoft.com/en-us/azure/cognitive-services/metrics-advisor/how-tos/alerts"
             )
         )
 
@@ -71,7 +71,7 @@ async def sample_get_hook_async(hook_id):
         print("Description: {}".format(hook.description))
         print("Emails to alert: {}".format(hook.emails_to_alert))
         print("External link: {}".format(hook.external_link))
-        print("Admins: {}".format(hook.admins))
+        print("Admins: {}".format(hook.admin_emails))
 
     # [END get_hook_async]
 
@@ -114,10 +114,11 @@ async def sample_update_hook_async(hook):
     hook.description = "updated hook description"
 
     async with client:
-        updated = await client.update_hook(
+        await client.update_hook(
             hook,
             emails_to_alert=["newemail@alertme.com"]
         )
+        updated = await client.get_hook(hook.id)
         print("Updated name: {}".format(updated.name))
         print("Updated description: {}".format(updated.description))
         print("Updated emails: {}".format(updated.emails_to_alert))

@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class IpGroupsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,7 +49,7 @@ class IpGroupsOperations:
         ip_groups_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.IpGroup":
+    ) -> "_models.IpGroup":
         """Gets the specified ipGroups.
 
         :param resource_group_name: The name of the resource group.
@@ -64,7 +64,7 @@ class IpGroupsOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.IpGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IpGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IpGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -97,7 +97,7 @@ class IpGroupsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IpGroup', pipeline_response)
@@ -112,10 +112,10 @@ class IpGroupsOperations:
         self,
         resource_group_name: str,
         ip_groups_name: str,
-        parameters: "models.IpGroup",
+        parameters: "_models.IpGroup",
         **kwargs
-    ) -> "models.IpGroup":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IpGroup"]
+    ) -> "_models.IpGroup":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IpGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -151,7 +151,7 @@ class IpGroupsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -170,9 +170,9 @@ class IpGroupsOperations:
         self,
         resource_group_name: str,
         ip_groups_name: str,
-        parameters: "models.IpGroup",
+        parameters: "_models.IpGroup",
         **kwargs
-    ) -> AsyncLROPoller["models.IpGroup"]:
+    ) -> AsyncLROPoller["_models.IpGroup"]:
         """Creates or updates an ipGroups in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -192,7 +192,7 @@ class IpGroupsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IpGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IpGroup"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -217,7 +217,13 @@ class IpGroupsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'ipGroupsName': self._serialize.url("ip_groups_name", ip_groups_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -235,9 +241,9 @@ class IpGroupsOperations:
         self,
         resource_group_name: str,
         ip_groups_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.IpGroup":
+    ) -> "_models.IpGroup":
         """Updates tags of an IpGroups resource.
 
         :param resource_group_name: The name of the resource group.
@@ -251,7 +257,7 @@ class IpGroupsOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.IpGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IpGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IpGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -287,7 +293,7 @@ class IpGroupsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IpGroup', pipeline_response)
@@ -335,7 +341,7 @@ class IpGroupsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -387,7 +393,13 @@ class IpGroupsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'ipGroupsName': self._serialize.url("ip_groups_name", ip_groups_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -405,7 +417,7 @@ class IpGroupsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.IpGroupListResult"]:
+    ) -> AsyncIterable["_models.IpGroupListResult"]:
         """Gets all IpGroups in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -415,7 +427,7 @@ class IpGroupsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.IpGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IpGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IpGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -461,7 +473,7 @@ class IpGroupsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -475,7 +487,7 @@ class IpGroupsOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.IpGroupListResult"]:
+    ) -> AsyncIterable["_models.IpGroupListResult"]:
         """Gets all IpGroups in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -483,7 +495,7 @@ class IpGroupsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.IpGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IpGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IpGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -528,7 +540,7 @@ class IpGroupsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

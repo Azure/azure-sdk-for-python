@@ -14,27 +14,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 3b18bdb2-9339-4a8a-b190-607836b29f6e
+      - 36e6babf-000b-471e-ad6f-6623f0a21225
       content-length:
       - '0'
       date:
-      - Tue, 06 Oct 2020 00:02:05 GMT
+      - Thu, 29 Oct 2020 21:19:44 GMT
       location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/652c03ee-9d6a-4291-bb36-9b653107a2fd
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/0d709d21-33ce-424f-a3c2-44ed84ee6beb
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '42'
+      - '87'
     status:
       code: 201
       message: Created
@@ -48,21 +48,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/652c03ee-9d6a-4291-bb36-9b653107a2fd?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/0d709d21-33ce-424f-a3c2-44ed84ee6beb?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "652c03ee-9d6a-4291-bb36-9b653107a2fd", "status":
-        "creating", "createdDateTime": "2020-10-06T00:02:05Z", "lastUpdatedDateTime":
-        "2020-10-06T00:02:05Z"}}'
+      string: '{"modelInfo": {"modelId": "0d709d21-33ce-424f-a3c2-44ed84ee6beb", "status":
+        "creating", "createdDateTime": "2020-10-29T21:19:44Z", "lastUpdatedDateTime":
+        "2020-10-29T21:19:44Z"}}'
     headers:
       apim-request-id:
-      - a216ecb8-82e0-4a9d-a80c-67f0f037964f
+      - e6999be5-10c8-461d-9761-6b99417d5388
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Oct 2020 00:02:11 GMT
+      - Thu, 29 Oct 2020 21:19:49 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -70,7 +70,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '42'
+      - '16'
     status:
       code: 200
       message: OK
@@ -84,21 +84,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/652c03ee-9d6a-4291-bb36-9b653107a2fd?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/0d709d21-33ce-424f-a3c2-44ed84ee6beb?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "652c03ee-9d6a-4291-bb36-9b653107a2fd", "status":
-        "creating", "createdDateTime": "2020-10-06T00:02:05Z", "lastUpdatedDateTime":
-        "2020-10-06T00:02:05Z"}}'
+      string: '{"modelInfo": {"modelId": "0d709d21-33ce-424f-a3c2-44ed84ee6beb", "status":
+        "creating", "createdDateTime": "2020-10-29T21:19:44Z", "lastUpdatedDateTime":
+        "2020-10-29T21:19:44Z"}}'
     headers:
       apim-request-id:
-      - 44f9be3e-1015-437a-8ecd-9d780e0b9e51
+      - 2289a1a9-470b-416c-b2f8-1994d4d07d04
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Oct 2020 00:02:15 GMT
+      - Thu, 29 Oct 2020 21:19:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -106,7 +106,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '99'
+      - '18'
     status:
       code: 200
       message: OK
@@ -120,14 +120,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/652c03ee-9d6a-4291-bb36-9b653107a2fd?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/0d709d21-33ce-424f-a3c2-44ed84ee6beb?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "652c03ee-9d6a-4291-bb36-9b653107a2fd", "status":
-        "ready", "createdDateTime": "2020-10-06T00:02:05Z", "lastUpdatedDateTime":
-        "2020-10-06T00:02:19Z"}, "keys": {"clusters": {"0": ["Additional Notes:",
+      string: '{"modelInfo": {"modelId": "0d709d21-33ce-424f-a3c2-44ed84ee6beb", "status":
+        "ready", "createdDateTime": "2020-10-29T21:19:44Z", "lastUpdatedDateTime":
+        "2020-10-29T21:19:58Z"}, "keys": {"clusters": {"0": ["Additional Notes:",
         "Address:", "Company Name:", "Company Phone:", "Dated As:", "Details", "Email:",
         "Ft Lauderdale, FL Phone:", "Hero Limited", "Name:", "Phone:", "Purchase Order",
         "Purchase Order #:", "Quantity", "SUBTOTAL", "Seattle, WA 93849 Phone:", "Shipped
@@ -140,11 +140,11 @@ interactions:
         "pages": 1, "errors": [], "status": "succeeded"}], "errors": []}}'
     headers:
       apim-request-id:
-      - e5d63bf4-e202-425a-ba7a-fbcf9c39e3e3
+      - 6338f2e1-2029-412d-bf62-f9b2fda64b5b
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Oct 2020 00:02:21 GMT
+      - Thu, 29 Oct 2020 21:19:58 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -152,7 +152,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '51'
+      - '15'
     status:
       code: 200
       message: OK
@@ -171,27 +171,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 8aac2d2a-510f-4485-a4fe-3c204a5f30aa
+      - 09b692e8-bf68-4c86-b300-82d219c013c7
       content-length:
       - '0'
       date:
-      - Tue, 06 Oct 2020 00:02:21 GMT
+      - Thu, 29 Oct 2020 21:19:59 GMT
       location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/1a3447aa-5b94-4360-9830-9267309ced37
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/ca57b534-a81c-4295-ab6d-911596f1ed4b
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '65'
+      - '42'
     status:
       code: 201
       message: Created
@@ -205,21 +205,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/1a3447aa-5b94-4360-9830-9267309ced37?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/ca57b534-a81c-4295-ab6d-911596f1ed4b?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "1a3447aa-5b94-4360-9830-9267309ced37", "status":
-        "creating", "createdDateTime": "2020-10-06T00:02:21Z", "lastUpdatedDateTime":
-        "2020-10-06T00:02:21Z"}}'
+      string: '{"modelInfo": {"modelId": "ca57b534-a81c-4295-ab6d-911596f1ed4b", "status":
+        "creating", "createdDateTime": "2020-10-29T21:19:59Z", "lastUpdatedDateTime":
+        "2020-10-29T21:19:59Z"}}'
     headers:
       apim-request-id:
-      - 29eb25e5-546e-4c46-8c84-a48f0a16b54e
+      - 7173b8dc-3408-43ee-bade-73c481e040ed
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Oct 2020 00:02:26 GMT
+      - Thu, 29 Oct 2020 21:20:04 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -227,7 +227,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '80'
+      - '86'
     status:
       code: 200
       message: OK
@@ -241,21 +241,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/1a3447aa-5b94-4360-9830-9267309ced37?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/ca57b534-a81c-4295-ab6d-911596f1ed4b?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "1a3447aa-5b94-4360-9830-9267309ced37", "status":
-        "creating", "createdDateTime": "2020-10-06T00:02:21Z", "lastUpdatedDateTime":
-        "2020-10-06T00:02:21Z"}}'
+      string: '{"modelInfo": {"modelId": "ca57b534-a81c-4295-ab6d-911596f1ed4b", "status":
+        "creating", "createdDateTime": "2020-10-29T21:19:59Z", "lastUpdatedDateTime":
+        "2020-10-29T21:19:59Z"}}'
     headers:
       apim-request-id:
-      - 454cdfb0-6573-4346-becf-432df96b912d
+      - bb65047b-9bec-411c-baa5-04a659947835
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Oct 2020 00:02:32 GMT
+      - Thu, 29 Oct 2020 21:20:10 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -263,7 +263,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '49'
+      - '61'
     status:
       code: 200
       message: OK
@@ -277,14 +277,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/1a3447aa-5b94-4360-9830-9267309ced37?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/ca57b534-a81c-4295-ab6d-911596f1ed4b?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "1a3447aa-5b94-4360-9830-9267309ced37", "status":
-        "ready", "createdDateTime": "2020-10-06T00:02:21Z", "lastUpdatedDateTime":
-        "2020-10-06T00:02:36Z"}, "keys": {"clusters": {"0": ["Additional Notes:",
+      string: '{"modelInfo": {"modelId": "ca57b534-a81c-4295-ab6d-911596f1ed4b", "status":
+        "ready", "createdDateTime": "2020-10-29T21:19:59Z", "lastUpdatedDateTime":
+        "2020-10-29T21:20:12Z"}, "keys": {"clusters": {"0": ["Additional Notes:",
         "Address:", "Company Name:", "Company Phone:", "Dated As:", "Details", "Email:",
         "Ft Lauderdale, FL Phone:", "Hero Limited", "Name:", "Phone:", "Purchase Order",
         "Purchase Order #:", "Quantity", "SUBTOTAL", "Seattle, WA 93849 Phone:", "Shipped
@@ -297,11 +297,11 @@ interactions:
         "pages": 1, "errors": [], "status": "succeeded"}], "errors": []}}'
     headers:
       apim-request-id:
-      - cd5341ea-7c54-464e-8ba3-5131438a66bf
+      - 0271f903-a066-46c8-bac0-49b01414319c
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Oct 2020 00:02:37 GMT
+      - Thu, 29 Oct 2020 21:20:14 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -309,12 +309,12 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '48'
+      - '147'
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''{"modelIds": ["652c03ee-9d6a-4291-bb36-9b653107a2fd", "1a3447aa-5b94-4360-9830-9267309ced37"]}'''
+    body: 'b''{"modelIds": ["0d709d21-33ce-424f-a3c2-44ed84ee6beb", "ca57b534-a81c-4295-ab6d-911596f1ed4b"]}'''
     headers:
       Accept:
       - application/json, text/json
@@ -327,20 +327,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/compose
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models/compose
   response:
     body:
       string: '{"error": {"code": "1001", "message": "Specified model not found or
-        not ready or has incompatible API version, Model Id: 1a3447aa-5b94-4360-9830-9267309ced37"}}'
+        not ready or has incompatible API version, Model Id: 0d709d21-33ce-424f-a3c2-44ed84ee6beb"}}'
     headers:
       apim-request-id:
-      - 42f7bd87-0ea2-479d-ae7f-351fa8921c60
+      - eff1967c-eab4-4d09-9196-2bd83cad9ec3
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Oct 2020 00:02:37 GMT
+      - Thu, 29 Oct 2020 21:20:15 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -348,7 +348,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '39'
+      - '20'
     status:
       code: 400
       message: Bad Request

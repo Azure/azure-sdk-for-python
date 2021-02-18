@@ -8,7 +8,8 @@ import time
 import logging
 import json
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.secrets import SecretClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
@@ -206,7 +207,7 @@ class SecretClientTests(KeyVaultTestCase):
             self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_backup_restore(self, client, **kwargs):
         secret_name = self.get_resource_name("secbak")
@@ -222,9 +223,13 @@ class SecretClientTests(KeyVaultTestCase):
         # delete secret
         client.begin_delete_secret(created_bundle.name).wait()
 
+        # purge secret
+        client.purge_deleted_secret(created_bundle.name)
+
         # restore secret
-        restored = client.restore_secret_backup(secret_backup)
-        self._assert_secret_attributes_equal(created_bundle.properties, restored)
+        restore_function = functools.partial(client.restore_secret_backup, secret_backup)
+        restored_secret = self._poll_until_no_exception(restore_function, ResourceExistsError)
+        self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -337,7 +342,7 @@ def test_service_headers_allowed_in_logs():
 
 
 def test_custom_hook_policy():
-    class CustomHookPolicy(object):
+    class CustomHookPolicy(SansIOHTTPPolicy):
         pass
 
     client = SecretClient("...", object(), custom_hook_policy=CustomHookPolicy())

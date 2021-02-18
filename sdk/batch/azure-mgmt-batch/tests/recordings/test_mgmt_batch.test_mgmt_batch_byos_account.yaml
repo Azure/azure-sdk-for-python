@@ -1,54 +1,5 @@
 interactions:
 - request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-keyvault/2.2.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.KeyVault/vaults/batchxtk3agb5zuivqarycco?api-version=2019-09-01
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.KeyVault/vaults/batchxtk3agb5zuivqarycco","name":"batchxtk3agb5zuivqarycco","type":"Microsoft.KeyVault/vaults","location":"westcentralus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","accessPolicies":[{"tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","objectId":"f520d84c-3fd3-4cc8-88d4-2ed25b00d27a","permissions":{"keys":["all"],"secrets":["all"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"enableSoftDelete":true,"vaultUri":"https://batchxtk3agb5zuivqarycco.vault.azure.net/","provisioningState":"Succeeded"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '784'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 29 May 2020 03:11:00 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-service-version:
-      - 1.1.0.281
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
     body: '{"location": "westcentralus", "properties": {"poolAllocationMode": "UserSubscription",
       "publicNetworkAccess": "Enabled"}}'
     headers:
@@ -61,18 +12,15 @@ interactions:
       Content-Length:
       - '121'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201?api-version=2020-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201?api-version=2021-01-01
   response:
     body:
       string: '{"error":{"code":"InvalidRequestBody","message":"The specified Request
-        Body is not syntactically valid.\nRequestId:00fb2b02-6023-4a60-8135-ce46fb0bc585\nTime:2020-05-29T03:11:02.8471169Z","target":"BatchAccount","details":[{"code":"Reason","message":"keyVaultReference
+        Body is not syntactically valid.\nRequestId:eee69012-9a70-45b4-bad1-7513bb045eb1\nTime:2021-01-28T07:51:09.9732141Z","target":"BatchAccount","details":[{"code":"Reason","message":"keyVaultReference
         must be set if poolAllocationMode is specified as ''UserSubscription'' on
         a PUT request"}]}}'
     headers:
@@ -83,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:11:03 GMT
+      - Thu, 28 Jan 2021 07:51:10 GMT
       expires:
       - '-1'
       pragma:
@@ -99,101 +47,4 @@ interactions:
     status:
       code: 400
       message: The specified Request Body is not syntactically valid.
-- request:
-    body: 'b''b\''{"location": "westcentralus", "properties": {"poolAllocationMode":
-      "UserSubscription", "keyVaultReference": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.KeyVault/vaults/batchxtk3agb5zuivqarycco",
-      "url": "https://batchxtk3agb5zuivqarycco.vault.azure.net/"}, "publicNetworkAccess":
-      "Enabled"}}\'''''
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '394'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201?api-version=2020-05-01
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Fri, 29 May 2020 03:11:05 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201/operationResults/8240d297-9c28-419e-98e6-0cc716099d34?api-version=2020-05-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201/operationResults/8240d297-9c28-419e-98e6-0cc716099d34?api-version=2020-05-01
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.Batch/batchAccounts/batch94171201","name":"batch94171201","type":"Microsoft.Batch/batchAccounts","location":"westcentralus","properties":{"accountEndpoint":"batch94171201.westcentralus.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuotaPerVMFamilyEnforced":false,"poolQuota":100,"activeJobAndJobScheduleQuota":300,"poolAllocationMode":"UserSubscription","keyVaultReference":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_byos_account94171201/providers/Microsoft.KeyVault/vaults/batchxtk3agb5zuivqarycco","url":"https://batchxtk3agb5zuivqarycco.vault.azure.net/"},"publicNetworkAccess":"Enabled","encryption":{"keySource":"Microsoft.Batch"}},"identity":{"type":"None"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '891'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 29 May 2020 03:11:29 GMT
-      etag:
-      - '"0x8D8037DFBFD84B7"'
-      expires:
-      - '-1'
-      last-modified:
-      - Fri, 29 May 2020 03:11:30 GMT
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
 version: 1

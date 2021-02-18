@@ -1,0 +1,175 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable2d8319da"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 06 Jan 2021 19:24:07 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:24:07 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttable2d8319da","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Wed, 06 Jan 2021 19:24:06 GMT
+      etag: W/"datetime'2021-01-06T19%3A24%3A06.3684616Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable2d8319da')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables
+- request:
+    body: '{"PartitionKey": "pk2d8319da", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk2d8319da", "RowKey@odata.type": "Edm.String", "age": 39, "sex":
+      "male", "sex@odata.type": "Edm.String", "married": true, "deceased": false,
+      "ratio": 3.1, "evenratio": 3.0, "large": 933311100, "Birthday": "1973-10-04T00:00:00Z",
+      "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other":
+      20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '577'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 06 Jan 2021 19:24:08 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:24:08 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable2d8319da
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable2d8319da/$metadata#uttable2d8319da/@Element","odata.etag":"W/\"datetime''2021-01-06T19%3A24%3A06.9141512Z''\"","PartitionKey":"pk2d8319da","RowKey":"rk2d8319da","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2021-01-06T19:24:06.9141512Z"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Wed, 06 Jan 2021 19:24:06 GMT
+      etag: W/"datetime'2021-01-06T19%3A24%3A06.9141512Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/uttable2d8319da(PartitionKey='pk2d8319da',RowKey='rk2d8319da')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Created
+    url: https://seankaneprim.table.cosmos.azure.com/uttable2d8319da
+- request:
+    body: '{"PartitionKey": "pk2d8319da1", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk2d8319da1", "RowKey@odata.type": "Edm.String", "age": 49, "sex":
+      "female", "sex@odata.type": "Edm.String", "married": false, "deceased": true,
+      "ratio": 5.2, "evenratio": 6.0, "large": 39999011, "Birthday": "1993-04-01T00:00:00Z",
+      "Birthday@odata.type": "Edm.DateTime", "birthday": "1990-04-01T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime", "binary": "YmluYXJ5LWJpbmFyeQ==", "binary@odata.type": "Edm.Binary",
+      "other": 40, "clsid": "c8da6455-213e-42d9-9b79-3f9149a57833", "clsid@odata.type":
+      "Edm.Guid"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '592'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 06 Jan 2021 19:24:09 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:24:09 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable2d8319da
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable2d8319da/$metadata#uttable2d8319da/@Element","odata.etag":"W/\"datetime''2021-01-06T19%3A24%3A07.0235144Z''\"","PartitionKey":"pk2d8319da1","RowKey":"rk2d8319da1","age":49,"sex":"female","married":false,"deceased":true,"ratio":5.2,"evenratio":6.0,"large":39999011,"Birthday@odata.type":"Edm.DateTime","Birthday":"1993-04-01T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1990-04-01T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5LWJpbmFyeQ==","other":40,"clsid@odata.type":"Edm.Guid","clsid":"c8da6455-213e-42d9-9b79-3f9149a57833","Timestamp":"2021-01-06T19:24:07.0235144Z"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Wed, 06 Jan 2021 19:24:06 GMT
+      etag: W/"datetime'2021-01-06T19%3A24%3A07.0235144Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/uttable2d8319da(PartitionKey='pk2d8319da1',RowKey='rk2d8319da1')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Created
+    url: https://seankaneprim.table.cosmos.azure.com/uttable2d8319da
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 06 Jan 2021 19:24:09 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:24:09 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable2d8319da()?$filter=age%20lt%2040
+  response:
+    body:
+      string: '{"value":[{"odata.etag":"W/\"datetime''2021-01-06T19%3A24%3A06.9141512Z''\"","PartitionKey":"pk2d8319da","RowKey":"rk2d8319da","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2021-01-06T19:24:06.9141512Z"}],"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#uttable2d8319da"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Wed, 06 Jan 2021 19:24:06 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/uttable2d8319da()?$filter=age%20lt%2040
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Wed, 06 Jan 2021 19:24:09 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 06 Jan 2021 19:24:09 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable2d8319da')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 06 Jan 2021 19:24:06 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.cosmos.azure.com/Tables('uttable2d8319da')
+version: 1

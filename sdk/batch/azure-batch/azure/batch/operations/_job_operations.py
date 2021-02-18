@@ -24,7 +24,7 @@ class JobOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2020-03-01.11.0".
+    :ivar api_version: Client API Version. Constant value: "2020-09-01.12.0".
     """
 
     models = models
@@ -34,7 +34,7 @@ class JobOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-03-01.11.0"
+        self.api_version = "2020-09-01.12.0"
 
         self.config = config
 
@@ -1357,7 +1357,9 @@ class JobOperations(object):
 
         Task counts provide a count of the Tasks by active, running or
         completed Task state, and a count of Tasks which succeeded or failed.
-        Tasks in the preparing state are counted as running.
+        Tasks in the preparing state are counted as running. Note that the
+        numbers returned may not always be up to date. If you need exact task
+        counts, use a list query.
 
         :param job_id: The ID of the Job.
         :type job_id: str
@@ -1370,8 +1372,8 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TaskCounts or ClientRawResponse if raw=true
-        :rtype: ~azure.batch.models.TaskCounts or
+        :return: TaskCountsResult or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.TaskCountsResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
@@ -1429,7 +1431,7 @@ class JobOperations(object):
         header_dict = {}
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('TaskCounts', response)
+            deserialized = self._deserialize('TaskCountsResult', response)
             header_dict = {
                 'client-request-id': 'str',
                 'request-id': 'str',

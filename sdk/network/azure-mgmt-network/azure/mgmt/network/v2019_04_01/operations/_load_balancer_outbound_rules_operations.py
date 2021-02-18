@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class LoadBalancerOutboundRulesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class LoadBalancerOutboundRulesOperations(object):
         load_balancer_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.LoadBalancerOutboundRuleListResult"]
+        # type: (...) -> Iterable["_models.LoadBalancerOutboundRuleListResult"]
         """Gets all the outbound rules in a load balancer.
 
         :param resource_group_name: The name of the resource group.
@@ -63,7 +63,7 @@ class LoadBalancerOutboundRulesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2019_04_01.models.LoadBalancerOutboundRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LoadBalancerOutboundRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancerOutboundRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -127,7 +127,7 @@ class LoadBalancerOutboundRulesOperations(object):
         outbound_rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OutboundRule"
+        # type: (...) -> "_models.OutboundRule"
         """Gets the specified load balancer outbound rule.
 
         :param resource_group_name: The name of the resource group.
@@ -141,7 +141,7 @@ class LoadBalancerOutboundRulesOperations(object):
         :rtype: ~azure.mgmt.network.v2019_04_01.models.OutboundRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OutboundRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OutboundRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

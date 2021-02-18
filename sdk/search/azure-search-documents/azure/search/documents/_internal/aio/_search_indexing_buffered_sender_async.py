@@ -34,10 +34,11 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     :type index_name: str
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword bool auto_flush: if the auto flush mode is on. Default to True.
     :keyword int auto_flush_interval: how many max seconds if between 2 flushes. This only takes effect
-        when auto_flush is on. Default to 60 seconds. If a non-positive number is set, it will be default
-        to 86400s (1 day)
+        when auto_flush is on. Default to 60 seconds.
+    :keyword int initial_batch_action_count: The initial number of actions to group into a batch when
+        tuning the behavior of the sender. The default value is 512.
+    :keyword int max_retries_per_action: The number of times to retry a failed document. The default value is 3.
     :keyword callable on_new: If it is set, the client will call corresponding methods when there
         is a new IndexAction added.
     :keyword callable on_progress: If it is set, the client will call corresponding methods when there
@@ -103,6 +104,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :param int timeout: time out setting. Default is 86400s (one day)
         :return: True if there are errors. Else False
         :rtype: bool
+        :raises ~azure.core.exceptions.ServiceResponseTimeoutError:
         """
         has_error = False
         begin_time = int(time.time())
@@ -110,6 +112,10 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
+                if self._on_error:
+                    actions = await self._index_documents_batch.dequeue_actions()
+                    for action in actions:
+                        await self._on_error(action)
                 raise ServiceResponseTimeoutError("Service response time out")
             result = await self._process(timeout=remaining, raise_error=False)
             if result:
@@ -165,12 +171,12 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         """ Every time when a new action is queued, this method
             will be triggered. It checks the actions already queued and flushes them if:
             1. Auto_flush is on
-            2. There are self._batch_size actions queued
+            2. There are self._batch_action_count actions queued
         """
         if not self._auto_flush:
             return
 
-        if len(self._index_documents_batch.actions) < self._batch_size:
+        if len(self._index_documents_batch.actions) < self._batch_action_count:
             return
 
         await self._process(raise_error=False)
@@ -255,6 +261,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             if len(actions) == 1:
                 raise
             pos = round(len(actions) / 2)
+            if pos < self._batch_action_count:
+                self._index_documents_batch = pos
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
@@ -303,11 +311,11 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         if not counter:
             # first time that fails
             self._retry_counter[key] = 1
-            await self._index_documents_batch.enqueue_action(action)
-        elif counter < self._max_retry_count - 1:
+            await self._index_documents_batch.enqueue_actions(action)
+        elif counter < self._max_retries_per_action - 1:
             # not reach retry limit yet
             self._retry_counter[key] = counter + 1
-            await self._index_documents_batch.enqueue_action(action)
+            await self._index_documents_batch.enqueue_actions(action)
         else:
             await self._callback_fail(action)
 

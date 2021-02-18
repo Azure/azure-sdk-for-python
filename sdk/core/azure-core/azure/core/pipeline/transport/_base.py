@@ -65,6 +65,7 @@ from typing import (
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import (
     ABC,
     AbstractContextManager,
@@ -77,6 +78,7 @@ from .._tools import await_result as _await_result
 
 if TYPE_CHECKING:
     from ..policies import SansIOHTTPPolicy
+    from collections.abc import MutableMapping
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -513,7 +515,7 @@ class _HttpResponseBase(object):
         self.request = request
         self.internal_response = internal_response
         self.status_code = None  # type: Optional[int]
-        self.headers = {}  # type: Dict[str, str]
+        self.headers = {}  # type: MutableMapping[str, str]
         self.reason = None  # type: Optional[str]
         self.content_type = None  # type: Optional[str]
         self.block_size = block_size or 4096  # Default to same as Requests
@@ -581,6 +583,14 @@ class _HttpResponseBase(object):
         message = message_parser(http_body)  # type: Message
         requests = self.request.multipart_mixed_info[0]  # type: List[HttpRequest]
         return self._decode_parts(message, http_response_type, requests)
+
+    def raise_for_status(self):
+        # type () -> None
+        """Raises an HttpResponseError if the response has an error status code.
+        If response is good, does nothing.
+        """
+        if self.status_code >= 400:
+            raise HttpResponseError(response=self)
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method

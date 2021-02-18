@@ -23,8 +23,8 @@ class ApplicationSummaryPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-        super(ApplicationSummaryPaged, self).__init__(*args, **kwargs)
 
+        super(ApplicationSummaryPaged, self).__init__(*args, **kwargs)
 class PoolUsageMetricsPaged(Paged):
     """
     A paging container for iterating over a list of :class:`PoolUsageMetrics <azure.batch.models.PoolUsageMetrics>` object
@@ -36,8 +36,8 @@ class PoolUsageMetricsPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-        super(PoolUsageMetricsPaged, self).__init__(*args, **kwargs)
 
+        super(PoolUsageMetricsPaged, self).__init__(*args, **kwargs)
 class CloudPoolPaged(Paged):
     """
     A paging container for iterating over a list of :class:`CloudPool <azure.batch.models.CloudPool>` object
@@ -49,8 +49,8 @@ class CloudPoolPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-        super(CloudPoolPaged, self).__init__(*args, **kwargs)
 
+        super(CloudPoolPaged, self).__init__(*args, **kwargs)
 class ImageInformationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ImageInformation <azure.batch.models.ImageInformation>` object
@@ -62,8 +62,8 @@ class ImageInformationPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-        super(ImageInformationPaged, self).__init__(*args, **kwargs)
 
+        super(ImageInformationPaged, self).__init__(*args, **kwargs)
 class PoolNodeCountsPaged(Paged):
     """
     A paging container for iterating over a list of :class:`PoolNodeCounts <azure.batch.models.PoolNodeCounts>` object
@@ -75,8 +75,8 @@ class PoolNodeCountsPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-        super(PoolNodeCountsPaged, self).__init__(*args, **kwargs)
 
+        super(PoolNodeCountsPaged, self).__init__(*args, **kwargs)
 class CloudJobPaged(Paged):
     """
     A paging container for iterating over a list of :class:`CloudJob <azure.batch.models.CloudJob>` object
@@ -88,8 +88,8 @@ class CloudJobPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-        super(CloudJobPaged, self).__init__(*args, **kwargs)
 
+        super(CloudJobPaged, self).__init__(*args, **kwargs)
 class JobPreparationAndReleaseTaskExecutionInformationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`JobPreparationAndReleaseTaskExecutionInformation <azure.batch.models.JobPreparationAndReleaseTaskExecutionInformation>` object
@@ -101,8 +101,8 @@ class JobPreparationAndReleaseTaskExecutionInformationPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-        super(JobPreparationAndReleaseTaskExecutionInformationPaged, self).__init__(*args, **kwargs)
 
+        super(JobPreparationAndReleaseTaskExecutionInformationPaged, self).__init__(*args, **kwargs)
 class CertificatePaged(Paged):
     """
     A paging container for iterating over a list of :class:`Certificate <azure.batch.models.Certificate>` object
@@ -114,8 +114,8 @@ class CertificatePaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-        super(CertificatePaged, self).__init__(*args, **kwargs)
 
+        super(CertificatePaged, self).__init__(*args, **kwargs)
 class NodeFilePaged(Paged):
     """
     A paging container for iterating over a list of :class:`NodeFile <azure.batch.models.NodeFile>` object
@@ -127,8 +127,8 @@ class NodeFilePaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-        super(NodeFilePaged, self).__init__(*args, **kwargs)
 
+        super(NodeFilePaged, self).__init__(*args, **kwargs)
 class CloudJobSchedulePaged(Paged):
     """
     A paging container for iterating over a list of :class:`CloudJobSchedule <azure.batch.models.CloudJobSchedule>` object
@@ -140,8 +140,8 @@ class CloudJobSchedulePaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-        super(CloudJobSchedulePaged, self).__init__(*args, **kwargs)
 
+        super(CloudJobSchedulePaged, self).__init__(*args, **kwargs)
 class CloudTaskPaged(Paged):
     """
     A paging container for iterating over a list of :class:`CloudTask <azure.batch.models.CloudTask>` object
@@ -153,8 +153,8 @@ class CloudTaskPaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
-        super(CloudTaskPaged, self).__init__(*args, **kwargs)
 
+        super(CloudTaskPaged, self).__init__(*args, **kwargs)
 class ComputeNodePaged(Paged):
     """
     A paging container for iterating over a list of :class:`ComputeNode <azure.batch.models.ComputeNode>` object
@@ -166,4 +166,5 @@ class ComputeNodePaged(Paged):
     }
 
     def __init__(self, *args, **kwargs):
+
         super(ComputeNodePaged, self).__init__(*args, **kwargs)

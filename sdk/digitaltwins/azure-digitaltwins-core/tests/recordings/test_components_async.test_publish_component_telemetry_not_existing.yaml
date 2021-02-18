@@ -1,0 +1,66 @@
+interactions:
+- request:
+    body: '{"ComponentTelemetry1": 5}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '26'
+      Content-Type:
+      - application/json
+      Message-Id:
+      - ef9761b5-f636-4b10-804e-f01b734dad1b
+      Telemetry-Source-Time:
+      - '2020-11-25 10:05:04.022194'
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component1/telemetry?api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
+        twin instance that exists with the ID foo. Please verify that the twin id
+        is valid and ensure that the twin is not deleted. See section on querying
+        the twins http://aka.ms/adtv2query."}}'
+    headers:
+      content-length: '256'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:05:04 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 404
+      message: Not Found
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component1/telemetry?api-version=2020-10-31
+- request:
+    body: '{"ComponentTelemetry1": 5}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '26'
+      Content-Type:
+      - application/json
+      Message-Id:
+      - 9def412b-bbe8-45b8-aefc-e7f55d7aab60
+      Telemetry-Source-Time:
+      - '2020-11-25 10:05:05.361065'
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2/telemetry?api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"DigitalTwinNotFound","message":"There is no digital
+        twin instance that exists with the ID foo. Please verify that the twin id
+        is valid and ensure that the twin is not deleted. See section on querying
+        the twins http://aka.ms/adtv2query."}}'
+    headers:
+      content-length: '256'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:05:04 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 404
+      message: Not Found
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2/telemetry?api-version=2020-10-31
+version: 1

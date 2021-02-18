@@ -13,12 +13,8 @@ Use the Service Bus client library for Python to communicate between application
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples) | [Changelog](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/CHANGELOG.md)
 
-> **NOTE**: This document has instructions, links and code snippets for the **preview** of the next version of the `azure-servicebus` package
-> which has different APIs than the current version (0.50). Please view the resources below for references on the existing library.
-
-[V0.50 Source code][0_50_source] | [V0.50 Package (PyPi)][0_50_pypi] | [V0.50 API reference documentation][0_50_api_docs] | [V0.50 Product documentation][0_50_product_docs] | [V0.50 Samples][0_50_samples] | [V0.50 Changelog][0_50_changelog]
-
-We also provide a migration guide for users familiar with the existing package that would like to try the preview: [migration guide to move from Service Bus V0.50 to Service Bus V7 Preview][migration_guide]
+**NOTE**: If you are using version 0.50 or lower and want to migrate to the latest version
+of this package please look at our [migration guide to move from Service Bus V0.50 to Service Bus V7][migration_guide].
 
 ## Getting started
 
@@ -27,7 +23,7 @@ We also provide a migration guide for users familiar with the existing package t
 Install the Azure Service Bus client library for Python with [pip][pip]:
 
 ```Bash
-pip install azure-servicebus --pre
+pip install azure-servicebus
 ```
 
 ### Prerequisites: 
@@ -59,6 +55,10 @@ Please find the samples linked below for demonstration as to how to authenticate
 [TokenCredential][token_credential_interface]
 protocol. There are implementations of the `TokenCredential` protocol available in the
 [azure-identity package][pypi_azure_identity]. The fully qualified namespace is of the format `<yournamespace.servicebus.windows.net>`.
+- To use the credential types provided by `azure-identity`, please install the package:
+```pip install azure-identity```
+- Additionally, to use the async API supported on Python 3.5+, you must first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/):
+```pip install aiohttp```
 - When using Azure Active Directory, your principal must be assigned a role which allows access to Service Bus, such as the
 Azure Service Bus Data Owner role. For more information about using Azure Active Directory authorization with Service Bus,
 please refer to [the associated documentation][servicebus_aad_authentication].
@@ -81,50 +81,51 @@ To interact with these resources, one should be familiar with the following SDK 
 
 * [ServiceBusClient][client_reference]: This is the object a user should first initialize to connect to a Service Bus Namespace.  To interact with a queue, topic, or subscription, one would spawn a sender or receiver off of this client.
 
-* [Sender][sender_reference]: To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py).
+* [ServiceBusSender][sender_reference]: To send messages to a Queue or Topic, one would use the corresponding `get_queue_sender` or `get_topic_sender` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py).
 
-* [Receiver][receiver_reference]: To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py).
+* [ServiceBusReceiver][receiver_reference]: To receive messages from a Queue or Subscription, one would use the corresponding `get_queue_receiver` or `get_subscription_receiver` method off of a `ServiceBusClient` instance as seen [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py).
 
-* [Message][message_reference]: When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload and control how the message is "settled" (completed, dead-lettered, etc); these functions are only available on a received message.
+* [ServiceBusMessage][message_reference]: When sending, this is the type you will construct to contain your payload.  When receiving, this is where you will access the payload.
 
 ## Examples
 
 The following sections provide several code snippets covering some of the most common Service Bus tasks, including:
 
-* [Send messages to a queue](#send-messages-to-a-queue)
-* [Receive messages from a queue](#receive-messages-from-a-queue)
-* [Send and receive a message from a session enabled queue](#send-and-receive-a-message-from-a-session-enabled-queue)
-* [Working with topics and subscriptions](#working-with-topics-and-subscriptions)
-* [Settle a message after receipt](#settle-a-message-after-receipt)
-* [Automatically renew Message or Session locks](#automatically-renew-message-or-session-locks)
+* [Send messages to a queue](#send-messages-to-a-queue "Send messages to a queue")
+* [Receive messages from a queue](#receive-messages-from-a-queue "Receive messages from a queue")
+* [Send and receive a message from a session enabled queue](#send-and-receive-a-message-from-a-session-enabled-queue "Send and receive a message from a session enabled queue")
+* [Working with topics and subscriptions](#working-with-topics-and-subscriptions "Working with topics and subscriptions")
+* [Settle a message after receipt](#settle-a-message-after-receipt "Settle a message after receipt")
+* [Automatically renew Message or Session locks](#automatically-renew-message-or-session-locks "Automatically renew Message or Session locks")
 
 To perform management tasks such as creating and deleting queues/topics/subscriptions, please utilize the azure-mgmt-servicebus library, available [here][servicebus_management_repository].
 
 Please find further examples in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples) directory demonstrating common Service Bus scenarios such as sending, receiving, session management and message handling.
 
-### [Send messages to a queue][send_reference]
+### Send messages to a queue 
+> **NOTE:** see reference documentation [here][send_reference].
 
 This example sends single message and array of messages to a queue that is assumed to already exist, created via the Azure portal or az commands.
 
 ```Python
-from azure.servicebus import ServiceBusClient, Message
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_sender(queue_name) as sender:
         # Sending a single message
-        single_message = Message("Single message")
+        single_message = ServiceBusMessage("Single message")
         sender.send_messages(single_message)
 
         # Sending a list of messages
-        messages = [Message("First message"), Message("Second message")]
+        messages = [ServiceBusMessage("First message"), ServiceBusMessage("Second message")]
         sender.send_messages(messages)
 ```
 
-> **NOTE:** A message may be scheduled for delayed delivery using the `ServiceBusSender.schedule_messages()` method, or by specifying `Message.scheduled_enqueue_time_utc` before calling `ServiceBusSender.send_messages()`
+> **NOTE:** A message may be scheduled for delayed delivery using the `ServiceBusSender.schedule_messages()` method, or by specifying `ServiceBusMessage.scheduled_enqueue_time_utc` before calling `ServiceBusSender.send_messages()`
 
 > For more detail on scheduling and schedule cancellation please see a sample [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/schedule_messages_and_cancellation.py).
 
@@ -138,21 +139,21 @@ To receive from a queue, you can either perform an ad-hoc receive via `receiver.
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     # max_wait_time specifies how long the receiver should wait with no incoming messages before stopping receipt.  
     # Default is None; to receive forever.
     with client.get_queue_receiver(queue_name, max_wait_time=30) as receiver:
-        for msg in receiver:  # ServiceBusReceiver instance is a generator. This is equivilent to get_streaming_message_iter().
+        for msg in receiver:  # ServiceBusReceiver instance is a generator.
             print(str(msg))
             # If it is desired to halt receiving early, one can break out of the loop here safely.
 ```
 
-> **NOTE:** Any message received with `mode=PeekLock` (this is the default, with the alternative ReceiveAndDelete removing the message from the queue immediately on receipt)
-> has a lock that must be renewed via `message.renew_lock()` before it expires if processing would take longer than the lock duration.  
-> See [AutoLockRenewer](#automatically-renew-message-or-session-locks) for a helper to perform this in the background automatically.
+> **NOTE:** Any message received with `receive_mode=PEEK_LOCK` (this is the default, with the alternative RECEIVE_AND_DELETE removing the message from the queue immediately on receipt)
+> has a lock that must be renewed via `receiver.renew_message_lock` before it expires if processing would take longer than the lock duration.
+> See [AutoLockRenewer](#automatically-renew-message-or-session-locks "Automatically renew Message or Session locks") for a helper to perform this in the background automatically.
 > Lock duration is set in Azure on the queue or topic itself.
 
 #### [Receive messages from a queue through ServiceBusReceiver.receive_messages()][receive_reference]
@@ -163,7 +164,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
@@ -183,24 +184,25 @@ In this example, max_message_count declares the maximum number of messages to at
 > **NOTE:** It should also be noted that `ServiceBusReceiver.peek_messages()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
 
 
-### [Send][session_send_reference] and [receive][session_receive_reference] a message from a session enabled queue
+### Send and receive a message from a session enabled queue
+> **NOTE:** see reference documentation for session [send][session_send_reference] and [receive][session_receive_reference].
 
 Sessions provide first-in-first-out and single-receiver semantics on top of a queue or subscription.  While the actual receive syntax is the same, initialization differs slightly.
 
 ```Python
-from azure.servicebus import ServiceBusClient, Message
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 session_id = os.environ['SERVICE_BUS_SESSION_ID']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_sender(queue_name) as sender:
-        sender.send_messages(Message("Session Enabled Message", session_id=session_id))
+        sender.send_messages(ServiceBusMessage("Session Enabled Message", session_id=session_id))
 
     # If session_id is null here, will receive from the first available session.
-    with client.get_queue_session_receiver(queue_name, session_id) as receiver:
+    with client.get_queue_receiver(queue_name, session_id=session_id) as receiver:
         for msg in receiver:
             print(str(msg))
 ```
@@ -210,21 +212,22 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 
 ### Working with [topics][topic_reference] and [subscriptions][subscription_reference]
+> **NOTE:** see reference documentation for [topics][topic_reference] and [subscriptions][subscription_reference].
 
 Topics and subscriptions give an alternative to queues for sending and receiving messages.  See documents [here][topic_concept] for more overarching detail,
 and of how these differ from queues.
 
 ```Python
-from azure.servicebus import ServiceBusClient, Message
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 topic_name = os.environ['SERVICE_BUS_TOPIC_NAME']
 subscription_name = os.environ['SERVICE_BUS_SUBSCRIPTION_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_topic_sender(topic_name) as sender:
-        sender.send_messages(Message("Data"))
+        sender.send_messages(ServiceBusMessage("Data"))
 
     # If session_id is null here, will receive from the first available session.
     with client.get_subscription_receiver(topic_name, subscription_name) as receiver:
@@ -236,14 +239,14 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 When receiving from a queue, you have multiple actions you can take on the messages you receive.
 
-> **NOTE**: You can only settle `ReceivedMessage` objects which are received in `ReceiveMode.PeekLock` mode (this is the default).
-> `ReceiveMode.ReceiveAndDelete` mode removes the message from the queue on receipt.  `PeekedMessage` messages
-> returned from `peek()` cannot be settled, as the message lock is not taken like it is in the aforementioned receive methods.  Sessionful messages have a similar limitation.
+> **NOTE**: You can only settle `ServiceBusReceivedMessage` objects which are received in `ServiceBusReceiveMode.PEEK_LOCK` mode (this is the default).
+> `ServiceBusReceiveMode.RECEIVE_AND_DELETE` mode removes the message from the queue on receipt.  `ServiceBusReceivedMessage` messages
+> returned from `peek_messages()` cannot be settled, as the message lock is not taken like it is in the aforementioned receive methods.
 
 If the message has a lock as mentioned above, settlement will fail if the message lock has expired.  
-If processing would take longer than the lock duration, it must be maintained via `message.renew_lock()` before it expires.  
+If processing would take longer than the lock duration, it must be maintained via `receiver.renew_message_lock` before it expires.
 Lock duration is set in Azure on the queue or topic itself.
-See [AutoLockRenewer](#automatically-renew-message-or-session-locks) for a helper to perform this in the background automatically.
+See [AutoLockRenewer](#automatically-renew-message-or-session-locks "Automatically renew Message or Session locks") for a helper to perform this in the background automatically.
 
 #### [Complete][complete_reference]
 
@@ -253,14 +256,14 @@ Declares the message processing to be successfully completed, removing the messa
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
         for msg in receiver:
             print(str(msg))
-            msg.complete()
+            receiver.complete_message(msg)
 ```
 
 #### [Abandon][abandon_reference]
@@ -271,32 +274,32 @@ Abandon processing of the message for the time being, returning the message imme
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
         for msg in receiver:
             print(str(msg))
-            msg.abandon()
+            receiver.abandon_message(msg)
 ```
 
 #### [DeadLetter][deadletter_reference]
 
-Transfer the message from the primary queue into a special "dead-letter sub-queue" where it can be accessed using the `ServiceBusClient.get_<queue|subscription>_receiver` function with parameter `sub_queue=SubQueue.DeadLetter` and consumed from like any other receiver. (see sample [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_deadlettered_messages.py))
+Transfer the message from the primary queue into a special "dead-letter sub-queue" where it can be accessed using the `ServiceBusClient.get_<queue|subscription>_receiver` function with parameter `sub_queue=ServiceBusSubQueue.DEAD_LETTER` and consumed from like any other receiver. (see sample [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_deadlettered_messages.py))
 
 ```Python
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
         for msg in receiver:
             print(str(msg))
-            msg.dead_letter()
+            receiver.dead_letter_message(msg)
 ```
 
 #### [Defer][defer_reference]
@@ -308,43 +311,66 @@ by setting it aside such that it must be received by sequence number in a call t
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
         for msg in receiver:
             print(str(msg))
-            msg.defer()
+            receiver.defer_message(msg)
 ```
 
-### [Automatically renew Message or Session locks][autolockrenew_reference]
+### Automatically renew Message or Session locks
+> **NOTE:** see reference documentation for [auto-lock-renewal][autolockrenew_reference].
 
-`AutoLockRenewer` is a simple method for ensuring your message or session remains locked even over long periods of time, if calling `renew_lock()` is impractical or undesired.
-Internally, it is not much more than shorthand for creating a concurrent watchdog to call `renew_lock()` if the object is nearing expiry.
+`AutoLockRenewer` is a simple method for ensuring your message or session remains locked even over long periods of time, if calling `receiver.renew_message_lock`/`receiver.session.renew_lock` is impractical or undesired.
+Internally, it is not much more than shorthand for creating a concurrent watchdog to do lock renewal if the object is nearing expiry.
 It should be used as follows:
+
+* Message lock automatic renewing
 
 ```python
 from azure.servicebus import ServiceBusClient, AutoLockRenewer
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+
+# Can also be called via "with AutoLockRenewer() as renewer" to automate closing.
+renewer = AutoLockRenewer()
+with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_queue_receiver(queue_name) as receiver:
+        for msg in receiver.receive_messages():
+            renewer.register(receiver, msg, max_lock_renewal_duration=60)
+            # Do your application logic here
+            receiver.complete_message(msg)
+renewer.close()
+```
+
+* Session lock automatic renewing
+
+```python
+from azure.servicebus import ServiceBusClient, AutoLockRenewer
+
+import os
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
+session_queue_name = os.environ['SERVICE_BUS_SESSION_QUEUE_NAME']
 session_id = os.environ['SERVICE_BUS_SESSION_ID']
 
 # Can also be called via "with AutoLockRenewer() as renewer" to automate closing.
 renewer = AutoLockRenewer()
 with ServiceBusClient.from_connection_string(connstr) as client:
-    with client.get_queue_session_receiver(queue_name, session_id=session_id) as receiver:
-        renewer.register(receiver.session, timeout=300) # Timeout for how long to maintain the lock for, in seconds.
+    with client.get_queue_receiver(session_queue_name, session_id=session_id) as receiver:
+        renewer.register(receiver, receiver.session, max_lock_renewal_duration=300) # Duration for how long to maintain the lock for, in seconds.
+
         for msg in receiver.receive_messages():
-            renewer.register(msg, timeout=60)
             # Do your application logic here
-            msg.complete()
+            receiver.complete_message(msg)
 renewer.close()
 ```
 
-If for any reason auto-renewal has been interrupted or failed, this can be observed via the `auto_renew_error` property on the object being renewed.
+If for any reason auto-renewal has been interrupted or failed, this can be observed via the `auto_renew_error` property on the object being renewed, or by having passed a callback to the `on_lock_renew_failure` parameter on renewer initialization.
 It would also manifest when trying to take action (such as completing a message) on the specified object.
 
 ## Troubleshooting
@@ -361,13 +387,58 @@ There are various timeouts a user should be aware of within the library.
 - 10 minute service side link closure:  A link, once opened, will be closed after 10 minutes idle to protect the service against resource leakage.  This should largely
 be transparent to a user, but if you notice a reconnect occurring after such a duration, this is why.  Performing any operations, including management operations, on the
 link will extend this timeout.
-- max_wait_time: Provided on creation of a receiver or when calling `receive_messages()` or `get_streaming_message_iter()`, the time after which receiving messages will halt after no traffic.  This applies both to the imperative `receive_messages()` function as well as the length
+- max_wait_time: Provided on creation of a receiver or when calling `receive_messages()`, the time after which receiving messages will halt after no traffic.  This applies both to the imperative `receive_messages()` function as well as the length
 a generator-style receive will run for before exiting if there are no messages.  Passing None (default) will wait forever, up until the 10 minute threshold if no other action is taken.
 
-> **NOTE:** If processing of a message or session is sufficiently long as to cause timeouts, as an alternative to calling `renew_lock()` manually, one can
-> leverage the `AutoLockRenewer` functionality detailed [above](#automatically-renew-message-or-session-locks).
+> **NOTE:** If processing of a message or session is sufficiently long as to cause timeouts, as an alternative to calling `receiver.renew_message_lock`/`receiver.session.renew_lock` manually, one can
+> leverage the `AutoLockRenewer` functionality detailed [above](#automatically-renew-message-or-session-locks "Automatically renew Message or Session locks").
 
 ### Common Exceptions
+
+The Service Bus APIs generate the following exceptions in azure.servicebus.exceptions:
+
+- **ServiceBusConnectionError:** An error occurred in the connection to the service.
+This may have been caused by a transient network issue or service problem. It is recommended to retry.
+- **ServiceBusAuthorizationError:** An error occurred when authorizing the connection to the service.
+This may have been caused by the credentials not having the right permission to perform the operation.
+It is recommended to check the permission of the credentials.
+- **ServiceBusAuthenticationError:** An error occurred when authenticate the connection to the service.
+This may have been caused by the credentials being incorrect. It is recommended to check the credentials.
+- **OperationTimeoutError:** This indicates that the service did not respond to an operation within the expected amount of time.
+This may have been caused by a transient network issue or service problem. The service may or may not have successfully completed the request; the status is not known.
+It is recommended to attempt to verify the current state and retry if necessary.
+- **MessageSizeExceededError:** This indicate that the message content is larger than the service bus frame size.
+This could happen when too many service bus messages are sent in a batch or the content passed into
+the body of a `Message` is too large. It is recommended to reduce the count of messages being sent in a batch or the size of content being passed into a single `ServiceBusMessage`. 
+- **MessageAlreadySettled:** This indicates failure to settle the message.
+This could happen when trying to settle an already-settled message.
+- **MessageLockLostError:** The lock on the message has expired and it has been released back to the queue.
+It will need to be received again in order to settle it.
+You should be aware of the lock duration of a message and keep renewing the lock before expiration in case of long processing time.
+`AutoLockRenewer` could help on keeping the lock of the message automatically renewed.
+- **SessionLockLostError:** The lock on the session has expired.
+All unsettled messages that have been received can no longer be settled.
+It is recommended to reconnect to the session if receive messages again if necessary.
+You should be aware of the lock duration of a session and keep renewing the lock before expiration in case of long processing time.
+`AutoLockRenewer` could help on keeping the lock of the session automatically renewed.
+- **MessageNotFoundError:** Attempt to receive a message with a particular sequence number. This message isn't found.
+Make sure the message hasn't been received already. Check the deadletter queue to see if the message has been deadlettered.
+- **MessagingEntityNotFoundError:** Entity associated with the operation doesn't exist or it has been deleted.
+Please make sure the entity exists.
+- **MessagingEntityDisabledError:** Request for a runtime operation on a disabled entity. Please Activate the entity.
+- **ServiceBusQuotaExceededError:** The messaging entity has reached its maximum allowable size, or the maximum number of connections to a namespace has been exceeded.
+Create space in the entity by receiving messages from the entity or its subqueues.
+- **ServiceBusServerBusyError:** Service isn't able to process the request at this time. Client can wait for a period of time, then retry the operation.
+- **ServiceBusCommunicationError:** Client isn't able to establish a connection to Service Bus.
+Make sure the supplied host name is correct and the host is reachable.
+If your code runs in an environment with a firewall/proxy, ensure that the traffic to the Service Bus domain/IP address and ports isn't blocked.
+- **SessionCannotBeLockedError:** Attempt to connect to a session with a specific session ID, but the session is currently locked by another client.
+Make sure the session is unlocked by other clients.
+- **AutoLockRenewFailed:** An attempt to renew a lock on a message or session in the background has failed.
+This could happen when the receiver used by `AutoLockRenerer` is closed or the lock of the renewable has expired.
+It is recommended to re-register the renewable message or session by receiving the message or connect to the sessionful entity again.
+- **AutoLockRenewTimeout:** The time allocated to renew the message or session lock has elapsed. You could re-register the object that wants be auto lock renewed or extend the timeout in advance.
+- **ServiceBusError:** All other Service Bus related errors. It is the root error class of all the errors described above.
 
 Please view the [exceptions reference docs][exception_reference] for detailed descriptions of our common Exception types.
 
@@ -386,6 +457,14 @@ For more extensive documentation on the Service Bus service, see the [Service Bu
 For users seeking to perform management operations against ServiceBus (Creating a queue/topic/etc, altering filter rules, enumerating entities)
 please see the [azure-mgmt-servicebus documentation][service_bus_mgmt_docs] for API documentation.  Terse usage examples can be found
 [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-mgmt-servicebus/tests) as well.
+
+### Building uAMQP wheel from source
+
+`azure-servicebus` depends on the [uAMQP](https://pypi.org/project/uamqp/) for the AMQP protocol implementation.
+uAMQP wheels are provided for most major operating systems and will be installed automatically when installing `azure-servicebus`.
+
+If you're running on a platform for which uAMQP wheels are not provided, please follow
+ the [uAMQP Installation](https://github.com/Azure/azure-uamqp-python#installation) guidance to install from source.
 
 ## Contributing
 
@@ -410,7 +489,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b7/
+[pypi]: https://pypi.org/project/azure-servicebus/
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
@@ -428,29 +507,23 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [servicebus_aad_authentication]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-authentication-and-authorization
 [token_credential_interface]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
-[message_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.Message
+[message_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.ServiceBusMessage
 [receiver_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.ServiceBusReceiver
 [sender_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.ServiceBusSender
 [client_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.ServiceBusClient
 [send_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=send_messages#azure.servicebus.ServiceBusSender.send_messages
-[receive_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=receive#azure.servicebus.ServiceBusReceiver.receive_messages
-[streaming_receive_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=get_streaming_message_iter#azure.servicebus.ServiceBusReceiver.get_streaming_message_iter
-[session_receive_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=receive#azure.servicebus.ServiceBusSessionReceiver.receive_messages
-[session_send_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=session_id#azure.servicebus.Message.session_id
-[complete_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=complete#azure.servicebus.ReceivedMessage.complete
-[abandon_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=abandon#azure.servicebus.ReceivedMessage.abandon
-[defer_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=defer#azure.servicebus.ReceivedMessage.defer
-[deadletter_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=dead_letter#azure.servicebus.ReceivedMessage.dead_letter
+[receive_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=receive_messages#azure.servicebus.ServiceBusReceiver.receive_messages
+[streaming_receive_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=next#azure.servicebus.ServiceBusReceiver.next
+[session_receive_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=session_id#azure.servicebus.ServiceBusSessionReceiver.receive_messages
+[session_send_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=session_id#azure.servicebus.ServiceBusMessage.session_id
+[complete_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=complete_message#azure.servicebus.ServiceBusReceiver.complete_message
+[abandon_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=abandon_message#azure.servicebus.ServiceBusReceiver.abandon_message
+[defer_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=defer_message#azure.servicebus.ServiceBusReceiver.defer_message
+[deadletter_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=dead_letter_message#azure.servicebus.ServiceBusReceiver.dead_letter_message
 [autolockrenew_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.AutoLockRenewer
 [exception_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#module-azure.servicebus.exceptions
 [subscription_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.aio.html?highlight=subscription#azure.servicebus.aio.ServiceBusClient.get_subscription_receiver
 [topic_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=topic#azure.servicebus.ServiceBusClient.get_topic_sender
 [sample_authenticate_client_connstr]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/authenticate_client_connstr.py
 [sample_authenticate_client_aad]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/client_identity_authentication.py
-[0_50_source]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/
-[0_50_pypi]: https://pypi.org/project/azure-servicebus/0.50.3/
-[0_50_api_docs]:https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/0.50.3/index.html
-[0_50_product_docs]: https://docs.microsoft.com/azure/service-bus-messaging/
-[0_50_samples]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/samples
-[0_50_changelog]: https://github.com/Azure/azure-sdk-for-python/blob/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/CHANGELOG.md
 [migration_guide]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/migration_guide.md

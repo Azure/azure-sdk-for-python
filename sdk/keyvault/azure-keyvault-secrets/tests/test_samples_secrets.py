@@ -4,8 +4,8 @@
 # -------------------------------------
 from __future__ import print_function
 import functools
+import time
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.keyvault.secrets import SecretClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
@@ -24,14 +24,12 @@ def test_create_secret_client():
     vault_url = "vault_url"
     # pylint:disable=unused-variable
     # [START create_secret_client]
-
     from azure.identity import DefaultAzureCredential
     from azure.keyvault.secrets import SecretClient
 
     # Create a SecretClient using default Azure credentials
-    credentials = DefaultAzureCredential()
-    secret_client = SecretClient(vault_url, credentials)
-
+    credential = DefaultAzureCredential()
+    secret_client = SecretClient(vault_url, credential)
     # [END create_secret_client]
 
 
@@ -53,10 +51,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(secret.name)
         print(secret.properties.version)
         print(secret.properties.expires_on)
-
         # [END set_secret]
-        # [START get_secret]
 
+        # [START get_secret]
         # get the latest version of a secret
         secret = secret_client.get_secret("secret-name")
 
@@ -67,10 +64,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(secret.name)
         print(secret.properties.version)
         print(secret.properties.vault_url)
-
         # [END get_secret]
-        # [START update_secret]
 
+        # [START update_secret]
         # update attributes of an existing secret
 
         content_type = "text/plain"
@@ -83,10 +79,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(updated_secret_properties.updated_on)
         print(updated_secret_properties.content_type)
         print(updated_secret_properties.tags)
-
         # [END update_secret]
-        # [START delete_secret]
 
+        # [START delete_secret]
         # delete a secret
         deleted_secret_poller = secret_client.begin_delete_secret("secret-name")
         deleted_secret = deleted_secret_poller.result()
@@ -101,7 +96,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # if you want to block until secret is deleted server-side, call wait() on the poller
         deleted_secret_poller.wait()
-
         # [END delete_secret]
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -114,7 +108,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             secret_client.set_secret("key{}".format(i), "value{}".format(i))
 
         # [START list_secrets]
-
         # list secrets
         secrets = secret_client.list_properties_of_secrets()
 
@@ -123,7 +116,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(secret.id)
             print(secret.name)
             print(secret.enabled)
-
         # [END list_secrets]
 
         # pylint: disable=unused-variable
@@ -136,10 +128,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(secret.id)
             print(secret.enabled)
             print(secret.updated_on)
-
         # [END list_properties_of_secret_versions]
-        # [START list_deleted_secrets]
 
+        # [START list_deleted_secrets]
         # gets an iterator of deleted secrets (requires soft-delete enabled for the vault)
         deleted_secrets = secret_client.list_deleted_secrets()
 
@@ -154,7 +145,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END list_deleted_secrets]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_example_secrets_backup_restore(self, client, **kwargs):
         secret_client = client
@@ -166,16 +157,19 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret_backup = secret_client.backup_secret("secret-name")
 
         print(secret_backup)
-
         # [END backup_secret]
-        secret_client.begin_delete_secret("secret-name").wait()
-        # [START restore_secret_backup]
 
+        secret_client.begin_delete_secret("secret-name").wait()
+        secret_client.purge_deleted_secret("secret-name")
+
+        if self.is_live:
+            time.sleep(60)
+
+        # [START restore_secret_backup]
         # restores a backed up secret
         restored_secret = secret_client.restore_secret_backup(secret_backup)
         print(restored_secret.id)
         print(restored_secret.version)
-
         # [END restore_secret_backup]
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -190,10 +184,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # gets a deleted secret (requires soft-delete enabled for the vault)
         deleted_secret = secret_client.get_deleted_secret("secret-name")
         print(deleted_secret.name)
-
         # [END get_deleted_secret]
-        # [START recover_deleted_secret]
 
+        # [START recover_deleted_secret]
         # recover deleted secret to the latest version
         recover_secret_poller = secret_client.begin_recover_deleted_secret("secret-name")
         recovered_secret = recover_secret_poller.result()
@@ -202,5 +195,4 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # if you want to block until secret is recovered server-side, call wait() on the poller
         recover_secret_poller.wait()
-
         # [END recover_deleted_secret]

@@ -88,6 +88,18 @@ class DiskCreateOptionTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     EMPTY = "Empty"
     ATTACH = "Attach"
 
+class ExecutionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Script execution status.
+    """
+
+    UNKNOWN = "Unknown"
+    PENDING = "Pending"
+    RUNNING = "Running"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    TIMED_OUT = "TimedOut"
+    CANCELED = "Canceled"
+
 class HyperVGenerationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the HyperVGeneration Type associated with a resource
     """
@@ -361,16 +373,20 @@ class VirtualMachineScaleSetSkuScaleType(with_metaclass(_CaseInsensitiveEnumMeta
 
 class VirtualMachineSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
-    see `Sizes for virtual machines <https://docs.microsoft.com/azure/virtual-machines/virtual-
-    machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
-    :code:`<br>`:code:`<br>` The available VM sizes depend on region and availability set. For a
-    list of available sizes use these APIs:  :code:`<br>`:code:`<br>` `List all available virtual
-    machine sizes in an availability set
+    see `Sizes for virtual machines <https://docs.microsoft.com/en-us/azure/virtual-
+    machines/sizes>`_. :code:`<br>`:code:`<br>` The available VM sizes depend on region and
+    availability set. For a list of available sizes use these APIs:  :code:`<br>`:code:`<br>` `List
+    all available virtual machine sizes in an availability set
     <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_
     :code:`<br>`:code:`<br>` `List all available virtual machine sizes in a region
-    <https://docs.microsoft.com/rest/api/compute/virtualmachinesizes/list>`_
+    <https://docs.microsoft.com/en-us/rest/api/compute/resourceskus/list>`_
     :code:`<br>`:code:`<br>` `List all available virtual machine sizes for resizing
-    <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_
+    <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_.
+    :code:`<br>`:code:`<br>` This list of sizes is no longer updated and the
+    **VirtualMachineSizeTypes** string constants will be removed from the subsequent REST API
+    specification. Use `List all available virtual machine sizes in a region
+    <https://docs.microsoft.com/en-us/rest/api/compute/resourceskus/list>`_ to get the latest
+    sizes.
     """
 
     BASIC_A0 = "Basic_A0"

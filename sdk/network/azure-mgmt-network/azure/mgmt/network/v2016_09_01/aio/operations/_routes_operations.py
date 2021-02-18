@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class RoutesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -135,7 +135,14 @@ class RoutesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+            'routeName': self._serialize.url("route_name", route_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -155,7 +162,7 @@ class RoutesOperations:
         route_table_name: str,
         route_name: str,
         **kwargs
-    ) -> "models.Route":
+    ) -> "_models.Route":
         """Gets the specified route from a route table.
 
         :param resource_group_name: The name of the resource group.
@@ -169,7 +176,7 @@ class RoutesOperations:
         :rtype: ~azure.mgmt.network.v2016_09_01.models.Route
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Route"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Route"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -216,10 +223,10 @@ class RoutesOperations:
         resource_group_name: str,
         route_table_name: str,
         route_name: str,
-        route_parameters: "models.Route",
+        route_parameters: "_models.Route",
         **kwargs
-    ) -> "models.Route":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Route"]
+    ) -> "_models.Route":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Route"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -275,9 +282,9 @@ class RoutesOperations:
         resource_group_name: str,
         route_table_name: str,
         route_name: str,
-        route_parameters: "models.Route",
+        route_parameters: "_models.Route",
         **kwargs
-    ) -> AsyncLROPoller["models.Route"]:
+    ) -> AsyncLROPoller["_models.Route"]:
         """Creates or updates a route in the specified route table.
 
         :param resource_group_name: The name of the resource group.
@@ -299,7 +306,7 @@ class RoutesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Route"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Route"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -325,7 +332,14 @@ class RoutesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+            'routeName': self._serialize.url("route_name", route_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -344,7 +358,7 @@ class RoutesOperations:
         resource_group_name: str,
         route_table_name: str,
         **kwargs
-    ) -> AsyncIterable["models.RouteListResult"]:
+    ) -> AsyncIterable["_models.RouteListResult"]:
         """Gets all routes in a route table.
 
         :param resource_group_name: The name of the resource group.
@@ -356,7 +370,7 @@ class RoutesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2016_09_01.models.RouteListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

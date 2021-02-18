@@ -9,6 +9,8 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 import logging
+
+from azure.core.credentials import AzureSasCredential
 from azure.core.pipeline import AsyncPipeline
 from azure.core.async_paging import AsyncList
 from azure.core.exceptions import HttpResponseError
@@ -18,6 +20,7 @@ from azure.core.pipeline.policies import (
     AsyncRedirectPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
+    AzureSasCredentialPolicy,
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
@@ -33,7 +36,6 @@ from .policies import (
 )
 from .policies_async import AsyncStorageResponseHook
 
-from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 if TYPE_CHECKING:
@@ -71,6 +73,8 @@ class AsyncStorageAccountHostsMixin(object):
             self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
+        elif isinstance(credential, AzureSasCredential):
+            self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
@@ -102,6 +106,8 @@ class AsyncStorageAccountHostsMixin(object):
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
+        if kwargs.get("_additional_pipeline_policies"):
+            policies = policies + kwargs.get("_additional_pipeline_policies")
         return config, AsyncPipeline(config.transport, policies=policies)
 
     async def _batch_send(
@@ -113,18 +119,25 @@ class AsyncStorageAccountHostsMixin(object):
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='https://{}/?comp=batch'.format(self.primary_hostname),
+            url='{}://{}/?comp=batch{}{}'.format(
+                self.scheme,
+                self.primary_hostname,
+                kwargs.pop('sas', None),
+                kwargs.pop('timeout', None)
+            ),
             headers={
                 'x-ms-version': self.api_version
             }
         )
 
+        policies = [StorageHeadersPolicy()]
+        if self._credential_policy:
+            policies.append(self._credential_policy)
+
         request.set_multipart_mixed(
             *reqs,
-            policies=[
-                StorageHeadersPolicy(),
-                self._credential_policy
-            ]
+            policies=policies,
+            enforce_https=False
         )
 
         pipeline_response = await self._pipeline.run(
@@ -148,7 +161,7 @@ class AsyncStorageAccountHostsMixin(object):
                     raise error
                 return AsyncList(parts_list)
             return parts
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
 

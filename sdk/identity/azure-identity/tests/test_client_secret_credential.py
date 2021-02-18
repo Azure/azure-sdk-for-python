@@ -18,6 +18,19 @@ except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        ClientSecretCredential(tenant, "client-id", "secret")
+
+    invalid_ids = {"", "my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        with pytest.raises(ValueError):
+            ClientSecretCredential(tenant, "client-id", "secret")
+
+
 def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
 
@@ -74,7 +87,7 @@ def test_client_secret_credential():
 def test_authority(authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
 
-    tenant_id = "expected_tenant"
+    tenant_id = "expected-tenant"
     parsed_authority = urlparse(authority)
     expected_netloc = parsed_authority.netloc or authority
     expected_authority = "https://{}/{}".format(expected_netloc, tenant_id)

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class AvailabilitySetsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class AvailabilitySetsOperations(object):
         self,
         resource_group_name,  # type: str
         availability_set_name,  # type: str
-        parameters,  # type: "models.AvailabilitySet"
+        parameters,  # type: "_models.AvailabilitySet"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AvailabilitySet"
+        # type: (...) -> "_models.AvailabilitySet"
         """Create or update an availability set.
 
         :param resource_group_name: The name of the resource group.
@@ -66,7 +66,7 @@ class AvailabilitySetsOperations(object):
         :rtype: ~azure.mgmt.compute.v2017_12_01.models.AvailabilitySet
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AvailabilitySet"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailabilitySet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -116,10 +116,10 @@ class AvailabilitySetsOperations(object):
         self,
         resource_group_name,  # type: str
         availability_set_name,  # type: str
-        parameters,  # type: "models.AvailabilitySetUpdate"
+        parameters,  # type: "_models.AvailabilitySetUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AvailabilitySet"
+        # type: (...) -> "_models.AvailabilitySet"
         """Update an availability set.
 
         :param resource_group_name: The name of the resource group.
@@ -133,7 +133,7 @@ class AvailabilitySetsOperations(object):
         :rtype: ~azure.mgmt.compute.v2017_12_01.models.AvailabilitySet
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AvailabilitySet"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailabilitySet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -185,7 +185,7 @@ class AvailabilitySetsOperations(object):
         availability_set_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.OperationStatusResponse"]
+        # type: (...) -> Optional["_models.OperationStatusResponse"]
         """Delete an availability set.
 
         :param resource_group_name: The name of the resource group.
@@ -197,7 +197,7 @@ class AvailabilitySetsOperations(object):
         :rtype: ~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -246,7 +246,7 @@ class AvailabilitySetsOperations(object):
         availability_set_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AvailabilitySet"
+        # type: (...) -> "_models.AvailabilitySet"
         """Retrieves information about an availability set.
 
         :param resource_group_name: The name of the resource group.
@@ -258,7 +258,7 @@ class AvailabilitySetsOperations(object):
         :rtype: ~azure.mgmt.compute.v2017_12_01.models.AvailabilitySet
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AvailabilitySet"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailabilitySet"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -304,7 +304,7 @@ class AvailabilitySetsOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AvailabilitySetListResult"]
+        # type: (...) -> Iterable["_models.AvailabilitySetListResult"]
         """Lists all availability sets in a subscription.
 
         :param expand: The expand expression to apply to the operation. Allowed values are
@@ -315,7 +315,7 @@ class AvailabilitySetsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2017_12_01.models.AvailabilitySetListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AvailabilitySetListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailabilitySetListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -377,7 +377,7 @@ class AvailabilitySetsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AvailabilitySetListResult"]
+        # type: (...) -> Iterable["_models.AvailabilitySetListResult"]
         """Lists all availability sets in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -387,7 +387,7 @@ class AvailabilitySetsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2017_12_01.models.AvailabilitySetListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AvailabilitySetListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailabilitySetListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -449,7 +449,7 @@ class AvailabilitySetsOperations(object):
         availability_set_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.VirtualMachineSizeListResult"]
+        # type: (...) -> Iterable["_models.VirtualMachineSizeListResult"]
         """Lists all available virtual machine sizes that can be used to create a new virtual machine in
         an existing availability set.
 
@@ -462,7 +462,7 @@ class AvailabilitySetsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2017_12_01.models.VirtualMachineSizeListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineSizeListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineSizeListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

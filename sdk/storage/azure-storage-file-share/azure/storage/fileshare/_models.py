@@ -6,11 +6,13 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 
+from enum import Enum
+
 from azure.core.paging import PageIterator
+from azure.core.exceptions import HttpResponseError
 from ._parser import _parse_datetime_from_str
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
-from ._generated.models import StorageErrorException
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
@@ -140,19 +142,23 @@ class CorsRule(GeneratedCorsRule):
 class ShareSmbSettings(GeneratedShareSmbSettings):
     """ Settings for the SMB protocol.
 
-    :param SmbMultichannel multichannel: Required. Sets the multichannel settings.
+    :keyword SmbMultichannel multichannel: Sets the multichannel settings.
     """
-    def __init__(self, multichannel):
-        self.multichannel = multichannel
+    def __init__(self, **kwargs):
+        self.multichannel = kwargs.get('multichannel')
+        if self.multichannel is None:
+            raise ValueError("The value 'multichannel' must be specified.")
 
 
 class SmbMultichannel(GeneratedSmbMultichannel):
     """ Settings for Multichannel.
 
-    :param bool enabled: Required. If SMB Multichannel is enabled.
+    :keyword bool enabled: If SMB Multichannel is enabled.
     """
-    def __init__(self, enabled):
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        self.enabled = kwargs.get('enabled')
+        if self.enabled is None:
+            raise ValueError("The value 'enabled' must be specified.")
 
 
 class ShareProtocolSettings(GeneratedShareProtocolSettings):
@@ -160,10 +166,12 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
 
     Contains protocol properties of the share service such as the SMB setting of the share service.
 
-    :param SmbSettings smb: Required. Sets SMB settings.
+    :keyword SmbSettings smb: Sets SMB settings.
     """
-    def __init__(self, smb):
-        self.smb = smb
+    def __init__(self, **kwargs):
+        self.smb = kwargs.get('smb')
+        if self.smb is None:
+            raise ValueError("The value 'smb' must be specified.")
 
     @classmethod
     def _from_generated(cls, generated):
@@ -222,7 +230,7 @@ class AccessPolicy(GenAccessPolicy):
 
 
 class LeaseProperties(DictMixin):
-    """File Lease Properties.
+    """File or Share Lease Properties.
 
     :ivar str status:
         The lease status of the file or share. Possible values: locked|unlocked
@@ -326,6 +334,10 @@ class ShareProperties(DictMixin):
     :ivar int remaining_retention_days:
         To indicate how many remaining days the deleted share will be kept.
         This is a service returned value, and the value will be set when list shared including deleted ones.
+    :ivar ~azure.storage.fileshare.models.ShareRootSquash or str root_squash:
+        Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
+    :ivar list(str) protocols:
+        Indicates the protocols enabled on the share. The protocol can be either SMB or NFS.
     """
 
     def __init__(self, **kwargs):
@@ -345,7 +357,9 @@ class ShareProperties(DictMixin):
         self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
         self.lease = LeaseProperties(**kwargs)
-
+        self.protocols = [protocol.strip() for protocol in kwargs.get('x-ms-enabled-protocols', None).split(',')]\
+            if kwargs.get('x-ms-enabled-protocols', None) else None
+        self.root_squash = kwargs.get('x-ms-root-squash', None)
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
@@ -361,10 +375,14 @@ class ShareProperties(DictMixin):
         props.deleted_time = generated.properties.deleted_time
         props.version = generated.version
         props.remaining_retention_days = generated.properties.remaining_retention_days
-        props.provisioned_egress_mbps = generated.properties.provisioned_egress_mbps
-        props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
+        props.provisioned_egress_mbps = generated.properties.provisioned_egress_m_bps
+        props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_m_bps
         props.provisioned_iops = generated.properties.provisioned_iops
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
+        props.protocols = [protocol.strip() for protocol in generated.properties.enabled_protocols.split(',')]\
+            if generated.properties.enabled_protocols else None
+        props.root_squash = generated.properties.root_squash
+
         return props
 
 
@@ -410,7 +428,7 @@ class SharePropertiesPaged(PageIterator):
                 prefix=self.prefix,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
@@ -502,7 +520,7 @@ class HandlesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
@@ -616,7 +634,7 @@ class DirectoryPropertiesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
@@ -698,6 +716,12 @@ class FileProperties(DictMixin):
         props.metadata = generated.properties.metadata
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         return props
+
+
+class ShareProtocols(str, Enum):
+    """Enabled protocols on the share"""
+    SMB = "SMB"
+    NFS = "NFS"
 
 
 class CopyProperties(DictMixin):

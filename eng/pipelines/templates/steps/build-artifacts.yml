@@ -1,17 +1,20 @@
 parameters:
   BeforePublishSteps: []
+  TestPipeline: false
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
   BuildDocs: true
 
 steps:
-  - task: PowerShell@2
-    displayName: Prep template pipeline for release
-    condition: and(succeeded(),eq(variables['TestPipeline'],'true'))
-    inputs:
-      pwsh: true
-      workingDirectory: $(Build.SourcesDirectory)
-      filePath: eng/scripts/SetTestPipelineVersion.ps1
+  - ${{if eq(parameters.TestPipeline, 'true')}}:
+    - task: PowerShell@2
+      displayName: Prep template pipeline for release
+      condition: succeeded()
+      inputs:
+        pwsh: true
+        workingDirectory: $(Build.SourcesDirectory)
+        filePath: eng/scripts/SetTestPipelineVersion.ps1
+        arguments: '-BuildID $(Build.BuildId)'
 
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
@@ -54,7 +57,8 @@ steps:
       arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
 
   - script: |
-      twine check $(Build.ArtifactStagingDirectory)/*
+      twine check $(Build.ArtifactStagingDirectory)/*.whl
+      twine check $(Build.ArtifactStagingDirectory)/*.zip
     displayName: 'Verify Readme'
 
   - task: PythonScript@0

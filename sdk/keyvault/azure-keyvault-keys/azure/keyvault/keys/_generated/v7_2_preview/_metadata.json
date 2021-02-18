@@ -1,0 +1,300 @@
+{
+    "chosen_version": "7.2-preview",
+    "total_api_version_list": ["7.2-preview"],
+    "client": {
+        "name": "KeyVaultClient",
+        "filename": "_key_vault_client",
+        "description": "The key vault client performs cryptographic key operations and vault operations against the Key Vault service.",
+        "base_url": null,
+        "custom_base_url": "\u0027{vaultBaseUrl}\u0027",
+        "azure_arm": false,
+        "has_lro_operations": false,
+        "client_side_validation": true,
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.core\": [\"PipelineClient\"]}, \"local\": {\"._configuration\": [\"KeyVaultClientConfiguration\"], \"._operations_mixin\": [\"KeyVaultClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.core\": [\"AsyncPipelineClient\"]}, \"local\": {\"._configuration\": [\"KeyVaultClientConfiguration\"], \"._operations_mixin\": [\"KeyVaultClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+        },
+        "async": {
+        },
+        "constant": {
+        },
+        "call": "",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": false,
+        "credential_scopes": null,
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null,
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}}"
+    },
+    "operation_groups": {
+    },
+    "operation_mixins": {
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"], \"azure.core.paging\": [\"ItemPaged\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Iterable\", \"Optional\", \"TypeVar\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"], \"azure.core.async_paging\": [\"AsyncItemPaged\", \"AsyncList\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
+        "operations": {
+            "create_key" : {
+                "sync": {
+                    "signature": "def create_key(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    parameters,  # type: \"_models.KeyCreateParameters\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Creates a new key, stores it, then returns key parameters and attributes to the client.\n\nThe create key operation can be used to create any key type in Azure Key Vault. If the named\nkey already exists, Azure Key Vault creates a new version of the key. It requires the\nkeys/create permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name for the new key. The system will generate the version name for the\n new key.\n:type key_name: str\n:param parameters: The parameters to create a key.\n:type parameters: ~azure.keyvault.v7_2.models.KeyCreateParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def create_key(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    parameters: \"_models.KeyCreateParameters\",\n    **kwargs\n) -\u003e \"_models.KeyBundle\":\n",
+                    "doc": "\"\"\"Creates a new key, stores it, then returns key parameters and attributes to the client.\n\nThe create key operation can be used to create any key type in Azure Key Vault. If the named\nkey already exists, Azure Key Vault creates a new version of the key. It requires the\nkeys/create permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name for the new key. The system will generate the version name for the\n new key.\n:type key_name: str\n:param parameters: The parameters to create a key.\n:type parameters: ~azure.keyvault.v7_2.models.KeyCreateParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name, parameters"
+            },
+            "import_key" : {
+                "sync": {
+                    "signature": "def import_key(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    parameters,  # type: \"_models.KeyImportParameters\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Imports an externally created key, stores it, and returns key parameters and attributes to the client.\n\nThe import key operation may be used to import any key type into an Azure Key Vault. If the\nnamed key already exists, Azure Key Vault creates a new version of the key. This operation\nrequires the keys/import permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: Name for the imported key.\n:type key_name: str\n:param parameters: The parameters to import a key.\n:type parameters: ~azure.keyvault.v7_2.models.KeyImportParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def import_key(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    parameters: \"_models.KeyImportParameters\",\n    **kwargs\n) -\u003e \"_models.KeyBundle\":\n",
+                    "doc": "\"\"\"Imports an externally created key, stores it, and returns key parameters and attributes to the client.\n\nThe import key operation may be used to import any key type into an Azure Key Vault. If the\nnamed key already exists, Azure Key Vault creates a new version of the key. This operation\nrequires the keys/import permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: Name for the imported key.\n:type key_name: str\n:param parameters: The parameters to import a key.\n:type parameters: ~azure.keyvault.v7_2.models.KeyImportParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name, parameters"
+            },
+            "delete_key" : {
+                "sync": {
+                    "signature": "def delete_key(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Deletes a key of any type from storage in Azure Key Vault.\n\nThe delete key operation cannot be used to remove individual versions of a key. This operation\nremoves the cryptographic material associated with the key, which means the key is not usable\nfor Sign/Verify, Wrap/Unwrap or Encrypt/Decrypt operations. This operation requires the\nkeys/delete permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key to delete.\n:type key_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DeletedKeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.DeletedKeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def delete_key(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    **kwargs\n) -\u003e \"_models.DeletedKeyBundle\":\n",
+                    "doc": "\"\"\"Deletes a key of any type from storage in Azure Key Vault.\n\nThe delete key operation cannot be used to remove individual versions of a key. This operation\nremoves the cryptographic material associated with the key, which means the key is not usable\nfor Sign/Verify, Wrap/Unwrap or Encrypt/Decrypt operations. This operation requires the\nkeys/delete permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key to delete.\n:type key_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DeletedKeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.DeletedKeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name"
+            },
+            "update_key" : {
+                "sync": {
+                    "signature": "def update_key(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    key_version,  # type: str\n    parameters,  # type: \"_models.KeyUpdateParameters\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"The update key operation changes specified attributes of a stored key and can be applied to any key type and key version stored in Azure Key Vault.\n\nIn order to perform this operation, the key must already exist in the Key Vault. Note: The\ncryptographic material of a key itself cannot be changed. This operation requires the\nkeys/update permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of key to update.\n:type key_name: str\n:param key_version: The version of the key to update.\n:type key_version: str\n:param parameters: The parameters of the key to update.\n:type parameters: ~azure.keyvault.v7_2.models.KeyUpdateParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def update_key(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    key_version: str,\n    parameters: \"_models.KeyUpdateParameters\",\n    **kwargs\n) -\u003e \"_models.KeyBundle\":\n",
+                    "doc": "\"\"\"The update key operation changes specified attributes of a stored key and can be applied to any key type and key version stored in Azure Key Vault.\n\nIn order to perform this operation, the key must already exist in the Key Vault. Note: The\ncryptographic material of a key itself cannot be changed. This operation requires the\nkeys/update permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of key to update.\n:type key_name: str\n:param key_version: The version of the key to update.\n:type key_version: str\n:param parameters: The parameters of the key to update.\n:type parameters: ~azure.keyvault.v7_2.models.KeyUpdateParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name, key_version, parameters"
+            },
+            "get_key" : {
+                "sync": {
+                    "signature": "def get_key(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    key_version,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Gets the public part of a stored key.\n\nThe get key operation is applicable to all key types. If the requested key is symmetric, then\nno key material is released in the response. This operation requires the keys/get permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key to get.\n:type key_name: str\n:param key_version: Adding the version parameter retrieves a specific version of a key. This\n URI fragment is optional. If not specified, the latest version of the key is returned.\n:type key_version: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_key(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    key_version: str,\n    **kwargs\n) -\u003e \"_models.KeyBundle\":\n",
+                    "doc": "\"\"\"Gets the public part of a stored key.\n\nThe get key operation is applicable to all key types. If the requested key is symmetric, then\nno key material is released in the response. This operation requires the keys/get permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key to get.\n:type key_name: str\n:param key_version: Adding the version parameter retrieves a specific version of a key. This\n URI fragment is optional. If not specified, the latest version of the key is returned.\n:type key_version: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name, key_version"
+            },
+            "get_key_versions" : {
+                "sync": {
+                    "signature": "def get_key_versions(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    maxresults=None,  # type: Optional[int]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Retrieves a list of individual key versions with the same key name.\n\nThe full key identifier, attributes, and tags are provided in the response. This operation\nrequires the keys/list permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results.\n:type maxresults: int\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either KeyListResult or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_2.models.KeyListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def get_key_versions(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    maxresults: Optional[int] = None,\n    **kwargs\n) -\u003e AsyncItemPaged[\"_models.KeyListResult\"]:\n",
+                    "doc": "\"\"\"Retrieves a list of individual key versions with the same key name.\n\nThe full key identifier, attributes, and tags are provided in the response. This operation\nrequires the keys/list permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results.\n:type maxresults: int\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either KeyListResult or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.KeyListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name, maxresults"
+            },
+            "get_keys" : {
+                "sync": {
+                    "signature": "def get_keys(\n    self,\n    vault_base_url,  # type: str\n    maxresults=None,  # type: Optional[int]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"List keys in the specified vault.\n\nRetrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the\npublic part of a stored key. The LIST operation is applicable to all key types, however only\nthe base key identifier, attributes, and tags are provided in the response. Individual versions\nof a key are not listed in the response. This operation requires the keys/list permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results.\n:type maxresults: int\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either KeyListResult or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_2.models.KeyListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def get_keys(\n    self,\n    vault_base_url: str,\n    maxresults: Optional[int] = None,\n    **kwargs\n) -\u003e AsyncItemPaged[\"_models.KeyListResult\"]:\n",
+                    "doc": "\"\"\"List keys in the specified vault.\n\nRetrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the\npublic part of a stored key. The LIST operation is applicable to all key types, however only\nthe base key identifier, attributes, and tags are provided in the response. Individual versions\nof a key are not listed in the response. This operation requires the keys/list permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results.\n:type maxresults: int\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either KeyListResult or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.KeyListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, maxresults"
+            },
+            "backup_key" : {
+                "sync": {
+                    "signature": "def backup_key(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Requests that a backup of the specified key be downloaded to the client.\n\nThe Key Backup operation exports a key from Azure Key Vault in a protected form. Note that this\noperation does NOT return key material in a form that can be used outside the Azure Key Vault\nsystem, the returned key material is either protected to a Azure Key Vault HSM or to Azure Key\nVault itself. The intent of this operation is to allow a client to GENERATE a key in one Azure\nKey Vault instance, BACKUP the key, and then RESTORE it into another Azure Key Vault instance.\nThe BACKUP operation may be used to export, in protected form, any key type from Azure Key\nVault. Individual versions of a key cannot be backed up. BACKUP / RESTORE can be performed\nwithin geographical boundaries only; meaning that a BACKUP from one geographical area cannot be\nrestored to another geographical area. For example, a backup from the US geographical area\ncannot be restored in an EU geographical area. This operation requires the key/backup\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: BackupKeyResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.BackupKeyResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def backup_key(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    **kwargs\n) -\u003e \"_models.BackupKeyResult\":\n",
+                    "doc": "\"\"\"Requests that a backup of the specified key be downloaded to the client.\n\nThe Key Backup operation exports a key from Azure Key Vault in a protected form. Note that this\noperation does NOT return key material in a form that can be used outside the Azure Key Vault\nsystem, the returned key material is either protected to a Azure Key Vault HSM or to Azure Key\nVault itself. The intent of this operation is to allow a client to GENERATE a key in one Azure\nKey Vault instance, BACKUP the key, and then RESTORE it into another Azure Key Vault instance.\nThe BACKUP operation may be used to export, in protected form, any key type from Azure Key\nVault. Individual versions of a key cannot be backed up. BACKUP / RESTORE can be performed\nwithin geographical boundaries only; meaning that a BACKUP from one geographical area cannot be\nrestored to another geographical area. For example, a backup from the US geographical area\ncannot be restored in an EU geographical area. This operation requires the key/backup\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: BackupKeyResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.BackupKeyResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name"
+            },
+            "restore_key" : {
+                "sync": {
+                    "signature": "def restore_key(\n    self,\n    vault_base_url,  # type: str\n    parameters,  # type: \"_models.KeyRestoreParameters\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Restores a backed up key to a vault.\n\nImports a previously backed up key into Azure Key Vault, restoring the key, its key identifier,\nattributes and access control policies. The RESTORE operation may be used to import a\npreviously backed up key. Individual versions of a key cannot be restored. The key is restored\nin its entirety with the same key name as it had when it was backed up. If the key name is not\navailable in the target Key Vault, the RESTORE operation will be rejected. While the key name\nis retained during restore, the final key identifier will change if the key is restored to a\ndifferent vault. Restore will restore all versions and preserve version identifiers. The\nRESTORE operation is subject to security constraints: The target Key Vault must be owned by the\nsame Microsoft Azure Subscription as the source Key Vault The user must have RESTORE permission\nin the target Key Vault. This operation requires the keys/restore permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param parameters: The parameters to restore the key.\n:type parameters: ~azure.keyvault.v7_2.models.KeyRestoreParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def restore_key(\n    self,\n    vault_base_url: str,\n    parameters: \"_models.KeyRestoreParameters\",\n    **kwargs\n) -\u003e \"_models.KeyBundle\":\n",
+                    "doc": "\"\"\"Restores a backed up key to a vault.\n\nImports a previously backed up key into Azure Key Vault, restoring the key, its key identifier,\nattributes and access control policies. The RESTORE operation may be used to import a\npreviously backed up key. Individual versions of a key cannot be restored. The key is restored\nin its entirety with the same key name as it had when it was backed up. If the key name is not\navailable in the target Key Vault, the RESTORE operation will be rejected. While the key name\nis retained during restore, the final key identifier will change if the key is restored to a\ndifferent vault. Restore will restore all versions and preserve version identifiers. The\nRESTORE operation is subject to security constraints: The target Key Vault must be owned by the\nsame Microsoft Azure Subscription as the source Key Vault The user must have RESTORE permission\nin the target Key Vault. This operation requires the keys/restore permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param parameters: The parameters to restore the key.\n:type parameters: ~azure.keyvault.v7_2.models.KeyRestoreParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, parameters"
+            },
+            "encrypt" : {
+                "sync": {
+                    "signature": "def encrypt(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    key_version,  # type: str\n    parameters,  # type: \"_models.KeyOperationsParameters\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Encrypts an arbitrary sequence of bytes using an encryption key that is stored in a key vault.\n\nThe ENCRYPT operation encrypts an arbitrary sequence of bytes using an encryption key that is\nstored in Azure Key Vault. Note that the ENCRYPT operation only supports a single block of\ndata, the size of which is dependent on the target key and the encryption algorithm to be used.\nThe ENCRYPT operation is only strictly necessary for symmetric keys stored in Azure Key Vault\nsince protection with an asymmetric key can be performed using public portion of the key. This\noperation is supported for asymmetric keys as a convenience for callers that have a key-\nreference but do not have access to the public key material. This operation requires the\nkeys/encrypt permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param key_version: The version of the key.\n:type key_version: str\n:param parameters: The parameters for the encryption operation.\n:type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyOperationResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def encrypt(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    key_version: str,\n    parameters: \"_models.KeyOperationsParameters\",\n    **kwargs\n) -\u003e \"_models.KeyOperationResult\":\n",
+                    "doc": "\"\"\"Encrypts an arbitrary sequence of bytes using an encryption key that is stored in a key vault.\n\nThe ENCRYPT operation encrypts an arbitrary sequence of bytes using an encryption key that is\nstored in Azure Key Vault. Note that the ENCRYPT operation only supports a single block of\ndata, the size of which is dependent on the target key and the encryption algorithm to be used.\nThe ENCRYPT operation is only strictly necessary for symmetric keys stored in Azure Key Vault\nsince protection with an asymmetric key can be performed using public portion of the key. This\noperation is supported for asymmetric keys as a convenience for callers that have a key-\nreference but do not have access to the public key material. This operation requires the\nkeys/encrypt permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param key_version: The version of the key.\n:type key_version: str\n:param parameters: The parameters for the encryption operation.\n:type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyOperationResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name, key_version, parameters"
+            },
+            "decrypt" : {
+                "sync": {
+                    "signature": "def decrypt(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    key_version,  # type: str\n    parameters,  # type: \"_models.KeyOperationsParameters\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Decrypts a single block of encrypted data.\n\nThe DECRYPT operation decrypts a well-formed block of ciphertext using the target encryption\nkey and specified algorithm. This operation is the reverse of the ENCRYPT operation; only a\nsingle block of data may be decrypted, the size of this block is dependent on the target key\nand the algorithm to be used. The DECRYPT operation applies to asymmetric and symmetric keys\nstored in Azure Key Vault since it uses the private portion of the key. This operation requires\nthe keys/decrypt permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param key_version: The version of the key.\n:type key_version: str\n:param parameters: The parameters for the decryption operation.\n:type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyOperationResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def decrypt(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    key_version: str,\n    parameters: \"_models.KeyOperationsParameters\",\n    **kwargs\n) -\u003e \"_models.KeyOperationResult\":\n",
+                    "doc": "\"\"\"Decrypts a single block of encrypted data.\n\nThe DECRYPT operation decrypts a well-formed block of ciphertext using the target encryption\nkey and specified algorithm. This operation is the reverse of the ENCRYPT operation; only a\nsingle block of data may be decrypted, the size of this block is dependent on the target key\nand the algorithm to be used. The DECRYPT operation applies to asymmetric and symmetric keys\nstored in Azure Key Vault since it uses the private portion of the key. This operation requires\nthe keys/decrypt permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param key_version: The version of the key.\n:type key_version: str\n:param parameters: The parameters for the decryption operation.\n:type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyOperationResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name, key_version, parameters"
+            },
+            "sign" : {
+                "sync": {
+                    "signature": "def sign(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    key_version,  # type: str\n    parameters,  # type: \"_models.KeySignParameters\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Creates a signature from a digest using the specified key.\n\nThe SIGN operation is applicable to asymmetric and symmetric keys stored in Azure Key Vault\nsince this operation uses the private portion of the key. This operation requires the keys/sign\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param key_version: The version of the key.\n:type key_version: str\n:param parameters: The parameters for the signing operation.\n:type parameters: ~azure.keyvault.v7_2.models.KeySignParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyOperationResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def sign(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    key_version: str,\n    parameters: \"_models.KeySignParameters\",\n    **kwargs\n) -\u003e \"_models.KeyOperationResult\":\n",
+                    "doc": "\"\"\"Creates a signature from a digest using the specified key.\n\nThe SIGN operation is applicable to asymmetric and symmetric keys stored in Azure Key Vault\nsince this operation uses the private portion of the key. This operation requires the keys/sign\npermission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param key_version: The version of the key.\n:type key_version: str\n:param parameters: The parameters for the signing operation.\n:type parameters: ~azure.keyvault.v7_2.models.KeySignParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyOperationResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name, key_version, parameters"
+            },
+            "verify" : {
+                "sync": {
+                    "signature": "def verify(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    key_version,  # type: str\n    parameters,  # type: \"_models.KeyVerifyParameters\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Verifies a signature using a specified key.\n\nThe VERIFY operation is applicable to symmetric keys stored in Azure Key Vault. VERIFY is not\nstrictly necessary for asymmetric keys stored in Azure Key Vault since signature verification\ncan be performed using the public portion of the key but this operation is supported as a\nconvenience for callers that only have a key-reference and not the public portion of the key.\nThis operation requires the keys/verify permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param key_version: The version of the key.\n:type key_version: str\n:param parameters: The parameters for verify operations.\n:type parameters: ~azure.keyvault.v7_2.models.KeyVerifyParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyVerifyResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyVerifyResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def verify(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    key_version: str,\n    parameters: \"_models.KeyVerifyParameters\",\n    **kwargs\n) -\u003e \"_models.KeyVerifyResult\":\n",
+                    "doc": "\"\"\"Verifies a signature using a specified key.\n\nThe VERIFY operation is applicable to symmetric keys stored in Azure Key Vault. VERIFY is not\nstrictly necessary for asymmetric keys stored in Azure Key Vault since signature verification\ncan be performed using the public portion of the key but this operation is supported as a\nconvenience for callers that only have a key-reference and not the public portion of the key.\nThis operation requires the keys/verify permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param key_version: The version of the key.\n:type key_version: str\n:param parameters: The parameters for verify operations.\n:type parameters: ~azure.keyvault.v7_2.models.KeyVerifyParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyVerifyResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyVerifyResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name, key_version, parameters"
+            },
+            "wrap_key" : {
+                "sync": {
+                    "signature": "def wrap_key(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    key_version,  # type: str\n    parameters,  # type: \"_models.KeyOperationsParameters\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Wraps a symmetric key using a specified key.\n\nThe WRAP operation supports encryption of a symmetric key using a key encryption key that has\npreviously been stored in an Azure Key Vault. The WRAP operation is only strictly necessary for\nsymmetric keys stored in Azure Key Vault since protection with an asymmetric key can be\nperformed using the public portion of the key. This operation is supported for asymmetric keys\nas a convenience for callers that have a key-reference but do not have access to the public key\nmaterial. This operation requires the keys/wrapKey permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param key_version: The version of the key.\n:type key_version: str\n:param parameters: The parameters for wrap operation.\n:type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyOperationResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def wrap_key(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    key_version: str,\n    parameters: \"_models.KeyOperationsParameters\",\n    **kwargs\n) -\u003e \"_models.KeyOperationResult\":\n",
+                    "doc": "\"\"\"Wraps a symmetric key using a specified key.\n\nThe WRAP operation supports encryption of a symmetric key using a key encryption key that has\npreviously been stored in an Azure Key Vault. The WRAP operation is only strictly necessary for\nsymmetric keys stored in Azure Key Vault since protection with an asymmetric key can be\nperformed using the public portion of the key. This operation is supported for asymmetric keys\nas a convenience for callers that have a key-reference but do not have access to the public key\nmaterial. This operation requires the keys/wrapKey permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param key_version: The version of the key.\n:type key_version: str\n:param parameters: The parameters for wrap operation.\n:type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyOperationResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name, key_version, parameters"
+            },
+            "unwrap_key" : {
+                "sync": {
+                    "signature": "def unwrap_key(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    key_version,  # type: str\n    parameters,  # type: \"_models.KeyOperationsParameters\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Unwraps a symmetric key using the specified key that was initially used for wrapping that key.\n\nThe UNWRAP operation supports decryption of a symmetric key using the target key encryption\nkey. This operation is the reverse of the WRAP operation. The UNWRAP operation applies to\nasymmetric and symmetric keys stored in Azure Key Vault since it uses the private portion of\nthe key. This operation requires the keys/unwrapKey permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param key_version: The version of the key.\n:type key_version: str\n:param parameters: The parameters for the key operation.\n:type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyOperationResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def unwrap_key(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    key_version: str,\n    parameters: \"_models.KeyOperationsParameters\",\n    **kwargs\n) -\u003e \"_models.KeyOperationResult\":\n",
+                    "doc": "\"\"\"Unwraps a symmetric key using the specified key that was initially used for wrapping that key.\n\nThe UNWRAP operation supports decryption of a symmetric key using the target key encryption\nkey. This operation is the reverse of the WRAP operation. The UNWRAP operation applies to\nasymmetric and symmetric keys stored in Azure Key Vault since it uses the private portion of\nthe key. This operation requires the keys/unwrapKey permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:param key_version: The version of the key.\n:type key_version: str\n:param parameters: The parameters for the key operation.\n:type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyOperationResult, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name, key_version, parameters"
+            },
+            "get_deleted_keys" : {
+                "sync": {
+                    "signature": "def get_deleted_keys(\n    self,\n    vault_base_url,  # type: str\n    maxresults=None,  # type: Optional[int]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Lists the deleted keys in the specified vault.\n\nRetrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the\npublic part of a deleted key. This operation includes deletion-specific information. The Get\nDeleted Keys operation is applicable for vaults enabled for soft-delete. While the operation\ncan be invoked on any vault, it will return an error if invoked on a non soft-delete enabled\nvault. This operation requires the keys/list permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results.\n:type maxresults: int\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either DeletedKeyListResult or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_2.models.DeletedKeyListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": false,
+                    "signature": "def get_deleted_keys(\n    self,\n    vault_base_url: str,\n    maxresults: Optional[int] = None,\n    **kwargs\n) -\u003e AsyncItemPaged[\"_models.DeletedKeyListResult\"]:\n",
+                    "doc": "\"\"\"Lists the deleted keys in the specified vault.\n\nRetrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the\npublic part of a deleted key. This operation includes deletion-specific information. The Get\nDeleted Keys operation is applicable for vaults enabled for soft-delete. While the operation\ncan be invoked on any vault, it will return an error if invoked on a non soft-delete enabled\nvault. This operation requires the keys/list permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param maxresults: Maximum number of results to return in a page. If not specified the service\n will return up to 25 results.\n:type maxresults: int\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either DeletedKeyListResult or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.DeletedKeyListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, maxresults"
+            },
+            "get_deleted_key" : {
+                "sync": {
+                    "signature": "def get_deleted_key(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Gets the public part of a deleted key.\n\nThe Get Deleted Key operation is applicable for soft-delete enabled vaults. While the operation\ncan be invoked on any vault, it will return an error if invoked on a non soft-delete enabled\nvault. This operation requires the keys/get permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DeletedKeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.DeletedKeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_deleted_key(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    **kwargs\n) -\u003e \"_models.DeletedKeyBundle\":\n",
+                    "doc": "\"\"\"Gets the public part of a deleted key.\n\nThe Get Deleted Key operation is applicable for soft-delete enabled vaults. While the operation\ncan be invoked on any vault, it will return an error if invoked on a non soft-delete enabled\nvault. This operation requires the keys/get permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DeletedKeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.DeletedKeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name"
+            },
+            "purge_deleted_key" : {
+                "sync": {
+                    "signature": "def purge_deleted_key(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Permanently deletes the specified key.\n\nThe Purge Deleted Key operation is applicable for soft-delete enabled vaults. While the\noperation can be invoked on any vault, it will return an error if invoked on a non soft-delete\nenabled vault. This operation requires the keys/purge permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def purge_deleted_key(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    **kwargs\n) -\u003e None:\n",
+                    "doc": "\"\"\"Permanently deletes the specified key.\n\nThe Purge Deleted Key operation is applicable for soft-delete enabled vaults. While the\noperation can be invoked on any vault, it will return an error if invoked on a non soft-delete\nenabled vault. This operation requires the keys/purge permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the key.\n:type key_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name"
+            },
+            "recover_deleted_key" : {
+                "sync": {
+                    "signature": "def recover_deleted_key(\n    self,\n    vault_base_url,  # type: str\n    key_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Recovers the deleted key to its latest version.\n\nThe Recover Deleted Key operation is applicable for deleted keys in soft-delete enabled vaults.\nIt recovers the deleted key back to its latest version under /keys. An attempt to recover an\nnon-deleted key will return an error. Consider this the inverse of the delete operation on\nsoft-delete enabled vaults. This operation requires the keys/recover permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the deleted key.\n:type key_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def recover_deleted_key(\n    self,\n    vault_base_url: str,\n    key_name: str,\n    **kwargs\n) -\u003e \"_models.KeyBundle\":\n",
+                    "doc": "\"\"\"Recovers the deleted key to its latest version.\n\nThe Recover Deleted Key operation is applicable for deleted keys in soft-delete enabled vaults.\nIt recovers the deleted key back to its latest version under /keys. An attempt to recover an\nnon-deleted key will return an error. Consider this the inverse of the delete operation on\nsoft-delete enabled vaults. This operation requires the keys/recover permission.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net.\n:type vault_base_url: str\n:param key_name: The name of the deleted key.\n:type key_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyBundle, or the result of cls(response)\n:rtype: ~azure.keyvault.v7_2.models.KeyBundle\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "vault_base_url, key_name"
+            }
+        }
+    }
+}

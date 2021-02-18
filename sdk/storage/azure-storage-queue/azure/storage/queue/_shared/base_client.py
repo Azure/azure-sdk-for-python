@@ -26,6 +26,7 @@ except ImportError:
 import six
 
 from azure.core.configuration import Configuration
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport
@@ -37,6 +38,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     UserAgentPolicy,
+    AzureSasCredentialPolicy,
 )
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
@@ -54,7 +56,6 @@ from .policies import (
     ExponentialRetry,
 )
 from .._version import VERSION
-from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 
@@ -209,6 +210,9 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             query_str += "snapshot={}&".format(self.snapshot)
         if share_snapshot:
             query_str += "sharesnapshot={}&".format(self.snapshot)
+        if sas_token and isinstance(credential, AzureSasCredential):
+            raise ValueError(
+                "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
         if sas_token and not credential:
             query_str += sas_token
         elif is_credential_sastoken(credential):
@@ -223,6 +227,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
+        elif isinstance(credential, AzureSasCredential):
+            self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -236,16 +242,16 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             config.transport = RequestsTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
-            config.headers_policy,
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
-            StorageRequestHook(**kwargs),
-            self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,
+            config.headers_policy,
+            StorageRequestHook(**kwargs),
+            self._credential_policy,
             config.logging_policy,
             StorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
@@ -298,7 +304,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                     raise error
                 return iter(parts)
             return parts
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
 class TransportWrapper(HttpTransport):

@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class VpnSitesConfigurationOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class VpnSitesConfigurationOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        request: "models.GetVpnSitesConfigurationRequest",
+        request: "_models.GetVpnSitesConfigurationRequest",
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -85,7 +85,7 @@ class VpnSitesConfigurationOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -97,7 +97,7 @@ class VpnSitesConfigurationOperations:
         self,
         resource_group_name: str,
         virtual_wan_name: str,
-        request: "models.GetVpnSitesConfigurationRequest",
+        request: "_models.GetVpnSitesConfigurationRequest",
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Gives the sas-url to download the configurations for vpn-sites in a resource group.
@@ -142,7 +142,13 @@ class VpnSitesConfigurationOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

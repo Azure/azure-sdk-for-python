@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class NetworkInterfacesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -135,7 +135,13 @@ class NetworkInterfacesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -156,7 +162,7 @@ class NetworkInterfacesOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NetworkInterface"
+        # type: (...) -> "_models.NetworkInterface"
         """Gets information about the specified network interface.
 
         :param resource_group_name: The name of the resource group.
@@ -170,7 +176,7 @@ class NetworkInterfacesOperations(object):
         :rtype: ~azure.mgmt.network.v2017_03_01.models.NetworkInterface
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterface"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterface"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -217,11 +223,11 @@ class NetworkInterfacesOperations(object):
         self,
         resource_group_name,  # type: str
         network_interface_name,  # type: str
-        parameters,  # type: "models.NetworkInterface"
+        parameters,  # type: "_models.NetworkInterface"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NetworkInterface"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterface"]
+        # type: (...) -> "_models.NetworkInterface"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterface"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -275,10 +281,10 @@ class NetworkInterfacesOperations(object):
         self,
         resource_group_name,  # type: str
         network_interface_name,  # type: str
-        parameters,  # type: "models.NetworkInterface"
+        parameters,  # type: "_models.NetworkInterface"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.NetworkInterface"]
+        # type: (...) -> LROPoller["_models.NetworkInterface"]
         """Creates or updates a network interface.
 
         :param resource_group_name: The name of the resource group.
@@ -298,7 +304,7 @@ class NetworkInterfacesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterface"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterface"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -323,7 +329,13 @@ class NetworkInterfacesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -341,7 +353,7 @@ class NetworkInterfacesOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.NetworkInterfaceListResult"]
+        # type: (...) -> Iterable["_models.NetworkInterfaceListResult"]
         """Gets all network interfaces in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -349,7 +361,7 @@ class NetworkInterfacesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2017_03_01.models.NetworkInterfaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterfaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterfaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -409,7 +421,7 @@ class NetworkInterfacesOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.NetworkInterfaceListResult"]
+        # type: (...) -> Iterable["_models.NetworkInterfaceListResult"]
         """Gets all network interfaces in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -419,7 +431,7 @@ class NetworkInterfacesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2017_03_01.models.NetworkInterfaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterfaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterfaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -481,8 +493,8 @@ class NetworkInterfacesOperations(object):
         network_interface_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.EffectiveRouteListResult"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.EffectiveRouteListResult"]]
+        # type: (...) -> Optional["_models.EffectiveRouteListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.EffectiveRouteListResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -531,7 +543,7 @@ class NetworkInterfacesOperations(object):
         network_interface_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.EffectiveRouteListResult"]
+        # type: (...) -> LROPoller["_models.EffectiveRouteListResult"]
         """Gets all route tables applied to a network interface.
 
         :param resource_group_name: The name of the resource group.
@@ -549,7 +561,7 @@ class NetworkInterfacesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EffectiveRouteListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EffectiveRouteListResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -573,7 +585,13 @@ class NetworkInterfacesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -593,8 +611,8 @@ class NetworkInterfacesOperations(object):
         network_interface_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.EffectiveNetworkSecurityGroupListResult"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.EffectiveNetworkSecurityGroupListResult"]]
+        # type: (...) -> Optional["_models.EffectiveNetworkSecurityGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.EffectiveNetworkSecurityGroupListResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -643,7 +661,7 @@ class NetworkInterfacesOperations(object):
         network_interface_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.EffectiveNetworkSecurityGroupListResult"]
+        # type: (...) -> LROPoller["_models.EffectiveNetworkSecurityGroupListResult"]
         """Gets all network security groups applied to a network interface.
 
         :param resource_group_name: The name of the resource group.
@@ -661,7 +679,7 @@ class NetworkInterfacesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EffectiveNetworkSecurityGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EffectiveNetworkSecurityGroupListResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -685,7 +703,13 @@ class NetworkInterfacesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -706,7 +730,7 @@ class NetworkInterfacesOperations(object):
         virtualmachine_index,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.NetworkInterfaceListResult"]
+        # type: (...) -> Iterable["_models.NetworkInterfaceListResult"]
         """Gets information about all network interfaces in a virtual machine in a virtual machine scale
         set.
 
@@ -721,7 +745,7 @@ class NetworkInterfacesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2017_03_01.models.NetworkInterfaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterfaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterfaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -785,7 +809,7 @@ class NetworkInterfacesOperations(object):
         virtual_machine_scale_set_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.NetworkInterfaceListResult"]
+        # type: (...) -> Iterable["_models.NetworkInterfaceListResult"]
         """Gets all network interfaces in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -797,7 +821,7 @@ class NetworkInterfacesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2017_03_01.models.NetworkInterfaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterfaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterfaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -863,7 +887,7 @@ class NetworkInterfacesOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NetworkInterface"
+        # type: (...) -> "_models.NetworkInterface"
         """Get the specified network interface in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -881,7 +905,7 @@ class NetworkInterfacesOperations(object):
         :rtype: ~azure.mgmt.network.v2017_03_01.models.NetworkInterface
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterface"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterface"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

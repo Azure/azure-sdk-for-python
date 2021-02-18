@@ -36,7 +36,34 @@ except ImportError:  # python < 3.3
 CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
 CERT_WITH_PASSWORD_PATH = os.path.join(os.path.dirname(__file__), "certificate-with-password.pem")
 CERT_PASSWORD = "password"
-BOTH_CERTS = ((CERT_PATH, None), (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD))
+BOTH_CERTS = (
+    (CERT_PATH, None),
+    (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD),  # credential should accept passwords as str or bytes
+    (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD.encode("utf-8")),
+)
+
+EC_CERT_PATH = os.path.join(os.path.dirname(__file__), "ec-certificate.pem")
+
+
+def test_non_rsa_key():
+    """The credential should raise ValueError when given a cert without an RSA private key"""
+    with pytest.raises(ValueError, match=".*RS256.*"):
+        CertificateCredential("tenant-id", "client-id", EC_CERT_PATH)
+    with pytest.raises(ValueError, match=".*RS256.*"):
+        CertificateCredential("tenant-id", "client-id", certificate_bytes=open(EC_CERT_PATH, "rb").read())
+
+
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        CertificateCredential(tenant, "client-id", CERT_PATH)
+
+    invalid_ids = {"", "my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        with pytest.raises(ValueError):
+            CertificateCredential(tenant, "client-id", CERT_PATH)
 
 
 def test_no_scopes():
@@ -78,7 +105,7 @@ def test_user_agent():
 def test_authority(authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
 
-    tenant_id = "expected_tenant"
+    tenant_id = "expected-tenant"
     parsed_authority = urlparse(authority)
     expected_netloc = parsed_authority.netloc or authority
     expected_authority = "https://{}/{}".format(expected_netloc, tenant_id)
@@ -108,9 +135,24 @@ def test_authority(authority):
     assert kwargs["authority"] == expected_authority
 
 
+def test_requires_certificate():
+    """the credential should raise ValueError when not given a certificate"""
+
+    with pytest.raises(ValueError):
+        CertificateCredential("tenant", "client-id")
+    with pytest.raises(ValueError):
+        CertificateCredential("tenant", "client-id", certificate_path=None)
+    with pytest.raises(ValueError):
+        CertificateCredential("tenant", "client-id", certificate_path="")
+    with pytest.raises(ValueError):
+        CertificateCredential("tenant", "client-id", certificate_bytes=None)
+    with pytest.raises(ValueError):
+        CertificateCredential("tenant", "client-id", certificate_path="", certificate_bytes=None)
+
+
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
-@pytest.mark.parametrize("send_certificate", (True, False))
-def test_request_body(cert_path, cert_password, send_certificate):
+@pytest.mark.parametrize("send_certificate_chain", (True, False))
+def test_request_body(cert_path, cert_password, send_certificate_chain):
     access_token = "***"
     authority = "authority.com"
     client_id = "client-id"
@@ -125,7 +167,7 @@ def test_request_body(cert_path, cert_password, send_certificate):
         assert request.body["scope"] == expected_scope
 
         with open(cert_path, "rb") as cert_file:
-            validate_jwt(request, client_id, cert_file.read(), expect_x5c=send_certificate)
+            validate_jwt(request, client_id, cert_file.read(), expect_x5c=send_certificate_chain)
 
         return mock_response(json_payload=build_aad_response(access_token=access_token))
 
@@ -136,7 +178,23 @@ def test_request_body(cert_path, cert_password, send_certificate):
         password=cert_password,
         transport=Mock(send=mock_send),
         authority=authority,
-        send_certificate=send_certificate,
+        send_certificate_chain=send_certificate_chain,
+    )
+    token = cred.get_token(expected_scope)
+    assert token.token == access_token
+
+    # credential should also accept the certificate as bytes
+    with open(cert_path, "rb") as f:
+        cert_bytes = f.read()
+
+    cred = CertificateCredential(
+        tenant_id,
+        client_id,
+        certificate_bytes=cert_bytes,
+        password=cert_password,
+        transport=Mock(send=mock_send),
+        authority=authority,
+        send_certificate_chain=send_certificate_chain,
     )
     token = cred.get_token(expected_scope)
     assert token.token == access_token

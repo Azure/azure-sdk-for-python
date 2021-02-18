@@ -4,20 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (  # pylint: disable=unused-import
-    Union,
-    Optional,
-    Any,
-    Iterable,
-    Dict,
-    List,
-    Type,
-    Tuple,
-    TYPE_CHECKING,
-)
+from typing import TYPE_CHECKING
+
 import logging
-
-
+from uuid import uuid4, UUID
+from datetime import datetime
+import six
 
 try:
     from urllib.parse import parse_qs, quote
@@ -25,11 +17,13 @@ except ImportError:
     from urlparse import parse_qs  # type: ignore
     from urllib2 import quote  # type: ignore
 
-import six
 from azure.core.configuration import Configuration
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport, HttpTransport
+from azure.core.pipeline.transport import (
+    HttpTransport,
+    HttpRequest,
+)
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
@@ -37,12 +31,18 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
-    UserAgentPolicy
+    UserAgentPolicy,
 )
 
+from ._common_conversion import _to_utc_datetime
 from ._shared_access_signature import QueryStringConstants
-from ._constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
-from ._models import LocationMode
+from ._constants import (
+    STORAGE_OAUTH_SCOPE,
+    SERVICE_HOST_BASE,
+    CONNECTION_TIMEOUT,
+    READ_TIMEOUT,
+)
+from ._models import LocationMode, BatchTransactionResult
 from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
     StorageHeadersPolicy,
@@ -53,10 +53,20 @@ from ._policies import (
     StorageHosts,
     TablesRetryPolicy,
 )
-from ._error import _process_table_error
-from ._models import PartialBatchErrorException
+from ._models import BatchErrorException
 from ._sdk_moniker import SDK_MONIKER
 
+if TYPE_CHECKING:
+    from typing import (  # pylint: disable=ungrouped-imports
+        Union,
+        Optional,
+        Any,
+        Iterable,
+        Dict,
+        List,
+        Type,
+        Tuple,
+    )
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -68,7 +78,7 @@ _SERVICE_PARAMS = {
 }
 
 
-class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
+class StorageAccountHostsMixin(object):
     def __init__(
         self,
         parsed_url,  # type: Any
@@ -83,9 +93,9 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
         if service not in ["blob", "queue", "file-share", "dfs", "table"]:
             raise ValueError("Invalid service: {}".format(service))
-        service_name = service.split('-')[0]
+        service_name = service.split("-")[0]
         account = parsed_url.netloc.split(".{}.core.".format(service_name))
-        if 'cosmos' in parsed_url.netloc:
+        if "cosmos" in parsed_url.netloc:
             account = parsed_url.netloc.split(".{}.cosmos.".format(service_name))
         self.account_name = account[0] if len(account) > 1 else None
         secondary_hostname = None
@@ -96,20 +106,46 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         if hasattr(self.credential, "account_name"):
             self.account_name = self.credential.account_name
             secondary_hostname = "{}-secondary.{}.{}".format(
-                self.credential.account_name, service_name, SERVICE_HOST_BASE)
+                self.credential.account_name, service_name, SERVICE_HOST_BASE
+            )
 
         if not self._hosts:
             if len(account) > 1:
-                secondary_hostname = parsed_url.netloc.replace(account[0], account[0] + "-secondary")
+                secondary_hostname = parsed_url.netloc.replace(
+                    account[0], account[0] + "-secondary"
+                )
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
-            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip('/')
-            self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
+            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
+            self._hosts = {
+                LocationMode.PRIMARY: primary_hostname,
+                LocationMode.SECONDARY: secondary_hostname,
+            }
 
         self.require_encryption = kwargs.get("require_encryption", False)
         self.key_encryption_key = kwargs.get("key_encryption_key")
         self.key_resolver_function = kwargs.get("key_resolver_function")
-        self._config, self._pipeline = self._create_pipeline(self.credential, storage_sdk=service, **kwargs)
+
+        self._configure_credential(self.credential)
+        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
+        kwargs.setdefault("read_timeout", READ_TIMEOUT)
+
+        self._policies = [
+            StorageHeadersPolicy(**kwargs),
+            ProxyPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
+            StorageContentValidation(),
+            StorageRequestHook(**kwargs),
+            self._credential_policy,
+            ContentDecodePolicy(response_encoding="utf-8"),
+            RedirectPolicy(**kwargs),
+            StorageHosts(hosts=self._hosts, **kwargs),
+            kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs),
+            StorageLoggingPolicy(**kwargs),
+            StorageResponseHook(**kwargs),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
+        ]
 
     def __enter__(self):
         self._client.__enter__()
@@ -119,7 +155,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self._client.__exit__(*args)
 
     def close(self):
-        """ This method is to close the sockets opened by the client.
+        """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         self._client.close()
@@ -201,7 +237,9 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         """
         return self._client._config.version  # pylint: disable=protected-access
 
-    def _format_query_string(self, sas_token, credential, snapshot=None, share_snapshot=None):
+    def _format_query_string(
+        self, sas_token, credential, snapshot=None, share_snapshot=None
+    ):
         query_str = "?"
         if snapshot:
             query_str += "snapshot={}&".format(self.snapshot)
@@ -214,99 +252,120 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             credential = None
         return query_str.rstrip("?&"), credential
 
-    def _create_pipeline(self, credential, **kwargs):
+    def _configure_credential(self, credential):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            self._credential_policy = BearerTokenCredentialPolicy(
+                credential, STORAGE_OAUTH_SCOPE
+            )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
-        config = kwargs.get("_configuration") or create_configuration(**kwargs)
-        if kwargs.get("_pipeline"):
-            return config, kwargs["_pipeline"]
-        config.transport = kwargs.get("transport")  # type: ignore
-        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
-        kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not config.transport:
-            config.transport = RequestsTransport(**kwargs)
-        policies = [
-            config.headers_policy,
-            config.proxy_policy,
-            config.user_agent_policy,
-            StorageContentValidation(),
-            StorageRequestHook(**kwargs),
-            self._credential_policy,
-            ContentDecodePolicy(response_encoding="utf-8"),
-            RedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs),
-            config.retry_policy,
-            config.logging_policy,
-            StorageResponseHook(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs)
-        ]
-        return config, Pipeline(config.transport, policies=policies)
-
     def _batch_send(
-        self, *reqs,  # type: HttpRequest
+        self,
+        entities,  # type: List[TableEntity]
+        *reqs,  # type: List[HttpRequest]
         **kwargs
     ):
-        """Given a series of request, do a Storage batch call.
-        """
+        # (...) -> List[HttpResponse]
+        """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
-        request = self._client._client.post(  # pylint: disable=protected-access
-            url='{}://{}/?comp=batch{}{}'.format(
-                self.scheme,
-                self._primary_hostname,
-                kwargs.pop('sas', None),
-                kwargs.pop('timeout', None)
-            ),
-            headers={
-                'x-ms-version': self.api_version
-            }
-        )
-
         policies = [StorageHeadersPolicy()]
-        if self._credential_policy:
-            policies.append(self._credential_policy)
 
+        changeset = HttpRequest("POST", None)
+        changeset.set_multipart_mixed(
+            *reqs, policies=policies, boundary="changeset_{}".format(uuid4())
+        )
+        request = self._client._client.post(  # pylint: disable=protected-access
+            url="https://{}/$batch".format(self._primary_hostname),
+            headers={
+                "x-ms-version": self.api_version,
+                "DataServiceVersion": "3.0",
+                "MaxDataServiceVersion": "3.0;NetFx",
+            },
+        )
         request.set_multipart_mixed(
-            *reqs,
+            changeset,
             policies=policies,
-            enforce_https=False
+            enforce_https=False,
+            boundary="batch_{}".format(uuid4()),
         )
 
-        pipeline_response = self._pipeline.run(
-            request, **kwargs
-        )
+        pipeline_response = self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
 
-        try:
-            if response.status_code not in [202]:
-                raise HttpResponseError(response=response)
-            parts = response.parts()
-            if raise_on_any_failure:
-                parts = list(response.parts())
-                if any(p for p in parts if not 200 <= p.status_code < 300):
-                    error = PartialBatchErrorException(
-                        message="There is a partial failure in the batch operation.",
-                        response=response, parts=parts
+        if response.status_code == 403:
+            raise ClientAuthenticationError(
+                message="There was an error authenticating with the service",
+                response=response,
+            )
+        if response.status_code == 404:
+            raise ResourceNotFoundError(
+                message="The resource could not be found", response=response
+            )
+        if response.status_code != 202:
+            raise BatchErrorException(
+                message="There is a failure in the batch operation.",
+                response=response,
+                parts=None,
+            )
+
+        parts = response.parts()
+        transaction_result = BatchTransactionResult(reqs, parts, entities)
+        if raise_on_any_failure:
+            if any(p for p in parts if not 200 <= p.status_code < 300):
+
+                if any(p for p in parts if p.status_code == 404):
+                    raise ResourceNotFoundError(
+                        message="The resource could not be found", response=response
                     )
-                    raise error
-                return iter(parts)
-            return parts
-        except HttpResponseError as error:
-            _process_table_error(error)
+
+                raise BatchErrorException(
+                    message="There is a failure in the batch operation.",
+                    response=response,
+                    parts=parts,
+                )
+        return transaction_result
+
+    def _parameter_filter_substitution(  # pylint: disable=no-self-use
+            self,
+            parameters,  # type: dict[str,str]
+            filter  # type: str  pylint: disable=redefined-builtin
+    ):
+        """Replace user defined parameter in filter
+        :param parameters: User defined parameters
+        :param filter: Filter for querying
+        """
+        if parameters:
+            filter_strings = filter.split(' ')
+            for index, word in enumerate(filter_strings):
+                if word[0] == u'@':
+                    val = parameters[word[1:]]
+                    if val in [True, False]:
+                        filter_strings[index] = str(val).lower()
+                    elif isinstance(val, (float, six.integer_types)):
+                        filter_strings[index] = str(val)
+                    elif isinstance(val, datetime):
+                        filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
+                    elif isinstance(val, UUID):
+                        filter_strings[index] = "guid'{}'".format(str(val))
+                    else:
+                        filter_strings[index] = "'{}'".format(val)
+            return ' '.join(filter_strings)
+
+        return filter
+
 
 class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created
     by a `get_client` method does not close the outer transport for the parent
     when used in a context manager.
     """
+
     def __init__(self, transport):
         self._transport = transport
 
@@ -322,14 +381,16 @@ class TransportWrapper(HttpTransport):
     def __enter__(self):
         pass
 
-    def __exit__(self, *args):  # pylint: disable=arguments-differ
+    def __exit__(self, *args):
         pass
 
 
 def format_shared_key_credential(account, credential):
     if isinstance(credential, six.string_types):
         if len(account) < 2:
-            raise ValueError("Unable to determine account name for shared key credential.")
+            raise ValueError(
+                "Unable to determine account name for shared key credential."
+            )
         credential = {"account_name": account[0], "account_key": credential}
     if isinstance(credential, dict):
         if "account_name" not in credential:
@@ -351,7 +412,10 @@ def parse_connection_str(conn_str, credential, service, keyword_args):
     secondary = None
     if not credential:
         try:
-            credential = {"account_name": conn_settings["AccountName"], "account_key": conn_settings["AccountKey"]}
+            credential = {
+                "account_name": conn_settings["AccountName"],
+                "account_key": conn_settings["AccountKey"],
+            }
         except KeyError:
             credential = conn_settings.get("SharedAccessSignature")
     if endpoints["primary"] in conn_settings:
@@ -377,52 +441,27 @@ def parse_connection_str(conn_str, credential, service, keyword_args):
     if not primary:
         try:
             primary = "https://{}.{}.{}".format(
-                conn_settings["AccountName"], service, conn_settings.get("EndpointSuffix", SERVICE_HOST_BASE)
+                conn_settings["AccountName"],
+                service,
+                conn_settings.get("EndpointSuffix", SERVICE_HOST_BASE),
             )
         except KeyError:
             raise ValueError("Connection string missing required connection details.")
 
-    if 'secondary_hostname' not in keyword_args:
-        keyword_args['secondary_hostname'] = secondary
+    if "secondary_hostname" not in keyword_args:
+        keyword_args["secondary_hostname"] = secondary
 
     return primary, credential
-
-
-def create_configuration(**kwargs):
-    # type: (**Any) -> Configuration
-    config = Configuration(**kwargs)
-    config.headers_policy = StorageHeadersPolicy(**kwargs)
-    config.user_agent_policy = UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs)
-        # sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
-    config.retry_policy = kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs)
-    config.logging_policy = StorageLoggingPolicy(**kwargs)
-    config.proxy_policy = ProxyPolicy(**kwargs)
-
-    # Storage settings
-    config.max_single_put_size = kwargs.get("max_single_put_size", 64 * 1024 * 1024)
-    config.copy_polling_interval = 15
-
-    # Block blob uploads
-    config.max_block_size = kwargs.get("max_block_size", 4 * 1024 * 1024)
-    config.min_large_block_upload_threshold = kwargs.get("min_large_block_upload_threshold", 4 * 1024 * 1024 + 1)
-    config.use_byte_buffer = kwargs.get("use_byte_buffer", False)
-
-    # Page blob uploads
-    config.max_page_size = kwargs.get("max_page_size", 4 * 1024 * 1024)
-
-    # Blob downloads
-    config.max_single_get_size = kwargs.get("max_single_get_size", 32 * 1024 * 1024)
-    config.max_chunk_get_size = kwargs.get("max_chunk_get_size", 4 * 1024 * 1024)
-
-    # File uploads
-    config.max_range_size = kwargs.get("max_range_size", 4 * 1024 * 1024)
-    return config
 
 
 def parse_query(query_str):
     sas_values = QueryStringConstants.to_list()
     parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
-    sas_params = ["{}={}".format(k, quote(v, safe='')) for k, v in parsed_query.items() if k in sas_values]
+    sas_params = [
+        "{}={}".format(k, quote(v, safe=""))
+        for k, v in parsed_query.items()
+        if k in sas_values
+    ]
     sas_token = None
     if sas_params:
         sas_token = "&".join(sas_params)

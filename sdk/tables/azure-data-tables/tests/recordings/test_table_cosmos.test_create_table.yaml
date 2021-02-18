@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 26 Sep 2020 01:05:31 GMT
+      - Fri, 18 Dec 2020 17:35:49 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 26 Sep 2020 01:05:31 GMT
+      - Fri, 18 Dec 2020 17:35:49 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"pytablesync2a40e43","odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"pytablesync2a40e43","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Sat, 26 Sep 2020 01:05:33 GMT
+      - Fri, 18 Dec 2020 17:35:50 GMT
       etag:
-      - W/"datetime'2020-09-26T01%3A05%3A32.7777799Z'"
+      - W/"datetime'2020-12-18T17%3A35%3A50.3173640Z'"
       location:
-      - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesync2a40e43')
+      - https://fake_cosmos_account.table.cosmos.azure.com/Tables('pytablesync2a40e43')
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -47,7 +47,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -55,15 +55,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 26 Sep 2020 01:05:33 GMT
+      - Fri, 18 Dec 2020 17:35:50 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 26 Sep 2020 01:05:33 GMT
+      - Fri, 18 Dec 2020 17:35:50 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesync2a40e43')
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('pytablesync2a40e43')
   response:
     body:
       string: ''
@@ -71,7 +71,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 26 Sep 2020 01:05:33 GMT
+      - Fri, 18 Dec 2020 17:35:50 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:

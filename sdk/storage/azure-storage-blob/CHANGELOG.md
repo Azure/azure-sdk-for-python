@@ -1,10 +1,44 @@
 # Release History
 
-## 12.6.0b2 (Unreleased)
+## 12.8.0b1 (2021-02-10)
+**New Features**
+- Added `ContainerClient.exists()` method
+- Added container SAS support for blob batch operations
 
+## 12.7.1 (2021-01-20)
+**Fixes**
+- Fixed msrest dependency issue (#16250)
+
+## 12.7.0 (2021-01-13)
+**Stable release of preview features**
+- Added `upload_blob_from_url` api on `BlobClient`.
+- Added support for leasing blob when get/set tags, listing all tags when find blobs by tags.
+- Added support for `AzureSasCredential` to allow SAS rotation in long living clients.
+
+**Fixes**
+- Fixed url parsing for blob emulator/localhost (#15882)
+
+## 12.7.0b1 (2020-12-07)
+**New features**
+- Added `upload_blob_from_url` api on `BlobClient`
+- Added support for leasing blob when get/set tags, listing all tags when find blobs by tags.
+
+
+## 12.6.0 (2020-11-10)
+**Stable release of preview features**
+- Preview feature `ArrowDialect` as output format of `query_blob`
+- Preview feature `undelete_container` on BlobServiceClient.
+- Preview feature Last Access Time.
+
+**Fixes**
+- Fixed the expired Authorization token problem during retry (#14701, #14067)
+- Catch exceptions thrown by async download (#14319)
+
+**Notes**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.6.0 to azure-core<2.0.0,>=1.9.0 to get continuation_token attr on AzureError.
 
 ## 12.6.0b1 (2020-10-02)
-**New features***
+**New features**
 - Added support for Arrow format (`ArrowType`) output serialization using `quick_query()`.
 - Added support for undeleting a container.
 - Added support for `LastAccessTime` property on a blob, which could be the last time a blob was written or read.
@@ -44,7 +78,7 @@
 - Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
 - For replication enabled account, users can get replication policies when get blob properties.
 
-## 12.3.2 (2020-6-12)
+## 12.3.2 
 **Fixes**
 - Fixed issue where batch requests could not be combined with SAS (#9534)
 - Batch requests now support applying parameters to individual blobs within the request via passing in a dictionary.
@@ -75,7 +109,7 @@ of using the existing one in the `ContainerClient`.
 - The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.
 
 
-## 12.2.0
+## 12.2.0 
 
 **New features**
 - Added support for the 2019-07-07 service version, and added `api_version` parameter to clients.
@@ -249,7 +283,7 @@ https://aka.ms/azure-sdk-preview1-python.
     - `LeaseClient`: Handles all lease operations for both containers and blobs.
 
     These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account, container or blob).
-    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/ref/Storage.html#azure-storage-blob).
+    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/storage.html#azure-storage-blob).
 - Copy blob operations now return a polling object that can be used to check the status of the operation, as well as abort the operation.
 - New module level operations for simple upload and download using a blob URL.
 - Download operations now return a streaming object that can download data in multiple ways:
@@ -285,11 +319,11 @@ https://aka.ms/azure-sdk-preview1-python.
 - Operation `update_page` has been renamed to `upload_page`.
 - Operation `get_page_ranges_diff` has been replaced by an optional str flag in the `get_page_ranges` operation.
 
-## 2.0.1
+## 2.0.1 
 
 - Updated dependency on azure-storage-common.
 
-## 2.0.0
+## 2.0.0 
 
 - Support for 2018-11-09 REST version. Please see our REST API documentation and blog for information about the related added features.
 - Added support for append block from URL(synchronously) for append blobs.
@@ -297,40 +331,40 @@ https://aka.ms/azure-sdk-preview1-python.
 - Added support for generating and using blob snapshot SAS tokens.
 - Added support for generating user delegation SAS tokens.
 
-## 1.5.0
+## 1.5.0 
 
 - Added new method list_blob_names to efficiently list only blob names in an efficient way.
 
-## 1.4.0
+## 1.4.0 
 
 - azure-storage-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
 - copy_blob method added to BlockBlobService to enable support for deep sync copy.
 
-## 1.3.1
+## 1.3.1 
 
 - Fixed design flaw where get_blob_to_* methods buffer entire blob when max_connections is set to 1.
 - Added support for access conditions on append_blob_from_* methods.
 
-## 1.3.0
+## 1.3.0 
 
 - Support for 2018-03-28 REST version. Please see our REST API documentation and blog for information about the related added features.
 - Added support for setting static website service properties.
 - Added support for getting account information, such as SKU name and account kind.
 - Added support for put block from URL(synchronously).
 
-## 1.2.0rc1
+## 1.2.0rc1 
 
 - Support for 2017-11-09 REST version. Please see our REST API documentation and blog for information about the related added features.
 - Support for write-once read-many containers.
 - Added support for OAuth authentication for HTTPS requests(Please note that this feature is available in preview).
 
-## 1.1.0
+## 1.1.0 
 
 - Support for 2017-07-29 REST version. Please see our REST API documentation and blogs for information about the related added features.
 - Added support for soft delete feature. If a delete retention policy is enabled through the set service properties API, then blobs or snapshots could be deleted softly and retained for a specified number of days, before being permanently removed by garbage collection.
 - Error message now contains the ErrorCode from the x-ms-error-code header value.
 
-## 1.0.0
+## 1.0.0 
 
 - The package has switched from Apache 2.0 to the MIT license.
 - Fixed bug where get_blob_to_* cannot get a single byte when start_range and end_range are both equal to 0.
@@ -338,7 +372,7 @@ https://aka.ms/azure-sdk-preview1-python.
 - Added convenient method to generate container url (make_container_url).
 - Metadata keys are now case-preserving when fetched from the service. Previously they were made lower-case by the library.
 
-## 0.37.1
+## 0.37.1 
 
 - Enabling MD5 validation no longer uses the memory-efficient algorithm for large block blobs, since computing the MD5 hash requires reading the entire block into memory.
 - Fixed a bug in the _SubStream class which was at risk of causing data corruption when using the memory-efficient algorithm for large block blobs.

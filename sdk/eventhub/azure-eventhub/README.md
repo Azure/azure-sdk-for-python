@@ -56,6 +56,10 @@ Alternately, one can use a Credential object to authenticate via AAD with the az
 [TokenCredential](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/azure/core/credentials.py)
 protocol. There are implementations of the `TokenCredential` protocol available in the
 [azure-identity package](https://pypi.org/project/azure-identity/). The host name is of the format `<yournamespace.servicebus.windows.net>`.
+- To use the credential types provided by `azure-identity`, please install the package:
+```pip install azure-identity```
+- Additionally, to use the async API supported on Python 3.5+, you must first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/):
+```pip install aiohttp```
 - When using Azure Active Directory, your principal must be assigned a role which allows access to Event Hubs, such as the
 Azure Event Hubs Data Owner role. For more information about using Azure Active Directory authorization with Event Hubs,
 please refer to [the associated documentation](https://docs.microsoft.com/azure/event-hubs/authorize-access-azure-active-directory).
@@ -82,7 +86,7 @@ one active consumer for a given partition and consumer group pairing. Each activ
 its partition; if there are multiple readers on the same partition, then they will receive duplicate events.
 
 For more concepts and deeper discussion, see: [Event Hubs Features](https://docs.microsoft.com/azure/event-hubs/event-hubs-features).
-Also, the concepts for AMQP are well documented in [OASIS Advanced Messaging Queuing Protocol (AMQP) Version 1.0](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.html).
+Also, the concepts for AMQP are well documented in [OASIS Advanced Messaging Queuing Protocol (AMQP) Version 1.0](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.html).
 
 ## Examples
 
@@ -197,7 +201,7 @@ with client:
 
 ### Publish events to an Event Hub asynchronously
 
-Use the `create_batch` method on `EventHubProcuer` to create an `EventDataBatch` object which can then be sent using the `send_batch` method.
+Use the `create_batch` method on `EventHubProducer` to create an `EventDataBatch` object which can then be sent using the `send_batch` method.
 Events may be added to the `EventDataBatch` using the `add` method until the maximum batch size limit in bytes has been reached.
 ```python
 import asyncio
@@ -419,6 +423,14 @@ Reference documentation is available [here](https://azuresdkdocs.blob.core.windo
 The EventHubs SDK integrates nicely with the [Schema Registry][schemaregistry_service] service and [Avro][avro].
 For more information, please refer to [Schema Registry SDK][schemaregistry_repo] and [Schema Registry Avro Serializer SDK][schemaregistry_avroserializer_repo].
 
+### Building uAMQP wheel from source
+
+`azure-eventhub` depends on the [uAMQP](https://pypi.org/project/uamqp/) for the AMQP protocol implementation.
+uAMQP wheels are provided for most major operating systems and will be installed automatically when installing `azure-eventhub`.
+
+If you're running on a platform for which uAMQP wheels are not provided, please follow
+ the [uAMQP Installation](https://github.com/Azure/azure-uamqp-python#installation) guidance to install from source.
+
 ### Provide Feedback
 
 If you encounter any bugs or have suggestions, please file an issue in the [Issues](https://github.com/Azure/azure-sdk-for-python/issues) section of the project.
@@ -434,7 +446,7 @@ PR appropriately (e.g., label, comment). Simply follow the instructions provided
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-[avro]: http://avro.apache.org/
+[avro]: https://avro.apache.org/
 [schemaregistry_service]: https://aka.ms/schemaregistry
 [schemaregistry_repo]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry
 [schemaregistry_avroserializer_repo]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer

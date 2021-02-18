@@ -17,6 +17,19 @@ from helpers import build_aad_response, mock_response, Request
 from helpers_async import async_validating_transport, AsyncMockTransport, wrap_in_future
 
 
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        VisualStudioCodeCredential(tenant_id=tenant)
+
+    invalid_ids = {"my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        with pytest.raises(ValueError):
+            VisualStudioCodeCredential(tenant_id=tenant)
+
+
 @pytest.mark.asyncio
 async def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
@@ -56,7 +69,7 @@ async def test_user_agent():
 async def test_request_url(authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
 
-    tenant_id = "expected_tenant"
+    tenant_id = "expected-tenant"
     access_token = "***"
     parsed_authority = urlparse(authority)
     expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
@@ -70,7 +83,9 @@ async def test_request_url(authority):
         assert request.body["refresh_token"] == expected_refresh_token
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
 
-    credential = VisualStudioCodeCredential(tenant_id=tenant_id, transport=mock.Mock(send=mock_send), authority=authority)
+    credential = VisualStudioCodeCredential(
+        tenant_id=tenant_id, transport=mock.Mock(send=mock_send), authority=authority
+    )
     with mock.patch(VisualStudioCodeCredential.__module__ + ".get_credentials", return_value=expected_refresh_token):
         token = await credential.get_token("scope")
     assert token.token == access_token
@@ -78,7 +93,9 @@ async def test_request_url(authority):
     # authority can be configured via environment variable
     with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
         credential = VisualStudioCodeCredential(tenant_id=tenant_id, transport=mock.Mock(send=mock_send))
-        with mock.patch(VisualStudioCodeCredential.__module__ + ".get_credentials", return_value=expected_refresh_token):
+        with mock.patch(
+            VisualStudioCodeCredential.__module__ + ".get_credentials", return_value=expected_refresh_token
+        ):
             await credential.get_token("scope")
     assert token.token == access_token
 

@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class PublicIPAddressesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -131,7 +131,13 @@ class PublicIPAddressesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'publicIpAddressName': self._serialize.url("public_ip_address_name", public_ip_address_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -151,7 +157,7 @@ class PublicIPAddressesOperations:
         public_ip_address_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.PublicIPAddress":
+    ) -> "_models.PublicIPAddress":
         """Gets the specified public IP address in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -165,7 +171,7 @@ class PublicIPAddressesOperations:
         :rtype: ~azure.mgmt.network.v2019_09_01.models.PublicIPAddress
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPAddress"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPAddress"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -212,10 +218,10 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: "models.PublicIPAddress",
+        parameters: "_models.PublicIPAddress",
         **kwargs
-    ) -> "models.PublicIPAddress":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPAddress"]
+    ) -> "_models.PublicIPAddress":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPAddress"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -269,9 +275,9 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: "models.PublicIPAddress",
+        parameters: "_models.PublicIPAddress",
         **kwargs
-    ) -> AsyncLROPoller["models.PublicIPAddress"]:
+    ) -> AsyncLROPoller["_models.PublicIPAddress"]:
         """Creates or updates a static or dynamic public IP address.
 
         :param resource_group_name: The name of the resource group.
@@ -291,7 +297,7 @@ class PublicIPAddressesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPAddress"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPAddress"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -316,7 +322,13 @@ class PublicIPAddressesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'publicIpAddressName': self._serialize.url("public_ip_address_name", public_ip_address_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -334,9 +346,9 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         public_ip_address_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.PublicIPAddress":
+    ) -> "_models.PublicIPAddress":
         """Updates public IP address tags.
 
         :param resource_group_name: The name of the resource group.
@@ -350,7 +362,7 @@ class PublicIPAddressesOperations:
         :rtype: ~azure.mgmt.network.v2019_09_01.models.PublicIPAddress
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPAddress"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPAddress"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -399,7 +411,7 @@ class PublicIPAddressesOperations:
     def list_all(
         self,
         **kwargs
-    ) -> AsyncIterable["models.PublicIPAddressListResult"]:
+    ) -> AsyncIterable["_models.PublicIPAddressListResult"]:
         """Gets all the public IP addresses in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -407,7 +419,7 @@ class PublicIPAddressesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_09_01.models.PublicIPAddressListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPAddressListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPAddressListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -466,7 +478,7 @@ class PublicIPAddressesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.PublicIPAddressListResult"]:
+    ) -> AsyncIterable["_models.PublicIPAddressListResult"]:
         """Gets all public IP addresses in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -476,7 +488,7 @@ class PublicIPAddressesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_09_01.models.PublicIPAddressListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPAddressListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPAddressListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -537,7 +549,7 @@ class PublicIPAddressesOperations:
         resource_group_name: str,
         virtual_machine_scale_set_name: str,
         **kwargs
-    ) -> AsyncIterable["models.PublicIPAddressListResult"]:
+    ) -> AsyncIterable["_models.PublicIPAddressListResult"]:
         """Gets information about all public IP addresses on a virtual machine scale set level.
 
         :param resource_group_name: The name of the resource group.
@@ -549,7 +561,7 @@ class PublicIPAddressesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_09_01.models.PublicIPAddressListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPAddressListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPAddressListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -614,7 +626,7 @@ class PublicIPAddressesOperations:
         network_interface_name: str,
         ip_configuration_name: str,
         **kwargs
-    ) -> AsyncIterable["models.PublicIPAddressListResult"]:
+    ) -> AsyncIterable["_models.PublicIPAddressListResult"]:
         """Gets information about all public IP addresses in a virtual machine IP configuration in a
         virtual machine scale set.
 
@@ -633,7 +645,7 @@ class PublicIPAddressesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_09_01.models.PublicIPAddressListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPAddressListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPAddressListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -703,7 +715,7 @@ class PublicIPAddressesOperations:
         public_ip_address_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.PublicIPAddress":
+    ) -> "_models.PublicIPAddress":
         """Get the specified public IP address in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -725,7 +737,7 @@ class PublicIPAddressesOperations:
         :rtype: ~azure.mgmt.network.v2019_09_01.models.PublicIPAddress
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PublicIPAddress"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PublicIPAddress"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

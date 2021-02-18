@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class MonitorsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class MonitorsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DatadogMonitorResourceListResponse"]
+        # type: (...) -> Iterable["_models.DatadogMonitorResourceListResponse"]
         """List all monitors under the specified subscription.
 
         List all monitors under the specified subscription.
@@ -61,7 +61,7 @@ class MonitorsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~microsoft_datadog_client.models.DatadogMonitorResourceListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatadogMonitorResourceListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatadogMonitorResourceListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -106,7 +106,7 @@ class MonitorsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+                error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -122,7 +122,7 @@ class MonitorsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DatadogMonitorResourceListResponse"]
+        # type: (...) -> Iterable["_models.DatadogMonitorResourceListResponse"]
         """List all monitors under the specified resource group.
 
         List all monitors under the specified resource group.
@@ -135,7 +135,7 @@ class MonitorsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~microsoft_datadog_client.models.DatadogMonitorResourceListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatadogMonitorResourceListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatadogMonitorResourceListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -181,7 +181,7 @@ class MonitorsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+                error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -198,7 +198,7 @@ class MonitorsOperations(object):
         monitor_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DatadogMonitorResource"
+        # type: (...) -> "_models.DatadogMonitorResource"
         """Get the properties of a specific monitor resource.
 
         Get the properties of a specific monitor resource.
@@ -213,7 +213,7 @@ class MonitorsOperations(object):
         :rtype: ~microsoft_datadog_client.models.DatadogMonitorResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatadogMonitorResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatadogMonitorResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -244,7 +244,7 @@ class MonitorsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DatadogMonitorResource', pipeline_response)
@@ -259,11 +259,11 @@ class MonitorsOperations(object):
         self,
         resource_group_name,  # type: str
         monitor_name,  # type: str
-        body=None,  # type: Optional["models.DatadogMonitorResource"]
+        body=None,  # type: Optional["_models.DatadogMonitorResource"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DatadogMonitorResource"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatadogMonitorResource"]
+        # type: (...) -> "_models.DatadogMonitorResource"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatadogMonitorResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -302,7 +302,7 @@ class MonitorsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -321,10 +321,10 @@ class MonitorsOperations(object):
         self,
         resource_group_name,  # type: str
         monitor_name,  # type: str
-        body=None,  # type: Optional["models.DatadogMonitorResource"]
+        body=None,  # type: Optional["_models.DatadogMonitorResource"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.DatadogMonitorResource"]
+        # type: (...) -> LROPoller["_models.DatadogMonitorResource"]
         """Create a monitor resource.
 
         Create a monitor resource.
@@ -347,7 +347,7 @@ class MonitorsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatadogMonitorResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatadogMonitorResource"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -372,7 +372,13 @@ class MonitorsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'monitorName': self._serialize.url("monitor_name", monitor_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -390,10 +396,10 @@ class MonitorsOperations(object):
         self,
         resource_group_name,  # type: str
         monitor_name,  # type: str
-        body=None,  # type: Optional["models.DatadogMonitorResourceUpdateParameters"]
+        body=None,  # type: Optional["_models.DatadogMonitorResourceUpdateParameters"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DatadogMonitorResource"
+        # type: (...) -> "_models.DatadogMonitorResource"
         """Update a monitor resource.
 
         Update a monitor resource.
@@ -410,7 +416,7 @@ class MonitorsOperations(object):
         :rtype: ~microsoft_datadog_client.models.DatadogMonitorResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatadogMonitorResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatadogMonitorResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -449,7 +455,7 @@ class MonitorsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DatadogMonitorResource', pipeline_response)
@@ -498,7 +504,7 @@ class MonitorsOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -554,7 +560,13 @@ class MonitorsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'monitorName': self._serialize.url("monitor_name", monitor_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

@@ -67,7 +67,7 @@ setup(
         ]
     ),
     install_requires=[
-      'six >=1.6',
+      'six >=1.11.0',
       'azure-core<2.0.0,>=1.0.0'
     ],
     extras_require={

@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class CustomIPPrefixesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -137,7 +137,13 @@ class CustomIPPrefixesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'customIpPrefixName': self._serialize.url("custom_ip_prefix_name", custom_ip_prefix_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -158,7 +164,7 @@ class CustomIPPrefixesOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CustomIpPrefix"
+        # type: (...) -> "_models.CustomIpPrefix"
         """Gets the specified custom IP prefix in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -172,7 +178,7 @@ class CustomIPPrefixesOperations(object):
         :rtype: ~azure.mgmt.network.v2020_06_01.models.CustomIpPrefix
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomIpPrefix"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomIpPrefix"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -219,11 +225,11 @@ class CustomIPPrefixesOperations(object):
         self,
         resource_group_name,  # type: str
         custom_ip_prefix_name,  # type: str
-        parameters,  # type: "models.CustomIpPrefix"
+        parameters,  # type: "_models.CustomIpPrefix"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CustomIpPrefix"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomIpPrefix"]
+        # type: (...) -> "_models.CustomIpPrefix"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomIpPrefix"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -277,10 +283,10 @@ class CustomIPPrefixesOperations(object):
         self,
         resource_group_name,  # type: str
         custom_ip_prefix_name,  # type: str
-        parameters,  # type: "models.CustomIpPrefix"
+        parameters,  # type: "_models.CustomIpPrefix"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.CustomIpPrefix"]
+        # type: (...) -> LROPoller["_models.CustomIpPrefix"]
         """Creates or updates a custom IP prefix.
 
         :param resource_group_name: The name of the resource group.
@@ -300,7 +306,7 @@ class CustomIPPrefixesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomIpPrefix"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomIpPrefix"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -325,7 +331,13 @@ class CustomIPPrefixesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'customIpPrefixName': self._serialize.url("custom_ip_prefix_name", custom_ip_prefix_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -343,10 +355,10 @@ class CustomIPPrefixesOperations(object):
         self,
         resource_group_name,  # type: str
         custom_ip_prefix_name,  # type: str
-        parameters,  # type: "models.TagsObject"
+        parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CustomIpPrefix"
+        # type: (...) -> "_models.CustomIpPrefix"
         """Updates custom IP prefix tags.
 
         :param resource_group_name: The name of the resource group.
@@ -360,7 +372,7 @@ class CustomIPPrefixesOperations(object):
         :rtype: ~azure.mgmt.network.v2020_06_01.models.CustomIpPrefix
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomIpPrefix"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomIpPrefix"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -410,7 +422,7 @@ class CustomIPPrefixesOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CustomIpPrefixListResult"]
+        # type: (...) -> Iterable["_models.CustomIpPrefixListResult"]
         """Gets all the custom IP prefixes in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -418,7 +430,7 @@ class CustomIPPrefixesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_06_01.models.CustomIpPrefixListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomIpPrefixListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomIpPrefixListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -478,7 +490,7 @@ class CustomIPPrefixesOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CustomIpPrefixListResult"]
+        # type: (...) -> Iterable["_models.CustomIpPrefixListResult"]
         """Gets all custom IP prefixes in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -488,7 +500,7 @@ class CustomIPPrefixesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_06_01.models.CustomIpPrefixListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CustomIpPrefixListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomIpPrefixListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/xx?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models/xx?includeKeys=true
   response:
     body:
       string: '{"error": {"code": "401", "message": "Access denied due to invalid
@@ -21,7 +21,7 @@ interactions:
       content-length:
       - '224'
       date:
-      - Mon, 14 Sep 2020 20:25:13 GMT
+      - Fri, 30 Oct 2020 01:19:11 GMT
     status:
       code: 401
       message: PermissionDenied

@@ -13,12 +13,19 @@ from uamqp.authentication.common import AMQPAuth
 
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
-from ._common.message import Message, BatchMessage
+from ._common.message import ServiceBusMessage, ServiceBusMessageBatch
 from .exceptions import (
     OperationTimeoutError,
     _ServiceBusErrorPolicy,
-    )
-from ._common.utils import create_authentication, transform_messages_to_sendable_if_needed, create_messages_from_dicts_if_needed
+)
+from ._common.utils import (
+    create_authentication,
+    transform_messages_to_sendable_if_needed,
+    create_messages_from_dicts_if_needed,
+    send_trace_context_manager,
+    trace_message,
+    add_link_to_send,
+)
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
@@ -28,7 +35,7 @@ from ._common.constants import (
     MGMT_REQUEST_MESSAGES,
     MGMT_REQUEST_MESSAGE_ID,
     MGMT_REQUEST_PARTITION_KEY,
-    MGMT_REQUEST_VIA_PARTITION_KEY
+    SPAN_NAME_SCHEDULE,
 )
 
 if TYPE_CHECKING:
@@ -40,9 +47,15 @@ _LOGGER = logging.getLogger(__name__)
 
 class SenderMixin(object):
     def _create_attribute(self):
-        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self._entity_name)
-        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self._entity_name)
-        self._error_policy = _ServiceBusErrorPolicy(max_retries=self._config.retry_total)
+        self._auth_uri = "sb://{}/{}".format(
+            self.fully_qualified_namespace, self._entity_name
+        )
+        self._entity_uri = "amqps://{}/{}".format(
+            self.fully_qualified_namespace, self._entity_name
+        )
+        self._error_policy = _ServiceBusErrorPolicy(
+            max_retries=self._config.retry_total
+        )
         self._name = "SBSender-{}".format(uuid.uuid4())
         self._max_message_size_on_link = 0
         self.entity_name = self._entity_name
@@ -56,19 +69,25 @@ class SenderMixin(object):
             if last_exception:
                 error = last_exception
             else:
-                error = OperationTimeoutError("Send operation timed out")
+                error = OperationTimeoutError(message="Send operation timed out")
             _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
             raise error
         self._handler._msg_timeout = timeout * 1000  # type: ignore
 
     @classmethod
-    def _build_schedule_request(cls, schedule_time_utc, *messages):
+    def _build_schedule_request(cls, schedule_time_utc, send_span, *messages):
         request_body = {MGMT_REQUEST_MESSAGES: []}
         for message in messages:
-            if not isinstance(message, Message):
-                raise ValueError("Scheduling batch messages only supports iterables containing Message Objects."
-                                 " Received instead: {}".format(message.__class__.__name__))
+            if not isinstance(message, ServiceBusMessage):
+                raise ValueError(
+                    "Scheduling batch messages only supports iterables containing "
+                    "ServiceBusMessage Objects. Received instead: {}".format(
+                        message.__class__.__name__
+                    )
+                )
             message = transform_messages_to_sendable_if_needed(message)
+            trace_message(message, send_span)
+            add_link_to_send(message, send_span)
             message.scheduled_enqueue_time_utc = schedule_time_utc
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
@@ -76,9 +95,9 @@ class SenderMixin(object):
                 message_data[MGMT_REQUEST_SESSION_ID] = message.session_id
             if message.partition_key:
                 message_data[MGMT_REQUEST_PARTITION_KEY] = message.partition_key
-            if message.via_partition_key:
-                message_data[MGMT_REQUEST_VIA_PARTITION_KEY] = message.via_partition_key
-            message_data[MGMT_REQUEST_MESSAGE] = bytearray(message.message.encode_message())
+            message_data[MGMT_REQUEST_MESSAGE] = bytearray(
+                message.message.encode_message()
+            )
             request_body[MGMT_REQUEST_MESSAGES].append(message_data)
         return request_body
 
@@ -86,6 +105,9 @@ class SenderMixin(object):
 class ServiceBusSender(BaseHandler, SenderMixin):
     """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
+
+    **Please use the `get_<queue/topic>_sender` method of ~azure.servicebus.ServiceBusClient to create a
+    ServiceBusSender instance.**
 
     :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
@@ -109,23 +131,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-            :start-after: [START create_servicebus_sender_sync]
-            :end-before: [END create_servicebus_sender_sync]
-            :language: python
-            :dedent: 4
-            :caption: Create a new instance of the ServiceBusSender.
-
     """
-    def __init__(
-        self,
-        fully_qualified_namespace,
-        credential,
-        **kwargs
-    ):
+
+    def __init__(self, fully_qualified_namespace, credential, **kwargs):
         # type: (str, TokenCredential, Any) -> None
         if kwargs.get("entity_name"):
             super(ServiceBusSender, self).__init__(
@@ -137,10 +145,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             queue_name = kwargs.get("queue_name")
             topic_name = kwargs.get("topic_name")
             if queue_name and topic_name:
-                raise ValueError("Queue/Topic name can not be specified simultaneously.")
+                raise ValueError(
+                    "Queue/Topic name can not be specified simultaneously."
+                )
             entity_name = queue_name or topic_name
             if not entity_name:
-                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
+                raise ValueError(
+                    "Queue/Topic name is missing. Please specify queue_name/topic_name."
+                )
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
@@ -152,132 +164,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._create_attribute()
         self._connection = kwargs.get("connection")
 
-    def _create_handler(self, auth):
-        # type: (AMQPAuth) -> None
-        self._handler = SendClient(
-            self._entity_uri,
-            auth=auth,
-            debug=self._config.logging_enable,
-            properties=self._properties,
-            error_policy=self._error_policy,
-            client_name=self._name,
-            keep_alive_interval=self._config.keep_alive,
-            encoding=self._config.encoding
-        )
-
-    def _open(self):
-        # pylint: disable=protected-access
-        if self._running:
-            return
-        if self._handler:
-            self._handler.close()
-
-        auth = None if self._connection else create_authentication(self)
-        self._create_handler(auth)
-        try:
-            self._handler.open(connection=self._connection)
-            while not self._handler.client_ready():
-                time.sleep(0.05)
-            self._running = True
-            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
-                                             or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
-        except:
-            self.close()
-            raise
-
-    def _send(self, message, timeout=None, last_exception=None):
-        # type: (Message, Optional[float], Exception) -> None
-        self._open()
-        default_timeout = self._handler._msg_timeout  # pylint: disable=protected-access
-        try:
-            self._set_msg_timeout(timeout, last_exception)
-            self._handler.send_message(message.message)
-        finally:  # reset the timeout of the handler back to the default value
-            self._set_msg_timeout(default_timeout, None)
-
-    def schedule_messages(self, messages, schedule_time_utc, **kwargs):
-        # type: (Union[Message, List[Message]], datetime.datetime, Any) -> List[int]
-        """Send Message or multiple Messages to be enqueued at a specific time.
-        Returns a list of the sequence numbers of the enqueued messages.
-        :param messages: The message or list of messages to schedule.
-        :type messages: Union[~azure.servicebus.Message, List[~azure.servicebus.Message]]
-        :param schedule_time_utc: The utc date and time to enqueue the messages.
-        :type schedule_time_utc: ~datetime.datetime
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: List[int]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START scheduling_messages]
-                :end-before: [END scheduling_messages]
-                :language: python
-                :dedent: 4
-                :caption: Schedule a message to be sent in future
-        """
-        # pylint: disable=protected-access
-        self._open()
-        messages = create_messages_from_dicts_if_needed(messages, Message)
-
-        timeout = kwargs.pop("timeout", None)
-        if timeout is not None and timeout <= 0:
-            raise ValueError("The timeout must be greater than 0.")
-        if isinstance(messages, Message):
-            request_body = self._build_schedule_request(schedule_time_utc, messages)
-        else:
-            request_body = self._build_schedule_request(schedule_time_utc, *messages)
-        return self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
-            request_body,
-            mgmt_handlers.schedule_op,
-            timeout=timeout
-        )
-
-    def cancel_scheduled_messages(self, sequence_numbers, **kwargs):
-        # type: (Union[int, List[int]], Any) -> None
-        """
-        Cancel one or more messages that have previously been scheduled and are still pending.
-
-        :param sequence_numbers: The sequence numbers of the scheduled messages.
-        :type sequence_numbers: int or list[int]
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: None
-        :raises: ~azure.servicebus.exceptions.ServiceBusError if messages cancellation failed due to message already
-         cancelled or enqueued.
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START cancel_scheduled_messages]
-                :end-before: [END cancel_scheduled_messages]
-                :language: python
-                :dedent: 4
-                :caption: Cancelling messages scheduled to be sent in future
-        """
-        self._open()
-        timeout = kwargs.pop("timeout", None)
-        if timeout is not None and timeout <= 0:
-            raise ValueError("The timeout must be greater than 0.")
-        if isinstance(sequence_numbers, int):
-            numbers = [types.AMQPLong(sequence_numbers)]
-        else:
-            numbers = [types.AMQPLong(s) for s in sequence_numbers]
-        request_body = {MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray(numbers)}
-        return self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
-            request_body,
-            mgmt_handlers.default,
-            timeout=timeout
-        )
-
     @classmethod
-    def from_connection_string(
-        cls,
-        conn_str,
-        **kwargs
-    ):
+    def _from_connection_string(cls, conn_str, **kwargs):
         # type: (str, Any) -> ServiceBusSender
         """Create a ServiceBusSender from a connection string.
 
@@ -311,30 +199,161 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Create a new instance of the ServiceBusSender from connection string.
 
         """
-        constructor_args = cls._convert_connection_string_to_kwargs(
-            conn_str,
-            **kwargs
-        )
+        constructor_args = cls._convert_connection_string_to_kwargs(conn_str, **kwargs)
         return cls(**constructor_args)
 
-    def send_messages(self, message, **kwargs):
+    def _create_handler(self, auth):
+        # type: (AMQPAuth) -> None
+        self._handler = SendClient(
+            self._entity_uri,
+            auth=auth,
+            debug=self._config.logging_enable,
+            properties=self._properties,
+            error_policy=self._error_policy,
+            client_name=self._name,
+            keep_alive_interval=self._config.keep_alive,
+            encoding=self._config.encoding,
+        )
 
-        # type: (Union[Message, BatchMessage, List[Message]], Any) -> None
+    def _open(self):
+        # pylint: disable=protected-access
+        if self._running:
+            return
+        if self._handler:
+            self._handler.close()
+
+        auth = None if self._connection else create_authentication(self)
+        self._create_handler(auth)
+        try:
+            self._handler.open(connection=self._connection)
+            while not self._handler.client_ready():
+                time.sleep(0.05)
+            self._running = True
+            self._max_message_size_on_link = (
+                self._handler.message_handler._link.peer_max_message_size
+                or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
+            )
+        except:
+            self._close_handler()
+            raise
+
+    def _send(self, message, timeout=None, last_exception=None):
+        # type: (Union[ServiceBusMessage, ServiceBusMessageBatch], Optional[float], Exception) -> None
+        self._open()
+        default_timeout = self._handler._msg_timeout  # pylint: disable=protected-access
+        try:
+            self._set_msg_timeout(timeout, last_exception)
+            self._handler.send_message(message.message)
+        finally:  # reset the timeout of the handler back to the default value
+            self._set_msg_timeout(default_timeout, None)
+
+    def schedule_messages(self, messages, schedule_time_utc, **kwargs):
+        # type: (Union[ServiceBusMessage, List[ServiceBusMessage]], datetime.datetime, Any) -> List[int]
+        """Send Message or multiple Messages to be enqueued at a specific time.
+        Returns a list of the sequence numbers of the enqueued messages.
+
+        :param messages: The message or list of messages to schedule.
+        :type messages: Union[~azure.servicebus.ServiceBusMessage, List[~azure.servicebus.ServiceBusMessage]]
+        :param schedule_time_utc: The utc date and time to enqueue the messages.
+        :type schedule_time_utc: ~datetime.datetime
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
+        :rtype: List[int]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START scheduling_messages]
+                :end-before: [END scheduling_messages]
+                :language: python
+                :dedent: 4
+                :caption: Schedule a message to be sent in future
+        """
+        # pylint: disable=protected-access
+
+        self._check_live()
+        messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
+
+        with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE) as send_span:
+            if isinstance(messages, ServiceBusMessage):
+                request_body = self._build_schedule_request(
+                    schedule_time_utc, send_span, messages
+                )
+            else:
+                if len(messages) == 0:
+                    return []  # No-op on empty list.
+                request_body = self._build_schedule_request(
+                    schedule_time_utc, send_span, *messages
+                )
+            if send_span:
+                self._add_span_request_attributes(send_span)
+            return self._mgmt_request_response_with_retry(
+                REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
+                request_body,
+                mgmt_handlers.schedule_op,
+                timeout=timeout,
+            )
+
+    def cancel_scheduled_messages(self, sequence_numbers, **kwargs):
+        # type: (Union[int, List[int]], Any) -> None
+        """
+        Cancel one or more messages that have previously been scheduled and are still pending.
+
+        :param sequence_numbers: The sequence numbers of the scheduled messages.
+        :type sequence_numbers: int or list[int]
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
+        :rtype: None
+        :raises: ~azure.servicebus.exceptions.ServiceBusError if messages cancellation failed due to message already
+         cancelled or enqueued.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START cancel_scheduled_messages]
+                :end-before: [END cancel_scheduled_messages]
+                :language: python
+                :dedent: 4
+                :caption: Cancelling messages scheduled to be sent in future
+        """
+        self._check_live()
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
+        if isinstance(sequence_numbers, int):
+            numbers = [types.AMQPLong(sequence_numbers)]
+        else:
+            numbers = [types.AMQPLong(s) for s in sequence_numbers]
+        if len(numbers) == 0:
+            return None  # no-op on empty list.
+        request_body = {MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray(numbers)}
+        return self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
+            request_body,
+            mgmt_handlers.default,
+            timeout=timeout,
+        )
+
+    def send_messages(self, message, **kwargs):
+        # type: (Union[ServiceBusMessage, ServiceBusMessageBatch, List[ServiceBusMessage]], Any) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         If a list of messages was provided, attempts to send them as a single batch, throwing a
         `ValueError` if they cannot fit in a single batch.
 
         :param message: The ServiceBus message to be sent.
-        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage or list[~azure.servicebus.Message]
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :type message: Union[~azure.servicebus.ServiceBusMessage,~azure.servicebus.ServiceBusMessageBatch,
+         list[~azure.servicebus.ServiceBusMessage]]
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
         :raises:
                 :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
-                :class: ~azure.servicebus.exceptions.MessageContentTooLarge if the size of the message is over
+                :class: ~azure.servicebus.exceptions.MessageSizeExceededError if the size of the message is over
                   service bus frame size limit.
-                :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to send
                 :class: ~azure.servicebus.exceptions.ServiceBusError when other errors happen such as connection
                  error, authentication error, and any unexpected errors.
                  It's also the top-level root class of above errors.
@@ -349,38 +368,63 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
-        messages = create_messages_from_dicts_if_needed(message, Message)
+        
+        self._check_live()
+        messages = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        message = transform_messages_to_sendable_if_needed(messages)
-        try:
-            batch = self.create_batch()
-            batch._from_list(message)  # pylint: disable=protected-access
-            message = batch
-        except TypeError:  # Message was not a list or generator.
-            pass
-        if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
-            raise ValueError("A BatchMessage or list of Message must have at least one Message")
-        if not isinstance(message, BatchMessage) and not isinstance(message, Message):
-            raise TypeError("Can only send azure.servicebus.<BatchMessage,Message> or lists of Messages.")
 
-        self._do_retryable_operation(
-            self._send,
-            message=message,
-            timeout=timeout,
-            operation_requires_timeout=True,
-            require_last_exception=True
-        )
+        with send_trace_context_manager() as send_span:
+            # Ensure message is sendable (not a ReceivedMessage), and if needed (a list) is batched. Adds tracing.
+            message = transform_messages_to_sendable_if_needed(message)
+            try:
+                for each_message in iter(message):  # type: ignore # Ignore type (and below) as it will except if wrong.
+                    add_link_to_send(each_message, send_span)
+                batch = self.create_message_batch()
+                batch._from_list(message, send_span)  # type: ignore # pylint: disable=protected-access
+                message = batch
+            except TypeError:  # Message was not a list or generator. Do needed tracing.
+                if isinstance(message, ServiceBusMessageBatch):
+                    for (
+                        batch_message
+                    ) in message.message._body_gen:  # pylint: disable=protected-access
+                        add_link_to_send(batch_message, send_span)
+                elif isinstance(message, ServiceBusMessage):
+                    trace_message(message, send_span)
+                    add_link_to_send(message, send_span)
 
-    def create_batch(self, max_size_in_bytes=None):
-        # type: (int) -> BatchMessage
-        """Create a BatchMessage object with the max size of all content being constrained by max_size_in_bytes.
-        The max_size should be no greater than the max allowed message size defined by the service.
+            if (
+                isinstance(message, ServiceBusMessageBatch) and len(message) == 0
+            ):  # pylint: disable=len-as-condition
+                return  # Short circuit noop if an empty list or batch is provided.
+            if not isinstance(message, ServiceBusMessageBatch) and not isinstance(
+                message, ServiceBusMessage
+            ):
+                raise TypeError(
+                    "Can only send azure.servicebus.<ServiceBusMessageBatch,ServiceBusMessage> "
+                    "or lists of ServiceBusMessage."
+                )
 
-        :param int max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold. By
-         default, the value is determined by your Service Bus tier.
-        :rtype: ~azure.servicebus.BatchMessage
+            if send_span:
+                self._add_span_request_attributes(send_span)
+
+            self._do_retryable_operation(
+                self._send,
+                message=message,
+                timeout=timeout,
+                operation_requires_timeout=True,
+                require_last_exception=True,
+            )
+
+    def create_message_batch(self, max_size_in_bytes=None):
+        # type: (Optional[int]) -> ServiceBusMessageBatch
+        """Create a ServiceBusMessageBatch object with the max size of all content being constrained by
+        max_size_in_bytes. The max_size should be no greater than the max allowed message size defined by the service.
+
+        :param Optional[int] max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object can
+         hold. By default, the value is determined by your Service Bus tier.
+        :rtype: ~azure.servicebus.ServiceBusMessageBatch
 
         .. admonition:: Example:
 
@@ -389,9 +433,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :end-before: [END create_batch_sync]
                 :language: python
                 :dedent: 4
-                :caption: Create BatchMessage object within limited size
+                :caption: Create ServiceBusMessageBatch object within limited size
 
         """
+        self._check_live()
         if not self._max_message_size_on_link:
             self._open_with_retry()
 
@@ -402,6 +447,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 )
             )
 
-        return BatchMessage(
+        return ServiceBusMessageBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link)
         )

@@ -1,5 +1,11 @@
 # Release History
 
+## 7.2.0.46 (2020-10-29)
+
+**Features**
+
+  - Added `update_partition_load` method to update the loads of provided partitions.
+
 ## 7.1.0.45 (2020-05-14)
 
 **Bugfix**

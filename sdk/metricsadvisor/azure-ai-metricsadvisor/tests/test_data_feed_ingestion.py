@@ -51,7 +51,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
     def test_refresh_data_feed_ingestion(self):
         self.admin_client.refresh_data_feed_ingestion(
             self.data_feed_id,
-            start_time=datetime.datetime(2019, 10, 1, tzinfo=tzutc()),
-            end_time=datetime.datetime(2020, 10, 3, tzinfo=tzutc()),
+            start_time=datetime.datetime(2020, 10, 1, tzinfo=tzutc()),
+            end_time=datetime.datetime(2020, 10, 2, tzinfo=tzutc()),
         )
 

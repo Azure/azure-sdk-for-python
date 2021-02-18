@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class LoadBalancerLoadBalancingRulesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         resource_group_name: str,
         load_balancer_name: str,
         **kwargs
-    ) -> AsyncIterable["models.LoadBalancerLoadBalancingRuleListResult"]:
+    ) -> AsyncIterable["_models.LoadBalancerLoadBalancingRuleListResult"]:
         """Gets all the load balancing rules in a load balancer.
 
         :param resource_group_name: The name of the resource group.
@@ -58,7 +58,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.LoadBalancerLoadBalancingRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LoadBalancerLoadBalancingRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancerLoadBalancingRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -121,7 +121,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         load_balancer_name: str,
         load_balancing_rule_name: str,
         **kwargs
-    ) -> "models.LoadBalancingRule":
+    ) -> "_models.LoadBalancingRule":
         """Gets the specified load balancer load balancing rule.
 
         :param resource_group_name: The name of the resource group.
@@ -135,7 +135,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.LoadBalancingRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LoadBalancingRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancingRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -1,0 +1,83 @@
+interactions:
+- request:
+    body: '[]'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"InvalidArgument","message":"Operation failed as models
+        provided was empty or of a type that is not supported.. Check that your Model
+        Array contains at least one item and it is of a supported type. See link(http://aka.ms/ADTv2Models)
+        for details."}}'
+    headers:
+      content-length: '266'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:10:14 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 400
+      message: Bad Request
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+- request:
+    body: '[{}]'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '4'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"DTDLParserError","message":"None of the models in
+        this request could be created due to a problem with one or more models: No
+        @context specifier in top-level JSON object. Add a ''@context'' property whose
+        value is the string ''dtmi:dtdl:context;2''.. See model documentation(http://aka.ms/ADTv2Models)
+        for supported format."}}'
+    headers:
+      content-length: '339'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:10:14 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 400
+      message: Bad Request
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"BadRequest","message":"A non-empty request body is
+        required."}}'
+    headers:
+      content-length: '81'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:10:14 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 400
+      message: Bad Request
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+version: 1

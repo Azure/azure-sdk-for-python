@@ -75,7 +75,7 @@ def test_exceptions_do_not_expose_secrets():
 
 @pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
 def test_request_url(authority):
-    tenant_id = "expected_tenant"
+    tenant_id = "expected-tenant"
     parsed_authority = urlparse(authority)
     expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
 

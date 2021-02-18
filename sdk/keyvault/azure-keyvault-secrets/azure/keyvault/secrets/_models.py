@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ._shared import parse_vault_id
+from ._shared import parse_key_vault_id
 
 try:
     from typing import TYPE_CHECKING
@@ -23,7 +23,7 @@ class SecretProperties(object):
         # type: (_models.SecretAttributes, str, **Any) -> None
         self._attributes = attributes
         self._id = vault_id
-        self._vault_id = parse_vault_id(vault_id)
+        self._vault_id = parse_key_vault_id(vault_id)
         self._content_type = kwargs.get("content_type", None)
         self._key_id = kwargs.get("key_id", None)
         self._managed = kwargs.get("managed", None)

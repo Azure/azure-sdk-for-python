@@ -18,8 +18,8 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
     """Base of search indexing buffered sender"""
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
     _DEFAULT_AUTO_FLUSH_INTERVAL = 60
-    _DEFAULT_BATCH_SIZE = 500
-    _DEFAULT_MAX_RETRY_COUNT = 3
+    _DEFAULT_INITIAL_BATCH_ACTION_COUNT = 512
+    _DEFAULT_MAX_RETRIES = 3
 
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, AzureKeyCredential, **Any) -> None
@@ -27,11 +27,11 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
         api_version = kwargs.pop('api_version', None)
         validate_api_version(api_version)
         self._auto_flush = kwargs.pop('auto_flush', True)
-        self._batch_size = kwargs.pop('batch_size', self._DEFAULT_BATCH_SIZE)
+        self._batch_action_count = kwargs.pop('initial_batch_action_count', self._DEFAULT_INITIAL_BATCH_ACTION_COUNT)
         self._auto_flush_interval = kwargs.pop('auto_flush_interval', self._DEFAULT_AUTO_FLUSH_INTERVAL)
         if self._auto_flush_interval <= 0:
-            self._auto_flush_interval = 86400
-        self._max_retry_count = kwargs.pop('max_retry_count', self._DEFAULT_MAX_RETRY_COUNT)
+            raise ValueError("auto_flush_interval must be a positive number.")
+        self._max_retries_per_action = kwargs.pop('max_retries_per_action ', self._DEFAULT_MAX_RETRIES)
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._index_key = None
@@ -41,8 +41,3 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
         self._on_error = kwargs.pop('on_error', None)
         self._on_remove = kwargs.pop('on_remove', None)
         self._retry_counter = {}
-
-    @property
-    def batch_size(self):
-        # type: () -> int
-        return self._batch_size

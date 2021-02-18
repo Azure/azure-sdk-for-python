@@ -31,6 +31,7 @@ class MgmtPowerBIDedicatedTest(AzureMgmtTestCase):
             azure.mgmt.powerbidedicated.PowerBIDedicatedManagementClient
         )
     
+    @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_powerbidedicated(self, resource_group):
 

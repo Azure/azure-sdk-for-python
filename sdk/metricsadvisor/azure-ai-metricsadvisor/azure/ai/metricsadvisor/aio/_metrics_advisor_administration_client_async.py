@@ -18,6 +18,7 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from .._generated.aio import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
 from .._generated.models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
@@ -39,8 +40,8 @@ from .._helpers import (
 )
 from ..models import (
     DataFeed,
-    EmailHook,
-    WebHook,
+    EmailNotificationHook,
+    WebNotificationHook,
     AnomalyAlertConfiguration,
     AnomalyDetectionConfiguration,
     DataFeedIngestionProgress,
@@ -49,7 +50,7 @@ from ..models import (
     DataFeedGranularity,
     DataFeedSchema,
     DataFeedIngestionSettings,
-    Hook,
+    NotificationHook,
     MetricDetectionCondition
 )
 from .._metrics_advisor_administration_client import (
@@ -65,8 +66,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :param credential: An instance of ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential.
-        Requires both subscription key and API key.
-    :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential
+        which requires both subscription key and API key. Or an object which can provide an access
+        token for the vault, such as a credential from :mod:`azure.identity`
+    :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
 
     .. admonition:: Example:
 
@@ -89,12 +91,27 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         self._endpoint = endpoint
 
-        self._client = _ClientAsync(
-            endpoint=endpoint,
-            sdk_moniker=SDK_MONIKER,
-            authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
-            **kwargs
-        )
+        if isinstance(credential, MetricsAdvisorKeyCredential):
+            self._client = _ClientAsync(
+                endpoint=endpoint,
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
+                **kwargs
+            )
+        else:
+            if hasattr(credential, "get_token"):
+                credential_scopes = kwargs.pop('credential_scopes',
+                                               ['https://cognitiveservices.azure.com/.default'])
+                credential_policy = AsyncBearerTokenCredentialPolicy(credential, *credential_scopes)
+            else:
+                raise TypeError("Please provide an instance from azure-identity "
+                                "or a class that implement the 'get_token protocol")
+            self._client = _ClientAsync(
+                endpoint=endpoint,
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=credential_policy,
+                **kwargs
+            )
 
     def __repr__(self):
         # type: () -> str
@@ -115,7 +132,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         await self._client.__aexit__()
 
     @distributed_trace_async
-    async def create_anomaly_alert_configuration(
+    async def create_alert_configuration(
             self, name: str,
             metric_alert_configurations: List[MetricAlertConfiguration],
             hook_ids: List[str],
@@ -138,9 +155,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
-                :start-after: [START create_anomaly_alert_config_async]
-                :end-before: [END create_anomaly_alert_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START create_alert_config_async]
+                :end-before: [END create_alert_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Create an anomaly alert configuration
@@ -162,7 +179,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
         response_headers = cast(dict, response_headers)
         config_id = response_headers["Location"].split("configurations/")[1]
-        return await self.get_anomaly_alert_configuration(config_id)
+        return await self.get_alert_configuration(config_id)
 
     @distributed_trace_async
     async def create_data_feed(
@@ -229,18 +246,18 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace_async
     async def create_hook(
-            self, name: str,
-            hook: Union[EmailHook, WebHook],
+            self, hook: Union[EmailNotificationHook, WebNotificationHook],
             **kwargs: Any
-    ) -> Union[Hook, EmailHook, WebHook]:
+    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         """Create a new email or web hook.
 
-        :param str name: The name for the hook.
-        :param hook: An email or web hook
-        :type hook: Union[~azure.ai.metricsadvisor.models.EmailHook, ~azure.ai.metricsadvisor.models.WebHook]
-        :return: EmailHook or WebHook
-        :rtype: Union[~azure.ai.metricsadvisor.models.Hook, ~azure.ai.metricsadvisor.models.EmailHook,
-            ~azure.ai.metricsadvisor.models.WebHook]
+        :param hook: An email or web hook to create
+        :type hook: Union[~azure.ai.metricsadvisor.models.EmailNotificationHook,
+            ~azure.ai.metricsadvisor.models.WebNotificationHook]
+        :return: EmailNotificationHook or WebNotificationHook
+        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
+            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
+            ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -250,15 +267,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :end-before: [END create_hook_async]
                 :language: python
                 :dedent: 4
-                :caption: Create a hook
+                :caption: Create a notification hook
         """
 
         hook_request = None
         if hook.hook_type == "Email":
-            hook_request = hook._to_generated(name)
+            hook_request = hook._to_generated()
 
         if hook.hook_type == "Webhook":
-            hook_request = hook._to_generated(name)
+            hook_request = hook._to_generated()
 
         response_headers = await self._client.create_hook(
             hook_request,  # type: ignore
@@ -270,7 +287,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return await self.get_hook(hook_id)
 
     @distributed_trace_async
-    async def create_metric_anomaly_detection_configuration(
+    async def create_detection_configuration(
             self, name: str,
             metric_id: str,
             whole_series_detection_condition: MetricDetectionCondition,
@@ -296,13 +313,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_detection_configuration_async.py
-                :start-after: [START create_anomaly_detection_config_async]
-                :end-before: [END create_anomaly_detection_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START create_detection_config_async]
+                :end-before: [END create_detection_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Create an anomaly detection configuration
         """
+
         description = kwargs.pop("description", None)
         series_group_detection_conditions = kwargs.pop("series_group_detection_conditions", None)
         series_detection_conditions = kwargs.pop("series_detection_conditions", None)
@@ -326,7 +344,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
         response_headers = cast(dict, response_headers)
         config_id = response_headers["Location"].split("configurations/")[1]
-        return await self.get_metric_anomaly_detection_configuration(config_id)
+        return await self.get_detection_configuration(config_id)
 
     @distributed_trace_async
     async def get_data_feed(self, data_feed_id: str, **kwargs: Any) -> DataFeed:
@@ -355,7 +373,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return DataFeed._from_generated(data_feed)
 
     @distributed_trace_async
-    async def get_anomaly_alert_configuration(
+    async def get_alert_configuration(
             self, alert_configuration_id: str,
             **kwargs: Any
     ) -> AnomalyAlertConfiguration:
@@ -369,9 +387,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
-                :start-after: [START get_anomaly_alert_config_async]
-                :end-before: [END get_anomaly_alert_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START get_alert_config_async]
+                :end-before: [END get_alert_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Get a single anomaly alert configuration by its ID
@@ -381,7 +399,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return AnomalyAlertConfiguration._from_generated(config)
 
     @distributed_trace_async
-    async def get_metric_anomaly_detection_configuration(
+    async def get_detection_configuration(
             self, detection_configuration_id: str,
             **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
@@ -395,9 +413,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_detection_configuration_async.py
-                :start-after: [START get_anomaly_detection_config_async]
-                :end-before: [END get_anomaly_detection_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START get_detection_config_async]
+                :end-before: [END get_detection_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Get a single anomaly detection configuration by its ID
@@ -411,14 +429,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         self,
         hook_id: str,
         **kwargs: Any
-    ) -> Union[Hook, EmailHook, WebHook]:
+    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         """Get a web or email hook by its id.
 
         :param hook_id: Hook unique ID.
         :type hook_id: str
-        :return: EmailHook or Webhook
-        :rtype: Union[~azure.ai.metricsadvisor.models.Hook, ~azure.ai.metricsadvisor.models.EmailHook,
-            ~azure.ai.metricsadvisor.models.WebHook]
+        :return: EmailNotificationHook or WebNotificationHook
+        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
+            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
+            ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -428,13 +447,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :end-before: [END get_hook_async]
                 :language: python
                 :dedent: 4
-                :caption: Get a hook by its ID
+                :caption: Get a notification hook by its ID
         """
 
         hook = await self._client.get_hook(hook_id, **kwargs)
         if hook.hook_type == "Email":
-            return EmailHook._from_generated(hook)
-        return WebHook._from_generated(hook)
+            return EmailNotificationHook._from_generated(hook)
+        return WebNotificationHook._from_generated(hook)
 
     @distributed_trace_async
     async def get_data_feed_ingestion_progress(
@@ -504,7 +523,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
     @distributed_trace_async
-    async def delete_anomaly_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> None:
+    async def delete_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> None:
         """Delete an anomaly alert configuration by its ID.
 
         :param alert_configuration_id: anomaly alert configuration unique id.
@@ -515,9 +534,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
-                :start-after: [START delete_anomaly_alert_config_async]
-                :end-before: [END delete_anomaly_alert_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START delete_alert_config_async]
+                :end-before: [END delete_alert_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Delete an anomaly alert configuration by its ID
@@ -526,7 +545,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         await self._client.delete_anomaly_alerting_configuration(alert_configuration_id, **kwargs)
 
     @distributed_trace_async
-    async def delete_metric_anomaly_detection_configuration(
+    async def delete_detection_configuration(
             self, detection_configuration_id: str,
             **kwargs: Any
     ) -> None:
@@ -540,9 +559,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_detection_configuration_async.py
-                :start-after: [START delete_anomaly_detection_config_async]
-                :end-before: [END delete_anomaly_detection_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START delete_detection_config_async]
+                :end-before: [END delete_detection_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Delete an anomaly detection configuration by its ID
@@ -598,7 +617,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     async def update_data_feed(
             self, data_feed: Union[str, DataFeed],
             **kwargs: Any
-    ) -> DataFeed:
+    ) -> None:
         """Update a data feed. Either pass the entire DataFeed object with the chosen updates
         or the ID to your data feed with updates passed via keyword arguments. If you pass both
         the DataFeed object and keyword arguments, the keyword arguments will take precedence.
@@ -630,9 +649,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DataSourceMissingDataPointFillType
         :keyword float custom_fill_value: The value of fill missing point for anomaly detection
             if "CustomValue" fill type is specified.
-        :keyword list[str] admins: Data feed administrators.
+        :keyword list[str] admin_emails: Data feed administrator emails.
         :keyword str data_feed_description: Data feed description.
-        :keyword list[str] viewers: Data feed viewer.
+        :keyword list[str] viewer_emails: Data feed viewer emails.
         :keyword access_mode: Data feed access mode. Possible values include:
             "Private", "Public". Default value: "Private".
         :paramtype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
@@ -644,8 +663,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
             InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
             ElasticsearchDataFeed]
-        :return: DataFeed
-        :rtype: ~azure.ai.metricsadvisor.models.DataFeed
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -675,8 +693,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         update_kwargs["fillMissingPointType"] = kwargs.pop("fill_type", unset)
         update_kwargs["fillMissingPointValue"] = kwargs.pop("custom_fill_value", unset)
         update_kwargs["viewMode"] = kwargs.pop("access_mode", unset)
-        update_kwargs["admins"] = kwargs.pop("admins", unset)
-        update_kwargs["viewers"] = kwargs.pop("viewers", unset)
+        update_kwargs["admins"] = kwargs.pop("admin_emails", unset)
+        update_kwargs["viewers"] = kwargs.pop("viewer_emails", unset)
         update_kwargs["status"] = kwargs.pop("status", unset)
         update_kwargs["actionLinkTemplate"] = kwargs.pop("action_link_template", unset)
         update_kwargs["dataSourceParameter"] = kwargs.pop("source", unset)
@@ -692,15 +710,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             data_feed_patch_type = DATA_FEED_PATCH[data_feed.source.data_source_type]
             data_feed_patch = data_feed._to_generated_patch(data_feed_patch_type, update)
 
-        await self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
-        return await self.get_data_feed(data_feed_id)
+        return await self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
 
     @distributed_trace_async
-    async def update_anomaly_alert_configuration(
+    async def update_alert_configuration(
         self,
         alert_configuration: Union[str, AnomalyAlertConfiguration],
         **kwargs: Any
-    ) -> AnomalyAlertConfiguration:
+    ) -> None:
         """Update anomaly alerting configuration. Either pass the entire AnomalyAlertConfiguration object
         with the chosen updates or the ID to your alert configuration with updates passed via keyword arguments.
         If you pass both the AnomalyAlertConfiguration object and keyword arguments, the keyword arguments
@@ -717,15 +734,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :paramtype cross_metrics_operator: str or
             ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
         :keyword str description: Anomaly alert configuration description.
-        :return: AnomalyAlertConfiguration
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
-                :start-after: [START update_anomaly_alert_config_async]
-                :end-before: [END update_anomaly_alert_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START update_alert_config_async]
+                :end-before: [END update_alert_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Update an existing anomaly alert configuration
@@ -754,19 +770,18 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 description=update.pop("description", None),
             )
 
-        await self._client.update_anomaly_alerting_configuration(
+        return await self._client.update_anomaly_alerting_configuration(
             alert_configuration_id,
             alert_configuration_patch,
             **kwargs
         )
-        return await self.get_anomaly_alert_configuration(alert_configuration_id)
 
     @distributed_trace_async
-    async def update_metric_anomaly_detection_configuration(
+    async def update_detection_configuration(
         self,
         detection_configuration: Union[str, AnomalyDetectionConfiguration],
         **kwargs: Any
-    ) -> AnomalyDetectionConfiguration:
+    ) -> None:
         """Update anomaly metric detection configuration. Either pass the entire AnomalyDetectionConfiguration object
         with the chosen updates or the ID to your detection configuration with updates passed via keyword arguments.
         If you pass both the AnomalyDetectionConfiguration object and keyword arguments, the keyword arguments
@@ -793,9 +808,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_detection_configuration_async.py
-                :start-after: [START update_anomaly_detection_config_async]
-                :end-before: [END update_anomaly_detection_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START update_detection_config_async]
+                :end-before: [END update_detection_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Update an existing anomaly detection configuration
@@ -824,40 +839,39 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 series_detection_conditions=update.pop("seriesOverrideConfigurations", None)
             )
 
-        await self._client.update_anomaly_detection_configuration(
+        return await self._client.update_anomaly_detection_configuration(
             detection_configuration_id,
             detection_config_patch,
             **kwargs
         )
-        return await self.get_metric_anomaly_detection_configuration(detection_configuration_id)
 
     @distributed_trace_async
     async def update_hook(
         self,
-        hook: Union[str, EmailHook, WebHook],
+        hook: Union[str, EmailNotificationHook, WebNotificationHook],
         **kwargs: Any
-    ) -> Union[Hook, EmailHook, WebHook]:
-        """Update a hook. Either pass the entire EmailHook or WebHook object with the chosen updates, or the
-        ID to your hook configuration with the updates passed via keyword arguments.
+    ) -> None:
+        """Update a hook. Either pass the entire EmailNotificationHook or WebNotificationHook object with the
+        chosen updates, or the ID to your hook configuration with the updates passed via keyword arguments.
         If you pass both the hook object and keyword arguments, the keyword arguments will take precedence.
 
         :param hook: An email or web hook or the ID to the hook. If an ID is passed, you must pass `hook_type`.
-        :type hook: Union[str, ~azure.ai.metricsadvisor.models.EmailHook, ~azure.ai.metricsadvisor.models.WebHook]
+        :type hook: Union[str, ~azure.ai.metricsadvisor.models.EmailNotificationHook,
+            ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :keyword str hook_type: The hook type. Possible values are "Email" or "Web". Must be passed if only the
             hook ID is provided.
         :keyword str name: Hook unique name.
         :keyword str description: Hook description.
         :keyword str external_link: Hook external link.
-        :keyword list[str] emails_to_alert: Email TO: list. Only should be passed to update EmailHook.
+        :keyword list[str] emails_to_alert: Email TO: list. Only should be passed to update EmailNotificationHook.
         :keyword str endpoint: API address, will be called when alert is triggered, only support
-            POST method via SSL. Only should be passed to update WebHook.
-        :keyword str username: basic authentication. Only should be passed to update WebHook.
-        :keyword str password: basic authentication. Only should be passed to update WebHook.
-        :keyword str certificate_key: client certificate. Only should be passed to update WebHook.
-        :keyword str certificate_password: client certificate password. Only should be passed to update WebHook.
-        :return: EmailHook or WebHook
-        :rtype: Union[~azure.ai.metricsadvisor.models.Hook, ~azure.ai.metricsadvisor.models.EmailHook,
-            ~azure.ai.metricsadvisor.models.WebHook]
+            POST method via SSL. Only should be passed to update WebNotificationHook.
+        :keyword str username: basic authentication. Only should be passed to update WebNotificationHook.
+        :keyword str password: basic authentication. Only should be passed to update WebNotificationHook.
+        :keyword str certificate_key: client certificate. Only should be passed to update WebNotificationHook.
+        :keyword str certificate_password: client certificate password. Only should be passed to update
+            WebNotificationHook.
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -867,7 +881,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :end-before: [END update_hook_async]
                 :language: python
                 :dedent: 4
-                :caption: Update an existing hook
+                :caption: Update an existing notification hook
         """
 
         unset = object()
@@ -895,7 +909,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         else:
             hook_id = hook.id
             if hook.hook_type == "Email":
-                hook = cast(EmailHook, hook)
+                hook = cast(EmailNotificationHook, hook)
                 hook_patch = hook._to_generated_patch(
                     name=update.pop("hookName", None),
                     description=update.pop("description", None),
@@ -904,7 +918,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 )
 
             elif hook.hook_type == "Webhook":
-                hook = cast(WebHook, hook)
+                hook = cast(WebNotificationHook, hook)
                 hook_patch = hook._to_generated_patch(
                     name=update.pop("hookName", None),
                     description=update.pop("description", None),
@@ -916,25 +930,24 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                     certificate_password=update.pop("certificatePassword", None)
                 )
 
-        await self._client.update_hook(
+        return await self._client.update_hook(
             hook_id,
             hook_patch,
             **kwargs
         )
-        return await self.get_hook(hook_id)
 
     @distributed_trace
     def list_hooks(
         self,
         **kwargs: Any
-    ) -> AsyncItemPaged[Union[Hook, EmailHook, WebHook]]:
+    ) -> AsyncItemPaged[Union[NotificationHook, EmailNotificationHook, WebNotificationHook]]:
         """List all hooks.
 
         :keyword str hook_name: filter hook by its name.
         :keyword int skip:
-        :return: Pageable containing EmailHook and WebHook
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[Union[~azure.ai.metricsadvisor.models.Hook,
-            ~azure.ai.metricsadvisor.models.EmailHook, ~azure.ai.metricsadvisor.models.WebHook]]
+        :return: Pageable containing EmailNotificationHook and WebNotificationHook
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[Union[~azure.ai.metricsadvisor.models.NotificationHook,
+            ~azure.ai.metricsadvisor.models.EmailNotificationHook, ~azure.ai.metricsadvisor.models.WebNotificationHook]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -944,15 +957,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :end-before: [END list_hooks_async]
                 :language: python
                 :dedent: 4
-                :caption: List all the hooks under an account
+                :caption: List all the notification hooks under an account
         """
         hook_name = kwargs.pop('hook_name', None)
         skip = kwargs.pop('skip', None)
 
         def _convert_to_hook_type(hook):
             if hook.hook_type == "Email":
-                return EmailHook._from_generated(hook)
-            return WebHook._from_generated(hook)
+                return EmailNotificationHook._from_generated(hook)
+            return WebNotificationHook._from_generated(hook)
 
         return self._client.list_hooks(  # type: ignore
             hook_name=hook_name,
@@ -1010,7 +1023,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
     @distributed_trace
-    def list_anomaly_alert_configurations(
+    def list_alert_configurations(
         self,
         detection_configuration_id: str,
         **kwargs: Any
@@ -1025,9 +1038,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
-                :start-after: [START list_anomaly_alert_configs_async]
-                :end-before: [END list_anomaly_alert_configs_async]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START list_alert_configs_async]
+                :end-before: [END list_alert_configs_async]
                 :language: python
                 :dedent: 4
                 :caption: List all anomaly alert configurations for specific anomaly detection configuration
@@ -1041,7 +1054,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
     @distributed_trace
-    def list_metric_anomaly_detection_configurations(
+    def list_detection_configurations(
         self,
         metric_id: str,
         **kwargs: Any
@@ -1056,9 +1069,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_detection_configuration_async.py
-                :start-after: [START list_anomaly_detection_configs_async]
-                :end-before: [END list_anomaly_detection_configs_async]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START list_detection_configs_async]
+                :end-before: [END list_detection_configs_async]
                 :language: python
                 :dedent: 4
                 :caption: List all anomaly detection configurations for a specific metric

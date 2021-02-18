@@ -7,7 +7,8 @@ import functools
 import logging
 import json
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.secrets.aio import SecretClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
@@ -204,7 +205,7 @@ class KeyVaultSecretTest(KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     async def test_backup_restore(self, client, **kwargs):
         secret_name = self.get_resource_name("secbak")
@@ -220,10 +221,13 @@ class KeyVaultSecretTest(KeyVaultTestCase):
         # delete secret
         await client.delete_secret(created_bundle.name)
 
+        # purge secret
+        await client.purge_deleted_secret(created_bundle.name)
+
         # restore secret
-        restored = await client.restore_secret_backup(secret_backup)
-        self.assertEqual(created_bundle.id, restored.id)
-        self._assert_secret_attributes_equal(created_bundle.properties, restored)
+        restore_function = functools.partial(client.restore_secret_backup, secret_backup)
+        restored_secret = await self._poll_until_no_exception(restore_function, expected_exception=ResourceExistsError)
+        self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -250,9 +254,9 @@ class KeyVaultSecretTest(KeyVaultTestCase):
             await client.recover_deleted_secret(secret_name)
 
         # validate the recovered secrets exist
-        await self._poll_until_no_exception(
-            client.get_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
-        )
+        for secret in secrets.keys():
+            get_function = functools.partial(client.get_secret, secret)
+            await self._poll_until_no_exception(get_function, expected_exception=ResourceNotFoundError)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -331,7 +335,7 @@ def test_service_headers_allowed_in_logs():
 
 
 def test_custom_hook_policy():
-    class CustomHookPolicy(object):
+    class CustomHookPolicy(SansIOHTTPPolicy):
         pass
 
     client = SecretClient("...", object(), custom_hook_policy=CustomHookPolicy())

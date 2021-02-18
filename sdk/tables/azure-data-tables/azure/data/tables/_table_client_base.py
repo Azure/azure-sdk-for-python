@@ -27,27 +27,28 @@ class TableClientBase(StorageAccountHostsMixin):
         account URL already has a SAS token, or the connection string already has shared
         access key values. The value can be a SAS token string, an account shared access
         key.
-    :type credential: Union[str,TokenCredential]
+    :type credential: str
 
     :returns: None
     """
 
     def __init__(
-            self, account_url,  # type: str
-            table_name,  # type: str
-            credential=None,  # type: str
-            **kwargs  # type: Any
+        self,
+        account_url,  # type: str
+        table_name,  # type: str
+        credential=None,  # type: str
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
 
         _validate_table_name(table_name)
 
         try:
-            if not account_url.lower().startswith('http'):
+            if not account_url.lower().startswith("http"):
                 account_url = "https://" + account_url
         except AttributeError:
             raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
+        parsed_url = urlparse(account_url.rstrip("/"))
         if not table_name:
             raise ValueError("Please specify a table name.")
         if not parsed_url.netloc:
@@ -55,11 +56,15 @@ class TableClientBase(StorageAccountHostsMixin):
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
-            raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
+            raise ValueError(
+                "You need to provide either a SAS token or an account shared key to authenticate."
+            )
 
         self.table_name = table_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(TableClientBase, self).__init__(parsed_url, service='table', credential=credential, **kwargs)
+        super(TableClientBase, self).__init__(
+            parsed_url, service="table", credential=credential, **kwargs
+        )
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -79,20 +84,3 @@ class TableClientBase(StorageAccountHostsMixin):
             raise ValueError(
                 'Too many access policies provided. The server does not support setting '
                 'more than 5 access policies on a single resource.')
-
-    def _parameter_filter_substitution(  # pylint: disable = R0201
-            self,
-            parameters,  # type: dict[str,str]
-            filter  # type: str  # pylint: disable = W0622
-    ):
-        """Replace user defined parameter in filter
-        :param parameters: User defined parameters
-        :param filter: Filter for querying
-        """
-        if parameters:
-            filter_start = filter.split('@')[0]
-            selected = filter.split('@')[1]
-            for key, value in parameters.items():
-                if key == selected:
-                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
-        return filter  # pylint: disable = W0622

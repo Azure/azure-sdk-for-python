@@ -1,7 +1,23 @@
 # Release History
 
-## 11.1.0b4 (Unreleased)
+## 11.1.1 (Unreleased)
 
+
+## 11.1.0 (2021-02-10)
+
+**Breaking Changes**
+
+- `IndexDocumentsBatch` does not support `enqueue_action` any longer. `enqueue_actions` takes a single action too.
+- `max_retries` of `SearchIndexingBufferedSender` is renamed to `max_retries_per_action`
+- `SearchClient` does not support `get_search_indexing_buffered_sender`
+
+## 11.1.0b4 (2020-11-10)
+
+**Features**
+
+- Added `get_search_indexing_buffered_sender` support for `SearchClient`
+- Added `initial_batch_action_count` support for `SearchIndexingBufferedSender`
+- Added `max_retries` support for `SearchIndexingBufferedSender`
 
 ## 11.1.0b3 (2020-10-06)
 

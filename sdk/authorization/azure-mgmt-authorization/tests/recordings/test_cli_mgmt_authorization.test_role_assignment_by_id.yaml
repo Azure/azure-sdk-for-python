@@ -1,0 +1,139 @@
+interactions:
+- request:
+    body: '{"properties": {"roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/e078ab98-ef3a-4c9a-aba7-12f5172b45d0",
+      "principalId": "123743cc-88ef-49ee-920e-13958fe5697d"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '233'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-authorization/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Authorization/roleAssignments/88888888-7000-0000-0000-000000000003?api-version=2018-01-01-preview
+  response:
+    body:
+      string: '{"properties":{"roleDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/e078ab98-ef3a-4c9a-aba7-12f5172b45d0","principalId":"123743cc-88ef-49ee-920e-13958fe5697d","principalType":"ServicePrincipal","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname","createdOn":"2020-11-23T07:34:59.1067752Z","updatedOn":"2020-11-23T07:34:59.1067752Z","createdBy":null,"updatedBy":"123743cc-88ef-49ee-920e-13958fe5697d"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Authorization/roleAssignments/88888888-7000-0000-0000-000000000003","type":"Microsoft.Authorization/roleAssignments","name":"88888888-7000-0000-0000-000000000003"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '903'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 23 Nov 2020 07:35:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      set-cookie:
+      - x-ms-gateway-slice=Production; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - x-ms-gateway-slice=Production
+      User-Agent:
+      - azsdk-python-azure-mgmt-authorization/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Authorization/roleAssignments/88888888-7000-0000-0000-000000000003?api-version=2018-01-01-preview
+  response:
+    body:
+      string: '{"properties":{"roleDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/e078ab98-ef3a-4c9a-aba7-12f5172b45d0","principalId":"123743cc-88ef-49ee-920e-13958fe5697d","principalType":"ServicePrincipal","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname","createdOn":"2020-11-23T07:34:59.1067752Z","updatedOn":"2020-11-23T07:34:59.4167510Z","createdBy":null,"updatedBy":"123743cc-88ef-49ee-920e-13958fe5697d"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Authorization/roleAssignments/88888888-7000-0000-0000-000000000003","type":"Microsoft.Authorization/roleAssignments","name":"88888888-7000-0000-0000-000000000003"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '903'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 23 Nov 2020 07:35:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      set-cookie:
+      - x-ms-gateway-slice=Production; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Cookie:
+      - x-ms-gateway-slice=Production
+      User-Agent:
+      - azsdk-python-azure-mgmt-authorization/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Authorization/roleAssignments/88888888-7000-0000-0000-000000000003?api-version=2018-01-01-preview
+  response:
+    body:
+      string: '{"properties":{"roleDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/e078ab98-ef3a-4c9a-aba7-12f5172b45d0","principalId":"123743cc-88ef-49ee-920e-13958fe5697d","principalType":"ServicePrincipal","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname","createdOn":"2020-11-23T07:34:59.1067752Z","updatedOn":"2020-11-23T07:34:59.4167510Z","createdBy":null,"updatedBy":"123743cc-88ef-49ee-920e-13958fe5697d"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.Authorization/roleAssignments/88888888-7000-0000-0000-000000000003","type":"Microsoft.Authorization/roleAssignments","name":"88888888-7000-0000-0000-000000000003"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '903'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 23 Nov 2020 07:35:03 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      set-cookie:
+      - x-ms-gateway-slice=Production; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
+    status:
+      code: 200
+      message: OK
+version: 1

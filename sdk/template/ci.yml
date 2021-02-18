@@ -10,7 +10,7 @@ trigger:
   paths:
     include:
     - sdk/template/
-    - eng/common/
+    - scripts/
 
 pr:
   branches:

@@ -1,0 +1,66 @@
+{
+    "chosen_version": "2015-07-01",
+    "total_api_version_list": ["2015-07-01"],
+    "client": {
+        "name": "AuthorizationManagementClient",
+        "filename": "_authorization_management_client",
+        "description": "Role based access control provides you a way to apply granular level policy administration down to individual resources or resource groups. These operations enable you to manage role definitions and role assignments. A role definition describes the set of actions that can be performed on resources. A role assignment grants access to Azure Active Directory users.",
+        "base_url": "\u0027https://management.azure.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": true,
+        "has_lro_operations": false,
+        "client_side_validation": false
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "The ID of the target subscription.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "The ID of the target subscription.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id"
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null
+    },
+    "operation_groups": {
+        "permissions": "PermissionsOperations",
+        "role_definitions": "RoleDefinitionsOperations",
+        "provider_operations_metadata": "ProviderOperationsMetadataOperations",
+        "global_administrator": "GlobalAdministratorOperations",
+        "role_assignments": "RoleAssignmentsOperations",
+        "classic_administrators": "ClassicAdministratorsOperations"
+    },
+    "operation_mixins": {
+    },
+    "sync_imports": "None",
+    "async_imports": "None"
+}

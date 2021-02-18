@@ -69,7 +69,7 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
 
             self.client = self.create_mgmt_client(CosmosDBManagementClient)
             group = self._get_resource_group(**kwargs)
-            cosmos_async_operation = self.client.database_accounts.create_or_update(
+            cosmos_async_operation = self.client.database_accounts.begin_create_or_update(
                 group.name,
                 name,
                 db_params

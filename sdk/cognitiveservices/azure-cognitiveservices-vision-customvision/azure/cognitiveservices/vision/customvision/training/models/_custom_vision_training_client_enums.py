@@ -65,6 +65,7 @@ class CustomVisionErrorCodes(str, Enum):
     bad_request_image_format = "BadRequestImageFormat"
     bad_request_image_size_bytes = "BadRequestImageSizeBytes"
     bad_request_image_dimensions = "BadRequestImageDimensions"
+    bad_request_image_aspect_ratio = "BadRequestImageAspectRatio"
     bad_request_image_exceeded_count = "BadRequestImageExceededCount"
     bad_request_training_not_needed = "BadRequestTrainingNotNeeded"
     bad_request_training_not_needed_but_training_pipeline_updated = "BadRequestTrainingNotNeededButTrainingPipelineUpdated"
@@ -76,9 +77,13 @@ class CustomVisionErrorCodes(str, Enum):
     bad_request_training_already_in_progress = "BadRequestTrainingAlreadyInProgress"
     bad_request_detection_training_not_allow_negative_tag = "BadRequestDetectionTrainingNotAllowNegativeTag"
     bad_request_invalid_email_address = "BadRequestInvalidEmailAddress"
+    bad_request_retired_domain_not_supported_for_training = "BadRequestRetiredDomainNotSupportedForTraining"
     bad_request_domain_not_supported_for_advanced_training = "BadRequestDomainNotSupportedForAdvancedTraining"
     bad_request_export_platform_not_supported_for_advanced_training = "BadRequestExportPlatformNotSupportedForAdvancedTraining"
     bad_request_reserved_budget_in_hours_not_enough_for_advanced_training = "BadRequestReservedBudgetInHoursNotEnoughForAdvancedTraining"
+    bad_request_custom_base_model_iteration_status_not_completed = "BadRequestCustomBaseModelIterationStatusNotCompleted"
+    bad_request_custom_base_model_domain_not_compatible = "BadRequestCustomBaseModelDomainNotCompatible"
+    bad_request_custom_base_model_architecture_retired = "BadRequestCustomBaseModelArchitectureRetired"
     bad_request_export_validation_failed = "BadRequestExportValidationFailed"
     bad_request_export_already_in_progress = "BadRequestExportAlreadyInProgress"
     bad_request_prediction_ids_missing = "BadRequestPredictionIdsMissing"
@@ -94,6 +99,7 @@ class CustomVisionErrorCodes(str, Enum):
     bad_request_operation_not_supported = "BadRequestOperationNotSupported"
     bad_request_invalid_artifact_uri = "BadRequestInvalidArtifactUri"
     bad_request_customer_managed_key_revoked = "BadRequestCustomerManagedKeyRevoked"
+    bad_request_invalid_uri = "BadRequestInvalidUri"
     bad_request_invalid = "BadRequestInvalid"
     unsupported_media_type = "UnsupportedMediaType"
     forbidden = "Forbidden"
@@ -143,6 +149,7 @@ class CustomVisionErrorCodes(str, Enum):
     error_prediction_storage = "ErrorPredictionStorage"
     error_region_proposal = "ErrorRegionProposal"
     error_unknown_base_model = "ErrorUnknownBaseModel"
+    error_server_time_out = "ErrorServerTimeOut"
     error_invalid = "ErrorInvalid"
 
 
@@ -159,6 +166,7 @@ class ExportPlatform(str, Enum):
     docker_file = "DockerFile"
     onnx = "ONNX"
     vaidk = "VAIDK"
+    open_vino = "OpenVino"
 
 
 class ExportStatus(str, Enum):
@@ -192,6 +200,8 @@ class ImageCreateStatus(str, Enum):
     error_region_limit_exceed = "ErrorRegionLimitExceed"
     error_unknown = "ErrorUnknown"
     error_negative_and_regular_tag_on_same_image = "ErrorNegativeAndRegularTagOnSameImage"
+    error_image_dimensions = "ErrorImageDimensions"
+    error_invalid_tag = "ErrorInvalidTag"
 
 
 class ImageMetadataUpdateStatus(str, Enum):

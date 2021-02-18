@@ -11,23 +11,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 01:07:20 GMT
+      - Fri, 18 Dec 2020 17:10:18 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:07:20 GMT
+      - Fri, 18 Dec 2020 17:10:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable7d0b1b23"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable7d0b1b23"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 01 Oct 2020 01:07:19 GMT
-      location: https://tablesteststorname.table.core.windows.net/Tables('uttable7d0b1b23')
+      date: Fri, 18 Dec 2020 17:10:18 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('uttable7d0b1b23')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -35,7 +35,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://tablesteststorname.table.core.windows.net/Tables
+    url: https://seankaneprim.table.core.windows.net/Tables
 - request:
     body: '{"PartitionKey": "pk7d0b1b23", "PartitionKey@odata.type": "Edm.String",
       "RowKey": "rk7d0b1b23", "RowKey@odata.type": "Edm.String", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa":
@@ -51,23 +51,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 01:07:20 GMT
+      - Fri, 18 Dec 2020 17:10:18 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:07:20 GMT
+      - Fri, 18 Dec 2020 17:10:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttable7d0b1b23
+    uri: https://fake_table_account.table.core.windows.net/uttable7d0b1b23
   response:
     body:
       string: '{"odata.error":{"code":"PropertyNameTooLong","message":{"lang":"en-US","value":"The
-        property name exceeds the maximum allowed length (255).\nRequestId:22fc9437-3002-005d-648f-972e65000000\nTime:2020-10-01T01:07:20.3903167Z"}}}'
+        property name exceeds the maximum allowed length (255).\nRequestId:b474760a-9002-0053-4a60-d5802d000000\nTime:2020-12-18T17:10:19.1080416Z"}}}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 01 Oct 2020 01:07:19 GMT
+      date: Fri, 18 Dec 2020 17:10:18 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -75,34 +75,34 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://tablesteststorname.table.core.windows.net/uttable7d0b1b23
+    url: https://seankaneprim.table.core.windows.net/uttable7d0b1b23
 - request:
     body: null
     headers:
       Accept:
       - application/json
       Date:
-      - Thu, 01 Oct 2020 01:07:20 GMT
+      - Fri, 18 Dec 2020 17:10:18 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:07:20 GMT
+      - Fri, 18 Dec 2020 17:10:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablesteststorname.table.core.windows.net/Tables('uttable7d0b1b23')
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttable7d0b1b23')
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 01 Oct 2020 01:07:19 GMT
+      date: Fri, 18 Dec 2020 17:10:18 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://tablesteststorname.table.core.windows.net/Tables('uttable7d0b1b23')
+    url: https://seankaneprim.table.core.windows.net/Tables('uttable7d0b1b23')
 version: 1

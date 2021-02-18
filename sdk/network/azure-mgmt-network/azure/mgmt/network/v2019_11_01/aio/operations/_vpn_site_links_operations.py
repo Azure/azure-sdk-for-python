@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class VpnSiteLinksOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class VpnSiteLinksOperations:
         vpn_site_name: str,
         vpn_site_link_name: str,
         **kwargs
-    ) -> "models.VpnSiteLink":
+    ) -> "_models.VpnSiteLink":
         """Retrieves the details of a VPN site link.
 
         :param resource_group_name: The resource group name of the VpnSite.
@@ -61,7 +61,7 @@ class VpnSiteLinksOperations:
         :rtype: ~azure.mgmt.network.v2019_11_01.models.VpnSiteLink
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnSiteLink"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnSiteLink"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -108,7 +108,7 @@ class VpnSiteLinksOperations:
         resource_group_name: str,
         vpn_site_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ListVpnSiteLinksResult"]:
+    ) -> AsyncIterable["_models.ListVpnSiteLinksResult"]:
         """Lists all the vpnSiteLinks in a resource group for a vpn site.
 
         :param resource_group_name: The resource group name of the VpnSite.
@@ -120,7 +120,7 @@ class VpnSiteLinksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_11_01.models.ListVpnSiteLinksResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVpnSiteLinksResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVpnSiteLinksResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

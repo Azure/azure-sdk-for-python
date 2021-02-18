@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Any, Dict
 
 try:
     from urllib.parse import urlparse, quote
@@ -12,14 +13,13 @@ except ImportError:
 
 import six
 
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob import BlobClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import process_storage_error
-from ._generated import DataLakeStorageClient
-from ._generated.models import StorageErrorException
+from ._generated import AzureDataLakeStorageRESTAPI
 from ._models import LocationMode, DirectoryProperties, AccessControlChangeResult, AccessControlChanges, \
-    AccessControlChangeCounters, AccessControlChangeFailure, DataLakeAclChangeFailedError
+    AccessControlChangeCounters, AccessControlChangeFailure
 from ._serialize import convert_dfs_url_to_blob_url, get_mod_conditions, \
     get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions, get_access_conditions
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
@@ -80,10 +80,13 @@ class PathClient(StorageAccountHostsMixin):
                                          _hosts=datalake_hosts, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
-        self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
-        self._datalake_client_for_blob_operation = DataLakeStorageClient(self._blob_client.url,
-                                                                         file_system_name, path_name,
-                                                                         pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, path=path_name,
+                                                   pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(
+            self._blob_client.url,
+            file_system=file_system_name,
+            path=path_name,
+            pipeline=self._pipeline)
 
     def __exit__(self, *args):
         self._blob_client.close()
@@ -196,7 +199,7 @@ class PathClient(StorageAccountHostsMixin):
             **kwargs)
         try:
             return self._client.path.create(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -247,7 +250,7 @@ class PathClient(StorageAccountHostsMixin):
         options = self._delete_path_options(**kwargs)
         try:
             return self._client.path.delete(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -331,7 +334,7 @@ class PathClient(StorageAccountHostsMixin):
         options = self._set_access_control_options(owner=owner, group=group, permissions=permissions, acl=acl, **kwargs)
         try:
             return self._client.path.set_access_control(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -394,7 +397,7 @@ class PathClient(StorageAccountHostsMixin):
         options = self._get_access_control_options(upn=upn, **kwargs)
         try:
             return self._client.path.get_properties(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -405,7 +408,7 @@ class PathClient(StorageAccountHostsMixin):
             'mode': mode,
             'force_flag': kwargs.pop('continue_on_failure', None),
             'timeout': kwargs.pop('timeout', None),
-            'continuation': kwargs.pop('continuation', None),
+            'continuation': kwargs.pop('continuation_token', None),
             'max_records': kwargs.pop('batch_size', None),
             'acl': acl,
             'cls': return_headers_and_deserialized}
@@ -429,7 +432,7 @@ class PathClient(StorageAccountHostsMixin):
         :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
             Callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
-        :keyword str continuation:
+        :keyword str continuation_token:
             Optional continuation token that can be used to resume previously stopped operation.
         :keyword int batch_size:
             Optional. If data set size exceeds batch size then operation will be split into multiple
@@ -451,6 +454,8 @@ class PathClient(StorageAccountHostsMixin):
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
+        :raises ~azure.core.exceptions.AzureError:
+            User can restart the operation using continuation_token field of AzureError if the token is available.
         """
         if not acl:
             raise ValueError("The Access Control List must be set for this operation")
@@ -478,7 +483,7 @@ class PathClient(StorageAccountHostsMixin):
         :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
             Callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
-        :keyword str continuation:
+        :keyword str continuation_token:
             Optional continuation token that can be used to resume previously stopped operation.
         :keyword int batch_size:
             Optional. If data set size exceeds batch size then operation will be split into multiple
@@ -500,6 +505,8 @@ class PathClient(StorageAccountHostsMixin):
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
+        :raises ~azure.core.exceptions.AzureError:
+            User can restart the operation using continuation_token field of AzureError if the token is available.
         """
         if not acl:
             raise ValueError("The Access Control List must be set for this operation")
@@ -526,7 +533,7 @@ class PathClient(StorageAccountHostsMixin):
         :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
             Callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
-        :keyword str continuation:
+        :keyword str continuation_token:
             Optional continuation token that can be used to resume previously stopped operation.
         :keyword int batch_size:
             Optional. If data set size exceeds batch size then operation will be split into multiple
@@ -548,6 +555,8 @@ class PathClient(StorageAccountHostsMixin):
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
+        :raises ~azure.core.exceptions.AzureError:
+            User can restart the operation using continuation_token field of AzureError if the token is available.
         """
         if not acl:
             raise ValueError("The Access Control List must be set for this operation")
@@ -613,8 +622,12 @@ class PathClient(StorageAccountHostsMixin):
                 failure_count=total_failure_count),
                 continuation=last_continuation_token
                 if total_failure_count > 0 and not continue_on_failure else current_continuation_token)
+        except HttpResponseError as error:
+            error.continuation_token = last_continuation_token
+            process_storage_error(error)
         except AzureError as error:
-            raise DataLakeAclChangeFailedError(error, error.message, last_continuation_token)
+            error.continuation_token = last_continuation_token
+            raise error
 
     def _rename_path_options(self, rename_source, content_settings=None, metadata=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
@@ -645,9 +658,8 @@ class PathClient(StorageAccountHostsMixin):
         options.update(kwargs)
         return options
 
-    def _rename_path(self, rename_source,
-                     **kwargs):
-        # type: (**Any) -> Dict[str, Any]
+    def _rename_path(self, rename_source, **kwargs):
+        # type: (str, **Any) -> Dict[str, Any]
         """
         Rename directory or file
 
@@ -707,7 +719,7 @@ class PathClient(StorageAccountHostsMixin):
             **kwargs)
         try:
             return self._client.path.create(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _get_path_properties(self, **kwargs):
@@ -751,6 +763,17 @@ class PathClient(StorageAccountHostsMixin):
         """
         path_properties = self._blob_client.get_blob_properties(**kwargs)
         return path_properties
+
+    def _exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a path exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return self._blob_client.exists(**kwargs)
 
     def set_metadata(self, metadata,  # type: Dict[str, str]
                      **kwargs):

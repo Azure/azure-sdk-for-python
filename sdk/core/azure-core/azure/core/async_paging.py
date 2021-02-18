@@ -35,6 +35,8 @@ from typing import (
     Awaitable,
 )
 
+from .exceptions import AzureError
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -93,8 +95,13 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
     async def __anext__(self):
         if self.continuation_token is None and self._did_a_call_already:
             raise StopAsyncIteration("End of paging")
+        try:
+            self._response = await self._get_next(self.continuation_token)
+        except AzureError as error:
+            if not error.continuation_token:
+                error.continuation_token = self.continuation_token
+            raise
 
-        self._response = await self._get_next(self.continuation_token)
         self._did_a_call_already = True
 
         self.continuation_token, self._current_page = await self._extract_data(

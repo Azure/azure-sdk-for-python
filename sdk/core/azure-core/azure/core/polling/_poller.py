@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import base64
+import logging
 import threading
 import uuid
 try:
@@ -32,6 +33,7 @@ except ImportError:
     from urllib.parse import urlparse
 
 from typing import TYPE_CHECKING, TypeVar, Generic
+from azure.core.exceptions import AzureError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
 
@@ -40,6 +42,8 @@ if TYPE_CHECKING:
 
 
 PollingReturnType = TypeVar("PollingReturnType")
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class PollingMethod(Generic[PollingReturnType]):
@@ -186,8 +190,17 @@ class LROPoller(Generic[PollingReturnType]):
         """
         try:
             self._polling_method.run()
-        except Exception as err: #pylint: disable=broad-except
-            self._exception = err
+        except AzureError as error:
+            if not error.continuation_token:
+                try:
+                    error.continuation_token = self.continuation_token()
+                except Exception as err:  # pylint: disable=broad-except
+                    _LOGGER.warning("Unable to retrieve continuation token: %s", err)
+                    error.continuation_token = None
+
+            self._exception = error
+        except Exception as error:  # pylint: disable=broad-except
+            self._exception = error
 
         finally:
             self._done.set()

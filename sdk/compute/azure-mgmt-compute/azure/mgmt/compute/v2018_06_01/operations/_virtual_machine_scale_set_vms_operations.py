@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class VirtualMachineScaleSetVMsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         resource_group_name,  # type: str
         vm_scale_set_name,  # type: str
         instance_id,  # type: str
-        vm_scale_set_vm_reimage_input=None,  # type: Optional["models.VirtualMachineReimageParameters"]
+        vm_scale_set_vm_reimage_input=None,  # type: Optional["_models.VirtualMachineReimageParameters"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -106,7 +106,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         resource_group_name,  # type: str
         vm_scale_set_name,  # type: str
         instance_id,  # type: str
-        vm_scale_set_vm_reimage_input=None,  # type: Optional["models.VirtualMachineReimageParameters"]
+        vm_scale_set_vm_reimage_input=None,  # type: Optional["_models.VirtualMachineReimageParameters"]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -154,7 +154,14 @@ class VirtualMachineScaleSetVMsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -263,7 +270,14 @@ class VirtualMachineScaleSetVMsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -373,7 +387,14 @@ class VirtualMachineScaleSetVMsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -392,11 +413,11 @@ class VirtualMachineScaleSetVMsOperations(object):
         resource_group_name,  # type: str
         vm_scale_set_name,  # type: str
         instance_id,  # type: str
-        parameters,  # type: "models.VirtualMachineScaleSetVM"
+        parameters,  # type: "_models.VirtualMachineScaleSetVM"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VirtualMachineScaleSetVM"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetVM"]
+        # type: (...) -> "_models.VirtualMachineScaleSetVM"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetVM"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -452,10 +473,10 @@ class VirtualMachineScaleSetVMsOperations(object):
         resource_group_name,  # type: str
         vm_scale_set_name,  # type: str
         instance_id,  # type: str
-        parameters,  # type: "models.VirtualMachineScaleSetVM"
+        parameters,  # type: "_models.VirtualMachineScaleSetVM"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.VirtualMachineScaleSetVM"]
+        # type: (...) -> LROPoller["_models.VirtualMachineScaleSetVM"]
         """Updates a virtual machine of a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -478,7 +499,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetVM"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetVM"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -504,7 +525,14 @@ class VirtualMachineScaleSetVMsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -612,7 +640,14 @@ class VirtualMachineScaleSetVMsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -633,7 +668,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VirtualMachineScaleSetVM"
+        # type: (...) -> "_models.VirtualMachineScaleSetVM"
         """Gets a virtual machine from a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -647,7 +682,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         :rtype: ~azure.mgmt.compute.v2018_06_01.models.VirtualMachineScaleSetVM
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetVM"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetVM"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -696,7 +731,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VirtualMachineScaleSetVMInstanceView"
+        # type: (...) -> "_models.VirtualMachineScaleSetVMInstanceView"
         """Gets the status of a virtual machine from a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -710,7 +745,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         :rtype: ~azure.mgmt.compute.v2018_06_01.models.VirtualMachineScaleSetVMInstanceView
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetVMInstanceView"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetVMInstanceView"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -761,7 +796,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.VirtualMachineScaleSetVMListResult"]
+        # type: (...) -> Iterable["_models.VirtualMachineScaleSetVMListResult"]
         """Gets a list of all virtual machines in a VM scale sets.
 
         :param resource_group_name: The name of the resource group.
@@ -782,7 +817,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2018_06_01.models.VirtualMachineScaleSetVMListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetVMListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSetVMListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -941,7 +976,14 @@ class VirtualMachineScaleSetVMsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1049,7 +1091,14 @@ class VirtualMachineScaleSetVMsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1157,7 +1206,14 @@ class VirtualMachineScaleSetVMsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1266,7 +1322,14 @@ class VirtualMachineScaleSetVMsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1374,7 +1437,14 @@ class VirtualMachineScaleSetVMsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1393,11 +1463,11 @@ class VirtualMachineScaleSetVMsOperations(object):
         resource_group_name,  # type: str
         vm_scale_set_name,  # type: str
         instance_id,  # type: str
-        parameters,  # type: "models.RunCommandInput"
+        parameters,  # type: "_models.RunCommandInput"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.RunCommandResult"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.RunCommandResult"]]
+        # type: (...) -> Optional["_models.RunCommandResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.RunCommandResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1451,10 +1521,10 @@ class VirtualMachineScaleSetVMsOperations(object):
         resource_group_name,  # type: str
         vm_scale_set_name,  # type: str
         instance_id,  # type: str
-        parameters,  # type: "models.RunCommandInput"
+        parameters,  # type: "_models.RunCommandInput"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.RunCommandResult"]
+        # type: (...) -> LROPoller["_models.RunCommandResult"]
         """Run command on a virtual machine in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -1476,7 +1546,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RunCommandResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RunCommandResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1502,7 +1572,14 @@ class VirtualMachineScaleSetVMsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

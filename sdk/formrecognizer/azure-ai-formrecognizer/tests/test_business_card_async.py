@@ -14,9 +14,9 @@ from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from azure.ai.formrecognizer import FormContentType, FormField, FormRecognizerApiVersion
-from testcase import GlobalFormRecognizerAccountPreparer
+from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from testcase import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
@@ -24,16 +24,16 @@ GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerCl
 
 class TestBusinessCardAsync(AsyncFormRecognizerTest):
 
-    @GlobalFormRecognizerAccountPreparer()
-    async def test_business_card_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    @FormRecognizerPreparer()
+    async def test_business_card_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         with open(self.business_card_jpg, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(ServiceRequestError):
-            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
+            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
                 poller = await client.begin_recognize_business_cards(myfile)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_authentication_successful_key(self, client):
         with open(self.business_card_jpg, "rb") as fd:
@@ -42,14 +42,14 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
             poller = await client.begin_recognize_business_cards(myfile)
             result = await poller.result()
 
-    @GlobalFormRecognizerAccountPreparer()
-    async def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+    @FormRecognizerPreparer()
+    async def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
             async with client:
                 poller = await client.begin_recognize_business_cards(b"xx", content_type="image/jpeg")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_passing_enum_content_type(self, client):
         with open(self.business_card_png, "rb") as fd:
@@ -62,7 +62,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
             result = await poller.result()
         self.assertIsNotNone(result)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_damaged_file_passed_as_bytes(self, client):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
@@ -72,7 +72,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
                     damaged_pdf
                 )
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
@@ -82,7 +82,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
                     damaged_pdf
                 )
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_damaged_file_passed_as_bytes_io(self, client):
         damaged_pdf = BytesIO(b"\x25\x50\x44\x46\x55\x55\x55")  # still has correct bytes to be recognized as PDF
@@ -92,7 +92,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
                     damaged_pdf
                 )
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_damaged_file_bytes_io_fails_autodetect(self, client):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
@@ -102,7 +102,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
                     damaged_pdf
                 )
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_blank_page(self, client):
 
@@ -115,7 +115,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
             result = await poller.result()
         self.assertIsNotNone(result)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_passing_bad_content_type_param_passed(self, client):
         with open(self.business_card_jpg, "rb") as fd:
@@ -127,14 +127,14 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
                     content_type="application/jpeg"
                 )
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_passing_unsupported_url_content_type(self, client):
         with self.assertRaises(TypeError):
             async with client:
                 poller = await client.begin_recognize_business_cards("https://badurl.jpg", content_type="application/json")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_auto_detect_unsupported_stream_content(self, client):
 
@@ -147,14 +147,14 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
                     myfile
                 )
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_stream_transform_png(self, client):
         responses = []
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result, business_card=True)
+            extracted_business_card = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -175,7 +175,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         read_results = raw_response.analyze_result.read_results
         document_results = raw_response.analyze_result.document_results
 
-        self.assertBusinessCardTransformCorrect(business_card, actual, read_results)
+        self.assertFormFieldsTransformCorrect(business_card.fields, actual, read_results)
 
         # check page range
         self.assertEqual(business_card.page_range.first_page_number, document_results[0].page_range[0])
@@ -184,14 +184,14 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(business_card.pages, read_results)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_stream_transform_jpg(self, client):
         responses = []
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result, business_card=True)
+            extracted_business_card = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -214,7 +214,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         document_results = raw_response.analyze_result.document_results
         page_results = raw_response.analyze_result.page_results
 
-        self.assertBusinessCardTransformCorrect(business_card, actual, read_results)
+        self.assertFormFieldsTransformCorrect(business_card.fields, actual, read_results)
 
         # check page range
         self.assertEqual(business_card.page_range.first_page_number, document_results[0].page_range[0])
@@ -223,14 +223,14 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(business_card.pages, read_results)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_stream_multipage_transform_pdf(self, client):
         responses = []
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result, business_card=True)
+            extracted_business_card = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -257,14 +257,14 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         for i in range(len(returned_model)):
             business_card = returned_model[i]
             actual = document_results[i]
-            self.assertBusinessCardTransformCorrect(business_card, actual.fields, read_results)
+            self.assertFormFieldsTransformCorrect(business_card.fields, actual.fields, read_results)
             self.assertEqual(i + 1, business_card.page_range.first_page_number)
             self.assertEqual(i + 1, business_card.page_range.last_page_number)
 
         # Check page metadata
         self.assertFormPagesTransformCorrect(returned_model, read_results)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_jpg(self, client):
 
@@ -295,7 +295,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
         # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
         # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
 
@@ -312,7 +312,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         self.assertEqual(business_card.fields.get("CompanyNames").value[0].value, "Contoso")
 
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_png(self, client):
         with open(self.business_card_png, "rb") as fd:
@@ -342,7 +342,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
         # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
         # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
 
@@ -358,7 +358,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("CompanyNames").value), 1)
         self.assertEqual(business_card.fields.get("CompanyNames").value[0].value, "Contoso")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_multipage_pdf(self, client):
 
@@ -385,7 +385,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com")
 
-        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
         # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
         # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
 
@@ -407,7 +407,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
         # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
         # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
 
@@ -423,7 +423,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("CompanyNames").value), 1)
         self.assertEqual(business_card.fields.get("CompanyNames").value[0].value, "Contoso")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_jpg_include_field_elements(self, client):
         with open(self.business_card_jpg, "rb") as fd:
@@ -440,7 +440,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
             for f in field.value:
                 self.assertFieldElementsHasValues(f.value_data.field_elements, business_card.page_range.first_page_number)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     @pytest.mark.live_test_only
     async def test_business_card_continuation_token(self, client):
@@ -451,12 +451,12 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         async with client:
             initial_poller = await client.begin_recognize_business_cards(business_card)
             cont_token = initial_poller.continuation_token()
-            poller = await client.begin_recognize_business_cards(business_card, continuation_token=cont_token)
+            poller = await client.begin_recognize_business_cards(None, continuation_token=cont_token)
             result = await poller.result()
             self.assertIsNotNone(result)
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     async def test_business_card_v2(self, client):
         with open(self.business_card_jpg, "rb") as fd:
@@ -466,7 +466,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
                 await client.begin_recognize_business_cards(business_card)
         assert "Method 'begin_recognize_business_cards' is only available for API version V2_1_PREVIEW and up" in str(e.value)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_locale_specified(self, client):
         with open(self.business_card_jpg, "rb") as fd:
@@ -476,7 +476,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
             assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
             await poller.wait()
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_business_card_locale_error(self, client):
         with open(self.business_card_jpg, "rb") as fd:

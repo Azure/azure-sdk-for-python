@@ -4,19 +4,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import unittest
 from datetime import datetime, timedelta
 
-from azure.core import MatchConditions
+import pytest
 
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
-    ResourceModifiedError, ServiceRequestError
+    ResourceModifiedError, ServiceRequestError, AzureError
 from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions, DataLakeDirectoryClient, \
-    generate_file_system_sas, FileSystemSasPermissions, DataLakeFileClient
+    generate_file_system_sas, FileSystemSasPermissions
 from azure.storage.filedatalake import DataLakeServiceClient, generate_directory_sas
-from azure.storage.filedatalake._models import AccessControlChangeResult, AccessControlChangeCounters, \
-    AccessControlChanges, DataLakeAclChangeFailedError
+from azure.storage.filedatalake._models import AccessControlChangeResult, AccessControlChangeCounters
 from testcase import (
     StorageTestCase,
     record,
@@ -97,6 +96,18 @@ class DirectoryTest(StorageTestCase):
 
         # Assert
         self.assertTrue(created)
+
+    @record
+    def test_directory_exists(self):
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        directory_client1 = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client2 = self.dsc.get_directory_client(self.file_system_name, "nonexistentdir")
+        directory_client1.create_directory()
+
+        self.assertTrue(directory_client1.exists())
+        self.assertFalse(directory_client2.exists())
 
     @record
     def test_using_oauth_token_credential_to_create_directory(self):
@@ -316,12 +327,12 @@ class DirectoryTest(StorageTestCase):
                 raise ServiceRequestError("network problem")
         acl = 'user::rwx,group::r-x,other::rwx'
 
-        with self.assertRaises(DataLakeAclChangeFailedError) as acl_error:
+        with self.assertRaises(AzureError) as acl_error:
             directory_client.set_access_control_recursive(acl=acl, batch_size=2, max_batches=2,
                                                           raw_response_hook=callback, retry_total=0)
-            self.assertIsNotNone(acl_error.exception.continuation)
-            self.assertEqual(acl_error.exception.message, "network problem")
-            self.assertIsInstance(acl_error.exception.error, ServiceRequestError)
+        self.assertIsNotNone(acl_error.exception.continuation_token)
+        self.assertEqual(acl_error.exception.message, "network problem")
+        self.assertIsInstance(acl_error.exception, ServiceRequestError)
 
     @record
     def test_set_access_control_recursive_in_batches(self):

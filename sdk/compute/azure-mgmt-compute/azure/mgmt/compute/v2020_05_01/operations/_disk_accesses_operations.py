@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class DiskAccessesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,11 +51,11 @@ class DiskAccessesOperations(object):
         self,
         resource_group_name,  # type: str
         disk_access_name,  # type: str
-        disk_access,  # type: "models.DiskAccess"
+        disk_access,  # type: "_models.DiskAccess"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DiskAccess"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskAccess"]
+        # type: (...) -> "_models.DiskAccess"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskAccess"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -109,10 +109,10 @@ class DiskAccessesOperations(object):
         self,
         resource_group_name,  # type: str
         disk_access_name,  # type: str
-        disk_access,  # type: "models.DiskAccess"
+        disk_access,  # type: "_models.DiskAccess"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.DiskAccess"]
+        # type: (...) -> LROPoller["_models.DiskAccess"]
         """Creates or updates a disk access resource.
 
         :param resource_group_name: The name of the resource group.
@@ -134,7 +134,7 @@ class DiskAccessesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskAccess"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskAccess"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -159,7 +159,13 @@ class DiskAccessesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'diskAccessName': self._serialize.url("disk_access_name", disk_access_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -177,11 +183,11 @@ class DiskAccessesOperations(object):
         self,
         resource_group_name,  # type: str
         disk_access_name,  # type: str
-        disk_access,  # type: "models.DiskAccessUpdate"
+        disk_access,  # type: "_models.DiskAccessUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DiskAccess"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskAccess"]
+        # type: (...) -> "_models.DiskAccess"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskAccess"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -235,10 +241,10 @@ class DiskAccessesOperations(object):
         self,
         resource_group_name,  # type: str
         disk_access_name,  # type: str
-        disk_access,  # type: "models.DiskAccessUpdate"
+        disk_access,  # type: "_models.DiskAccessUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.DiskAccess"]
+        # type: (...) -> LROPoller["_models.DiskAccess"]
         """Updates (patches) a disk access resource.
 
         :param resource_group_name: The name of the resource group.
@@ -260,7 +266,7 @@ class DiskAccessesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskAccess"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskAccess"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -285,7 +291,13 @@ class DiskAccessesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'diskAccessName': self._serialize.url("disk_access_name", disk_access_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -305,7 +317,7 @@ class DiskAccessesOperations(object):
         disk_access_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DiskAccess"
+        # type: (...) -> "_models.DiskAccess"
         """Gets information about a disk access resource.
 
         :param resource_group_name: The name of the resource group.
@@ -319,7 +331,7 @@ class DiskAccessesOperations(object):
         :rtype: ~azure.mgmt.compute.v2020_05_01.models.DiskAccess
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskAccess"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskAccess"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -452,7 +464,13 @@ class DiskAccessesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'diskAccessName': self._serialize.url("disk_access_name", disk_access_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -471,7 +489,7 @@ class DiskAccessesOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DiskAccessList"]
+        # type: (...) -> Iterable["_models.DiskAccessList"]
         """Lists all the disk access resources under a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -481,7 +499,7 @@ class DiskAccessesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2020_05_01.models.DiskAccessList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskAccessList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskAccessList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -541,7 +559,7 @@ class DiskAccessesOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DiskAccessList"]
+        # type: (...) -> Iterable["_models.DiskAccessList"]
         """Lists all the disk access resources under a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -549,7 +567,7 @@ class DiskAccessesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2020_05_01.models.DiskAccessList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskAccessList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskAccessList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -610,7 +628,7 @@ class DiskAccessesOperations(object):
         disk_access_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateLinkResourceListResult"
+        # type: (...) -> "_models.PrivateLinkResourceListResult"
         """Gets the private link resources possible under disk access resource.
 
         :param resource_group_name: The name of the resource group.
@@ -624,7 +642,7 @@ class DiskAccessesOperations(object):
         :rtype: ~azure.mgmt.compute.v2020_05_01.models.PrivateLinkResourceListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

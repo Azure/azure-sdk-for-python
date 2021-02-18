@@ -157,7 +157,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         loop = _get_running_loop()
         retry_active = True
         retry_total = 3
-        retry_interval = 1000
+        retry_interval = 1  # 1 second
         while retry_active:
             try:
                 chunk = await loop.run_in_executor(

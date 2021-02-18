@@ -14,7 +14,7 @@ from ._key_validity import raise_if_time_invalid
 from ._providers import get_local_cryptography_provider, NoLocalCryptography
 from .. import KeyOperation
 from .._models import KeyVaultKey
-from .._shared import KeyVaultClientBase, parse_vault_id
+from .._shared import KeyVaultClientBase, parse_key_vault_id
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
@@ -25,8 +25,56 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
+def _validate_arguments(operation, algorithm, **kwargs):
+    # type: (KeyOperation, EncryptionAlgorithm, **Any) -> None
+    """Validates the arguments passed to perform an operation with a provided algorithm.
+
+    :param KeyOperation operation: the type of operation being requested
+    :param EncyptionAlgorithm algorithm: the encryption algorithm to use for the operation
+    :keyword bytes iv: initialization vector
+    :keyword bytes authentication_tag: authentication tag returned from an encryption
+    :keyword bytes additional_authenticated_data: data that is authenticated but not encrypted
+    :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
+    """
+    iv = kwargs.pop("iv", None)
+    tag = kwargs.pop("tag", None)
+    aad = kwargs.pop("aad", None)
+
+    if operation == KeyOperation.encrypt:
+        if iv and "CBC" not in algorithm:
+            raise ValueError(
+                "iv should only be provided with AES-CBC algorithms; {} does not accept an iv".format(algorithm)
+            )
+        if aad and not ("CBC" in algorithm or "GCM" in algorithm):
+            raise ValueError(
+                "additional_authenticated_data should only be provided with AES algorithms; {} does not accept "
+                "additional authenticated data".format(algorithm)
+            )
+
+    if operation == KeyOperation.decrypt:
+        if iv and not ("CBC" in algorithm or "GCM" in algorithm):
+            raise ValueError(
+                "iv should only be provided with AES algorithms; {} does not accept an iv".format(algorithm)
+            )
+        if tag and "GCM" not in algorithm:
+            raise ValueError(
+                "authentication_tag should only be provided with AES-GCM algorithms; {} does not accept a tag".format(
+                    algorithm
+                )
+            )
+        if aad and not ("CBC" in algorithm or "GCM" in algorithm):
+            raise ValueError(
+                "additional_authenticated_data should only be provided with AES algorithms; {} does not accept "
+                "additional authenticated data".format(algorithm)
+            )
+
+
 class CryptographyClient(KeyVaultClientBase):
     """Performs cryptographic operations using Azure Key Vault keys.
+
+    This client will perform operations locally when it's intialized with the necessary key material or is able to get
+    that material from Key Vault. When the required key material is unavailable, cryptographic operations are performed
+    by the Key Vault service.
 
     :param key:
         Either a :class:`~azure.keyvault.keys.KeyVaultKey` instance as returned by
@@ -53,10 +101,10 @@ class CryptographyClient(KeyVaultClientBase):
 
         if isinstance(key, KeyVaultKey):
             self._key = key
-            self._key_id = parse_vault_id(key.id)
+            self._key_id = parse_key_vault_id(key.id)
         elif isinstance(key, six.string_types):
             self._key = None
-            self._key_id = parse_vault_id(key)
+            self._key_id = parse_key_vault_id(key)
             self._keys_get_forbidden = None  # type: Optional[bool]
         else:
             raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
@@ -76,7 +124,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         :rtype: str
         """
-        return "/".join(self._key_id)
+        return self._key_id.source_id
 
     @distributed_trace
     def _initialize(self, **kwargs):
@@ -87,9 +135,10 @@ class CryptographyClient(KeyVaultClientBase):
         # try to get the key material, if we don't have it and aren't forbidden to do so
         if not (self._key or self._keys_get_forbidden):
             try:
-                self._key = self._client.get_key(
+                key_bundle = self._client.get_key(
                     self._key_id.vault_url, self._key_id.name, self._key_id.version, **kwargs
                 )
+                self._key = KeyVaultKey._from_key_bundle(key_bundle)  # pylint:disable=protected-access
             except HttpResponseError as ex:
                 # if we got a 403, we don't have keys/get permission and won't try to get the key again
                 # (other errors may be transient)
@@ -113,7 +162,11 @@ class CryptographyClient(KeyVaultClientBase):
         :param algorithm: encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
         :param bytes plaintext: bytes to encrypt
+        :keyword bytes iv: optional initialization vector. For use with AES-CBC encryption.
+        :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
+            with AES-GCM encryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
+        :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
 
         .. literalinclude:: ../tests/test_examples_crypto.py
             :start-after: [START encrypt]
@@ -122,7 +175,11 @@ class CryptographyClient(KeyVaultClientBase):
             :language: python
             :dedent: 8
         """
+        iv = kwargs.pop("iv", None)
+        aad = kwargs.pop("additional_authenticated_data", None)
+        _validate_arguments(operation=KeyOperation.encrypt, algorithm=algorithm, iv=iv, aad=aad)
         self._initialize(**kwargs)
+
         if self._local_provider.supports(KeyOperation.encrypt, algorithm):
             raise_if_time_invalid(self._key)
             try:
@@ -134,11 +191,18 @@ class CryptographyClient(KeyVaultClientBase):
             vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
-            parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=plaintext),
+            parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=plaintext, iv=iv, aad=aad),
             **kwargs
         )
 
-        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=operation_result.result)
+        return EncryptResult(
+            key_id=self.key_id,
+            algorithm=algorithm,
+            ciphertext=operation_result.result,
+            iv=operation_result.iv,
+            authentication_tag=operation_result.authentication_tag,
+            additional_authenticated_data=operation_result.additional_authenticated_data,
+        )
 
     @distributed_trace
     def decrypt(self, algorithm, ciphertext, **kwargs):
@@ -150,7 +214,13 @@ class CryptographyClient(KeyVaultClientBase):
         :param algorithm: encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
         :param bytes ciphertext: encrypted bytes to decrypt
+        :keyword bytes iv: the initialization vector used during encryption. For use with AES encryption.
+        :keyword bytes authentication_tag: the authentication tag generated during encryption. For use with AES-GCM
+            encryption.
+        :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
+            with AES-GCM encryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
+        :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
 
         .. literalinclude:: ../tests/test_examples_crypto.py
             :start-after: [START decrypt]
@@ -159,7 +229,12 @@ class CryptographyClient(KeyVaultClientBase):
             :language: python
             :dedent: 8
         """
+        iv = kwargs.pop("iv", None)
+        tag = kwargs.pop("authentication_tag", None)
+        aad = kwargs.pop("additional_authenticated_data", None)
+        _validate_arguments(operation=KeyOperation.decrypt, algorithm=algorithm, iv=iv, tag=tag, aad=aad)
         self._initialize(**kwargs)
+
         if self._local_provider.supports(KeyOperation.decrypt, algorithm):
             try:
                 return self._local_provider.decrypt(algorithm, ciphertext)
@@ -170,7 +245,9 @@ class CryptographyClient(KeyVaultClientBase):
             vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
-            parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=ciphertext),
+            parameters=self._models.KeyOperationsParameters(
+                algorithm=algorithm, value=ciphertext, iv=iv, tag=tag, aad=aad
+            ),
             **kwargs
         )
 
@@ -242,7 +319,7 @@ class CryptographyClient(KeyVaultClientBase):
             parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=encrypted_key),
             **kwargs
         )
-        return UnwrapResult(key_id=self._key_id, algorithm=algorithm, key=operation_result.result)
+        return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=operation_result.result)
 
     @distributed_trace
     def sign(self, algorithm, digest, **kwargs):

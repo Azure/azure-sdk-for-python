@@ -34,12 +34,12 @@ Please refer to azure.identity library for detailed information.
 
 import os
 import asyncio
-from azure.servicebus import Message
+from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio import ServiceBusClient
 from azure.identity.aio import EnvironmentCredential
 
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 
@@ -56,7 +56,7 @@ async def run():
     async with servicebus_client:
         sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
         async with sender:
-            await sender.send_messages(Message('Single Message'))
+            await sender.send_messages(ServiceBusMessage('Single Message'))
 
     await credential.close()
 

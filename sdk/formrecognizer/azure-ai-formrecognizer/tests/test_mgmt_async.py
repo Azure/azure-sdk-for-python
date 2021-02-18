@@ -10,9 +10,9 @@ from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.ai.formrecognizer.aio import FormTrainingClient
-from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
+from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from testcase import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
 
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
@@ -20,7 +20,7 @@ GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClie
 
 class TestManagementAsync(AsyncFormRecognizerTest):
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @pytest.mark.live_test_only
     async def test_active_directory_auth_async(self):
         token = self.generate_oauth_token()
@@ -30,65 +30,65 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             props = await client.get_account_properties()
         self.assertIsNotNone(props)
 
-    @GlobalFormRecognizerAccountPreparer()
-    async def test_account_properties_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+    @FormRecognizerPreparer()
+    async def test_account_properties_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormTrainingClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
             async with client:
                 result = await client.get_account_properties()
 
-    @GlobalFormRecognizerAccountPreparer()
-    async def test_get_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+    @FormRecognizerPreparer()
+    async def test_get_model_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormTrainingClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
             async with client:
                 result = await client.get_custom_model("xx")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_get_model_empty_model_id(self, client):
         with self.assertRaises(ValueError):
             async with client:
                 result = await client.get_custom_model("")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_get_model_none_model_id(self, client):
         with self.assertRaises(ValueError):
             async with client:
                 result = await client.get_custom_model(None)
 
-    @GlobalFormRecognizerAccountPreparer()
-    async def test_list_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+    @FormRecognizerPreparer()
+    async def test_list_model_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormTrainingClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
             async with client:
                 result = client.list_custom_models()
                 async for res in result:
                     test = res
 
-    @GlobalFormRecognizerAccountPreparer()
-    async def test_delete_model_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential("xxxx"))
+    @FormRecognizerPreparer()
+    async def test_delete_model_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormTrainingClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
             async with client:
                 result = await client.delete_model("xx")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_delete_model_none_model_id(self, client):
         with self.assertRaises(ValueError):
             async with client:
                 result = await client.delete_model(None)
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_delete_model_empty_model_id(self, client):
         with self.assertRaises(ValueError):
             async with client:
                 result = await client.delete_model("")
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_account_properties(self, client):
         async with client:
@@ -97,11 +97,11 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         self.assertIsNotNone(properties.custom_model_limit)
         self.assertIsNotNone(properties.custom_model_count)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True)
-    async def test_mgmt_model_labeled(self, client, container_sas_url):
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    async def test_mgmt_model_labeled(self, client, formrecognizer_storage_container_sas_url):
         async with client:
-            poller = await client.begin_training(container_sas_url, use_training_labels=True)
+            poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=True)
             labeled_model_from_train = await poller.result()
             labeled_model_from_get = await client.get_custom_model(labeled_model_from_train.model_id)
 
@@ -132,11 +132,11 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             with self.assertRaises(ResourceNotFoundError):
                 await client.get_custom_model(labeled_model_from_train.model_id)
 
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer(training=True)
-    async def test_mgmt_model_unlabeled(self, client, container_sas_url):
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    async def test_mgmt_model_unlabeled(self, client, formrecognizer_storage_container_sas_url):
         async with client:
-            poller = await client.begin_training(container_sas_url, use_training_labels=False)
+            poller = await client.begin_training(formrecognizer_storage_container_sas_url, use_training_labels=False)
             unlabeled_model_from_train = await poller.result()
             unlabeled_model_from_get = await client.get_custom_model(unlabeled_model_from_train.model_id)
 
@@ -166,10 +166,10 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             with self.assertRaises(ResourceNotFoundError):
                 await client.get_custom_model(unlabeled_model_from_train.model_id)
 
-    @GlobalFormRecognizerAccountPreparer()
-    async def test_get_form_recognizer_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+    @FormRecognizerPreparer()
+    async def test_get_form_recognizer_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         transport = AioHttpTransport()
-        ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport)
+        ftc = FormTrainingClient(endpoint=formrecognizer_test_endpoint, credential=AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
 
         async with ftc:
             await ftc.get_account_properties()

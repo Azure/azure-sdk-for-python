@@ -39,4 +39,5 @@ extends:
       safeName: azuredatatables
     - name: azure_data_nspkg
       safeName: azuredatanspkg
+      skipVerifyChangeLog: true
 

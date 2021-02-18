@@ -6,13 +6,13 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
 
-import functools
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Dict, TYPE_CHECKING
 )
 
 from azure.core.tracing.decorator import distributed_trace
 
+from azure.core.pipeline import AsyncPipeline
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -20,13 +20,13 @@ from azure.storage.blob.aio import ContainerClient
 
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
-from ._models import PathPropertiesPaged
 from ._data_lake_lease_async import DataLakeLeaseClient
+from .._deserialize import deserialize_path_properties
 from .._file_system_client import FileSystemClient as FileSystemClientBase
-from .._generated.aio import DataLakeStorageClient
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._generated.aio import AzureDataLakeStorageRESTAPI
+from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
-from .._models import FileSystemProperties, PublicAccess
+from .._models import FileSystemProperties, PublicAccess, DirectoryProperties, FileProperties
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -54,9 +54,11 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
      :type file_system_name: str
      :param credential:
          The credentials with which to authenticate. This is optional if the
-         account URL already has a SAS token. The value can be a SAS token string, and account
+         account URL already has a SAS token. The value can be a SAS token string,
+         an instance of a AzureSasCredential from azure.core.credentials, an account
          shared access key, or an instance of a TokenCredentials class from azure.identity.
-         If the URL already has a SAS token, specifying an explicit credential will take priority.
+         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
 
     .. admonition:: Example:
 
@@ -87,7 +89,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                                                  credential=credential,
                                                  _hosts=self._container_client._hosts,# pylint: disable=protected-access
                                                  **kwargs)  # type: ignore # pylint: disable=protected-access
-        self._client = DataLakeStorageClient(self.url, file_system_name, None, pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
     async def __aexit__(self, *args):
@@ -191,6 +193,44 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         return await self._container_client.create_container(metadata=metadata,
                                                              public_access=public_access,
                                                              **kwargs)
+
+    @distributed_trace_async
+    async def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a file system exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return await self._container_client.exists(**kwargs)
+
+    @distributed_trace_async
+    async def _rename_file_system(self, new_name, **kwargs):
+        # type: (str, **Any) -> FileSystemClient
+        """Renames a filesystem.
+
+        Operation is successful only if the source filesystem exists.
+
+        :param str new_name:
+            The new filesystem name the user wants to rename to.
+        :keyword lease:
+            Specify this to perform only if the lease ID given
+            matches the active lease ID of the source filesystem.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        """
+        await self._container_client._rename_container(new_name, **kwargs)   # pylint: disable=protected-access
+        renamed_file_system = FileSystemClient(
+                "{}://{}".format(self.scheme, self.primary_hostname), file_system_name=new_name,
+                credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
+                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+                key_resolver_function=self.key_resolver_function)
+        return renamed_file_system
 
     @distributed_trace_async
     async def delete_file_system(self, **kwargs):
@@ -382,7 +422,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                         recursive=True,  # type: Optional[bool]
                         max_results=None,  # type: Optional[int]
                         **kwargs):
-        # type: (...) -> ItemPaged[PathProperties]
+        # type: (...) -> AsyncItemPaged[PathProperties]
         """Returns a generator to list the paths(could be files or directories) under the specified file system.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -418,14 +458,13 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: List the blobs in the file system.
         """
         timeout = kwargs.pop('timeout', None)
-        command = functools.partial(
-            self._client.file_system.list_paths,
+        return self._client.file_system.list_paths(
+            recursive=recursive,
+            max_results=max_results,
             path=path,
             timeout=timeout,
+            cls=deserialize_path_properties,
             **kwargs)
-        return AsyncItemPaged(
-            command, recursive, path=path, max_results=max_results,
-            page_iterator_class=PathPropertiesPaged, **kwargs)
 
     @distributed_trace_async
     async def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
@@ -695,13 +734,16 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: Getting the directory client to interact with a specific directory.
         """
         try:
-            directory_name = directory.name
+            directory_name = directory.get('name')
         except AttributeError:
-            directory_name = directory
-
+            directory_name = str(directory)
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
-                                       _configuration=self._config, _pipeline=self._pipeline,
+                                       _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
                                        key_encryption_key=self.key_encryption_key,
@@ -733,13 +775,16 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :caption: Getting the file client to interact with a specific file.
         """
         try:
-            file_path = file_path.name
+            file_path = file_path.get('name')
         except AttributeError:
-            pass
-
+            file_path = str(file_path)
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function, loop=self._loop)

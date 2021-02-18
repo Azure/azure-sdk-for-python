@@ -138,6 +138,9 @@ class ClientBaseAsync(ClientBase):
                 timeout=self._config.auth_timeout,
                 http_proxy=self._config.http_proxy,
                 transport_type=self._config.transport_type,
+                custom_endpoint_hostname=self._config.custom_endpoint_hostname,
+                port=self._config.connection_port,
+                verify=self._config.connection_verify
             )
             await auth.update_token()
             return auth
@@ -149,6 +152,9 @@ class ClientBaseAsync(ClientBase):
             timeout=self._config.auth_timeout,
             http_proxy=self._config.http_proxy,
             transport_type=self._config.transport_type,
+            custom_endpoint_hostname=self._config.custom_endpoint_hostname,
+            port=self._config.connection_port,
+            verify=self._config.connection_verify
         )
 
     async def _close_connection_async(self) -> None:

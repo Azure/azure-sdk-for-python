@@ -1,5 +1,37 @@
-
 # Release History
+
+## 1.11.1 (Unreleased)
+
+
+## 1.11.0 (2021-02-08)
+
+### Features
+
+- Added `CaseInsensitiveEnumMeta` class for case-insensitive enums.  #16316
+- Add `raise_for_status` method onto `HttpResponse`. Calling `response.raise_for_status()` on a response with an error code
+will raise an `HttpResponseError`. Calling it on a good response will do nothing  #16399
+
+### Bug Fixes
+
+- Update conn.conn_kw rather than overriding it when setting block size. (thanks for @jiasli for the contribution)  #16587
+
+## 1.10.0 (2021-01-11)
+
+### Features
+
+- Added `AzureSasCredential` and its respective policy. #15946
+
+## 1.9.0 (2020-11-09)
+
+### Features
+
+- Add a `continuation_token` attribute to the base `AzureError` exception, and set this value for errors raised
+  during paged or long-running operations.
+
+### Bug Fixes
+
+- Set retry_interval to 1 second instead of 1000 seconds (thanks **vbarbaresi** for contributing)  #14357
+
 
 ## 1.8.2 (2020-10-05)
 

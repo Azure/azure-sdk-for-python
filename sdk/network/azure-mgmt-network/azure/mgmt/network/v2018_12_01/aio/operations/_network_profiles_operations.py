@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class NetworkProfilesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -129,7 +129,13 @@ class NetworkProfilesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkProfileName': self._serialize.url("network_profile_name", network_profile_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -149,7 +155,7 @@ class NetworkProfilesOperations:
         network_profile_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.NetworkProfile":
+    ) -> "_models.NetworkProfile":
         """Gets the specified network profile in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -163,7 +169,7 @@ class NetworkProfilesOperations:
         :rtype: ~azure.mgmt.network.v2018_12_01.models.NetworkProfile
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkProfile"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkProfile"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -210,9 +216,9 @@ class NetworkProfilesOperations:
         self,
         resource_group_name: str,
         network_profile_name: str,
-        parameters: "models.NetworkProfile",
+        parameters: "_models.NetworkProfile",
         **kwargs
-    ) -> "models.NetworkProfile":
+    ) -> "_models.NetworkProfile":
         """Creates or updates a network profile.
 
         :param resource_group_name: The name of the resource group.
@@ -226,7 +232,7 @@ class NetworkProfilesOperations:
         :rtype: ~azure.mgmt.network.v2018_12_01.models.NetworkProfile
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkProfile"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkProfile"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -280,9 +286,9 @@ class NetworkProfilesOperations:
         self,
         resource_group_name: str,
         network_profile_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.NetworkProfile":
+    ) -> "_models.NetworkProfile":
         """Updates network profile tags.
 
         :param resource_group_name: The name of the resource group.
@@ -296,7 +302,7 @@ class NetworkProfilesOperations:
         :rtype: ~azure.mgmt.network.v2018_12_01.models.NetworkProfile
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkProfile"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkProfile"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -345,7 +351,7 @@ class NetworkProfilesOperations:
     def list_all(
         self,
         **kwargs
-    ) -> AsyncIterable["models.NetworkProfileListResult"]:
+    ) -> AsyncIterable["_models.NetworkProfileListResult"]:
         """Gets all the network profiles in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -353,7 +359,7 @@ class NetworkProfilesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_12_01.models.NetworkProfileListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkProfileListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkProfileListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -412,7 +418,7 @@ class NetworkProfilesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.NetworkProfileListResult"]:
+    ) -> AsyncIterable["_models.NetworkProfileListResult"]:
         """Gets all network profiles in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -422,7 +428,7 @@ class NetworkProfilesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_12_01.models.NetworkProfileListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkProfileListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkProfileListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

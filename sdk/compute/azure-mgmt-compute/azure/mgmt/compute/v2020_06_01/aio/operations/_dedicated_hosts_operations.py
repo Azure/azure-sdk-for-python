@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class DedicatedHostsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,10 +48,10 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        parameters: "models.DedicatedHost",
+        parameters: "_models.DedicatedHost",
         **kwargs
-    ) -> "models.DedicatedHost":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DedicatedHost"]
+    ) -> "_models.DedicatedHost":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHost"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -107,9 +107,9 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        parameters: "models.DedicatedHost",
+        parameters: "_models.DedicatedHost",
         **kwargs
-    ) -> AsyncLROPoller["models.DedicatedHost"]:
+    ) -> AsyncLROPoller["_models.DedicatedHost"]:
         """Create or update a dedicated host .
 
         :param resource_group_name: The name of the resource group.
@@ -131,7 +131,7 @@ class DedicatedHostsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DedicatedHost"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHost"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -157,7 +157,14 @@ class DedicatedHostsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'hostGroupName': self._serialize.url("host_group_name", host_group_name, 'str'),
+            'hostName': self._serialize.url("host_name", host_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -176,10 +183,10 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        parameters: "models.DedicatedHostUpdate",
+        parameters: "_models.DedicatedHostUpdate",
         **kwargs
-    ) -> "models.DedicatedHost":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DedicatedHost"]
+    ) -> "_models.DedicatedHost":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHost"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -231,9 +238,9 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        parameters: "models.DedicatedHostUpdate",
+        parameters: "_models.DedicatedHostUpdate",
         **kwargs
-    ) -> AsyncLROPoller["models.DedicatedHost"]:
+    ) -> AsyncLROPoller["_models.DedicatedHost"]:
         """Update an dedicated host .
 
         :param resource_group_name: The name of the resource group.
@@ -255,7 +262,7 @@ class DedicatedHostsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DedicatedHost"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHost"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -281,7 +288,14 @@ class DedicatedHostsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'hostGroupName': self._serialize.url("host_group_name", host_group_name, 'str'),
+            'hostName': self._serialize.url("host_name", host_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -387,7 +401,14 @@ class DedicatedHostsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'hostGroupName': self._serialize.url("host_group_name", host_group_name, 'str'),
+            'hostName': self._serialize.url("host_name", host_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -408,7 +429,7 @@ class DedicatedHostsOperations:
         host_name: str,
         expand: Optional[str] = "instanceView",
         **kwargs
-    ) -> "models.DedicatedHost":
+    ) -> "_models.DedicatedHost":
         """Retrieves information about a dedicated host.
 
         :param resource_group_name: The name of the resource group.
@@ -424,7 +445,7 @@ class DedicatedHostsOperations:
         :rtype: ~azure.mgmt.compute.v2020_06_01.models.DedicatedHost
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DedicatedHost"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHost"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -473,7 +494,7 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.DedicatedHostListResult"]:
+    ) -> AsyncIterable["_models.DedicatedHostListResult"]:
         """Lists all of the dedicated hosts in the specified dedicated host group. Use the nextLink
         property in the response to get the next page of dedicated hosts.
 
@@ -486,7 +507,7 @@ class DedicatedHostsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2020_06_01.models.DedicatedHostListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DedicatedHostListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHostListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

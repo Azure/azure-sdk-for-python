@@ -496,6 +496,7 @@ class ServicePlacementPolicyType(str, Enum):
     prefer_primary_domain = "PreferPrimaryDomain"  #: Indicates that the ServicePlacementPolicyDescription is of type ServicePlacementPreferPrimaryDomainPolicyDescription, which indicates that if possible the Primary replica for the partitions of the service should be located in a particular domain as an optimization. The value is 3.
     require_domain_distribution = "RequireDomainDistribution"  #: Indicates that the ServicePlacementPolicyDescription is of type ServicePlacementRequireDomainDistributionPolicyDescription, indicating that the system will disallow placement of any two replicas from the same partition in the same domain at any time. The value is 4.
     non_partially_place_service = "NonPartiallyPlaceService"  #: Indicates that the ServicePlacementPolicyDescription is of type ServicePlacementNonPartiallyPlaceServicePolicyDescription, which indicates that if possible all replicas of a particular partition of the service should be placed atomically. The value is 5.
+    allow_multiple_stateless_instances_on_node = "AllowMultipleStatelessInstancesOnNode"  #: Indicates that the ServicePlacementPolicyDescription is of type ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription, which indicates that multiple stateless instances of a particular partition of the service can be placed on a node. The value is 6.
 
 
 class ServiceLoadMetricWeight(str, Enum):
@@ -750,6 +751,7 @@ class BackupStorageKind(str, Enum):
     invalid = "Invalid"  #: Indicates an invalid backup storage kind. All Service Fabric enumerations have the invalid type.
     file_share = "FileShare"  #: Indicates file/ SMB share to be used as backup storage.
     azure_blob_store = "AzureBlobStore"  #: Indicates Azure blob store to be used as backup storage.
+    dsms_azure_blob_store = "DsmsAzureBlobStore"  #: Indicates Dsms Azure blob store to be used as backup storage.
 
 
 class BackupScheduleKind(str, Enum):
