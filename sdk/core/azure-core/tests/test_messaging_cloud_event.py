@@ -56,6 +56,7 @@ def test_cloud_storage_dict():
         "storage_diagnostics":{"batchId":"b68529f3-68cd-4744-baa4-3c0498ec19f0"}
     }
     assert event.specversion == "1.0"
+    assert event.time == "2020-08-07T01:11:49.765846Z"
     assert event.__class__ == CloudEvent
 
 
@@ -88,25 +89,6 @@ def test_cloud_custom_dict_base64():
     assert event.data == b'cloudevent'
     assert event.specversion == "1.0"
     assert event.__class__ == CloudEvent
-
-def test_extensions_upper_case_value_error():
-    with pytest.raises(ValueError):
-        event = CloudEvent(
-            source='sample',
-            type='type',
-            data='data',
-            extensions={"lowercase123": "accepted", "NOTlower123": "not allowed"}
-        )
-
-
-def test_extensions_name_too_long_value_error():
-    with pytest.raises(ValueError):
-        event = CloudEvent(
-            source='sample',
-            type='type',
-            data='data',
-            extensions={"lowercase123": "accepted", "thisislowerandtoolongforaname": "not allowed"}
-        )
 
 def test_data_and_base64_both_exist_raises():
     with pytest.raises(ValueError):

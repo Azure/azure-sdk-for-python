@@ -12,7 +12,7 @@ try:
     from datetime import timezone
     TZ_UTC = timezone.utc  # type: ignore
 except ImportError:
-    from azure.core.pipeline.policies._utils import _FixedOffset
+    from azure.core._utils import _FixedOffset
     TZ_UTC = _FixedOffset(0) # type: ignore
 
 try:
@@ -40,7 +40,7 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
      as data_base64 in the outgoing request.
     :type data: object
     :keyword time: Optional. The time (in UTC) the event was generated, in RFC3339 format.
-    :type time: ~datetime.datetime
+    :type time: str
     :keyword dataschema: Optional. Identifies the schema that data adheres to.
     :type dataschema: str
     :keyword datacontenttype: Optional. Content type of data value.
@@ -53,6 +53,10 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
     :keyword id: Optional. An identifier for the event. The combination of id and source must be
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :type id: Optional[str]
+    :keyword extensions: Optional. A CloudEvent MAY include any number of additional context attributes
+     with distinct names represented as key - value pairs. Each extension must be alphanumeric, lower cased
+     and must not exceed the length of 20 characters.
+    :type extensions: Optional[dict]
     :ivar source: Identifies the context in which an event happened. The combination of id and source must
      be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
     :vartype source: str
@@ -61,7 +65,7 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
     :ivar type: Type of event related to the originating occurrence.
     :vartype type: str
     :ivar time: The time (in UTC) the event was generated, in RFC3339 format.
-    :vartype time: ~datetime.datetime
+    :vartype time: str
     :ivar dataschema: Identifies the schema that data adheres to.
     :vartype dataschema: str
     :ivar datacontenttype: Content type of data value.
@@ -73,7 +77,11 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
     :vartype specversion: str
     :ivar id: An identifier for the event. The combination of id and source must be
      unique for each distinct event. If not provided, a random UUID will be generated and used.
-    :vartype id: Optional[str]
+    :vartype id: str
+    :ivar extensions: A CloudEvent MAY include any number of additional context attributes
+     with distinct names represented as key - value pairs. Each extension must be alphanumeric, lower cased
+     and must not exceed the length of 20 characters.
+    :vartype extensions: dict
     """
     def __init__(self, source, type, **kwargs): # pylint: disable=redefined-builtin
         # type: (str, str, Any) -> None
@@ -86,11 +94,7 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
         self.dataschema = kwargs.pop("dataschema", None)
         self.subject = kwargs.pop("subject", None)
         self.extensions = {}
-        _extensions = dict(kwargs.pop('extensions', {}))
-        for key in _extensions.keys():
-            if not key.islower() or not key.isalnum() or len(key) > 20:
-                raise ValueError("Extensions must be lower case and alphanumeric.")
-        self.extensions.update(_extensions)
+        self.extensions.update(dict(kwargs.pop('extensions', {})))
         self.data = kwargs.pop("data", None)
 
     def __repr__(self):
@@ -118,15 +122,15 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
         if data and data_base64:
             raise ValueError("Invalid input. Only one of data and data_base64 must be present.")
         return cls(
-        id=event.pop("id", None),
-        source=event.pop("source", None),
-        type=event.pop("type", None),
-        specversion=event.pop("specversion", None),
-        data=data or b64decode(data_base64),
-        time=event.pop("time", None),
-        dataschema=event.pop("dataschema", None),
-        datacontenttype=event.pop("datacontenttype", None),
-        subject=event.pop("subject", None),
-        extensions=event,
-        **kwargs
+            id=event.pop("id", None),
+            source=event.pop("source", None),
+            type=event.pop("type", None),
+            specversion=event.pop("specversion", None),
+            data=data or b64decode(data_base64),
+            time=event.pop("time", None),
+            dataschema=event.pop("dataschema", None),
+            datacontenttype=event.pop("datacontenttype", None),
+            subject=event.pop("subject", None),
+            extensions=event,
+            **kwargs
         )
