@@ -1,8 +1,12 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import os
 =======
 >>>>>>> 798b57943... Regenerated code
+=======
+import os
+>>>>>>> dae559a62... Removed hardcoded info from tests
 import pytest
 from azure.communication.phonenumbers.aio import PhoneNumbersClient
 from _shared.asynctestcase import AsyncCommunicationTestCase
@@ -19,6 +23,9 @@ class NewTests(AsyncCommunicationTestCase):
     def setUp(self):
         super(NewTests, self).setUp()
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> dae559a62... Removed hardcoded info from tests
         if self.is_playback():
             self.phone_number = "+18000005555"
             self.phone_number_to_release = "+18000005556"
@@ -30,8 +37,11 @@ class NewTests(AsyncCommunicationTestCase):
             self.country_code = os.getenv("AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE")
             self.area_code = os.getenv("AZURE_COMMUNICATION_SERIVCE_AREA_CODE")
 
+<<<<<<< HEAD
 =======
 >>>>>>> 798b57943... Regenerated code
+=======
+>>>>>>> dae559a62... Removed hardcoded info from tests
         self.phone_number_client = PhoneNumbersClient.from_connection_string(self.connection_str)
         self.recording_processors.extend([
             BodyReplacerProcessor(
@@ -147,15 +157,15 @@ class NewTests(AsyncCommunicationTestCase):
 >>>>>>> cb958a482... Added fixed samples
     async def test_get_phone_number(self):
         async with self.phone_number_client:
-            phone_number = await self.phone_number_client.get_phone_number("+18332272412")
-        assert phone_number.phone_number == "+18332272412"
+            phone_number = await self.phone_number_client.get_phone_number(self.phone_number)
+        assert phone_number.phone_number == self.phone_number
         
     
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_release_phone_number(self):
         async with self.phone_number_client:
-            poller = await self.phone_number_client.begin_release_phone_number("+16194895875")
+            poller = await self.phone_number_client.begin_release_phone_number(self.phone_number_to_release)
             result = await poller.result()
         assert result
 
@@ -168,11 +178,11 @@ class NewTests(AsyncCommunicationTestCase):
         )
         async with self.phone_number_client:
             poller = await self.phone_number_client.begin_search_available_phone_numbers(
-                "US",
+                self.country_code,
                 PhoneNumberType.TOLL_FREE,
                 PhoneNumberAssignmentType.APPLICATION,
                 capabilities,
-                "833",
+                self.area_code,
                 1,
                 polling = True
             )
@@ -183,7 +193,7 @@ class NewTests(AsyncCommunicationTestCase):
     async def test_update_phone_number_capabilities(self):
         async with self.phone_number_client:
             poller = self.phone_number_client.begin_update_phone_number_capabilities(
-            "+16194895875",
+            self.phone_number,
             PhoneNumberCapabilityValue.OUTBOUND,
             PhoneNumberCapabilityValue.OUTBOUND,
             polling = True
@@ -199,11 +209,11 @@ class NewTests(AsyncCommunicationTestCase):
         )
         async with self.phone_number_client:
             search_poller = await self.phone_number_client.begin_search_available_phone_numbers(
-                "US",
+                self.country_code,
                 PhoneNumberType.TOLL_FREE,
                 PhoneNumberAssignmentType.APPLICATION,
                 capabilities,
-                "833",
+                self.area_code,
                 1,
                 polling = True
             )
