@@ -93,6 +93,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = self.create_client_from_credential(
