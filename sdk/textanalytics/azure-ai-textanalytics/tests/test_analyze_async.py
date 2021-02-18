@@ -123,7 +123,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": os.environ.get("AZURE_TEXT_ANALYTICS_KEY"), "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")})
     async def test_all_successful_passing_string_pii_entities_task(self, client):
 
         docs = ["My SSN is 859-98-0987.",
