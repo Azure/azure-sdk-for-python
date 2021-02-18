@@ -8,6 +8,51 @@
 Tasks listed here https://microsoft.sharepoint.com/teams/AzureDeveloperExperience/Shared%20Documents/Forms/AllItems.aspx?id=%2Fteams%2FAzureDeveloperExperience%2FShared%20Documents%2FUX%20Research%2F20%2D01%20Text%20Analytics%200120&p=true&originalPath=aHR0cHM6Ly9taWNyb3NvZnQuc2hhcmVwb2ludC5jb20vOmY6L3QvQXp1cmVEZXZlbG9wZXJFeHBlcmllbmNlL0VsV0tSQ0dUMjRsSml0NlM1eUt2UkNvQmtfTkczbUJ3NDB6YXd0end2ZzBSTWc_cnRpbWU9Y0hWWDFOelMyRWc
 """
 
+def test_task_one():
+    """
+    Use text analytics services and detect whether a review is positive or not positive. Print “this review is [positive/not positive]”. Print the results.
+    """
+    import json
+    import os
+    from azure.core.pipeline.transport import HttpRequest
+    from azure.identity import DefaultAzureCredential
+    from azure.ai.textanalytics import TextAnalyticsClient
+
+    client = TextAnalyticsClient(
+        endpoint="https://python-textanalytics.cognitiveservices.azure.com/",
+        credential=DefaultAzureCredential()
+    )
+
+    path_to_data = os.path.abspath(
+        os.path.join(
+            os.path.abspath(__file__),
+            "..",
+            "./data_inputs/task_2_data.json"
+        )
+    )
+
+    with open(path_to_data) as file:
+        documents = json.load(file)
+
+    request = HttpRequest("POST", "/text/analytics/v3.1-preview.1/sentiment",
+        json={
+            "documents": documents
+        }
+    )
+
+    response = client.send_request(request)
+    response.raise_for_status()
+
+    json_response = response.json()
+
+    error_doc_ids = [error['id'] for error in json_response['errors']]
+    good_docs = [doc for doc in json_response['documents'] if doc['id'] not in error_doc_ids]
+
+    [
+        print(f"Review #{doc['id']} is '{doc['sentiment']}'")
+        for doc in good_docs
+    ]
+
 def test_task_two():
     """
     Find words in the reviews that can be categorized as a person, location, or organization. Print the
