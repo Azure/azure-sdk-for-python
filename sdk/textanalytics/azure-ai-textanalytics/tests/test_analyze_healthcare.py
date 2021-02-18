@@ -261,13 +261,13 @@ class TestHealth(TextAnalyticsTest):
         response = client.begin_analyze_healthcare_entities(
             docs,
             show_stats=True,
-            model_version="2020-09-03",
+            model_version="2021-01-11",
             polling_interval=self._interval()
         ).result()
 
         self.assertIsNotNone(response)
         self.assertIsNotNone(response.model_version)
-        self.assertEqual("2020-09-03", response.model_version)
+        self.assertEqual("2021-01-11", response.model_version)
         self.assertEqual(response.statistics.documents_count, 5)
         self.assertEqual(response.statistics.transactions_count, 4)
         self.assertEqual(response.statistics.valid_documents_count, 4)
