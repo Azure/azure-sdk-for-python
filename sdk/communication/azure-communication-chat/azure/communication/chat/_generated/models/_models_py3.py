@@ -114,8 +114,12 @@ class ChatMessage(msrest.serialization.Model):
     :param created_on: Required. The timestamp when the chat message arrived at the server. The
      timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type created_on: ~datetime.datetime
-    :param sender_id: The id of the chat message sender.
-    :type sender_id: str
+    :param sender_communication_identifier: Identifies a participant in Azure Communication
+     services. A participant is, for example, a phone number or an Azure communication user. This
+     model must be interpreted as a union: Apart from rawId, at most one further property may be
+     set.
+    :type sender_communication_identifier:
+     ~azure.communication.chat.models.CommunicationIdentifierModel
     :param deleted_on: The timestamp (if applicable) when the message was deleted. The timestamp is
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type deleted_on: ~datetime.datetime
@@ -140,7 +144,7 @@ class ChatMessage(msrest.serialization.Model):
         'content': {'key': 'content', 'type': 'ChatMessageContent'},
         'sender_display_name': {'key': 'senderDisplayName', 'type': 'str'},
         'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'sender_id': {'key': 'senderId', 'type': 'str'},
+        'sender_communication_identifier': {'key': 'senderCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
         'deleted_on': {'key': 'deletedOn', 'type': 'iso-8601'},
         'edited_on': {'key': 'editedOn', 'type': 'iso-8601'},
     }
@@ -155,7 +159,7 @@ class ChatMessage(msrest.serialization.Model):
         created_on: datetime.datetime,
         content: Optional["ChatMessageContent"] = None,
         sender_display_name: Optional[str] = None,
-        sender_id: Optional[str] = None,
+        sender_communication_identifier: Optional["CommunicationIdentifierModel"] = None,
         deleted_on: Optional[datetime.datetime] = None,
         edited_on: Optional[datetime.datetime] = None,
         **kwargs
@@ -168,7 +172,7 @@ class ChatMessage(msrest.serialization.Model):
         self.content = content
         self.sender_display_name = sender_display_name
         self.created_on = created_on
-        self.sender_id = sender_id
+        self.sender_communication_identifier = sender_communication_identifier
         self.deleted_on = deleted_on
         self.edited_on = edited_on
 
@@ -183,16 +187,19 @@ class ChatMessageContent(msrest.serialization.Model):
     :param participants: Chat message content for messages of types participantAdded or
      participantRemoved.
     :type participants: list[~azure.communication.chat.models.ChatParticipant]
-    :param initiator: Chat message content for messages of types participantAdded or
-     participantRemoved.
-    :type initiator: str
+    :param initiator_communication_identifier: Identifies a participant in Azure Communication
+     services. A participant is, for example, a phone number or an Azure communication user. This
+     model must be interpreted as a union: Apart from rawId, at most one further property may be
+     set.
+    :type initiator_communication_identifier:
+     ~azure.communication.chat.models.CommunicationIdentifierModel
     """
 
     _attribute_map = {
         'message': {'key': 'message', 'type': 'str'},
         'topic': {'key': 'topic', 'type': 'str'},
         'participants': {'key': 'participants', 'type': '[ChatParticipant]'},
-        'initiator': {'key': 'initiator', 'type': 'str'},
+        'initiator_communication_identifier': {'key': 'initiatorCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
     }
 
     def __init__(
@@ -201,14 +208,14 @@ class ChatMessageContent(msrest.serialization.Model):
         message: Optional[str] = None,
         topic: Optional[str] = None,
         participants: Optional[List["ChatParticipant"]] = None,
-        initiator: Optional[str] = None,
+        initiator_communication_identifier: Optional["CommunicationIdentifierModel"] = None,
         **kwargs
     ):
         super(ChatMessageContent, self).__init__(**kwargs)
         self.message = message
         self.topic = topic
         self.participants = participants
-        self.initiator = initiator
+        self.initiator_communication_identifier = initiator_communication_identifier
 
 
 class ChatMessageReadReceipt(msrest.serialization.Model):
@@ -216,8 +223,12 @@ class ChatMessageReadReceipt(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sender_id: Required. Id of the participant who read the message.
-    :type sender_id: str
+    :param sender_communication_identifier: Required. Identifies a participant in Azure
+     Communication services. A participant is, for example, a phone number or an Azure communication
+     user. This model must be interpreted as a union: Apart from rawId, at most one further property
+     may be set.
+    :type sender_communication_identifier:
+     ~azure.communication.chat.models.CommunicationIdentifierModel
     :param chat_message_id: Required. Id of the chat message that has been read. This id is
      generated by the server.
     :type chat_message_id: str
@@ -227,13 +238,13 @@ class ChatMessageReadReceipt(msrest.serialization.Model):
     """
 
     _validation = {
-        'sender_id': {'required': True},
+        'sender_communication_identifier': {'required': True},
         'chat_message_id': {'required': True},
         'read_on': {'required': True},
     }
 
     _attribute_map = {
-        'sender_id': {'key': 'senderId', 'type': 'str'},
+        'sender_communication_identifier': {'key': 'senderCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
         'chat_message_id': {'key': 'chatMessageId', 'type': 'str'},
         'read_on': {'key': 'readOn', 'type': 'iso-8601'},
     }
@@ -241,13 +252,13 @@ class ChatMessageReadReceipt(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        sender_id: str,
+        sender_communication_identifier: "CommunicationIdentifierModel",
         chat_message_id: str,
         read_on: datetime.datetime,
         **kwargs
     ):
         super(ChatMessageReadReceipt, self).__init__(**kwargs)
-        self.sender_id = sender_id
+        self.sender_communication_identifier = sender_communication_identifier
         self.chat_message_id = chat_message_id
         self.read_on = read_on
 
@@ -327,12 +338,11 @@ class ChatParticipant(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The id of the chat participant.
-    :type id: str
-    :param identifier: Identifies a participant in Azure Communication services. A participant is,
-     for example, a phone number or an Azure communication user. This model must be interpreted as a
-     union: Apart from rawId, at most one further property may be set.
-    :type identifier: ~azure.communication.chat.models.CommunicationIdentifierModel
+    :param communication_identifier: Required. Identifies a participant in Azure Communication
+     services. A participant is, for example, a phone number or an Azure communication user. This
+     model must be interpreted as a union: Apart from rawId, at most one further property may be
+     set.
+    :type communication_identifier: ~azure.communication.chat.models.CommunicationIdentifierModel
     :param display_name: Display name for the chat participant.
     :type display_name: str
     :param share_history_time: Time from which the chat history is shared with the participant. The
@@ -341,12 +351,11 @@ class ChatParticipant(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
+        'communication_identifier': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'identifier': {'key': 'identifier', 'type': 'CommunicationIdentifierModel'},
+        'communication_identifier': {'key': 'communicationIdentifier', 'type': 'CommunicationIdentifierModel'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'share_history_time': {'key': 'shareHistoryTime', 'type': 'iso-8601'},
     }
@@ -354,15 +363,13 @@ class ChatParticipant(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        id: str,
-        identifier: Optional["CommunicationIdentifierModel"] = None,
+        communication_identifier: "CommunicationIdentifierModel",
         display_name: Optional[str] = None,
         share_history_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(ChatParticipant, self).__init__(**kwargs)
-        self.id = id
-        self.identifier = identifier
+        self.communication_identifier = communication_identifier
         self.display_name = display_name
         self.share_history_time = share_history_time
 
@@ -414,8 +421,12 @@ class ChatThread(msrest.serialization.Model):
     :param created_on: Required. The timestamp when the chat thread was created. The timestamp is
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type created_on: ~datetime.datetime
-    :param created_by: Required. Id of the chat thread owner.
-    :type created_by: str
+    :param created_by_communication_identifier: Required. Identifies a participant in Azure
+     Communication services. A participant is, for example, a phone number or an Azure communication
+     user. This model must be interpreted as a union: Apart from rawId, at most one further property
+     may be set.
+    :type created_by_communication_identifier:
+     ~azure.communication.chat.models.CommunicationIdentifierModel
     :param deleted_on: The timestamp when the chat thread was deleted. The timestamp is in RFC3339
      format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type deleted_on: ~datetime.datetime
@@ -425,14 +436,14 @@ class ChatThread(msrest.serialization.Model):
         'id': {'required': True},
         'topic': {'required': True},
         'created_on': {'required': True},
-        'created_by': {'required': True},
+        'created_by_communication_identifier': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'topic': {'key': 'topic', 'type': 'str'},
         'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_communication_identifier': {'key': 'createdByCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
         'deleted_on': {'key': 'deletedOn', 'type': 'iso-8601'},
     }
 
@@ -442,7 +453,7 @@ class ChatThread(msrest.serialization.Model):
         id: str,
         topic: str,
         created_on: datetime.datetime,
-        created_by: str,
+        created_by_communication_identifier: "CommunicationIdentifierModel",
         deleted_on: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -450,7 +461,7 @@ class ChatThread(msrest.serialization.Model):
         self.id = id
         self.topic = topic
         self.created_on = created_on
-        self.created_by = created_by
+        self.created_by_communication_identifier = created_by_communication_identifier
         self.deleted_on = deleted_on
 
 

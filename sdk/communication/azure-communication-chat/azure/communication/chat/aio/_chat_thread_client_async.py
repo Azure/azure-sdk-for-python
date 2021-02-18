@@ -35,7 +35,7 @@ from .._models import (
     ChatMessageReadReceipt
 )
 from .._shared.models import CommunicationUserIdentifier
-from .._utils import _to_utc_datetime # pylint: disable=unused-import
+from .._utils import _to_utc_datetime, CommunicationUserIdentifierConverter # pylint: disable=unused-import
 from .._version import SDK_MONIKER
 
 
@@ -559,7 +559,8 @@ class ChatThreadClient(object):
 
         return await self._client.chat_thread.remove_chat_participant(
             chat_thread_id=self._thread_id,
-            chat_participant_id=user.identifier,
+            participant_communication_identifier=CommunicationUserIdentifierConverter._to_identifier_model(user),
+            # pylint:disable=protected-access
             **kwargs)
 
     async def close(self) -> None:

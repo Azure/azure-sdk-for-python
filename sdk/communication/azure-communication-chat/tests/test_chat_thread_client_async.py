@@ -170,16 +170,21 @@ async def test_get_message():
                             "topic": "Lunch Chat thread",
                             "participants": [
                                 {
-                                    "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b",
+                                    "communicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
                                     "displayName": "Bob",
                                     "shareHistoryTime": "2020-10-30T10:50:50Z"
                                 }
                             ],
-                            "initiator": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"
+                            "initiatorCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}}
                         },
                         "senderDisplayName": "Bob",
                         "createdOn": "2021-01-27T01:37:33Z",
-                        "senderId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000007-e155-1f06-1db7-3a3a0d00004b"
+                        "senderCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
+                        "deletedOn": "2021-01-27T01:37:33Z",
+                        "editedOn": "2021-01-27T01:37:33Z"
                     })
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
@@ -212,16 +217,21 @@ async def test_list_messages():
                             "topic": "Lunch Chat thread",
                             "participants": [
                                 {
-                                    "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b",
+                                    "communicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
                                     "displayName": "Bob",
                                     "shareHistoryTime": "2020-10-30T10:50:50Z"
                                 }
                             ],
-                            "initiator": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"
+                            "initiatorCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}}
                         },
                         "senderDisplayName": "Bob",
                         "createdOn": "2021-01-27T01:37:33Z",
-                        "senderId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000007-e155-1f06-1db7-3a3a0d00004b"
+                        "senderCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
+                        "deletedOn": "2021-01-27T01:37:33Z",
+                        "editedOn": "2021-01-27T01:37:33Z"
                     }]})
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
@@ -250,46 +260,56 @@ async def test_list_messages_with_start_time():
         return mock_response(status_code=200, json_payload={
             "value": [
                 {
-                    "id": "message_id1",
+                    "id": "message_id_1",
                     "type": "text",
                     "sequenceId": "3",
-                    "version": "message_id1",
+                    "version": "message_id_1",
                     "content": {
                         "message": "message_str",
                         "topic": "Lunch Chat thread",
                         "participants": [
                             {
-                                "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b",
+                                "communicationIdentifier": {"rawId": "string", "communicationUser": {
+                                    "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
                                 "displayName": "Bob",
                                 "shareHistoryTime": "2020-10-30T10:50:50Z"
                             }
                         ],
-                        "initiator": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"
+                        "initiatorCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}}
                     },
                     "senderDisplayName": "Bob",
-                    "createdOn": "2020-08-17T18:05:44Z",
-                    "senderId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000007-e155-1f06-1db7-3a3a0d00004b"
+                    "createdOn": "2021-01-27T01:37:33Z",
+                    "senderCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                        "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
+                    "deletedOn": "2021-01-27T01:37:33Z",
+                    "editedOn": "2021-01-27T01:37:33Z"
                 },
                 {
-                    "id": "message_id2",
+                    "id": "message_id_2",
                     "type": "text",
                     "sequenceId": "3",
-                    "version": "message_id2",
+                    "version": "message_id_2",
                     "content": {
                         "message": "message_str",
                         "topic": "Lunch Chat thread",
                         "participants": [
                             {
-                                "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b",
+                                "communicationIdentifier": {"rawId": "string", "communicationUser": {
+                                    "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
                                 "displayName": "Bob",
                                 "shareHistoryTime": "2020-10-30T10:50:50Z"
                             }
                         ],
-                        "initiator": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"
+                        "initiatorCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}}
                     },
                     "senderDisplayName": "Bob",
-                    "createdOn": "2020-08-17T23:13:33Z",
-                    "senderId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000007-e155-1f06-1db7-3a3a0d00004b"
+                    "createdOn": "2021-01-27T01:37:33Z",
+                    "senderCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                        "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
+                    "deletedOn": "2021-01-27T01:37:33Z",
+                    "editedOn": "2021-01-27T01:37:33Z"
                 }]})
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
@@ -351,7 +371,18 @@ async def test_list_participants():
     raised = False
 
     async def mock_send(*_, **__):
-        return mock_response(status_code=200, json_payload={"value": [{"id": participant_id}]})
+        return mock_response(status_code=200, json_payload={"value": [
+            {
+                "communicationIdentifier": {
+                    "rawId": participant_id,
+                    "communicationUser": {
+                        "id": participant_id
+                    }
+                },
+                "displayName": "Bob",
+                "shareHistoryTime": "2020-10-30T10:50:50Z"
+            }
+        ]})
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     chat_thread_participants = None
@@ -378,8 +409,26 @@ async def test_list_participants_with_results_per_page():
     async def mock_send(*_, **__):
         return mock_response(status_code=200, json_payload={
                 "value": [
-                    {"id": participant_id_1},
-                    {"id": participant_id_2}
+                    {
+                        "communicationIdentifier": {
+                            "rawId": participant_id_1,
+                            "communicationUser": {
+                                "id": participant_id_1
+                            }
+                        },
+                        "displayName": "Bob",
+                        "shareHistoryTime": "2020-10-30T10:50:50Z"
+                    },
+                    {
+                        "communicationIdentifier": {
+                            "rawId": participant_id_2,
+                            "communicationUser": {
+                                "id": participant_id_2
+                            }
+                        },
+                        "displayName": "Bob",
+                        "shareHistoryTime": "2020-10-30T10:50:50Z"
+                    }
                 ]})
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
@@ -500,7 +549,17 @@ async def test_list_read_receipts():
     raised = False
 
     async def mock_send(*_, **__):
-        return mock_response(status_code=200, json_payload={"value": [{"chatMessageId": message_id}]})
+        return mock_response(status_code=200, json_payload={"value": [
+            {
+                "chatMessageId": message_id,
+                "senderCommunicationIdentifier": {
+                    "rawId": "string",
+                    "communicationUser": {
+                        "id": "string"
+                    }
+                }
+            }
+        ]})
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     read_receipts = None
@@ -527,8 +586,24 @@ async def test_list_read_receipts_with_results_per_page():
     async def mock_send(*_, **__):
         return mock_response(status_code=200, json_payload={
             "value": [
-                {"chatMessageId": message_id_1},
-                {"chatMessageId": message_id_2}
+                {
+                    "chatMessageId": message_id_1,
+                    "senderCommunicationIdentifier": {
+                        "rawId": "string",
+                        "communicationUser": {
+                            "id": "string"
+                        }
+                    }
+                },
+                {
+                    "chatMessageId": message_id_2,
+                    "senderCommunicationIdentifier": {
+                        "rawId": "string",
+                        "communicationUser": {
+                            "id": "string"
+                        }
+                    }
+                }
             ]})
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
@@ -555,7 +630,15 @@ async def test_list_read_receipts_with_results_per_page_and_skip():
     async def mock_send(*_, **__):
         return mock_response(status_code=200, json_payload={
             "value": [
-                {"chatMessageId": message_id_1}
+                {
+                    "chatMessageId": message_id_1,
+                    "senderCommunicationIdentifier": {
+                        "rawId": "string",
+                        "communicationUser": {
+                            "id": "string"
+                        }
+                    }
+                }
             ]})
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 

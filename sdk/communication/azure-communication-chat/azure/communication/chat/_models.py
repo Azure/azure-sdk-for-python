@@ -7,6 +7,7 @@
 from ._generated.models import ChatParticipant as ChatParticipantAutorest
 from ._shared.models import CommunicationUserIdentifier
 from ._generated.models import ChatMessageType
+from ._utils import CommunicationUserIdentifierConverter
 
 class ChatThreadParticipant(object):
     """A participant of the chat thread.
@@ -35,14 +36,16 @@ class ChatThreadParticipant(object):
     @classmethod
     def _from_generated(cls, chat_thread_participant):
         return cls(
-            user=CommunicationUserIdentifier(chat_thread_participant.id),
+            user=CommunicationUserIdentifierConverter._from_identifier_model(
+                chat_thread_participant.communication_identifier),  # pylint:disable=protected-access
             display_name=chat_thread_participant.display_name,
             share_history_time=chat_thread_participant.share_history_time
         )
 
     def _to_generated(self):
         return ChatParticipantAutorest(
-            id=self.user.identifier,
+            communication_identifier=CommunicationUserIdentifierConverter._to_identifier_model(self.user),
+            # pylint:disable=protected-access
             display_name=self.display_name,
             share_history_time=self.share_history_time
         )
@@ -70,8 +73,8 @@ class ChatMessage(object):
     :ivar created_on: The timestamp when the chat message arrived at the server. The timestamp is
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type created_on: ~datetime.datetime
-    :ivar sender_id: The chat message sender.
-    :type sender_id: CommunicationUserIdentifier
+    :ivar sender_communication_identifier: The chat message sender.
+    :type sender_communication_identifier: CommunicationUserIdentifier
     :ivar deleted_on: The timestamp when the chat message was deleted. The timestamp is in RFC3339
      format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type deleted_on: ~datetime.datetime
@@ -93,7 +96,7 @@ class ChatMessage(object):
         self.content = kwargs['content']
         self.sender_display_name = kwargs['sender_display_name']
         self.created_on = kwargs['created_on']
-        self.sender_id = kwargs['sender_id']
+        self.sender_communication_identifier = kwargs['sender_communication_identifier']
         self.deleted_on = kwargs['deleted_on']
         self.edited_on = kwargs['edited_on']
 
@@ -115,7 +118,8 @@ class ChatMessage(object):
             content=ChatMessageContent._from_generated(chat_message.content), # pylint:disable=protected-access
             sender_display_name=chat_message.sender_display_name,
             created_on=chat_message.created_on,
-            sender_id=CommunicationUserIdentifier(chat_message.sender_id),
+            sender_communication_identifier=CommunicationUserIdentifierConverter._from_identifier_model(
+                chat_message.sender_communication_identifier), # pylint:disable=protected-access
             deleted_on=chat_message.deleted_on,
             edited_on=chat_message.edited_on
         )
@@ -131,9 +135,9 @@ class ChatMessageContent(object):
     :param participants: Chat message content for messages of types participantAdded or
      participantRemoved.
     :type participants: list[~azure.communication.chat.models.ChatParticipant]
-    :param initiator: Chat message content for messages of types participantAdded or
+    :param initiator_communication_identifier: Chat message content for messages of types participantAdded or
      participantRemoved.
-    :type initiator: str
+    :type initiator_communication_identifier: CommunicationUserIdentifier
     """
 
     def __init__(
@@ -151,14 +155,16 @@ class ChatMessageContent(object):
     def _from_generated(cls, chat_message_content):
         participants_list = chat_message_content.participants
         if participants_list is not None and len(participants_list) > 0:
-            participants = [ChatThreadParticipant._from_generated(participant) for participant in participants_list] # pylint:disable=protected-access
+            participants = [ChatThreadParticipant._from_generated(participant) for participant in
+                            participants_list]  # pylint:disable=protected-access
         else:
             participants = []
         return cls(
             message=chat_message_content.message,
             topic=chat_message_content.topic,
             participants=participants,
-            initiator=chat_message_content.initiator
+            initiator=CommunicationUserIdentifierConverter._from_identifier_model(
+                chat_message_content.initiator_communication_identifier)  # pylint:disable=protected-access
         )
 
 
@@ -176,8 +182,6 @@ class ChatThread(object):
     :vartype created_on: ~datetime.datetime
     :ivar created_by: the chat thread owner.
     :vartype created_by: CommunicationUserIdentifier
-    :param participants: Chat thread participants.
-    :type participants: list[~azure.communication.chat.ChatThreadParticipant]
     """
 
     # pylint:disable=protected-access
@@ -191,7 +195,6 @@ class ChatThread(object):
         self.topic = kwargs.get('topic', None)
         self.created_on = kwargs['created_on']
         self.created_by = kwargs['created_by']
-        self.participants = kwargs.get('participants', None)
 
     @classmethod
     def _from_generated(cls, chat_thread):
@@ -199,7 +202,8 @@ class ChatThread(object):
             id=chat_thread.id,
             topic=chat_thread.topic,
             created_on=chat_thread.created_on,
-            created_by=CommunicationUserIdentifier(chat_thread.created_by)
+            created_by=CommunicationUserIdentifierConverter._from_identifier_model(
+                chat_thread.created_by_communication_identifier) # pylint:disable=protected-access
         )
 
 
@@ -230,7 +234,8 @@ class ChatMessageReadReceipt(object):
     @classmethod
     def _from_generated(cls, read_receipt):
         return cls(
-            sender=CommunicationUserIdentifier(read_receipt.sender_id),
+            sender=CommunicationUserIdentifierConverter._from_identifier_model(
+                read_receipt.sender_communication_identifier),  # pylint:disable=protected-access
             chat_message_id=read_receipt.chat_message_id,
             read_on=read_receipt.read_on
         )

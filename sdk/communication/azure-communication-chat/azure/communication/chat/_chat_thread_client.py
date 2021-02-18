@@ -29,7 +29,7 @@ from ._models import (
     ChatMessageReadReceipt
 )
 
-from ._utils import _to_utc_datetime # pylint: disable=unused-import
+from ._utils import _to_utc_datetime, CommunicationUserIdentifierConverter # pylint: disable=unused-import
 from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
@@ -339,7 +339,8 @@ class ChatThreadClient(object):
         """Gets a list of messages from a thread.
 
         :keyword int results_per_page: The maximum number of messages to be returned per page.
-        :keyword ~datetime.datetime start_time: The start time where the range query.
+        :keyword ~datetime.datetime start_time: The earliest point in time to get messages up to.
+        The timestamp should be in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of ChatMessage
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.ChatMessage]
@@ -574,7 +575,8 @@ class ChatThreadClient(object):
 
         return self._client.chat_thread.remove_chat_participant(
             chat_thread_id=self._thread_id,
-            chat_participant_id=user.identifier,
+            participant_communication_identifier=CommunicationUserIdentifierConverter._to_identifier_model(user),
+            # pylint:disable=protected-access
             **kwargs)
 
     def close(self):

@@ -127,8 +127,10 @@ async def test_get_chat_thread():
     async def mock_send(*_, **__):
         return mock_response(status_code=200, json_payload={
                 "id": thread_id,
-                "created_by": "8:acs:resource_user",
-                "participants": [{"id": "", "display_name": "name", "share_history_time": "1970-01-01T00:00:00Z"}]
+                "topic": "Lunch Chat thread",
+                "createdOn": "2020-10-30T10:50:50Z",
+                "deletedOn": "2020-10-30T10:50:50Z",
+                "createdByCommunicationIdentifier": {"rawId": "string", "communicationUser": {"id": "string"}}
                 })
     chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
 
