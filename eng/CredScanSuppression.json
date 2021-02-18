@@ -30,9 +30,19 @@
                 "MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
                 "NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==",
                 "3Ujhg7pzkOeE7flc6Z187ugf5/cJnszGPjAiXmcwhaY=",
-                "SecretBase"
+                "SecretBase",
+                "nodesdk",
+                "p@55wOrd",
+                "pass$w0rd",
+                ""
             ],
             "_justification": "Secret used by test code, it is fake."
-        }
+        },
+        {
+            "file":[
+                "sdk/keyvault/azure-keyvault-certificates/tests/ca.key"
+            ],
+            "_justification": "File contains private key used by test code."
+        }  
     ]
 }
