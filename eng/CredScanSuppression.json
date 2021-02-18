@@ -13,7 +13,6 @@
                 "Aa!1()-xyz",
                 "000000000000000000000000000000000000000000000000000",
                 "UsernameAndPassword",
-                "b4GrSv5ajm8zBPgaihzmWtzw5BCiUYjAxZ%2FqOgGQZao%3D&response_type=client_credentials",
                 "123456",
                 "Password1!",
                 "NewPassword1!",
@@ -25,16 +24,11 @@
                 "123_abc",
                 "pa$$w0rd",
                 "Password1!!!",
-                "NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==",
                 "Un53cuRE!",
-                "MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
-                "NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==",
-                "3Ujhg7pzkOeE7flc6Z187ugf5/cJnszGPjAiXmcwhaY=",
                 "SecretBase",
                 "nodesdk",
                 "p@55wOrd",
-                "pass$w0rd",
-                ""
+                "pass$w0rd"
             ],
             "_justification": "Secret used by test code, it is fake."
         },
