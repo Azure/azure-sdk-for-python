@@ -146,3 +146,8 @@ jobs:
           displayName: Delete resource group
           condition: ne(variables['AZURE_RESOURCEGROUP_NAME'], '')
 
+      - ${{ if eq(parameters['DeployArmTemplate'], true) }}:
+        - template: /eng/common/TestResources/remove-test-resources.yml
+          parameters:
+            ServiceDirectory: '${{ parameters.ServiceDirectory }}'
+            SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
