@@ -286,17 +286,12 @@ def create_properties_from_list_of_dicts_if_needed(properties, sb_resource_type)
     corresponding dict representations of resource properties.
     """
     # type: (dict, DictPropertiesType) -> (str, DictPropertiesReturnType)
-    try:
-        if isinstance(properties, dict):
-            resource_property_name = properties["name"]
-            dict_to_props = sb_resource_type(**properties)
-            to_update = dict_to_props._to_internal_entity() # pylint: disable=protected-access
-        else:
-            resource_property_name = properties.name
-            to_update = properties._to_internal_entity()    # pylint: disable=protected-access
+    if isinstance(properties, dict):
+        resource_property_name = properties["name"]
+        dict_to_props = sb_resource_type(**properties)
+        to_update = dict_to_props._to_internal_entity() # pylint: disable=protected-access
+    else:
+        resource_property_name = properties.name
+        to_update = properties._to_internal_entity()    # pylint: disable=protected-access
 
-        return (resource_property_name, to_update)
-    except (AttributeError, TypeError) as e:
-        _log.error(e)
-    except KeyError as e:
-        raise AttributeError("{} dict is missing required key: {}".format(sb_resource_type, e))
+    return (resource_property_name, to_update)

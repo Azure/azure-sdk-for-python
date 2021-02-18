@@ -178,20 +178,16 @@ def create_messages_from_dicts_if_needed(messages, message_type):
     of messages and to Message objects.
     """
     # type: (DictMessageType) -> Union[List[azure.servicebus.Message], azure.servicebus.BatchMessage]
-    try:
-        if isinstance(messages, list):
-            for index, message in enumerate(messages):
-                if isinstance(message, dict):
-                    messages[index] = message_type(**message)
+    if isinstance(messages, list):
+        for index, message in enumerate(messages):
+            if isinstance(message, dict):
+                messages[index] = message_type(**message)
 
-        if isinstance(messages, dict):
-            temp_messages = message_type(**messages)
-            messages = [temp_messages]
+    if isinstance(messages, dict):
+        temp_messages = message_type(**messages)
+        messages = [temp_messages]
 
-        if isinstance(messages, message_type):
-            messages = [messages]
+    if isinstance(messages, message_type):
+        messages = [messages]
 
-        return messages
-    except TypeError as e:
-        _log.error("Dict must include 'body' key. Message is incorrectly formatted:")
-        _log.error(e)
+    return messages
