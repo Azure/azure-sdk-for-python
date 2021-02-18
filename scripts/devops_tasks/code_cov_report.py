@@ -83,7 +83,11 @@ def create_coverage_report():
 
         p.remove(p.find('classes'))
 
-        p.append(temp_c)
+        c = ET.SubElement(p, "classes")
+        c.append(temp_c)
+
+
+        # p.append(c)
         packages_to_add.append(p)
         print(p[0])
         ET.dump(p)
