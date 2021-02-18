@@ -83,3 +83,13 @@ def test_extensions_upper_case_value_error():
             data='data',
             extensions={"lowercase123": "accepted", "NOTlower123": "not allowed"}
         )
+
+def test_data_and_base64_both_exist_raises():
+    with pytest.raises(ValueError):
+        CloudEvent.from_dict(
+            {"source":'sample',
+            "type":'type',
+            "data":'data',
+            "data_base64":'Y2kQ=='
+            }
+        )
