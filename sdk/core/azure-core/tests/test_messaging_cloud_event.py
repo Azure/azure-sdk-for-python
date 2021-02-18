@@ -74,3 +74,12 @@ def test_cloud_custom_dict_base64():
     assert event.data == b'cloudevent'
     assert event.specversion == "1.0"
     assert event.__class__ == CloudEvent
+
+def test_extensions_upper_case_value_error():
+    with pytest.raises(ValueError):
+        event = CloudEvent(
+            source='sample',
+            type='type',
+            data='data',
+            extensions={"lowercase123": "accepted", "NOTlower123": "not allowed"}
+        )
