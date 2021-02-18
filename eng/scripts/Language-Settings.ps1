@@ -5,31 +5,117 @@ $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
 
-function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
-{
-  pip install packaging==20.4 -q -I
-  $pkgName = $pkgName.Replace('_', '-')
-  if (Test-Path (Join-Path $pkgPath "setup.py"))
+function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectoryName, $artifactName)
+{  
+  $packageName = $artifactName.Replace('_', '-')
+  $pkgDirName = Split-Path $pkgPath -Leaf
+  if ($pkgDirName -ne $packageName)
   {
-    $setupLocation = $pkgPath.Replace('\','/')
-    pushd $RepoRoot
-    $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import get_package_properties; obj=get_package_properties('$setupLocation'); print('{0},{1},{2}'.format(obj[0], obj[1], obj[2]));") -split ","
-    popd
-    if (($setupProps -ne $null) -and ($setupProps[0] -eq $pkgName))
+    # Common code triggers this function against each directory but we can skip if it doesn't match package name
+    return $null
+  }
+
+  $setupPyPath = Join-Path $pkgPath "setup.py"
+
+  if (Test-Path $setupPyPath)
+  {
+    # Get PackageName and Version Info from SetUp.py
+    $packageNameFromSetupPy = $null
+    $namespaceNameFromSetupPy = $null
+    $versionFromSetupPy = $null
+    $versionFileSubDir = $null
+    $requiresCorePkg = $False
+    $nameAndVersionInfo = Select-String -Path $setupPyPath -Pattern '^\s+version=.+,$', '^\s+name=.+,$', '^PACKAGE_NAME\s=.+$', '^NAMESPACE_NAME\s=.+$', '^package_folder_path\s=.+$'-Raw
+
+    #Write-Host "nameandversion $nameAndVersionInfo"
+
+    if ($null -ne $nameAndVersionInfo)
     {
-      $pkgProp = [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceDirectory)
-      if ($pkgName -match "mgmt")
+      foreach ($info in $nameAndVersionInfo)
       {
-        $pkgProp.SdkType = "mgmt"
+        if ($info -match "PACKAGE_NAME =")
+        {
+          $packageNameFromSetupPy = $info.Replace("'",'"').Split('"')[1]
+        }
+        if ($info -match "version=")
+        {
+          $versionFromSetupPy = $info.Replace("'",'"').Split('"')[1]
+        }
+        if ($info -match "NAMESPACE_NAME =")
+        {
+          $namespaceNameFromSetupPy = $info.Replace("'",'"').Split('"')[1]
+        }
+        if ($null -eq $packageNameFromSetupPy -and $info -match "name=")
+        {
+          $packageNameFromSetupPy = $info.Replace("'",'"').Split('"')[1]
+        }
+        if ($info -match 'package_folder_path = \".+\"')
+        {
+          $versionFileSubDir = $info.Replace("'",'"').Split('"')[1]
+        }
       }
-      else
+
+      #Write-Host "Package Name $packageNameFromSetupPy" -ForegroundColor Green
+      #Write-Host "Package Version $versionFromSetupPy" -ForegroundColor Green
+
+      $installRequiresInfo = (Get-Content -Path $setupPyPath -Raw | Select-String -Pattern '(?s)\sinstall_requires=.*?],').Matches.Value
+
+      if (($installRequiresInfo -match "azure-core") -or ($installRequiresInfo -match "azure-mgmt-core"))
       {
-        $pkgProp.SdkType = "client"
+        $requiresCorePkg = $True
       }
-      $pkgProp.IsNewSdk = $setupProps[3]
+    }
+    $ParsedVersion = [AzureEngSemanticVersion]::ParsePythonVersionString($versionFromSetupPy)
+
+    if ($null -eq $ParsedVersion)
+    {
+      $versionFilePath = Join-Path $pkgPath ($packageName.Replace('-', '/')) "_version.py"
+      if (!(Test-Path $versionFilePath))
+      {
+        $versionFilePath = Join-Path $pkgPath ($packageName.Replace('-', '/')) "version.py"
+      }
+      if (!(Test-Path $versionFilePath) -and ($null -ne $namespaceNameFromSetupPy))
+      {
+        $versionFilePath = Join-Path $pkgPath ($namespaceNameFromSetupPy.Replace('.', '/')) "_version.py"
+      }
+      if (!(Test-Path $versionFilePath) -and ($null -ne $versionFileSubDir))
+      {
+        $versionFilePath = Join-Path $pkgPath $versionFileSubDir "_version.py"
+      }
+      if (Test-Path $versionFilePath)
+      {
+        #Write-Host "Version File $versionFilePath" -ForegroundColor Yellow
+        $versionFromFile = (Select-String -Path $versionFilePath -Pattern '^VERSION\s=\s.+' -Raw).Replace("'", '"').Split('"')[1]
+        $parsedVersion = [AzureEngSemanticVersion]::ParsePythonVersionString($versionFromFile)
+
+        if (($null -ne $versionFromFile) -and ($null -eq $parsedVersion))
+        {
+          LogWarning "Retirieved version [ $versionFromFile ] for [ $packageName ] is invalid"
+        }
+
+        if ($null -ne $ParsedVersion)
+        {
+          $versionFromSetupPy = $versionFromFile
+        }
+      }
+    }
+
+    #Write-Host "Package Version $versionFromSetupPy" -ForegroundColor Blue
+    #Write-Host "IsNewSDK $requiresCorePkg" -ForegroundColor Blue
+
+    if ($packageNameFromSetupPy -eq $packageName)
+    {
+      if ($null -eq $parsedVersion)
+      {
+        LogWarning "Failed to get version for [ $packageName ]"
+      }
+      $pkgProp = [PackageProps]::new($packageName, $parsedVersion.RawVersion, $pkgPath, $serviceDirectoryName)
+      $pkgProp.IsNewSdk = $requiresCorePkg
+      $pkgProp.ArtifactName = $packageName
       return $pkgProp
     }
   }
+  LogWarning "Failed to retrieve Package Properties for [ $packageName ]"
   return $null
 }
 
