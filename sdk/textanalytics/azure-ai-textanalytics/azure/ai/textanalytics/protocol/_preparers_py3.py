@@ -32,7 +32,7 @@ class TextAnalyticsPreparers:
         Analytics API</a>`. See the :code:`<a href="https://aka.ms/talangs">Supported languages in Text
         Analytics API</a>` for the list of enabled languages.
 
-        :param api_version: REST API's service version to use. Required. Possible values are
+        :param str api_version: REST API's service version to use. Required. Possible values are
          'v3.0' or 'v3.1-preview.1'.
         :param body: JSON body containing the set of documents to process as part of this batch.
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
@@ -89,7 +89,7 @@ class TextAnalyticsPreparers:
         :code:`<a href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for the
         list of enabled languages.
 
-        :param api_version: REST API's service version to use. Required. Possible values are
+        :param str api_version: REST API's service version to use. Required. Possible values are
          'v3.1-preview.1'.
         :param body: JSON body containing the set of documents to process as part of this batch.
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
@@ -134,7 +134,7 @@ class TextAnalyticsPreparers:
         the :code:`<a href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for
         the list of enabled languages.
 
-        :param api_version: REST API's service version to use. Required. Possible values are
+        :param str api_version: REST API's service version to use. Required. Possible values are
          'v3.0' or 'v3.1-preview.1'.
         :param body: JSON body containing the set of documents to process as part of this batch.
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
@@ -187,7 +187,7 @@ class TextAnalyticsPreparers:
         href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for the list of
         enabled languages.
 
-        :param api_version: REST API's service version to use. Required. Possible values are
+        :param str api_version: REST API's service version to use. Required. Possible values are
          'v3.0' or 'v3.1-preview.1'.
         :param body: JSON body containing the set of documents to process as part of this batch.
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
@@ -233,7 +233,7 @@ class TextAnalyticsPreparers:
         href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for the list of
         enabled languages.
 
-        :param api_version: REST API's service version to use. Required. Possible values are
+        :param str api_version: REST API's service version to use. Required. Possible values are
          'v3.0' or 'v3.1-preview.1'.
         :param body: JSON body containing the set of documents to process as part of this batch.
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
@@ -280,7 +280,7 @@ class TextAnalyticsPreparers:
         the :code:`<a href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for
         the list of enabled languages.
 
-        :param api_version: REST API's service version to use. Required. Possible values are
+        :param str api_version: REST API's service version to use. Required. Possible values are
          'v3.0' or 'v3.1-preview.1'.
         :param body: JSON body containing the set of documents to process as part of this batch.
         :param model_version: (Optional) This value indicates which model will be used for scoring. If

@@ -130,3 +130,25 @@ async def test_query_params(client, documents):
     assert json_response['documents'][0]['sentiment'] == 'positive'
     assert json_response['documents'][1]['sentiment'] == 'positive'
     assert json_response['statistics']['documentsCount'] == 3
+
+@pytest.mark.asyncio
+async def test_azure_key_credential(documents):
+    import os
+    from azure.ai.textanalytics.aio import TextAnalyticsClient
+    from azure.core.credentials import AzureKeyCredential
+
+
+    request = TextAnalyticsPreparers.prepare_sentiment(
+        api_version="v3.0",
+        body={
+            "documents": documents
+        },
+    )
+
+    async with TextAnalyticsClient(endpoint="https://python-textanalytics.cognitiveservices.azure.com/", credential=AzureKeyCredential(os.environ['AZURE_TEXT_ANALYTICS_KEY'])) as client:
+        response = await client.send_request(request)
+        response.raise_for_status()
+        await response.load_body()
+        json_response = response.json()
+        assert json_response['documents'][0]['sentiment'] == 'positive'
+        assert json_response['documents'][1]['sentiment'] == 'positive'

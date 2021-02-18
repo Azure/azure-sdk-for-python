@@ -128,3 +128,22 @@ def test_query_params(client, documents):
     assert json_response['documents'][0]['sentiment'] == 'positive'
     assert json_response['documents'][1]['sentiment'] == 'positive'
     assert json_response['statistics']['documentsCount'] == 3
+
+def test_azure_key_credential(documents):
+    import os
+    from azure.ai.textanalytics import TextAnalyticsClient
+    from azure.core.credentials import AzureKeyCredential
+    client = TextAnalyticsClient(endpoint="https://python-textanalytics.cognitiveservices.azure.com/", credential=AzureKeyCredential(os.environ['AZURE_TEXT_ANALYTICS_KEY']))
+
+    request = TextAnalyticsPreparers.prepare_sentiment(
+        api_version="v3.1-preview.1",
+        body={
+            "documents": documents
+        },
+    )
+    response = client.send_request(request)
+    response.raise_for_status()
+    json_response = response.json()
+    assert json_response['documents'][0]['sentiment'] == 'positive'
+    assert json_response['documents'][1]['sentiment'] == 'positive'
+

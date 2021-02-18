@@ -6,10 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Union
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
+from azure.core.credentials import AzureKeyCredential
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -25,14 +26,14 @@ class TextAnalyticsClientConfiguration(Configuration):
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureKeyCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).
     :type endpoint: str
     """
 
     def __init__(
         self,
-        credential: "TokenCredential",
+        credential: Union["TokenCredential", AzureKeyCredential],
         endpoint: str,
         **kwargs: Any,
     ) -> None:
@@ -62,4 +63,7 @@ class TextAnalyticsClientConfiguration(Configuration):
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            if isinstance(self.credential, AzureKeyCredential):
+                self.authentication_policy = policies.AzureKeyCredentialPolicy(name="Ocp-Apim-Subscription-Key", credential=self.credential)
+            else:
+                self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)

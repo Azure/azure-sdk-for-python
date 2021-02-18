@@ -6,9 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Union
 
 from azure.core import AsyncPipelineClient
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from msrest import Serializer
 
@@ -23,14 +24,14 @@ class TextAnalyticsClient:
     """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. No training data is needed to use this API; just bring your text data. This API uses advanced natural language processing techniques to deliver best in class predictions. Further documentation can be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or ~azure.core.credentials.AzureKeyCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).
     :type endpoint: str
     """
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
+        credential: Union["AsyncTokenCredential", AzureKeyCredential],
         endpoint: str,
         **kwargs: Any
     ) -> None:
