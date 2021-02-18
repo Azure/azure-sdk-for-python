@@ -15,9 +15,8 @@ stages:
         ServiceDirectory: keyvault
         BuildTargetingString: ${{ service }}
         JobName: ${{ replace(service, '-', '_') }}
-        ${{ if or(eq(service, 'azure-keyvault-keys'), eq(service, 'azure-keyvault-certificates')) }}:
-          DeployArmTemplate: true
-          AllocateResourceGroup: true
+        DeployArmTemplate: true
+        AllocateResourceGroup: true
         EnvVars:
           AZURE_TEST_RUN_LIVE: true
           AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
