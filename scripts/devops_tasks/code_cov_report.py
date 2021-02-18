@@ -71,30 +71,33 @@ def create_coverage_report():
         packages_root.remove(n)
 
     # Last thing with root, change the 'name' attrib to be just the package name
+    packages_to_add = []
     for package in root.find('packages'):
         name = package.attrib['name'].split('.')
         package.attrib['name'] = name[2]
 
-    packages_to_add = []
-    for package in root.find('packages'):
-        p = copy.deepcopy(package)
-        print(p.attrib)
-        temp_c = copy.deepcopy(p.find('classes')[0])
-        temp_c.remove(temp_c.find('lines'))
+        packages_to_add.append(copy.deepcopy(package))
 
-        temp_c.attrib['filename'] = temp_c.attrib['filename'].replace('/__init__.py', '/**/*.py')
+    # packages_to_add = []
+    # for package in root.find('packages'):
+    #     p = copy.deepcopy(package)
+    #     print(p.attrib)
+    #     temp_c = copy.deepcopy(p.find('classes')[0])
+    #     temp_c.remove(temp_c.find('lines'))
 
-        print(ET.dump(temp_c))
+    #     temp_c.attrib['filename'] = temp_c.attrib['filename'].replace('/__init__.py', '/**/*.py')
 
-        p.remove(p.find('classes'))
+    #     print(ET.dump(temp_c))
 
-        c = ET.SubElement(p, "classes")
-        c.append(temp_c)
+    #     p.remove(p.find('classes'))
 
-        packages_to_add.append(p)
-        print(p[0])
+    #     c = ET.SubElement(p, "classes")
+    #     c.append(temp_c)
 
-    print(packages_to_add)
+    #     packages_to_add.append(p)
+    #     print(p[0])
+
+    # print(packages_to_add)
 
     write_final_xml(packages_to_add)
 
