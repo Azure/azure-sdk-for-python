@@ -6,7 +6,6 @@ import asyncio
 import functools
 import logging
 import json
-import pytest
 
 from azure.core.exceptions import ResourceExistsError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -29,6 +28,7 @@ from azure.keyvault.certificates import (
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates._shared import HttpChallengeCache
 from devtools_testutils import PowerShellPreparer
+import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
 

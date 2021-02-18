@@ -4,12 +4,12 @@
 # ------------------------------------
 import asyncio
 import functools
-import pytest
 
 from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates._shared import HttpChallengeCache
 from devtools_testutils import PowerShellPreparer
+import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
 

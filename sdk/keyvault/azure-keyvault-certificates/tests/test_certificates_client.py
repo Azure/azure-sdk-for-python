@@ -6,12 +6,10 @@ import functools
 import json
 import logging
 import time
-import pytest
 
 from azure.core.exceptions import ResourceExistsError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure_devtools.scenario_tests import RecordingProcessor, RequestUrlNormalizer
-
 from azure.keyvault.certificates import (
     AdministratorContact,
     ApiVersion,
@@ -30,6 +28,7 @@ from azure.keyvault.certificates import (
 )
 from azure.keyvault.certificates._shared import HttpChallengeCache
 from devtools_testutils import PowerShellPreparer
+import pytest
 
 from _shared.test_case import KeyVaultTestCase
 
