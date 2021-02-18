@@ -4,7 +4,7 @@
 
   **Features**
   - Add `from_connection_string` method to instantiate exporters
-      ([#16580](https://github.com/Azure/azure-sdk-for-python/pull/16580))
+      ([#16818](https://github.com/Azure/azure-sdk-for-python/pull/16818))
 
 ## 1.0.0b3 (2021-02-11)
 
