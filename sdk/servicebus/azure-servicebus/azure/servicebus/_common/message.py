@@ -44,13 +44,11 @@ from .utils import (
 )
 from ..exceptions import (
     MessageAlreadySettled,
-    MessageLockExpired,
-    SessionLockExpired,
-    MessageSettleFailed,
-    MessageContentTooLarge,
+    MessageLockLostError,
+    SessionLockLostError,
+    MessageSizeExceededError,
     ServiceBusError)
 from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed, create_messages_from_dicts_if_needed
-from ..exceptions import MessageSizeExceededError
 
 if TYPE_CHECKING:
     from ..aio._servicebus_receiver_async import (

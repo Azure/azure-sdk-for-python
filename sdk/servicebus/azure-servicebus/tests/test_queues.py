@@ -41,8 +41,7 @@ from azure.servicebus.exceptions import (
     MessageAlreadySettled,
     AutoLockRenewTimeout,
     MessageSizeExceededError,
-    OperationTimeoutError,
-    ServiceBusError
+    OperationTimeoutError
 )
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
@@ -2317,6 +2316,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             m.complete()
                 else:
                     raise Exception("Failed to receive schdeduled message.")                    
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
