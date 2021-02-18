@@ -81,6 +81,9 @@ def create_coverage_report():
         print(p.attrib)
         temp_c = copy.deepcopy(p.find('classes')[0])
         temp_c.remove(temp_c.find('lines'))
+
+        temp_c.attrib['filename'] = temp_c.attrib['filename'].replace('/__init__.py', '/**/*.py')
+
         print(ET.dump(temp_c))
 
         p.remove(p.find('classes'))
@@ -88,11 +91,9 @@ def create_coverage_report():
         c = ET.SubElement(p, "classes")
         c.append(temp_c)
 
-
-        # p.append(c)
         packages_to_add.append(p)
         print(p[0])
-        ET.dump(p)
+
     print(packages_to_add)
 
     write_final_xml(packages_to_add)
