@@ -34,7 +34,8 @@
         },
         {
             "file":[
-                "sdk/keyvault/azure-keyvault-certificates/tests/ca.key"
+                "sdk/keyvault/azure-keyvault-certificates/tests/ca.key",
+                "sdk/identity/azure-identity/tests/ec-certificate.pem"
             ],
             "_justification": "File contains private key used by test code."
         }  
