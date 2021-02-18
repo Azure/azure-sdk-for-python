@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import uuid
-import base64
+from  base64 import b64decode
 from datetime import tzinfo, timedelta, datetime
 
 try:
@@ -125,7 +125,7 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
         source=event.pop("source", None),
         type=event.pop("type", None),
         specversion=event.pop("specversion", None),
-        data=data or base64.b64decode(data_base64),
+        data=data or b64decode(data_base64),
         time=event.pop("time", None),
         dataschema=event.pop("dataschema", None),
         datacontenttype=event.pop("datacontenttype", None),
