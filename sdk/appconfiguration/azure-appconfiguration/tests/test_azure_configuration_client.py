@@ -431,7 +431,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             assert key1.value['conditions'] == key2.value['conditions']
             assert key1.value['description'] == key2.value['description']
             assert key1.value['enabled'] == key2.value['enabled']
-            assert key1.is_enabled == key2.is_enabled
         else:
             assert key1.value == key2.value
 
@@ -440,7 +439,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         retrieved_flag = client.get_configuration_setting(".appconfig.featureflag/test_features")
         retrieved_flag.value['enabled'] = False
         sent_flag = client.set_configuration_setting(retrieved_flag)
-        print(retrieved_flag)
         self._assert_same_keys(retrieved_flag, sent_flag)
 
         feature_flag = FeatureFlagConfigurationSetting("test_feature", True)
@@ -448,9 +446,12 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
         self._assert_same_keys(feature_flag, set_flag)
 
+        set_flag.value['enabled'] = not set_flag.value['enabled']
+        changed_flag = client.set_configuration_setting(set_flag)
+        self._assert_same_keys(set_flag, changed_flag)
+
     @app_config_decorator
     def test_config_setting_secret_reference(self, client):
-        retrieved = client.get_configuration_setting("test")
 
         secret_reference = SecretReferenceConfigurationSetting(
             "ConnectionString", "https://test-test.vault.azure.net/secrets/connectionString")

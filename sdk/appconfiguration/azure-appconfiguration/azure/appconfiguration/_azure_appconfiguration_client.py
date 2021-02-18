@@ -24,7 +24,6 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
 )
 from ._azure_appconfiguration_error import ResourceReadOnlyError
-from ._generated.models import KeyValue
 from ._generated import AzureAppConfiguration
 from ._generated.models import ErrorException
 from ._generated._configuration import AzureAppConfigurationConfiguration

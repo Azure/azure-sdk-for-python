@@ -2,9 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import ast
 import json
-import six
 from msrest.serialization import Model
 from ._generated.models import KeyValue
 
@@ -58,9 +56,9 @@ class ConfigurationSetting(Model):
             return None
         if key_value.content_type is not None:
             if key_value.content_type.startswith(FeatureFlagConfigurationSetting.feature_flag_content_type):
-                return FeatureFlagConfigurationSetting._from_generated(key_value)
+                return FeatureFlagConfigurationSetting._from_generated(key_value) # pylint: disable=protected-access
             if key_value.content_type.startswith(SecretReferenceConfigurationSetting.secret_reference_content_type):
-                return SecretReferenceConfigurationSetting._from_generated(key_value)
+                return SecretReferenceConfigurationSetting._from_generated(key_value) # pylint: disable=protected-access
 
         return cls(
             key=key_value.key,
@@ -74,6 +72,7 @@ class ConfigurationSetting(Model):
         )
 
     def _to_generated(self):
+        # type: (...) -> KeyValue
         return KeyValue(
             key=self.key,
             label=self.label,
@@ -121,66 +120,56 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
     feature_flag_content_type = "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
 
 
-    def __init__(self, feature_id, is_enabled, **kwargs):
+    def __init__(self, key, value, **kwargs):
         # type: (str, bool, str) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
-        self.key = feature_id
-        if not feature_id.startswith(self.key_prefix):
-            self.key = self.key_prefix + feature_id
-        self.is_enabled = is_enabled
+        self.key = key
+        if not key.startswith(self.key_prefix):
+            self.key = self.key_prefix + key
+        self.value = value
         self.label = kwargs.get('label', None)
         self.content_type = kwargs.get('content_type', self.feature_flag_content_type)
-        self._feature_id = feature_id
         self.last_modified = kwargs.get('last_modified', None)
         self.tags = kwargs.get('tags', {})
         self.read_only = kwargs.get('read_only', None)
         self.etag = kwargs.get('etag', None)
+        self.description = kwargs.get('description', None)
+        self.display_name = kwargs.get('display_name', None)
 
-        self.value = kwargs.get('value', None)
-        if isinstance(self.value, six.string_types):
-            try:
-                self.value = ast.literal_eval(self.value)
-            except ValueError:
-                self.value = json.loads(self.value)
-            except:
-                pass
-
-        # This is for instantiating a value itself
-        if isinstance(self.is_enabled, bool):
+        if isinstance(self.value, bool):
             self.value = {
                 'id': self.key,
-                'description': kwargs.get('description', None),
-                'enabled': is_enabled,
+                'description': self.description,
+                'enabled': self.value,
                 'conditions': {
                     'client_filters': []
                 }
             }
 
-        self.is_enabled = self.value['enabled']
-
-        self.description = kwargs.get('description', None)
-        self.display_name = kwargs.get('display_name', None)
-
 
     @classmethod
     def _from_generated(cls, key_value):
         # type: (KeyValue) -> FeatureFlagConfigurationSetting
-        # TODO: change the value to dict change to right here
         if key_value is None:
             return None
+        if key_value.value:
+            try:
+                key_value.value = json.loads(key_value.value)
+            except json.decoder.JSONDecodeError:
+                pass
         return cls(
-            feature_id=key_value.key,
-            is_enabled=key_value.value,
+            key=key_value.key,
+            value=key_value.value,
             label=key_value.label,
             content_type=key_value.content_type,
             last_modified=key_value.last_modified,
             tags=key_value.tags,
             read_only=key_value.locked,
             etag=key_value.etag,
-            value=key_value.value
         )
 
     def _to_generated(self):
+        # type: (...) -> KeyValue
         value = self.value
         if isinstance(self.value, dict):
             value = json.dumps(self.value)
@@ -227,7 +216,7 @@ class SecretReferenceConfigurationSetting(Model):
         'read_only': {'key': 'read_only', 'type': 'bool'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
-    secret_reference_content_type = "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8";
+    secret_reference_content_type = "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
 
     def __init__(self, key, value, label=None, **kwargs):
         # type: (str, str, str) -> None
@@ -263,6 +252,7 @@ class SecretReferenceConfigurationSetting(Model):
         )
 
     def _to_generated(self):
+        # type: (...) -> KeyValue
         value = self.value
         if isinstance(self.value, dict):
             value = json.dumps(self.value)
@@ -284,8 +274,7 @@ class FeatureFlagFilter(object):
     :type name: string
     """
 
-    def __init__(self, name, parameters=dict()):
+    def __init__(self, name, parameters=None):
         # type: (str, dict) -> None
         self.name = name
-        self.parameters = parameters
-
+        self.parameters = parameters or {}
