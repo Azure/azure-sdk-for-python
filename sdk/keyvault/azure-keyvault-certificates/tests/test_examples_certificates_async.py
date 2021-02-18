@@ -8,6 +8,7 @@ import functools
 from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 from azure.keyvault.certificates.aio import CertificateClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+import pytest
 
 from _shared.preparer_async import KeyVaultClientPreparer as _KeyVaultClientPreparer
 from _shared.test_case_async import KeyVaultTestCase
@@ -20,7 +21,8 @@ def print(*args):
     assert all(arg is not None for arg in args)
 
 
-def test_create_certificate():
+@pytest.mark.asyncio
+async def test_create_certificate():
     vault_url = "vault_url"
     # pylint:disable=unused-variable
     # [START create_certificate_client]
@@ -30,6 +32,11 @@ def test_create_certificate():
     # Create a KeyVaultCertificate using default Azure credentials
     credential = DefaultAzureCredential()
     certificate_client = CertificateClient(vault_url=vault_url, credential=credential)
+
+    # the client and credential should be closed when no longer needed
+    # (both are also async context managers)
+    await certificate_client.close()
+    await credential.close()
     # [END create_certificate_client]
 
 

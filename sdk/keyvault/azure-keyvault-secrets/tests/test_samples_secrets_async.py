@@ -7,6 +7,7 @@ import functools
 
 from azure.keyvault.secrets.aio import SecretClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+import pytest
 
 from _shared.preparer_async import KeyVaultClientPreparer as _KeyVaultClientPreparer
 from _shared.test_case_async import KeyVaultTestCase
@@ -20,7 +21,8 @@ def print(*args):
     assert all(arg is not None for arg in args)
 
 
-def test_create_secret_client():
+@pytest.mark.asyncio
+async def test_create_secret_client():
     vault_url = "vault_url"
     # pylint:disable=unused-variable
     # [START create_secret_client]
@@ -28,8 +30,13 @@ def test_create_secret_client():
     from azure.keyvault.secrets.aio import SecretClient
 
     # Create a SecretClient using default Azure credentials
-    credentials = DefaultAzureCredential()
-    secret_client = SecretClient(vault_url, credentials)
+    credential = DefaultAzureCredential()
+    secret_client = SecretClient(vault_url, credential)
+
+    # the client and credential should be closed when no longer needed
+    # (both are also async context managers)
+    await secret_client.close()
+    await credential.close()
     # [END create_secret_client]
 
 
