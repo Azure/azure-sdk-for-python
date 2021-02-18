@@ -1,3 +1,4 @@
+import copy
 import logging
 import os
 import xml.etree.ElementTree as ET
@@ -73,6 +74,36 @@ def create_coverage_report():
     for package in root.find('packages'):
         name = package.attrib['name'].split('.')
         package.attrib['name'] = name[2]
+
+    packages_to_add = []
+    for package in root.find('packages'):
+        p = copy.deepcopy(package)
+        print(p.attrib)
+        temp_c = copy.deepcopy(p.find('classes')[0])
+
+        p.remove(p.find('classes'))
+
+        p.append(temp_c)
+        packages_to_add.append(p)
+        print(p[0])
+        ET.dump(p)
+    print(packages_to_add)
+
+    write_final_xml(packages_to_add)
+
+def write_final_xml(packages_to_add):
+    if not os.path.exists(coverage_file):
+        logging.info("No coverage file detected at {}".format(coverage_file))
+        return
+
+    logging.info("Modifying coverage file at {}".format(coverage_file))
+    tree = ET.parse(coverage_file)
+    root = tree.getroot()
+
+    packages = root[1]
+
+    for p in packages_to_add:
+        packages.insert(0, p)
 
     with open(coverage_file, "wb") as f:
         data = ET.tostring(root)
