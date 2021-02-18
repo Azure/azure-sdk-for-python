@@ -53,6 +53,16 @@ class TestAzureTraceExporter(unittest.TestCase):
             "4321abcd-5678-4efa-8abc-1234567890ab",
         )
 
+    def test_from_connection_string(self):
+        exporter = AzureMonitorTraceExporter.from_connection_string(
+            "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab"
+        )
+        self.assertTrue(isinstance(exporter, AzureMonitorTraceExporter))
+        self.assertEqual(
+            exporter._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+
     def test_export_empty(self):
         exporter = self._exporter
         result = exporter.export([])

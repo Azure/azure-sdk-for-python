@@ -32,7 +32,7 @@ Please find the samples linked below for demonstration as to how to authenticate
 
 ```Python
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
-exporter = AzureMonitorTraceExporter(
+exporter = AzureMonitorTraceExporter.from_connection_string(
     connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
 )
 ```
@@ -73,7 +73,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
-exporter = AzureMonitorTraceExporter(
+exporter = AzureMonitorTraceExporter.from_connection_string(
     connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
 )
 
@@ -110,8 +110,8 @@ tracer = trace.get_tracer(__name__)
 # This line causes your calls made with the requests library to be tracked.
 RequestsInstrumentor().instrument()
 span_processor = BatchExportSpanProcessor(
-    AzureMonitorTraceExporter(
-        connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
+    AzureMonitorTraceExporter.from_connection_string(
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
     )
 )
 trace.get_tracer_provider().add_span_processor(span_processor)

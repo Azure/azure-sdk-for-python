@@ -12,8 +12,8 @@ from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 
-exporter = AzureMonitorTraceExporter(
-    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+exporter = AzureMonitorTraceExporter.from_connection_string(
+    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 
 trace.set_tracer_provider(TracerProvider())

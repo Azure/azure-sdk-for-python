@@ -68,6 +68,9 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
+    @classmethod
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorTraceExporter":
+        return cls(connection_string=conn_str, **kwargs)
 
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
