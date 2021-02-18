@@ -56,7 +56,7 @@ from ..exceptions import (
     MessageSettleFailed,
     MessageContentTooLarge,
     ServiceBusError)
-from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
+from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed, create_messages_from_dicts_if_needed
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
     from .._servicebus_session_receiver import ServiceBusSessionReceiver
@@ -527,7 +527,7 @@ class BatchMessage(object):
 
     def _from_list(self, messages):
         for each in messages:
-            if not isinstance(each, Message):
+            if not isinstance(each, Message) and not isinstance(each, dict):
                 raise TypeError("Only Message or an iterable object containing Message objects are accepted."
                                  "Received instead: {}".format(each.__class__.__name__))
             self.add(each)
@@ -554,10 +554,9 @@ class BatchMessage(object):
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
         """
-        if isinstance(message, dict):
-            temp_message = Message(message.pop('body'), **message)
-            message = temp_message
-        message = transform_messages_to_sendable_if_needed(message)
+
+        messages = create_messages_from_dicts_if_needed(message, Message)[0]
+        message = transform_messages_to_sendable_if_needed(messages)
         message_size = message.message.get_message_encoded_size()
 
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
@@ -591,9 +590,7 @@ class PeekedMessage(Message):
 
     def __init__(self, message):
         # type: (uamqp.message.Message) -> None
-        if isinstance(message, dict):
-            temp_message = Message(message.pop('body'), **message)
-            message = temp_message
+        message = create_messages_from_dicts_if_needed(message, Message)
         super(PeekedMessage, self).__init__(None, message=message) # type: ignore
 
     def _to_outgoing_message(self):

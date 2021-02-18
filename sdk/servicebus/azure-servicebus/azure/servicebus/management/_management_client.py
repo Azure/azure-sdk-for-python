@@ -23,7 +23,7 @@ from ._generated.models import QueueDescriptionFeed, TopicDescriptionEntry, \
     CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent
 from ._utils import extract_data_template, get_next_template, deserialize_rule_key_values, serialize_rule_key_values, \
     extract_rule_data_template, _validate_entity_name_type, _validate_topic_and_subscription_types, \
-    _validate_topic_subscription_and_rule_types
+    _validate_topic_subscription_and_rule_types, create_properties_from_list_of_dicts_if_needed
 from ._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 
 from .._common.constants import JWT_TOKEN_SCOPE
@@ -280,15 +280,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type queue: ~azure.servicebus.management.QueueProperties
         :rtype: None
         """
-        if kwargs:
-            queue._internal_qd = None 
-            queue.__dict__.update([(key, kwargs.pop(key)) for key in kwargs.copy() if key in queue.__dict__.keys()])
 
-        if isinstance(queue, dict):
-            dict_to_queue_props = QueueProperties(queue.pop('name'), **queue) 
-            to_update = dict_to_queue_props._to_internal_entity()
-        else:
-            to_update = queue._to_internal_entity() 
+        queue_name, to_update = create_properties_from_list_of_dicts_if_needed(queue, QueueProperties)
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
 
@@ -300,7 +293,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             self._impl.entity.put(
-                queue.name,  # type: ignore
+                queue_name,  # type: ignore
                 request_body,
                 api_version=constants.API_VERSION,
                 if_match="*",
@@ -488,15 +481,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type topic: ~azure.servicebus.management.TopicProperties
         :rtype: None
         """
-        if kwargs:
-            topic._internal_qd = None 
-            topic.__dict__.update([(key, kwargs.pop(key)) for key in kwargs.copy() if key in topic.__dict__.keys()])
 
-        if isinstance(topic, dict):
-            dict_to_topic_props = TopicProperties(topic.pop('name'), **topic)
-            to_update = dict_to_topic_props._to_internal_entity()
-        else:
-            to_update = topic._to_internal_entity()
+        topic_name, to_update = create_properties_from_list_of_dicts_if_needed(topic, TopicProperties)
         to_update.default_message_time_to_live = kwargs.get(
             "default_message_time_to_live") or topic.default_message_time_to_live
         to_update.duplicate_detection_history_time_window = kwargs.get(
@@ -513,7 +499,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             self._impl.entity.put(
-                topic.name,  # type: ignore
+                topic_name,  # type: ignore
                 request_body,
                 api_version=constants.API_VERSION,
                 if_match="*",
@@ -705,15 +691,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         _validate_entity_name_type(topic_name, display_name='topic_name')
         
-        if kwargs:
-            subscription._internal_qd = None 
-            subscription.__dict__.update([(key, kwargs.pop(key)) for key in kwargs.copy() if key in subscription.__dict__.keys()])
-        if isinstance(subscription, dict):
-            dict_to_subscription_props = SubscriptionProperties(subscription.pop('name'), **subscription)
-            to_update = dict_to_subscription_props._to_internal_entity()
-        else:
-            to_update = subscription._to_internal_entity()
-
+        subscription_name, to_update = create_properties_from_list_of_dicts_if_needed(subscription, SubscriptionProperties)
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
 
@@ -726,7 +704,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         with _handle_response_error():
             self._impl.subscription.put(
                 topic_name,
-                subscription.name,
+                subscription_name,
                 request_body,
                 api_version=constants.API_VERSION,
                 if_match="*",
@@ -875,15 +853,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
-        if kwargs:
-            rule._internal_qd = None 
-            rule.__dict__.update([(key, kwargs.pop(key)) for key in kwargs.copy() if key in rule.__dict__.keys()])
-        if isinstance(rule, dict):
-            dict_to_rule_props = RuleProperties(rule.pop("name"), **rule)
-            to_update = dict_to_rule_props._to_internal_entity()
-        else:
-            to_update = rule._to_internal_entity()
 
+        rule_name, to_update = create_properties_from_list_of_dicts_if_needed(rule, RuleProperties)
 
         create_entity_body = CreateRuleBody(
             content=CreateRuleBodyContent(
@@ -896,7 +867,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             self._impl.rule.put(
                 topic_name,
                 subscription_name,
-                rule.name,
+                rule_name,
                 request_body,
                 api_version=constants.API_VERSION,
                 if_match="*",

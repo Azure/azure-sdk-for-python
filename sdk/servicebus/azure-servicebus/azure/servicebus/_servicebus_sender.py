@@ -18,7 +18,7 @@ from .exceptions import (
     OperationTimeoutError,
     _ServiceBusErrorPolicy,
     )
-from ._common.utils import create_authentication, transform_messages_to_sendable_if_needed
+from ._common.utils import create_authentication, transform_messages_to_sendable_if_needed, create_messages_from_dicts_if_needed
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
@@ -218,16 +218,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """
         # pylint: disable=protected-access
         self._open()
-        if isinstance(messages, list):
-            for index, each in enumerate(messages):
-                if isinstance(each, dict):
-                    messages[index] = Message(each.pop("body"), **each)
-                else:
-                    pass
-
-        if isinstance(messages, dict):
-            temp_messages = Message(messages.pop("body"), **messages)
-            messages = temp_messages
+        messages = create_messages_from_dicts_if_needed(messages, Message)
 
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
@@ -358,19 +349,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
-        if isinstance(message, list):
-            for index, each in enumerate(message):
-                if isinstance(each, dict):
-                    message[index] = Message(each.pop("body"), **each)
-                else:
-                    pass
-        if isinstance(message, dict):
-            temporary_message = Message(message.pop('body'), **message)
-            message = temporary_message
+        messages = create_messages_from_dicts_if_needed(message, Message)
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        message = transform_messages_to_sendable_if_needed(message)
+        message = transform_messages_to_sendable_if_needed(messages)
         try:
             batch = self.create_batch()
             batch._from_list(message)  # pylint: disable=protected-access

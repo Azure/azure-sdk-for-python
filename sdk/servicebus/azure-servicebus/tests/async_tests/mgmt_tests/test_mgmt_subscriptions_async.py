@@ -293,3 +293,68 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
 
         await mgmt_service.delete_subscription(topic_name, subscription_name)
         await mgmt_service.delete_topic(topic_name)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_mgmt_subscription_async_update_dict_success(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        await clear_topics(mgmt_service)
+        topic_name = "fjrui"
+        subscription_name = "eqkovc"
+
+        try:
+            topic_description = await mgmt_service.create_topic(topic_name)
+            subscription_description = await mgmt_service.create_subscription(topic_description.name, subscription_name)
+            subscription_description_dict = dict(subscription_description)
+
+            # Try updating one setting.
+            subscription_description_dict["lock_duration"] = datetime.timedelta(minutes=2)
+            await mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
+            subscription_description = await mgmt_service.get_subscription(topic_name, subscription_name)
+            assert subscription_description.lock_duration == datetime.timedelta(minutes=2)
+
+            # Now try updating all settings.
+            subscription_description_dict = dict(subscription_description)
+            subscription_description_dict["auto_delete_on_idle"] = datetime.timedelta(minutes=10)
+            subscription_description_dict["dead_lettering_on_message_expiration"] = True
+            subscription_description_dict["default_message_time_to_live"] = datetime.timedelta(minutes=11)
+            subscription_description_dict["lock_duration"] = datetime.timedelta(seconds=12)
+            subscription_description_dict["max_delivery_count"] = 14
+            # topic_description.enable_partitioning = True # Cannot be changed after creation
+            # topic_description.requires_session = True # Cannot be changed after creation
+
+            await mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
+            subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
+
+            assert subscription_description.auto_delete_on_idle == datetime.timedelta(minutes=10)
+            assert subscription_description.dead_lettering_on_message_expiration == True
+            assert subscription_description.default_message_time_to_live == datetime.timedelta(minutes=11)
+            assert subscription_description.max_delivery_count == 14
+            assert subscription_description.lock_duration == datetime.timedelta(seconds=12)
+            # assert topic_description.enable_partitioning == True
+            # assert topic_description.requires_session == True
+        finally:
+            await mgmt_service.delete_subscription(topic_name, subscription_name)
+            await mgmt_service.delete_topic(topic_name)
+
+        await mgmt_service.close()
+
+    @pytest.mark.liveTest
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    async def test_mgmt_subscription_async_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        await clear_topics(mgmt_service)
+        topic_name = "fjrui"
+        subscription_name = "eqkovc"
+
+        topic_description = await mgmt_service.create_topic(topic_name)
+        subscription_description = await mgmt_service.create_subscription(topic_description.name, subscription_name)
+        # send in subscription dict without non-name keyword args
+        subscription_description_only_name = {"name": topic_name}
+        with pytest.raises(TypeError):
+            await mgmt_service.update_subscription(topic_description.name, subscription_description_only_name)
+
+        await mgmt_service.delete_subscription(topic_name, subscription_name)
+        await mgmt_service.delete_topic(topic_name)
+        await mgmt_service.close()

@@ -37,8 +37,8 @@ from ...management._handle_response_error import _handle_response_error
 from ...management._model_workaround import avoid_timedelta_overflow
 from ._utils import extract_data_template, extract_rule_data_template, get_next_template
 from ...management._utils import deserialize_rule_key_values, serialize_rule_key_values, \
-    _validate_entity_name_type, _validate_topic_and_subscription_types, _validate_topic_subscription_and_rule_types
-
+    _validate_entity_name_type, _validate_topic_and_subscription_types, _validate_topic_subscription_and_rule_types, \
+    create_properties_from_list_of_dicts_if_needed
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential  # pylint:disable=ungrouped-imports
@@ -286,12 +286,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         :type queue: ~azure.servicebus.management.QueueProperties
         :rtype: None
         """
-        if isinstance(queue, dict):
-            dict_to_queue_props = QueueProperties(queue.pop("name"), **queue)
-            to_update = dict_to_queue_props._to_internal_entity()
-        else:
-            to_update = queue._to_internal_entity()
-
+        queue_name, to_update = create_properties_from_list_of_dicts_if_needed(queue, QueueProperties)
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
 
@@ -303,7 +298,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             await self._impl.entity.put(
-                queue.name,  # type: ignore
+                queue_name,  # type: ignore
                 request_body,
                 api_version=constants.API_VERSION,
                 if_match="*",
@@ -483,12 +478,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         :type topic: ~azure.servicebus.management.TopicProperties
         :rtype: None
         """
-        if isinstance(topic, dict):
-            dict_to_topic_props = TopicProperties(topic.pop("name"), **topic)
-            to_update = dict_to_topic_props._to_internal_entity()
-        else:
-            to_update = topic._to_internal_entity()
-
+        topic_name, to_update = create_properties_from_list_of_dicts_if_needed(topic, TopicProperties)
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
 
@@ -500,7 +490,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             await self._impl.entity.put(
-                topic.name,  # type: ignore
+                topic_name,  # type: ignore
                 request_body,
                 api_version=constants.API_VERSION,
                 if_match="*",
@@ -692,12 +682,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         :rtype: None
         """
         _validate_entity_name_type(topic_name, display_name='topic_name')
-        if isinstance(subscription, dict):
-            dict_to_subscription_props = SubscriptionProperties(subscription.pop("name"), **subscription)
-            to_update = dict_to_subscription_props._to_internal_entity()
-        else:
-            to_update = subscription._to_internal_entity()
-
+        subscription_name, to_update = create_properties_from_list_of_dicts_if_needed(subscription, SubscriptionProperties)
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
 
@@ -710,7 +695,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         with _handle_response_error():
             await self._impl.subscription.put(
                 topic_name,
-                subscription.name,
+                subscription_name,
                 request_body,
                 api_version=constants.API_VERSION,
                 if_match="*",
@@ -863,11 +848,8 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         :rtype: None
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
-        if isinstance(rule, dict):
-            dict_to_rule_props = RuleProperties(rule.pop('name'), **rule)
-            to_update = dict_to_rule_props._to_internal_entity()
-        else:
-            to_update = rule._to_internal_entity()
+
+        rule_name, to_update = create_properties_from_list_of_dicts_if_needed(rule, RuleProperties)
 
         create_entity_body = CreateRuleBody(
             content=CreateRuleBodyContent(
@@ -880,7 +862,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
             await self._impl.rule.put(
                 topic_name,
                 subscription_name,
-                rule.name,
+                rule_name,
                 request_body,
                 api_version=constants.API_VERSION,
                 if_match="*",

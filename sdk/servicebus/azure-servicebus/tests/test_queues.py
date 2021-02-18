@@ -1979,3 +1979,174 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         finally:
             # must reset the mgmt execute method, otherwise other test cases would use the hacked execute method, leading to timeout error
             uamqp.mgmt_operation.MgmtOperation.execute = original_execute_method
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_queue_send_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        def _hack_amqp_sender_run(cls):
+            time.sleep(6)  # sleep until timeout
+            cls.message_handler.work()
+            cls._waiting_messages = 0
+            cls._pending_messages = cls._filter_pending()
+            if cls._backoff and not cls._waiting_messages:
+                _logger.info("Client told to backoff - sleeping for %r seconds", cls._backoff)
+                cls._connection.sleep(cls._backoff)
+                cls._backoff = 0
+            cls._connection.work()
+            return True
+
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                # this one doesn't need to reset the method, as it's hacking the method on the instance
+                sender._handler._client_run = types.MethodType(_hack_amqp_sender_run, sender._handler)
+                with pytest.raises(OperationTimeoutError):
+                    sender.send_messages(Message("body"), timeout=5)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_queue_send_dicts_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+
+                message_dict = {"body": "Message"}
+                message2_dict = {"body": "Message2"}
+                list_message_dicts = [message_dict, message2_dict]
+
+                # send single dict
+                sender.send_messages(message_dict)
+
+                # send list of dicts
+                sender.send_messages(list_message_dicts)
+
+                # create and send BatchMessage with dicts
+                batch_message = sender.create_batch()
+                batch_message._from_list(list_message_dicts)  # pylint: disable=protected-access
+                sender.send_messages(batch_message)
+
+                received_messages = []
+                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                    for message in receiver:
+                        received_messages.append(message)
+                assert len(received_messages) == 5
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_queue_send_dict_messages_error_badly_formatted_dicts(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+
+                message_dict = {"bad_key": "Message"}
+                message2_dict = {"bad_key": "Message2"}
+                list_message_dicts = [message_dict, message2_dict]
+
+                # send single dict
+                with pytest.raises(TypeError):
+                    sender.send_messages(message_dict)
+
+                # send list of dicts
+                with pytest.raises(TypeError):
+                    sender.send_messages(list_message_dicts)
+
+                # create and send BatchMessage with dicts
+                batch_message = sender.create_batch()
+                with pytest.raises(TypeError):
+                    batch_message._from_list(list_message_dicts)  # pylint: disable=protected-access
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_queue_send_dict_messages_scheduled(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            content = "Test scheduled message"
+            message_id = uuid.uuid4()
+            message_id2 = uuid.uuid4()
+            scheduled_enqueue_time = (utc_now() + timedelta(minutes=0.05)).replace(microsecond=0)
+            message_dict = {"message_id": message_id, "body": content}
+            message2_dict = {"message_id": message_id2, "body": content}
+            list_message_dicts = [message_dict, message2_dict]
+            
+            # send single dict
+            with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+                with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                    tokens = sender.schedule_messages(message_dict, scheduled_enqueue_time)
+                    assert len(tokens) == 1
+    
+                messages = receiver.receive_messages(max_wait_time=20)
+                if messages:
+                    try:
+                        data = str(messages[0])
+                        assert data == content
+                        assert messages[0].message_id == message_id
+                        assert messages[0].scheduled_enqueue_time_utc == scheduled_enqueue_time
+                        assert messages[0].scheduled_enqueue_time_utc <= messages[0].enqueued_time_utc.replace(microsecond=0)
+                        assert len(messages) == 1
+                    finally:
+                        for m in messages:
+                            m.complete()
+                else:
+                    raise Exception("Failed to receive schdeduled message.")
+
+            # send list of dicts
+            with sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=20) as receiver:
+                with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                    tokens = sender.schedule_messages(list_message_dicts, scheduled_enqueue_time)
+                    assert len(tokens) == 2
+    
+                messages = receiver.receive_messages(max_wait_time=20)
+                messages.extend(receiver.receive_messages(max_wait_time=5))
+                if messages:
+                    try:
+                        data = str(messages[0])
+                        print(messages)
+                        assert data == content
+                        assert messages[0].message_id == message_id
+                        assert messages[0].scheduled_enqueue_time_utc == scheduled_enqueue_time
+                        assert messages[0].scheduled_enqueue_time_utc <= messages[0].enqueued_time_utc.replace(microsecond=0)
+                        assert len(messages) == 2
+                    finally:
+                        for m in messages:
+                            m.complete()
+                else:
+                    raise Exception("Failed to receive schdeduled message.")
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_queue_send_dict_messages_scheduled_error_badly_formatted_dicts(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            content = "Test scheduled message"
+            message_id = uuid.uuid4()
+            message_id2 = uuid.uuid4()
+            scheduled_enqueue_time = (utc_now() + timedelta(minutes=0.1)).replace(microsecond=0)
+            with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+                with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                    message_dict = {"message_id": message_id, "bad_key": content}
+                    message2_dict = {"message_id": message_id2, "bad_key": content}
+                    list_message_dicts = [message_dict, message2_dict]
+                    with pytest.raises(TypeError):
+                        sender.schedule_messages(message_dict, scheduled_enqueue_time)
+                    with pytest.raises(TypeError):
+                        sender.schedule_messages(list_message_dicts, scheduled_enqueue_time)
+    

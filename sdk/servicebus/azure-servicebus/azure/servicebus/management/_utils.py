@@ -3,10 +3,28 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import cast
+from typing import TYPE_CHECKING, cast, Dict, List, Union
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
 import six
+import logging
+if TYPE_CHECKING:
+    # pylint: disable=unused-import, ungrouped-imports
+    from ._models import QueueProperties, TopicProperties, \
+        SubscriptionProperties, RuleProperties, InternalQueueDescription, InternalTopicDescription, \
+        InternalSubscriptionDescription, InternalRuleDescription
+    DictPropertiesType = Union[
+        QueueProperties,
+        TopicProperties,
+        SubscriptionProperties,
+        RuleProperties
+    ]
+    DictPropertiesReturnType = Union[
+        InternalQueueDescription,
+        InternalTopicDescription,
+        InternalSubscriptionDescription,
+        InternalRuleDescription
+    ]
 
 # Refer to the async version of this module under ..\aio\management\_utils.py for detailed explanation.
 
@@ -18,6 +36,7 @@ except ImportError:
 from azure.servicebus.management import _constants as constants
 from ._handle_response_error import _handle_response_error
 
+_log = logging.getLogger(__name__)
 
 def extract_rule_data_template(feed_class, convert, feed_element):
     """Special version of function extrat_data_template for Rule.
@@ -260,3 +279,24 @@ def _validate_topic_subscription_and_rule_types(topic_name, subscription_name, r
     if not isinstance(topic_name, str) or not isinstance(subscription_name, str) or not isinstance(rule_name, str):
         raise TypeError("topic name, subscription name and rule name must be strings, not {} {} and {}".format(
             type(topic_name), type(subscription_name), type(rule_name)))
+
+def create_properties_from_list_of_dicts_if_needed(properties, sb_resource_type):
+    """
+    This method is used to create internal resource objects given their
+    corresponding dict representations of resource properties.
+    """
+    # type: (dict, DictPropertiesType) -> (str, DictPropertiesReturnType)
+    try:
+        if isinstance(properties, dict):
+            resource_property_name = properties["name"]
+            dict_to_props = sb_resource_type(**properties)
+            to_update = dict_to_props._to_internal_entity() # pylint: disable=protected-access
+        else:
+            resource_property_name = properties.name
+            to_update = properties._to_internal_entity()    # pylint: disable=protected-access
+
+        return (resource_property_name, to_update)
+    except KeyError as e:
+        _log.error("{} dict is missing required key: {}".format(sb_resource_type, e))
+    except TypeError as e:
+        _log.error(e)
