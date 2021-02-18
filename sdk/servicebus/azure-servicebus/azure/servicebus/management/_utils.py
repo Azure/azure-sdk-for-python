@@ -296,7 +296,7 @@ def create_properties_from_list_of_dicts_if_needed(properties, sb_resource_type)
             to_update = properties._to_internal_entity()    # pylint: disable=protected-access
 
         return (resource_property_name, to_update)
-    except KeyError as e:
-        _log.error("{} dict is missing required key: {}".format(sb_resource_type, e))
-    except TypeError as e:
+    except (AttributeError, TypeError) as e:
         _log.error(e)
+    except KeyError as e:
+        raise AttributeError("{} dict is missing required key: {}".format(sb_resource_type, e))
