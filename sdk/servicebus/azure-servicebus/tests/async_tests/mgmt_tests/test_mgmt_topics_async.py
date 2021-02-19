@@ -262,7 +262,7 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
     async def test_mgmt_topic_async_update_dict_success(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
-        topic_name = "fjrui"
+        topic_name = "fjruid"
 
         try:
             topic_description = await mgmt_service.create_topic(topic_name)
@@ -302,7 +302,6 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
             assert topic_description.support_ordering == True
         finally:
             await mgmt_service.delete_topic(topic_name)
-        await mgmt_service.close()
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -311,11 +310,11 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = "fjruid"
-        topic_description = await mgmt_service.create_topic(topic_name)
-        # send in topic dict without non-name keyword args
-        topic_description_only_name = {"name": topic_name}
-        with pytest.raises(TypeError):
-            await mgmt_service.update_topic(topic_description_only_name)
-
-        await mgmt_service.delete_topic(topic_name)
-        await mgmt_service.close()
+        try:
+            topic_description = await mgmt_service.create_topic(topic_name)
+            # send in topic dict without non-name keyword args
+            topic_description_only_name = {"name": topic_name}
+            with pytest.raises(TypeError):
+                await mgmt_service.update_topic(topic_description_only_name)
+        finally:
+            await mgmt_service.delete_topic(topic_name)

@@ -306,7 +306,7 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_mgmt_subscription_async_update_dict_success(self, servicebus_namespace_connection_string, **kwargs):
+    async def test_mgmt_subscription_async_update_dict_success(self, servicebus_namespace_connection_string, servicebus_namespace, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
@@ -343,13 +343,21 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
             assert subscription_description.lock_duration == datetime.timedelta(seconds=12)
             # assert topic_description.enable_partitioning == True
             # assert topic_description.requires_session == True
+
+            # Finally, test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
+            subscription_description_dict = dict(subscription_description)
+            subscription_description_dict["forward_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, topic_name)
+            subscription_description_dict["forward_dead_lettered_messages_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, topic_name)
+            await mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
+            subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+
         finally:
             await mgmt_service.delete_subscription(topic_name, subscription_name)
             await mgmt_service.delete_topic(topic_name)
 
-        await mgmt_service.close()
-
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_mgmt_subscription_async_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
@@ -358,13 +366,13 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
         topic_name = "fjrui"
         subscription_name = "eqkovc"
 
-        topic_description = await mgmt_service.create_topic(topic_name)
-        subscription_description = await mgmt_service.create_subscription(topic_description.name, subscription_name)
-        # send in subscription dict without non-name keyword args
-        subscription_description_only_name = {"name": topic_name}
-        with pytest.raises(TypeError):
-            await mgmt_service.update_subscription(topic_description.name, subscription_description_only_name)
-
-        await mgmt_service.delete_subscription(topic_name, subscription_name)
-        await mgmt_service.delete_topic(topic_name)
-        await mgmt_service.close()
+        try:
+            topic_description = await mgmt_service.create_topic(topic_name)
+            subscription_description = await mgmt_service.create_subscription(topic_description.name, subscription_name)
+            # send in subscription dict without non-name keyword args
+            subscription_description_only_name = {"name": topic_name}
+            with pytest.raises(TypeError):
+                await mgmt_service.update_subscription(topic_description.name, subscription_description_only_name)
+        finally:
+            await mgmt_service.delete_subscription(topic_name, subscription_name)
+            await mgmt_service.delete_topic(topic_name)

@@ -250,8 +250,8 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
     async def test_mgmt_rule_async_update_dict_success(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
-        topic_name = "fjrui"
-        subscription_name = "eqkovc"
+        topic_name = "fjruid"
+        subscription_name = "eqkovcd"
         rule_name = 'rule'
         sql_filter = SqlRuleFilter("Priority = 'low'")
 
@@ -283,9 +283,6 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
             await mgmt_service.delete_subscription(topic_name, subscription_name)
             await mgmt_service.delete_topic(topic_name)
 
-        await mgmt_service.close()
-
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_mgmt_rule_async_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
@@ -296,16 +293,17 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
         rule_name = 'rule'
         sql_filter = SqlRuleFilter("Priority = 'low'")
 
-        topic_description = await mgmt_service.create_topic(topic_name)
-        subscription_description = await mgmt_service.create_subscription(topic_description.name, subscription_name)
-        await mgmt_service.create_rule(topic_name, subscription_name, rule_name, filter=sql_filter)
+        try:
+            topic_description = await mgmt_service.create_topic(topic_name)
+            subscription_description = await mgmt_service.create_subscription(topic_description.name, subscription_name)
+            await mgmt_service.create_rule(topic_name, subscription_name, rule_name, filter=sql_filter)
 
-        # send in rule dict without non-name keyword args
-        rule_description_only_name = {"name": topic_name}
-        with pytest.raises(TypeError):
-            await mgmt_service.update_rule(topic_description.name, subscription_description.name, rule_description_only_name)
+            # send in rule dict without non-name keyword args
+            rule_description_only_name = {"name": topic_name}
+            with pytest.raises(TypeError):
+                await mgmt_service.update_rule(topic_description.name, subscription_description.name, rule_description_only_name)
 
-        await mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
-        await mgmt_service.delete_subscription(topic_name, subscription_name)
-        await mgmt_service.delete_topic(topic_name)
-        await mgmt_service.close()
+        finally:
+            await mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
+            await mgmt_service.delete_subscription(topic_name, subscription_name)
+            await mgmt_service.delete_topic(topic_name)

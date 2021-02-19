@@ -265,7 +265,7 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
     def test_mgmt_topic_update_dict_success(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
-        topic_name = "fjrui"
+        topic_name = "fjruid"
 
         try:
             topic_description = mgmt_service.create_topic(topic_name)
@@ -306,17 +306,17 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
         finally:
             mgmt_service.delete_topic(topic_name)
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_topic_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
-        topic_name = "fjruid"
-        topic_description = mgmt_service.create_topic(topic_name)
-        # send in topic dict without non-name keyword args
-        topic_description_only_name = {"name": topic_name}
-        with pytest.raises(TypeError):
-            mgmt_service.update_topic(topic_description_only_name)
-
-        mgmt_service.delete_topic(topic_name)
+        topic_name = "dfjdfj"
+        try:
+            topic_description = mgmt_service.create_topic(topic_name)
+            # send in topic dict without non-name keyword args
+            topic_description_only_name = {"name": topic_name}
+            with pytest.raises(TypeError):
+                mgmt_service.update_topic(topic_description_only_name)
+        finally:
+            mgmt_service.delete_topic(topic_name)

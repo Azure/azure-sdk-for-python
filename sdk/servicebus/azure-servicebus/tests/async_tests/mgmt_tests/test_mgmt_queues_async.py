@@ -447,10 +447,9 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
         with pytest.raises(ResourceNotFoundError):
             await mgmt_service.get_queue_runtime_properties("non_existing_queue")
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_mgmt_queue_async_update_dict_success(self, servicebus_namespace_connection_string, **kwargs):
+    async def test_mgmt_queue_async_update_dict_success(self, servicebus_namespace_connection_string, servicebus_namespace, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_queues(mgmt_service)
         queue_name = "fjruid"
@@ -476,6 +475,8 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
             queue_description_dict["lock_duration"] = datetime.timedelta(seconds=13)
             queue_description_dict["max_delivery_count"] = 14
             queue_description_dict["max_size_in_megabytes"] = 3072
+            queue_description_dict["forward_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, queue_name)
+            queue_description_dict["forward_dead_lettered_messages_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, queue_name)
             #queue_description_dict["requires_duplicate_detection"] = True # Read only
             #queue_description_dict["requires_session"] = True # Cannot be changed after creation
 
@@ -492,11 +493,13 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
             assert queue_description.lock_duration == datetime.timedelta(seconds=13)
             assert queue_description.max_delivery_count == 14
             assert queue_description.max_size_in_megabytes == 3072
+            assert queue_description.forward_to.endswith(".servicebus.windows.net/{}".format(queue_name))
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert queue_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
             #assert queue_description.requires_duplicate_detection == True
             #assert queue_description.requires_session == True
         finally:
             await mgmt_service.delete_queue(queue_name)
-        await mgmt_service.close()
     
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -506,10 +509,10 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
         await clear_queues(mgmt_service)
         queue_name = "fjruid"
         queue_description = await mgmt_service.create_queue(queue_name)
-        # send in queue dict without non-name keyword args
-        queue_description_only_name = {"name": queue_name}
-        with pytest.raises(TypeError):
-            await mgmt_service.update_queue(queue_description_only_name)
-
-        await mgmt_service.delete_queue(queue_name)
-        await mgmt_service.close()
+        try:
+            # send in queue dict without non-name keyword args
+            queue_description_only_name = {"name": queue_name}
+            with pytest.raises(TypeError):
+                await mgmt_service.update_queue(queue_description_only_name)
+        finally:
+            await mgmt_service.delete_queue(queue_name)
