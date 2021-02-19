@@ -167,12 +167,13 @@ def sample_update_data_feed(data_feed):
     data_feed.name = "updated name"
     data_feed.options.data_feed_description = "updated description for data feed"
 
-    updated_data_feed = client.update_data_feed(
+    client.update_data_feed(
         data_feed,
         access_mode="Public",
         fill_type="CustomValue",
         custom_fill_value=1
     )
+    updated_data_feed = client.get_data_feed(data_feed.id)
 
     print("Updated name: {}".format(updated_data_feed.name))
     print("Updated description: {}".format(updated_data_feed.options.data_feed_description))

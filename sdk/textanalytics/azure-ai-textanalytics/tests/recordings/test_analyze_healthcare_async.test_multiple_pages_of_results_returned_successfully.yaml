@@ -15,20 +15,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
-      apim-request-id: ec00d641-a228-4b77-8269-c5f4722d5740
-      date: Thu, 19 Nov 2020 21:25:04 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/09dc4a40-8e83-4f5d-b81d-273a631aab2a
+      apim-request-id: e9936e47-2e65-4d07-ade7-ceea5bb5a208
+      date: Wed, 27 Jan 2021 02:20:53 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/66b571a4-2c2b-46cd-a661-7b2f33cd5645
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '140'
+      x-envoy-upstream-service-time: '142'
     status:
       code: 202
       message: Accepted
@@ -37,22 +37,22 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/09dc4a40-8e83-4f5d-b81d-273a631aab2a?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/66b571a4-2c2b-46cd-a661-7b2f33cd5645?showStats=True
   response:
     body:
-      string: '{"jobId":"09dc4a40-8e83-4f5d-b81d-273a631aab2a","lastUpdateDateTime":"2020-11-19T21:25:06Z","createdDateTime":"2020-11-19T21:25:04Z","expirationDateTime":"2020-11-20T21:25:04Z","status":"succeeded","errors":[],"results":{"statistics":{"documentsCount":10,"validDocumentsCount":10,"erroneousDocumentsCount":0,"transactionsCount":10},"documents":[{"id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+      string: '{"jobId":"66b571a4-2c2b-46cd-a661-7b2f33cd5645","lastUpdateDateTime":"2021-01-27T02:20:56Z","createdDateTime":"2021-01-27T02:20:54Z","expirationDateTime":"2021-01-28T02:20:54Z","status":"succeeded","errors":[],"results":{"statistics":{"documentsCount":10,"validDocumentsCount":10,"erroneousDocumentsCount":0,"transactionsCount":10},"documents":[{"id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
     headers:
-      apim-request-id: 0a7a2f74-b27c-4d53-857c-c4cc73cefe61
+      apim-request-id: 7f1e984d-119c-4d4c-8bc4-e1d0f57e2856
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:25:08 GMT
+      date: Wed, 27 Jan 2021 02:20:58 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '89'
+      x-envoy-upstream-service-time: '85'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/09dc4a40-8e83-4f5d-b81d-273a631aab2a?showStats=True
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/66b571a4-2c2b-46cd-a661-7b2f33cd5645?showStats=True
 version: 1

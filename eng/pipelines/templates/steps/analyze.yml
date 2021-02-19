@@ -6,6 +6,8 @@ parameters:
   Artifacts: []
 
 steps:
+  - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
+
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
 
   - ${{ each artifact in parameters.Artifacts }}:
@@ -25,6 +27,22 @@ steps:
       pip install -r requirements.txt
       python find_invalid_versions.py --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
+
+  - pwsh: |
+      Get-ChildItem $(Build.SourcesDirectory) -Filter "*.py" |
+      Foreach-Object {
+        if ((Get-Content $_ -Raw) -match "\r\n") {
+          Write-Error "Found CRLF line ending in `$_`"
+        }
+      }
+
+      Get-ChildItem $(Build.SourcesDirectory) -Filter "*.md" |
+      Foreach-Object {
+        if ((Get-Content $_ -Raw) -match "\r\n") {
+          Write-Error "Found CRLF line ending in `$_`"
+        }
+      }
+    displayName: Check for CRLF Line endings
 
   - template: /eng/common/pipelines/templates/steps/verify-path-length.yml
     parameters:
@@ -58,13 +76,13 @@ steps:
      arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
 
   - template: run_mypy.yml
-    parameters: 
+    parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
   - template: run_pylint.yml
-    parameters: 
+    parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
@@ -83,6 +101,13 @@ steps:
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
 
   - template: ../steps/run_bandit.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      TestMarkArgument: ${{ parameters.TestMarkArgument }}
+      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+
+  - template: ../steps/run_breaking_changes.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       BuildTargetingString: ${{ parameters.BuildTargetingString }}

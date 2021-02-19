@@ -1,22 +1,49 @@
 $Language = "python"
+$LanguageDisplayName = "Python"
 $PackageRepository = "PyPI"
 $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
 
 function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
-{
-  pip install packaging==20.4 -q -I
-  $pkgName = $pkgName.Replace('_', '-')
+{  
+  $packageName = $pkgName.Replace('_', '-')
+  $pkgDirName = Split-Path $pkgPath -Leaf
+  if ($pkgDirName -ne $packageName)
+  {
+    # Common code triggers this function against each directory but we can skip if it doesn't match package name
+    return $null
+  }
+
   if (Test-Path (Join-Path $pkgPath "setup.py"))
   {
     $setupLocation = $pkgPath.Replace('\','/')
     pushd $RepoRoot
-    $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import parse_setup; obj=parse_setup('$setupLocation'); print('{0},{1}'.format(obj[0], obj[1]));") -split ","
-    popd
-    if (($setupProps -ne $null) -and ($setupProps[0] -eq $pkgName))
+    $setupProps = $null
+    try{
+      pip install packaging==20.4 -q -I
+      $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import get_package_properties; obj=get_package_properties('$setupLocation'); print('{0},{1},{2}'.format(obj[0], obj[1], obj[2]));") -split ","
+    }
+    catch
     {
-      return [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceDirectory)
+      # This is soft error and failure is expected for python metapackages
+      Write-Host "Failed to parse package properties for " $packageName
+    }
+    popd
+    if (($setupProps -ne $null) -and ($setupProps[0] -eq $packageName))
+    {
+      $pkgProp = [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceDirectory)
+      if ($packageName -match "mgmt")
+      {
+        $pkgProp.SdkType = "mgmt"
+      }
+      else
+      {
+        $pkgProp.SdkType = "client"
+      }
+      $pkgProp.IsNewSdk = $setupProps[2]
+      $pkgProp.ArtifactName = $pkgName
+      return $pkgProp
     }
   }
   return $null
@@ -54,6 +81,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
 
   $pkgId = $matches["package"]
+  $docsReadMeName = $pkgId -replace "^azure-" , ""
   $pkgVersion = $matches["versionstring"]
 
   $workFolder = "$workingDirectory$($pkg.Basename)"
@@ -84,6 +112,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
     Deployable     = $forceCreate -or !(IsPythonPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
+    DocsReadMeName = $docsReadMeName
   }
 }
 
@@ -225,4 +254,18 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
   }
   pip install -r "$EngDir/versioning/requirements.txt" -q -I
   python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version --service $ServiceDirectory --release-date $ReleaseDate
+}
+
+function GetExistingPackageVersions ($PackageName, $GroupId=$null)
+{
+  try
+  {
+    $existingVersion = Invoke-RestMethod -Method GET -Uri "https://pypi.python.org/pypi/${PackageName}/json"
+    return ($existingVersion.releases | Get-Member -MemberType NoteProperty).Name
+  }
+  catch
+  {
+    LogError "Failed to retrieve package versions. `n$_"
+    return $null
+  }
 }

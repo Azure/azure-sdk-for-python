@@ -678,20 +678,20 @@ class MgmtComputeTest(AzureMgmtTestCase):
           "overprovision": True,
           "virtual_machine_profile": {
             "storage_profile": {
-              # "image_reference": {
-              #   "sku": "2016-Datacenter",
-              #   "publisher": "MicrosoftWindowsServer",
-              #   "version": "latest",
-              #   "offer": "WindowsServer"
-              # },
               "image_reference": {
-                  "offer": "UbuntuServer",
-                  "publisher": "Canonical",
-                  "sku": "18.04-LTS",
-                  # "urn": "Canonical:UbuntuServer:18.04-LTS:latest",
-                  # "urnAlias": "UbuntuLTS",
-                  "version": "latest"
+                "sku": "2016-Datacenter",
+                "publisher": "MicrosoftWindowsServer",
+                "version": "latest",
+                "offer": "WindowsServer"
               },
+              # "image_reference": {
+              #     "offer": "UbuntuServer",
+              #     "publisher": "Canonical",
+              #     "sku": "18.04-LTS",
+              #     # "urn": "Canonical:UbuntuServer:18.04-LTS:latest",
+              #     # "urnAlias": "UbuntuLTS",
+              #     "version": "latest"
+              # },
               "os_disk": {
                 "caching": "ReadWrite",
                 "managed_disk": {
@@ -875,11 +875,17 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "extension_profile": {
             },
             "storage_profile": {
+              # "image_reference": {
+              #   "offer": "UbuntuServer",
+              #   "publisher": "Canonical",
+              #   "sku": "18.04-LTS",
+              #   "version": "latest"
+              # },
               "image_reference": {
-                "offer": "UbuntuServer",
-                "publisher": "Canonical",
-                "sku": "18.04-LTS",
-                "version": "latest"
+                "sku": "2016-Datacenter",
+                "publisher": "MicrosoftWindowsServer",
+                "version": "latest",
+                "offer": "WindowsServer"
               },
               "os_disk": {
                 "caching": "ReadWrite",

@@ -16,9 +16,9 @@ if TYPE_CHECKING:
     from typing import Any
 
 from ._configuration import KeyVaultClientConfiguration
-from .operations import KeyVaultClientOperationsMixin
 from .operations import RoleDefinitionsOperations
 from .operations import RoleAssignmentsOperations
+from .operations import KeyVaultClientOperationsMixin
 from . import models
 
 

@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Any
 
 try:
     from urllib.parse import urlparse
@@ -92,9 +93,12 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
 
+    def __enter__(self):
+        self._blob_service_client.__enter__()
+        return self
+
     def __exit__(self, *args):
         self._blob_service_client.close()
-        super(DataLakeServiceClient, self).__exit__(*args)
 
     def close(self):
         # type: () -> None
@@ -102,7 +106,6 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         It need not be used when using with a context manager.
         """
         self._blob_service_client.close()
-        self.__exit__()
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to hostname
@@ -195,6 +198,10 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             call. If the request does not specify the server will return up to 5,000 items per page.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword bool include_deleted:
+            Specifies that deleted file systems to be returned in the response. This is for file system restore enabled
+            account. The default value is `False`.
+            .. versionadded:: 12.3.0
         :returns: An iterable (auto-paging) of FileSystemProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.FileSystemProperties]
 
@@ -249,6 +256,55 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         file_system_client = self.get_file_system_client(file_system)
         file_system_client.create_file_system(metadata=metadata, public_access=public_access, **kwargs)
         return file_system_client
+
+    def _rename_file_system(self, name, new_name, **kwargs):
+        # type: (str, str, **Any) -> FileSystemClient
+        """Renames a filesystem.
+
+        Operation is successful only if the source filesystem exists.
+
+        :param str name:
+            The name of the filesystem to rename.
+        :param str new_name:
+            The new filesystem name the user wants to rename to.
+        :keyword lease:
+            Specify this to perform only if the lease ID given
+            matches the active lease ID of the source filesystem.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        """
+        self._blob_service_client._rename_container(name, new_name, **kwargs)   # pylint: disable=protected-access
+        renamed_file_system = self.get_file_system_client(new_name)
+        return renamed_file_system
+
+    def undelete_file_system(self, name, deleted_version, **kwargs):
+        # type: (str, str, **Any) -> FileSystemClient
+        """Restores soft-deleted filesystem.
+
+        Operation will only be successful if used within the specified number of days
+        set in the delete retention policy.
+
+        .. versionadded:: 12.3.0
+            This operation was introduced in API version '2019-12-12'.
+
+        :param str name:
+            Specifies the name of the deleted filesystem to restore.
+        :param str deleted_version:
+            Specifies the version of the deleted filesystem to restore.
+        :keyword str new_name:
+            The new name for the deleted filesystem to be restored to.
+            If not specified "name" will be used as the restored filesystem name.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.filedatalake.FileSystemClient
+        """
+        new_name = kwargs.pop('new_name', None)
+        file_system = self.get_file_system_client(new_name or name)
+        self._blob_service_client.undelete_container(
+            name, deleted_version, new_name=new_name, **kwargs)  # pylint: disable=protected-access
+        return file_system
 
     def delete_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
                            **kwargs):

@@ -14,23 +14,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.7.5 (Linux-4.4.0-19041-Microsoft-x86_64-with-debian-stretch-sid)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/entities/recognition/pii?showStats=false&domain=PHI&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"redactedText":"I work at Microsoft and my phone number
-        is ************","id":"0","entities":[{"text":"333-333-3333","category":"Phone
-        Number","offset":43,"length":12,"confidenceScore":0.8}],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
+      string: '{"documents":[{"redactedText":"I work at ********* and my phone number
+        is ************","id":"0","entities":[{"text":"Microsoft","category":"Organization","offset":10,"length":9,"confidenceScore":0.95},{"text":"333-333-3333","category":"Phone
+        Number","offset":43,"length":12,"confidenceScore":0.8}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
       apim-request-id:
-      - d63baf74-36c7-443c-9488-8c817ff97dbe
+      - 580e0c03-497f-4e54-b358-2b40b3214fe8
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 19 Nov 2020 21:28:28 GMT
+      - Thu, 18 Feb 2021 01:49:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '80'
+      - '31'
     status:
       code: 200
       message: OK

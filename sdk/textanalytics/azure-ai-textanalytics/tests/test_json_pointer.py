@@ -37,8 +37,8 @@ def generated_sentiment_confidence_score():
 @pytest.fixture
 def generated_target_relation():
     return _generated_models.TargetRelation(
-        relation_type="opinion",
-        ref="#/documents/0/sentences/1/opinions/0"
+        relation_type="assessment",
+        ref="#/documents/0/sentences/1/assessments/0"
     )
 
 @pytest.fixture

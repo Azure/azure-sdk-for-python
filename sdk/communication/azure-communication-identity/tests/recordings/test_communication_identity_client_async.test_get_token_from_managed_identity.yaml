@@ -1,0 +1,58 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"identity": {"id": "sanitized"}}'
+    headers:
+      api-supported-versions: 2020-07-20-preview2, 2021-03-07
+      content-type: application/json; charset=utf-8
+      date: Fri, 29 Jan 2021 22:36:49 GMT
+      ms-cv: cUzRyy4LbUigYrZ7lbi4wA.0
+      strict-transport-security: max-age=2592000
+      transfer-encoding: chunked
+      x-processing-time: 238ms
+    status:
+      code: 201
+      message: Created
+    url: https://communication5brewzlj3te.communication.azure.com/identities?api-version=2021-03-07
+- request:
+    body: '{"scopes": ["chat"]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '20'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+  response:
+    body:
+      string: '{"token": "sanitized", "expiresOn": "2021-01-30T22:36:48.7283566+00:00"}'
+    headers:
+      api-supported-versions: 2020-07-20-preview2, 2021-03-07
+      content-type: application/json; charset=utf-8
+      date: Fri, 29 Jan 2021 22:36:49 GMT
+      ms-cv: bFRoAJk3ikGgv2ot2Vwh4A.0
+      strict-transport-security: max-age=2592000
+      transfer-encoding: chunked
+      x-processing-time: 26ms
+    status:
+      code: 200
+      message: OK
+    url: https://communication5brewzlj3te.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+version: 1

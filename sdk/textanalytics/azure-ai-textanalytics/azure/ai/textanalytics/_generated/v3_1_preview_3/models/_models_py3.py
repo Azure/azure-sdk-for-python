@@ -2300,7 +2300,7 @@ class TasksStateTasks(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param details:
-    :type details: ~azure.ai.textanalytics.v3_1_preview_3.models.TaskState
+    :type details: ~azure.ai.textanalytics.v3_1_preview_3.models.TasksStateTasksDetails
     :param completed: Required.
     :type completed: int
     :param failed: Required.
@@ -2328,7 +2328,7 @@ class TasksStateTasks(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': 'TaskState'},
+        'details': {'key': 'details', 'type': 'TasksStateTasksDetails'},
         'completed': {'key': 'completed', 'type': 'int'},
         'failed': {'key': 'failed', 'type': 'int'},
         'in_progress': {'key': 'inProgress', 'type': 'int'},
@@ -2345,7 +2345,7 @@ class TasksStateTasks(msrest.serialization.Model):
         failed: int,
         in_progress: int,
         total: int,
-        details: Optional["TaskState"] = None,
+        details: Optional["TasksStateTasksDetails"] = None,
         entity_recognition_tasks: Optional[List["TasksStateTasksEntityRecognitionTasksItem"]] = None,
         entity_recognition_pii_tasks: Optional[List["TasksStateTasksEntityRecognitionPiiTasksItem"]] = None,
         key_phrase_extraction_tasks: Optional[List["TasksStateTasksKeyPhraseExtractionTasksItem"]] = None,

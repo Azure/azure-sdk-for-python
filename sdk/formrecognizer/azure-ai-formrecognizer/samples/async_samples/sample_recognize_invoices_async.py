@@ -31,7 +31,7 @@ class RecognizeInvoiceSampleAsync(object):
 
     async def recognize_invoice(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..",  "..", "./sample_forms/forms/Invoice_1.pdf"))
+                                                            "..",  "..", "./sample_forms/forms/sample_invoice.jpg"))
 
         # [START recognize_invoices_async]
         from azure.core.credentials import AzureKeyCredential
@@ -55,9 +55,15 @@ class RecognizeInvoiceSampleAsync(object):
                 vendor_address = invoice.fields.get("VendorAddress")
                 if vendor_address:
                     print("Vendor Address: {} has confidence: {}".format(vendor_address.value, vendor_address.confidence))
+                vendor_address_recipient = invoice.fields.get("VendorAddressRecipient")
+                if vendor_address_recipient:
+                    print("Vendor Address Recipient: {} has confidence: {}".format(vendor_address_recipient.value, vendor_address_recipient.confidence))
                 customer_name = invoice.fields.get("CustomerName")
                 if customer_name:
                     print("Customer Name: {} has confidence: {}".format(customer_name.value, customer_name.confidence))
+                customer_id = invoice.fields.get("CustomerId")
+                if customer_id:
+                    print("Customer Id: {} has confidence: {}".format(customer_id.value, customer_id.confidence))
                 customer_address = invoice.fields.get("CustomerAddress")
                 if customer_address:
                     print("Customer Address: {} has confidence: {}".format(customer_address.value, customer_address.confidence))
@@ -76,6 +82,51 @@ class RecognizeInvoiceSampleAsync(object):
                 due_date = invoice.fields.get("DueDate")
                 if due_date:
                     print("Due Date: {} has confidence: {}".format(due_date.value, due_date.confidence))
+                purchase_order = invoice.fields.get("PurchaseOrder")
+                if purchase_order:
+                    print("Purchase Order: {} has confidence: {}".format(purchase_order.value, purchase_order.confidence))
+                billing_address = invoice.fields.get("BillingAddress")
+                if billing_address:
+                    print("Billing Address: {} has confidence: {}".format(billing_address.value, billing_address.confidence))
+                billing_address_recipient = invoice.fields.get("BillingAddressRecipient")
+                if billing_address_recipient:
+                    print("Billing Address Recipient: {} has confidence: {}".format(billing_address_recipient.value, billing_address_recipient.confidence))
+                shipping_address = invoice.fields.get("ShippingAddress")
+                if shipping_address:
+                    print("Shipping Address: {} has confidence: {}".format(shipping_address.value, shipping_address.confidence))
+                shipping_address_recipient = invoice.fields.get("ShippingAddressRecipient")
+                if shipping_address_recipient:
+                    print("Shipping Address Recipient: {} has confidence: {}".format(shipping_address_recipient.value, shipping_address_recipient.confidence))
+                subtotal = invoice.fields.get("SubTotal")
+                if subtotal:
+                    print("Subtotal: {} has confidence: {}".format(subtotal.value, subtotal.confidence))
+                total_tax = invoice.fields.get("TotalTax")
+                if total_tax:
+                    print("Total Tax: {} has confidence: {}".format(total_tax.value, total_tax.confidence))
+                previous_unpaid_balance = invoice.fields.get("PreviousUnpaidBalance")
+                if previous_unpaid_balance:
+                    print("Previous Unpaid Balance: {} has confidence: {}".format(previous_unpaid_balance.value, previous_unpaid_balance.confidence))
+                amount_due = invoice.fields.get("AmountDue")
+                if amount_due:
+                    print("Amount Due: {} has confidence: {}".format(amount_due.value, amount_due.confidence))
+                service_start_date = invoice.fields.get("ServiceStartDate")
+                if service_start_date:
+                    print("Service Start Date: {} has confidence: {}".format(service_start_date.value, service_start_date.confidence))
+                service_end_date = invoice.fields.get("ServiceEndDate")
+                if service_end_date:
+                    print("Service End Date: {} has confidence: {}".format(service_end_date.value, service_end_date.confidence))
+                service_address = invoice.fields.get("ServiceAddress")
+                if service_address:
+                    print("Service Address: {} has confidence: {}".format(service_address.value, service_address.confidence))
+                service_address_recipient = invoice.fields.get("ServiceAddressRecipient")
+                if service_address_recipient:
+                    print("Service Address Recipient: {} has confidence: {}".format(service_address_recipient.value, service_address_recipient.confidence))
+                remittance_address = invoice.fields.get("RemittanceAddress")
+                if remittance_address:
+                    print("Remittance Address: {} has confidence: {}".format(remittance_address.value, remittance_address.confidence))
+                remittance_address_recipient = invoice.fields.get("RemittanceAddressRecipient")
+                if remittance_address_recipient:
+                    print("Remittance Address Recipient: {} has confidence: {}".format(remittance_address_recipient.value, remittance_address_recipient.confidence))
         # [END recognize_invoices_async]
 
 async def main():

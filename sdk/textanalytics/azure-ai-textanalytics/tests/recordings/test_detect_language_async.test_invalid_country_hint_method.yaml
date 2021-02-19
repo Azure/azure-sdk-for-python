@@ -10,9 +10,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/languages?showStats=false
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -20,9 +20,9 @@ interactions:
         hint is not valid. Please specify an ISO 3166-1 alpha-2 two letter country
         code."}}}],"modelVersion":"2020-09-01"}'
     headers:
-      apim-request-id: 94afaed2-5c59-4395-87a6-bbb54c2b3f1d
+      apim-request-id: ef3c69a1-6a5b-465c-8d47-0c9c7e7d95af
       content-type: application/json; charset=utf-8
-      date: Thu, 19 Nov 2020 21:25:11 GMT
+      date: Wed, 27 Jan 2021 02:22:02 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -30,5 +30,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.2/languages?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/languages?showStats=false
 version: 1

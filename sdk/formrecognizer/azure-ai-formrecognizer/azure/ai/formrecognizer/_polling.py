@@ -11,8 +11,9 @@ from azure.core.polling.base_polling import (
     OperationResourcePolling,
     _is_empty,
     _as_json,
-    BadResponse
+    BadResponse,
 )
+
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
 
@@ -25,13 +26,11 @@ def raise_error(response, errors, message):
 
 
 class TrainingPolling(LocationPolling):
-    """Polling method overrides for training endpoints.
-    """
+    """Polling method overrides for training endpoints."""
 
     def get_polling_url(self):
         # type: () -> str
-        """Return the polling URL.
-        """
+        """Return the polling URL."""
         return self._location_url + "?includeKeys=true"
 
     def get_status(self, pipeline_response):  # pylint: disable=no-self-use
@@ -44,15 +43,17 @@ class TrainingPolling(LocationPolling):
         response = pipeline_response.http_response
         if response.status_code == 200:
             body = _as_json(response)
-            status = body['modelInfo']['status']
+            status = body["modelInfo"]["status"]
             if not status:
                 raise BadResponse("No status found in body")
             if status.lower() == "invalid":
-                train_result = body.get('trainResult')
+                train_result = body.get("trainResult")
                 if train_result:
                     errors = train_result.get("errors")
                     if errors:
-                        message = "\nInvalid model created with ID={}".format(body["modelInfo"]["modelId"])
+                        message = "\nInvalid model created with ID={}".format(
+                            body["modelInfo"]["modelId"]
+                        )
                         raise_error(response, errors, message)
                 return "Failed"
             if status.lower() != "creating":
@@ -64,8 +65,7 @@ class TrainingPolling(LocationPolling):
 
 
 class AnalyzePolling(OperationResourcePolling):
-    """Polling method overrides for custom analyze endpoints.
-    """
+    """Polling method overrides for custom analyze endpoints."""
 
     def get_status(self, pipeline_response):  # pylint: disable=no-self-use
         # type: (PipelineResponse) -> str
@@ -96,9 +96,7 @@ class AnalyzePolling(OperationResourcePolling):
 
 
 class CopyPolling(OperationResourcePolling):
-    """Polling method overrides for copy endpoint.
-
-    """
+    """Polling method overrides for copy endpoint."""
 
     def get_status(self, pipeline_response):  # pylint: disable=no-self-use
         # type: (PipelineResponse) -> str

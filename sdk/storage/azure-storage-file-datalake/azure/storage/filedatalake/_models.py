@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
+from datetime import datetime
 from enum import Enum
 
 from azure.storage.blob import LeaseProperties as BlobLeaseProperties
@@ -38,6 +39,10 @@ class FileSystemProperties(object):
         Represents whether the file system has a legal hold.
     :ivar dict metadata: A dict with name-value pairs to associate with the
         file system as metadata.
+    :ivar bool deleted:
+        Whether this file system was deleted.
+    :ivar str deleted_version:
+        The version of a deleted file system.
 
     Returned ``FileSystemProperties`` instances expose these values through a
     dictionary interface, for example: ``file_system_props["last_modified"]``.
@@ -53,12 +58,16 @@ class FileSystemProperties(object):
         self.has_immutability_policy = None
         self.has_legal_hold = None
         self.metadata = None
+        self.deleted = None
+        self.deleted_version = None
 
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
+        props.deleted = generated.deleted
+        props.deleted_version = generated.version
         props.etag = generated.properties.etag
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = PublicAccess._from_generated(  # pylint: disable=protected-access
@@ -211,7 +220,7 @@ class PathProperties(object):
         path_prop.owner = generated.owner
         path_prop.group = generated.group
         path_prop.permissions = generated.permissions
-        path_prop.last_modified = generated.last_modified
+        path_prop.last_modified = datetime.strptime(generated.last_modified, "%a, %d %b %Y %H:%M:%S %Z")
         path_prop.is_directory = bool(generated.is_directory)
         path_prop.etag = generated.additional_properties.get('etag')
         path_prop.content_length = generated.content_length

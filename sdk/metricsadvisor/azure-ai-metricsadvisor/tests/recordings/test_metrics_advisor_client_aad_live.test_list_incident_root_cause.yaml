@@ -1,0 +1,40 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/incident_id/rootCause
+  response:
+    body:
+      string: '{"value":[{"rootCause":{"dimension":{"category":"Electronics (Consumer)","dimension_name":"Karachi"}},"path":["dimension_name"],"score":0.34265262137636504,"description":"Increase
+        on category = Electronics (Consumer) | dimension_name = Karachi contributes
+        the most to current incident."}]}'
+    headers:
+      apim-request-id:
+      - 47f466d4-2842-4a41-bd00-5ddc2cb22d5d
+      content-length:
+      - '259'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 Jan 2021 01:01:38 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '187'
+      x-request-id:
+      - 47f466d4-2842-4a41-bd00-5ddc2cb22d5d
+    status:
+      code: 200
+      message: OK
+version: 1

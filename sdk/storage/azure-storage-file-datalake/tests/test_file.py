@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 import unittest
 from datetime import datetime, timedelta
-
 import pytest
 
 from azure.core import MatchConditions
@@ -101,6 +100,21 @@ class FileTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(response)
+
+    @record
+    def test_file_exists(self):
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client1 = directory_client.get_file_client('filename')
+        file_client2 = directory_client.get_file_client('nonexistentfile')
+        file_client1.create_file()
+
+        self.assertTrue(file_client1.exists())
+        self.assertFalse(file_client2.exists())
 
     @record
     def test_create_file_using_oauth_token_credential(self):

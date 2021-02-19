@@ -27,14 +27,14 @@ import os
 
 
 class ChatClientSamples(object):
-    from azure.communication.administration import CommunicationIdentityClient
+    from azure.communication.identity import CommunicationIdentityClient
     connection_string = os.environ.get("AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING", None)
     if not connection_string:
         raise ValueError("Set AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING env before run this sample.")
 
     identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
     user = identity_client.create_user()
-    tokenresponse = identity_client.issue_token(user, scopes=["chat"])
+    tokenresponse = identity_client.get_token(user, scopes=["chat"])
     token = tokenresponse.token
 
     endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
@@ -45,8 +45,9 @@ class ChatClientSamples(object):
 
     def create_chat_client(self):
         # [START create_chat_client]
-        from azure.communication.chat import ChatClient, CommunicationUserCredential
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
         # [END create_chat_client]
 
     def create_thread(self):
@@ -54,20 +55,30 @@ class ChatClientSamples(object):
         from datetime import datetime
         from azure.communication.chat import(
             ChatClient,
-            ChatThreadMember,
-            CommunicationUser,
-            CommunicationUserCredential
+            CommunicationUserIdentifier,
+            CommunicationTokenCredential,
+            CommunicationTokenRefreshOptions
+            ChatThreadParticipant
         )
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
 
         topic = "test topic"
-        members = [ChatThreadMember(
+        participants = [ChatThreadParticipant(
             user=self.user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
-        chat_thread_client = chat_client.create_chat_thread(topic, members)
+
+        # creates a new chat_thread everytime
+        chat_thread_client = chat_client.create_chat_thread(topic, participants)
+
+        # creates a new chat_thread if not exists
+        repeatability_request_id = 'b66d6031-fdcc-41df-8306-e524c9f226b8' # unique identifier
+        chat_thread_client_w_repeatability_id = chat_client.create_chat_thread(topic,
+                                                                               participants,
+                                                                               repeatability_request_id)
         # [END create_thread]
 
         self._thread_id = chat_thread_client.thread_id
@@ -75,9 +86,10 @@ class ChatClientSamples(object):
 
     def get_chat_thread_client(self):
         # [START get_chat_thread_client]
-        from azure.communication.chat import ChatClient, CommunicationUserCredential
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
         chat_thread_client = chat_client.get_chat_thread_client(self._thread_id)
         # [END get_chat_thread_client]
 
@@ -85,9 +97,10 @@ class ChatClientSamples(object):
 
     def get_thread(self):
         # [START get_thread]
-        from azure.communication.chat import ChatClient, CommunicationUserCredential
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
         chat_thread = chat_client.get_chat_thread(self._thread_id)
         # [END get_thread]
 
@@ -95,11 +108,12 @@ class ChatClientSamples(object):
 
     def list_threads(self):
         # [START list_threads]
-        from azure.communication.chat import ChatClient, CommunicationUserCredential
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
         from datetime import datetime, timedelta
         import pytz
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
         start_time = datetime.utcnow() - timedelta(days=2)
         start_time = start_time.replace(tzinfo=pytz.utc)
         chat_thread_infos = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
@@ -111,9 +125,10 @@ class ChatClientSamples(object):
 
     def delete_thread(self):
         # [START delete_thread]
-        from azure.communication.chat import ChatClient, CommunicationUserCredential
+        from azure.communication.chat import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
 
-        chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
+        refresh_options = CommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
         chat_client.delete_chat_thread(self._thread_id)
         # [END delete_thread]
 

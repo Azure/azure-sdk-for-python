@@ -520,6 +520,7 @@ def decrypt_queue_message(message, response, require_encryption, key_encryption_
     :return: The plain text message from the queue message.
     :rtype: str
     '''
+    response = response.http_response
 
     try:
         message = loads(message)

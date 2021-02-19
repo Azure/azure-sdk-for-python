@@ -20,18 +20,18 @@ from random import randint, sample
 import time
 
 from datetime import datetime, timedelta
-
-from azure.eventgrid import EventGridPublisherClient, CloudEvent, generate_shared_access_signature, EventGridSharedAccessSignatureCredential
+from azure.core.credentials import AzureSasCredential
+from azure.eventgrid import EventGridPublisherClient, CloudEvent, generate_sas
 
 key = os.environ["CLOUD_ACCESS_KEY"]
-topic_hostname = os.environ["CLOUD_TOPIC_HOSTNAME"]
+endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
 expiration_date_utc = datetime.utcnow() + timedelta(hours=1)
 
-signature = generate_shared_access_signature(topic_hostname, key, expiration_date_utc)
+signature = generate_sas(endpoint, key, expiration_date_utc)
 
 # authenticate client
-credential = EventGridSharedAccessSignatureCredential(signature)
-client = EventGridPublisherClient(topic_hostname, credential)
+credential = AzureSasCredential(signature)
+client = EventGridPublisherClient(endpoint, credential)
 
 team_members = ["Josh", "Kerri", "Kieran", "Laurent", "Lily", "Matt", "Soren", "Srikanta", "Swathi"]    # possible values for data field
 

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ActivityLogAlertsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,9 +45,9 @@ class ActivityLogAlertsOperations:
         self,
         resource_group_name: str,
         activity_log_alert_name: str,
-        activity_log_alert: "models.ActivityLogAlertResource",
+        activity_log_alert: "_models.ActivityLogAlertResource",
         **kwargs
-    ) -> "models.ActivityLogAlertResource":
+    ) -> "_models.ActivityLogAlertResource":
         """Create a new activity log alert or update an existing one.
 
         :param resource_group_name: The name of the resource group.
@@ -61,7 +61,7 @@ class ActivityLogAlertsOperations:
         :rtype: ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ActivityLogAlertResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActivityLogAlertResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -97,7 +97,7 @@ class ActivityLogAlertsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -117,7 +117,7 @@ class ActivityLogAlertsOperations:
         resource_group_name: str,
         activity_log_alert_name: str,
         **kwargs
-    ) -> "models.ActivityLogAlertResource":
+    ) -> "_models.ActivityLogAlertResource":
         """Get an activity log alert.
 
         :param resource_group_name: The name of the resource group.
@@ -129,7 +129,7 @@ class ActivityLogAlertsOperations:
         :rtype: ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ActivityLogAlertResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActivityLogAlertResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -160,7 +160,7 @@ class ActivityLogAlertsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ActivityLogAlertResource', pipeline_response)
@@ -219,7 +219,7 @@ class ActivityLogAlertsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -231,9 +231,9 @@ class ActivityLogAlertsOperations:
         self,
         resource_group_name: str,
         activity_log_alert_name: str,
-        activity_log_alert_patch: "models.ActivityLogAlertResourcePatch",
+        activity_log_alert_patch: "_models.ActivityLogAlertResourcePatch",
         **kwargs
-    ) -> "models.ActivityLogAlertResource":
+    ) -> "_models.ActivityLogAlertResource":
         """Updates an existing ActivityLogAlertResource's tags. To update other fields use the
         CreateOrUpdate method.
 
@@ -248,7 +248,7 @@ class ActivityLogAlertsOperations:
         :rtype: ~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ActivityLogAlertResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActivityLogAlertResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -284,7 +284,7 @@ class ActivityLogAlertsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ActivityLogAlertResource', pipeline_response)
@@ -298,7 +298,7 @@ class ActivityLogAlertsOperations:
     def list_by_subscription_id(
         self,
         **kwargs
-    ) -> AsyncIterable["models.ActivityLogAlertList"]:
+    ) -> AsyncIterable["_models.ActivityLogAlertList"]:
         """Get a list of all activity log alerts in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -306,7 +306,7 @@ class ActivityLogAlertsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ActivityLogAlertList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActivityLogAlertList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -351,7 +351,7 @@ class ActivityLogAlertsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -366,7 +366,7 @@ class ActivityLogAlertsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ActivityLogAlertList"]:
+    ) -> AsyncIterable["_models.ActivityLogAlertList"]:
         """Get a list of all activity log alerts in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -376,7 +376,7 @@ class ActivityLogAlertsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2017_03_01_preview.models.ActivityLogAlertList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ActivityLogAlertList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActivityLogAlertList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -422,7 +422,7 @@ class ActivityLogAlertsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
