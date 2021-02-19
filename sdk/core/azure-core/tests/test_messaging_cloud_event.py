@@ -3,7 +3,14 @@ import sys
 import os
 import pytest
 import json
-from datetime import datetime, timezone
+from datetime import datetime
+
+try:
+    from datetime import timezone
+    TZ_UTC = timezone.utc  # type: ignore
+except ImportError:
+    from azure.core._utils import _FixedOffset
+    TZ_UTC = _FixedOffset(0) # type: ignore
 
 from azure.core.messaging import CloudEvent
 
@@ -16,7 +23,7 @@ def test_cloud_event_constructor():
         )
     
     assert event.specversion == '1.0'
-    assert event.time.tzinfo == timezone.utc
+    assert event.time.tzinfo == TZ_UTC
     assert event.id is not None
     assert event.source == 'Azure.Core.Sample'
     assert event.data == 'cloudevent'
