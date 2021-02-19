@@ -64,7 +64,7 @@ steps:
   - ${{ parameters.AfterTestSteps }}
 
   - pwsh: |
-      Get-ChildItem .\_coverage\ |
+      Get-ChildItem .\_coverage\ -Recurse |
       Foreach-Object {
         Get-Content $_
       }
