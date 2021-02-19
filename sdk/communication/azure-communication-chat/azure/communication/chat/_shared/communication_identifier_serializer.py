@@ -116,8 +116,8 @@ class CommunicationUserIdentifierSerializer(object):
 
     @classmethod
     def _getIdnetifierType(cls, communicationIdentifier):
-        def has_attributes(object, attributes):
-            return all([hasattr(communicationIdentifier, attr) for attr in attributes])
+        def has_attributes(obj, attributes):
+            return all([hasattr(obj, attr) for attr in attributes])
 
         if has_attributes(communicationIdentifier, ["identifier"]):
             return _IdentifierType.COMMUNICATION_USER_IDENTIFIER
