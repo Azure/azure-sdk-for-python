@@ -19,6 +19,14 @@ class DatabaseAccountKind(str, Enum):
     parse = "Parse"
 
 
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned,UserAssigned"
+    none = "None"
+
+
 class DatabaseAccountOfferType(str, Enum):
 
     standard = "Standard"
@@ -48,32 +56,20 @@ class ServerVersion(str, Enum):
 
     three_full_stop_two = "3.2"
     three_full_stop_six = "3.6"
+    four_full_stop_zero = "4.0"
 
 
-class CreateMode(str, Enum):
+class NetworkAclBypass(str, Enum):
 
-    default = "Default"
-    restore = "Restore"
-
-
-class RestoreMode(str, Enum):
-
-    point_in_time = "PointInTime"
-
-
-class CreatedByType(str, Enum):
-
-    user = "User"
-    application = "Application"
-    managed_identity = "ManagedIdentity"
-    key = "Key"
+    none = "None"
+    azure_services = "AzureServices"
 
 
 class IndexingMode(str, Enum):
 
-    consistent = "Consistent"
-    lazy = "Lazy"
-    none = "None"
+    consistent = "consistent"
+    lazy = "lazy"
+    none = "none"
 
 
 class DataType(str, Enum):
@@ -95,8 +91,8 @@ class IndexKind(str, Enum):
 
 class CompositePathSortOrder(str, Enum):
 
-    ascending = "Ascending"
-    descending = "Descending"
+    ascending = "ascending"
+    descending = "descending"
 
 
 class SpatialType(str, Enum):
@@ -111,6 +107,7 @@ class PartitionKind(str, Enum):
 
     hash = "Hash"
     range = "Range"
+    multi_hash = "MultiHash"
 
 
 class ConflictResolutionMode(str, Enum):
@@ -132,14 +129,6 @@ class TriggerOperation(str, Enum):
     update = "Update"
     delete = "Delete"
     replace = "Replace"
-
-
-class ResourceIdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
-    system_assigned_user_assigned = "SystemAssigned,UserAssigned"
-    none = "None"
 
 
 class KeyKind(str, Enum):
@@ -171,25 +160,7 @@ class PrimaryAggregationType(str, Enum):
     last = "Last"
 
 
-class ApiType(str, Enum):
+class BackupPolicyType(str, Enum):
 
-    mongo_db = "MongoDB"
-    gremlin = "Gremlin"
-    cassandra = "Cassandra"
-    table = "Table"
-    sql = "Sql"
-    gremlin_v2 = "GremlinV2"
-
-
-class RoleDefinitionType(str, Enum):
-
-    built_in_role = "BuiltInRole"
-    custom_role = "CustomRole"
-
-
-class OperationType(str, Enum):
-
-    create = "Create"
-    replace = "Replace"
-    delete = "Delete"
-    system_operation = "SystemOperation"
+    periodic = "Periodic"
+    continuous = "Continuous"

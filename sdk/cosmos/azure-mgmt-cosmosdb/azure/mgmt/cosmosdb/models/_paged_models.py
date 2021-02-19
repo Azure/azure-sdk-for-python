@@ -181,32 +181,6 @@ class SqlTriggerGetResultsPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SqlTriggerGetResultsPaged, self).__init__(*args, **kwargs)
-class SqlRoleDefinitionGetResultsPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`SqlRoleDefinitionGetResults <azure.mgmt.cosmosdb.models.SqlRoleDefinitionGetResults>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SqlRoleDefinitionGetResults]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(SqlRoleDefinitionGetResultsPaged, self).__init__(*args, **kwargs)
-class SqlRoleAssignmentGetResultsPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`SqlRoleAssignmentGetResults <azure.mgmt.cosmosdb.models.SqlRoleAssignmentGetResults>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SqlRoleAssignmentGetResults]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(SqlRoleAssignmentGetResultsPaged, self).__init__(*args, **kwargs)
 class MongoDBDatabaseGetResultsPaged(Paged):
     """
     A paging container for iterating over a list of :class:`MongoDBDatabaseGetResults <azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResults>` object
@@ -298,19 +272,6 @@ class GremlinGraphGetResultsPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(GremlinGraphGetResultsPaged, self).__init__(*args, **kwargs)
-class RestorableDatabaseAccountGetResultPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`RestorableDatabaseAccountGetResult <azure.mgmt.cosmosdb.models.RestorableDatabaseAccountGetResult>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[RestorableDatabaseAccountGetResult]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(RestorableDatabaseAccountGetResultPaged, self).__init__(*args, **kwargs)
 class NotebookWorkspacePaged(Paged):
     """
     A paging container for iterating over a list of :class:`NotebookWorkspace <azure.mgmt.cosmosdb.models.NotebookWorkspace>` object
@@ -324,71 +285,6 @@ class NotebookWorkspacePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(NotebookWorkspacePaged, self).__init__(*args, **kwargs)
-class RestorableSqlDatabaseGetResultPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`RestorableSqlDatabaseGetResult <azure.mgmt.cosmosdb.models.RestorableSqlDatabaseGetResult>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[RestorableSqlDatabaseGetResult]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(RestorableSqlDatabaseGetResultPaged, self).__init__(*args, **kwargs)
-class RestorableSqlContainerGetResultPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`RestorableSqlContainerGetResult <azure.mgmt.cosmosdb.models.RestorableSqlContainerGetResult>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[RestorableSqlContainerGetResult]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(RestorableSqlContainerGetResultPaged, self).__init__(*args, **kwargs)
-class DatabaseRestoreResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`DatabaseRestoreResource <azure.mgmt.cosmosdb.models.DatabaseRestoreResource>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[DatabaseRestoreResource]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(DatabaseRestoreResourcePaged, self).__init__(*args, **kwargs)
-class RestorableMongodbDatabaseGetResultPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`RestorableMongodbDatabaseGetResult <azure.mgmt.cosmosdb.models.RestorableMongodbDatabaseGetResult>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[RestorableMongodbDatabaseGetResult]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(RestorableMongodbDatabaseGetResultPaged, self).__init__(*args, **kwargs)
-class RestorableMongodbCollectionGetResultPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`RestorableMongodbCollectionGetResult <azure.mgmt.cosmosdb.models.RestorableMongodbCollectionGetResult>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[RestorableMongodbCollectionGetResult]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(RestorableMongodbCollectionGetResultPaged, self).__init__(*args, **kwargs)
 class PrivateLinkResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`PrivateLinkResource <azure.mgmt.cosmosdb.models.PrivateLinkResource>` object

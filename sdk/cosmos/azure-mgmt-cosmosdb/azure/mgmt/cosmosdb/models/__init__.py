@@ -42,17 +42,14 @@ try:
     from ._models_py3 import CreateUpdateOptions
     from ._models_py3 import DatabaseAccountConnectionString
     from ._models_py3 import DatabaseAccountCreateUpdateParameters
-    from ._models_py3 import DatabaseAccountCreateUpdateProperties
     from ._models_py3 import DatabaseAccountGetResults
     from ._models_py3 import DatabaseAccountListConnectionStringsResult
     from ._models_py3 import DatabaseAccountListKeysResult
     from ._models_py3 import DatabaseAccountListReadOnlyKeysResult
     from ._models_py3 import DatabaseAccountRegenerateKeyParameters
     from ._models_py3 import DatabaseAccountUpdateParameters
-    from ._models_py3 import DatabaseRestoreResource
-    from ._models_py3 import DefaultErrorResponse, DefaultErrorResponseException
-    from ._models_py3 import DefaultRequestDatabaseAccountCreateUpdateProperties
     from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponseUpdatedFormat, ErrorResponseUpdatedFormatException
     from ._models_py3 import ExcludedPath
     from ._models_py3 import ExtendedResourceProperties
     from ._models_py3 import FailoverPolicies
@@ -104,7 +101,6 @@ try:
     from ._models_py3 import PercentileMetricValue
     from ._models_py3 import PeriodicModeBackupPolicy
     from ._models_py3 import PeriodicModeProperties
-    from ._models_py3 import Permission
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointProperty
     from ._models_py3 import PrivateLinkResource
@@ -112,20 +108,6 @@ try:
     from ._models_py3 import ProxyResource
     from ._models_py3 import RegionForOnlineOffline
     from ._models_py3 import Resource
-    from ._models_py3 import RestorableDatabaseAccountGetResult
-    from ._models_py3 import RestorableLocationResource
-    from ._models_py3 import RestorableMongodbCollectionGetResult
-    from ._models_py3 import RestorableMongodbCollectionPropertiesResource
-    from ._models_py3 import RestorableMongodbDatabaseGetResult
-    from ._models_py3 import RestorableMongodbDatabasePropertiesResource
-    from ._models_py3 import RestorableSqlContainerGetResult
-    from ._models_py3 import RestorableSqlContainerPropertiesResource
-    from ._models_py3 import RestorableSqlContainerPropertiesResourceContainer
-    from ._models_py3 import RestorableSqlDatabaseGetResult
-    from ._models_py3 import RestorableSqlDatabasePropertiesResource
-    from ._models_py3 import RestorableSqlDatabasePropertiesResourceDatabase
-    from ._models_py3 import RestoreParameters
-    from ._models_py3 import RestoreReqeustDatabaseAccountCreateUpdateProperties
     from ._models_py3 import SpatialSpec
     from ._models_py3 import SqlContainerCreateUpdateParameters
     from ._models_py3 import SqlContainerGetPropertiesOptions
@@ -137,10 +119,6 @@ try:
     from ._models_py3 import SqlDatabaseGetPropertiesResource
     from ._models_py3 import SqlDatabaseGetResults
     from ._models_py3 import SqlDatabaseResource
-    from ._models_py3 import SqlRoleAssignmentCreateUpdateParameters
-    from ._models_py3 import SqlRoleAssignmentGetResults
-    from ._models_py3 import SqlRoleDefinitionCreateUpdateParameters
-    from ._models_py3 import SqlRoleDefinitionGetResults
     from ._models_py3 import SqlStoredProcedureCreateUpdateParameters
     from ._models_py3 import SqlStoredProcedureGetPropertiesResource
     from ._models_py3 import SqlStoredProcedureGetResults
@@ -153,7 +131,6 @@ try:
     from ._models_py3 import SqlUserDefinedFunctionGetPropertiesResource
     from ._models_py3 import SqlUserDefinedFunctionGetResults
     from ._models_py3 import SqlUserDefinedFunctionResource
-    from ._models_py3 import SystemData
     from ._models_py3 import TableCreateUpdateParameters
     from ._models_py3 import TableGetPropertiesOptions
     from ._models_py3 import TableGetPropertiesResource
@@ -202,17 +179,14 @@ except (SyntaxError, ImportError):
     from ._models import CreateUpdateOptions
     from ._models import DatabaseAccountConnectionString
     from ._models import DatabaseAccountCreateUpdateParameters
-    from ._models import DatabaseAccountCreateUpdateProperties
     from ._models import DatabaseAccountGetResults
     from ._models import DatabaseAccountListConnectionStringsResult
     from ._models import DatabaseAccountListKeysResult
     from ._models import DatabaseAccountListReadOnlyKeysResult
     from ._models import DatabaseAccountRegenerateKeyParameters
     from ._models import DatabaseAccountUpdateParameters
-    from ._models import DatabaseRestoreResource
-    from ._models import DefaultErrorResponse, DefaultErrorResponseException
-    from ._models import DefaultRequestDatabaseAccountCreateUpdateProperties
     from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ErrorResponseUpdatedFormat, ErrorResponseUpdatedFormatException
     from ._models import ExcludedPath
     from ._models import ExtendedResourceProperties
     from ._models import FailoverPolicies
@@ -264,7 +238,6 @@ except (SyntaxError, ImportError):
     from ._models import PercentileMetricValue
     from ._models import PeriodicModeBackupPolicy
     from ._models import PeriodicModeProperties
-    from ._models import Permission
     from ._models import PrivateEndpointConnection
     from ._models import PrivateEndpointProperty
     from ._models import PrivateLinkResource
@@ -272,20 +245,6 @@ except (SyntaxError, ImportError):
     from ._models import ProxyResource
     from ._models import RegionForOnlineOffline
     from ._models import Resource
-    from ._models import RestorableDatabaseAccountGetResult
-    from ._models import RestorableLocationResource
-    from ._models import RestorableMongodbCollectionGetResult
-    from ._models import RestorableMongodbCollectionPropertiesResource
-    from ._models import RestorableMongodbDatabaseGetResult
-    from ._models import RestorableMongodbDatabasePropertiesResource
-    from ._models import RestorableSqlContainerGetResult
-    from ._models import RestorableSqlContainerPropertiesResource
-    from ._models import RestorableSqlContainerPropertiesResourceContainer
-    from ._models import RestorableSqlDatabaseGetResult
-    from ._models import RestorableSqlDatabasePropertiesResource
-    from ._models import RestorableSqlDatabasePropertiesResourceDatabase
-    from ._models import RestoreParameters
-    from ._models import RestoreReqeustDatabaseAccountCreateUpdateProperties
     from ._models import SpatialSpec
     from ._models import SqlContainerCreateUpdateParameters
     from ._models import SqlContainerGetPropertiesOptions
@@ -297,10 +256,6 @@ except (SyntaxError, ImportError):
     from ._models import SqlDatabaseGetPropertiesResource
     from ._models import SqlDatabaseGetResults
     from ._models import SqlDatabaseResource
-    from ._models import SqlRoleAssignmentCreateUpdateParameters
-    from ._models import SqlRoleAssignmentGetResults
-    from ._models import SqlRoleDefinitionCreateUpdateParameters
-    from ._models import SqlRoleDefinitionGetResults
     from ._models import SqlStoredProcedureCreateUpdateParameters
     from ._models import SqlStoredProcedureGetPropertiesResource
     from ._models import SqlStoredProcedureGetResults
@@ -313,7 +268,6 @@ except (SyntaxError, ImportError):
     from ._models import SqlUserDefinedFunctionGetPropertiesResource
     from ._models import SqlUserDefinedFunctionGetResults
     from ._models import SqlUserDefinedFunctionResource
-    from ._models import SystemData
     from ._models import TableCreateUpdateParameters
     from ._models import TableGetPropertiesOptions
     from ._models import TableGetPropertiesResource
@@ -332,7 +286,6 @@ except (SyntaxError, ImportError):
 from ._paged_models import CassandraKeyspaceGetResultsPaged
 from ._paged_models import CassandraTableGetResultsPaged
 from ._paged_models import DatabaseAccountGetResultsPaged
-from ._paged_models import DatabaseRestoreResourcePaged
 from ._paged_models import GremlinDatabaseGetResultsPaged
 from ._paged_models import GremlinGraphGetResultsPaged
 from ._paged_models import MetricDefinitionPaged
@@ -346,15 +299,8 @@ from ._paged_models import PartitionUsagePaged
 from ._paged_models import PercentileMetricPaged
 from ._paged_models import PrivateEndpointConnectionPaged
 from ._paged_models import PrivateLinkResourcePaged
-from ._paged_models import RestorableDatabaseAccountGetResultPaged
-from ._paged_models import RestorableMongodbCollectionGetResultPaged
-from ._paged_models import RestorableMongodbDatabaseGetResultPaged
-from ._paged_models import RestorableSqlContainerGetResultPaged
-from ._paged_models import RestorableSqlDatabaseGetResultPaged
 from ._paged_models import SqlContainerGetResultsPaged
 from ._paged_models import SqlDatabaseGetResultsPaged
-from ._paged_models import SqlRoleAssignmentGetResultsPaged
-from ._paged_models import SqlRoleDefinitionGetResultsPaged
 from ._paged_models import SqlStoredProcedureGetResultsPaged
 from ._paged_models import SqlTriggerGetResultsPaged
 from ._paged_models import SqlUserDefinedFunctionGetResultsPaged
@@ -362,14 +308,13 @@ from ._paged_models import TableGetResultsPaged
 from ._paged_models import UsagePaged
 from ._cosmos_db_management_client_enums import (
     DatabaseAccountKind,
+    ResourceIdentityType,
     DatabaseAccountOfferType,
     DefaultConsistencyLevel,
     ConnectorOffer,
     PublicNetworkAccess,
     ServerVersion,
-    CreateMode,
-    RestoreMode,
-    CreatedByType,
+    NetworkAclBypass,
     IndexingMode,
     DataType,
     IndexKind,
@@ -379,13 +324,10 @@ from ._cosmos_db_management_client_enums import (
     ConflictResolutionMode,
     TriggerType,
     TriggerOperation,
-    ResourceIdentityType,
     KeyKind,
     UnitType,
     PrimaryAggregationType,
-    ApiType,
-    RoleDefinitionType,
-    OperationType,
+    BackupPolicyType,
 )
 
 __all__ = [
@@ -421,17 +363,14 @@ __all__ = [
     'CreateUpdateOptions',
     'DatabaseAccountConnectionString',
     'DatabaseAccountCreateUpdateParameters',
-    'DatabaseAccountCreateUpdateProperties',
     'DatabaseAccountGetResults',
     'DatabaseAccountListConnectionStringsResult',
     'DatabaseAccountListKeysResult',
     'DatabaseAccountListReadOnlyKeysResult',
     'DatabaseAccountRegenerateKeyParameters',
     'DatabaseAccountUpdateParameters',
-    'DatabaseRestoreResource',
-    'DefaultErrorResponse', 'DefaultErrorResponseException',
-    'DefaultRequestDatabaseAccountCreateUpdateProperties',
     'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponseUpdatedFormat', 'ErrorResponseUpdatedFormatException',
     'ExcludedPath',
     'ExtendedResourceProperties',
     'FailoverPolicies',
@@ -483,7 +422,6 @@ __all__ = [
     'PercentileMetricValue',
     'PeriodicModeBackupPolicy',
     'PeriodicModeProperties',
-    'Permission',
     'PrivateEndpointConnection',
     'PrivateEndpointProperty',
     'PrivateLinkResource',
@@ -491,20 +429,6 @@ __all__ = [
     'ProxyResource',
     'RegionForOnlineOffline',
     'Resource',
-    'RestorableDatabaseAccountGetResult',
-    'RestorableLocationResource',
-    'RestorableMongodbCollectionGetResult',
-    'RestorableMongodbCollectionPropertiesResource',
-    'RestorableMongodbDatabaseGetResult',
-    'RestorableMongodbDatabasePropertiesResource',
-    'RestorableSqlContainerGetResult',
-    'RestorableSqlContainerPropertiesResource',
-    'RestorableSqlContainerPropertiesResourceContainer',
-    'RestorableSqlDatabaseGetResult',
-    'RestorableSqlDatabasePropertiesResource',
-    'RestorableSqlDatabasePropertiesResourceDatabase',
-    'RestoreParameters',
-    'RestoreReqeustDatabaseAccountCreateUpdateProperties',
     'SpatialSpec',
     'SqlContainerCreateUpdateParameters',
     'SqlContainerGetPropertiesOptions',
@@ -516,10 +440,6 @@ __all__ = [
     'SqlDatabaseGetPropertiesResource',
     'SqlDatabaseGetResults',
     'SqlDatabaseResource',
-    'SqlRoleAssignmentCreateUpdateParameters',
-    'SqlRoleAssignmentGetResults',
-    'SqlRoleDefinitionCreateUpdateParameters',
-    'SqlRoleDefinitionGetResults',
     'SqlStoredProcedureCreateUpdateParameters',
     'SqlStoredProcedureGetPropertiesResource',
     'SqlStoredProcedureGetResults',
@@ -532,7 +452,6 @@ __all__ = [
     'SqlUserDefinedFunctionGetPropertiesResource',
     'SqlUserDefinedFunctionGetResults',
     'SqlUserDefinedFunctionResource',
-    'SystemData',
     'TableCreateUpdateParameters',
     'TableGetPropertiesOptions',
     'TableGetPropertiesResource',
@@ -561,8 +480,6 @@ __all__ = [
     'SqlStoredProcedureGetResultsPaged',
     'SqlUserDefinedFunctionGetResultsPaged',
     'SqlTriggerGetResultsPaged',
-    'SqlRoleDefinitionGetResultsPaged',
-    'SqlRoleAssignmentGetResultsPaged',
     'MongoDBDatabaseGetResultsPaged',
     'MongoDBCollectionGetResultsPaged',
     'TableGetResultsPaged',
@@ -570,24 +487,17 @@ __all__ = [
     'CassandraTableGetResultsPaged',
     'GremlinDatabaseGetResultsPaged',
     'GremlinGraphGetResultsPaged',
-    'RestorableDatabaseAccountGetResultPaged',
     'NotebookWorkspacePaged',
-    'RestorableSqlDatabaseGetResultPaged',
-    'RestorableSqlContainerGetResultPaged',
-    'DatabaseRestoreResourcePaged',
-    'RestorableMongodbDatabaseGetResultPaged',
-    'RestorableMongodbCollectionGetResultPaged',
     'PrivateLinkResourcePaged',
     'PrivateEndpointConnectionPaged',
     'DatabaseAccountKind',
+    'ResourceIdentityType',
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',
     'ConnectorOffer',
     'PublicNetworkAccess',
     'ServerVersion',
-    'CreateMode',
-    'RestoreMode',
-    'CreatedByType',
+    'NetworkAclBypass',
     'IndexingMode',
     'DataType',
     'IndexKind',
@@ -597,11 +507,8 @@ __all__ = [
     'ConflictResolutionMode',
     'TriggerType',
     'TriggerOperation',
-    'ResourceIdentityType',
     'KeyKind',
     'UnitType',
     'PrimaryAggregationType',
-    'ApiType',
-    'RoleDefinitionType',
-    'OperationType',
+    'BackupPolicyType',
 ]
