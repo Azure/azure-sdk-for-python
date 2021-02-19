@@ -103,6 +103,7 @@ def create_coverage_report():
 
     write_final_xml(packages_to_add)
 
+
 def write_final_xml(packages_to_add):
     if not os.path.exists(coverage_file):
         logging.info("No coverage file detected at {}".format(coverage_file))
@@ -135,6 +136,5 @@ def recursive_set_name(root):
         recursive_set_name(child)
 
 
-if __name__ == "__main__":
-    generate_coverage_xml()
-    create_coverage_report()
+# if __name__ == "__main__":
+#     generate_coverage_xml()
