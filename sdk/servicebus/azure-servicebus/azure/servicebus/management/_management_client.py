@@ -405,7 +405,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
-        queue_name, to_update = create_properties_from_dicts_if_needed(queue, QueueProperties)
+        queue = create_properties_from_dicts_if_needed(queue, QueueProperties)
+        to_update = queue._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
             to_update.default_message_time_to_live
@@ -423,7 +424,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         self._create_forward_to_header_tokens(queue, kwargs)
         with _handle_response_error():
             self._impl.entity.put(
-                queue_name,  # type: ignore
+                queue.name,  # type: ignore
                 request_body,
                 api_version=constants.API_VERSION,
                 if_match="*",
@@ -633,7 +634,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
-        topic_name, to_update = create_properties_from_dicts_if_needed(topic, TopicProperties)
+        topic = create_properties_from_dicts_if_needed(topic, TopicProperties)
+        to_update = topic._to_internal_entity()
 
         to_update.default_message_time_to_live = (
             kwargs.get("default_message_time_to_live")
@@ -659,7 +661,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             self._impl.entity.put(
-                topic_name,  # type: ignore
+                topic.name,  # type: ignore
                 request_body,
                 api_version=constants.API_VERSION,
                 if_match="*",
@@ -888,7 +890,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         _validate_entity_name_type(topic_name, display_name="topic_name")
 
-        subscription_name, to_update = create_properties_from_dicts_if_needed(subscription, SubscriptionProperties)
+        subscription = create_properties_from_dicts_if_needed(subscription, SubscriptionProperties)
+        to_update = subscription._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
             to_update.default_message_time_to_live
@@ -907,7 +910,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         with _handle_response_error():
             self._impl.subscription.put(
                 topic_name,
-                subscription_name,
+                subscription.name,
                 request_body,
                 api_version=constants.API_VERSION,
                 if_match="*",
@@ -1079,7 +1082,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
-        rule_name, to_update = create_properties_from_dicts_if_needed(rule, RuleProperties)
+        rule = create_properties_from_dicts_if_needed(rule, RuleProperties)
+        to_update = rule._to_internal_entity()
 
         create_entity_body = CreateRuleBody(
             content=CreateRuleBodyContent(
@@ -1092,7 +1096,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             self._impl.rule.put(
                 topic_name,
                 subscription_name,
-                rule_name,
+                rule.name,
                 request_body,
                 api_version=constants.API_VERSION,
                 if_match="*",

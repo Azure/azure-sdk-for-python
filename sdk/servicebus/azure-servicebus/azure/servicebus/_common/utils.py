@@ -208,7 +208,7 @@ def transform_messages_to_sendable_if_needed(messages):
 def create_messages_from_dicts_if_needed(messages, message_type):
     """
     This method is used to convert dict representations
-    of messages and to Message objects.
+    of messages and to a list of ServiceBusMessage objects or ServiceBusBatchMessage.
     """
     # type: (DictMessageType) -> Union[List[azure.servicebus.ServiceBusMessage], azure.servicebus.ServiceBusMessageBatch]
     if isinstance(messages, list):

@@ -326,19 +326,15 @@ def _validate_topic_subscription_and_rule_types(
                 type(topic_name), type(subscription_name), type(rule_name)
             )
         )
-        
+     
 def create_properties_from_dicts_if_needed(properties, sb_resource_type):
     """
-    This method is used to create internal resource objects given their
-    corresponding dict representations of resource properties.
+    This method is used to create a properties object given the 
+    resource properties type and its corresponding dict representation.
     """
-    # type: (dict, DictPropertiesType) -> (str, DictPropertiesReturnType)
+    # type: (dict, DictPropertiesType) -> (DictPropertiesReturnType)
     if isinstance(properties, dict):
-        resource_property_name = properties["name"]
         dict_to_props = sb_resource_type(**properties)
-        to_update = dict_to_props._to_internal_entity() # pylint: disable=protected-access
-    else:
-        resource_property_name = properties.name
-        to_update = properties._to_internal_entity()    # pylint: disable=protected-access
+        properties = dict_to_props
 
-    return (resource_property_name, to_update)
+    return properties
