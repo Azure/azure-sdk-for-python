@@ -6,7 +6,141 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-    from typing import Any
+
+
+class EncryptionAlgorithmConfiguration():
+    """An encryption algorithm, including parameters applicable to using it for encryption.
+    """
+
+    def __init__(self, algorithm, **kwargs):
+        self.algorithm = algorithm
+        self.iv = kwargs.pop("iv", None)
+        self.additional_authenticated_data = kwargs.pop("additional_authenticated_data", None)
+
+    @classmethod
+    def rsa_oaep(cls):
+        return cls(EncryptionAlgorithm.rsa_oaep)
+
+    @classmethod
+    def rsa_oaep_256(cls):
+        return cls(EncryptionAlgorithm.rsa_oaep_256)
+
+    @classmethod
+    def rsa1_5(cls):
+        return cls(EncryptionAlgorithm.rsa1_5)
+
+    @classmethod
+    def a128_gcm(cls, additional_authenticated_data=None):
+        return cls(
+            EncryptionAlgorithm.a128_gcm, additional_authenticated_data=additional_authenticated_data
+        )
+
+    @classmethod
+    def a192_gcm(cls, additional_authenticated_data=None):
+        return cls(
+            EncryptionAlgorithm.a192_gcm, additional_authenticated_data=additional_authenticated_data
+        )
+
+    @classmethod
+    def a256_gcm(cls, additional_authenticated_data=None):
+        return cls(
+            EncryptionAlgorithm.a256_gcm, additional_authenticated_data=additional_authenticated_data
+        )
+
+    @classmethod
+    def a128_cbc(cls, iv=None):
+        return cls(EncryptionAlgorithm.a128_cbc, iv=iv)
+
+    @classmethod
+    def a192_cbc(cls, iv=None):
+        return cls(EncryptionAlgorithm.a192_cbc, iv=iv)
+
+    @classmethod
+    def a256_cbc(cls, iv=None):
+        return cls(EncryptionAlgorithm.a256_cbc, iv=iv)
+
+    @classmethod
+    def a128_cbcpad(cls, iv=None):
+        return cls(EncryptionAlgorithm.a128_cbcpad, iv=iv)
+
+    @classmethod
+    def a192_cbcpad(cls, iv=None):
+        return cls(EncryptionAlgorithm.a192_cbcpad, iv=iv)
+
+    @classmethod
+    def a256_cbcpad(cls, iv=None):
+        return cls(EncryptionAlgorithm.a256_cbcpad, iv=iv)
+
+
+class DecryptionAlgorithmConfiguration():
+    """An encryption algorithm, including parameters applicable to using it for decryption.
+    """
+
+    def __init__(self, algorithm, **kwargs):
+        self.algorithm = algorithm
+        self.iv = kwargs.pop("iv", None)
+        self.authentication_tag = kwargs.pop("authentication_tag", None)
+        self.additional_authenticated_data = kwargs.pop("additional_authenticated_data", None)
+
+    @classmethod
+    def rsa_oaep(cls):
+        return cls(EncryptionAlgorithm.rsa_oaep)
+
+    @classmethod
+    def rsa_oaep_256(cls):
+        return cls(EncryptionAlgorithm.rsa_oaep_256)
+
+    @classmethod
+    def rsa1_5(cls):
+        return cls(EncryptionAlgorithm.rsa1_5)
+
+    @classmethod
+    def a128_gcm(cls, authentication_tag=None, additional_authenticated_data=None):
+        return cls(
+            EncryptionAlgorithm.a128_gcm,
+            authentication_tag=authentication_tag,
+            additional_authenticated_data=additional_authenticated_data
+        )
+
+    @classmethod
+    def a192_gcm(cls, authentication_tag=None, additional_authenticated_data=None):
+        return cls(
+            EncryptionAlgorithm.a192_gcm,
+            authentication_tag=authentication_tag,
+            additional_authenticated_data=additional_authenticated_data
+        )
+
+    @classmethod
+    def a256_gcm(cls, authentication_tag=None, additional_authenticated_data=None):
+        return cls(
+            EncryptionAlgorithm.a256_gcm,
+            authentication_tag=authentication_tag,
+            additional_authenticated_data=additional_authenticated_data
+        )
+
+    @classmethod
+    def a128_cbc(cls, iv=None):
+        return cls(EncryptionAlgorithm.a128_cbc, iv=iv)
+
+    @classmethod
+    def a192_cbc(cls, iv=None):
+        return cls(EncryptionAlgorithm.a192_cbc, iv=iv)
+
+    @classmethod
+    def a256_cbc(cls, iv=None):
+        return cls(EncryptionAlgorithm.a256_cbc, iv=iv)
+
+    @classmethod
+    def a128_cbcpad(cls, iv=None):
+        return cls(EncryptionAlgorithm.a128_cbcpad, iv=iv)
+
+    @classmethod
+    def a192_cbcpad(cls, iv=None):
+        return cls(EncryptionAlgorithm.a192_cbcpad, iv=iv)
+
+    @classmethod
+    def a256_cbcpad(cls, iv=None):
+        return cls(EncryptionAlgorithm.a256_cbcpad, iv=iv)
 
 
 class DecryptResult:
