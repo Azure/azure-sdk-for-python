@@ -368,9 +368,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
-        
+
         self._check_live()
-        messages = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
+        message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")

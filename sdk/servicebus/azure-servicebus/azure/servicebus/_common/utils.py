@@ -9,7 +9,7 @@ import datetime
 import logging
 import functools
 import platform
-from typing import Optional, Dict, List, Tuple, Iterable, Type, TYPE_CHECKING, Union, Iterator
+from typing import Dict, List, Iterable, TYPE_CHECKING, Union
 from contextlib import contextmanager
 from msrest.serialization import UTC
 
@@ -47,7 +47,7 @@ if TYPE_CHECKING:
     from azure.core.tracing import AbstractSpan
     from .receiver_mixins import ReceiverMixin
     from .._servicebus_session import BaseSession
-      
+
     # pylint: disable=unused-import, ungrouped-imports
     DictMessageType = Union[
         Dict,
@@ -210,7 +210,7 @@ def create_messages_from_dicts_if_needed(messages, message_type):
     This method is used to convert dict representations
     of messages and to a list of ServiceBusMessage objects or ServiceBusBatchMessage.
     """
-    # type: (DictMessageType) -> Union[List[azure.servicebus.ServiceBusMessage], azure.servicebus.ServiceBusMessageBatch]
+    # type: (DictMessageType) -> Union[List[ServiceBusMessage], ServiceBusMessageBatch]
     if isinstance(messages, list):
         for index, message in enumerate(messages):
             if isinstance(message, dict):

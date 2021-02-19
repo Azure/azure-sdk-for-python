@@ -3,11 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, cast, Dict, List, Union
+from typing import TYPE_CHECKING, cast, Union
 from xml.etree.ElementTree import ElementTree, SubElement, QName
+import logging
+from azure.servicebus.management import _constants as constants
+
 import isodate
 import six
-import logging
+from ._handle_response_error import _handle_response_error
 if TYPE_CHECKING:
     # pylint: disable=unused-import, ungrouped-imports
     from ._models import QueueProperties, TopicProperties, \
@@ -32,9 +35,6 @@ try:
     import urllib.parse as urlparse
 except ImportError:
     import urlparse  # type: ignore  # for python 2.7
-
-from azure.servicebus.management import _constants as constants
-from ._handle_response_error import _handle_response_error
 
 _log = logging.getLogger(__name__)
 
@@ -326,10 +326,10 @@ def _validate_topic_subscription_and_rule_types(
                 type(topic_name), type(subscription_name), type(rule_name)
             )
         )
-     
+
 def create_properties_from_dicts_if_needed(properties, sb_resource_type):
     """
-    This method is used to create a properties object given the 
+    This method is used to create a properties object given the
     resource properties type and its corresponding dict representation.
     """
     # type: (dict, DictPropertiesType) -> (DictPropertiesReturnType)

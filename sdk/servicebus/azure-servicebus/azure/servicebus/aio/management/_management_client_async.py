@@ -884,7 +884,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          from `get_subscription`, `update_subscription` or `list_subscription` and has the updated properties.
         :rtype: None
         """
-        
+
         _validate_entity_name_type(topic_name, display_name="topic_name")
 
         subscription = create_properties_from_dicts_if_needed(subscription, SubscriptionProperties)
