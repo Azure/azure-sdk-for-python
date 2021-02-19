@@ -329,7 +329,7 @@ def collect_log_files(working_dir):
 
             for filename in os.listdir(log_files):
                 if filename.endswith(".log"):
-                    logging.info("LOG FILE: ", filename)
+                    logging.info("LOG FILE: {}".format(filename))
 
                     file_location = os.path.join(log_files, filename)
                     shutil.move(

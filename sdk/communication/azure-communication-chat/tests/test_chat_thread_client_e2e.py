@@ -45,12 +45,12 @@ class ChatThreadClientTest(CommunicationTestCase):
 
         # create user and issue token
         self.user = self.identity_client.create_user()
-        tokenresponse = self.identity_client.issue_token(self.user, scopes=["chat"])
+        tokenresponse = self.identity_client.get_token(self.user, scopes=["chat"])
         self.token = tokenresponse.token
 
         # create another user
         self.new_user = self.identity_client.create_user()
-        tokenresponse = self.identity_client.issue_token(self.new_user, scopes=["chat"])
+        tokenresponse = self.identity_client.get_token(self.new_user, scopes=["chat"])
         self.token_new_user = tokenresponse.token
 
         # create ChatClient

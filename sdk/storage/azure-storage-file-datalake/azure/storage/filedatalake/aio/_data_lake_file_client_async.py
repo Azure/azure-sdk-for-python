@@ -4,13 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-from azure.core.exceptions import HttpResponseError
-
+from typing import Any
 try:
     from urllib.parse import quote, unquote
 except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
+from azure.core.exceptions import HttpResponseError
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
 from .._data_lake_file_client import DataLakeFileClient as DataLakeFileClientBase
@@ -129,6 +129,17 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :caption: Create file.
         """
         return await self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
+
+    async def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a file exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return await self._exists(**kwargs)
 
     async def delete_file(self, **kwargs):
         # type: (...) -> None
@@ -461,9 +472,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         downloader = await self._blob_client.download_blob(offset=offset, length=length, **kwargs)
         return StorageStreamDownloader(downloader)
 
-    async def rename_file(self, new_name,  # type: str
-                          **kwargs):
-        # type: (**Any) -> DataLakeFileClient
+    async def rename_file(self, new_name, **kwargs):
+        # type: (str, **Any) -> DataLakeFileClient
         """
         Rename the source file.
 

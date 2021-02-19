@@ -1,0 +1,141 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - efaedac6-6d95-11eb-9bc1-c8348e5fffbf
+      x-ms-date:
+      - Sat, 13 Feb 2021 00:53:50 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystemd8210d29/directoryd8210d29?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sat, 13 Feb 2021 00:53:49 GMT
+      ETag: '"0x8D8CFB9D41CFDA5"'
+      Last-Modified: Sat, 13 Feb 2021 00:53:50 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 55a13272-a01f-009d-80a2-0138e6000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystemd8210d29/directoryd8210d29?resource=directory
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - efe889a0-6d95-11eb-bda1-c8348e5fffbf
+      x-ms-date:
+      - Sat, 13 Feb 2021 00:53:50 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystemd8210d29/directoryd8210d29%2Ffilename?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Sat, 13 Feb 2021 00:53:49 GMT
+      ETag: '"0x8D8CFB9D420F58B"'
+      Last-Modified: Sat, 13 Feb 2021 00:53:50 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 55a13276-a01f-009d-04a2-0138e6000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanprodhierarchical.dfs.core.windows.net/filesystemd8210d29/directoryd8210d29%2Ffilename?resource=file
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - efec3311-6d95-11eb-968f-c8348e5fffbf
+      x-ms-date:
+      - Sat, 13 Feb 2021 00:53:50 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-version:
+      - '2020-06-12'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/filesystemd8210d29/directoryd8210d29/filename
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges: bytes
+      Content-Length: '0'
+      Content-Type: application/octet-stream
+      Date: Sat, 13 Feb 2021 00:53:50 GMT
+      ETag: '"0x8D8CFB9D420F58B"'
+      Last-Modified: Sat, 13 Feb 2021 00:53:50 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier: Hot
+      x-ms-access-tier-inferred: 'true'
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Sat, 13 Feb 2021 00:53:50 GMT
+      x-ms-group: $superuser
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-owner: $superuser
+      x-ms-permissions: rw-r-----
+      x-ms-request-id: 266f3dd6-a01e-00a2-34a2-01f045000000
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2020-06-12'
+    status:
+      code: 200
+      message: OK
+    url: https://seanprodhierarchical.blob.core.windows.net/filesystemd8210d29/directoryd8210d29/filename
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - efef6773-6d95-11eb-8bf7-c8348e5fffbf
+      x-ms-date:
+      - Sat, 13 Feb 2021 00:53:50 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-version:
+      - '2020-06-12'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/filesystemd8210d29/directoryd8210d29/nonexistentfile
+  response:
+    body:
+      string: ''
+    headers:
+      Date: Sat, 13 Feb 2021 00:53:50 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      x-ms-error-code: BlobNotFound
+      x-ms-request-id: 266f3dda-a01e-00a2-38a2-01f045000000
+      x-ms-version: '2020-06-12'
+    status:
+      code: 404
+      message: The specified blob does not exist.
+    url: https://seanprodhierarchical.blob.core.windows.net/filesystemd8210d29/directoryd8210d29/nonexistentfile
+version: 1

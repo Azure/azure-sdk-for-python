@@ -103,7 +103,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_input_with_some_errors(self, client):
-        docs = [{"id": "1", "language": "es", "text": "hola"},
+        docs = [{"id": "1", "language": "notalanguage", "text": "hola"},
                 {"id": "2", "text": ""},
                 {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
 
@@ -586,9 +586,11 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             ["I work at Microsoft and my phone number is 333-333-3333"],
             domain_filter=PiiEntityDomainType.PROTECTED_HEALTH_INFORMATION
         )
-        self.assertEqual(len(result[0].entities), 1)
-        self.assertEqual(result[0].entities[0].text, '333-333-3333')
-        self.assertEqual(result[0].entities[0].category, 'Phone Number')
+        self.assertEqual(len(result[0].entities), 2)
+        microsoft = list(filter(lambda x: x.text == "Microsoft", result[0].entities))[0]
+        phone = list(filter(lambda x: x.text == "333-333-3333", result[0].entities))[0]
+        self.assertEqual(phone.category, "Phone Number")
+        self.assertEqual(microsoft.category, "Organization")
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})

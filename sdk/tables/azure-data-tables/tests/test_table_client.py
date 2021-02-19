@@ -47,6 +47,11 @@ class TestTableClient(AzureTestCase, TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback))
         assert isinstance(tables,  list)
 
+        # The count doesn't matter, going through the PagedItem calls `callback`
+        count = 0
+        for table in tables:
+            count += 1
+
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
             assert "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
@@ -57,19 +62,26 @@ class TestTableClient(AzureTestCase, TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
         assert isinstance(tables,  list)
 
+        # The count doesn't matter, going through the PagedItem calls `callback`
+        count = 0
+        for table in tables:
+            count += 1
+
     @TablesPreparer()
     def test_user_agent_append(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
-            assert response.http_request.headers['User-Agent'] == "azsdk-python-data-tables/{} Python/{} ({}) customer_user_agent".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform())
+            assert response.http_request.headers['User-Agent'] == 'customer_user_agent'
 
         custom_headers = {'User-Agent': 'customer_user_agent'}
         tables = service.list_tables(raw_response_hook=callback, headers=custom_headers)
+
+        # The count doesn't matter, going through the PagedItem calls `callback`
+        count = 0
+        for table in tables:
+            count += 1
 
     @TablesPreparer()
     def test_user_agent_default(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -84,6 +96,11 @@ class TestTableClient(AzureTestCase, TableTestCase):
 
         tables = list(service.list_tables(raw_response_hook=callback))
         assert isinstance(tables,  list)
+
+        # The count doesn't matter, going through the PagedItem calls `callback`
+        count = 0
+        for table in tables:
+            count += 1
 
 
 class TestTableUnitTests(TableTestCase):
@@ -126,16 +143,17 @@ class TestTableUnitTests(TableTestCase):
         # Arrange
         url = self.account_url(self.tables_storage_account_name, "table")
         suffix = '.table.core.windows.net'
+        token = self.generate_sas_token()
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self.account_url(self.tables_storage_account_name, "table"), credential=self.generate_sas_token(), table_name='foo')
+                self.account_url(self.tables_storage_account_name, "table"), credential=token, table_name='foo')
 
             # Assert
             assert service is not None
             assert service.account_name ==  self.tables_storage_account_name
             assert service.url.startswith('https://' + self.tables_storage_account_name + suffix)
-            assert service.url.endswith(self.generate_sas_token())
+            assert service.url.endswith(token)
             assert service.credential is None
 
     def test_create_service_china(self):
@@ -212,7 +230,9 @@ class TestTableUnitTests(TableTestCase):
 
     def test_create_service_with_connection_string_sas(self):
         # Arrange
-        conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.tables_storage_account_name, self.generate_sas_token())
+        token = self.generate_sas_token()
+        conn_string = 'AccountName={};SharedAccessSignature={};'.format(
+            self.tables_storage_account_name, token)
 
         for service_type in SERVICES:
             # Act
@@ -221,8 +241,9 @@ class TestTableUnitTests(TableTestCase):
             # Assert
             assert service is not None
             assert service.account_name ==  self.tables_storage_account_name
-            assert service.url.startswith('https://' + self.tables_storage_account_name + '.table.core.windows.net')
-            assert service.url.endswith(self.generate_sas_token())
+            assert service.url.startswith(
+                'https://' + self.tables_storage_account_name + '.table.core.windows.net')
+            assert service.url.endswith(token)
             assert service.credential is None
 
     def test_create_service_with_connection_string_cosmos(self):
@@ -351,7 +372,8 @@ class TestTableUnitTests(TableTestCase):
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_custom_account_endpoint_path(self):
-        custom_account_url = "http://local-machine:11002/custom/account/path/" + self.generate_sas_token()
+        token = self.generate_sas_token()
+        custom_account_url = "http://local-machine:11002/custom/account/path/" + token
         for service_type in SERVICES.items():
             conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};TableEndpoint={};'.format(
                 self.tables_storage_account_name, self.tables_primary_storage_account_key, custom_account_url)
@@ -378,7 +400,7 @@ class TestTableUnitTests(TableTestCase):
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
-        service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.generate_sas_token())
+        service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + token)
         assert service.account_name ==  None
         assert service.table_name ==  "foo"
         assert service.credential ==  None
