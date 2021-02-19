@@ -93,7 +93,7 @@ class TextAnalyticsClientOperationsMixin:
         executed.
 
         :param body: Collection of documents to analyze and tasks to execute.
-        :type body: ~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeBatchInput
+        :type body: ~azure.ai.textanalytics.v3_1_preview_4.models.AnalyzeBatchInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncAnalyzeBatchActionsLROPollingMethod polling method,
@@ -101,7 +101,7 @@ class TextAnalyticsClientOperationsMixin:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncAnalyzeBatchActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
-        :rtype: ~....._async_lro.AsyncAnalyzeBatchActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeJobState]
+        :rtype: ~....._async_lro.AsyncAnalyzeBatchActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_4.models.AnalyzeJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
@@ -173,7 +173,7 @@ class TextAnalyticsClientOperationsMixin:
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeJobState, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeJobState
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.AnalyzeJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeJobState"]
@@ -248,7 +248,7 @@ class TextAnalyticsClientOperationsMixin:
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HealthcareJobState, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.HealthcareJobState
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.HealthcareJobState"]
@@ -483,14 +483,14 @@ class TextAnalyticsClientOperationsMixin:
         symptoms, etc) and their relations.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_3.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_3.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AnalyzeHealthcareEntitiesAsyncLROPollingMethod polling method,
@@ -498,7 +498,7 @@ class TextAnalyticsClientOperationsMixin:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AnalyzeHealthcareEntitiesAsyncLROPoller that returns either HealthcareJobState or the result of cls(response)
-        :rtype: ~....._async_lro.AnalyzeHealthcareEntitiesAsyncLROPoller[~azure.ai.textanalytics.v3_1_preview_3.models.HealthcareJobState]
+        :rtype: ~....._async_lro.AnalyzeHealthcareEntitiesAsyncLROPoller[~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
@@ -561,7 +561,7 @@ class TextAnalyticsClientOperationsMixin:
         Analytics API</a>` for the list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_3.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
@@ -571,10 +571,10 @@ class TextAnalyticsClientOperationsMixin:
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_3.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntitiesResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.EntitiesResult
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.EntitiesResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EntitiesResult"]
@@ -638,6 +638,7 @@ class TextAnalyticsClientOperationsMixin:
         show_stats: Optional[bool] = None,
         domain: Optional[str] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = "TextElements_v8",
+        pii_categories: Optional[List[Union[str, "_models.PiiCategory"]]] = None,
         **kwargs
     ) -> "_models.PiiResult":
         """Entities containing personal information.
@@ -649,7 +650,7 @@ class TextAnalyticsClientOperationsMixin:
         list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_3.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
@@ -662,10 +663,12 @@ class TextAnalyticsClientOperationsMixin:
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_3.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
+        :param pii_categories: (Optional) describes the PII categories to return.
+        :type pii_categories: list[str or ~azure.ai.textanalytics.v3_1_preview_4.models.PiiCategory]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PiiResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.PiiResult
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.PiiResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PiiResult"]
@@ -699,6 +702,8 @@ class TextAnalyticsClientOperationsMixin:
             query_parameters['domain'] = self._serialize.query("domain", domain, 'str')
         if string_index_type is not None:
             query_parameters['stringIndexType'] = self._serialize.query("string_index_type", string_index_type, 'str')
+        if pii_categories is not None:
+            query_parameters['piiCategories'] = self._serialize.query("pii_categories", pii_categories, '[str]', div=',')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -732,14 +737,14 @@ class TextAnalyticsClientOperationsMixin:
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = "TextElements_v8",
         **kwargs
     ) -> "_models.EntityLinkingResult":
-        """Linked entities from a well-known knowledge base.
+        """Linked entities from a well known knowledge base.
 
-        The API returns a list of recognized entities with links to a well-known knowledge base. See
+        The API returns a list of recognized entities with links to a well known knowledge base. See
         the :code:`<a href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for
         the list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_3.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
@@ -749,10 +754,10 @@ class TextAnalyticsClientOperationsMixin:
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_3.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntityLinkingResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.EntityLinkingResult
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.EntityLinkingResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EntityLinkingResult"]
@@ -823,7 +828,7 @@ class TextAnalyticsClientOperationsMixin:
         enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_3.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
@@ -832,7 +837,7 @@ class TextAnalyticsClientOperationsMixin:
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyPhraseResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.KeyPhraseResult
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.KeyPhraseResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyPhraseResult"]
@@ -902,7 +907,7 @@ class TextAnalyticsClientOperationsMixin:
         enabled languages.
 
         :param documents:
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_3.models.LanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.LanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
@@ -911,7 +916,7 @@ class TextAnalyticsClientOperationsMixin:
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LanguageResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.LanguageResult
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.LanguageResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LanguageResult"]
@@ -979,26 +984,26 @@ class TextAnalyticsClientOperationsMixin:
 
         The API returns a detailed sentiment analysis for the input text. The analysis is done in
         multiple levels of granularity, start from the a document level, down to sentence and key terms
-        (aspects) and opinions.
+        (targets and assessments).
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_3.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
-        :param opinion_mining: (Optional) if set to true, response will contain input and document
-         level statistics including aspect-based sentiment analysis results.
+        :param opinion_mining: (Optional) if set to true, response will contain not only sentiment
+         prediction but also opinion mining (aspect-based sentiment analysis) results.
         :type opinion_mining: bool
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_3.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SentimentResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.SentimentResponse
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.SentimentResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SentimentResponse"]

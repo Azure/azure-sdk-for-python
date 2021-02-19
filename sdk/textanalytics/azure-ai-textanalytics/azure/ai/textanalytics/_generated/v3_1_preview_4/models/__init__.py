@@ -10,11 +10,10 @@ try:
     from ._models_py3 import AnalyzeBatchInput
     from ._models_py3 import AnalyzeJobMetadata
     from ._models_py3 import AnalyzeJobState
-    from ._models_py3 import AspectConfidenceScoreLabel
-    from ._models_py3 import AspectRelation
     from ._models_py3 import Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1
     from ._models_py3 import Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1
     from ._models_py3 import Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1
+    from ._models_py3 import ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1
     from ._models_py3 import DetectedLanguage
     from ._models_py3 import DocumentEntities
     from ._models_py3 import DocumentError
@@ -29,11 +28,15 @@ try:
     from ._models_py3 import EntitiesTaskParameters
     from ._models_py3 import Entity
     from ._models_py3 import EntityLinkingResult
+    from ._models_py3 import EntityLinkingTask
+    from ._models_py3 import EntityLinkingTaskParameters
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import HealthcareAssertion
     from ._models_py3 import HealthcareEntity
     from ._models_py3 import HealthcareEntityLink
     from ._models_py3 import HealthcareJobState
     from ._models_py3 import HealthcareRelation
+    from ._models_py3 import HealthcareRelationEntity
     from ._models_py3 import HealthcareResult
     from ._models_py3 import InnerError
     from ._models_py3 import JobDescriptor
@@ -56,15 +59,18 @@ try:
     from ._models_py3 import PiiTask
     from ._models_py3 import PiiTaskParameters
     from ._models_py3 import RequestStatistics
-    from ._models_py3 import SentenceAspect
-    from ._models_py3 import SentenceOpinion
+    from ._models_py3 import SentenceAssessment
     from ._models_py3 import SentenceSentiment
+    from ._models_py3 import SentenceTarget
     from ._models_py3 import SentimentConfidenceScorePerLabel
     from ._models_py3 import SentimentResponse
+    from ._models_py3 import TargetConfidenceScoreLabel
+    from ._models_py3 import TargetRelation
     from ._models_py3 import TaskState
     from ._models_py3 import TasksState
     from ._models_py3 import TasksStateTasks
     from ._models_py3 import TasksStateTasksDetails
+    from ._models_py3 import TasksStateTasksEntityLinkingTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionPiiTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionTasksItem
     from ._models_py3 import TasksStateTasksKeyPhraseExtractionTasksItem
@@ -74,11 +80,10 @@ except (SyntaxError, ImportError):
     from ._models import AnalyzeBatchInput  # type: ignore
     from ._models import AnalyzeJobMetadata  # type: ignore
     from ._models import AnalyzeJobState  # type: ignore
-    from ._models import AspectConfidenceScoreLabel  # type: ignore
-    from ._models import AspectRelation  # type: ignore
     from ._models import Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1  # type: ignore
     from ._models import Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1  # type: ignore
     from ._models import Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1  # type: ignore
+    from ._models import ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1  # type: ignore
     from ._models import DetectedLanguage  # type: ignore
     from ._models import DocumentEntities  # type: ignore
     from ._models import DocumentError  # type: ignore
@@ -93,11 +98,15 @@ except (SyntaxError, ImportError):
     from ._models import EntitiesTaskParameters  # type: ignore
     from ._models import Entity  # type: ignore
     from ._models import EntityLinkingResult  # type: ignore
+    from ._models import EntityLinkingTask  # type: ignore
+    from ._models import EntityLinkingTaskParameters  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import HealthcareAssertion  # type: ignore
     from ._models import HealthcareEntity  # type: ignore
     from ._models import HealthcareEntityLink  # type: ignore
     from ._models import HealthcareJobState  # type: ignore
     from ._models import HealthcareRelation  # type: ignore
+    from ._models import HealthcareRelationEntity  # type: ignore
     from ._models import HealthcareResult  # type: ignore
     from ._models import InnerError  # type: ignore
     from ._models import JobDescriptor  # type: ignore
@@ -120,15 +129,18 @@ except (SyntaxError, ImportError):
     from ._models import PiiTask  # type: ignore
     from ._models import PiiTaskParameters  # type: ignore
     from ._models import RequestStatistics  # type: ignore
-    from ._models import SentenceAspect  # type: ignore
-    from ._models import SentenceOpinion  # type: ignore
+    from ._models import SentenceAssessment  # type: ignore
     from ._models import SentenceSentiment  # type: ignore
+    from ._models import SentenceTarget  # type: ignore
     from ._models import SentimentConfidenceScorePerLabel  # type: ignore
     from ._models import SentimentResponse  # type: ignore
+    from ._models import TargetConfidenceScoreLabel  # type: ignore
+    from ._models import TargetRelation  # type: ignore
     from ._models import TaskState  # type: ignore
     from ._models import TasksState  # type: ignore
     from ._models import TasksStateTasks  # type: ignore
     from ._models import TasksStateTasksDetails  # type: ignore
+    from ._models import TasksStateTasksEntityLinkingTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionPiiTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionTasksItem  # type: ignore
     from ._models import TasksStateTasksKeyPhraseExtractionTasksItem  # type: ignore
@@ -136,15 +148,20 @@ except (SyntaxError, ImportError):
     from ._models import TextAnalyticsWarning  # type: ignore
 
 from ._text_analytics_client_enums import (
-    AspectRelationType,
+    Association,
+    Certainty,
+    Conditionality,
     DocumentSentimentValue,
     ErrorCodeValue,
     InnerErrorCodeValue,
+    PiiCategory,
     PiiTaskParametersDomain,
+    RelationType,
     SentenceSentimentValue,
     State,
     StringIndexType,
     StringIndexTypeResponse,
+    TargetRelationType,
     TokenSentimentValue,
     WarningCodeValue,
 )
@@ -153,11 +170,10 @@ __all__ = [
     'AnalyzeBatchInput',
     'AnalyzeJobMetadata',
     'AnalyzeJobState',
-    'AspectConfidenceScoreLabel',
-    'AspectRelation',
     'Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1',
     'Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1',
     'Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1',
+    'ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1',
     'DetectedLanguage',
     'DocumentEntities',
     'DocumentError',
@@ -172,11 +188,15 @@ __all__ = [
     'EntitiesTaskParameters',
     'Entity',
     'EntityLinkingResult',
+    'EntityLinkingTask',
+    'EntityLinkingTaskParameters',
     'ErrorResponse',
+    'HealthcareAssertion',
     'HealthcareEntity',
     'HealthcareEntityLink',
     'HealthcareJobState',
     'HealthcareRelation',
+    'HealthcareRelationEntity',
     'HealthcareResult',
     'InnerError',
     'JobDescriptor',
@@ -199,29 +219,37 @@ __all__ = [
     'PiiTask',
     'PiiTaskParameters',
     'RequestStatistics',
-    'SentenceAspect',
-    'SentenceOpinion',
+    'SentenceAssessment',
     'SentenceSentiment',
+    'SentenceTarget',
     'SentimentConfidenceScorePerLabel',
     'SentimentResponse',
+    'TargetConfidenceScoreLabel',
+    'TargetRelation',
     'TaskState',
     'TasksState',
     'TasksStateTasks',
     'TasksStateTasksDetails',
+    'TasksStateTasksEntityLinkingTasksItem',
     'TasksStateTasksEntityRecognitionPiiTasksItem',
     'TasksStateTasksEntityRecognitionTasksItem',
     'TasksStateTasksKeyPhraseExtractionTasksItem',
     'TextAnalyticsError',
     'TextAnalyticsWarning',
-    'AspectRelationType',
+    'Association',
+    'Certainty',
+    'Conditionality',
     'DocumentSentimentValue',
     'ErrorCodeValue',
     'InnerErrorCodeValue',
+    'PiiCategory',
     'PiiTaskParametersDomain',
+    'RelationType',
     'SentenceSentimentValue',
     'State',
     'StringIndexType',
     'StringIndexTypeResponse',
+    'TargetRelationType',
     'TokenSentimentValue',
     'WarningCodeValue',
 ]
