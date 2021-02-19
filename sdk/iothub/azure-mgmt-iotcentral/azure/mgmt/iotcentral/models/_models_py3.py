@@ -243,6 +243,11 @@ class AppTemplate(Model):
     :vartype order: float
     :ivar description: The description of the template.
     :vartype description: str
+    :ivar industry: The industry of the template.
+    :vartype industry: str
+    :ivar locations: A list of locations that support the template.
+    :vartype locations:
+     list[~azure.mgmt.iotcentral.models.AppTemplateLocations]
     """
 
     _validation = {
@@ -252,6 +257,8 @@ class AppTemplate(Model):
         'title': {'readonly': True},
         'order': {'readonly': True},
         'description': {'readonly': True},
+        'industry': {'readonly': True},
+        'locations': {'readonly': True},
     }
 
     _attribute_map = {
@@ -261,6 +268,8 @@ class AppTemplate(Model):
         'title': {'key': 'title', 'type': 'str'},
         'order': {'key': 'order', 'type': 'float'},
         'description': {'key': 'description', 'type': 'str'},
+        'industry': {'key': 'industry', 'type': 'str'},
+        'locations': {'key': 'locations', 'type': '[AppTemplateLocations]'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -271,6 +280,36 @@ class AppTemplate(Model):
         self.title = None
         self.order = None
         self.description = None
+        self.industry = None
+        self.locations = None
+
+
+class AppTemplateLocations(Model):
+    """IoT Central Application Template Locations.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ID of the location.
+    :vartype id: str
+    :ivar display_name: The display name of the location.
+    :vartype display_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'display_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AppTemplateLocations, self).__init__(**kwargs)
+        self.id = None
+        self.display_name = None
 
 
 class CloudError(Model):
@@ -370,21 +409,31 @@ class Operation(Model):
     :vartype name: str
     :param display: The object that represents the operation.
     :type display: ~azure.mgmt.iotcentral.models.OperationDisplay
+    :ivar origin: The intended executor of the operation.
+    :vartype origin: str
+    :ivar properties: Additional descriptions for the operation.
+    :vartype properties: object
     """
 
     _validation = {
         'name': {'readonly': True},
+        'origin': {'readonly': True},
+        'properties': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
     }
 
     def __init__(self, *, display=None, **kwargs) -> None:
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = display
+        self.origin = None
+        self.properties = None
 
 
 class OperationDisplay(Model):
