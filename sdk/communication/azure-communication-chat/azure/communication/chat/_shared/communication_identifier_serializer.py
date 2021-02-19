@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum
 
 from .models import (
     CommunicationIdentifierModel,
@@ -14,6 +15,12 @@ from .models import (
     PhoneNumberIdentifierModel,
     MicrosoftTeamsUserIdentifierModel
 )
+
+class _IdentifierType(Enum):
+    COMMUNICATION_USER_IDENTIFIER=1
+    PHONE_NUMBER_IDENTIFIER=2
+    UNKNOWN_IDENTIFIER=3
+    MICROSOFT_TEAMS_IDENTIFIER=4
 
 class CommunicationUserIdentifierSerializer(object):
 
