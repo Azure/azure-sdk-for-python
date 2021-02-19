@@ -10,13 +10,30 @@ urlFragment: azure-eventgrid-samples
 
 # Azure Event Grid Client Library Python Samples
 
+## Sync samples
 These code samples show common champion scenario operations with the Azure Event Grid client library.
 
-* Publish Custom Events to a topic: [cs1_publish_custom_events_to_a_topic.py][python-eg-sample-customevent]
-* Publish Custom events to a domain topic: [cs2_publish_custom_events_to_a_domain_topic.py][python-eg-sample-customevent-to-domain]
-* Publish a Cloud Event: [cs6_publish_events_using_cloud_events_1.0_schema.py][python-eg-sample-send-cloudevent]
+* Publish Custom Events to a topic: [sample_publish_custom_events_to_a_topic.py][python-eg-sample-customevent]
+* Publish Custom events to a domain topic: [sample_publish_custom_events_to_a_domain_topic.py][python-eg-sample-customevent-to-domain]
+* Publish a Cloud Event: [sample_publish_events_using_cloud_events_1.0_schema.py][python-eg-sample-send-cloudevent]
 
-[python-eg-sample-customevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs1_publish_custom_events_to_a_topic.py
-[python-eg-sample-customevent-to-domain]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs2_publish_custom_events_to_a_domain_topic.py
-[python-eg-sample-send-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs5_publish_events_using_cloud_events_1.0_schema.py
+* Consume a Custom Payload of raw cloudevent data: [sample_consume_custom_payload.py]
+[python-eg-sample-consume-custom-payload]
+
+## Async samples
+These code samples show common champion scenario operations with the Azure Event Grid client library using the async client.
+
+* Publish Custom Events to a topic: [sample_publish_custom_events_to_a_topic_async.py][python-eg-sample-customevent-async]
+* Publish Custom events to a domain topic: [sample_publish_custom_events_to_a_domain_topic_async.py][python-eg-sample-customevent-to-domain-async]
+* Publish a Cloud Event: [sample_publish_events_using_cloud_events_1.0_schema_async.py][python-eg-sample-send-cloudevent-async]
+
+
+[python-eg-sample-customevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_custom_events_to_a_topic.py
+[python-eg-sample-customevent-to-domain]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_custom_events_to_a_domain_topic.py
+[python-eg-sample-send-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py
+
+[python-eg-sample-customevent-async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_custom_events_to_a_topic.py
+[python-eg-sample-customevent-to-domain-async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_custom_events_to_a_domain_topic.py
+[python-eg-sample-send-cloudevent-async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_events_using_cloud_events_1.0_schema.py
+
 [publisher-service-doc]: https://docs.microsoft.com/azure/event-grid/concepts

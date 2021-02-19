@@ -1,3 +1,17 @@
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+"""
+FILE: sample_consume_custom_payload.py
+DESCRIPTION:
+    These samples demonstrate consuming a raw json with a list of jsons and
+    deserializing them into typed objects of CloudEvents.
+USAGE:
+    python sample_consume_custom_payload.py
+"""
+
 from azure.eventgrid import CloudEvent
 import json
 
