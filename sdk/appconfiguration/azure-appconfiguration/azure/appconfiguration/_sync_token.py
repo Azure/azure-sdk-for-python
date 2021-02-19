@@ -50,6 +50,7 @@ class SyncToken(object):
         except ValueError:
             return None
 
+
 class SyncTokenPolicy(SansIOHTTPPolicy):
     """A simple policy that enable the given callback
     with the response.

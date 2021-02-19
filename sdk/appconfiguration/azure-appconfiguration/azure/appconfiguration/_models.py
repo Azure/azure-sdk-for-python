@@ -120,7 +120,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
     feature_flag_content_type = "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
 
 
-    def __init__(self, key, value, **kwargs):
+    def __init__(self, key, value, feature_filters=[], **kwargs):
         # type: (str, bool, str) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.key = key
@@ -142,10 +142,9 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
                 'description': self.description,
                 'enabled': self.value,
                 'conditions': {
-                    'client_filters': []
+                    'client_filters': feature_filters
                 }
             }
-
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -157,6 +156,16 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
                 key_value.value = json.loads(key_value.value)
             except json.decoder.JSONDecodeError:
                 pass
+
+        filters = None
+        try:
+            filters = key_value.value['conditions']['client_filters']
+            if len(filters) > 0:
+                filters = [FeatureFilterBase._from_generated(f) for f in filters]
+                key_value.value['conditions']['client_filters'] = filters
+        except KeyError:
+            pass
+
         return cls(
             key=key_value.key,
             value=key_value.value,
@@ -166,12 +175,14 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
             tags=key_value.tags,
             read_only=key_value.locked,
             etag=key_value.etag,
+            feature_filters=filters
         )
 
     def _to_generated(self):
         # type: (...) -> KeyValue
         value = self.value
         if isinstance(self.value, dict):
+            self._serialize_filters()
             value = json.dumps(self.value)
         return KeyValue(
             key=self.key,
@@ -183,6 +194,10 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
             locked=self.read_only,
             etag=self.etag
         )
+
+    def _serialize_filters(self):
+        for idx, f in enumerate(self.value['conditions']['client_filters']):
+            self.value['conditions']['client_filters'][idx] = f._serialize()
 
 
 class SecretReferenceConfigurationSetting(Model):
@@ -268,13 +283,70 @@ class SecretReferenceConfigurationSetting(Model):
         )
 
 
-class FeatureFlagFilter(object):
+class FeatureFilterBase(object):
+    """ Base class for the feature filters of FeatureFlagConfigurationSetting
+    """
+
+    def __init__(self):
+        pass
+# sent_config.value['conditions']['client_filters'][0]['parameters']['Audience']['DefaultRolloutPercentage'] = 80
+
+    @classmethod
+    def _from_generated(self, feature_filter):
+        if feature_filter['name'] == 'Microsoft.Targeting':
+            return TargetingFeatureFilter.from_service(feature_filter['parameters'])
+        elif feature_filter['name'] == 'Microsoft.TimeWindow':
+            return TimeWindowFeatureFilter.from_service(feature_filter['parameters'])
+        elif feature_filter['name'] == 'Microsoft.Percentage':
+            return CustomFeatureFilter.from_service(feature_filter['parameters'])
+        else:
+            raise ValueError("{} not recognized as a feature filter.".format(feature_filter['name']))
+
+    def _to_generated(self):
+        pass
+
+    def _serialize(self):
+        pass
+
+
+class TargetingFeatureFilter(FeatureFilterBase):
     """ A configuration setting that controls a feature flag
     :param name:
     :type name: string
     """
 
-    def __init__(self, name, parameters=None):
+    def __init__(self, rollout_percentage, users=None, groups=None):
         # type: (str, dict) -> None
-        self.name = name
-        self.parameters = parameters or {}
+        self.rollout_percentage = rollout_percentage
+        self.users = users or []
+        self.groups = groups or []
+
+    @classmethod
+    def from_service(cls, dict_repr):
+        return cls(
+            dict_repr['Audience']['DefaultRolloutPercentage'],
+            users=dict_repr['Audience']['Users'],
+            groups=dict_repr['Audience']['Groups']
+        )
+
+    def _serialize(self):
+        # type: (...) -> dict
+        return {
+            'name': 'Microsoft.Targeting',
+            'parameters': {
+                'Audience': {
+                    'Users': self.users,
+                    'Groups': self.groups,
+                    'DefaultRolloutPercentage': self.rollout_percentage
+                }
+            }
+        }
+
+class TimeWindowFeatureFilter(FeatureFilterBase):
+
+    pass
+
+
+class CustomFeatureFilter(FeatureFilterBase):
+
+    pass
