@@ -1,5 +1,14 @@
 # Release History
 
+## 4.1.0 (2021-02-19)
+
+**Features**
+
+  - Model AppTemplate has a new parameter industry
+  - Model AppTemplate has a new parameter locations
+  - Model Operation has a new parameter properties
+  - Model Operation has a new parameter origin
+
 ## 4.0.0 (2021-01-05)
 
 **Features**
