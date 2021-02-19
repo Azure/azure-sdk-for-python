@@ -32,7 +32,7 @@ class SmsSamples(object):
         async with sms_client:
             try:
                 # calling send() with sms values 
-                sms_responses = sms_client.send(
+                sms_responses = await sms_client.send(
                     from_="<leased-phone-number>",
                     to=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
                     message="Hello World via SMS",
@@ -43,8 +43,8 @@ class SmsSamples(object):
                 pass
 
             failed_recipients = []
-            async for sms_response in sms_responses:
-                if (sms_response.succeeded):
+            for sms_response in sms_responses:
+                if (sms_response.successful):
                     print("Message with message id {} was successful sent to {}"
                     .format(sms_response.message_id , sms_response.to))
                 else:
@@ -54,7 +54,7 @@ class SmsSamples(object):
             
             try:
                 # calling send() with failed recipients
-                sms_responses = sms_client.send(
+                sms_responses = await sms_client.send(
                     from_="<leased-phone-number>",
                     to=failed_recipients,
                     message="Hello World via SMS",

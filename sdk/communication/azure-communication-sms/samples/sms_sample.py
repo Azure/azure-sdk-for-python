@@ -39,14 +39,14 @@ class SmsSamples(object):
         
         failed_recipients = []
         for sms_response in sms_responses:
-            if (sms_response.succeeded):
+            if (sms_response.successful):
                 print("Message with message id {} was successful sent to {}"
                 .format(sms_response.message_id , sms_response.to))
             else:
                 print("Message with message id {} failed to send to {}"
                 .format(sms_response.message_id , sms_response.to))
                 failed_recipients.append(sms_response.to)
-
+        
         # calling send() with failed recipients
         sms_responses = sms_client.send(
             from_="<leased-phone-number>",
