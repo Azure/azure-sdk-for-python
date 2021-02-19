@@ -6,9 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import msrest.serialization
+
+from ._azure_communication_sms_service_enums import *
 
 
 class SendMessageRequest(msrest.serialization.Model):
@@ -19,9 +21,9 @@ class SendMessageRequest(msrest.serialization.Model):
     :param from_property: Required. The sender's phone number in E.164 format that is owned by the
      authenticated account.
     :type from_property: str
-    :param to: Required. The recipient's phone number in E.164 format. In this version, a minimum
-     of 1 and upto 100 recipients in the list are supported.
-    :type to: list[str]
+    :param sms_recipients: Required. The recipient's phone number in E.164 format. In this version,
+     a minimum of 1 and upto 100 recipients in the list are supported.
+    :type sms_recipients: list[~azure.communication.sms.models.SmsRecipient]
     :param message: Required. The contents of the message that will be sent to the recipient. The
      allowable content is defined by RFC 5724.
     :type message: str
@@ -31,13 +33,13 @@ class SendMessageRequest(msrest.serialization.Model):
 
     _validation = {
         'from_property': {'required': True},
-        'to': {'required': True},
+        'sms_recipients': {'required': True},
         'message': {'required': True, 'max_length': 2048, 'min_length': 0},
     }
 
     _attribute_map = {
         'from_property': {'key': 'from', 'type': 'str'},
-        'to': {'key': 'to', 'type': '[str]'},
+        'sms_recipients': {'key': 'smsRecipients', 'type': '[SmsRecipient]'},
         'message': {'key': 'message', 'type': 'str'},
         'sms_send_options': {'key': 'smsSendOptions', 'type': 'SmsSendOptions'},
     }
@@ -46,28 +48,78 @@ class SendMessageRequest(msrest.serialization.Model):
         self,
         *,
         from_property: str,
-        to: List[str],
+        sms_recipients: List["SmsRecipient"],
         message: str,
         sms_send_options: Optional["SmsSendOptions"] = None,
         **kwargs
     ):
         super(SendMessageRequest, self).__init__(**kwargs)
         self.from_property = from_property
-        self.to = to
+        self.sms_recipients = sms_recipients
         self.message = message
         self.sms_send_options = sms_send_options
+
+
+class SmsRecipient(msrest.serialization.Model):
+    """Recipient details for sending SMS messages.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param to: Required. The recipient's phone number in E.164 format.
+    :type to: str
+    :param repeatability_request_id: If specified, the client directs that the request is
+     repeatable; that is, the client can make the request multiple times with the same
+     Repeatability-Request-ID and get back an appropriate response without the server executing the
+     request multiple times. The value of the Repeatability-Request-ID is an opaque string
+     representing a client-generated, 36-character hexadecimal case-insensitive encoding of a UUID
+     (GUID), identifier for the request.
+    :type repeatability_request_id: str
+    :param repeatability_first_sent: MUST be sent by clients to specify that a request is
+     repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
+     was first created.eg- Tue, 26 Mar 2019 16:06:51 GMT.
+    :type repeatability_first_sent: str
+    """
+
+    _validation = {
+        'to': {'required': True},
+    }
+
+    _attribute_map = {
+        'to': {'key': 'to', 'type': 'str'},
+        'repeatability_request_id': {'key': 'repeatabilityRequestId', 'type': 'str'},
+        'repeatability_first_sent': {'key': 'repeatabilityFirstSent', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        to: str,
+        repeatability_request_id: Optional[str] = None,
+        repeatability_first_sent: Optional[str] = None,
+        **kwargs
+    ):
+        super(SmsRecipient, self).__init__(**kwargs)
+        self.to = to
+        self.repeatability_request_id = repeatability_request_id
+        self.repeatability_first_sent = repeatability_first_sent
 
 
 class SmsSendOptions(msrest.serialization.Model):
     """Optional configuration for sending SMS messages.
 
-    :param enable_delivery_report: Enable this flag to receive a delivery report for this message
-     on the Azure Resource EventGrid.
+    All required parameters must be populated in order to send to Azure.
+
+    :param enable_delivery_report: Required. Enable this flag to receive a delivery report for this
+     message on the Azure Resource EventGrid.
     :type enable_delivery_report: bool
     :param tag: Use this field to provide metadata that will then be sent back in the corresponding
      Delivery Report.
     :type tag: str
     """
+
+    _validation = {
+        'enable_delivery_report': {'required': True},
+    }
 
     _attribute_map = {
         'enable_delivery_report': {'key': 'enableDeliveryReport', 'type': 'bool'},
@@ -77,7 +129,7 @@ class SmsSendOptions(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        enable_delivery_report: Optional[bool] = False,
+        enable_delivery_report: bool,
         tag: Optional[str] = None,
         **kwargs
     ):
@@ -93,8 +145,6 @@ class SmsSendResponse(msrest.serialization.Model):
 
     :param value: Required.
     :type value: list[~azure.communication.sms.models.SmsSendResult]
-    :param next_link:
-    :type next_link: str
     """
 
     _validation = {
@@ -103,19 +153,16 @@ class SmsSendResponse(msrest.serialization.Model):
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[SmsSendResult]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         value: List["SmsSendResult"],
-        next_link: Optional[str] = None,
         **kwargs
     ):
         super(SmsSendResponse, self).__init__(**kwargs)
         self.value = value
-        self.next_link = next_link
 
 
 class SmsSendResult(msrest.serialization.Model):
@@ -123,30 +170,35 @@ class SmsSendResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param to: Required. The recipients's phone number in E.164 format.
+    :param to: Required. The recipient's phone number in E.164 format.
     :type to: str
-    :param message_id: The identifier of the outgoing SMS message. Only present if message
+    :param message_id: The identifier of the outgoing Sms message. Only present if message
      processed.
     :type message_id: str
     :param http_status_code: Required. HTTP Status code.
     :type http_status_code: int
-    :param succeeded: Required. Flag to check if message processing succeeded or not.
-    :type succeeded: bool
-    :param error_message: Optional error message in case of 4xx or 5xx errors.
+    :param repeatability_result: The result of a repeatable request with one of the case-
+     insensitive values accepted or rejected. Possible values include: "accepted", "rejected".
+    :type repeatability_result: str or
+     ~azure.communication.sms.models.SmsSendResultRepeatabilityResult
+    :param successful: Required. Indicates if the message is processed successfully or not.
+    :type successful: bool
+    :param error_message: Optional error message in case of 4xx/5xx/repeatable errors.
     :type error_message: str
     """
 
     _validation = {
         'to': {'required': True},
         'http_status_code': {'required': True},
-        'succeeded': {'required': True},
+        'successful': {'required': True},
     }
 
     _attribute_map = {
         'to': {'key': 'to', 'type': 'str'},
         'message_id': {'key': 'messageId', 'type': 'str'},
         'http_status_code': {'key': 'httpStatusCode', 'type': 'int'},
-        'succeeded': {'key': 'succeeded', 'type': 'bool'},
+        'repeatability_result': {'key': 'repeatabilityResult', 'type': 'str'},
+        'successful': {'key': 'successful', 'type': 'bool'},
         'error_message': {'key': 'errorMessage', 'type': 'str'},
     }
 
@@ -155,8 +207,9 @@ class SmsSendResult(msrest.serialization.Model):
         *,
         to: str,
         http_status_code: int,
-        succeeded: bool,
+        successful: bool,
         message_id: Optional[str] = None,
+        repeatability_result: Optional[Union[str, "SmsSendResultRepeatabilityResult"]] = None,
         error_message: Optional[str] = None,
         **kwargs
     ):
@@ -164,5 +217,6 @@ class SmsSendResult(msrest.serialization.Model):
         self.to = to
         self.message_id = message_id
         self.http_status_code = http_status_code
-        self.succeeded = succeeded
+        self.repeatability_result = repeatability_result
+        self.successful = successful
         self.error_message = error_message

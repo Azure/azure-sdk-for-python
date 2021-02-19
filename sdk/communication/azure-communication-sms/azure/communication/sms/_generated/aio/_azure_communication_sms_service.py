@@ -21,7 +21,7 @@ class AzureCommunicationSMSService(object):
 
     :ivar sms: SmsOperations operations
     :vartype sms: azure.communication.sms.aio.operations.SmsOperations
-    :param endpoint: The endpoint of the Azure Communication resource.
+    :param endpoint: The communication resource, for example https://my-resource.communication.azure.com.
     :type endpoint: str
     """
 

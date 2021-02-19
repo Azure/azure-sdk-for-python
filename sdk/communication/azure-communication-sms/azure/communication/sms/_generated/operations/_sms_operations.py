@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
@@ -17,7 +16,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -47,31 +46,18 @@ class SmsOperations(object):
     def send(
         self,
         send_message_request,  # type: "_models.SendMessageRequest"
-        repeatability_request_id=None,  # type: Optional[str]
-        repeatability_first_sent=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.SmsSendResponse"]
+        # type: (...) -> "_models.SmsSendResponse"
         """Sends a SMS message from a phone number that belongs to the authenticated account.
 
         Sends a SMS message from a phone number that belongs to the authenticated account.
 
         :param send_message_request: Represents the body of the send message request.
         :type send_message_request: ~azure.communication.sms.models.SendMessageRequest
-        :param repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, the client can make the request multiple times with the same
-         Repeatability-Request-ID and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-ID is an opaque string
-         representing a client-generated, 36-character hexadecimal case-insensitive encoding of a UUID
-         (GUID), identifier for the request.
-        :type repeatability_request_id: str
-        :param repeatability_first_sent: MUST be sent by clients to specify that a request is
-         repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
-         was first created.eg- Tue, 26 Mar 2019 16:06:51 GMT.
-        :type repeatability_first_sent: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SmsSendResponse or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.sms.models.SmsSendResponse]
+        :return: SmsSendResponse, or the result of cls(response)
+        :rtype: ~azure.communication.sms.models.SmsSendResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SmsSendResponse"]
@@ -80,67 +66,40 @@ class SmsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2021-03-07"
-        content_type = "application/json"
+        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
-        def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            if repeatability_request_id is not None:
-                header_parameters['repeatability-request-id'] = self._serialize.header("repeatability_request_id", repeatability_request_id, 'str')
-            if repeatability_first_sent is not None:
-                header_parameters['repeatability-first-sent'] = self._serialize.header("repeatability_first_sent", repeatability_first_sent, 'str')
-            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        # Construct URL
+        url = self.send.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = self.send.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
-                body_content_kwargs = {}  # type: Dict[str, Any]
-                body_content = self._serialize.body(send_message_request, 'SendMessageRequest')
-                body_content_kwargs['content'] = body_content
-                request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-            else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                path_format_arguments = {
-                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                body_content_kwargs = {}  # type: Dict[str, Any]
-                body_content = self._serialize.body(send_message_request, 'SendMessageRequest')
-                body_content_kwargs['content'] = body_content
-                request = self._client.get(url, query_parameters, header_parameters, **body_content_kwargs)
-            return request
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize('SmsSendResponse', pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(send_message_request, 'SendMessageRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
+        deserialized = self._deserialize('SmsSendResponse', pipeline_response)
 
-            if response.status_code not in [202]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+        if cls:
+            return cls(pipeline_response, deserialized, {})
 
-            return pipeline_response
-
-        return ItemPaged(
-            get_next, extract_data
-        )
+        return deserialized
     send.metadata = {'url': '/sms'}  # type: ignore

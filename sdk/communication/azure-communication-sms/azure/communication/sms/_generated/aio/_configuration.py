@@ -19,7 +19,7 @@ class AzureCommunicationSMSServiceConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The endpoint of the Azure Communication resource.
+    :param endpoint: The communication resource, for example https://my-resource.communication.azure.com.
     :type endpoint: str
     """
 

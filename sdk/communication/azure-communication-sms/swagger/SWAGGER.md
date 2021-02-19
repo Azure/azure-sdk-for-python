@@ -23,7 +23,7 @@ directive:
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/dc652c9308ddcb19a73dbbb37498e63081dfde6e/specification/communication/data-plane/Microsoft.CommunicationServicesSms/stable/2021-03-07/communicationservicessms.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/83d782b99cb85a9b2f5ef22774584541dd0ff997/specification/communication/data-plane/Microsoft.CommunicationServicesSms/stable/2021-03-07/communicationservicessms.json
 output-folder: ../azure/communication/sms/_generated
 namespace: azure.communication.sms
 no-namespace-folders: true

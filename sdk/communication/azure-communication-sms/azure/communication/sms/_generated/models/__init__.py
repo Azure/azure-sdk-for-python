@@ -8,18 +8,26 @@
 
 try:
     from ._models_py3 import SendMessageRequest
+    from ._models_py3 import SmsRecipient
     from ._models_py3 import SmsSendOptions
     from ._models_py3 import SmsSendResponse
     from ._models_py3 import SmsSendResult
 except (SyntaxError, ImportError):
     from ._models import SendMessageRequest  # type: ignore
+    from ._models import SmsRecipient  # type: ignore
     from ._models import SmsSendOptions  # type: ignore
     from ._models import SmsSendResponse  # type: ignore
     from ._models import SmsSendResult  # type: ignore
 
+from ._azure_communication_sms_service_enums import (
+    SmsSendResultRepeatabilityResult,
+)
+
 __all__ = [
     'SendMessageRequest',
+    'SmsRecipient',
     'SmsSendOptions',
     'SmsSendResponse',
     'SmsSendResult',
+    'SmsSendResultRepeatabilityResult',
 ]

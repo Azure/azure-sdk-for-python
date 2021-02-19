@@ -4,9 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.sms._generated.models import (
     SendMessageRequest,
+    SmsRecipient,
     SmsSendResult,
     SmsSendOptions,
 )
@@ -75,8 +76,8 @@ class SmsClient(object):
 
         return cls(endpoint, access_key, **kwargs)
 
-    @distributed_trace()
-    def send(self, from_, # type: str
+    @distributed_trace_async()
+    async def send(self, from_, # type: str
              to, # type: Union[str, List[str]]
              message, # type: str
              **kwargs # type: Any
@@ -91,8 +92,8 @@ class SmsClient(object):
          message on the Azure Resource EventGrid.
         :keyword str tag: Use this field to provide metadata that will then be sent back in the corresponding
          Delivery Report.
-        :return: An iterator like instance of SmsSendResult
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.sms.models.SmsSendResult]
+        :return: A list of SmsSendResults.
+        :rtype: [~azure.communication.sms.models.SmsSendResult]
         """
 
         enable_delivery_report = kwargs.pop('enable_delivery_report', False)
@@ -105,12 +106,15 @@ class SmsClient(object):
 
         request = SendMessageRequest(
             from_property=from_,
-            to=[p for p in to],
+            sms_recipients=[SmsRecipient(to=p) for p in to],
             message=message,
             sms_send_options=sms_send_options,
             **kwargs)
 
-        return self._sms_service_client.sms.send(request, **kwargs)
+        return await self._sms_service_client.sms.send(
+            request,
+            cls=lambda pr, r, e: r.value,
+            **kwargs)
 
     async def __aenter__(self) -> "SMSClient":
         await self._sms_service_client.__aenter__()
