@@ -17,7 +17,9 @@ from azure.appconfiguration import (
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
-    TargetingFeatureFilter
+    TargetingFeatureFilter,
+    TimeWindowFeatureFilter,
+    CustomFeatureFilter
 )
 
 from consts import (
@@ -472,40 +474,43 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             True,
             feature_filters=[TargetingFeatureFilter(75)]
         )
-        # {
-        #     'name': 'Microsoft.Targeting', # TODO: change to Enum
-        #     'parameters': {
-        #         'Audience': {
-        #             'Users': [],
-        #             'Groups': [],
-        #             'DefaultRolloutPercentage': 75,
-        #         }
-        #     }
-        # })
 
         sent_config = client.set_configuration_setting(new)
         self._assert_same_keys(sent_config, new)
+
+        assert isinstance(sent_config.value['conditions']['client_filters'][0], TargetingFeatureFilter)
+        assert len(sent_config.value['conditions']['client_filters']) == 1
 
         sent_config.value['conditions']['client_filters'][0].rollout_percentage = 80
         updated_sent_config = client.set_configuration_setting(sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)
 
+        updated_sent_config.add_feature_filter(TargetingFeatureFilter(50))
+        updated_sent_config.add_feature_filter(TargetingFeatureFilter(100))
+
+        sent_config = client.set_configuration_setting(updated_sent_config)
+        self._assert_same_keys(sent_config, updated_sent_config)
+        assert len(sent_config.value['conditions']['client_filters']) == 3
+
         client.delete_configuration_setting(updated_sent_config)
 
     @app_config_decorator
     def test_feature_filter_time_window(self, client):
-        new = FeatureFlagConfigurationSetting('time_window', True, feature_filter={
-            'name': 'Microsoft.TimeWindow',
-            'parameters': {
-                'Start': 'Fri, 19 Feb 2021 18:00:00 GMT', # TODO: convert these to datetime objects
-                'End': 'Fri, 26 Feb 2021 05:00:00 GMT'
-            }
-        })
+        new = FeatureFlagConfigurationSetting(
+            'time_window',
+            True,
+            feature_filters=[
+                TimeWindowFeatureFilter(
+                    start='Fri, 19 Feb 2021 18:00:00 GMT',
+                    end='Fri, 26 Feb 2021 05:00:00 GMT'
+                )
+            ]
+        )
 
         sent = client.set_configuration_setting(new)
         self._assert_same_keys(sent, new)
 
-        sent.value['conditions']['client_filters'][0]['parameters']['End'] = 'Fri, 26 Feb 2021 08:00:00 GMT'
+        sent.value['conditions']['client_filters'][0].end = 'Fri, 26 Feb 2021 08:00:00 GMT'
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 

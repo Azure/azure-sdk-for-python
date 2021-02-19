@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
+import six
+import datetime
 from msrest.serialization import Model
 from ._generated.models import KeyValue
 
@@ -182,7 +184,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
         # type: (...) -> KeyValue
         value = self.value
         if isinstance(self.value, dict):
-            self._serialize_filters()
+            self._to_generated_filters()
             value = json.dumps(self.value)
         return KeyValue(
             key=self.key,
@@ -195,9 +197,14 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
             etag=self.etag
         )
 
-    def _serialize_filters(self):
+    def _to_generated_filters(self):
+        # type: (...) -> None
         for idx, f in enumerate(self.value['conditions']['client_filters']):
-            self.value['conditions']['client_filters'][idx] = f._serialize()
+            self.value['conditions']['client_filters'][idx] = f._to_generated()
+
+    def add_feature_filter(self, feature_filter):
+        # type: (FeatureFilterBase) -> None
+        self.value['conditions']['client_filters'].append(feature_filter)
 
 
 class SecretReferenceConfigurationSetting(Model):
@@ -305,9 +312,6 @@ class FeatureFilterBase(object):
     def _to_generated(self):
         pass
 
-    def _serialize(self):
-        pass
-
 
 class TargetingFeatureFilter(FeatureFilterBase):
     """ A configuration setting that controls a feature flag
@@ -317,6 +321,7 @@ class TargetingFeatureFilter(FeatureFilterBase):
 
     def __init__(self, rollout_percentage, users=None, groups=None):
         # type: (str, dict) -> None
+        self._name = 'Microsoft.Targeting'
         self.rollout_percentage = rollout_percentage
         self.users = users or []
         self.groups = groups or []
@@ -329,10 +334,10 @@ class TargetingFeatureFilter(FeatureFilterBase):
             groups=dict_repr['Audience']['Groups']
         )
 
-    def _serialize(self):
+    def _to_generated(self):
         # type: (...) -> dict
         return {
-            'name': 'Microsoft.Targeting',
+            'name': self._name,
             'parameters': {
                 'Audience': {
                     'Users': self.users,
@@ -343,8 +348,37 @@ class TargetingFeatureFilter(FeatureFilterBase):
         }
 
 class TimeWindowFeatureFilter(FeatureFilterBase):
+    """ A configuration setting that controls a feature flag
+    :param name:
+    :type name: string
+    """
 
-    pass
+    def __init__(self, start, end=None):
+        self._name = 'Microsoft.TimeWindow'
+        self.start = start
+        self.end = end
+        self._to_datetime_object()
+
+    def _to_datetime_object(self):
+        # TODO: datetime serialization 
+        pass
+
+    @classmethod
+    def from_service(cls, dict_repr):
+        return cls(
+            dict_repr['Start'],
+            end=dict_repr.get('End', None)
+        )
+
+    def _to_generated(self):
+        # type: (...) -> dict
+        return {
+            'name': self._name,
+            'parameters': {
+                'Start': self.start,
+                'End': self.end
+            }
+        }
 
 
 class CustomFeatureFilter(FeatureFilterBase):
