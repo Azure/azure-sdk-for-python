@@ -7,6 +7,7 @@
 import uuid
 from  base64 import b64decode
 from datetime import datetime
+import isodate
 
 try:
     from datetime import timezone
@@ -39,8 +40,8 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
     :keyword data: Optional. Event data specific to the event type. If data is of bytes type, it will be sent
      as data_base64 in the outgoing request.
     :type data: object
-    :keyword time: Optional. The time (in UTC) the event was generated, in RFC3339 format.
-    :type time: str
+    :keyword time: Optional. The time (in UTC) the event was generated.
+    :type time: ~datetime.datetime
     :keyword dataschema: Optional. Identifies the schema that data adheres to.
     :type dataschema: str
     :keyword datacontenttype: Optional. Content type of data value.
@@ -64,8 +65,8 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
     :vartype data: object
     :ivar type: Type of event related to the originating occurrence.
     :vartype type: str
-    :ivar time: The time (in UTC) the event was generated, in RFC3339 format.
-    :vartype time: str
+    :ivar time: The time (in UTC) the event was generated.
+    :vartype time: ~datetime.datetime
     :ivar dataschema: Identifies the schema that data adheres to.
     :vartype dataschema: str
     :ivar datacontenttype: Content type of data value.
@@ -89,12 +90,16 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
         self.type = type
         self.specversion = kwargs.pop("specversion", "1.0")
         self.id = kwargs.pop("id", str(uuid.uuid4()))
-        self.time = kwargs.pop("time", datetime.now(TZ_UTC).isoformat())
+        self.time = kwargs.pop("time", datetime.now(TZ_UTC))
         self.datacontenttype = kwargs.pop("datacontenttype", None)
         self.dataschema = kwargs.pop("dataschema", None)
         self.subject = kwargs.pop("subject", None)
         self.extensions = {}
-        self.extensions.update(dict(kwargs.pop('extensions', {})))
+        _extensions = dict(kwargs.pop('extensions', {}))
+        for key in _extensions.keys():
+            if not key.islower() or not key.isalnum():
+                raise ValueError("Extension attributes should be lower cased and alphanumeric.")
+        self.extensions.update(_extensions)
         self.data = kwargs.pop("data", None)
 
     def __repr__(self):
@@ -121,13 +126,17 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
         data_base64 = event.pop("data_base64", None)
         if data and data_base64:
             raise ValueError("Invalid input. Only one of data and data_base64 must be present.")
+        try:
+            time = isodate.parse_datetime(event.pop("time", None))
+        except AttributeError:
+            pass
         return cls(
             id=event.pop("id", None),
             source=event.pop("source", None),
             type=event.pop("type", None),
             specversion=event.pop("specversion", None),
             data=data or b64decode(data_base64),
-            time=event.pop("time", None),
+            time=time,
             dataschema=event.pop("dataschema", None),
             datacontenttype=event.pop("datacontenttype", None),
             subject=event.pop("subject", None),
