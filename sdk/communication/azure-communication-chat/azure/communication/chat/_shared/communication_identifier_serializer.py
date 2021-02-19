@@ -35,16 +35,18 @@ class CommunicationUserIdentifierSerializer(object):
         :rtype: ~azure.communication.chat.CommunicationIdentifierModel
         :raises Union[TypeError, ValueError]
         """
-        if isinstance(communicationIdentifier, CommunicationUserIdentifier):
+        identifierType = CommunicationUserIdentifierSerializer._getIdnetifierType(communicationIdentifier)
+
+        if identifierType == _IdentifierType.COMMUNICATION_USER_IDENTIFIER:
             return CommunicationIdentifierModel(
                 communication_user=CommunicationUserIdentifierModel(id=communicationIdentifier.identifier)
             )
-        if isinstance(communicationIdentifier, PhoneNumberIdentifier):
+        if identifierType == _IdentifierType.PHONE_NUMBER_IDENTIFIER:
             return CommunicationIdentifierModel(
                 raw_id=communicationIdentifier.raw_id,
                 phone_number=PhoneNumberIdentifierModel(value=communicationIdentifier.phone_number)
             )
-        if isinstance(communicationIdentifier, MicrosoftTeamsUserIdentifier):
+        if identifierType == _IdentifierType.MICROSOFT_TEAMS_IDENTIFIER:
             return CommunicationIdentifierModel(
                 raw_id=communicationIdentifier.raw_id,
                 microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(user_id=communicationIdentifier.user_id,
@@ -52,7 +54,7 @@ class CommunicationUserIdentifierSerializer(object):
                 cloud=communicationIdentifier.cloud)
             )
 
-        if isinstance(communicationIdentifier, UnknownIdentifier):
+        if identifierType == _IdentifierType.UNKNOWN_IDENTIFIER:
             return CommunicationIdentifierModel(
                 raw_id=communicationIdentifier.identifier
             )
