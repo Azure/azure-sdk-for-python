@@ -3,8 +3,6 @@ import logging
 import os
 import xml.etree.ElementTree as ET
 
-# from create_coverage import generate_coverage_xml
-
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_file = os.path.join(root_dir, "coverage.xml")
 
@@ -80,27 +78,6 @@ def create_coverage_report():
 
         packages_to_add.append(copy.deepcopy(package))
 
-    # packages_to_add = []
-    # for package in root.find('packages'):
-    #     p = copy.deepcopy(package)
-    #     print(p.attrib)
-    #     temp_c = copy.deepcopy(p.find('classes')[0])
-    #     temp_c.remove(temp_c.find('lines'))
-
-    #     temp_c.attrib['filename'] = temp_c.attrib['filename'].replace('/__init__.py', '/**/*.py')
-
-    #     print(ET.dump(temp_c))
-
-    #     p.remove(p.find('classes'))
-
-    #     c = ET.SubElement(p, "classes")
-    #     c.append(temp_c)
-
-    #     packages_to_add.append(p)
-    #     print(p[0])
-
-    # print(packages_to_add)
-
     write_final_xml(packages_to_add)
 
 
@@ -134,7 +111,3 @@ def recursive_set_name(root):
 
     for child in root:
         recursive_set_name(child)
-
-
-# if __name__ == "__main__":
-#     generate_coverage_xml()
