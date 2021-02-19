@@ -111,3 +111,22 @@ class CommunicationUserIdentifierSerializer(object):
             )
 
         return UnknownIdentifier(raw_id)
+
+    @classmethod
+    def _getIdnetifierType(cls, communicationIdentifier):
+        def has_attributes(object, attributes):
+            return all([hasattr(communicationIdentifier, attr) for attr in attributes])
+
+        if has_attributes(communicationIdentifier, ["identifier"]):
+            return _IdentifierType.COMMUNICATION_USER_IDENTIFIER
+        
+        if has_attributes(communicationIdentifier, ['phone_number', 'raw_id']):
+            return _IdentifierType.PHONE_NUMBER_IDENTIFIER
+        
+        if has_attributes(communicationIdentifier, ["raw_id", "user_id", "is_anonymous", "cloud"]):
+            return _IdentifierType.MICROSOFT_TEAMS_IDENTIFIER
+
+        # TODO: replace the schema of UnknownIdentifier
+        if has_attributes(communicationIdentifier, ["identifier"]):
+            return _IdentifierType.UNKNOWN_IDENTIFIER
+
