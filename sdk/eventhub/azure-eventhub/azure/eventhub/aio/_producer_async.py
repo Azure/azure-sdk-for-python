@@ -8,22 +8,26 @@ import logging
 from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING
 import time
 
-from uamqp import types, constants, errors
+from uamqp import types, constants, errors, utils
 from uamqp import SendClientAsync
 
 from azure.core.tracing import AbstractSpan
 
 from .._common import EventData, EventDataBatch
 from ..exceptions import _error_handler, OperationTimeoutError
-from .._producer import _set_partition_key, _set_trace_message
+from .._producer import IdempotentProducerMixin
 from .._utils import (
     create_properties,
-    set_message_partition_key,
-    trace_message,
     send_context_manager,
-    add_link_to_send,
+    add_link_to_send
 )
-from .._constants import TIMEOUT_SYMBOL
+from .._constants import (
+    TIMEOUT_SYMBOL,
+    IDEMPOTENT_PRODUCER_SYMBOL,
+    PRODUCER_EPOCH_SYMBOL,
+    PRODUCER_SEQUENCE_NUMBER_SYMBOL,
+    PRODUCER_ID_SYMBOL
+)
 from ._client_base_async import ConsumerProducerMixin
 
 if TYPE_CHECKING:
@@ -34,7 +38,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class EventHubProducer(
-    ConsumerProducerMixin
+    ConsumerProducerMixin, IdempotentProducerMixin
 ):  # pylint: disable=too-many-instance-attributes
     """A producer responsible for transmitting batches of EventData to a specific Event Hub.
 
@@ -96,8 +100,33 @@ class EventHubProducer(
         self._link_properties = {
             types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))
         }
+        self._desired_capabilities = None
+        self._enable_idempotent_partitions = kwargs.get("enable_idempotent_partitions", False)
+        # the following instance variables are for idempotent producer,
+        # client is expected to keep and manage these data during the life cycle of the producer instance.
+        self._partition_option = kwargs.get("partition_option") or {}
+        self._owner_level = self._partition_option.get("owner_level")
+        self._producer_group_id = self._partition_option.get("producer_group_id")
+        self._starting_sequence_number = self._partition_option.get("starting_sequence_number")
+        self._last_published_sequence_number = None
 
     def _create_handler(self, auth: "JWTTokenAsync") -> None:
+
+        desired_capabilities = None
+        if self._enable_idempotent_partitions:
+            symbol_array = [IDEMPOTENT_PRODUCER_SYMBOL]
+            desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
+
+        if self._producer_group_id is not None or\
+                self._owner_level is not None or\
+                self._starting_sequence_number is not None:
+            self._link_properties[PRODUCER_ID_SYMBOL] =\
+                types.AMQPLong(self._producer_group_id) if self._producer_group_id is not None else None
+            self._link_properties[PRODUCER_EPOCH_SYMBOL] =\
+                types.AMQPShort(self._owner_level) if self._owner_level is not None else None
+            self._link_properties[PRODUCER_SEQUENCE_NUMBER_SYMBOL] =\
+                types.AMQPInt(self._starting_sequence_number) if self._starting_sequence_number is not None else None
+
         self._handler = SendClientAsync(
             self._target,
             auth=auth,
@@ -111,7 +140,9 @@ class EventHubProducer(
             properties=create_properties(
                 self._client._config.user_agent  # pylint:disable=protected-access
             ),
-            loop=self._loop,
+            desired_capabilities=self._desired_capabilities,
+            on_attach=self._on_attach,
+            loop=self._loop
         )
 
     async def _open_with_retry(self) -> Any:
@@ -173,40 +204,28 @@ class EventHubProducer(
 
     def _wrap_eventdata(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data_batch: EventDataBatch,
         span: Optional[AbstractSpan],
         partition_key: Optional[AnyStr],
-    ) -> Union[EventData, EventDataBatch]:
-        if isinstance(event_data, EventData):
-            if partition_key:
-                set_message_partition_key(event_data.message, partition_key)
-            wrapper_event_data = event_data
-            trace_message(wrapper_event_data, span)
-            add_link_to_send(wrapper_event_data, span)
-        else:
-            if isinstance(
-                event_data, EventDataBatch
-            ):  # The partition_key in the param will be omitted.
-                if (
-                    partition_key and partition_key != event_data._partition_key  # pylint: disable=protected-access
-                ):
-                    raise ValueError(
-                        "The partition_key does not match the one of the EventDataBatch"
-                    )
-                for message in event_data.message._body_gen:  # pylint: disable=protected-access
-                    add_link_to_send(message, span)
-                wrapper_event_data = event_data  # type:ignore
-            else:
-                if partition_key:
-                    event_data = _set_partition_key(event_data, partition_key)
-                event_data = _set_trace_message(event_data, span)
-                wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # type: ignore  # pylint: disable=protected-access
-        wrapper_event_data.message.on_send_complete = self._on_outcome
-        return wrapper_event_data
+    ) -> EventDataBatch:
+        if (
+            partition_key and partition_key != event_data_batch._partition_key  # pylint: disable=protected-access
+        ):
+            raise ValueError(
+                "The partition_key does not match the one of the EventDataBatch"
+            )
+        for i in range(len(event_data_batch)):
+            event = event_data_batch.message._body_gen[i]  # pylint: disable=protected-access
+            add_link_to_send(event, span)
+            if self._enable_idempotent_partitions:
+                self._populate_idempotent_event_annotations(event, i)
+
+        event_data_batch.message.on_send_complete = self._on_outcome
+        return event_data_batch
 
     async def send(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data: EventDataBatch,
         *,
         partition_key: Optional[AnyStr] = None,
         timeout: Optional[float] = None
@@ -216,7 +235,7 @@ class EventHubProducer(
         received or operation times out.
 
         :param event_data: The event to be sent. It can be an EventData object, or iterable of EventData objects
-        :type event_data: ~azure.eventhub.common.EventData, Iterator, Generator, list
+        :type event_data: ~azure.eventhub.EventDataBatch
         :param partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service. partition_key
          could be omitted if event_data is of type ~azure.eventhub.EventDataBatch.
@@ -237,18 +256,26 @@ class EventHubProducer(
         # Tracing code
         async with self._lock:
             with send_context_manager() as child:
-                self._check_closed()
-                wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
-                self._unsent_events = [wrapper_event_data.message]
+                try:
+                    wrapper_event_data = None
+                    self._check_closed()
+                    await self._open_with_retry()
+                    wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
+                    self._unsent_events = [wrapper_event_data.message]
+                    if child:
+                        self._client._add_span_request_attributes(  # pylint: disable=protected-access
+                            child
+                        )
 
-                if child:
-                    self._client._add_span_request_attributes(  # pylint: disable=protected-access
-                        child
-                    )
-
-                await self._send_event_data_with_retry(
-                    timeout=timeout
-                )  # pylint:disable=unexpected-keyword-arg
+                    await self._send_event_data_with_retry(
+                        timeout=timeout
+                    )  # pylint:disable=unexpected-keyword-arg
+                    if self._enable_idempotent_partitions:
+                        self._commit_idempotent_sending_events(wrapper_event_data)
+                except:
+                    if self._enable_idempotent_partitions:
+                        self._rollback_idempotent_sending_events(wrapper_event_data)
+                    raise
 
     async def close(self) -> None:
         """

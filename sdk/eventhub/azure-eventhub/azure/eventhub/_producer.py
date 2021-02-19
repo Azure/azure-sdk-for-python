@@ -30,9 +30,7 @@ from ._utils import (
     set_message_partition_key,
     trace_message,
     send_context_manager,
-    add_link_to_send,
-    commit_idempotent_sending_events,
-    rollback_idempotent_sending_events
+    add_link_to_send
 )
 from ._constants import (
     TIMEOUT_SYMBOL,
@@ -67,8 +65,70 @@ def _set_trace_message(event_datas, parent_span=None):
         yield ed
 
 
+class IdempotentProducerMixin(object):
+    """
+    Mixin class that provides reusable idempotent publishing related functionality shared
+    by sync and async EventHubProducer.
+
+    """
+    def _on_attach(self, source, target, properties, error):
+        if not self._enable_idempotent_partitions or str(target) != self._target:
+            return
+        self._owner_level = properties.get(PRODUCER_EPOCH)
+        self._producer_group_id = properties.get(PRODUCER_ID)
+        self._starting_sequence_number = properties.get(PRODUCER_SEQUENCE_NUMBER)
+
+    def _set_idempotent_producer_link_configs(self):
+        self._desired_capabilities = utils.data_factory(types.AMQPArray([IDEMPOTENT_PRODUCER_SYMBOL]))
+        if self._producer_group_id is not None or\
+                self._owner_level is not None or\
+                self._starting_sequence_number is not None:
+            self._link_properties[PRODUCER_ID_SYMBOL] =\
+                types.AMQPLong(self._producer_group_id) if self._producer_group_id is not None else None
+            self._link_properties[PRODUCER_EPOCH_SYMBOL] =\
+                types.AMQPShort(self._owner_level) if self._owner_level is not None else None
+            self._link_properties[PRODUCER_SEQUENCE_NUMBER_SYMBOL] =\
+                types.AMQPInt(self._starting_sequence_number) if self._starting_sequence_number is not None else None
+
+    def _populate_idempotent_event_annotations(self, event, idx):
+        event._pending_published_sequence_number = self._starting_sequence_number + idx
+        event.message.annotations[PRODUCER_EPOCH_SYMBOL] = self._owner_level
+        event.message.annotations[PRODUCER_ID_SYMBOL] = self._producer_group_id
+        event.message.annotations[PRODUCER_SEQUENCE_NUMBER_SYMBOL] = \
+            event._pending_published_sequence_number
+
+    def _commit_idempotent_sending_events(self, event_data_batch):
+        """
+        Update the sequence number of events and producer after idempotent sending succeeds
+        """
+        # pylint: disable=protected-access
+        event_data_batch._starting_published_sequence_number = self._starting_sequence_number
+        self._starting_sequence_number += len(event_data_batch)
+        self._last_published_sequence_number = self._starting_sequence_number - 1
+        for i in range(len(event_data_batch)):
+            event = event_data_batch.message._body_gen[i]
+            event._published_sequence_number = event._pending_published_sequence_number
+            event._pending_published_sequence_number = None
+
+    @classmethod
+    def _rollback_idempotent_sending_events(cls, event_data_batch):
+        """
+        Unset the sequence number of events after idempotent sending fails
+        """
+        # pylint: disable=protected-access
+        if not event_data_batch:
+            return
+
+        for i in range(len(event_data_batch)):
+            event = event_data_batch.message._body_gen[i]
+            del event.message.annotations[PRODUCER_EPOCH_SYMBOL]
+            del event.message.annotations[PRODUCER_ID_SYMBOL]
+            del event.message.annotations[PRODUCER_SEQUENCE_NUMBER_SYMBOL]
+            event._pending_published_sequence_number = None
+
+
 class EventHubProducer(
-    ConsumerProducerMixin
+    ConsumerProducerMixin, IdempotentProducerMixin
 ):  # pylint:disable=too-many-instance-attributes
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
@@ -133,6 +193,7 @@ class EventHubProducer(
         self._link_properties = {
             types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))
         }
+        self._desired_capabilities = None
         self._enable_idempotent_partitions = kwargs.get("enable_idempotent_partitions", False)
         # the following instance variables are for idempotent producer,
         # client is expected to keep and manage these data during the life cycle of the producer instance.
@@ -145,20 +206,8 @@ class EventHubProducer(
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
 
-        desired_capabilities = None
         if self._enable_idempotent_partitions:
-            symbol_array = [IDEMPOTENT_PRODUCER_SYMBOL]
-            desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
-
-        if self._producer_group_id is not None or\
-                self._owner_level is not None or\
-                self._starting_sequence_number is not None:
-            self._link_properties[PRODUCER_ID_SYMBOL] =\
-                types.AMQPLong(self._producer_group_id) if self._producer_group_id is not None else None
-            self._link_properties[PRODUCER_EPOCH_SYMBOL] =\
-                types.AMQPShort(self._owner_level) if self._owner_level is not None else None
-            self._link_properties[PRODUCER_SEQUENCE_NUMBER_SYMBOL] =\
-                types.AMQPInt(self._starting_sequence_number) if self._starting_sequence_number is not None else None
+            self._set_idempotent_producer_link_configs()
 
         self._handler = SendClient(
             self._target,
@@ -171,7 +220,7 @@ class EventHubProducer(
             client_name=self._name,
             link_properties=self._link_properties,
             properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
-            desired_capabilities=desired_capabilities,
+            desired_capabilities=self._desired_capabilities,
             on_attach=self._on_attach
         )
 
@@ -241,21 +290,10 @@ class EventHubProducer(
             event = event_data_batch.message._body_gen[i]  # pylint: disable=protected-access
             add_link_to_send(event, span)
             if self._enable_idempotent_partitions:
-                event._pending_published_sequence_number = self._starting_sequence_number + i
-                event.message.annotations[PRODUCER_EPOCH_SYMBOL] = self._owner_level
-                event.message.annotations[PRODUCER_ID_SYMBOL] = self._producer_group_id
-                event.message.annotations[PRODUCER_SEQUENCE_NUMBER_SYMBOL] =\
-                    event._pending_published_sequence_number
+                self._populate_idempotent_event_annotations(event, i)
 
         event_data_batch.message.on_send_complete = self._on_outcome
         return event_data_batch
-
-    def _on_attach(self, source, target, properties, error):
-        if not self._enable_idempotent_partitions or str(target) != self._target:
-            return
-        self._owner_level = properties.get(PRODUCER_EPOCH)
-        self._producer_group_id = properties.get(PRODUCER_ID)
-        self._starting_sequence_number = properties.get(PRODUCER_SEQUENCE_NUMBER)
 
     def send(
         self,
@@ -269,7 +307,7 @@ class EventHubProducer(
         received or operation times out.
 
         :param event_data: The event to be sent. It can be an EventData object, or iterable of EventData objects
-        :type event_data: ~azure.eventhub.common.EventData, Iterator, Generator, list
+        :type event_data: ~azure.eventhub.EventDataBatch
         :param partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service. partition_key
          could be omitted if event_data is of type ~azure.eventhub.EventDataBatch.
@@ -304,11 +342,11 @@ class EventHubProducer(
                     self._send_event_data_with_retry(timeout=timeout)
                     if self._enable_idempotent_partitions:
                         # commit the changes of the properties on each event and update producer
-                        commit_idempotent_sending_events(self, wrapper_event_data)
+                        self._commit_idempotent_sending_events(wrapper_event_data)
                 except:
                     if self._enable_idempotent_partitions:
                         # idempotent sending failed, unset the properties on each event
-                        rollback_idempotent_sending_events(wrapper_event_data)
+                        self._rollback_idempotent_sending_events(wrapper_event_data)
                     raise
 
     def close(self):
