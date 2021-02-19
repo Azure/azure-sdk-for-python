@@ -11,7 +11,7 @@ import logging
 import re
 from common_tasks import run_check_call
 
-from create_coverage import create_coverage_report
+from code_cov_report import create_coverage_report
 
 logging.getLogger().setLevel(logging.INFO)
 
