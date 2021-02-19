@@ -121,14 +121,13 @@ class CommunicationUserIdentifierSerializer(object):
 
         if has_attributes(communicationIdentifier, ["identifier"]):
             return _IdentifierType.COMMUNICATION_USER_IDENTIFIER
-        
+
         if has_attributes(communicationIdentifier, ['phone_number', 'raw_id']):
             return _IdentifierType.PHONE_NUMBER_IDENTIFIER
-        
+
         if has_attributes(communicationIdentifier, ["raw_id", "user_id", "is_anonymous", "cloud"]):
             return _IdentifierType.MICROSOFT_TEAMS_IDENTIFIER
 
         # TODO: replace the schema of UnknownIdentifier
         if has_attributes(communicationIdentifier, ["unknownIdentifier"]):
             return _IdentifierType.UNKNOWN_IDENTIFIER
-
