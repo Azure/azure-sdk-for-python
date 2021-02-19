@@ -92,7 +92,7 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
         unknown_identifier_expected = UnknownIdentifier("an id")
 
         assert isinstance(unknown_identifier_actual, UnknownIdentifier)
-        assert unknown_identifier_actual.identifier == unknown_identifier_expected.identifier
+        assert unknown_identifier_actual.unknownIdentifier == unknown_identifier_expected.unknownIdentifier
 
     def test_serialize_phone_number(self):
         phone_number_identifier_model = CommunicationUserIdentifierSerializer.serialize(

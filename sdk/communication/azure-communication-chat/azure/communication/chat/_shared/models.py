@@ -108,13 +108,13 @@ class UnknownIdentifier(object):
     Represents an identifier of an unknown type.
     It will be encountered in communications with endpoints that are not
     identifiable by this version of the SDK.
-    :ivar identifier: Unknown communication identifier.
-    :vartype identifier: str
+    :ivar unknownIdentifier: Unknown communication identifier.
+    :vartype unknownIdentifier: str
     :param identifier: Value to initialize UnknownIdentifier.
     :type identifier: str
     """
     def __init__(self, identifier):
-        self.identifier = identifier
+        self.unknownIdentifier = identifier
 
 class CommunicationIdentifierModel(msrest.serialization.Model):
     """Identifies a participant in Azure Communication services. A participant is, for example, a phone number or an Azure communication user. This model must be interpreted as a union: Apart from rawId, at most one further property may be set.
