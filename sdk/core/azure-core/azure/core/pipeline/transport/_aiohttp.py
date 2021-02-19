@@ -241,7 +241,8 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                             raise
                         if resp.http_response.status_code == 416:
                             raise
-                        chunk = await resp.http_response.content.read(self.block_size)
+                        self.response = resp
+                        chunk = await self.response.http_response.content.read(self.block_size)
                     except Exception as err:  # pylint: disable=broad-except
                         _LOGGER.warning("Unable to stream download: %s", err)
                         self.response.internal_response.close()
