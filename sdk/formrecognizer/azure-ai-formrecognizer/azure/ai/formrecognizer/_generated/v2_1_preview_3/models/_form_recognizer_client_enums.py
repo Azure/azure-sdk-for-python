@@ -70,25 +70,6 @@ class KeyValueType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SELECTION_MARK = "selectionMark"
 
 class Language(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Currently, only Afrikaans (‘af’), Albanian (‘sq’), Asturian (‘ast’), Basque (‘eu’), Bislama
-    (‘bi’), Breton (‘br’), Catalan (‘ca’), Cebuano (‘ceb’), Chamorro (‘ch’), Cornish (‘kw’),
-    Corsican (‘co’), Crimean Tatar - Latin script(‘crh’), Czech (‘cs’), Danish (‘da’), Dutch
-    (‘nl’), English ('en'), Estonian (‘et’), Fijian (‘fj’), Filipino (‘fil’), Finnish (‘fi’),
-    French (‘fr’), Friulian (‘fur’), Galician (‘gl’), German (‘de’), Gilbertese (‘gil’),
-    Greenlandic (‘kl’), Haitian Creole (‘ht’), Hani (‘hni’), Hmong Daw (‘mww’), Hungarian (‘hu’),
-    Indonesian (‘id’), Interlingua (‘ia’), Inuktitut (‘iu’), Irish (‘ga’), Italian (‘it’), Japanese
-    (‘ja’), Javanese (‘jv’), Kabuverdianu (‘kea’), Kachin (‘kac’), Kara-Kalpak (‘kaa’), Kashubian
-    (‘csb’), Khasi (‘kha’), Korean (‘ko’), Kurdish - Latin script (‘ku’), K’iche’ (‘quc’),
-    Luxembourgish (‘lb’), Malay (‘ms’), Manx (‘gv’), Neapolitan (‘nap’), Norwegian (‘no’), Occitan
-    (‘oc’), Polish (‘pl’), Portuguese (‘pt’), Romansh (‘rm’), Scots (‘sco’), Scottish Gaelic
-    (‘gd’), simplified Chinese (‘zh-Hans’), Slovenian (‘sl’), Spanish (‘es’), Swahili (‘sw’),
-    Swedish (‘sv’), Tatar - Latin script (‘tt’), Tetum (‘tet’), traditional Chinese (‘zh-Hant’),
-    Turkish (‘tr’), Upper Sorbian (‘hsb’), Uzbek (‘uz’), Volapük (‘vo’), Walser (‘wae’), Western
-    Frisian (‘fy’), Yucatec Maya (‘yua’), Zhuang (‘za’) and Zulu (‘zu’) are supported (print –
-    seventy-three languages and handwritten – English only). Layout supports auto language
-    identification and multi language documents, so only provide a language code if you would like
-    to force the documented to be processed as that specific language.
-    """
 
     AF = "af"
     AST = "ast"
@@ -210,11 +191,11 @@ class SelectionMarkState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNSELECTED = "unselected"
 
 class TextStyle(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Style of the extracted text: handwriting or printed.
+    """The text line style name, including handwriting and other.
     """
 
+    OTHER = "other"
     HANDWRITING = "handwriting"
-    PRINTED = "printed"
 
 class TrainStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the training operation.

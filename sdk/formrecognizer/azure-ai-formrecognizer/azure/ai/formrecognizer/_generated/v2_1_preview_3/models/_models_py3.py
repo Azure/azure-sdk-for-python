@@ -114,33 +114,26 @@ class Appearance(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param style: Required. Style of the extracted text: handwriting or printed. Possible values
-     include: "handwriting", "printed".
-    :type style: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.TextStyle
-    :param style_confidence: Required. Confidence value of predicted style.
-    :type style_confidence: float
+    :param style: Required. An object representing the style of the text line.
+    :type style: ~azure.ai.formrecognizer.v2_1_preview_3.models.Style
     """
 
     _validation = {
         'style': {'required': True},
-        'style_confidence': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
-        'style': {'key': 'style', 'type': 'str'},
-        'style_confidence': {'key': 'styleConfidence', 'type': 'float'},
+        'style': {'key': 'style', 'type': 'Style'},
     }
 
     def __init__(
         self,
         *,
-        style: Union[str, "TextStyle"],
-        style_confidence: float,
+        style: "Style",
         **kwargs
     ):
         super(Appearance, self).__init__(**kwargs)
         self.style = style
-        self.style_confidence = style_confidence
 
 
 class Attributes(msrest.serialization.Model):
@@ -1071,13 +1064,6 @@ class ReadResult(msrest.serialization.Model):
      images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
      "inch".
     :type unit: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.LengthUnit
-    :param language: The detected language on the page overall. Possible values include: "af",
-     "ast", "bi", "br", "ca", "ceb", "ch", "co", "crh", "cs", "csb", "da", "de", "en", "es", "et",
-     "eu", "fi", "fil", "fj", "fr", "fur", "fy", "ga", "gd", "gil", "gl", "gv", "hni", "hsb", "ht",
-     "hu", "ia", "id", "it", "iu", "ja", "jv", "kaa", "kac", "kea", "kha", "kl", "ko", "ku", "kw",
-     "lb", "ms", "mww", "nap", "nl", "no", "oc", "pl", "pt", "quc", "rm", "sco", "sl", "sq", "sv",
-     "sw", "tet", "tr", "tt", "uz", "vo", "wae", "yua", "za", "zh-Hans", "zh-Hant", "zu".
-    :type language: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Language
     :param lines: When includeTextDetails is set to true, a list of recognized text lines. The
      maximum number of lines returned is 300 per page. The lines are sorted top to bottom, left to
      right, although in certain cases proximity is treated with higher priority. As the sorting
@@ -1102,7 +1088,6 @@ class ReadResult(msrest.serialization.Model):
         'width': {'key': 'width', 'type': 'float'},
         'height': {'key': 'height', 'type': 'float'},
         'unit': {'key': 'unit', 'type': 'str'},
-        'language': {'key': 'language', 'type': 'str'},
         'lines': {'key': 'lines', 'type': '[TextLine]'},
         'selection_marks': {'key': 'selectionMarks', 'type': '[SelectionMark]'},
     }
@@ -1115,7 +1100,6 @@ class ReadResult(msrest.serialization.Model):
         width: float,
         height: float,
         unit: Union[str, "LengthUnit"],
-        language: Optional[Union[str, "Language"]] = None,
         lines: Optional[List["TextLine"]] = None,
         selection_marks: Optional[List["SelectionMark"]] = None,
         **kwargs
@@ -1126,7 +1110,6 @@ class ReadResult(msrest.serialization.Model):
         self.width = width
         self.height = height
         self.unit = unit
-        self.language = language
         self.lines = lines
         self.selection_marks = selection_marks
 
@@ -1196,6 +1179,40 @@ class SourcePath(msrest.serialization.Model):
         self.source = source
 
 
+class Style(msrest.serialization.Model):
+    """An object representing the style of the text line.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The text line style name, including handwriting and other. Possible
+     values include: "other", "handwriting".
+    :type name: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.TextStyle
+    :param confidence: Required. The confidence of text line style.
+    :type confidence: float
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'confidence': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'confidence': {'key': 'confidence', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Union[str, "TextStyle"],
+        confidence: float,
+        **kwargs
+    ):
+        super(Style, self).__init__(**kwargs)
+        self.name = name
+        self.confidence = confidence
+
+
 class TextLine(msrest.serialization.Model):
     """An object representing an extracted text line.
 
@@ -1205,14 +1222,6 @@ class TextLine(msrest.serialization.Model):
     :type text: str
     :param bounding_box: Required. Bounding box of an extracted line.
     :type bounding_box: list[float]
-    :param language: The detected language of this line, if different from the overall page
-     language. Possible values include: "af", "ast", "bi", "br", "ca", "ceb", "ch", "co", "crh",
-     "cs", "csb", "da", "de", "en", "es", "et", "eu", "fi", "fil", "fj", "fr", "fur", "fy", "ga",
-     "gd", "gil", "gl", "gv", "hni", "hsb", "ht", "hu", "ia", "id", "it", "iu", "ja", "jv", "kaa",
-     "kac", "kea", "kha", "kl", "ko", "ku", "kw", "lb", "ms", "mww", "nap", "nl", "no", "oc", "pl",
-     "pt", "quc", "rm", "sco", "sl", "sq", "sv", "sw", "tet", "tr", "tt", "uz", "vo", "wae", "yua",
-     "za", "zh-Hans", "zh-Hant", "zu".
-    :type language: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Language
     :param words: Required. List of words in the text line.
     :type words: list[~azure.ai.formrecognizer.v2_1_preview_3.models.TextWord]
     :param appearance: Text appearance properties.
@@ -1228,7 +1237,6 @@ class TextLine(msrest.serialization.Model):
     _attribute_map = {
         'text': {'key': 'text', 'type': 'str'},
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
-        'language': {'key': 'language', 'type': 'str'},
         'words': {'key': 'words', 'type': '[TextWord]'},
         'appearance': {'key': 'appearance', 'type': 'Appearance'},
     }
@@ -1239,14 +1247,12 @@ class TextLine(msrest.serialization.Model):
         text: str,
         bounding_box: List[float],
         words: List["TextWord"],
-        language: Optional[Union[str, "Language"]] = None,
         appearance: Optional["Appearance"] = None,
         **kwargs
     ):
         super(TextLine, self).__init__(**kwargs)
         self.text = text
         self.bounding_box = bounding_box
-        self.language = language
         self.words = words
         self.appearance = appearance
 

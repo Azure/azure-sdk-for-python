@@ -34,6 +34,7 @@ try:
     from ._models_py3 import ReadResult
     from ._models_py3 import SelectionMark
     from ._models_py3 import SourcePath
+    from ._models_py3 import Style
     from ._models_py3 import TextLine
     from ._models_py3 import TextWord
     from ._models_py3 import TrainRequest
@@ -68,6 +69,7 @@ except (SyntaxError, ImportError):
     from ._models import ReadResult  # type: ignore
     from ._models import SelectionMark  # type: ignore
     from ._models import SourcePath  # type: ignore
+    from ._models import Style  # type: ignore
     from ._models import TextLine  # type: ignore
     from ._models import TextWord  # type: ignore
     from ._models import TrainRequest  # type: ignore
@@ -119,6 +121,7 @@ __all__ = [
     'ReadResult',
     'SelectionMark',
     'SourcePath',
+    'Style',
     'TextLine',
     'TextWord',
     'TrainRequest',

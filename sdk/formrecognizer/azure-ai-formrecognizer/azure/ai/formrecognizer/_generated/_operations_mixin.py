@@ -30,7 +30,7 @@ class FormRecognizerClientOperationsMixin(object):
         self,
         include_text_details=False,  # type: Optional[bool]
         locale=None,  # type: Optional[Union[str, "_models.Locale"]]
-        page_range=None,  # type: Optional[List[str]]
+        pages=None,  # type: Optional[List[str]]
         file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
@@ -46,11 +46,11 @@ class FormRecognizerClientOperationsMixin(object):
         :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
          en-IN, en-US(default).
         :type locale: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Locale
-        :param page_range: Custom page numbers for multi-page documents(PDF/TIFF), input the number of
-         the pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
-         range with a comma or space.
-        :type page_range: list[str]
-        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
+         pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+         range with a comma.
+        :type pages: list[str]
+        :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
@@ -75,15 +75,16 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.begin_analyze_business_card_async(include_text_details, locale, page_range, file_stream, **kwargs)
+        return mixin_instance.begin_analyze_business_card_async(include_text_details, locale, pages, file_stream, **kwargs)
 
-    def begin_analyze_id_async(
+    def begin_analyze_id_document_async(
         self,
         include_text_details=False,  # type: Optional[bool]
+        pages=None,  # type: Optional[List[str]]
         file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
-        """Analyze ID.
+        """Analyze ID Document.
 
         Extract field text and semantic values from a given ID document. The input document must be of
         one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png', 'image/tiff'
@@ -92,7 +93,11 @@ class FormRecognizerClientOperationsMixin(object):
 
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
-        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
+         pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+         range with a comma.
+        :type pages: list[str]
+        :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
@@ -106,24 +111,24 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('begin_analyze_id_async')
+        api_version = self._get_api_version('begin_analyze_id_document_async')
         if api_version == '2.1-preview.3':
             from .v2_1_preview_3.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'begin_analyze_id_async'".format(api_version))
+            raise ValueError("API version {} does not have operation 'begin_analyze_id_document_async'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.begin_analyze_id_async(include_text_details, file_stream, **kwargs)
+        return mixin_instance.begin_analyze_id_document_async(include_text_details, pages, file_stream, **kwargs)
 
     def begin_analyze_invoice_async(
         self,
         include_text_details=False,  # type: Optional[bool]
         locale=None,  # type: Optional[Union[str, "_models.Locale"]]
-        page_range=None,  # type: Optional[List[str]]
+        pages=None,  # type: Optional[List[str]]
         file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
@@ -139,11 +144,11 @@ class FormRecognizerClientOperationsMixin(object):
         :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
          en-IN, en-US(default).
         :type locale: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Locale
-        :param page_range: Custom page numbers for multi-page documents(PDF/TIFF), input the number of
-         the pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
-         range with a comma or space.
-        :type page_range: list[str]
-        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
+         pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+         range with a comma.
+        :type pages: list[str]
+        :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
@@ -168,13 +173,13 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.begin_analyze_invoice_async(include_text_details, locale, page_range, file_stream, **kwargs)
+        return mixin_instance.begin_analyze_invoice_async(include_text_details, locale, pages, file_stream, **kwargs)
 
     def begin_analyze_layout_async(
         self,
-        page_range=None,  # type: Optional[List[str]]
+        pages=None,  # type: Optional[List[str]]
         language=None,  # type: Optional[Union[str, "_models.Language"]]
-        reading_order=None,  # type: Optional[Union[str, "_models.ReadingOrder"]]
+        reading_order="basic",  # type: Optional[Union[str, "_models.ReadingOrder"]]
         file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
@@ -185,10 +190,10 @@ class FormRecognizerClientOperationsMixin(object):
         'image/bmp'. Alternatively, use 'application/json' type to specify the location (Uri or local
         path) of the document to be analyzed.
 
-        :param page_range: Custom page numbers for multi-page documents(PDF/TIFF), input the number of
-         the pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
-         range with a comma or space.
-        :type page_range: list[str]
+        :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
+         pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+         range with a comma.
+        :type pages: list[str]
         :param language: Currently, only Afrikaans (‘af’), Albanian (‘sq’), Asturian (‘ast’), Basque
          (‘eu’), Bislama (‘bi’), Breton (‘br’), Catalan (‘ca’), Cebuano (‘ceb’), Chamorro (‘ch’),
          Cornish (‘kw’), Corsican (‘co’), Crimean Tatar - Latin script(‘crh’), Czech (‘cs’), Danish
@@ -209,9 +214,9 @@ class FormRecognizerClientOperationsMixin(object):
          to force the documented to be processed as that specific language.
         :type language: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Language
         :param reading_order: Reading order algorithm to sort the text lines returned. Supported
-         reading orders include: Basic(default), Natural.
+         reading orders include: basic(default), natural.
         :type reading_order: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.ReadingOrder
-        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
@@ -242,13 +247,13 @@ class FormRecognizerClientOperationsMixin(object):
         if api_version == '2.0':
             return mixin_instance.begin_analyze_layout_async(file_stream, **kwargs)
         elif api_version == '2.1-preview.3':
-            return mixin_instance.begin_analyze_layout_async(page_range, language, reading_order, file_stream, **kwargs)
+            return mixin_instance.begin_analyze_layout_async(pages, language, reading_order, file_stream, **kwargs)
 
     def begin_analyze_receipt_async(
         self,
         include_text_details=False,  # type: Optional[bool]
         locale=None,  # type: Optional[Union[str, "_models.Locale"]]
-        page_range=None,  # type: Optional[List[str]]
+        pages=None,  # type: Optional[List[str]]
         file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
@@ -264,11 +269,11 @@ class FormRecognizerClientOperationsMixin(object):
         :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
          en-IN, en-US(default).
         :type locale: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Locale
-        :param page_range: Custom page numbers for multi-page documents(PDF/TIFF), input the number of
-         the pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
-         range with a comma or space.
-        :type page_range: list[str]
-        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
+         pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+         range with a comma.
+        :type pages: list[str]
+        :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
@@ -299,13 +304,13 @@ class FormRecognizerClientOperationsMixin(object):
         if api_version == '2.0':
             return mixin_instance.begin_analyze_receipt_async(include_text_details, file_stream, **kwargs)
         elif api_version == '2.1-preview.3':
-            return mixin_instance.begin_analyze_receipt_async(include_text_details, locale, page_range, file_stream, **kwargs)
+            return mixin_instance.begin_analyze_receipt_async(include_text_details, locale, pages, file_stream, **kwargs)
 
     def begin_analyze_with_custom_model(
         self,
         model_id,  # type: str
         include_text_details=False,  # type: Optional[bool]
-        page_range=None,  # type: Optional[List[str]]
+        pages=None,  # type: Optional[List[str]]
         file_stream=None,  # type: Optional[Union[IO, "_models.SourcePath"]]
         **kwargs  # type: Any
     ):
@@ -320,11 +325,11 @@ class FormRecognizerClientOperationsMixin(object):
         :type model_id: str
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
-        :param page_range: Custom page numbers for multi-page documents(PDF/TIFF), input the number of
-         the pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
-         range with a comma or space.
-        :type page_range: list[str]
-        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
+         pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+         range with a comma.
+        :type pages: list[str]
+        :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
@@ -355,7 +360,7 @@ class FormRecognizerClientOperationsMixin(object):
         if api_version == '2.0':
             return mixin_instance.begin_analyze_with_custom_model(model_id, include_text_details, file_stream, **kwargs)
         elif api_version == '2.1-preview.3':
-            return mixin_instance.begin_analyze_with_custom_model(model_id, include_text_details, page_range, file_stream, **kwargs)
+            return mixin_instance.begin_analyze_with_custom_model(model_id, include_text_details, pages, file_stream, **kwargs)
 
     def begin_compose_custom_models_async(
         self,
@@ -598,12 +603,12 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_analyze_form_result(model_id, result_id, **kwargs)
 
-    def get_analyze_id_result(
+    def get_analyze_id_document_result(
         self,
         result_id,  # type: str
         **kwargs  # type: Any
     ):
-        """Get Analyze ID Result.
+        """Get Analyze ID Document Result.
 
         Track the progress and obtain the result of the analyze ID operation.
 
@@ -614,18 +619,18 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_analyze_id_result')
+        api_version = self._get_api_version('get_analyze_id_document_result')
         if api_version == '2.1-preview.3':
             from .v2_1_preview_3.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'get_analyze_id_result'".format(api_version))
+            raise ValueError("API version {} does not have operation 'get_analyze_id_document_result'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.get_analyze_id_result(result_id, **kwargs)
+        return mixin_instance.get_analyze_id_document_result(result_id, **kwargs)
 
     def get_analyze_invoice_result(
         self,
