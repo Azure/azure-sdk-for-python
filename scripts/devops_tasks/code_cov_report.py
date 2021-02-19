@@ -3,6 +3,8 @@ import logging
 import os
 import xml.etree.ElementTree as ET
 
+from create_coverage import generate_coverage_xml
+
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_file = os.path.join(root_dir, "coverage.xml")
 
@@ -134,4 +136,5 @@ def recursive_set_name(root):
 
 
 if __name__ == "__main__":
+    generate_coverage_xml()
     create_coverage_report()
