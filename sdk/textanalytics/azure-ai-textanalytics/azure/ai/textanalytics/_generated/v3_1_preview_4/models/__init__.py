@@ -31,10 +31,12 @@ try:
     from ._models_py3 import EntityLinkingTask
     from ._models_py3 import EntityLinkingTaskParameters
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import HealthcareAssertion
     from ._models_py3 import HealthcareEntity
     from ._models_py3 import HealthcareEntityLink
     from ._models_py3 import HealthcareJobState
     from ._models_py3 import HealthcareRelation
+    from ._models_py3 import HealthcareRelationEntity
     from ._models_py3 import HealthcareResult
     from ._models_py3 import InnerError
     from ._models_py3 import JobDescriptor
@@ -99,10 +101,12 @@ except (SyntaxError, ImportError):
     from ._models import EntityLinkingTask  # type: ignore
     from ._models import EntityLinkingTaskParameters  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import HealthcareAssertion  # type: ignore
     from ._models import HealthcareEntity  # type: ignore
     from ._models import HealthcareEntityLink  # type: ignore
     from ._models import HealthcareJobState  # type: ignore
     from ._models import HealthcareRelation  # type: ignore
+    from ._models import HealthcareRelationEntity  # type: ignore
     from ._models import HealthcareResult  # type: ignore
     from ._models import InnerError  # type: ignore
     from ._models import JobDescriptor  # type: ignore
@@ -144,10 +148,15 @@ except (SyntaxError, ImportError):
     from ._models import TextAnalyticsWarning  # type: ignore
 
 from ._text_analytics_client_enums import (
+    Association,
+    Certainty,
+    Conditionality,
     DocumentSentimentValue,
     ErrorCodeValue,
     InnerErrorCodeValue,
+    PiiCategory,
     PiiTaskParametersDomain,
+    RelationType,
     SentenceSentimentValue,
     State,
     StringIndexType,
@@ -182,10 +191,12 @@ __all__ = [
     'EntityLinkingTask',
     'EntityLinkingTaskParameters',
     'ErrorResponse',
+    'HealthcareAssertion',
     'HealthcareEntity',
     'HealthcareEntityLink',
     'HealthcareJobState',
     'HealthcareRelation',
+    'HealthcareRelationEntity',
     'HealthcareResult',
     'InnerError',
     'JobDescriptor',
@@ -225,10 +236,15 @@ __all__ = [
     'TasksStateTasksKeyPhraseExtractionTasksItem',
     'TextAnalyticsError',
     'TextAnalyticsWarning',
+    'Association',
+    'Certainty',
+    'Conditionality',
     'DocumentSentimentValue',
     'ErrorCodeValue',
     'InnerErrorCodeValue',
+    'PiiCategory',
     'PiiTaskParametersDomain',
+    'RelationType',
     'SentenceSentimentValue',
     'State',
     'StringIndexType',

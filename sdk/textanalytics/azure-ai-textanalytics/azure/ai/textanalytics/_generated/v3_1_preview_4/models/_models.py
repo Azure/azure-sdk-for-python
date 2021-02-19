@@ -620,7 +620,7 @@ class DocumentLinkedEntities(msrest.serialization.Model):
 
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
-    :param entities: Required. Recognized well-known entities in the document.
+    :param entities: Required. Recognized well known entities in the document.
     :type entities: list[~azure.ai.textanalytics.v3_1_preview_4.models.LinkedEntity]
     :param warnings: Required. Warnings encountered while processing document.
     :type warnings: list[~azure.ai.textanalytics.v3_1_preview_4.models.TextAnalyticsWarning]
@@ -935,10 +935,15 @@ class EntityLinkingTaskParameters(msrest.serialization.Model):
 
     :param model_version:
     :type model_version: str
+    :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
+     "Utf16CodeUnit". Default value: "TextElements_v8".
+    :type string_index_type: str or
+     ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexTypeResponse
     """
 
     _attribute_map = {
         'model_version': {'key': 'model-version', 'type': 'str'},
+        'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
     }
 
     def __init__(
@@ -947,6 +952,7 @@ class EntityLinkingTaskParameters(msrest.serialization.Model):
     ):
         super(EntityLinkingTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
+        self.string_index_type = kwargs.get('string_index_type', "TextElements_v8")
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -974,6 +980,36 @@ class ErrorResponse(msrest.serialization.Model):
         self.error = kwargs['error']
 
 
+class HealthcareAssertion(msrest.serialization.Model):
+    """HealthcareAssertion.
+
+    :param conditionality: Describes any conditionality on the entity. Possible values include:
+     "Hypothetical", "Conditional".
+    :type conditionality: str or ~azure.ai.textanalytics.v3_1_preview_4.models.Conditionality
+    :param certainty: Describes the entities certainty and polarity. Possible values include:
+     "Positive", "Positive Possible", "Neutral Possible", "Negative Possible", "Negative".
+    :type certainty: str or ~azure.ai.textanalytics.v3_1_preview_4.models.Certainty
+    :param association: Describes if the entity is the subject of the text or if it describes
+     someone else. Possible values include: "subject", "other".
+    :type association: str or ~azure.ai.textanalytics.v3_1_preview_4.models.Association
+    """
+
+    _attribute_map = {
+        'conditionality': {'key': 'conditionality', 'type': 'str'},
+        'certainty': {'key': 'certainty', 'type': 'str'},
+        'association': {'key': 'association', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HealthcareAssertion, self).__init__(**kwargs)
+        self.conditionality = kwargs.get('conditionality', None)
+        self.certainty = kwargs.get('certainty', None)
+        self.association = kwargs.get('association', None)
+
+
 class HealthcareEntity(Entity):
     """HealthcareEntity.
 
@@ -993,8 +1029,11 @@ class HealthcareEntity(Entity):
     :type length: int
     :param confidence_score: Required. Confidence score between 0 and 1 of the extracted entity.
     :type confidence_score: float
-    :param is_negated: Required.
-    :type is_negated: bool
+    :param assertion:
+    :type assertion: ~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareAssertion
+    :param name: Preferred name for the entity. Example: 'histologically' would have a 'name' of
+     'histologic'.
+    :type name: str
     :param links: Entity references in known data sources.
     :type links: list[~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareEntityLink]
     """
@@ -1005,7 +1044,6 @@ class HealthcareEntity(Entity):
         'offset': {'required': True},
         'length': {'required': True},
         'confidence_score': {'required': True},
-        'is_negated': {'required': True},
     }
 
     _attribute_map = {
@@ -1015,7 +1053,8 @@ class HealthcareEntity(Entity):
         'offset': {'key': 'offset', 'type': 'int'},
         'length': {'key': 'length', 'type': 'int'},
         'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
-        'is_negated': {'key': 'isNegated', 'type': 'bool'},
+        'assertion': {'key': 'assertion', 'type': 'HealthcareAssertion'},
+        'name': {'key': 'name', 'type': 'str'},
         'links': {'key': 'links', 'type': '[HealthcareEntityLink]'},
     }
 
@@ -1024,7 +1063,8 @@ class HealthcareEntity(Entity):
         **kwargs
     ):
         super(HealthcareEntity, self).__init__(**kwargs)
-        self.is_negated = kwargs['is_negated']
+        self.assertion = kwargs.get('assertion', None)
+        self.name = kwargs.get('name', None)
         self.links = kwargs.get('links', None)
 
 
@@ -1118,34 +1158,30 @@ class HealthcareJobState(JobMetadata, Pagination):
 
 
 class HealthcareRelation(msrest.serialization.Model):
-    """HealthcareRelation.
+    """Every relation is an entity graph of a certain relationType, where all entities are connected and have specific roles within the relation context.
 
     All required parameters must be populated in order to send to Azure.
 
     :param relation_type: Required. Type of relation. Examples include: ``DosageOfMedication`` or
-     'FrequencyOfMedication', etc.
-    :type relation_type: str
-    :param bidirectional: Required. If true the relation between the entities is bidirectional,
-     otherwise directionality is source to target.
-    :type bidirectional: bool
-    :param source: Required. Reference link to the source entity.
-    :type source: str
-    :param target: Required. Reference link to the target entity.
-    :type target: str
+     'FrequencyOfMedication', etc. Possible values include: "Abbreviation",
+     "DirectionOfBodyStructure", "DirectionOfCondition", "DirectionOfExamination",
+     "DirectionOfTreatment", "DosageOfMedication", "FormOfMedication", "FrequencyOfMedication",
+     "FrequencyOfTreatment", "QualifierOfCondition", "RelationOfExamination", "RouteOfMedication",
+     "TimeOfCondition", "TimeOfEvent", "TimeOfExamination", "TimeOfMedication", "TimeOfTreatment",
+     "UnitOfCondition", "UnitOfExamination", "ValueOfCondition", "ValueOfExamination".
+    :type relation_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.RelationType
+    :param entities: Required. The entities in the relation.
+    :type entities: list[~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareRelationEntity]
     """
 
     _validation = {
         'relation_type': {'required': True},
-        'bidirectional': {'required': True},
-        'source': {'required': True},
-        'target': {'required': True},
+        'entities': {'required': True},
     }
 
     _attribute_map = {
         'relation_type': {'key': 'relationType', 'type': 'str'},
-        'bidirectional': {'key': 'bidirectional', 'type': 'bool'},
-        'source': {'key': 'source', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        'entities': {'key': 'entities', 'type': '[HealthcareRelationEntity]'},
     }
 
     def __init__(
@@ -1154,9 +1190,40 @@ class HealthcareRelation(msrest.serialization.Model):
     ):
         super(HealthcareRelation, self).__init__(**kwargs)
         self.relation_type = kwargs['relation_type']
-        self.bidirectional = kwargs['bidirectional']
-        self.source = kwargs['source']
-        self.target = kwargs['target']
+        self.entities = kwargs['entities']
+
+
+class HealthcareRelationEntity(msrest.serialization.Model):
+    """HealthcareRelationEntity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param ref: Required. Reference link object, using a JSON pointer RFC 6901 (URI Fragment
+     Identifier Representation), pointing to the entity .
+    :type ref: str
+    :param role: Required. Role of entity in the relationship. For example: 'CD20-positive diffuse
+     large B-cell lymphoma' has the following entities with their roles in parenthesis:  CD20
+     (GeneOrProtein), Positive (Expression), diffuse large B-cell lymphoma (Diagnosis).
+    :type role: str
+    """
+
+    _validation = {
+        'ref': {'required': True},
+        'role': {'required': True},
+    }
+
+    _attribute_map = {
+        'ref': {'key': 'ref', 'type': 'str'},
+        'role': {'key': 'role', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HealthcareRelationEntity, self).__init__(**kwargs)
+        self.ref = kwargs['ref']
+        self.role = kwargs['role']
 
 
 class HealthcareResult(msrest.serialization.Model):
@@ -1264,7 +1331,7 @@ class JobManifestTasks(msrest.serialization.Model):
         'entity_recognition_tasks': {'key': 'entityRecognitionTasks', 'type': '[EntitiesTask]'},
         'entity_recognition_pii_tasks': {'key': 'entityRecognitionPiiTasks', 'type': '[PiiTask]'},
         'key_phrase_extraction_tasks': {'key': 'keyPhraseExtractionTasks', 'type': '[KeyPhrasesTask]'},
-        'entity_linking_tasks': {'key': 'EntityLinkingTasks', 'type': '[EntityLinkingTask]'},
+        'entity_linking_tasks': {'key': 'entityLinkingTasks', 'type': '[EntityLinkingTask]'},
     }
 
     def __init__(
@@ -1514,7 +1581,7 @@ class Match(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param confidence_score: Required. If a well-known item is recognized, a decimal number
+    :param confidence_score: Required. If a well known item is recognized, a decimal number
      denoting the confidence level between 0 and 1 will be returned.
     :type confidence_score: float
     :param text: Required. Entity text as appears in the request.
@@ -1722,15 +1789,22 @@ class PiiTaskParameters(msrest.serialization.Model):
     :type domain: str or ~azure.ai.textanalytics.v3_1_preview_4.models.PiiTaskParametersDomain
     :param model_version:
     :type model_version: str
+    :param pii_categories: (Optional) describes the PII categories to return.
+    :type pii_categories: list[str or ~azure.ai.textanalytics.v3_1_preview_4.models.PiiCategory]
     :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
      "Utf16CodeUnit". Default value: "TextElements_v8".
     :type string_index_type: str or
      ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexTypeResponse
     """
 
+    _validation = {
+        'pii_categories': {'unique': True},
+    }
+
     _attribute_map = {
         'domain': {'key': 'domain', 'type': 'str'},
         'model_version': {'key': 'model-version', 'type': 'str'},
+        'pii_categories': {'key': 'piiCategories', 'type': '[str]'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
     }
 
@@ -1741,6 +1815,7 @@ class PiiTaskParameters(msrest.serialization.Model):
         super(PiiTaskParameters, self).__init__(**kwargs)
         self.domain = kwargs.get('domain', "none")
         self.model_version = kwargs.get('model_version', "latest")
+        self.pii_categories = kwargs.get('pii_categories', None)
         self.string_index_type = kwargs.get('string_index_type', "TextElements_v8")
 
 
@@ -2090,7 +2165,7 @@ class TasksStateTasks(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param details:
-    :type details: ~azure.ai.textanalytics.v3_1_preview_4.models.TaskState
+    :type details: ~azure.ai.textanalytics.v3_1_preview_4.models.TasksStateTasksDetails
     :param completed: Required.
     :type completed: int
     :param failed: Required.
@@ -2121,7 +2196,7 @@ class TasksStateTasks(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': 'TaskState'},
+        'details': {'key': 'details', 'type': 'TasksStateTasksDetails'},
         'completed': {'key': 'completed', 'type': 'int'},
         'failed': {'key': 'failed', 'type': 'int'},
         'in_progress': {'key': 'inProgress', 'type': 'int'},
