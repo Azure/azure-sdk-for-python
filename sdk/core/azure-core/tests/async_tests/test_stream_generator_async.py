@@ -10,7 +10,7 @@ from azure.core.pipeline.transport import (
     AsyncioRequestsTransportResponse,
     AioHttpTransport,
 )
-from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 from unittest import mock
 import pytest
@@ -93,7 +93,7 @@ async def test_connection_error_416():
             self.headers = {}
             self.content = MockContent()
 
-        async def close(self):
+        def close(self):
             pass
 
     class AsyncMock(mock.MagicMock):

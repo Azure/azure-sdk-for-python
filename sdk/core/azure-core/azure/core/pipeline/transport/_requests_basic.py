@@ -143,6 +143,7 @@ class StreamDownloadGenerator(object):
                             raise
                         if resp.http_response.status_code == 416:
                             raise
+                        self.iter_content_func = resp.http_response.iter_content(self.block_size)
                         chunk = next(self.iter_content_func)
                     except Exception as err:   # pylint: disable=broad-except
                         _LOGGER.warning("Unable to stream download: %s", err)
