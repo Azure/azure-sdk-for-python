@@ -6,28 +6,42 @@ interactions:
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       Content-Length:
-      - '172'
+      - '174'
       Content-Type:
       - application/json
+      Date:
+      - Fri, 19 Feb 2021 23:46:23 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
   response:
     body: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
-      202, "errorMessage": null, "repeatabilityResult": "accepted", "successful":
-      true}]}'
+      400, "errorMessage": "Invalid To phone number format.", "repeatabilityResult":
+      "notavailable", "successful": false}]}'
     headers:
-      api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
-      content-type: application/json; charset=utf-8
-      date: Fri, 19 Feb 2021 23:53:34 GMT
-      ms-cv: YVbyy8ilhUCYHPz1CtyXCg.0
-      request-context: appId=
-      transfer-encoding: chunked
-      x-processing-time: 984ms
+      api-supported-versions:
+      - 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 19 Feb 2021 23:46:22 GMT
+      ms-cv:
+      - KrZPD8ayDkeofuM5VxUYRA.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 442ms
     status:
       code: 202
       message: Accepted
-    url: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
 version: 1

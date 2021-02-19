@@ -2,7 +2,7 @@ interactions:
 - request:
     body: '{"from": "sanitized", "smsRecipients": [{"to": "sanitized"}, {"to": "sanitized"}],
       "message": "Hello World via SMS", "smsSendOptions": {"enableDeliveryReport":
-      true, "tag": "test-tag"}}'
+      true, "tag": "custom-tag"}}'
     headers:
       Accept:
       - application/json
@@ -11,11 +11,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '194'
+      - '196'
       Content-Type:
       - application/json
       Date:
-      - Fri, 19 Feb 2021 20:32:31 GMT
+      - Fri, 19 Feb 2021 23:53:31 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -33,15 +33,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 19 Feb 2021 20:32:30 GMT
+      - Fri, 19 Feb 2021 23:53:31 GMT
       ms-cv:
-      - Me4qe0hj+0S3ms9aJlQ9IA.0
+      - zGP+zoxEzEWfEoCv9nxZUg.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 688ms
+      - 864ms
     status:
       code: 202
       message: Accepted
