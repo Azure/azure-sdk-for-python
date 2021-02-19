@@ -46,19 +46,18 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
 
         async with sms_client:
             # calling send() with sms values
-            sms_responses = sms_client.send(
+            sms_responses = await sms_client.send(
                 from_=self.phone_number,
                 to=[self.phone_number],
                 message="Hello World via SMS",
-                enable_delivery_report=True)  # optional property
+                enable_delivery_report=True,  # optional property
+                tag="test-tag")  # optional property
             
-            count = 0
-            async for sms_response in sms_responses:
-                count += 1
-                assert sms_response.message_id is not None
-                assert sms_response.http_status_code is 202
-            assert count is 1
+            assert len(sms_responses) is 1
 
+            for sms_response in sms_responses:
+                self.verify_sms_response(sms_response)
+    
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_send_sms_multiple_async(self):
@@ -67,18 +66,17 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
 
         async with sms_client:
             # calling send() with sms values
-            sms_responses = sms_client.send(
+            sms_responses = await sms_client.send(
                 from_=self.phone_number,
                 to=[self.phone_number, self.phone_number],
                 message="Hello World via SMS",
-                enable_delivery_report=True)  # optional property
+                enable_delivery_report=True,  # optional property
+                tag="test-tag")  # optional propert
             
-            count = 0
-            async for sms_response in sms_responses:
-                count += 1
-                assert sms_response.message_id is not None
-                assert sms_response.http_status_code is 202
-            assert count is 2
+            assert len(sms_responses) is 2
+
+            for sms_response in sms_responses:
+                self.verify_sms_response(sms_response)
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -93,16 +91,22 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
 
         async with sms_client:
             # calling send() with sms values
-            sms_responses = sms_client.send(
+            sms_responses = await sms_client.send(
                 from_=self.phone_number,
                 to=[self.phone_number],
                 message="Hello World via SMS",
-                enable_delivery_report=True)  # optional property
+                enable_delivery_report=True,  # optional property
+                tag="test-tag")  # optional propert
             
-            count = 0
-            async for sms_response in sms_responses:
-                count += 1
-                assert sms_response.message_id is not None
-                assert sms_response.http_status_code is 202
-            assert count is 1
+            assert len(sms_responses) is 1
+
+            for sms_response in sms_responses:
+                self.verify_sms_response(sms_response)
+
+    def verify_sms_response(self, sms_response):
+        assert sms_response.to == self.phone_number
+        assert sms_response.message_id is not None
+        assert sms_response.http_status_code is 202
+        assert sms_response.error_message is None
+        assert sms_response.successful
             

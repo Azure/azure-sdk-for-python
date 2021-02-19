@@ -39,14 +39,13 @@ class SMSClientTest(CommunicationTestCase):
             from_=self.phone_number,
             to=[self.phone_number],
             message="Hello World via SMS",
-            enable_delivery_report=True)  # optional property
+            enable_delivery_report=True,  # optional property
+            tag="test-tag")  # optional property
         
-        count = 0
+        assert len(sms_responses) is 1
+
         for sms_response in sms_responses:
-            count += 1
-            assert sms_response.message_id is not None
-            assert sms_response.http_status_code is 202
-        assert count is 1
+            self.verify_sms_response(sms_response)
     
     @pytest.mark.live_test_only
     def test_send_sms_multiple(self):
@@ -56,12 +55,18 @@ class SMSClientTest(CommunicationTestCase):
             from_=self.phone_number,
             to=[self.phone_number, self.phone_number],
             message="Hello World via SMS",
-            enable_delivery_report=True)  # optional property
+            enable_delivery_report=True,  # optional property
+            tag="test-tag")  # optional property
         
-        count = 0
+        assert len(sms_responses) is 2
+
         for sms_response in sms_responses:
-            count += 1
-            assert sms_response.message_id is not None
-            assert sms_response.http_status_code is 202
-        assert count is 2
+            self.verify_sms_response(sms_response)
+    
+    def verify_sms_response(self, sms_response):
+        assert sms_response.to == self.phone_number
+        assert sms_response.message_id is not None
+        assert sms_response.http_status_code is 202
+        assert sms_response.error_message is None
+        assert sms_response.successful
         
