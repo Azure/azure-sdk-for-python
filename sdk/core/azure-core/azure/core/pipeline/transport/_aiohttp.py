@@ -231,7 +231,8 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             while retry_active:
                 retry_total -= 1
                 if retry_total <= 0:
-                    retry_active = False
+                    _LOGGER.warning("Unable to stream download: %s", ex)
+                    raise ex
                 else:
                     await asyncio.sleep(retry_interval)
                     # todo handle pre-set range & x-ms-range

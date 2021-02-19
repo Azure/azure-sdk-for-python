@@ -133,7 +133,7 @@ class StreamDownloadGenerator(object):
             while retry_active:
                 retry_total -= 1
                 if retry_total <= 0:
-                    _LOGGER.warning("Unable to stream download: %s", err)
+                    _LOGGER.warning("Unable to stream download: %s", ex)
                     raise ex
                 else:
                     time.sleep(retry_interval)
