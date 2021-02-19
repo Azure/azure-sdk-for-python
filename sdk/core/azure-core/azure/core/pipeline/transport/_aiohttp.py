@@ -218,46 +218,48 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         retry_active = True
         retry_total = 3
         retry_interval = 1  # 1 second
-        while retry_active:
-            try:
-                chunk = await self.response.internal_response.content.read(self.block_size)
-                if not chunk:
-                    raise _ResponseStopIteration()
-                self.downloaded += self.block_size
-                return chunk
-            except _ResponseStopIteration:
-                self.response.internal_response.close()
-                raise StopAsyncIteration()
-            except (ChunkedEncodingError, ConnectionError) as ex:
+        try:
+            chunk = await self.response.internal_response.content.read(self.block_size)
+            if not chunk:
+                raise _ResponseStopIteration()
+            self.downloaded += self.block_size
+            return chunk
+        except _ResponseStopIteration:
+            self.response.internal_response.close()
+            raise StopAsyncIteration()
+        except (ChunkedEncodingError, ConnectionError) as ex:
+            while retry_active:
                 retry_total -= 1
                 if retry_total <= 0:
                     retry_active = False
                 else:
                     await asyncio.sleep(retry_interval)
+                    # todo handle pre-set range & x-ms-range
                     headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
                     try:
                         resp = await self.pipeline.run(self.request, stream=True, headers=headers)
                         if not resp.http_response:
-                            raise
+                            continue
                         if resp.http_response.status_code == 416:
-                            raise
+                            continue
                         self.response = resp
                         chunk = await self.response.http_response.content.read(self.block_size)
-                    except Exception as err:  # pylint: disable=broad-except
-                        _LOGGER.warning("Unable to stream download: %s", err)
+                    except StopIteration:
                         self.response.internal_response.close()
-                        raise ex
+                        raise StopIteration()
+                    except Exception:  # pylint: disable=broad-except
+                        continue
                     if not chunk:
+                        self.response.internal_response.close()
                         raise StopAsyncIteration()
-                    self.downloaded += len(chunk)
+                    self.downloaded += self.block_size
                     return chunk
-                continue
-            except StreamConsumedError:
-                raise
-            except Exception as err:
-                _LOGGER.warning("Unable to stream download: %s", err)
-                self.response.internal_response.close()
-                raise
+        except StreamConsumedError:
+            raise
+        except Exception as err:
+            _LOGGER.warning("Unable to stream download: %s", err)
+            self.response.internal_response.close()
+            raise
 
 class AioHttpTransportResponse(AsyncHttpResponse):
     """Methods for accessing response body data.

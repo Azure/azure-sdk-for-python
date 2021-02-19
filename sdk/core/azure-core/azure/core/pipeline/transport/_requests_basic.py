@@ -119,47 +119,51 @@ class StreamDownloadGenerator(object):
         retry_active = True
         retry_total = 3
         retry_interval = 1  # 1 second
-        while retry_active:
-            try:
-                chunk = next(self.iter_content_func)
-                if not chunk:
-                    raise StopIteration()
-                self.downloaded += self.block_size
-                return chunk
-            except StopIteration:
-                self.response.internal_response.close()
+        try:
+            chunk = next(self.iter_content_func)
+            if not chunk:
                 raise StopIteration()
-            except (requests.exceptions.ChunkedEncodingError,
-                    requests.exceptions.ConnectionError) as ex:
+            self.downloaded += self.block_size
+            return chunk
+        except StopIteration:
+            self.response.internal_response.close()
+            raise StopIteration()
+        except (requests.exceptions.ChunkedEncodingError,
+                requests.exceptions.ConnectionError) as ex:
+            while retry_active:
                 retry_total -= 1
                 if retry_total <= 0:
-                    retry_active = False
+                    _LOGGER.warning("Unable to stream download: %s", err)
+                    raise ex
                 else:
                     time.sleep(retry_interval)
+                    # todo handle pre-set range & x-ms-range
                     headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
                     try:
                         resp = self.pipeline.run(self.request, stream=True, headers=headers)
                         if not resp.http_response:
-                            raise
+                            continue
                         if resp.http_response.status_code == 416:
-                            raise
+                            continue
+                        self.response = resp
                         self.iter_content_func = resp.http_response.iter_content(self.block_size)
                         chunk = next(self.iter_content_func)
-                    except Exception as err:   # pylint: disable=broad-except
-                        _LOGGER.warning("Unable to stream download: %s", err)
+                        self.downloaded += self.block_size
+                        return chunk
+                    except StopIteration:
                         self.response.internal_response.close()
-                        raise ex
-                    if not chunk:
                         raise StopIteration()
-                    self.downloaded += len(chunk)
-                    return chunk
-                continue
-            except requests.exceptions.StreamConsumedError:
-                raise
-            except Exception as err:
-                _LOGGER.warning("Unable to stream download: %s", err)
-                self.response.internal_response.close()
-                raise
+                    except Exception:   # pylint: disable=broad-except
+                        continue
+                    if not chunk:
+                        self.response.internal_response.close()
+                        raise StopIteration()
+        except requests.exceptions.StreamConsumedError:
+            raise
+        except Exception as err:
+            _LOGGER.warning("Unable to stream download: %s", err)
+            self.response.internal_response.close()
+            raise
     next = __next__  # Python 2 compatibility.
 
 
