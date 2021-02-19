@@ -11,8 +11,6 @@ import logging
 import re
 from common_tasks import run_check_call
 
-from code_cov_report import create_coverage_report
-
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -73,5 +71,3 @@ def fix_dot_coverage_file(coverage_file):
 
 if __name__ == "__main__":
     collect_tox_coverage_files()
-    generate_coverage_xml()
-    create_coverage_report()
