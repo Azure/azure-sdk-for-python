@@ -3,7 +3,7 @@ import sys
 import os
 import pytest
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 from azure.core.messaging import CloudEvent
 
@@ -16,7 +16,7 @@ def test_cloud_event_constructor():
         )
     
     assert event.specversion == '1.0'
-    assert event.time.endswith('+00:00')
+    assert event.time.tzinfo == timezone.utc
     assert event.id is not None
     assert event.source == 'Azure.Core.Sample'
     assert event.data == 'cloudevent'
@@ -56,7 +56,10 @@ def test_cloud_storage_dict():
         "storage_diagnostics":{"batchId":"b68529f3-68cd-4744-baa4-3c0498ec19f0"}
     }
     assert event.specversion == "1.0"
-    assert event.time == "2020-08-07T01:11:49.765846Z"
+    assert event.time.__class__ == datetime
+    assert event.time.month == 8
+    assert event.time.day == 7
+    assert event.time.hour == 1
     assert event.__class__ == CloudEvent
 
 
@@ -108,3 +111,35 @@ def test_cloud_event_repr():
         )
 
     assert repr(event).startswith("CloudEvent(source=Azure.Core.Sample, type=SampleType, specversion=1.0,")
+
+def test_extensions_upper_case_value_error():	
+    with pytest.raises(ValueError):	
+        event = CloudEvent(	
+            source='sample',	
+            type='type',	
+            data='data',	
+            extensions={"lowercase123": "accepted", "NOTlower123": "not allowed"}	
+        )
+
+def test_extensions_not_alphanumeric_value_error():	
+    with pytest.raises(ValueError):	
+        event = CloudEvent(	
+            source='sample',	
+            type='type',	
+            data='data',	
+            extensions={"lowercase123": "accepted", "not@lph@nu^^3ic": "not allowed"}	
+        )
+
+def test_cloud_from_dict_with_invalid_extensions():
+    cloud_custom_dict_with_extensions = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "source":"https://egtest.dev/cloudcustomevent",
+        "data":{"team": "event grid squad"},
+        "type":"Azure.Sdk.Sample",
+        "time":"2020-08-07T02:06:08.11969Z",
+        "specversion":"1.0",
+        "ext1": "example",
+        "BADext2": "example2"
+    }
+    with pytest.raises(ValueError):
+        event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
