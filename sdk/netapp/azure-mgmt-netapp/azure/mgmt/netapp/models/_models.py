@@ -1941,7 +1941,7 @@ class SystemData(msrest.serialization.Model):
     :param last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
     :type last_modified_by_type: str or ~azure.mgmt.netapp.models.CreatedByType
-    :param last_modified_at: The type of identity that last modified the resource.
+    :param last_modified_at: The timestamp of resource last modification (UTC).
     :type last_modified_at: ~datetime.datetime
     """
 
@@ -2051,8 +2051,6 @@ class Volume(msrest.serialization.Model):
     :type tags: dict[str, str]
     :ivar file_system_id: Unique FileSystem Identifier.
     :vartype file_system_id: str
-    :ivar name_properties_name: Resource name.
-    :vartype name_properties_name: str
     :param creation_token: Required. A unique file path for the volume. Used when creating mount
      targets.
     :type creation_token: str
@@ -2114,7 +2112,6 @@ class Volume(msrest.serialization.Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'file_system_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'name_properties_name': {'readonly': True},
         'creation_token': {'required': True, 'max_length': 80, 'min_length': 1, 'pattern': r'^[a-zA-Z][a-zA-Z0-9\-]{0,79}$'},
         'usage_threshold': {'required': True, 'maximum': 109951162777600, 'minimum': 107374182400},
         'provisioning_state': {'readonly': True},
@@ -2133,7 +2130,6 @@ class Volume(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
         'creation_token': {'key': 'properties.creationToken', 'type': 'str'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'usage_threshold': {'key': 'properties.usageThreshold', 'type': 'long'},
@@ -2168,7 +2164,6 @@ class Volume(msrest.serialization.Model):
         self.type = None
         self.tags = kwargs.get('tags', None)
         self.file_system_id = None
-        self.name_properties_name = None
         self.creation_token = kwargs['creation_token']
         self.service_level = kwargs.get('service_level', None)
         self.usage_threshold = kwargs.get('usage_threshold', 107374182400)

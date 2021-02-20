@@ -4,7 +4,7 @@
     "client": {
         "name": "NetAppManagementClient",
         "filename": "_net_app_management_client",
-        "description": "Microsoft NetApp Azure Resource Provider specification.",
+        "description": "Microsoft NetApp Files Azure Resource Provider specification.",
         "base_url": "\u0027https://management.azure.com\u0027",
         "custom_base_url": null,
         "azure_arm": true,

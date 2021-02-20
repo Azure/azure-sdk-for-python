@@ -31,7 +31,7 @@ from .. import models
 
 
 class NetAppManagementClient(object):
-    """Microsoft NetApp Azure Resource Provider specification.
+    """Microsoft NetApp Files Azure Resource Provider specification.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.netapp.aio.operations.Operations
