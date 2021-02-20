@@ -88,6 +88,20 @@ class DiskCreateOptionTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     EMPTY = "Empty"
     ATTACH = "Attach"
 
+class DiskDetachOptionTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the detach behavior to be used while detaching a disk or which is already in the
+    process of detachment from the virtual machine. Supported values: **ForceDetach**.
+    :code:`<br>`:code:`<br>` detachOption: **ForceDetach** is applicable only for managed data
+    disks. If a previous detachment attempt of the data disk did not complete due to an unexpected
+    failure from the virtual machine and the disk is still not released then use force-detach as a
+    last resort option to detach the disk forcibly from the VM. All writes might not have been
+    flushed when using this detach behavior. :code:`<br>`:code:`<br>` This feature is still in
+    preview mode and is not supported for VirtualMachineScaleSet. To force-detach a data disk
+    update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'.
+    """
+
+    FORCE_DETACH = "ForceDetach"
+
 class ExecutionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Script execution status.
     """
@@ -99,6 +113,12 @@ class ExecutionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     TIMED_OUT = "TimedOut"
     CANCELED = "Canceled"
+
+class ExtendedLocationTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of extendedLocation.
+    """
+
+    EDGE_ZONE = "EdgeZone"
 
 class HyperVGenerationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the HyperVGeneration Type associated with a resource
@@ -113,22 +133,6 @@ class HyperVGenerationTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
 
     V1 = "V1"
     V2 = "V2"
-
-class InGuestPatchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the mode of in-guest patching to IaaS virtual machine.:code:`<br />`:code:`<br />`
-    Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application of
-    patches to a virtual machine. You do this by applying patches manually inside the VM. In this
-    mode, automatic updates are disabled; the property WindowsConfiguration.enableAutomaticUpdates
-    must be false:code:`<br />`:code:`<br />` **AutomaticByOS** - The virtual machine will
-    automatically be updated by the OS. The property WindowsConfiguration.enableAutomaticUpdates
-    must be true. :code:`<br />`:code:`<br />` **AutomaticByPlatform** - the virtual machine will
-    automatically updated by the platform. The properties provisionVMAgent and
-    WindowsConfiguration.enableAutomaticUpdates must be true
-    """
-
-    MANUAL = "Manual"
-    AUTOMATIC_BY_OS = "AutomaticByOS"
-    AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"
 
 class IntervalInMins(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Interval value in minutes used to create LogAnalytics call rate logs.
@@ -147,6 +151,17 @@ class IPVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     I_PV4 = "IPv4"
     I_PV6 = "IPv6"
+
+class LinuxVMGuestPatchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the mode of VM Guest Patching to IaaS virtual machine.:code:`<br />`:code:`<br />`
+    Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - The virtual machine's
+    default patching configuration is used. :code:`<br />`:code:`<br />` **AutomaticByPlatform** -
+    The virtual machine will be automatically updated by the platform. The property
+    provisionVMAgent must be true
+    """
+
+    IMAGE_DEFAULT = "ImageDefault"
+    AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"
 
 class MaintenanceOperationResultCodeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The Last Maintenance Operation Result Code.
@@ -171,6 +186,13 @@ class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WINDOWS = "Windows"
     LINUX = "Linux"
 
+class OrchestrationMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the orchestration mode for the virtual machine scale set.
+    """
+
+    UNIFORM = "Uniform"
+    FLEXIBLE = "Flexible"
+
 class OrchestrationServiceNames(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The name of the service.
     """
@@ -194,22 +216,30 @@ class OrchestrationServiceStateAction(with_metaclass(_CaseInsensitiveEnumMeta, s
     SUSPEND = "Suspend"
 
 class PatchAssessmentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes the outcome of an install operation for a given patch.
+    """Describes the availability of a given patch.
     """
 
+    UNKNOWN = "Unknown"
+    AVAILABLE = "Available"
+
+class PatchInstallationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The state of the patch after the installation operation completed.
+    """
+
+    UNKNOWN = "Unknown"
     INSTALLED = "Installed"
     FAILED = "Failed"
     EXCLUDED = "Excluded"
     NOT_SELECTED = "NotSelected"
     PENDING = "Pending"
-    AVAILABLE = "Available"
 
 class PatchOperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The overall success or failure status of the operation. It remains "InProgress" until the
-    operation completes. At that point it will become "Failed", "Succeeded", or
+    operation completes. At that point it will become "Unknown", "Failed", "Succeeded", or
     "CompletedWithWarnings."
     """
 
+    UNKNOWN = "Unknown"
     IN_PROGRESS = "InProgress"
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
@@ -231,20 +261,6 @@ class ProximityPlacementGroupType(with_metaclass(_CaseInsensitiveEnumMeta, str, 
 
     STANDARD = "Standard"
     ULTRA = "Ultra"
-
-class RebootStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The reboot status of the machine after the patch operation. It will be in "NotNeeded" status if
-    reboot is not needed after the patch operation. "Required" will be the status once the patch is
-    applied and machine is required to reboot. "Started" will be the reboot status when the machine
-    has started to reboot. "Failed" will be the status if the machine is failed to reboot.
-    "Completed" will be the status once the machine is rebooted successfully
-    """
-
-    NOT_NEEDED = "NotNeeded"
-    REQUIRED = "Required"
-    STARTED = "Started"
-    FAILED = "Failed"
-    COMPLETED = "Completed"
 
 class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity used for the virtual machine. The type 'SystemAssigned, UserAssigned'
@@ -280,14 +296,6 @@ class SettingNames(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     AUTO_LOGON = "AutoLogon"
     FIRST_LOGON_COMMANDS = "FirstLogonCommands"
-
-class SoftwareUpdateRebootBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes the reboot requirements of the patch.
-    """
-
-    NEVER_REBOOTS = "NeverReboots"
-    ALWAYS_REQUIRES_REBOOT = "AlwaysRequiresReboot"
-    CAN_REQUEST_REBOOT = "CanRequestReboot"
 
 class StatusLevelTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The level code.
@@ -372,21 +380,18 @@ class VirtualMachineScaleSetSkuScaleType(with_metaclass(_CaseInsensitiveEnumMeta
     NONE = "None"
 
 class VirtualMachineSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the size of the virtual machine. For more information about virtual machine sizes,
-    see `Sizes for virtual machines <https://docs.microsoft.com/en-us/azure/virtual-
-    machines/sizes>`_. :code:`<br>`:code:`<br>` The available VM sizes depend on region and
-    availability set. For a list of available sizes use these APIs:  :code:`<br>`:code:`<br>` `List
-    all available virtual machine sizes in an availability set
+    """Specifies the size of the virtual machine. :code:`<br>`:code:`<br>` The enum data type is
+    currently deprecated and will be removed by December 23rd 2023. :code:`<br>`:code:`<br>`
+    Recommended way to get the list of available sizes is using these APIs:
+    :code:`<br>`:code:`<br>` `List all available virtual machine sizes in an availability set
     <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_
     :code:`<br>`:code:`<br>` `List all available virtual machine sizes in a region
     <https://docs.microsoft.com/en-us/rest/api/compute/resourceskus/list>`_
     :code:`<br>`:code:`<br>` `List all available virtual machine sizes for resizing
-    <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_.
-    :code:`<br>`:code:`<br>` This list of sizes is no longer updated and the
-    **VirtualMachineSizeTypes** string constants will be removed from the subsequent REST API
-    specification. Use `List all available virtual machine sizes in a region
-    <https://docs.microsoft.com/en-us/rest/api/compute/resourceskus/list>`_ to get the latest
-    sizes.
+    <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. For more
+    information about virtual machine sizes, see `Sizes for virtual machines
+    <https://docs.microsoft.com/en-us/azure/virtual-machines/sizes>`_. :code:`<br>`:code:`<br>` The
+    available VM sizes depend on region and availability set.
     """
 
     BASIC_A0 = "Basic_A0"
@@ -562,3 +567,64 @@ class VmDiskTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     NONE = "None"
     UNMANAGED = "Unmanaged"
+
+class VMGuestPatchClassificationLinux(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    CRITICAL = "Critical"
+    SECURITY = "Security"
+    OTHER = "Other"
+
+class VMGuestPatchClassificationWindows(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    CRITICAL = "Critical"
+    SECURITY = "Security"
+    UPDATE_ROLL_UP = "UpdateRollUp"
+    FEATURE_PACK = "FeaturePack"
+    SERVICE_PACK = "ServicePack"
+    DEFINITION = "Definition"
+    TOOLS = "Tools"
+    UPDATES = "Updates"
+
+class VMGuestPatchRebootBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Describes the reboot requirements of the patch.
+    """
+
+    UNKNOWN = "Unknown"
+    NEVER_REBOOTS = "NeverReboots"
+    ALWAYS_REQUIRES_REBOOT = "AlwaysRequiresReboot"
+    CAN_REQUEST_REBOOT = "CanRequestReboot"
+
+class VMGuestPatchRebootSetting(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Defines when it is acceptable to reboot a VM during a software update operation.
+    """
+
+    IF_REQUIRED = "IfRequired"
+    NEVER = "Never"
+    ALWAYS = "Always"
+
+class VMGuestPatchRebootStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The reboot state of the VM following completion of the operation.
+    """
+
+    UNKNOWN = "Unknown"
+    NOT_NEEDED = "NotNeeded"
+    REQUIRED = "Required"
+    STARTED = "Started"
+    FAILED = "Failed"
+    COMPLETED = "Completed"
+
+class WindowsVMGuestPatchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the mode of VM Guest Patching to IaaS virtual machine.:code:`<br />`:code:`<br />`
+    Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application of
+    patches to a virtual machine. You do this by applying patches manually inside the VM. In this
+    mode, automatic updates are disabled; the property WindowsConfiguration.enableAutomaticUpdates
+    must be false:code:`<br />`:code:`<br />` **AutomaticByOS** - The virtual machine will
+    automatically be updated by the OS. The property WindowsConfiguration.enableAutomaticUpdates
+    must be true. :code:`<br />`:code:`<br />` **AutomaticByPlatform** - the virtual machine will
+    automatically updated by the platform. The properties provisionVMAgent and
+    WindowsConfiguration.enableAutomaticUpdates must be true
+    """
+
+    MANUAL = "Manual"
+    AUTOMATIC_BY_OS = "AutomaticByOS"
+    AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"

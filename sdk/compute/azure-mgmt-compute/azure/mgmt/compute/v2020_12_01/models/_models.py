@@ -45,7 +45,7 @@ class AdditionalUnattendContent(msrest.serialization.Model):
     :param setting_name: Specifies the name of the setting to which the content applies. Possible
      values are: FirstLogonCommands and AutoLogon. Possible values include: "AutoLogon",
      "FirstLogonCommands".
-    :type setting_name: str or ~azure.mgmt.compute.v2020_06_01.models.SettingNames
+    :type setting_name: str or ~azure.mgmt.compute.v2020_12_01.models.SettingNames
     :param content: Specifies the XML formatted content that is added to the unattend.xml file for
      the specified path and component. The XML must be less than 4KB and must include the root
      element for the setting or feature that is being inserted.
@@ -100,9 +100,9 @@ class ApiError(msrest.serialization.Model):
     """Api error.
 
     :param details: The Api error details.
-    :type details: list[~azure.mgmt.compute.v2020_06_01.models.ApiErrorBase]
+    :type details: list[~azure.mgmt.compute.v2020_12_01.models.ApiErrorBase]
     :param innererror: The Api inner error.
-    :type innererror: ~azure.mgmt.compute.v2020_06_01.models.InnerError
+    :type innererror: ~azure.mgmt.compute.v2020_12_01.models.InnerError
     :param code: The error code.
     :type code: str
     :param target: The target of the particular error.
@@ -308,19 +308,19 @@ class AvailabilitySet(Resource):
      AvailabilitySetSkuTypes for possible set of values. Use 'Aligned' for virtual machines with
      managed disks and 'Classic' for virtual machines with unmanaged disks. Default value is
      'Classic'.
-    :type sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
+    :type sku: ~azure.mgmt.compute.v2020_12_01.models.Sku
     :param platform_update_domain_count: Update Domain count.
     :type platform_update_domain_count: int
     :param platform_fault_domain_count: Fault Domain count.
     :type platform_fault_domain_count: int
     :param virtual_machines: A list of references to all virtual machines in the availability set.
-    :type virtual_machines: list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
+    :type virtual_machines: list[~azure.mgmt.compute.v2020_12_01.models.SubResource]
     :param proximity_placement_group: Specifies information about the proximity placement group
      that the availability set should be assigned to. :code:`<br>`:code:`<br>`Minimum api-version:
      2018-04-01.
-    :type proximity_placement_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type proximity_placement_group: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :ivar statuses: The resource status information.
-    :vartype statuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :vartype statuses: list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
     """
 
     _validation = {
@@ -364,7 +364,7 @@ class AvailabilitySetListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of availability sets.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.AvailabilitySet]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.AvailabilitySet]
     :param next_link: The URI to fetch the next page of AvailabilitySets. Call ListNext() with this
      URI to fetch the next page of AvailabilitySets.
     :type next_link: str
@@ -415,19 +415,19 @@ class AvailabilitySetUpdate(UpdateResource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param sku: Sku of the availability set.
-    :type sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
+    :type sku: ~azure.mgmt.compute.v2020_12_01.models.Sku
     :param platform_update_domain_count: Update Domain count.
     :type platform_update_domain_count: int
     :param platform_fault_domain_count: Fault Domain count.
     :type platform_fault_domain_count: int
     :param virtual_machines: A list of references to all virtual machines in the availability set.
-    :type virtual_machines: list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
+    :type virtual_machines: list[~azure.mgmt.compute.v2020_12_01.models.SubResource]
     :param proximity_placement_group: Specifies information about the proximity placement group
      that the availability set should be assigned to. :code:`<br>`:code:`<br>`Minimum api-version:
      2018-04-01.
-    :type proximity_placement_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type proximity_placement_group: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :ivar statuses: The resource status information.
-    :vartype statuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :vartype statuses: list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
     """
 
     _validation = {
@@ -463,10 +463,10 @@ class AvailablePatchSummary(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar status: The overall success or failure status of the operation. It remains "InProgress"
-     until the operation completes. At that point it will become "Failed", "Succeeded", or
-     "CompletedWithWarnings.". Possible values include: "InProgress", "Failed", "Succeeded",
-     "CompletedWithWarnings".
-    :vartype status: str or ~azure.mgmt.compute.v2020_06_01.models.PatchOperationStatus
+     until the operation completes. At that point it will become "Unknown", "Failed", "Succeeded",
+     or "CompletedWithWarnings.". Possible values include: "Unknown", "InProgress", "Failed",
+     "Succeeded", "CompletedWithWarnings".
+    :vartype status: str or ~azure.mgmt.compute.v2020_12_01.models.PatchOperationStatus
     :ivar assessment_activity_id: The activity ID of the operation that produced this result. It is
      used to correlate across CRP and extension logs.
     :vartype assessment_activity_id: str
@@ -485,7 +485,7 @@ class AvailablePatchSummary(msrest.serialization.Model):
     :vartype last_modified_time: ~datetime.datetime
     :ivar error: The errors that were encountered during execution of the operation. The details
      array contains the list of them.
-    :vartype error: ~azure.mgmt.compute.v2020_06_01.models.ApiError
+    :vartype error: ~azure.mgmt.compute.v2020_12_01.models.ApiError
     """
 
     _validation = {
@@ -595,7 +595,7 @@ class BootDiagnosticsInstanceView(msrest.serialization.Model):
     :vartype serial_console_log_blob_uri: str
     :ivar status: The boot diagnostics status information for the VM. :code:`<br>`:code:`<br>`
      NOTE: It will be set only if there are errors encountered in enabling boot diagnostics.
-    :vartype status: ~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus
+    :vartype status: ~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus
     """
 
     _validation = {
@@ -626,7 +626,7 @@ class ComputeOperationListResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The list of compute operations.
-    :vartype value: list[~azure.mgmt.compute.v2020_06_01.models.ComputeOperationValue]
+    :vartype value: list[~azure.mgmt.compute.v2020_12_01.models.ComputeOperationValue]
     """
 
     _validation = {
@@ -709,17 +709,17 @@ class DataDisk(msrest.serialization.Model):
     :param name: The disk name.
     :type name: str
     :param vhd: The virtual hard disk.
-    :type vhd: ~azure.mgmt.compute.v2020_06_01.models.VirtualHardDisk
+    :type vhd: ~azure.mgmt.compute.v2020_12_01.models.VirtualHardDisk
     :param image: The source user image virtual hard disk. The virtual hard disk will be copied
      before being attached to the virtual machine. If SourceImage is provided, the destination
      virtual hard drive must not exist.
-    :type image: ~azure.mgmt.compute.v2020_06_01.models.VirtualHardDisk
+    :type image: ~azure.mgmt.compute.v2020_12_01.models.VirtualHardDisk
     :param caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
      storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
      "ReadWrite".
-    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_12_01.models.CachingTypes
     :param write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
     :type write_accelerator_enabled: bool
@@ -730,13 +730,13 @@ class DataDisk(msrest.serialization.Model):
      image to create the virtual machine. If you are using a platform image, you also use the
      imageReference element described above. If you are using a marketplace image, you  also use the
      plan element previously described. Possible values include: "FromImage", "Empty", "Attach".
-    :type create_option: str or ~azure.mgmt.compute.v2020_06_01.models.DiskCreateOptionTypes
+    :type create_option: str or ~azure.mgmt.compute.v2020_12_01.models.DiskCreateOptionTypes
     :param disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
      used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
      This value cannot be larger than 1023 GB.
     :type disk_size_gb: int
     :param managed_disk: The managed disk parameters.
-    :type managed_disk: ~azure.mgmt.compute.v2020_06_01.models.ManagedDiskParameters
+    :type managed_disk: ~azure.mgmt.compute.v2020_12_01.models.ManagedDiskParameters
     :param to_be_detached: Specifies whether the data disk is in process of detachment from the
      VirtualMachine/VirtualMachineScaleset.
     :type to_be_detached: bool
@@ -748,6 +748,17 @@ class DataDisk(msrest.serialization.Model):
      StorageAccountType is UltraSSD_LRS. Returned only for VirtualMachine ScaleSet VM disks. Can be
      updated only via updates to the VirtualMachine Scale Set.
     :vartype disk_m_bps_read_write: long
+    :param detach_option: Specifies the detach behavior to be used while detaching a disk or which
+     is already in the process of detachment from the virtual machine. Supported values:
+     **ForceDetach**. :code:`<br>`:code:`<br>` detachOption: **ForceDetach** is applicable only for
+     managed data disks. If a previous detachment attempt of the data disk did not complete due to
+     an unexpected failure from the virtual machine and the disk is still not released then use
+     force-detach as a last resort option to detach the disk forcibly from the VM. All writes might
+     not have been flushed when using this detach behavior. :code:`<br>`:code:`<br>` This feature is
+     still in preview mode and is not supported for VirtualMachineScaleSet. To force-detach a data
+     disk update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'. Possible
+     values include: "ForceDetach".
+    :type detach_option: str or ~azure.mgmt.compute.v2020_12_01.models.DiskDetachOptionTypes
     """
 
     _validation = {
@@ -770,6 +781,7 @@ class DataDisk(msrest.serialization.Model):
         'to_be_detached': {'key': 'toBeDetached', 'type': 'bool'},
         'disk_iops_read_write': {'key': 'diskIOPSReadWrite', 'type': 'long'},
         'disk_m_bps_read_write': {'key': 'diskMBpsReadWrite', 'type': 'long'},
+        'detach_option': {'key': 'detachOption', 'type': 'str'},
     }
 
     def __init__(
@@ -789,6 +801,7 @@ class DataDisk(msrest.serialization.Model):
         self.to_be_detached = kwargs.get('to_be_detached', None)
         self.disk_iops_read_write = None
         self.disk_m_bps_read_write = None
+        self.detach_option = kwargs.get('detach_option', None)
 
 
 class DataDiskImage(msrest.serialization.Model):
@@ -836,7 +849,7 @@ class DedicatedHost(Resource):
     :type tags: dict[str, str]
     :param sku: Required. SKU of the dedicated host for Hardware Generation and VM family. Only
      name is required to be set. List Microsoft.Compute SKUs for a list of possible values.
-    :type sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
+    :type sku: ~azure.mgmt.compute.v2020_12_01.models.Sku
     :param platform_fault_domain: Fault domain of the dedicated host within a dedicated host group.
     :type platform_fault_domain: int
     :param auto_replace_on_failure: Specifies whether the dedicated host should be replaced
@@ -846,19 +859,19 @@ class DedicatedHost(Resource):
      :code:`<br>`:code:`<br>` Does not change throughout the lifetime of the host.
     :vartype host_id: str
     :ivar virtual_machines: A list of references to all virtual machines in the Dedicated Host.
-    :vartype virtual_machines: list[~azure.mgmt.compute.v2020_06_01.models.SubResourceReadOnly]
+    :vartype virtual_machines: list[~azure.mgmt.compute.v2020_12_01.models.SubResourceReadOnly]
     :param license_type: Specifies the software license type that will be applied to the VMs
      deployed on the dedicated host. :code:`<br>`:code:`<br>` Possible values are:
      :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **Windows_Server_Hybrid**
      :code:`<br>`:code:`<br>` **Windows_Server_Perpetual** :code:`<br>`:code:`<br>` Default:
      **None**. Possible values include: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
-    :type license_type: str or ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostLicenseTypes
+    :type license_type: str or ~azure.mgmt.compute.v2020_12_01.models.DedicatedHostLicenseTypes
     :ivar provisioning_time: The date when the host was first provisioned.
     :vartype provisioning_time: ~datetime.datetime
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar instance_view: The dedicated host instance view.
-    :vartype instance_view: ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostInstanceView
+    :vartype instance_view: ~azure.mgmt.compute.v2020_12_01.models.DedicatedHostInstanceView
     """
 
     _validation = {
@@ -937,7 +950,7 @@ class DedicatedHostAvailableCapacity(msrest.serialization.Model):
 
     :param allocatable_v_ms: The unutilized capacity of the dedicated host represented in terms of
      each VM size that is allowed to be deployed to the dedicated host.
-    :type allocatable_v_ms: list[~azure.mgmt.compute.v2020_06_01.models.DedicatedHostAllocatableVM]
+    :type allocatable_v_ms: list[~azure.mgmt.compute.v2020_12_01.models.DedicatedHostAllocatableVM]
     """
 
     _attribute_map = {
@@ -976,10 +989,10 @@ class DedicatedHostGroup(Resource):
     :param platform_fault_domain_count: Number of fault domains that the host group can span.
     :type platform_fault_domain_count: int
     :ivar hosts: A list of references to all dedicated hosts in the dedicated host group.
-    :vartype hosts: list[~azure.mgmt.compute.v2020_06_01.models.SubResourceReadOnly]
+    :vartype hosts: list[~azure.mgmt.compute.v2020_12_01.models.SubResourceReadOnly]
     :ivar instance_view: The dedicated host group instance view, which has the list of instance
      view of the dedicated hosts under the dedicated host group.
-    :vartype instance_view: ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostGroupInstanceView
+    :vartype instance_view: ~azure.mgmt.compute.v2020_12_01.models.DedicatedHostGroupInstanceView
     :param support_automatic_placement: Specifies whether virtual machines or virtual machine scale
      sets can be placed automatically on the dedicated host group. Automatic placement means
      resources are allocated on dedicated hosts, that are chosen by Azure, under the dedicated host
@@ -1027,7 +1040,7 @@ class DedicatedHostGroupInstanceView(msrest.serialization.Model):
     """DedicatedHostGroupInstanceView.
 
     :param hosts: List of instance view of the dedicated hosts under the dedicated host group.
-    :type hosts: list[~azure.mgmt.compute.v2020_06_01.models.DedicatedHostInstanceViewWithName]
+    :type hosts: list[~azure.mgmt.compute.v2020_12_01.models.DedicatedHostInstanceViewWithName]
     """
 
     _attribute_map = {
@@ -1048,7 +1061,7 @@ class DedicatedHostGroupListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of dedicated host groups.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.DedicatedHostGroup]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.DedicatedHostGroup]
     :param next_link: The URI to fetch the next page of Dedicated Host Groups. Call ListNext() with
      this URI to fetch the next page of Dedicated Host Groups.
     :type next_link: str
@@ -1086,10 +1099,10 @@ class DedicatedHostGroupUpdate(UpdateResource):
     :param platform_fault_domain_count: Number of fault domains that the host group can span.
     :type platform_fault_domain_count: int
     :ivar hosts: A list of references to all dedicated hosts in the dedicated host group.
-    :vartype hosts: list[~azure.mgmt.compute.v2020_06_01.models.SubResourceReadOnly]
+    :vartype hosts: list[~azure.mgmt.compute.v2020_12_01.models.SubResourceReadOnly]
     :ivar instance_view: The dedicated host group instance view, which has the list of instance
      view of the dedicated hosts under the dedicated host group.
-    :vartype instance_view: ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostGroupInstanceView
+    :vartype instance_view: ~azure.mgmt.compute.v2020_12_01.models.DedicatedHostGroupInstanceView
     :param support_automatic_placement: Specifies whether virtual machines or virtual machine scale
      sets can be placed automatically on the dedicated host group. Automatic placement means
      resources are allocated on dedicated hosts, that are chosen by Azure, under the dedicated host
@@ -1134,9 +1147,9 @@ class DedicatedHostInstanceView(msrest.serialization.Model):
      dedicated host resides.
     :vartype asset_id: str
     :param available_capacity: Unutilized capacity of the dedicated host.
-    :type available_capacity: ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostAvailableCapacity
+    :type available_capacity: ~azure.mgmt.compute.v2020_12_01.models.DedicatedHostAvailableCapacity
     :param statuses: The resource status information.
-    :type statuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :type statuses: list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
     """
 
     _validation = {
@@ -1168,9 +1181,9 @@ class DedicatedHostInstanceViewWithName(DedicatedHostInstanceView):
      dedicated host resides.
     :vartype asset_id: str
     :param available_capacity: Unutilized capacity of the dedicated host.
-    :type available_capacity: ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostAvailableCapacity
+    :type available_capacity: ~azure.mgmt.compute.v2020_12_01.models.DedicatedHostAvailableCapacity
     :param statuses: The resource status information.
-    :type statuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :type statuses: list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
     :ivar name: The name of the dedicated host.
     :vartype name: str
     """
@@ -1201,7 +1214,7 @@ class DedicatedHostListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of dedicated hosts.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.DedicatedHost]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.DedicatedHost]
     :param next_link: The URI to fetch the next page of dedicated hosts. Call ListNext() with this
      URI to fetch the next page of dedicated hosts.
     :type next_link: str
@@ -1241,19 +1254,19 @@ class DedicatedHostUpdate(UpdateResource):
      :code:`<br>`:code:`<br>` Does not change throughout the lifetime of the host.
     :vartype host_id: str
     :ivar virtual_machines: A list of references to all virtual machines in the Dedicated Host.
-    :vartype virtual_machines: list[~azure.mgmt.compute.v2020_06_01.models.SubResourceReadOnly]
+    :vartype virtual_machines: list[~azure.mgmt.compute.v2020_12_01.models.SubResourceReadOnly]
     :param license_type: Specifies the software license type that will be applied to the VMs
      deployed on the dedicated host. :code:`<br>`:code:`<br>` Possible values are:
      :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **Windows_Server_Hybrid**
      :code:`<br>`:code:`<br>` **Windows_Server_Perpetual** :code:`<br>`:code:`<br>` Default:
      **None**. Possible values include: "None", "Windows_Server_Hybrid", "Windows_Server_Perpetual".
-    :type license_type: str or ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostLicenseTypes
+    :type license_type: str or ~azure.mgmt.compute.v2020_12_01.models.DedicatedHostLicenseTypes
     :ivar provisioning_time: The date when the host was first provisioned.
     :vartype provisioning_time: ~datetime.datetime
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar instance_view: The dedicated host instance view.
-    :vartype instance_view: ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostInstanceView
+    :vartype instance_view: ~azure.mgmt.compute.v2020_12_01.models.DedicatedHostInstanceView
     """
 
     _validation = {
@@ -1299,7 +1312,7 @@ class DiagnosticsProfile(msrest.serialization.Model):
      Console Output and Screenshot to diagnose VM status. :code:`<br>`:code:`<br>` You can easily
      view the output of your console log. :code:`<br>`:code:`<br>` Azure also enables you to see a
      screenshot of the VM from the hypervisor.
-    :type boot_diagnostics: ~azure.mgmt.compute.v2020_06_01.models.BootDiagnostics
+    :type boot_diagnostics: ~azure.mgmt.compute.v2020_12_01.models.BootDiagnostics
     """
 
     _attribute_map = {
@@ -1319,7 +1332,7 @@ class DiffDiskSettings(msrest.serialization.Model):
 
     :param option: Specifies the ephemeral disk settings for operating system disk. Possible values
      include: "Local".
-    :type option: str or ~azure.mgmt.compute.v2020_06_01.models.DiffDiskOptions
+    :type option: str or ~azure.mgmt.compute.v2020_12_01.models.DiffDiskOptions
     :param placement: Specifies the ephemeral disk placement for operating system
      disk.:code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **CacheDisk**
      :code:`<br>`:code:`<br>` **ResourceDisk** :code:`<br>`:code:`<br>` Default: **CacheDisk** if
@@ -1328,7 +1341,7 @@ class DiffDiskSettings(msrest.serialization.Model):
      us/azure/virtual-machines/windows/sizes and Linux VM at https://docs.microsoft.com/en-
      us/azure/virtual-machines/linux/sizes to check which VM sizes exposes a cache disk. Possible
      values include: "CacheDisk", "ResourceDisk".
-    :type placement: str or ~azure.mgmt.compute.v2020_06_01.models.DiffDiskPlacement
+    :type placement: str or ~azure.mgmt.compute.v2020_12_01.models.DiffDiskPlacement
     """
 
     _attribute_map = {
@@ -1350,7 +1363,7 @@ class DisallowedConfiguration(msrest.serialization.Model):
 
     :param vm_disk_type: VM disk types which are disallowed. Possible values include: "None",
      "Unmanaged".
-    :type vm_disk_type: str or ~azure.mgmt.compute.v2020_06_01.models.VmDiskTypes
+    :type vm_disk_type: str or ~azure.mgmt.compute.v2020_12_01.models.VmDiskTypes
     """
 
     _attribute_map = {
@@ -1407,9 +1420,9 @@ class DiskEncryptionSettings(msrest.serialization.Model):
 
     :param disk_encryption_key: Specifies the location of the disk encryption key, which is a Key
      Vault Secret.
-    :type disk_encryption_key: ~azure.mgmt.compute.v2020_06_01.models.KeyVaultSecretReference
+    :type disk_encryption_key: ~azure.mgmt.compute.v2020_12_01.models.KeyVaultSecretReference
     :param key_encryption_key: Specifies the location of the key encryption key in Key Vault.
-    :type key_encryption_key: ~azure.mgmt.compute.v2020_06_01.models.KeyVaultKeyReference
+    :type key_encryption_key: ~azure.mgmt.compute.v2020_12_01.models.KeyVaultKeyReference
     :param enabled: Specifies whether disk encryption should be enabled on the virtual machine.
     :type enabled: bool
     """
@@ -1437,9 +1450,9 @@ class DiskInstanceView(msrest.serialization.Model):
     :type name: str
     :param encryption_settings: Specifies the encryption settings for the OS Disk.
      :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
-    :type encryption_settings: list[~azure.mgmt.compute.v2020_06_01.models.DiskEncryptionSettings]
+    :type encryption_settings: list[~azure.mgmt.compute.v2020_12_01.models.DiskEncryptionSettings]
     :param statuses: The resource status information.
-    :type statuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :type statuses: list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
     """
 
     _attribute_map = {
@@ -1458,45 +1471,65 @@ class DiskInstanceView(msrest.serialization.Model):
         self.statuses = kwargs.get('statuses', None)
 
 
+class ExtendedLocation(msrest.serialization.Model):
+    """The complex type of the extended location.
+
+    :param name: The name of the extended location.
+    :type name: str
+    :param type: The type of the extended location. Possible values include: "EdgeZone".
+    :type type: str or ~azure.mgmt.compute.v2020_12_01.models.ExtendedLocationTypes
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ExtendedLocation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+
+
 class HardwareProfile(msrest.serialization.Model):
     """Specifies the hardware settings for the virtual machine.
 
-    :param vm_size: Specifies the size of the virtual machine. For more information about virtual
-     machine sizes, see `Sizes for virtual machines <https://docs.microsoft.com/en-us/azure/virtual-
-     machines/sizes>`_. :code:`<br>`:code:`<br>` The available VM sizes depend on region and
-     availability set. For a list of available sizes use these APIs:  :code:`<br>`:code:`<br>` `List
-     all available virtual machine sizes in an availability set
+    :param vm_size: Specifies the size of the virtual machine. :code:`<br>`:code:`<br>` The enum
+     data type is currently deprecated and will be removed by December 23rd 2023.
+     :code:`<br>`:code:`<br>` Recommended way to get the list of available sizes is using these
+     APIs: :code:`<br>`:code:`<br>` `List all available virtual machine sizes in an availability set
      <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_
      :code:`<br>`:code:`<br>` `List all available virtual machine sizes in a region
      <https://docs.microsoft.com/en-us/rest/api/compute/resourceskus/list>`_
      :code:`<br>`:code:`<br>` `List all available virtual machine sizes for resizing
-     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_.
-     :code:`<br>`:code:`<br>` This list of sizes is no longer updated and the
-     **VirtualMachineSizeTypes** string constants will be removed from the subsequent REST API
-     specification. Use `List all available virtual machine sizes in a region
-     <https://docs.microsoft.com/en-us/rest/api/compute/resourceskus/list>`_ to get the latest
-     sizes. Possible values include: "Basic_A0", "Basic_A1", "Basic_A2", "Basic_A3", "Basic_A4",
-     "Standard_A0", "Standard_A1", "Standard_A2", "Standard_A3", "Standard_A4", "Standard_A5",
-     "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A9", "Standard_A10", "Standard_A11",
-     "Standard_A1_v2", "Standard_A2_v2", "Standard_A4_v2", "Standard_A8_v2", "Standard_A2m_v2",
-     "Standard_A4m_v2", "Standard_A8m_v2", "Standard_B1s", "Standard_B1ms", "Standard_B2s",
-     "Standard_B2ms", "Standard_B4ms", "Standard_B8ms", "Standard_D1", "Standard_D2", "Standard_D3",
-     "Standard_D4", "Standard_D11", "Standard_D12", "Standard_D13", "Standard_D14",
-     "Standard_D1_v2", "Standard_D2_v2", "Standard_D3_v2", "Standard_D4_v2", "Standard_D5_v2",
-     "Standard_D2_v3", "Standard_D4_v3", "Standard_D8_v3", "Standard_D16_v3", "Standard_D32_v3",
-     "Standard_D64_v3", "Standard_D2s_v3", "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3",
-     "Standard_D32s_v3", "Standard_D64s_v3", "Standard_D11_v2", "Standard_D12_v2",
-     "Standard_D13_v2", "Standard_D14_v2", "Standard_D15_v2", "Standard_DS1", "Standard_DS2",
-     "Standard_DS3", "Standard_DS4", "Standard_DS11", "Standard_DS12", "Standard_DS13",
-     "Standard_DS14", "Standard_DS1_v2", "Standard_DS2_v2", "Standard_DS3_v2", "Standard_DS4_v2",
-     "Standard_DS5_v2", "Standard_DS11_v2", "Standard_DS12_v2", "Standard_DS13_v2",
-     "Standard_DS14_v2", "Standard_DS15_v2", "Standard_DS13-4_v2", "Standard_DS13-2_v2",
-     "Standard_DS14-8_v2", "Standard_DS14-4_v2", "Standard_E2_v3", "Standard_E4_v3",
-     "Standard_E8_v3", "Standard_E16_v3", "Standard_E32_v3", "Standard_E64_v3", "Standard_E2s_v3",
-     "Standard_E4s_v3", "Standard_E8s_v3", "Standard_E16s_v3", "Standard_E32s_v3",
-     "Standard_E64s_v3", "Standard_E32-16_v3", "Standard_E32-8s_v3", "Standard_E64-32s_v3",
-     "Standard_E64-16s_v3", "Standard_F1", "Standard_F2", "Standard_F4", "Standard_F8",
-     "Standard_F16", "Standard_F1s", "Standard_F2s", "Standard_F4s", "Standard_F8s",
+     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. For more
+     information about virtual machine sizes, see `Sizes for virtual machines
+     <https://docs.microsoft.com/en-us/azure/virtual-machines/sizes>`_. :code:`<br>`:code:`<br>` The
+     available VM sizes depend on region and availability set. Possible values include: "Basic_A0",
+     "Basic_A1", "Basic_A2", "Basic_A3", "Basic_A4", "Standard_A0", "Standard_A1", "Standard_A2",
+     "Standard_A3", "Standard_A4", "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8",
+     "Standard_A9", "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2_v2",
+     "Standard_A4_v2", "Standard_A8_v2", "Standard_A2m_v2", "Standard_A4m_v2", "Standard_A8m_v2",
+     "Standard_B1s", "Standard_B1ms", "Standard_B2s", "Standard_B2ms", "Standard_B4ms",
+     "Standard_B8ms", "Standard_D1", "Standard_D2", "Standard_D3", "Standard_D4", "Standard_D11",
+     "Standard_D12", "Standard_D13", "Standard_D14", "Standard_D1_v2", "Standard_D2_v2",
+     "Standard_D3_v2", "Standard_D4_v2", "Standard_D5_v2", "Standard_D2_v3", "Standard_D4_v3",
+     "Standard_D8_v3", "Standard_D16_v3", "Standard_D32_v3", "Standard_D64_v3", "Standard_D2s_v3",
+     "Standard_D4s_v3", "Standard_D8s_v3", "Standard_D16s_v3", "Standard_D32s_v3",
+     "Standard_D64s_v3", "Standard_D11_v2", "Standard_D12_v2", "Standard_D13_v2", "Standard_D14_v2",
+     "Standard_D15_v2", "Standard_DS1", "Standard_DS2", "Standard_DS3", "Standard_DS4",
+     "Standard_DS11", "Standard_DS12", "Standard_DS13", "Standard_DS14", "Standard_DS1_v2",
+     "Standard_DS2_v2", "Standard_DS3_v2", "Standard_DS4_v2", "Standard_DS5_v2", "Standard_DS11_v2",
+     "Standard_DS12_v2", "Standard_DS13_v2", "Standard_DS14_v2", "Standard_DS15_v2",
+     "Standard_DS13-4_v2", "Standard_DS13-2_v2", "Standard_DS14-8_v2", "Standard_DS14-4_v2",
+     "Standard_E2_v3", "Standard_E4_v3", "Standard_E8_v3", "Standard_E16_v3", "Standard_E32_v3",
+     "Standard_E64_v3", "Standard_E2s_v3", "Standard_E4s_v3", "Standard_E8s_v3", "Standard_E16s_v3",
+     "Standard_E32s_v3", "Standard_E64s_v3", "Standard_E32-16_v3", "Standard_E32-8s_v3",
+     "Standard_E64-32s_v3", "Standard_E64-16s_v3", "Standard_F1", "Standard_F2", "Standard_F4",
+     "Standard_F8", "Standard_F16", "Standard_F1s", "Standard_F2s", "Standard_F4s", "Standard_F8s",
      "Standard_F16s", "Standard_F2s_v2", "Standard_F4s_v2", "Standard_F8s_v2", "Standard_F16s_v2",
      "Standard_F32s_v2", "Standard_F64s_v2", "Standard_F72s_v2", "Standard_G1", "Standard_G2",
      "Standard_G3", "Standard_G4", "Standard_G5", "Standard_GS1", "Standard_GS2", "Standard_GS3",
@@ -1510,7 +1543,7 @@ class HardwareProfile(msrest.serialization.Model):
      "Standard_NC12s_v3", "Standard_NC24s_v3", "Standard_NC24rs_v3", "Standard_ND6s",
      "Standard_ND12s", "Standard_ND24s", "Standard_ND24rs", "Standard_NV6", "Standard_NV12",
      "Standard_NV24".
-    :type vm_size: str or ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineSizeTypes
+    :type vm_size: str or ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineSizeTypes
     """
 
     _attribute_map = {
@@ -1542,15 +1575,17 @@ class Image(Resource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
+    :param extended_location: The extended location of the Image.
+    :type extended_location: ~azure.mgmt.compute.v2020_12_01.models.ExtendedLocation
     :param source_virtual_machine: The source virtual machine from which Image is created.
-    :type source_virtual_machine: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type source_virtual_machine: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param storage_profile: Specifies the storage settings for the virtual machine disks.
-    :type storage_profile: ~azure.mgmt.compute.v2020_06_01.models.ImageStorageProfile
+    :type storage_profile: ~azure.mgmt.compute.v2020_12_01.models.ImageStorageProfile
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
     :param hyper_v_generation: Gets the HyperVGenerationType of the VirtualMachine created from the
      image. Possible values include: "V1", "V2".
-    :type hyper_v_generation: str or ~azure.mgmt.compute.v2020_06_01.models.HyperVGenerationTypes
+    :type hyper_v_generation: str or ~azure.mgmt.compute.v2020_12_01.models.HyperVGenerationTypes
     """
 
     _validation = {
@@ -1567,6 +1602,7 @@ class Image(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
         'source_virtual_machine': {'key': 'properties.sourceVirtualMachine', 'type': 'SubResource'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'ImageStorageProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -1578,6 +1614,7 @@ class Image(Resource):
         **kwargs
     ):
         super(Image, self).__init__(**kwargs)
+        self.extended_location = kwargs.get('extended_location', None)
         self.source_virtual_machine = kwargs.get('source_virtual_machine', None)
         self.storage_profile = kwargs.get('storage_profile', None)
         self.provisioning_state = None
@@ -1588,9 +1625,9 @@ class ImageDisk(msrest.serialization.Model):
     """Describes a image disk.
 
     :param snapshot: The snapshot.
-    :type snapshot: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type snapshot: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param managed_disk: The managedDisk.
-    :type managed_disk: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type managed_disk: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param blob_uri: The Virtual Hard Disk.
     :type blob_uri: str
     :param caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
@@ -1598,7 +1635,7 @@ class ImageDisk(msrest.serialization.Model):
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
      storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
      "ReadWrite".
-    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_12_01.models.CachingTypes
     :param disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
      used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
      This value cannot be larger than 1023 GB.
@@ -1606,10 +1643,10 @@ class ImageDisk(msrest.serialization.Model):
     :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
      UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
      include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
-    :type storage_account_type: str or ~azure.mgmt.compute.v2020_06_01.models.StorageAccountTypes
+    :type storage_account_type: str or ~azure.mgmt.compute.v2020_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed image disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     """
 
     _attribute_map = {
@@ -1642,9 +1679,9 @@ class ImageDataDisk(ImageDisk):
     All required parameters must be populated in order to send to Azure.
 
     :param snapshot: The snapshot.
-    :type snapshot: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type snapshot: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param managed_disk: The managedDisk.
-    :type managed_disk: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type managed_disk: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param blob_uri: The Virtual Hard Disk.
     :type blob_uri: str
     :param caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
@@ -1652,7 +1689,7 @@ class ImageDataDisk(ImageDisk):
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
      storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
      "ReadWrite".
-    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_12_01.models.CachingTypes
     :param disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
      used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
      This value cannot be larger than 1023 GB.
@@ -1660,10 +1697,10 @@ class ImageDataDisk(ImageDisk):
     :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
      UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
      include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
-    :type storage_account_type: str or ~azure.mgmt.compute.v2020_06_01.models.StorageAccountTypes
+    :type storage_account_type: str or ~azure.mgmt.compute.v2020_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed image disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param lun: Required. Specifies the logical unit number of the data disk. This value is used to
      identify data disks within the VM and therefore must be unique for each data disk attached to a
      VM.
@@ -1699,7 +1736,7 @@ class ImageListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of Images.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.Image]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.Image]
     :param next_link: The uri to fetch the next page of Images. Call ListNext() with this to fetch
      the next page of Images.
     :type next_link: str
@@ -1729,9 +1766,9 @@ class ImageOSDisk(ImageDisk):
     All required parameters must be populated in order to send to Azure.
 
     :param snapshot: The snapshot.
-    :type snapshot: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type snapshot: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param managed_disk: The managedDisk.
-    :type managed_disk: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type managed_disk: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param blob_uri: The Virtual Hard Disk.
     :type blob_uri: str
     :param caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
@@ -1739,7 +1776,7 @@ class ImageOSDisk(ImageDisk):
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
      storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
      "ReadWrite".
-    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_12_01.models.CachingTypes
     :param disk_size_gb: Specifies the size of empty data disks in gigabytes. This element can be
      used to overwrite the name of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
      This value cannot be larger than 1023 GB.
@@ -1747,17 +1784,17 @@ class ImageOSDisk(ImageDisk):
     :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
      UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
      include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
-    :type storage_account_type: str or ~azure.mgmt.compute.v2020_06_01.models.StorageAccountTypes
+    :type storage_account_type: str or ~azure.mgmt.compute.v2020_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed image disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param os_type: Required. This property allows you to specify the type of the OS that is
      included in the disk if creating a VM from a custom image. :code:`<br>`:code:`<br>` Possible
      values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
      values include: "Windows", "Linux".
-    :type os_type: str or ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemTypes
+    :type os_type: str or ~azure.mgmt.compute.v2020_12_01.models.OperatingSystemTypes
     :param os_state: Required. The OS State. Possible values include: "Generalized", "Specialized".
-    :type os_state: str or ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemStateTypes
+    :type os_state: str or ~azure.mgmt.compute.v2020_12_01.models.OperatingSystemStateTypes
     """
 
     _validation = {
@@ -1844,12 +1881,12 @@ class ImageStorageProfile(msrest.serialization.Model):
      machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
      for Azure virtual machines <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-
      windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
-    :type os_disk: ~azure.mgmt.compute.v2020_06_01.models.ImageOSDisk
+    :type os_disk: ~azure.mgmt.compute.v2020_12_01.models.ImageOSDisk
     :param data_disks: Specifies the parameters that are used to add a data disk to a virtual
      machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
      for Azure virtual machines <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-
      windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
-    :type data_disks: list[~azure.mgmt.compute.v2020_06_01.models.ImageDataDisk]
+    :type data_disks: list[~azure.mgmt.compute.v2020_12_01.models.ImageDataDisk]
     :param zone_resilient: Specifies whether an image is zone resilient or not. Default is false.
      Zone resilient images can be created only in regions that provide Zone Redundant Storage (ZRS).
     :type zone_resilient: bool
@@ -1879,14 +1916,14 @@ class ImageUpdate(UpdateResource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param source_virtual_machine: The source virtual machine from which Image is created.
-    :type source_virtual_machine: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type source_virtual_machine: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param storage_profile: Specifies the storage settings for the virtual machine disks.
-    :type storage_profile: ~azure.mgmt.compute.v2020_06_01.models.ImageStorageProfile
+    :type storage_profile: ~azure.mgmt.compute.v2020_12_01.models.ImageStorageProfile
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
     :param hyper_v_generation: Gets the HyperVGenerationType of the VirtualMachine created from the
      image. Possible values include: "V1", "V2".
-    :type hyper_v_generation: str or ~azure.mgmt.compute.v2020_06_01.models.HyperVGenerationTypes
+    :type hyper_v_generation: str or ~azure.mgmt.compute.v2020_12_01.models.HyperVGenerationTypes
     """
 
     _validation = {
@@ -1941,7 +1978,7 @@ class InstanceViewStatus(msrest.serialization.Model):
     :param code: The status code.
     :type code: str
     :param level: The level code. Possible values include: "Info", "Warning", "Error".
-    :type level: str or ~azure.mgmt.compute.v2020_06_01.models.StatusLevelTypes
+    :type level: str or ~azure.mgmt.compute.v2020_12_01.models.StatusLevelTypes
     :param display_status: The short localizable label for the status.
     :type display_status: str
     :param message: The detailed status message, including for alerts and error messages.
@@ -1978,7 +2015,7 @@ class KeyVaultKeyReference(msrest.serialization.Model):
     :param key_url: Required. The URL referencing a key encryption key in Key Vault.
     :type key_url: str
     :param source_vault: Required. The relative URL of the Key Vault containing the key.
-    :type source_vault: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type source_vault: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     """
 
     _validation = {
@@ -2008,7 +2045,7 @@ class KeyVaultSecretReference(msrest.serialization.Model):
     :param secret_url: Required. The URL referencing a secret in a Key Vault.
     :type secret_url: str
     :param source_vault: Required. The relative URL of the Key Vault containing the secret.
-    :type source_vault: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type source_vault: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     """
 
     _validation = {
@@ -2036,24 +2073,16 @@ class LastPatchInstallationSummary(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar status: The overall success or failure status of the operation. It remains "InProgress"
-     until the operation completes. At that point it will become "Failed", "Succeeded", or
-     "CompletedWithWarnings.". Possible values include: "InProgress", "Failed", "Succeeded",
-     "CompletedWithWarnings".
-    :vartype status: str or ~azure.mgmt.compute.v2020_06_01.models.PatchOperationStatus
+     until the operation completes. At that point it will become "Unknown", "Failed", "Succeeded",
+     or "CompletedWithWarnings.". Possible values include: "Unknown", "InProgress", "Failed",
+     "Succeeded", "CompletedWithWarnings".
+    :vartype status: str or ~azure.mgmt.compute.v2020_12_01.models.PatchOperationStatus
     :ivar installation_activity_id: The activity ID of the operation that produced this result. It
      is used to correlate across CRP and extension logs.
     :vartype installation_activity_id: str
     :ivar maintenance_window_exceeded: Describes whether the operation ran out of time before it
      completed all its intended actions.
     :vartype maintenance_window_exceeded: bool
-    :ivar reboot_status: The reboot status of the machine after the patch operation. It will be in
-     "NotNeeded" status if reboot is not needed after the patch operation. "Required" will be the
-     status once the patch is applied and machine is required to reboot. "Started" will be the
-     reboot status when the machine has started to reboot. "Failed" will be the status if the
-     machine is failed to reboot. "Completed" will be the status once the machine is rebooted
-     successfully. Possible values include: "NotNeeded", "Required", "Started", "Failed",
-     "Completed".
-    :vartype reboot_status: str or ~azure.mgmt.compute.v2020_06_01.models.RebootStatus
     :ivar not_selected_patch_count: The number of all available patches but not going to be
      installed because it didn't match a classification or inclusion list entry.
     :vartype not_selected_patch_count: int
@@ -2071,18 +2100,15 @@ class LastPatchInstallationSummary(msrest.serialization.Model):
     :vartype start_time: ~datetime.datetime
     :ivar last_modified_time: The UTC timestamp when the operation began.
     :vartype last_modified_time: ~datetime.datetime
-    :ivar started_by: The person or system account that started the operation.
-    :vartype started_by: str
     :ivar error: The errors that were encountered during execution of the operation. The details
      array contains the list of them.
-    :vartype error: ~azure.mgmt.compute.v2020_06_01.models.ApiError
+    :vartype error: ~azure.mgmt.compute.v2020_12_01.models.ApiError
     """
 
     _validation = {
         'status': {'readonly': True},
         'installation_activity_id': {'readonly': True},
         'maintenance_window_exceeded': {'readonly': True},
-        'reboot_status': {'readonly': True},
         'not_selected_patch_count': {'readonly': True},
         'excluded_patch_count': {'readonly': True},
         'pending_patch_count': {'readonly': True},
@@ -2090,7 +2116,6 @@ class LastPatchInstallationSummary(msrest.serialization.Model):
         'failed_patch_count': {'readonly': True},
         'start_time': {'readonly': True},
         'last_modified_time': {'readonly': True},
-        'started_by': {'readonly': True},
         'error': {'readonly': True},
     }
 
@@ -2098,7 +2123,6 @@ class LastPatchInstallationSummary(msrest.serialization.Model):
         'status': {'key': 'status', 'type': 'str'},
         'installation_activity_id': {'key': 'installationActivityId', 'type': 'str'},
         'maintenance_window_exceeded': {'key': 'maintenanceWindowExceeded', 'type': 'bool'},
-        'reboot_status': {'key': 'rebootStatus', 'type': 'str'},
         'not_selected_patch_count': {'key': 'notSelectedPatchCount', 'type': 'int'},
         'excluded_patch_count': {'key': 'excludedPatchCount', 'type': 'int'},
         'pending_patch_count': {'key': 'pendingPatchCount', 'type': 'int'},
@@ -2106,7 +2130,6 @@ class LastPatchInstallationSummary(msrest.serialization.Model):
         'failed_patch_count': {'key': 'failedPatchCount', 'type': 'int'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'started_by': {'key': 'startedBy', 'type': 'str'},
         'error': {'key': 'error', 'type': 'ApiError'},
     }
 
@@ -2118,7 +2141,6 @@ class LastPatchInstallationSummary(msrest.serialization.Model):
         self.status = None
         self.installation_activity_id = None
         self.maintenance_window_exceeded = None
-        self.reboot_status = None
         self.not_selected_patch_count = None
         self.excluded_patch_count = None
         self.pending_patch_count = None
@@ -2126,7 +2148,6 @@ class LastPatchInstallationSummary(msrest.serialization.Model):
         self.failed_patch_count = None
         self.start_time = None
         self.last_modified_time = None
-        self.started_by = None
         self.error = None
 
 
@@ -2137,18 +2158,22 @@ class LinuxConfiguration(msrest.serialization.Model):
      disabled.
     :type disable_password_authentication: bool
     :param ssh: Specifies the ssh key configuration for a Linux OS.
-    :type ssh: ~azure.mgmt.compute.v2020_06_01.models.SshConfiguration
+    :type ssh: ~azure.mgmt.compute.v2020_12_01.models.SshConfiguration
     :param provision_vm_agent: Indicates whether virtual machine agent should be provisioned on the
      virtual machine. :code:`<br>`:code:`<br>` When this property is not specified in the request
      body, default behavior is to set it to true.  This will ensure that VM Agent is installed on
      the VM so that extensions can be added to the VM later.
     :type provision_vm_agent: bool
+    :param patch_settings: [Preview Feature] Specifies settings related to VM Guest Patching on
+     Linux.
+    :type patch_settings: ~azure.mgmt.compute.v2020_12_01.models.LinuxPatchSettings
     """
 
     _attribute_map = {
         'disable_password_authentication': {'key': 'disablePasswordAuthentication', 'type': 'bool'},
         'ssh': {'key': 'ssh', 'type': 'SshConfiguration'},
         'provision_vm_agent': {'key': 'provisionVMAgent', 'type': 'bool'},
+        'patch_settings': {'key': 'patchSettings', 'type': 'LinuxPatchSettings'},
     }
 
     def __init__(
@@ -2159,6 +2184,67 @@ class LinuxConfiguration(msrest.serialization.Model):
         self.disable_password_authentication = kwargs.get('disable_password_authentication', None)
         self.ssh = kwargs.get('ssh', None)
         self.provision_vm_agent = kwargs.get('provision_vm_agent', None)
+        self.patch_settings = kwargs.get('patch_settings', None)
+
+
+class LinuxParameters(msrest.serialization.Model):
+    """Input for InstallPatches on a Linux VM, as directly received by the API.
+
+    :param classifications_to_include: The update classifications to select when installing patches
+     for Linux.
+    :type classifications_to_include: list[str or
+     ~azure.mgmt.compute.v2020_12_01.models.VMGuestPatchClassificationLinux]
+    :param package_name_masks_to_include: packages to include in the patch operation. Format:
+     packageName_packageVersion.
+    :type package_name_masks_to_include: list[str]
+    :param package_name_masks_to_exclude: packages to exclude in the patch operation. Format:
+     packageName_packageVersion.
+    :type package_name_masks_to_exclude: list[str]
+    :param maintenance_run_id: This is used as a maintenance run identifier for Auto VM Guest
+     Patching in Linux.
+    :type maintenance_run_id: str
+    """
+
+    _attribute_map = {
+        'classifications_to_include': {'key': 'classificationsToInclude', 'type': '[str]'},
+        'package_name_masks_to_include': {'key': 'packageNameMasksToInclude', 'type': '[str]'},
+        'package_name_masks_to_exclude': {'key': 'packageNameMasksToExclude', 'type': '[str]'},
+        'maintenance_run_id': {'key': 'maintenanceRunId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LinuxParameters, self).__init__(**kwargs)
+        self.classifications_to_include = kwargs.get('classifications_to_include', None)
+        self.package_name_masks_to_include = kwargs.get('package_name_masks_to_include', None)
+        self.package_name_masks_to_exclude = kwargs.get('package_name_masks_to_exclude', None)
+        self.maintenance_run_id = kwargs.get('maintenance_run_id', None)
+
+
+class LinuxPatchSettings(msrest.serialization.Model):
+    """Specifies settings related to VM Guest Patching on Linux.
+
+    :param patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine.:code:`<br
+     />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - The
+     virtual machine's default patching configuration is used. :code:`<br />`:code:`<br />`
+     **AutomaticByPlatform** - The virtual machine will be automatically updated by the platform.
+     The property provisionVMAgent must be true. Possible values include: "ImageDefault",
+     "AutomaticByPlatform".
+    :type patch_mode: str or ~azure.mgmt.compute.v2020_12_01.models.LinuxVMGuestPatchMode
+    """
+
+    _attribute_map = {
+        'patch_mode': {'key': 'patchMode', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LinuxPatchSettings, self).__init__(**kwargs)
+        self.patch_mode = kwargs.get('patch_mode', None)
 
 
 class ListUsagesResult(msrest.serialization.Model):
@@ -2167,7 +2253,7 @@ class ListUsagesResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of compute resource usages.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.Usage]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.Usage]
     :param next_link: The URI to fetch the next page of compute resource usage information. Call
      ListNext() with this to fetch the next page of compute resource usage information.
     :type next_link: str
@@ -2253,7 +2339,7 @@ class LogAnalyticsOperationResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar properties: LogAnalyticsOutput.
-    :vartype properties: ~azure.mgmt.compute.v2020_06_01.models.LogAnalyticsOutput
+    :vartype properties: ~azure.mgmt.compute.v2020_12_01.models.LogAnalyticsOutput
     """
 
     _validation = {
@@ -2314,7 +2400,7 @@ class MaintenanceRedeployStatus(msrest.serialization.Model):
     :param last_operation_result_code: The Last Maintenance Operation Result Code. Possible values
      include: "None", "RetryLater", "MaintenanceAborted", "MaintenanceCompleted".
     :type last_operation_result_code: str or
-     ~azure.mgmt.compute.v2020_06_01.models.MaintenanceOperationResultCodeTypes
+     ~azure.mgmt.compute.v2020_12_01.models.MaintenanceOperationResultCodeTypes
     :param last_operation_message: Message returned for the last Maintenance Operation.
     :type last_operation_message: str
     """
@@ -2351,10 +2437,10 @@ class ManagedDiskParameters(SubResource):
     :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
      UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
      include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
-    :type storage_account_type: str or ~azure.mgmt.compute.v2020_06_01.models.StorageAccountTypes
+    :type storage_account_type: str or ~azure.mgmt.compute.v2020_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     """
 
     _attribute_map = {
@@ -2401,7 +2487,7 @@ class NetworkProfile(msrest.serialization.Model):
     :param network_interfaces: Specifies the list of resource Ids for the network interfaces
      associated with the virtual machine.
     :type network_interfaces:
-     list[~azure.mgmt.compute.v2020_06_01.models.NetworkInterfaceReference]
+     list[~azure.mgmt.compute.v2020_12_01.models.NetworkInterfaceReference]
     """
 
     _attribute_map = {
@@ -2423,10 +2509,10 @@ class OrchestrationServiceStateInput(msrest.serialization.Model):
 
     :param service_name: Required. The name of the service. Possible values include:
      "AutomaticRepairs", "DummyOrchestrationServiceName".
-    :type service_name: str or ~azure.mgmt.compute.v2020_06_01.models.OrchestrationServiceNames
+    :type service_name: str or ~azure.mgmt.compute.v2020_12_01.models.OrchestrationServiceNames
     :param action: Required. The action to be performed. Possible values include: "Resume",
      "Suspend".
-    :type action: str or ~azure.mgmt.compute.v2020_06_01.models.OrchestrationServiceStateAction
+    :type action: str or ~azure.mgmt.compute.v2020_12_01.models.OrchestrationServiceStateAction
     """
 
     _validation = {
@@ -2455,10 +2541,10 @@ class OrchestrationServiceSummary(msrest.serialization.Model):
 
     :ivar service_name: The name of the service. Possible values include: "AutomaticRepairs",
      "DummyOrchestrationServiceName".
-    :vartype service_name: str or ~azure.mgmt.compute.v2020_06_01.models.OrchestrationServiceNames
+    :vartype service_name: str or ~azure.mgmt.compute.v2020_12_01.models.OrchestrationServiceNames
     :ivar service_state: The current state of the service. Possible values include: "NotRunning",
      "Running", "Suspended".
-    :vartype service_state: str or ~azure.mgmt.compute.v2020_06_01.models.OrchestrationServiceState
+    :vartype service_state: str or ~azure.mgmt.compute.v2020_12_01.models.OrchestrationServiceState
     """
 
     _validation = {
@@ -2489,30 +2575,30 @@ class OSDisk(msrest.serialization.Model):
      disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>` Possible
      values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
      values include: "Windows", "Linux".
-    :type os_type: str or ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemTypes
+    :type os_type: str or ~azure.mgmt.compute.v2020_12_01.models.OperatingSystemTypes
     :param encryption_settings: Specifies the encryption settings for the OS Disk.
      :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
-    :type encryption_settings: ~azure.mgmt.compute.v2020_06_01.models.DiskEncryptionSettings
+    :type encryption_settings: ~azure.mgmt.compute.v2020_12_01.models.DiskEncryptionSettings
     :param name: The disk name.
     :type name: str
     :param vhd: The virtual hard disk.
-    :type vhd: ~azure.mgmt.compute.v2020_06_01.models.VirtualHardDisk
+    :type vhd: ~azure.mgmt.compute.v2020_12_01.models.VirtualHardDisk
     :param image: The source user image virtual hard disk. The virtual hard disk will be copied
      before being attached to the virtual machine. If SourceImage is provided, the destination
      virtual hard drive must not exist.
-    :type image: ~azure.mgmt.compute.v2020_06_01.models.VirtualHardDisk
+    :type image: ~azure.mgmt.compute.v2020_12_01.models.VirtualHardDisk
     :param caching: Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values
      are: :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None** for Standard
      storage. **ReadOnly** for Premium storage. Possible values include: "None", "ReadOnly",
      "ReadWrite".
-    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_12_01.models.CachingTypes
     :param write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
     :type write_accelerator_enabled: bool
     :param diff_disk_settings: Specifies the ephemeral Disk Settings for the operating system disk
      used by the virtual machine.
-    :type diff_disk_settings: ~azure.mgmt.compute.v2020_06_01.models.DiffDiskSettings
+    :type diff_disk_settings: ~azure.mgmt.compute.v2020_12_01.models.DiffDiskSettings
     :param create_option: Required. Specifies how the virtual machine should be
      created.:code:`<br>`:code:`<br>` Possible values are::code:`<br>`:code:`<br>` **Attach** \u2013
      This value is used when you are using a specialized disk to create the virtual
@@ -2520,13 +2606,13 @@ class OSDisk(msrest.serialization.Model):
      image to create the virtual machine. If you are using a platform image, you also use the
      imageReference element described above. If you are using a marketplace image, you  also use the
      plan element previously described. Possible values include: "FromImage", "Empty", "Attach".
-    :type create_option: str or ~azure.mgmt.compute.v2020_06_01.models.DiskCreateOptionTypes
+    :type create_option: str or ~azure.mgmt.compute.v2020_12_01.models.DiskCreateOptionTypes
     :param disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
      used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
      This value cannot be larger than 1023 GB.
     :type disk_size_gb: int
     :param managed_disk: The managed disk parameters.
-    :type managed_disk: ~azure.mgmt.compute.v2020_06_01.models.ManagedDiskParameters
+    :type managed_disk: ~azure.mgmt.compute.v2020_12_01.models.ManagedDiskParameters
     """
 
     _validation = {
@@ -2572,7 +2658,7 @@ class OSDiskImage(msrest.serialization.Model):
 
     :param operating_system: Required. The operating system of the osDiskImage. Possible values
      include: "Windows", "Linux".
-    :type operating_system: str or ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemTypes
+    :type operating_system: str or ~azure.mgmt.compute.v2020_12_01.models.OperatingSystemTypes
     """
 
     _validation = {
@@ -2651,7 +2737,7 @@ class OSProfile(msrest.serialization.Model):
     :type custom_data: str
     :param windows_configuration: Specifies Windows operating system settings on the virtual
      machine.
-    :type windows_configuration: ~azure.mgmt.compute.v2020_06_01.models.WindowsConfiguration
+    :type windows_configuration: ~azure.mgmt.compute.v2020_12_01.models.WindowsConfiguration
     :param linux_configuration: Specifies the Linux operating system settings on the virtual
      machine. :code:`<br>`:code:`<br>`For a list of supported Linux distributions, see `Linux on
      Azure-Endorsed Distributions <https://docs.microsoft.com/azure/virtual-machines/virtual-
@@ -2659,10 +2745,10 @@ class OSProfile(msrest.serialization.Model):
      :code:`<br>`:code:`<br>` For running non-endorsed distributions, see `Information for Non-
      Endorsed Distributions <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-
      linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
-    :type linux_configuration: ~azure.mgmt.compute.v2020_06_01.models.LinuxConfiguration
+    :type linux_configuration: ~azure.mgmt.compute.v2020_12_01.models.LinuxConfiguration
     :param secrets: Specifies set of certificates that should be installed onto the virtual
      machine.
-    :type secrets: list[~azure.mgmt.compute.v2020_06_01.models.VaultSecretGroup]
+    :type secrets: list[~azure.mgmt.compute.v2020_12_01.models.VaultSecretGroup]
     :param allow_extension_operations: Specifies whether extension operations should be allowed on
      the virtual machine. :code:`<br>`:code:`<br>`This may only be set to False when no extensions
      are present on the virtual machine.
@@ -2701,10 +2787,64 @@ class OSProfile(msrest.serialization.Model):
         self.require_guest_provision_signal = kwargs.get('require_guest_provision_signal', None)
 
 
-class PatchSettings(msrest.serialization.Model):
-    """PatchSettings.
+class PatchInstallationDetail(msrest.serialization.Model):
+    """Information about a specific patch that was encountered during an installation action.
 
-    :param patch_mode: Specifies the mode of in-guest patching to IaaS virtual machine.:code:`<br
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar patch_id: A unique identifier for the patch.
+    :vartype patch_id: str
+    :ivar name: The friendly name of the patch.
+    :vartype name: str
+    :ivar version: The version string of the package. It may conform to Semantic Versioning. Only
+     applies to Linux.
+    :vartype version: str
+    :ivar kb_id: The KBID of the patch. Only applies to Windows patches.
+    :vartype kb_id: str
+    :ivar classifications: The classification(s) of the patch as provided by the patch publisher.
+    :vartype classifications: list[str]
+    :ivar installation_state: The state of the patch after the installation operation completed.
+     Possible values include: "Unknown", "Installed", "Failed", "Excluded", "NotSelected",
+     "Pending".
+    :vartype installation_state: str or
+     ~azure.mgmt.compute.v2020_12_01.models.PatchInstallationState
+    """
+
+    _validation = {
+        'patch_id': {'readonly': True},
+        'name': {'readonly': True},
+        'version': {'readonly': True},
+        'kb_id': {'readonly': True},
+        'classifications': {'readonly': True},
+        'installation_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'patch_id': {'key': 'patchId', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'kb_id': {'key': 'kbId', 'type': 'str'},
+        'classifications': {'key': 'classifications', 'type': '[str]'},
+        'installation_state': {'key': 'installationState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PatchInstallationDetail, self).__init__(**kwargs)
+        self.patch_id = None
+        self.name = None
+        self.version = None
+        self.kb_id = None
+        self.classifications = None
+        self.installation_state = None
+
+
+class PatchSettings(msrest.serialization.Model):
+    """Specifies settings related to VM Guest Patching on Windows.
+
+    :param patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine.:code:`<br
      />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
      the application of patches to a virtual machine. You do this by applying patches manually
      inside the VM. In this mode, automatic updates are disabled; the property
@@ -2714,11 +2854,16 @@ class PatchSettings(msrest.serialization.Model):
      **AutomaticByPlatform** - the virtual machine will automatically updated by the platform. The
      properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true.
      Possible values include: "Manual", "AutomaticByOS", "AutomaticByPlatform".
-    :type patch_mode: str or ~azure.mgmt.compute.v2020_06_01.models.InGuestPatchMode
+    :type patch_mode: str or ~azure.mgmt.compute.v2020_12_01.models.WindowsVMGuestPatchMode
+    :param enable_hotpatching: Enables customers to patch their Azure VMs without requiring a
+     reboot. For enableHotpatching, the 'provisionVMAgent' must be set to true and 'patchMode' must
+     be set to 'AutomaticByPlatform'.
+    :type enable_hotpatching: bool
     """
 
     _attribute_map = {
         'patch_mode': {'key': 'patchMode', 'type': 'str'},
+        'enable_hotpatching': {'key': 'enableHotpatching', 'type': 'bool'},
     }
 
     def __init__(
@@ -2727,6 +2872,7 @@ class PatchSettings(msrest.serialization.Model):
     ):
         super(PatchSettings, self).__init__(**kwargs)
         self.patch_mode = kwargs.get('patch_mode', None)
+        self.enable_hotpatching = kwargs.get('enable_hotpatching', None)
 
 
 class Plan(msrest.serialization.Model):
@@ -2783,21 +2929,21 @@ class ProximityPlacementGroup(Resource):
      resources within an Azure region or Availability Zone. :code:`<br>`:code:`<br>` **Ultra** : For
      future use. Possible values include: "Standard", "Ultra".
     :type proximity_placement_group_type: str or
-     ~azure.mgmt.compute.v2020_06_01.models.ProximityPlacementGroupType
+     ~azure.mgmt.compute.v2020_12_01.models.ProximityPlacementGroupType
     :ivar virtual_machines: A list of references to all virtual machines in the proximity placement
      group.
     :vartype virtual_machines:
-     list[~azure.mgmt.compute.v2020_06_01.models.SubResourceWithColocationStatus]
+     list[~azure.mgmt.compute.v2020_12_01.models.SubResourceWithColocationStatus]
     :ivar virtual_machine_scale_sets: A list of references to all virtual machine scale sets in the
      proximity placement group.
     :vartype virtual_machine_scale_sets:
-     list[~azure.mgmt.compute.v2020_06_01.models.SubResourceWithColocationStatus]
+     list[~azure.mgmt.compute.v2020_12_01.models.SubResourceWithColocationStatus]
     :ivar availability_sets: A list of references to all availability sets in the proximity
      placement group.
     :vartype availability_sets:
-     list[~azure.mgmt.compute.v2020_06_01.models.SubResourceWithColocationStatus]
+     list[~azure.mgmt.compute.v2020_12_01.models.SubResourceWithColocationStatus]
     :param colocation_status: Describes colocation status of the Proximity Placement Group.
-    :type colocation_status: ~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus
+    :type colocation_status: ~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus
     """
 
     _validation = {
@@ -2841,7 +2987,7 @@ class ProximityPlacementGroupListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of proximity placement groups.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.ProximityPlacementGroup]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.ProximityPlacementGroup]
     :param next_link: The URI to fetch the next page of proximity placement groups.
     :type next_link: str
     """
@@ -2973,7 +3119,7 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
     :type group_by_user_agent: bool
     :param interval_length: Required. Interval value in minutes used to create LogAnalytics call
      rate logs. Possible values include: "ThreeMins", "FiveMins", "ThirtyMins", "SixtyMins".
-    :type interval_length: str or ~azure.mgmt.compute.v2020_06_01.models.IntervalInMins
+    :type interval_length: str or ~azure.mgmt.compute.v2020_12_01.models.IntervalInMins
     """
 
     _validation = {
@@ -3044,7 +3190,7 @@ class RollbackStatusInfo(msrest.serialization.Model):
     :ivar failed_rolledback_instance_count: The number of instances which failed to rollback.
     :vartype failed_rolledback_instance_count: int
     :ivar rollback_error: Error details if OS rollback failed.
-    :vartype rollback_error: ~azure.mgmt.compute.v2020_06_01.models.ApiError
+    :vartype rollback_error: ~azure.mgmt.compute.v2020_12_01.models.ApiError
     """
 
     _validation = {
@@ -3092,6 +3238,13 @@ class RollingUpgradePolicy(msrest.serialization.Model):
      machines in one batch and starting the next batch. The time duration should be specified in ISO
      8601 format. The default value is 0 seconds (PT0S).
     :type pause_time_between_batches: str
+    :param enable_cross_zone_upgrade: Allow VMSS to ignore AZ boundaries when constructing upgrade
+     batches. Take into consideration the Update Domain and maxBatchInstancePercent to determine the
+     batch size.
+    :type enable_cross_zone_upgrade: bool
+    :param prioritize_unhealthy_instances: Upgrade all unhealthy instances in a scale set before
+     any healthy instances.
+    :type prioritize_unhealthy_instances: bool
     """
 
     _validation = {
@@ -3105,6 +3258,8 @@ class RollingUpgradePolicy(msrest.serialization.Model):
         'max_unhealthy_instance_percent': {'key': 'maxUnhealthyInstancePercent', 'type': 'int'},
         'max_unhealthy_upgraded_instance_percent': {'key': 'maxUnhealthyUpgradedInstancePercent', 'type': 'int'},
         'pause_time_between_batches': {'key': 'pauseTimeBetweenBatches', 'type': 'str'},
+        'enable_cross_zone_upgrade': {'key': 'enableCrossZoneUpgrade', 'type': 'bool'},
+        'prioritize_unhealthy_instances': {'key': 'prioritizeUnhealthyInstances', 'type': 'bool'},
     }
 
     def __init__(
@@ -3116,6 +3271,8 @@ class RollingUpgradePolicy(msrest.serialization.Model):
         self.max_unhealthy_instance_percent = kwargs.get('max_unhealthy_instance_percent', None)
         self.max_unhealthy_upgraded_instance_percent = kwargs.get('max_unhealthy_upgraded_instance_percent', None)
         self.pause_time_between_batches = kwargs.get('pause_time_between_batches', None)
+        self.enable_cross_zone_upgrade = kwargs.get('enable_cross_zone_upgrade', None)
+        self.prioritize_unhealthy_instances = kwargs.get('prioritize_unhealthy_instances', None)
 
 
 class RollingUpgradeProgressInfo(msrest.serialization.Model):
@@ -3166,12 +3323,12 @@ class RollingUpgradeRunningStatus(msrest.serialization.Model):
 
     :ivar code: Code indicating the current status of the upgrade. Possible values include:
      "RollingForward", "Cancelled", "Completed", "Faulted".
-    :vartype code: str or ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradeStatusCode
+    :vartype code: str or ~azure.mgmt.compute.v2020_12_01.models.RollingUpgradeStatusCode
     :ivar start_time: Start time of the upgrade.
     :vartype start_time: ~datetime.datetime
     :ivar last_action: The last action performed on the rolling upgrade. Possible values include:
      "Start", "Cancel".
-    :vartype last_action: str or ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradeActionType
+    :vartype last_action: str or ~azure.mgmt.compute.v2020_12_01.models.RollingUpgradeActionType
     :ivar last_action_time: Last action time of the upgrade.
     :vartype last_action_time: ~datetime.datetime
     """
@@ -3219,14 +3376,14 @@ class RollingUpgradeStatusInfo(Resource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :ivar policy: The rolling upgrade policies applied for this upgrade.
-    :vartype policy: ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradePolicy
+    :vartype policy: ~azure.mgmt.compute.v2020_12_01.models.RollingUpgradePolicy
     :ivar running_status: Information about the current running state of the overall upgrade.
-    :vartype running_status: ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradeRunningStatus
+    :vartype running_status: ~azure.mgmt.compute.v2020_12_01.models.RollingUpgradeRunningStatus
     :ivar progress: Information about the number of virtual machine instances in each upgrade
      state.
-    :vartype progress: ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradeProgressInfo
+    :vartype progress: ~azure.mgmt.compute.v2020_12_01.models.RollingUpgradeProgressInfo
     :ivar error: Error details for this upgrade, if there are any.
-    :vartype error: ~azure.mgmt.compute.v2020_06_01.models.ApiError
+    :vartype error: ~azure.mgmt.compute.v2020_12_01.models.ApiError
     """
 
     _validation = {
@@ -3274,7 +3431,7 @@ class RunCommandDocumentBase(msrest.serialization.Model):
     :type id: str
     :param os_type: Required. The Operating System type. Possible values include: "Windows",
      "Linux".
-    :type os_type: str or ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemTypes
+    :type os_type: str or ~azure.mgmt.compute.v2020_12_01.models.OperatingSystemTypes
     :param label: Required. The VM run command label.
     :type label: str
     :param description: Required. The VM run command description.
@@ -3320,7 +3477,7 @@ class RunCommandDocument(RunCommandDocumentBase):
     :type id: str
     :param os_type: Required. The Operating System type. Possible values include: "Windows",
      "Linux".
-    :type os_type: str or ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemTypes
+    :type os_type: str or ~azure.mgmt.compute.v2020_12_01.models.OperatingSystemTypes
     :param label: Required. The VM run command label.
     :type label: str
     :param description: Required. The VM run command description.
@@ -3328,7 +3485,7 @@ class RunCommandDocument(RunCommandDocumentBase):
     :param script: Required. The script to be executed.
     :type script: list[str]
     :param parameters: The parameters used by the script.
-    :type parameters: list[~azure.mgmt.compute.v2020_06_01.models.RunCommandParameterDefinition]
+    :type parameters: list[~azure.mgmt.compute.v2020_12_01.models.RunCommandParameterDefinition]
     """
 
     _validation = {
@@ -3370,7 +3527,7 @@ class RunCommandInput(msrest.serialization.Model):
      will override the default script of the command.
     :type script: list[str]
     :param parameters: The run command parameters.
-    :type parameters: list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
+    :type parameters: list[~azure.mgmt.compute.v2020_12_01.models.RunCommandInputParameter]
     """
 
     _validation = {
@@ -3429,7 +3586,7 @@ class RunCommandListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of virtual machine run commands.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.RunCommandDocumentBase]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.RunCommandDocumentBase]
     :param next_link: The uri to fetch the next page of run commands. Call ListNext() with this to
      fetch the next page of run commands.
     :type next_link: str
@@ -3495,7 +3652,7 @@ class RunCommandResult(msrest.serialization.Model):
     """RunCommandResult.
 
     :param value: Run command operation response.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
     """
 
     _attribute_map = {
@@ -3528,7 +3685,7 @@ class ScaleInPolicy(msrest.serialization.Model):
      across zones. Within each zone, the newest virtual machines that are not protected will be
      chosen for removal. :code:`<br>`:code:`<br>`.
     :type rules: list[str or
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetScaleInRules]
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetScaleInRules]
     """
 
     _attribute_map = {
@@ -3549,7 +3706,7 @@ class ScheduledEventsProfile(msrest.serialization.Model):
     :param terminate_notification_profile: Specifies Terminate Scheduled Event related
      configurations.
     :type terminate_notification_profile:
-     ~azure.mgmt.compute.v2020_06_01.models.TerminateNotificationProfile
+     ~azure.mgmt.compute.v2020_12_01.models.TerminateNotificationProfile
     """
 
     _attribute_map = {
@@ -3567,23 +3724,41 @@ class ScheduledEventsProfile(msrest.serialization.Model):
 class SecurityProfile(msrest.serialization.Model):
     """Specifies the Security profile settings for the virtual machine or virtual machine scale set.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param uefi_settings: Specifies the security settings like secure boot and vTPM used while
+     creating the virtual machine. :code:`<br>`:code:`<br>`Minimum api-version: 2020-12-01.
+    :type uefi_settings: ~azure.mgmt.compute.v2020_12_01.models.UefiSettings
     :param encryption_at_host: This property can be used by user in the request to enable or
      disable the Host Encryption for the virtual machine or virtual machine scale set. This will
      enable the encryption for all the disks including Resource/Temp disk at host itself.
      :code:`<br>`:code:`<br>` Default: The Encryption at host will be disabled unless this property
      is set to true for the resource.
     :type encryption_at_host: bool
+    :ivar security_type: Specifies the SecurityType of the virtual machine. It is set as
+     TrustedLaunch to enable UefiSettings. :code:`<br>`:code:`<br>` Default: UefiSettings will not
+     be enabled unless this property is set as TrustedLaunch. Default value: "TrustedLaunch".
+    :vartype security_type: str
     """
 
-    _attribute_map = {
-        'encryption_at_host': {'key': 'encryptionAtHost', 'type': 'bool'},
+    _validation = {
+        'security_type': {'constant': True},
     }
+
+    _attribute_map = {
+        'uefi_settings': {'key': 'uefiSettings', 'type': 'UefiSettings'},
+        'encryption_at_host': {'key': 'encryptionAtHost', 'type': 'bool'},
+        'security_type': {'key': 'securityType', 'type': 'str'},
+    }
+
+    security_type = "TrustedLaunch"
 
     def __init__(
         self,
         **kwargs
     ):
         super(SecurityProfile, self).__init__(**kwargs)
+        self.uefi_settings = kwargs.get('uefi_settings', None)
         self.encryption_at_host = kwargs.get('encryption_at_host', None)
 
 
@@ -3620,7 +3795,7 @@ class SshConfiguration(msrest.serialization.Model):
     """SSH configuration for Linux based VMs running on Azure.
 
     :param public_keys: The list of SSH public keys used to authenticate with linux based VMs.
-    :type public_keys: list[~azure.mgmt.compute.v2020_06_01.models.SshPublicKey]
+    :type public_keys: list[~azure.mgmt.compute.v2020_12_01.models.SshPublicKey]
     """
 
     _attribute_map = {
@@ -3757,7 +3932,7 @@ class SshPublicKeysGroupListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of SSH public keys.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.SshPublicKeyResource]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.SshPublicKeyResource]
     :param next_link: The URI to fetch the next page of SSH public keys. Call ListNext() with this
      URI to fetch the next page of SSH public keys.
     :type next_link: str
@@ -3813,17 +3988,17 @@ class StorageProfile(msrest.serialization.Model):
      information about platform images, marketplace images, or virtual machine images. This element
      is required when you want to use a platform image, marketplace image, or virtual machine image,
      but is not used in other creation operations.
-    :type image_reference: ~azure.mgmt.compute.v2020_06_01.models.ImageReference
+    :type image_reference: ~azure.mgmt.compute.v2020_12_01.models.ImageReference
     :param os_disk: Specifies information about the operating system disk used by the virtual
      machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
      for Azure virtual machines <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-
      windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
-    :type os_disk: ~azure.mgmt.compute.v2020_06_01.models.OSDisk
+    :type os_disk: ~azure.mgmt.compute.v2020_12_01.models.OSDisk
     :param data_disks: Specifies the parameters that are used to add a data disk to a virtual
      machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
      for Azure virtual machines <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-
      windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
-    :type data_disks: list[~azure.mgmt.compute.v2020_06_01.models.DataDisk]
+    :type data_disks: list[~azure.mgmt.compute.v2020_12_01.models.DataDisk]
     """
 
     _attribute_map = {
@@ -3874,7 +4049,7 @@ class SubResourceWithColocationStatus(SubResource):
     :type id: str
     :param colocation_status: Describes colocation status of a resource in the Proximity Placement
      Group.
-    :type colocation_status: ~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus
+    :type colocation_status: ~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus
     """
 
     _attribute_map = {
@@ -3964,6 +4139,31 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
         super(ThrottledRequestsInput, self).__init__(**kwargs)
 
 
+class UefiSettings(msrest.serialization.Model):
+    """Specifies the security settings like secure boot and vTPM used while creating the virtual machine. :code:`<br>`:code:`<br>`Minimum api-version: 2020-12-01.
+
+    :param secure_boot_enabled: Specifies whether secure boot should be enabled on the virtual
+     machine. :code:`<br>`:code:`<br>`Minimum api-version: 2020-12-01.
+    :type secure_boot_enabled: bool
+    :param v_tpm_enabled: Specifies whether vTPM should be enabled on the virtual machine.
+     :code:`<br>`:code:`<br>`Minimum api-version: 2020-12-01.
+    :type v_tpm_enabled: bool
+    """
+
+    _attribute_map = {
+        'secure_boot_enabled': {'key': 'secureBootEnabled', 'type': 'bool'},
+        'v_tpm_enabled': {'key': 'vTpmEnabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UefiSettings, self).__init__(**kwargs)
+        self.secure_boot_enabled = kwargs.get('secure_boot_enabled', None)
+        self.v_tpm_enabled = kwargs.get('v_tpm_enabled', None)
+
+
 class UpgradeOperationHistoricalStatusInfo(msrest.serialization.Model):
     """Virtual Machine Scale Set OS Upgrade History operation response.
 
@@ -3971,7 +4171,7 @@ class UpgradeOperationHistoricalStatusInfo(msrest.serialization.Model):
 
     :ivar properties: Information about the properties of the upgrade operation.
     :vartype properties:
-     ~azure.mgmt.compute.v2020_06_01.models.UpgradeOperationHistoricalStatusInfoProperties
+     ~azure.mgmt.compute.v2020_12_01.models.UpgradeOperationHistoricalStatusInfoProperties
     :ivar type: Resource type.
     :vartype type: str
     :ivar location: Resource location.
@@ -4006,18 +4206,18 @@ class UpgradeOperationHistoricalStatusInfoProperties(msrest.serialization.Model)
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar running_status: Information about the overall status of the upgrade operation.
-    :vartype running_status: ~azure.mgmt.compute.v2020_06_01.models.UpgradeOperationHistoryStatus
+    :vartype running_status: ~azure.mgmt.compute.v2020_12_01.models.UpgradeOperationHistoryStatus
     :ivar progress: Counts of the VMs in each state.
-    :vartype progress: ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradeProgressInfo
+    :vartype progress: ~azure.mgmt.compute.v2020_12_01.models.RollingUpgradeProgressInfo
     :ivar error: Error Details for this upgrade if there are any.
-    :vartype error: ~azure.mgmt.compute.v2020_06_01.models.ApiError
+    :vartype error: ~azure.mgmt.compute.v2020_12_01.models.ApiError
     :ivar started_by: Invoker of the Upgrade Operation. Possible values include: "Unknown", "User",
      "Platform".
-    :vartype started_by: str or ~azure.mgmt.compute.v2020_06_01.models.UpgradeOperationInvoker
+    :vartype started_by: str or ~azure.mgmt.compute.v2020_12_01.models.UpgradeOperationInvoker
     :ivar target_image_reference: Image Reference details.
-    :vartype target_image_reference: ~azure.mgmt.compute.v2020_06_01.models.ImageReference
+    :vartype target_image_reference: ~azure.mgmt.compute.v2020_12_01.models.ImageReference
     :ivar rollback_info: Information about OS rollback if performed.
-    :vartype rollback_info: ~azure.mgmt.compute.v2020_06_01.models.RollbackStatusInfo
+    :vartype rollback_info: ~azure.mgmt.compute.v2020_12_01.models.RollbackStatusInfo
     """
 
     _validation = {
@@ -4058,7 +4258,7 @@ class UpgradeOperationHistoryStatus(msrest.serialization.Model):
 
     :ivar code: Code indicating the current status of the upgrade. Possible values include:
      "RollingForward", "Cancelled", "Completed", "Faulted".
-    :vartype code: str or ~azure.mgmt.compute.v2020_06_01.models.UpgradeState
+    :vartype code: str or ~azure.mgmt.compute.v2020_12_01.models.UpgradeState
     :ivar start_time: Start time of the upgrade.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: End time of the upgrade.
@@ -4096,14 +4296,14 @@ class UpgradePolicy(msrest.serialization.Model):
      manualUpgrade action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the
      scale set are  automatically updated at the same time. Possible values include: "Automatic",
      "Manual", "Rolling".
-    :type mode: str or ~azure.mgmt.compute.v2020_06_01.models.UpgradeMode
+    :type mode: str or ~azure.mgmt.compute.v2020_12_01.models.UpgradeMode
     :param rolling_upgrade_policy: The configuration parameters used while performing a rolling
      upgrade.
-    :type rolling_upgrade_policy: ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradePolicy
+    :type rolling_upgrade_policy: ~azure.mgmt.compute.v2020_12_01.models.RollingUpgradePolicy
     :param automatic_os_upgrade_policy: Configuration parameters used for performing automatic OS
      Upgrade.
     :type automatic_os_upgrade_policy:
-     ~azure.mgmt.compute.v2020_06_01.models.AutomaticOSUpgradePolicy
+     ~azure.mgmt.compute.v2020_12_01.models.AutomaticOSUpgradePolicy
     """
 
     _attribute_map = {
@@ -4136,7 +4336,7 @@ class Usage(msrest.serialization.Model):
     :param limit: Required. The maximum permitted usage of the resource.
     :type limit: long
     :param name: Required. The name of the type of usage.
-    :type name: ~azure.mgmt.compute.v2020_06_01.models.UsageName
+    :type name: ~azure.mgmt.compute.v2020_12_01.models.UsageName
     """
 
     _validation = {
@@ -4257,10 +4457,10 @@ class VaultSecretGroup(msrest.serialization.Model):
 
     :param source_vault: The relative URL of the Key Vault containing all of the certificates in
      VaultCertificates.
-    :type source_vault: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type source_vault: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param vault_certificates: The list of key vault references in SourceVault which contain
      certificates.
-    :type vault_certificates: list[~azure.mgmt.compute.v2020_06_01.models.VaultCertificate]
+    :type vault_certificates: list[~azure.mgmt.compute.v2020_12_01.models.VaultCertificate]
     """
 
     _attribute_map = {
@@ -4318,31 +4518,33 @@ class VirtualMachine(Resource):
      image from an API, you must enable the image for programmatic use.  In the Azure portal, find
      the marketplace image that you want to use and then click **Want to deploy programmatically,
      Get Started ->**. Enter any required information and then click **Save**.
-    :type plan: ~azure.mgmt.compute.v2020_06_01.models.Plan
+    :type plan: ~azure.mgmt.compute.v2020_12_01.models.Plan
     :ivar resources: The virtual machine child extension resources.
-    :vartype resources: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtension]
+    :vartype resources: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineExtension]
     :param identity: The identity of the virtual machine, if configured.
-    :type identity: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineIdentity
+    :type identity: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineIdentity
     :param zones: The virtual machine zones.
     :type zones: list[str]
+    :param extended_location: The extended location of the Virtual Machine.
+    :type extended_location: ~azure.mgmt.compute.v2020_12_01.models.ExtendedLocation
     :param hardware_profile: Specifies the hardware settings for the virtual machine.
-    :type hardware_profile: ~azure.mgmt.compute.v2020_06_01.models.HardwareProfile
+    :type hardware_profile: ~azure.mgmt.compute.v2020_12_01.models.HardwareProfile
     :param storage_profile: Specifies the storage settings for the virtual machine disks.
-    :type storage_profile: ~azure.mgmt.compute.v2020_06_01.models.StorageProfile
+    :type storage_profile: ~azure.mgmt.compute.v2020_12_01.models.StorageProfile
     :param additional_capabilities: Specifies additional capabilities enabled or disabled on the
      virtual machine.
-    :type additional_capabilities: ~azure.mgmt.compute.v2020_06_01.models.AdditionalCapabilities
+    :type additional_capabilities: ~azure.mgmt.compute.v2020_12_01.models.AdditionalCapabilities
     :param os_profile: Specifies the operating system settings used while creating the virtual
      machine. Some of the settings cannot be changed once VM is provisioned.
-    :type os_profile: ~azure.mgmt.compute.v2020_06_01.models.OSProfile
+    :type os_profile: ~azure.mgmt.compute.v2020_12_01.models.OSProfile
     :param network_profile: Specifies the network interfaces of the virtual machine.
-    :type network_profile: ~azure.mgmt.compute.v2020_06_01.models.NetworkProfile
+    :type network_profile: ~azure.mgmt.compute.v2020_12_01.models.NetworkProfile
     :param security_profile: Specifies the Security related profile settings for the virtual
      machine.
-    :type security_profile: ~azure.mgmt.compute.v2020_06_01.models.SecurityProfile
+    :type security_profile: ~azure.mgmt.compute.v2020_12_01.models.SecurityProfile
     :param diagnostics_profile: Specifies the boot diagnostic settings state.
      :code:`<br>`:code:`<br>`Minimum api-version: 2015-06-15.
-    :type diagnostics_profile: ~azure.mgmt.compute.v2020_06_01.models.DiagnosticsProfile
+    :type diagnostics_profile: ~azure.mgmt.compute.v2020_12_01.models.DiagnosticsProfile
     :param availability_set: Specifies information about the availability set that the virtual
      machine should be assigned to. Virtual machines specified in the same availability set are
      allocated to different nodes to maximize availability. For more information about availability
@@ -4357,7 +4559,7 @@ class VirtualMachine(Resource):
      group as the availability set resource. An existing VM cannot be added to an availability set.
      :code:`<br>`:code:`<br>`This property cannot exist along with a non-null
      properties.virtualMachineScaleSet reference.
-    :type availability_set: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type availability_set: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param virtual_machine_scale_set: Specifies information about the virtual machine scale set
      that the virtual machine should be assigned to. Virtual machines specified in the same virtual
      machine scale set are allocated to different nodes to maximize availability. Currently, a VM
@@ -4365,15 +4567,15 @@ class VirtualMachine(Resource):
      to a virtual machine scale set. :code:`<br>`:code:`<br>`This property cannot exist along with a
      non-null properties.availabilitySet reference. :code:`<br>`:code:`<br>`Minimum api‐version:
      2019‐03‐01.
-    :type virtual_machine_scale_set: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type virtual_machine_scale_set: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param proximity_placement_group: Specifies information about the proximity placement group
      that the virtual machine should be assigned to. :code:`<br>`:code:`<br>`Minimum api-version:
      2018-04-01.
-    :type proximity_placement_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type proximity_placement_group: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param priority: Specifies the priority for the virtual machine.
      :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01. Possible values include: "Regular",
      "Low", "Spot".
-    :type priority: str or ~azure.mgmt.compute.v2020_06_01.models.VirtualMachinePriorityTypes
+    :type priority: str or ~azure.mgmt.compute.v2020_12_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
      Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
@@ -4381,21 +4583,21 @@ class VirtualMachine(Resource):
      and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
      "Delete".
     :type eviction_policy: str or
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineEvictionPolicyTypes
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineEvictionPolicyTypes
     :param billing_profile: Specifies the billing related details of a Azure Spot virtual machine.
      :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01.
-    :type billing_profile: ~azure.mgmt.compute.v2020_06_01.models.BillingProfile
+    :type billing_profile: ~azure.mgmt.compute.v2020_12_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the virtual machine resides
      in. :code:`<br>`:code:`<br>`Minimum api-version: 2018-10-01.
-    :type host: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type host: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param host_group: Specifies information about the dedicated host group that the virtual
      machine resides in. :code:`<br>`:code:`<br>`Minimum api-version: 2020-06-01.
      :code:`<br>`:code:`<br>`NOTE: User cannot specify both host and hostGroup properties.
-    :type host_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type host_group: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar instance_view: The virtual machine instance view.
-    :vartype instance_view: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineInstanceView
+    :vartype instance_view: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineInstanceView
     :param license_type: Specifies that the image or disk that is being used was licensed on-
      premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
      :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
@@ -4415,6 +4617,15 @@ class VirtualMachine(Resource):
      ISO 8601 format. The default value is 90 minutes (PT1H30M). :code:`<br>`:code:`<br>` Minimum
      api-version: 2020-06-01.
     :type extensions_time_budget: str
+    :param platform_fault_domain: Specifies the scale set logical fault domain into which the
+     Virtual Machine will be created. By default, the Virtual Machine will by automatically assigned
+     to a fault domain that best maintains balance across available fault
+     domains.:code:`<br>`:code:`<li>`This is applicable only if the 'virtualMachineScaleSet'
+     property of this Virtual Machine is set.:code:`<li>`The Virtual Machine Scale Set that is
+     referenced, must have 'platformFaultDomainCount' &gt; 1.:code:`<li>`This property cannot be
+     updated once the Virtual Machine is created.:code:`<li>`Fault domain assignment can be viewed
+     in the Virtual Machine Instance View.:code:`<br>`:code:`<br>`Minimum api‐version: 2020‐12‐01.
+    :type platform_fault_domain: int
     """
 
     _validation = {
@@ -4438,6 +4649,7 @@ class VirtualMachine(Resource):
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
+        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
@@ -4458,6 +4670,7 @@ class VirtualMachine(Resource):
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
         'extensions_time_budget': {'key': 'properties.extensionsTimeBudget', 'type': 'str'},
+        'platform_fault_domain': {'key': 'properties.platformFaultDomain', 'type': 'int'},
     }
 
     def __init__(
@@ -4469,6 +4682,7 @@ class VirtualMachine(Resource):
         self.resources = None
         self.identity = kwargs.get('identity', None)
         self.zones = kwargs.get('zones', None)
+        self.extended_location = kwargs.get('extended_location', None)
         self.hardware_profile = kwargs.get('hardware_profile', None)
         self.storage_profile = kwargs.get('storage_profile', None)
         self.additional_capabilities = kwargs.get('additional_capabilities', None)
@@ -4489,6 +4703,7 @@ class VirtualMachine(Resource):
         self.license_type = kwargs.get('license_type', None)
         self.vm_id = None
         self.extensions_time_budget = kwargs.get('extensions_time_budget', None)
+        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
 
 
 class VirtualMachineAgentInstanceView(msrest.serialization.Model):
@@ -4498,9 +4713,9 @@ class VirtualMachineAgentInstanceView(msrest.serialization.Model):
     :type vm_agent_version: str
     :param extension_handlers: The virtual machine extension handler instance view.
     :type extension_handlers:
-     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtensionHandlerInstanceView]
+     list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineExtensionHandlerInstanceView]
     :param statuses: The resource status information.
-    :type statuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :type statuses: list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
     """
 
     _attribute_map = {
@@ -4525,10 +4740,10 @@ class VirtualMachineAssessPatchesResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar status: The overall success or failure status of the operation. It remains "InProgress"
-     until the operation completes. At that point it will become "Failed", "Succeeded", or
-     "CompletedWithWarnings.". Possible values include: "InProgress", "Failed", "Succeeded",
-     "CompletedWithWarnings".
-    :vartype status: str or ~azure.mgmt.compute.v2020_06_01.models.PatchOperationStatus
+     until the operation completes. At that point it will become "Unknown", "Failed", "Succeeded",
+     or "CompletedWithWarnings.". Possible values include: "Unknown", "InProgress", "Failed",
+     "Succeeded", "CompletedWithWarnings".
+    :vartype status: str or ~azure.mgmt.compute.v2020_12_01.models.PatchOperationStatus
     :ivar assessment_activity_id: The activity ID of the operation that produced this result. It is
      used to correlate across CRP and extension logs.
     :vartype assessment_activity_id: str
@@ -4543,12 +4758,13 @@ class VirtualMachineAssessPatchesResult(msrest.serialization.Model):
     :vartype other_patch_count: int
     :ivar start_date_time: The UTC timestamp when the operation began.
     :vartype start_date_time: ~datetime.datetime
-    :ivar patches: The list of patches that have been detected as available for installation.
-    :vartype patches:
-     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineSoftwarePatchProperties]
+    :ivar available_patches: The list of patches that have been detected as available for
+     installation.
+    :vartype available_patches:
+     list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineSoftwarePatchProperties]
     :ivar error: The errors that were encountered during execution of the operation. The details
      array contains the list of them.
-    :vartype error: ~azure.mgmt.compute.v2020_06_01.models.ApiError
+    :vartype error: ~azure.mgmt.compute.v2020_12_01.models.ApiError
     """
 
     _validation = {
@@ -4558,7 +4774,7 @@ class VirtualMachineAssessPatchesResult(msrest.serialization.Model):
         'critical_and_security_patch_count': {'readonly': True},
         'other_patch_count': {'readonly': True},
         'start_date_time': {'readonly': True},
-        'patches': {'readonly': True},
+        'available_patches': {'readonly': True},
         'error': {'readonly': True},
     }
 
@@ -4569,7 +4785,7 @@ class VirtualMachineAssessPatchesResult(msrest.serialization.Model):
         'critical_and_security_patch_count': {'key': 'criticalAndSecurityPatchCount', 'type': 'int'},
         'other_patch_count': {'key': 'otherPatchCount', 'type': 'int'},
         'start_date_time': {'key': 'startDateTime', 'type': 'iso-8601'},
-        'patches': {'key': 'patches', 'type': '[VirtualMachineSoftwarePatchProperties]'},
+        'available_patches': {'key': 'availablePatches', 'type': '[VirtualMachineSoftwarePatchProperties]'},
         'error': {'key': 'error', 'type': 'ApiError'},
     }
 
@@ -4584,7 +4800,7 @@ class VirtualMachineAssessPatchesResult(msrest.serialization.Model):
         self.critical_and_security_patch_count = None
         self.other_patch_count = None
         self.start_date_time = None
-        self.patches = None
+        self.available_patches = None
         self.error = None
 
 
@@ -4709,7 +4925,7 @@ class VirtualMachineExtension(Resource):
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :param instance_view: The virtual machine extension instance view.
-    :type instance_view: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtensionInstanceView
+    :type instance_view: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineExtensionInstanceView
     """
 
     _validation = {
@@ -4763,7 +4979,7 @@ class VirtualMachineExtensionHandlerInstanceView(msrest.serialization.Model):
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param status: The extension handler status.
-    :type status: ~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus
+    :type status: ~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus
     """
 
     _attribute_map = {
@@ -4856,9 +5072,9 @@ class VirtualMachineExtensionInstanceView(msrest.serialization.Model):
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param substatuses: The resource status information.
-    :type substatuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :type substatuses: list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
     :param statuses: The resource status information.
-    :type statuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :type statuses: list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
     """
 
     _attribute_map = {
@@ -4885,7 +5101,7 @@ class VirtualMachineExtensionsListResult(msrest.serialization.Model):
     """The List Extension operation response.
 
     :param value: The list of extensions.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtension]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineExtension]
     """
 
     _attribute_map = {
@@ -4961,7 +5177,7 @@ class VirtualMachineHealthStatus(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar status: The health status information for the VM.
-    :vartype status: ~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus
+    :vartype status: ~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus
     """
 
     _validation = {
@@ -4995,12 +5211,12 @@ class VirtualMachineIdentity(msrest.serialization.Model):
      UserAssigned' includes both an implicitly created identity and a set of user assigned
      identities. The type 'None' will remove any identities from the virtual machine. Possible
      values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
-    :type type: str or ~azure.mgmt.compute.v2020_06_01.models.ResourceIdentityType
+    :type type: str or ~azure.mgmt.compute.v2020_12_01.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated with the Virtual
      Machine. The user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.compute.v2020_06_01.models.UserAssignedIdentitiesValue]
+     ~azure.mgmt.compute.v2020_12_01.models.UserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -5041,6 +5257,8 @@ class VirtualMachineImageResource(SubResource):
      more information about using tags, see `Using tags to organize your Azure resources
      <https://docs.microsoft.com/azure/azure-resource-manager/resource-group-using-tags.md>`_.
     :type tags: dict[str, str]
+    :param extended_location: The extended location of the Virtual Machine.
+    :type extended_location: ~azure.mgmt.compute.v2020_12_01.models.ExtendedLocation
     """
 
     _validation = {
@@ -5053,6 +5271,7 @@ class VirtualMachineImageResource(SubResource):
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
     }
 
     def __init__(
@@ -5063,6 +5282,7 @@ class VirtualMachineImageResource(SubResource):
         self.name = kwargs['name']
         self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
+        self.extended_location = kwargs.get('extended_location', None)
 
 
 class VirtualMachineImage(VirtualMachineImageResource):
@@ -5080,22 +5300,26 @@ class VirtualMachineImage(VirtualMachineImageResource):
      more information about using tags, see `Using tags to organize your Azure resources
      <https://docs.microsoft.com/azure/azure-resource-manager/resource-group-using-tags.md>`_.
     :type tags: dict[str, str]
+    :param extended_location: The extended location of the Virtual Machine.
+    :type extended_location: ~azure.mgmt.compute.v2020_12_01.models.ExtendedLocation
     :param plan: Used for establishing the purchase context of any 3rd Party artifact through
      MarketPlace.
-    :type plan: ~azure.mgmt.compute.v2020_06_01.models.PurchasePlan
+    :type plan: ~azure.mgmt.compute.v2020_12_01.models.PurchasePlan
     :param os_disk_image: Contains the os disk image information.
-    :type os_disk_image: ~azure.mgmt.compute.v2020_06_01.models.OSDiskImage
+    :type os_disk_image: ~azure.mgmt.compute.v2020_12_01.models.OSDiskImage
     :param data_disk_images:
-    :type data_disk_images: list[~azure.mgmt.compute.v2020_06_01.models.DataDiskImage]
+    :type data_disk_images: list[~azure.mgmt.compute.v2020_12_01.models.DataDiskImage]
     :param automatic_os_upgrade_properties: Describes automatic OS upgrade properties on the image.
     :type automatic_os_upgrade_properties:
-     ~azure.mgmt.compute.v2020_06_01.models.AutomaticOSUpgradeProperties
+     ~azure.mgmt.compute.v2020_12_01.models.AutomaticOSUpgradeProperties
     :param hyper_v_generation: Specifies the HyperVGeneration Type. Possible values include: "V1",
      "V2".
-    :type hyper_v_generation: str or ~azure.mgmt.compute.v2020_06_01.models.HyperVGenerationTypes
+    :type hyper_v_generation: str or ~azure.mgmt.compute.v2020_12_01.models.HyperVGenerationTypes
     :param disallowed: Specifies disallowed configuration for the VirtualMachine created from the
      image.
-    :type disallowed: ~azure.mgmt.compute.v2020_06_01.models.DisallowedConfiguration
+    :type disallowed: ~azure.mgmt.compute.v2020_12_01.models.DisallowedConfiguration
+    :param features:
+    :type features: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineImageFeature]
     """
 
     _validation = {
@@ -5108,12 +5332,14 @@ class VirtualMachineImage(VirtualMachineImageResource):
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
         'plan': {'key': 'properties.plan', 'type': 'PurchasePlan'},
         'os_disk_image': {'key': 'properties.osDiskImage', 'type': 'OSDiskImage'},
         'data_disk_images': {'key': 'properties.dataDiskImages', 'type': '[DataDiskImage]'},
         'automatic_os_upgrade_properties': {'key': 'properties.automaticOSUpgradeProperties', 'type': 'AutomaticOSUpgradeProperties'},
         'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
         'disallowed': {'key': 'properties.disallowed', 'type': 'DisallowedConfiguration'},
+        'features': {'key': 'properties.features', 'type': '[VirtualMachineImageFeature]'},
     }
 
     def __init__(
@@ -5127,6 +5353,164 @@ class VirtualMachineImage(VirtualMachineImageResource):
         self.automatic_os_upgrade_properties = kwargs.get('automatic_os_upgrade_properties', None)
         self.hyper_v_generation = kwargs.get('hyper_v_generation', None)
         self.disallowed = kwargs.get('disallowed', None)
+        self.features = kwargs.get('features', None)
+
+
+class VirtualMachineImageFeature(msrest.serialization.Model):
+    """Specifies additional capabilities supported by the image.
+
+    :param name: The name of the feature.
+    :type name: str
+    :param value: The corresponding value for the feature.
+    :type value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineImageFeature, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+
+
+class VirtualMachineInstallPatchesParameters(msrest.serialization.Model):
+    """Input for InstallPatches as directly received by the API.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param maximum_duration: Required. Specifies the maximum amount of time that the operation will
+     run. It must be an ISO 8601-compliant duration string such as PT4H (4 hours).
+    :type maximum_duration: str
+    :param reboot_setting: Required. Defines when it is acceptable to reboot a VM during a software
+     update operation. Possible values include: "IfRequired", "Never", "Always".
+    :type reboot_setting: str or ~azure.mgmt.compute.v2020_12_01.models.VMGuestPatchRebootSetting
+    :param windows_parameters: Input for InstallPatches on a Windows VM, as directly received by
+     the API.
+    :type windows_parameters: ~azure.mgmt.compute.v2020_12_01.models.WindowsParameters
+    :param linux_parameters: Input for InstallPatches on a Linux VM, as directly received by the
+     API.
+    :type linux_parameters: ~azure.mgmt.compute.v2020_12_01.models.LinuxParameters
+    """
+
+    _validation = {
+        'maximum_duration': {'required': True},
+        'reboot_setting': {'required': True},
+    }
+
+    _attribute_map = {
+        'maximum_duration': {'key': 'maximumDuration', 'type': 'str'},
+        'reboot_setting': {'key': 'rebootSetting', 'type': 'str'},
+        'windows_parameters': {'key': 'windowsParameters', 'type': 'WindowsParameters'},
+        'linux_parameters': {'key': 'linuxParameters', 'type': 'LinuxParameters'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineInstallPatchesParameters, self).__init__(**kwargs)
+        self.maximum_duration = kwargs['maximum_duration']
+        self.reboot_setting = kwargs['reboot_setting']
+        self.windows_parameters = kwargs.get('windows_parameters', None)
+        self.linux_parameters = kwargs.get('linux_parameters', None)
+
+
+class VirtualMachineInstallPatchesResult(msrest.serialization.Model):
+    """The result summary of an installation operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: The overall success or failure status of the operation. It remains "InProgress"
+     until the operation completes. At that point it will become "Failed", "Succeeded", "Unknown" or
+     "CompletedWithWarnings.". Possible values include: "Unknown", "InProgress", "Failed",
+     "Succeeded", "CompletedWithWarnings".
+    :vartype status: str or ~azure.mgmt.compute.v2020_12_01.models.PatchOperationStatus
+    :ivar installation_activity_id: The activity ID of the operation that produced this result. It
+     is used to correlate across CRP and extension logs.
+    :vartype installation_activity_id: str
+    :ivar reboot_status: The reboot state of the VM following completion of the operation. Possible
+     values include: "Unknown", "NotNeeded", "Required", "Started", "Failed", "Completed".
+    :vartype reboot_status: str or ~azure.mgmt.compute.v2020_12_01.models.VMGuestPatchRebootStatus
+    :ivar maintenance_window_exceeded: Whether the operation ran out of time before it completed
+     all its intended actions.
+    :vartype maintenance_window_exceeded: bool
+    :ivar excluded_patch_count: The number of patches that were not installed due to the user
+     blocking their installation.
+    :vartype excluded_patch_count: int
+    :ivar not_selected_patch_count: The number of patches that were detected as available for
+     install, but did not meet the operation's criteria.
+    :vartype not_selected_patch_count: int
+    :ivar pending_patch_count: The number of patches that were identified as meeting the
+     installation criteria, but were not able to be installed. Typically this happens when
+     maintenanceWindowExceeded == true.
+    :vartype pending_patch_count: int
+    :ivar installed_patch_count: The number of patches successfully installed.
+    :vartype installed_patch_count: int
+    :ivar failed_patch_count: The number of patches that could not be installed due to some issue.
+     See errors for details.
+    :vartype failed_patch_count: int
+    :ivar patches: The patches that were installed during the operation.
+    :vartype patches: list[~azure.mgmt.compute.v2020_12_01.models.PatchInstallationDetail]
+    :ivar start_date_time: The UTC timestamp when the operation began.
+    :vartype start_date_time: ~datetime.datetime
+    :ivar error: The errors that were encountered during execution of the operation. The details
+     array contains the list of them.
+    :vartype error: ~azure.mgmt.compute.v2020_12_01.models.ApiError
+    """
+
+    _validation = {
+        'status': {'readonly': True},
+        'installation_activity_id': {'readonly': True},
+        'reboot_status': {'readonly': True},
+        'maintenance_window_exceeded': {'readonly': True},
+        'excluded_patch_count': {'readonly': True},
+        'not_selected_patch_count': {'readonly': True},
+        'pending_patch_count': {'readonly': True},
+        'installed_patch_count': {'readonly': True},
+        'failed_patch_count': {'readonly': True},
+        'patches': {'readonly': True},
+        'start_date_time': {'readonly': True},
+        'error': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'installation_activity_id': {'key': 'installationActivityId', 'type': 'str'},
+        'reboot_status': {'key': 'rebootStatus', 'type': 'str'},
+        'maintenance_window_exceeded': {'key': 'maintenanceWindowExceeded', 'type': 'bool'},
+        'excluded_patch_count': {'key': 'excludedPatchCount', 'type': 'int'},
+        'not_selected_patch_count': {'key': 'notSelectedPatchCount', 'type': 'int'},
+        'pending_patch_count': {'key': 'pendingPatchCount', 'type': 'int'},
+        'installed_patch_count': {'key': 'installedPatchCount', 'type': 'int'},
+        'failed_patch_count': {'key': 'failedPatchCount', 'type': 'int'},
+        'patches': {'key': 'patches', 'type': '[PatchInstallationDetail]'},
+        'start_date_time': {'key': 'startDateTime', 'type': 'iso-8601'},
+        'error': {'key': 'error', 'type': 'ApiError'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineInstallPatchesResult, self).__init__(**kwargs)
+        self.status = None
+        self.installation_activity_id = None
+        self.reboot_status = None
+        self.maintenance_window_exceeded = None
+        self.excluded_patch_count = None
+        self.not_selected_patch_count = None
+        self.pending_patch_count = None
+        self.installed_patch_count = None
+        self.failed_patch_count = None
+        self.patches = None
+        self.start_date_time = None
+        self.error = None
 
 
 class VirtualMachineInstanceView(msrest.serialization.Model):
@@ -5146,35 +5530,35 @@ class VirtualMachineInstanceView(msrest.serialization.Model):
     :type os_version: str
     :param hyper_v_generation: Specifies the HyperVGeneration Type associated with a resource.
      Possible values include: "V1", "V2".
-    :type hyper_v_generation: str or ~azure.mgmt.compute.v2020_06_01.models.HyperVGenerationType
+    :type hyper_v_generation: str or ~azure.mgmt.compute.v2020_12_01.models.HyperVGenerationType
     :param rdp_thumb_print: The Remote desktop certificate thumbprint.
     :type rdp_thumb_print: str
     :param vm_agent: The VM Agent running on the virtual machine.
-    :type vm_agent: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineAgentInstanceView
+    :type vm_agent: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineAgentInstanceView
     :param maintenance_redeploy_status: The Maintenance Operation status on the virtual machine.
     :type maintenance_redeploy_status:
-     ~azure.mgmt.compute.v2020_06_01.models.MaintenanceRedeployStatus
+     ~azure.mgmt.compute.v2020_12_01.models.MaintenanceRedeployStatus
     :param disks: The virtual machine disk information.
-    :type disks: list[~azure.mgmt.compute.v2020_06_01.models.DiskInstanceView]
+    :type disks: list[~azure.mgmt.compute.v2020_12_01.models.DiskInstanceView]
     :param extensions: The extensions information.
     :type extensions:
-     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtensionInstanceView]
+     list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineExtensionInstanceView]
     :ivar vm_health: The health status for the VM.
-    :vartype vm_health: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineHealthStatus
+    :vartype vm_health: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineHealthStatus
     :param boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
      Console Output and Screenshot to diagnose VM status. :code:`<br>`:code:`<br>` You can easily
      view the output of your console log. :code:`<br>`:code:`<br>` Azure also enables you to see a
      screenshot of the VM from the hypervisor.
-    :type boot_diagnostics: ~azure.mgmt.compute.v2020_06_01.models.BootDiagnosticsInstanceView
+    :type boot_diagnostics: ~azure.mgmt.compute.v2020_12_01.models.BootDiagnosticsInstanceView
     :ivar assigned_host: Resource id of the dedicated host, on which the virtual machine is
      allocated through automatic placement, when the virtual machine is associated with a dedicated
      host group that has automatic placement enabled. :code:`<br>`:code:`<br>`Minimum api-version:
      2020-06-01.
     :vartype assigned_host: str
     :param statuses: The resource status information.
-    :type statuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
-    :param patch_status: The status of virtual machine patch operations.
-    :type patch_status: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachinePatchStatus
+    :type statuses: list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
+    :param patch_status: [Preview Feature] The status of virtual machine patch operations.
+    :type patch_status: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachinePatchStatus
     """
 
     _validation = {
@@ -5230,7 +5614,7 @@ class VirtualMachineListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of virtual machines.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachine]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachine]
     :param next_link: The URI to fetch the next page of VMs. Call ListNext() with this URI to fetch
      the next page of Virtual Machines.
     :type next_link: str
@@ -5257,18 +5641,28 @@ class VirtualMachineListResult(msrest.serialization.Model):
 class VirtualMachinePatchStatus(msrest.serialization.Model):
     """The status of virtual machine patch operations.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :param available_patch_summary: The available patch summary of the latest assessment operation
      for the virtual machine.
-    :type available_patch_summary: ~azure.mgmt.compute.v2020_06_01.models.AvailablePatchSummary
+    :type available_patch_summary: ~azure.mgmt.compute.v2020_12_01.models.AvailablePatchSummary
     :param last_patch_installation_summary: The installation summary of the latest installation
      operation for the virtual machine.
     :type last_patch_installation_summary:
-     ~azure.mgmt.compute.v2020_06_01.models.LastPatchInstallationSummary
+     ~azure.mgmt.compute.v2020_12_01.models.LastPatchInstallationSummary
+    :ivar configuration_statuses: The enablement status of the specified patchMode.
+    :vartype configuration_statuses:
+     list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
     """
+
+    _validation = {
+        'configuration_statuses': {'readonly': True},
+    }
 
     _attribute_map = {
         'available_patch_summary': {'key': 'availablePatchSummary', 'type': 'AvailablePatchSummary'},
         'last_patch_installation_summary': {'key': 'lastPatchInstallationSummary', 'type': 'LastPatchInstallationSummary'},
+        'configuration_statuses': {'key': 'configurationStatuses', 'type': '[InstanceViewStatus]'},
     }
 
     def __init__(
@@ -5278,6 +5672,7 @@ class VirtualMachinePatchStatus(msrest.serialization.Model):
         super(VirtualMachinePatchStatus, self).__init__(**kwargs)
         self.available_patch_summary = kwargs.get('available_patch_summary', None)
         self.last_patch_installation_summary = kwargs.get('last_patch_installation_summary', None)
+        self.configuration_statuses = None
 
 
 class VirtualMachineReimageParameters(msrest.serialization.Model):
@@ -5318,12 +5713,12 @@ class VirtualMachineRunCommand(Resource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param source: The source of the run command script.
-    :type source: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandScriptSource
+    :type source: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineRunCommandScriptSource
     :param parameters: The parameters used by the script.
-    :type parameters: list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
+    :type parameters: list[~azure.mgmt.compute.v2020_12_01.models.RunCommandInputParameter]
     :param protected_parameters: The parameters used by the script.
     :type protected_parameters:
-     list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
+     list[~azure.mgmt.compute.v2020_12_01.models.RunCommandInputParameter]
     :param async_execution: Optional. If set to true, provisioning will complete as soon as the
      script starts and will not wait for script to complete.
     :type async_execution: bool
@@ -5344,7 +5739,7 @@ class VirtualMachineRunCommand(Resource):
     :vartype provisioning_state: str
     :ivar instance_view: The virtual machine run command instance view.
     :vartype instance_view:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandInstanceView
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineRunCommandInstanceView
     """
 
     _validation = {
@@ -5398,7 +5793,7 @@ class VirtualMachineRunCommandInstanceView(msrest.serialization.Model):
 
     :param execution_state: Script execution status. Possible values include: "Unknown", "Pending",
      "Running", "Failed", "Succeeded", "TimedOut", "Canceled".
-    :type execution_state: str or ~azure.mgmt.compute.v2020_06_01.models.ExecutionState
+    :type execution_state: str or ~azure.mgmt.compute.v2020_12_01.models.ExecutionState
     :param execution_message: Communicate script configuration errors or execution messages.
     :type execution_message: str
     :param exit_code: Exit code returned from script execution.
@@ -5412,7 +5807,7 @@ class VirtualMachineRunCommandInstanceView(msrest.serialization.Model):
     :param end_time: Script end time.
     :type end_time: ~datetime.datetime
     :param statuses: The resource status information.
-    :type statuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :type statuses: list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
     """
 
     _attribute_map = {
@@ -5474,7 +5869,7 @@ class VirtualMachineRunCommandsListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of run commands.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommand]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineRunCommand]
     :param next_link: The uri to fetch the next page of run commands.
     :type next_link: str
     """
@@ -5505,12 +5900,12 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param source: The source of the run command script.
-    :type source: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandScriptSource
+    :type source: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineRunCommandScriptSource
     :param parameters: The parameters used by the script.
-    :type parameters: list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
+    :type parameters: list[~azure.mgmt.compute.v2020_12_01.models.RunCommandInputParameter]
     :param protected_parameters: The parameters used by the script.
     :type protected_parameters:
-     list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
+     list[~azure.mgmt.compute.v2020_12_01.models.RunCommandInputParameter]
     :param async_execution: Optional. If set to true, provisioning will complete as soon as the
      script starts and will not wait for script to complete.
     :type async_execution: bool
@@ -5531,7 +5926,7 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
     :vartype provisioning_state: str
     :ivar instance_view: The virtual machine run command instance view.
     :vartype instance_view:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandInstanceView
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineRunCommandInstanceView
     """
 
     _validation = {
@@ -5590,25 +5985,27 @@ class VirtualMachineScaleSet(Resource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param sku: The virtual machine scale set sku.
-    :type sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
+    :type sku: ~azure.mgmt.compute.v2020_12_01.models.Sku
     :param plan: Specifies information about the marketplace image used to create the virtual
      machine. This element is only used for marketplace images. Before you can use a marketplace
      image from an API, you must enable the image for programmatic use.  In the Azure portal, find
      the marketplace image that you want to use and then click **Want to deploy programmatically,
      Get Started ->**. Enter any required information and then click **Save**.
-    :type plan: ~azure.mgmt.compute.v2020_06_01.models.Plan
+    :type plan: ~azure.mgmt.compute.v2020_12_01.models.Plan
     :param identity: The identity of the virtual machine scale set, if configured.
-    :type identity: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetIdentity
+    :type identity: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetIdentity
     :param zones: The virtual machine scale set zones. NOTE: Availability zones can only be set
      when you create the scale set.
     :type zones: list[str]
+    :param extended_location: The extended location of the Virtual Machine Scale Set.
+    :type extended_location: ~azure.mgmt.compute.v2020_12_01.models.ExtendedLocation
     :param upgrade_policy: The upgrade policy.
-    :type upgrade_policy: ~azure.mgmt.compute.v2020_06_01.models.UpgradePolicy
+    :type upgrade_policy: ~azure.mgmt.compute.v2020_12_01.models.UpgradePolicy
     :param automatic_repairs_policy: Policy for automatic repairs.
-    :type automatic_repairs_policy: ~azure.mgmt.compute.v2020_06_01.models.AutomaticRepairsPolicy
+    :type automatic_repairs_policy: ~azure.mgmt.compute.v2020_12_01.models.AutomaticRepairsPolicy
     :param virtual_machine_profile: The virtual machine profile.
     :type virtual_machine_profile:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMProfile
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetVMProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :param overprovision: Specifies whether the Virtual Machine Scale Set should be
@@ -5632,18 +6029,21 @@ class VirtualMachineScaleSet(Resource):
     :param proximity_placement_group: Specifies information about the proximity placement group
      that the virtual machine scale set should be assigned to. :code:`<br>`:code:`<br>`Minimum api-
      version: 2018-04-01.
-    :type proximity_placement_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type proximity_placement_group: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param host_group: Specifies information about the dedicated host group that the virtual
      machine scale set resides in. :code:`<br>`:code:`<br>`Minimum api-version: 2020-06-01.
-    :type host_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type host_group: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param additional_capabilities: Specifies additional capabilities enabled or disabled on the
      Virtual Machines in the Virtual Machine Scale Set. For instance: whether the Virtual Machines
      have the capability to support attaching managed data disks with UltraSSD_LRS storage account
      type.
-    :type additional_capabilities: ~azure.mgmt.compute.v2020_06_01.models.AdditionalCapabilities
+    :type additional_capabilities: ~azure.mgmt.compute.v2020_12_01.models.AdditionalCapabilities
     :param scale_in_policy: Specifies the scale-in policy that decides which virtual machines are
      chosen for removal when a Virtual Machine Scale Set is scaled-in.
-    :type scale_in_policy: ~azure.mgmt.compute.v2020_06_01.models.ScaleInPolicy
+    :type scale_in_policy: ~azure.mgmt.compute.v2020_12_01.models.ScaleInPolicy
+    :param orchestration_mode: Specifies the orchestration mode for the virtual machine scale set.
+     Possible values include: "Uniform", "Flexible".
+    :type orchestration_mode: str or ~azure.mgmt.compute.v2020_12_01.models.OrchestrationMode
     """
 
     _validation = {
@@ -5665,6 +6065,7 @@ class VirtualMachineScaleSet(Resource):
         'plan': {'key': 'plan', 'type': 'Plan'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
+        'extended_location': {'key': 'extendedLocation', 'type': 'ExtendedLocation'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
         'automatic_repairs_policy': {'key': 'properties.automaticRepairsPolicy', 'type': 'AutomaticRepairsPolicy'},
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile'},
@@ -5679,6 +6080,7 @@ class VirtualMachineScaleSet(Resource):
         'host_group': {'key': 'properties.hostGroup', 'type': 'SubResource'},
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'scale_in_policy': {'key': 'properties.scaleInPolicy', 'type': 'ScaleInPolicy'},
+        'orchestration_mode': {'key': 'properties.orchestrationMode', 'type': 'str'},
     }
 
     def __init__(
@@ -5690,6 +6092,7 @@ class VirtualMachineScaleSet(Resource):
         self.plan = kwargs.get('plan', None)
         self.identity = kwargs.get('identity', None)
         self.zones = kwargs.get('zones', None)
+        self.extended_location = kwargs.get('extended_location', None)
         self.upgrade_policy = kwargs.get('upgrade_policy', None)
         self.automatic_repairs_policy = kwargs.get('automatic_repairs_policy', None)
         self.virtual_machine_profile = kwargs.get('virtual_machine_profile', None)
@@ -5704,6 +6107,7 @@ class VirtualMachineScaleSet(Resource):
         self.host_group = kwargs.get('host_group', None)
         self.additional_capabilities = kwargs.get('additional_capabilities', None)
         self.scale_in_policy = kwargs.get('scale_in_policy', None)
+        self.orchestration_mode = kwargs.get('orchestration_mode', None)
 
 
 class VirtualMachineScaleSetDataDisk(msrest.serialization.Model):
@@ -5722,20 +6126,20 @@ class VirtualMachineScaleSetDataDisk(msrest.serialization.Model):
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
      storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
      "ReadWrite".
-    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_12_01.models.CachingTypes
     :param write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
     :type write_accelerator_enabled: bool
     :param create_option: Required. The create option. Possible values include: "FromImage",
      "Empty", "Attach".
-    :type create_option: str or ~azure.mgmt.compute.v2020_06_01.models.DiskCreateOptionTypes
+    :type create_option: str or ~azure.mgmt.compute.v2020_12_01.models.DiskCreateOptionTypes
     :param disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
      used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
      This value cannot be larger than 1023 GB.
     :type disk_size_gb: int
     :param managed_disk: The managed disk parameters.
     :type managed_disk:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetManagedDiskParameters
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetManagedDiskParameters
     :param disk_iops_read_write: Specifies the Read-Write IOPS for the managed disk. Should be used
      only when StorageAccountType is UltraSSD_LRS. If not specified, a default value would be
      assigned based on diskSizeGB.
@@ -5866,7 +6270,7 @@ class VirtualMachineScaleSetExtensionListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of VM scale set extensions.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetExtension]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetExtension]
     :param next_link: The uri to fetch the next page of VM scale set extensions. Call ListNext()
      with this to fetch the next page of VM scale set extensions.
     :type next_link: str
@@ -5894,7 +6298,7 @@ class VirtualMachineScaleSetExtensionProfile(msrest.serialization.Model):
     """Describes a virtual machine scale set extension profile.
 
     :param extensions: The virtual machine scale set child extension resources.
-    :type extensions: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetExtension]
+    :type extensions: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetExtension]
     :param extensions_time_budget: Specifies the time alloted for all extensions to start. The time
      duration should be between 15 minutes and 120 minutes (inclusive) and should be specified in
      ISO 8601 format. The default value is 90 minutes (PT1H30M). :code:`<br>`:code:`<br>` Minimum
@@ -6014,13 +6418,13 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
      assigned identities. The type 'None' will remove any identities from the virtual machine scale
      set. Possible values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned",
      "None".
-    :type type: str or ~azure.mgmt.compute.v2020_06_01.models.ResourceIdentityType
+    :type type: str or ~azure.mgmt.compute.v2020_12_01.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated with the virtual
      machine scale set. The user identity dictionary key references will be ARM resource ids in the
      form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -6083,15 +6487,15 @@ class VirtualMachineScaleSetInstanceView(msrest.serialization.Model):
 
     :ivar virtual_machine: The instance view status summary for the virtual machine scale set.
     :vartype virtual_machine:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetInstanceViewStatusesSummary
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetInstanceViewStatusesSummary
     :ivar extensions: The extensions information.
     :vartype extensions:
-     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMExtensionsSummary]
+     list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetVMExtensionsSummary]
     :param statuses: The resource status information.
-    :type statuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :type statuses: list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
     :ivar orchestration_services: The orchestration services information.
     :vartype orchestration_services:
-     list[~azure.mgmt.compute.v2020_06_01.models.OrchestrationServiceSummary]
+     list[~azure.mgmt.compute.v2020_12_01.models.OrchestrationServiceSummary]
     """
 
     _validation = {
@@ -6125,7 +6529,7 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(msrest.serialization.Mod
 
     :ivar statuses_summary: The extensions information.
     :vartype statuses_summary:
-     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineStatusCodeCount]
+     list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineStatusCodeCount]
     """
 
     _validation = {
@@ -6154,34 +6558,34 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     :param name: Required. The IP configuration name.
     :type name: str
     :param subnet: Specifies the identifier of the subnet.
-    :type subnet: ~azure.mgmt.compute.v2020_06_01.models.ApiEntityReference
+    :type subnet: ~azure.mgmt.compute.v2020_12_01.models.ApiEntityReference
     :param primary: Specifies the primary network interface in case the virtual machine has more
      than 1 network interface.
     :type primary: bool
     :param public_ip_address_configuration: The publicIPAddressConfiguration.
     :type public_ip_address_configuration:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetPublicIPAddressConfiguration
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetPublicIPAddressConfiguration
     :param private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
-    :type private_ip_address_version: str or ~azure.mgmt.compute.v2020_06_01.models.IPVersion
+    :type private_ip_address_version: str or ~azure.mgmt.compute.v2020_12_01.models.IPVersion
     :param application_gateway_backend_address_pools: Specifies an array of references to backend
      address pools of application gateways. A scale set can reference backend address pools of
      multiple application gateways. Multiple scale sets cannot use the same application gateway.
     :type application_gateway_backend_address_pools:
-     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_12_01.models.SubResource]
     :param application_security_groups: Specifies an array of references to application security
      group.
-    :type application_security_groups: list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
+    :type application_security_groups: list[~azure.mgmt.compute.v2020_12_01.models.SubResource]
     :param load_balancer_backend_address_pools: Specifies an array of references to backend address
      pools of load balancers. A scale set can reference backend address pools of one public and one
      internal load balancer. Multiple scale sets cannot use the same basic sku load balancer.
     :type load_balancer_backend_address_pools:
-     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_12_01.models.SubResource]
     :param load_balancer_inbound_nat_pools: Specifies an array of references to inbound Nat pools
      of the load balancers. A scale set can reference inbound nat pools of one public and one
      internal load balancer. Multiple scale sets cannot use the same basic sku load balancer.
-    :type load_balancer_inbound_nat_pools: list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
+    :type load_balancer_inbound_nat_pools: list[~azure.mgmt.compute.v2020_12_01.models.SubResource]
     """
 
     _validation = {
@@ -6246,7 +6650,7 @@ class VirtualMachineScaleSetListOSUpgradeHistory(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of OS upgrades performed on the virtual machine scale set.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.UpgradeOperationHistoricalStatusInfo]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.UpgradeOperationHistoricalStatusInfo]
     :param next_link: The uri to fetch the next page of OS Upgrade History. Call ListNext() with
      this to fetch the next page of history of upgrades.
     :type next_link: str
@@ -6276,7 +6680,7 @@ class VirtualMachineScaleSetListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of virtual machine scale sets.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSet]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSet]
     :param next_link: The uri to fetch the next page of Virtual Machine Scale Sets. Call ListNext()
      with this to fetch the next page of VMSS.
     :type next_link: str
@@ -6306,7 +6710,7 @@ class VirtualMachineScaleSetListSkusResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of skus available for the virtual machine scale set.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetSku]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetSku]
     :param next_link: The uri to fetch the next page of Virtual Machine Scale Set Skus. Call
      ListNext() with this to fetch the next page of VMSS Skus.
     :type next_link: str
@@ -6336,7 +6740,7 @@ class VirtualMachineScaleSetListWithLinkResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of virtual machine scale sets.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSet]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSet]
     :param next_link: The uri to fetch the next page of Virtual Machine Scale Sets. Call ListNext()
      with this to fetch the next page of Virtual Machine Scale Sets.
     :type next_link: str
@@ -6366,10 +6770,10 @@ class VirtualMachineScaleSetManagedDiskParameters(msrest.serialization.Model):
     :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
      UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
      include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
-    :type storage_account_type: str or ~azure.mgmt.compute.v2020_06_01.models.StorageAccountTypes
+    :type storage_account_type: str or ~azure.mgmt.compute.v2020_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     """
 
     _attribute_map = {
@@ -6404,13 +6808,13 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     :param enable_fpga: Specifies whether the network interface is FPGA networking-enabled.
     :type enable_fpga: bool
     :param network_security_group: The network security group.
-    :type network_security_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type network_security_group: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param dns_settings: The dns settings to be applied on the network interfaces.
     :type dns_settings:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetNetworkConfigurationDnsSettings
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetNetworkConfigurationDnsSettings
     :param ip_configurations: Specifies the IP configurations of the network interface.
     :type ip_configurations:
-     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetIPConfiguration]
+     list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetIPConfiguration]
     :param enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
     :type enable_ip_forwarding: bool
     """
@@ -6471,10 +6875,10 @@ class VirtualMachineScaleSetNetworkProfile(msrest.serialization.Model):
     :param health_probe: A reference to a load balancer probe used to determine the health of an
      instance in the virtual machine scale set. The reference will be in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
-    :type health_probe: ~azure.mgmt.compute.v2020_06_01.models.ApiEntityReference
+    :type health_probe: ~azure.mgmt.compute.v2020_12_01.models.ApiEntityReference
     :param network_interface_configurations: The list of network configurations.
     :type network_interface_configurations:
-     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetNetworkConfiguration]
+     list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetNetworkConfiguration]
     """
 
     _attribute_map = {
@@ -6503,7 +6907,7 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
      :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
      storage. ReadOnly for Premium storage**. Possible values include: "None", "ReadOnly",
      "ReadWrite".
-    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_12_01.models.CachingTypes
     :param write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
     :type write_accelerator_enabled: bool
@@ -6513,10 +6917,10 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
      image, you also use the imageReference element described above. If you are using a marketplace
      image, you  also use the plan element previously described. Possible values include:
      "FromImage", "Empty", "Attach".
-    :type create_option: str or ~azure.mgmt.compute.v2020_06_01.models.DiskCreateOptionTypes
+    :type create_option: str or ~azure.mgmt.compute.v2020_12_01.models.DiskCreateOptionTypes
     :param diff_disk_settings: Specifies the ephemeral disk Settings for the operating system disk
      used by the virtual machine scale set.
-    :type diff_disk_settings: ~azure.mgmt.compute.v2020_06_01.models.DiffDiskSettings
+    :type diff_disk_settings: ~azure.mgmt.compute.v2020_12_01.models.DiffDiskSettings
     :param disk_size_gb: Specifies the size of the operating system disk in gigabytes. This element
      can be used to overwrite the size of the disk in a virtual machine image.
      :code:`<br>`:code:`<br>` This value cannot be larger than 1023 GB.
@@ -6525,15 +6929,15 @@ class VirtualMachineScaleSetOSDisk(msrest.serialization.Model):
      disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>` Possible
      values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
      values include: "Windows", "Linux".
-    :type os_type: str or ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemTypes
+    :type os_type: str or ~azure.mgmt.compute.v2020_12_01.models.OperatingSystemTypes
     :param image: Specifies information about the unmanaged user image to base the scale set on.
-    :type image: ~azure.mgmt.compute.v2020_06_01.models.VirtualHardDisk
+    :type image: ~azure.mgmt.compute.v2020_12_01.models.VirtualHardDisk
     :param vhd_containers: Specifies the container urls that are used to store operating system
      disks for the scale set.
     :type vhd_containers: list[str]
     :param managed_disk: The managed disk parameters.
     :type managed_disk:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetManagedDiskParameters
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetManagedDiskParameters
     """
 
     _validation = {
@@ -6618,7 +7022,7 @@ class VirtualMachineScaleSetOSProfile(msrest.serialization.Model):
     :type custom_data: str
     :param windows_configuration: Specifies Windows operating system settings on the virtual
      machine.
-    :type windows_configuration: ~azure.mgmt.compute.v2020_06_01.models.WindowsConfiguration
+    :type windows_configuration: ~azure.mgmt.compute.v2020_12_01.models.WindowsConfiguration
     :param linux_configuration: Specifies the Linux operating system settings on the virtual
      machine. :code:`<br>`:code:`<br>`For a list of supported Linux distributions, see `Linux on
      Azure-Endorsed Distributions <https://docs.microsoft.com/azure/virtual-machines/virtual-
@@ -6626,10 +7030,10 @@ class VirtualMachineScaleSetOSProfile(msrest.serialization.Model):
      :code:`<br>`:code:`<br>` For running non-endorsed distributions, see `Information for Non-
      Endorsed Distributions <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-
      linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
-    :type linux_configuration: ~azure.mgmt.compute.v2020_06_01.models.LinuxConfiguration
+    :type linux_configuration: ~azure.mgmt.compute.v2020_12_01.models.LinuxConfiguration
     :param secrets: Specifies set of certificates that should be installed onto the virtual
      machines in the scale set.
-    :type secrets: list[~azure.mgmt.compute.v2020_06_01.models.VaultSecretGroup]
+    :type secrets: list[~azure.mgmt.compute.v2020_12_01.models.VaultSecretGroup]
     """
 
     _attribute_map = {
@@ -6667,15 +7071,15 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(msrest.serialization.Mo
     :type idle_timeout_in_minutes: int
     :param dns_settings: The dns settings to be applied on the publicIP addresses .
     :type dns_settings:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
     :param ip_tags: The list of IP tags associated with the public IP address.
-    :type ip_tags: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetIpTag]
+    :type ip_tags: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetIpTag]
     :param public_ip_prefix: The PublicIPPrefix from which to allocate publicIP addresses.
-    :type public_ip_prefix: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type public_ip_prefix: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param public_ip_address_version: Available from Api-Version 2019-07-01 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible values
      are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
-    :type public_ip_address_version: str or ~azure.mgmt.compute.v2020_06_01.models.IPVersion
+    :type public_ip_address_version: str or ~azure.mgmt.compute.v2020_12_01.models.IPVersion
     """
 
     _validation = {
@@ -6764,9 +7168,9 @@ class VirtualMachineScaleSetSku(msrest.serialization.Model):
     :ivar resource_type: The type of resource the sku applies to.
     :vartype resource_type: str
     :ivar sku: The Sku.
-    :vartype sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
+    :vartype sku: ~azure.mgmt.compute.v2020_12_01.models.Sku
     :ivar capacity: Specifies the number of virtual machines in the scale set.
-    :vartype capacity: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetSkuCapacity
+    :vartype capacity: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetSkuCapacity
     """
 
     _validation = {
@@ -6805,7 +7209,7 @@ class VirtualMachineScaleSetSkuCapacity(msrest.serialization.Model):
     :ivar scale_type: The scale type applicable to the sku. Possible values include: "Automatic",
      "None".
     :vartype scale_type: str or
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetSkuScaleType
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetSkuScaleType
     """
 
     _validation = {
@@ -6840,19 +7244,19 @@ class VirtualMachineScaleSetStorageProfile(msrest.serialization.Model):
      information about platform images, marketplace images, or virtual machine images. This element
      is required when you want to use a platform image, marketplace image, or virtual machine image,
      but is not used in other creation operations.
-    :type image_reference: ~azure.mgmt.compute.v2020_06_01.models.ImageReference
+    :type image_reference: ~azure.mgmt.compute.v2020_12_01.models.ImageReference
     :param os_disk: Specifies information about the operating system disk used by the virtual
      machines in the scale set. :code:`<br>`:code:`<br>` For more information about disks, see
      `About disks and VHDs for Azure virtual machines <https://docs.microsoft.com/azure/virtual-
      machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-
      machines%2fwindows%2ftoc.json>`_.
-    :type os_disk: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetOSDisk
+    :type os_disk: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetOSDisk
     :param data_disks: Specifies the parameters that are used to add data disks to the virtual
      machines in the scale set. :code:`<br>`:code:`<br>` For more information about disks, see
      `About disks and VHDs for Azure virtual machines <https://docs.microsoft.com/azure/virtual-
      machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-
      machines%2fwindows%2ftoc.json>`_.
-    :type data_disks: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetDataDisk]
+    :type data_disks: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetDataDisk]
     """
 
     _attribute_map = {
@@ -6877,19 +7281,19 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param sku: The virtual machine scale set sku.
-    :type sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
+    :type sku: ~azure.mgmt.compute.v2020_12_01.models.Sku
     :param plan: The purchase plan when deploying a virtual machine scale set from VM Marketplace
      images.
-    :type plan: ~azure.mgmt.compute.v2020_06_01.models.Plan
+    :type plan: ~azure.mgmt.compute.v2020_12_01.models.Plan
     :param identity: The identity of the virtual machine scale set, if configured.
-    :type identity: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetIdentity
+    :type identity: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetIdentity
     :param upgrade_policy: The upgrade policy.
-    :type upgrade_policy: ~azure.mgmt.compute.v2020_06_01.models.UpgradePolicy
+    :type upgrade_policy: ~azure.mgmt.compute.v2020_12_01.models.UpgradePolicy
     :param automatic_repairs_policy: Policy for automatic repairs.
-    :type automatic_repairs_policy: ~azure.mgmt.compute.v2020_06_01.models.AutomaticRepairsPolicy
+    :type automatic_repairs_policy: ~azure.mgmt.compute.v2020_12_01.models.AutomaticRepairsPolicy
     :param virtual_machine_profile: The virtual machine profile.
     :type virtual_machine_profile:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateVMProfile
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetUpdateVMProfile
     :param overprovision: Specifies whether the Virtual Machine Scale Set should be
      overprovisioned.
     :type overprovision: bool
@@ -6905,14 +7309,14 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      Virtual Machines in the Virtual Machine Scale Set. For instance: whether the Virtual Machines
      have the capability to support attaching managed data disks with UltraSSD_LRS storage account
      type.
-    :type additional_capabilities: ~azure.mgmt.compute.v2020_06_01.models.AdditionalCapabilities
+    :type additional_capabilities: ~azure.mgmt.compute.v2020_12_01.models.AdditionalCapabilities
     :param scale_in_policy: Specifies the scale-in policy that decides which virtual machines are
      chosen for removal when a Virtual Machine Scale Set is scaled-in.
-    :type scale_in_policy: ~azure.mgmt.compute.v2020_06_01.models.ScaleInPolicy
+    :type scale_in_policy: ~azure.mgmt.compute.v2020_12_01.models.ScaleInPolicy
     :param proximity_placement_group: Specifies information about the proximity placement group
      that the virtual machine scale set should be assigned to. :code:`<br>`:code:`<br>`Minimum api-
      version: 2018-04-01.
-    :type proximity_placement_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type proximity_placement_group: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     """
 
     _attribute_map = {
@@ -6958,29 +7362,29 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
     :param name: The IP configuration name.
     :type name: str
     :param subnet: The subnet.
-    :type subnet: ~azure.mgmt.compute.v2020_06_01.models.ApiEntityReference
+    :type subnet: ~azure.mgmt.compute.v2020_12_01.models.ApiEntityReference
     :param primary: Specifies the primary IP Configuration in case the network interface has more
      than one IP Configuration.
     :type primary: bool
     :param public_ip_address_configuration: The publicIPAddressConfiguration.
     :type public_ip_address_configuration:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
     :param private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it represents
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Possible values include: "IPv4", "IPv6".
-    :type private_ip_address_version: str or ~azure.mgmt.compute.v2020_06_01.models.IPVersion
+    :type private_ip_address_version: str or ~azure.mgmt.compute.v2020_12_01.models.IPVersion
     :param application_gateway_backend_address_pools: The application gateway backend address
      pools.
     :type application_gateway_backend_address_pools:
-     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_12_01.models.SubResource]
     :param application_security_groups: Specifies an array of references to application security
      group.
-    :type application_security_groups: list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
+    :type application_security_groups: list[~azure.mgmt.compute.v2020_12_01.models.SubResource]
     :param load_balancer_backend_address_pools: The load balancer backend address pools.
     :type load_balancer_backend_address_pools:
-     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_12_01.models.SubResource]
     :param load_balancer_inbound_nat_pools: The load balancer inbound nat pools.
-    :type load_balancer_inbound_nat_pools: list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
+    :type load_balancer_inbound_nat_pools: list[~azure.mgmt.compute.v2020_12_01.models.SubResource]
     """
 
     _attribute_map = {
@@ -7027,13 +7431,13 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
     :param enable_fpga: Specifies whether the network interface is FPGA networking-enabled.
     :type enable_fpga: bool
     :param network_security_group: The network security group.
-    :type network_security_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type network_security_group: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param dns_settings: The dns settings to be applied on the network interfaces.
     :type dns_settings:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetNetworkConfigurationDnsSettings
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetNetworkConfigurationDnsSettings
     :param ip_configurations: The virtual machine scale set IP Configuration.
     :type ip_configurations:
-     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateIPConfiguration]
+     list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetUpdateIPConfiguration]
     :param enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
     :type enable_ip_forwarding: bool
     """
@@ -7071,10 +7475,10 @@ class VirtualMachineScaleSetUpdateNetworkProfile(msrest.serialization.Model):
     :param health_probe: A reference to a load balancer probe used to determine the health of an
      instance in the virtual machine scale set. The reference will be in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
-    :type health_probe: ~azure.mgmt.compute.v2020_06_01.models.ApiEntityReference
+    :type health_probe: ~azure.mgmt.compute.v2020_12_01.models.ApiEntityReference
     :param network_interface_configurations: The list of network configurations.
     :type network_interface_configurations:
-     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateNetworkConfiguration]
+     list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetUpdateNetworkConfiguration]
     """
 
     _attribute_map = {
@@ -7095,7 +7499,7 @@ class VirtualMachineScaleSetUpdateOSDisk(msrest.serialization.Model):
     """Describes virtual machine scale set operating system disk Update Object. This should be used for Updating VMSS OS Disk.
 
     :param caching: The caching type. Possible values include: "None", "ReadOnly", "ReadWrite".
-    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_12_01.models.CachingTypes
     :param write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
     :type write_accelerator_enabled: bool
@@ -7106,12 +7510,12 @@ class VirtualMachineScaleSetUpdateOSDisk(msrest.serialization.Model):
     :param image: The Source User Image VirtualHardDisk. This VirtualHardDisk will be copied before
      using it to attach to the Virtual Machine. If SourceImage is provided, the destination
      VirtualHardDisk should not exist.
-    :type image: ~azure.mgmt.compute.v2020_06_01.models.VirtualHardDisk
+    :type image: ~azure.mgmt.compute.v2020_12_01.models.VirtualHardDisk
     :param vhd_containers: The list of virtual hard disk container uris.
     :type vhd_containers: list[str]
     :param managed_disk: The managed disk parameters.
     :type managed_disk:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetManagedDiskParameters
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetManagedDiskParameters
     """
 
     _attribute_map = {
@@ -7142,11 +7546,11 @@ class VirtualMachineScaleSetUpdateOSProfile(msrest.serialization.Model):
     :param custom_data: A base-64 encoded string of custom data.
     :type custom_data: str
     :param windows_configuration: The Windows Configuration of the OS profile.
-    :type windows_configuration: ~azure.mgmt.compute.v2020_06_01.models.WindowsConfiguration
+    :type windows_configuration: ~azure.mgmt.compute.v2020_12_01.models.WindowsConfiguration
     :param linux_configuration: The Linux Configuration of the OS profile.
-    :type linux_configuration: ~azure.mgmt.compute.v2020_06_01.models.LinuxConfiguration
+    :type linux_configuration: ~azure.mgmt.compute.v2020_12_01.models.LinuxConfiguration
     :param secrets: The List of certificates for addition to the VM.
-    :type secrets: list[~azure.mgmt.compute.v2020_06_01.models.VaultSecretGroup]
+    :type secrets: list[~azure.mgmt.compute.v2020_12_01.models.VaultSecretGroup]
     """
 
     _attribute_map = {
@@ -7176,7 +7580,7 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(msrest.serializat
     :type idle_timeout_in_minutes: int
     :param dns_settings: The dns settings to be applied on the publicIP addresses .
     :type dns_settings:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
     """
 
     _attribute_map = {
@@ -7199,11 +7603,11 @@ class VirtualMachineScaleSetUpdateStorageProfile(msrest.serialization.Model):
     """Describes a virtual machine scale set storage profile.
 
     :param image_reference: The image reference.
-    :type image_reference: ~azure.mgmt.compute.v2020_06_01.models.ImageReference
+    :type image_reference: ~azure.mgmt.compute.v2020_12_01.models.ImageReference
     :param os_disk: The OS disk.
-    :type os_disk: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateOSDisk
+    :type os_disk: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetUpdateOSDisk
     :param data_disks: The data disks.
-    :type data_disks: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetDataDisk]
+    :type data_disks: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetDataDisk]
     """
 
     _attribute_map = {
@@ -7226,27 +7630,27 @@ class VirtualMachineScaleSetUpdateVMProfile(msrest.serialization.Model):
     """Describes a virtual machine scale set virtual machine profile.
 
     :param os_profile: The virtual machine scale set OS profile.
-    :type os_profile: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateOSProfile
+    :type os_profile: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetUpdateOSProfile
     :param storage_profile: The virtual machine scale set storage profile.
     :type storage_profile:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateStorageProfile
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetUpdateStorageProfile
     :param network_profile: The virtual machine scale set network profile.
     :type network_profile:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateNetworkProfile
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetUpdateNetworkProfile
     :param security_profile: The virtual machine scale set Security profile.
-    :type security_profile: ~azure.mgmt.compute.v2020_06_01.models.SecurityProfile
+    :type security_profile: ~azure.mgmt.compute.v2020_12_01.models.SecurityProfile
     :param diagnostics_profile: The virtual machine scale set diagnostics profile.
-    :type diagnostics_profile: ~azure.mgmt.compute.v2020_06_01.models.DiagnosticsProfile
+    :type diagnostics_profile: ~azure.mgmt.compute.v2020_12_01.models.DiagnosticsProfile
     :param extension_profile: The virtual machine scale set extension profile.
     :type extension_profile:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetExtensionProfile
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetExtensionProfile
     :param license_type: The license type, which is for bring your own license scenario.
     :type license_type: str
     :param billing_profile: Specifies the billing related details of a Azure Spot VMSS.
      :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01.
-    :type billing_profile: ~azure.mgmt.compute.v2020_06_01.models.BillingProfile
+    :type billing_profile: ~azure.mgmt.compute.v2020_12_01.models.BillingProfile
     :param scheduled_events_profile: Specifies Scheduled Event related configurations.
-    :type scheduled_events_profile: ~azure.mgmt.compute.v2020_06_01.models.ScheduledEventsProfile
+    :type scheduled_events_profile: ~azure.mgmt.compute.v2020_12_01.models.ScheduledEventsProfile
     """
 
     _attribute_map = {
@@ -7297,15 +7701,15 @@ class VirtualMachineScaleSetVM(Resource):
     :ivar instance_id: The virtual machine instance ID.
     :vartype instance_id: str
     :ivar sku: The virtual machine SKU.
-    :vartype sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
+    :vartype sku: ~azure.mgmt.compute.v2020_12_01.models.Sku
     :param plan: Specifies information about the marketplace image used to create the virtual
      machine. This element is only used for marketplace images. Before you can use a marketplace
      image from an API, you must enable the image for programmatic use.  In the Azure portal, find
      the marketplace image that you want to use and then click **Want to deploy programmatically,
      Get Started ->**. Enter any required information and then click **Save**.
-    :type plan: ~azure.mgmt.compute.v2020_06_01.models.Plan
+    :type plan: ~azure.mgmt.compute.v2020_12_01.models.Plan
     :ivar resources: The virtual machine child extension resources.
-    :vartype resources: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtension]
+    :vartype resources: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineExtension]
     :ivar zones: The virtual machine zones.
     :vartype zones: list[str]
     :ivar latest_model_applied: Specifies whether the latest model has been applied to the virtual
@@ -7315,29 +7719,29 @@ class VirtualMachineScaleSetVM(Resource):
     :vartype vm_id: str
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMInstanceView
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetVMInstanceView
     :param hardware_profile: Specifies the hardware settings for the virtual machine.
-    :type hardware_profile: ~azure.mgmt.compute.v2020_06_01.models.HardwareProfile
+    :type hardware_profile: ~azure.mgmt.compute.v2020_12_01.models.HardwareProfile
     :param storage_profile: Specifies the storage settings for the virtual machine disks.
-    :type storage_profile: ~azure.mgmt.compute.v2020_06_01.models.StorageProfile
+    :type storage_profile: ~azure.mgmt.compute.v2020_12_01.models.StorageProfile
     :param additional_capabilities: Specifies additional capabilities enabled or disabled on the
      virtual machine in the scale set. For instance: whether the virtual machine has the capability
      to support attaching managed data disks with UltraSSD_LRS storage account type.
-    :type additional_capabilities: ~azure.mgmt.compute.v2020_06_01.models.AdditionalCapabilities
+    :type additional_capabilities: ~azure.mgmt.compute.v2020_12_01.models.AdditionalCapabilities
     :param os_profile: Specifies the operating system settings for the virtual machine.
-    :type os_profile: ~azure.mgmt.compute.v2020_06_01.models.OSProfile
+    :type os_profile: ~azure.mgmt.compute.v2020_12_01.models.OSProfile
     :param security_profile: Specifies the Security related profile settings for the virtual
      machine.
-    :type security_profile: ~azure.mgmt.compute.v2020_06_01.models.SecurityProfile
+    :type security_profile: ~azure.mgmt.compute.v2020_12_01.models.SecurityProfile
     :param network_profile: Specifies the network interfaces of the virtual machine.
-    :type network_profile: ~azure.mgmt.compute.v2020_06_01.models.NetworkProfile
+    :type network_profile: ~azure.mgmt.compute.v2020_12_01.models.NetworkProfile
     :param network_profile_configuration: Specifies the network profile configuration of the
      virtual machine.
     :type network_profile_configuration:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMNetworkProfileConfiguration
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetVMNetworkProfileConfiguration
     :param diagnostics_profile: Specifies the boot diagnostic settings state.
      :code:`<br>`:code:`<br>`Minimum api-version: 2015-06-15.
-    :type diagnostics_profile: ~azure.mgmt.compute.v2020_06_01.models.DiagnosticsProfile
+    :type diagnostics_profile: ~azure.mgmt.compute.v2020_12_01.models.DiagnosticsProfile
     :param availability_set: Specifies information about the availability set that the virtual
      machine should be assigned to. Virtual machines specified in the same availability set are
      allocated to different nodes to maximize availability. For more information about availability
@@ -7349,7 +7753,7 @@ class VirtualMachineScaleSetVM(Resource):
      planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
      :code:`<br>`:code:`<br>` Currently, a VM can only be added to availability set at creation
      time. An existing VM cannot be added to an availability set.
-    :type availability_set: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type availability_set: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :param license_type: Specifies that the image or disk that is being used was licensed on-
@@ -7368,7 +7772,7 @@ class VirtualMachineScaleSetVM(Resource):
     :vartype model_definition_applied: str
     :param protection_policy: Specifies the protection policy of the virtual machine.
     :type protection_policy:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMProtectionPolicy
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetVMProtectionPolicy
     """
 
     _validation = {
@@ -7480,7 +7884,7 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :param instance_view: The virtual machine extension instance view.
-    :type instance_view: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtensionInstanceView
+    :type instance_view: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineExtensionInstanceView
     """
 
     _validation = {
@@ -7529,7 +7933,7 @@ class VirtualMachineScaleSetVMExtensionsListResult(msrest.serialization.Model):
     """The List VMSS VM Extension operation response.
 
     :param value: The list of VMSS VM extensions.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMExtension]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetVMExtension]
     """
 
     _attribute_map = {
@@ -7553,7 +7957,7 @@ class VirtualMachineScaleSetVMExtensionsSummary(msrest.serialization.Model):
     :vartype name: str
     :ivar statuses_summary: The extensions information.
     :vartype statuses_summary:
-     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineStatusCodeCount]
+     list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineStatusCodeCount]
     """
 
     _validation = {
@@ -7705,24 +8109,24 @@ class VirtualMachineScaleSetVMInstanceView(msrest.serialization.Model):
     :param rdp_thumb_print: The Remote desktop certificate thumbprint.
     :type rdp_thumb_print: str
     :param vm_agent: The VM Agent running on the virtual machine.
-    :type vm_agent: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineAgentInstanceView
+    :type vm_agent: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineAgentInstanceView
     :param maintenance_redeploy_status: The Maintenance Operation status on the virtual machine.
     :type maintenance_redeploy_status:
-     ~azure.mgmt.compute.v2020_06_01.models.MaintenanceRedeployStatus
+     ~azure.mgmt.compute.v2020_12_01.models.MaintenanceRedeployStatus
     :param disks: The disks information.
-    :type disks: list[~azure.mgmt.compute.v2020_06_01.models.DiskInstanceView]
+    :type disks: list[~azure.mgmt.compute.v2020_12_01.models.DiskInstanceView]
     :param extensions: The extensions information.
     :type extensions:
-     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtensionInstanceView]
+     list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineExtensionInstanceView]
     :ivar vm_health: The health status for the VM.
-    :vartype vm_health: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineHealthStatus
+    :vartype vm_health: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineHealthStatus
     :param boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
      Console Output and Screenshot to diagnose VM status. :code:`<br>`:code:`<br>` You can easily
      view the output of your console log. :code:`<br>`:code:`<br>` Azure also enables you to see a
      screenshot of the VM from the hypervisor.
-    :type boot_diagnostics: ~azure.mgmt.compute.v2020_06_01.models.BootDiagnosticsInstanceView
+    :type boot_diagnostics: ~azure.mgmt.compute.v2020_12_01.models.BootDiagnosticsInstanceView
     :param statuses: The resource status information.
-    :type statuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :type statuses: list[~azure.mgmt.compute.v2020_12_01.models.InstanceViewStatus]
     :ivar assigned_host: Resource id of the dedicated host, on which the virtual machine is
      allocated through automatic placement, when the virtual machine is associated with a dedicated
      host group that has automatic placement enabled. :code:`<br>`:code:`<br>`Minimum api-version:
@@ -7778,7 +8182,7 @@ class VirtualMachineScaleSetVMListResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The list of virtual machine scale sets VMs.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVM]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetVM]
     :param next_link: The uri to fetch the next page of Virtual Machine Scale Set VMs. Call
      ListNext() with this to fetch the next page of VMSS VMs.
     :type next_link: str
@@ -7807,7 +8211,7 @@ class VirtualMachineScaleSetVMNetworkProfileConfiguration(msrest.serialization.M
 
     :param network_interface_configurations: The list of network configurations.
     :type network_interface_configurations:
-     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetNetworkConfiguration]
+     list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetNetworkConfiguration]
     """
 
     _attribute_map = {
@@ -7827,24 +8231,24 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
 
     :param os_profile: Specifies the operating system settings for the virtual machines in the
      scale set.
-    :type os_profile: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetOSProfile
+    :type os_profile: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetOSProfile
     :param storage_profile: Specifies the storage settings for the virtual machine disks.
     :type storage_profile:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetStorageProfile
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetStorageProfile
     :param network_profile: Specifies properties of the network interfaces of the virtual machines
      in the scale set.
     :type network_profile:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetNetworkProfile
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetNetworkProfile
     :param security_profile: Specifies the Security related profile settings for the virtual
      machines in the scale set.
-    :type security_profile: ~azure.mgmt.compute.v2020_06_01.models.SecurityProfile
+    :type security_profile: ~azure.mgmt.compute.v2020_12_01.models.SecurityProfile
     :param diagnostics_profile: Specifies the boot diagnostic settings state.
      :code:`<br>`:code:`<br>`Minimum api-version: 2015-06-15.
-    :type diagnostics_profile: ~azure.mgmt.compute.v2020_06_01.models.DiagnosticsProfile
+    :type diagnostics_profile: ~azure.mgmt.compute.v2020_12_01.models.DiagnosticsProfile
     :param extension_profile: Specifies a collection of settings for extensions installed on
      virtual machines in the scale set.
     :type extension_profile:
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetExtensionProfile
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineScaleSetExtensionProfile
     :param license_type: Specifies that the image or disk that is being used was licensed on-
      premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
      :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
@@ -7859,7 +8263,7 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
     :param priority: Specifies the priority for the virtual machines in the scale set.
      :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview. Possible values include:
      "Regular", "Low", "Spot".
-    :type priority: str or ~azure.mgmt.compute.v2020_06_01.models.VirtualMachinePriorityTypes
+    :type priority: str or ~azure.mgmt.compute.v2020_12_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
      Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
@@ -7867,12 +8271,12 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
      and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
      "Delete".
     :type eviction_policy: str or
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineEvictionPolicyTypes
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineEvictionPolicyTypes
     :param billing_profile: Specifies the billing related details of a Azure Spot VMSS.
      :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01.
-    :type billing_profile: ~azure.mgmt.compute.v2020_06_01.models.BillingProfile
+    :type billing_profile: ~azure.mgmt.compute.v2020_12_01.models.BillingProfile
     :param scheduled_events_profile: Specifies Scheduled Event related configurations.
-    :type scheduled_events_profile: ~azure.mgmt.compute.v2020_06_01.models.ScheduledEventsProfile
+    :type scheduled_events_profile: ~azure.mgmt.compute.v2020_12_01.models.ScheduledEventsProfile
     """
 
     _attribute_map = {
@@ -7997,7 +8401,7 @@ class VirtualMachineSizeListResult(msrest.serialization.Model):
     """The List Virtual Machine operation response.
 
     :param value: The list of virtual machine sizes.
-    :type value: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineSize]
+    :type value: list[~azure.mgmt.compute.v2020_12_01.models.VirtualMachineSize]
     """
 
     _attribute_map = {
@@ -8023,14 +8427,14 @@ class VirtualMachineSoftwarePatchProperties(msrest.serialization.Model):
     :vartype name: str
     :ivar version: The version number of the patch. This property applies only to Linux patches.
     :vartype version: str
-    :ivar kbid: The KBID of the patch. Only applies to Windows patches.
-    :vartype kbid: str
+    :ivar kb_id: The KBID of the patch. Only applies to Windows patches.
+    :vartype kb_id: str
     :ivar classifications: The classification(s) of the patch as provided by the patch publisher.
     :vartype classifications: list[str]
     :ivar reboot_behavior: Describes the reboot requirements of the patch. Possible values include:
-     "NeverReboots", "AlwaysRequiresReboot", "CanRequestReboot".
+     "Unknown", "NeverReboots", "AlwaysRequiresReboot", "CanRequestReboot".
     :vartype reboot_behavior: str or
-     ~azure.mgmt.compute.v2020_06_01.models.SoftwareUpdateRebootBehavior
+     ~azure.mgmt.compute.v2020_12_01.models.VMGuestPatchRebootBehavior
     :ivar activity_id: The activity ID of the operation that produced this result. It is used to
      correlate across CRP and extension logs.
     :vartype activity_id: str
@@ -8038,17 +8442,16 @@ class VirtualMachineSoftwarePatchProperties(msrest.serialization.Model):
     :vartype published_date: ~datetime.datetime
     :ivar last_modified_date_time: The UTC timestamp of the last update to this patch record.
     :vartype last_modified_date_time: ~datetime.datetime
-    :ivar assessment_state: Describes the outcome of an install operation for a given patch.
-     Possible values include: "Installed", "Failed", "Excluded", "NotSelected", "Pending",
-     "Available".
-    :vartype assessment_state: str or ~azure.mgmt.compute.v2020_06_01.models.PatchAssessmentState
+    :ivar assessment_state: Describes the availability of a given patch. Possible values include:
+     "Unknown", "Available".
+    :vartype assessment_state: str or ~azure.mgmt.compute.v2020_12_01.models.PatchAssessmentState
     """
 
     _validation = {
         'patch_id': {'readonly': True},
         'name': {'readonly': True},
         'version': {'readonly': True},
-        'kbid': {'readonly': True},
+        'kb_id': {'readonly': True},
         'classifications': {'readonly': True},
         'reboot_behavior': {'readonly': True},
         'activity_id': {'readonly': True},
@@ -8061,7 +8464,7 @@ class VirtualMachineSoftwarePatchProperties(msrest.serialization.Model):
         'patch_id': {'key': 'patchId', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'version': {'key': 'version', 'type': 'str'},
-        'kbid': {'key': 'kbid', 'type': 'str'},
+        'kb_id': {'key': 'kbId', 'type': 'str'},
         'classifications': {'key': 'classifications', 'type': '[str]'},
         'reboot_behavior': {'key': 'rebootBehavior', 'type': 'str'},
         'activity_id': {'key': 'activityId', 'type': 'str'},
@@ -8078,7 +8481,7 @@ class VirtualMachineSoftwarePatchProperties(msrest.serialization.Model):
         self.patch_id = None
         self.name = None
         self.version = None
-        self.kbid = None
+        self.kb_id = None
         self.classifications = None
         self.reboot_behavior = None
         self.activity_id = None
@@ -8129,29 +8532,29 @@ class VirtualMachineUpdate(UpdateResource):
      image from an API, you must enable the image for programmatic use.  In the Azure portal, find
      the marketplace image that you want to use and then click **Want to deploy programmatically,
      Get Started ->**. Enter any required information and then click **Save**.
-    :type plan: ~azure.mgmt.compute.v2020_06_01.models.Plan
+    :type plan: ~azure.mgmt.compute.v2020_12_01.models.Plan
     :param identity: The identity of the virtual machine, if configured.
-    :type identity: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineIdentity
+    :type identity: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineIdentity
     :param zones: The virtual machine zones.
     :type zones: list[str]
     :param hardware_profile: Specifies the hardware settings for the virtual machine.
-    :type hardware_profile: ~azure.mgmt.compute.v2020_06_01.models.HardwareProfile
+    :type hardware_profile: ~azure.mgmt.compute.v2020_12_01.models.HardwareProfile
     :param storage_profile: Specifies the storage settings for the virtual machine disks.
-    :type storage_profile: ~azure.mgmt.compute.v2020_06_01.models.StorageProfile
+    :type storage_profile: ~azure.mgmt.compute.v2020_12_01.models.StorageProfile
     :param additional_capabilities: Specifies additional capabilities enabled or disabled on the
      virtual machine.
-    :type additional_capabilities: ~azure.mgmt.compute.v2020_06_01.models.AdditionalCapabilities
+    :type additional_capabilities: ~azure.mgmt.compute.v2020_12_01.models.AdditionalCapabilities
     :param os_profile: Specifies the operating system settings used while creating the virtual
      machine. Some of the settings cannot be changed once VM is provisioned.
-    :type os_profile: ~azure.mgmt.compute.v2020_06_01.models.OSProfile
+    :type os_profile: ~azure.mgmt.compute.v2020_12_01.models.OSProfile
     :param network_profile: Specifies the network interfaces of the virtual machine.
-    :type network_profile: ~azure.mgmt.compute.v2020_06_01.models.NetworkProfile
+    :type network_profile: ~azure.mgmt.compute.v2020_12_01.models.NetworkProfile
     :param security_profile: Specifies the Security related profile settings for the virtual
      machine.
-    :type security_profile: ~azure.mgmt.compute.v2020_06_01.models.SecurityProfile
+    :type security_profile: ~azure.mgmt.compute.v2020_12_01.models.SecurityProfile
     :param diagnostics_profile: Specifies the boot diagnostic settings state.
      :code:`<br>`:code:`<br>`Minimum api-version: 2015-06-15.
-    :type diagnostics_profile: ~azure.mgmt.compute.v2020_06_01.models.DiagnosticsProfile
+    :type diagnostics_profile: ~azure.mgmt.compute.v2020_12_01.models.DiagnosticsProfile
     :param availability_set: Specifies information about the availability set that the virtual
      machine should be assigned to. Virtual machines specified in the same availability set are
      allocated to different nodes to maximize availability. For more information about availability
@@ -8166,7 +8569,7 @@ class VirtualMachineUpdate(UpdateResource):
      group as the availability set resource. An existing VM cannot be added to an availability set.
      :code:`<br>`:code:`<br>`This property cannot exist along with a non-null
      properties.virtualMachineScaleSet reference.
-    :type availability_set: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type availability_set: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param virtual_machine_scale_set: Specifies information about the virtual machine scale set
      that the virtual machine should be assigned to. Virtual machines specified in the same virtual
      machine scale set are allocated to different nodes to maximize availability. Currently, a VM
@@ -8174,15 +8577,15 @@ class VirtualMachineUpdate(UpdateResource):
      to a virtual machine scale set. :code:`<br>`:code:`<br>`This property cannot exist along with a
      non-null properties.availabilitySet reference. :code:`<br>`:code:`<br>`Minimum api‐version:
      2019‐03‐01.
-    :type virtual_machine_scale_set: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type virtual_machine_scale_set: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param proximity_placement_group: Specifies information about the proximity placement group
      that the virtual machine should be assigned to. :code:`<br>`:code:`<br>`Minimum api-version:
      2018-04-01.
-    :type proximity_placement_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type proximity_placement_group: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param priority: Specifies the priority for the virtual machine.
      :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01. Possible values include: "Regular",
      "Low", "Spot".
-    :type priority: str or ~azure.mgmt.compute.v2020_06_01.models.VirtualMachinePriorityTypes
+    :type priority: str or ~azure.mgmt.compute.v2020_12_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
      Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
@@ -8190,21 +8593,21 @@ class VirtualMachineUpdate(UpdateResource):
      and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
      "Delete".
     :type eviction_policy: str or
-     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineEvictionPolicyTypes
+     ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineEvictionPolicyTypes
     :param billing_profile: Specifies the billing related details of a Azure Spot virtual machine.
      :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01.
-    :type billing_profile: ~azure.mgmt.compute.v2020_06_01.models.BillingProfile
+    :type billing_profile: ~azure.mgmt.compute.v2020_12_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the virtual machine resides
      in. :code:`<br>`:code:`<br>`Minimum api-version: 2018-10-01.
-    :type host: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type host: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :param host_group: Specifies information about the dedicated host group that the virtual
      machine resides in. :code:`<br>`:code:`<br>`Minimum api-version: 2020-06-01.
      :code:`<br>`:code:`<br>`NOTE: User cannot specify both host and hostGroup properties.
-    :type host_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :type host_group: ~azure.mgmt.compute.v2020_12_01.models.SubResource
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar instance_view: The virtual machine instance view.
-    :vartype instance_view: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineInstanceView
+    :vartype instance_view: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineInstanceView
     :param license_type: Specifies that the image or disk that is being used was licensed on-
      premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
      :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
@@ -8224,6 +8627,15 @@ class VirtualMachineUpdate(UpdateResource):
      ISO 8601 format. The default value is 90 minutes (PT1H30M). :code:`<br>`:code:`<br>` Minimum
      api-version: 2020-06-01.
     :type extensions_time_budget: str
+    :param platform_fault_domain: Specifies the scale set logical fault domain into which the
+     Virtual Machine will be created. By default, the Virtual Machine will by automatically assigned
+     to a fault domain that best maintains balance across available fault
+     domains.:code:`<br>`:code:`<li>`This is applicable only if the 'virtualMachineScaleSet'
+     property of this Virtual Machine is set.:code:`<li>`The Virtual Machine Scale Set that is
+     referenced, must have 'platformFaultDomainCount' &gt; 1.:code:`<li>`This property cannot be
+     updated once the Virtual Machine is created.:code:`<li>`Fault domain assignment can be viewed
+     in the Virtual Machine Instance View.:code:`<br>`:code:`<br>`Minimum api‐version: 2020‐12‐01.
+    :type platform_fault_domain: int
     """
 
     _validation = {
@@ -8257,6 +8669,7 @@ class VirtualMachineUpdate(UpdateResource):
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
         'extensions_time_budget': {'key': 'properties.extensionsTimeBudget', 'type': 'str'},
+        'platform_fault_domain': {'key': 'properties.platformFaultDomain', 'type': 'int'},
     }
 
     def __init__(
@@ -8287,6 +8700,7 @@ class VirtualMachineUpdate(UpdateResource):
         self.license_type = kwargs.get('license_type', None)
         self.vm_id = None
         self.extensions_time_budget = kwargs.get('extensions_time_budget', None)
+        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
 
 
 class VMScaleSetConvertToSinglePlacementGroupInput(msrest.serialization.Model):
@@ -8332,12 +8746,13 @@ class WindowsConfiguration(msrest.serialization.Model):
     :param additional_unattend_content: Specifies additional base-64 encoded XML formatted
      information that can be included in the Unattend.xml file, which is used by Windows Setup.
     :type additional_unattend_content:
-     list[~azure.mgmt.compute.v2020_06_01.models.AdditionalUnattendContent]
-    :param patch_settings: Specifies settings related to in-guest patching (KBs).
-    :type patch_settings: ~azure.mgmt.compute.v2020_06_01.models.PatchSettings
+     list[~azure.mgmt.compute.v2020_12_01.models.AdditionalUnattendContent]
+    :param patch_settings: [Preview Feature] Specifies settings related to VM Guest Patching on
+     Windows.
+    :type patch_settings: ~azure.mgmt.compute.v2020_12_01.models.PatchSettings
     :param win_rm: Specifies the Windows Remote Management listeners. This enables remote Windows
      PowerShell.
-    :type win_rm: ~azure.mgmt.compute.v2020_06_01.models.WinRMConfiguration
+    :type win_rm: ~azure.mgmt.compute.v2020_12_01.models.WinRMConfiguration
     """
 
     _attribute_map = {
@@ -8362,11 +8777,50 @@ class WindowsConfiguration(msrest.serialization.Model):
         self.win_rm = kwargs.get('win_rm', None)
 
 
+class WindowsParameters(msrest.serialization.Model):
+    """Input for InstallPatches on a Windows VM, as directly received by the API.
+
+    :param classifications_to_include: The update classifications to select when installing patches
+     for Windows.
+    :type classifications_to_include: list[str or
+     ~azure.mgmt.compute.v2020_12_01.models.VMGuestPatchClassificationWindows]
+    :param kb_numbers_to_include: Kbs to include in the patch operation.
+    :type kb_numbers_to_include: list[str]
+    :param kb_numbers_to_exclude: Kbs to exclude in the patch operation.
+    :type kb_numbers_to_exclude: list[str]
+    :param exclude_kbs_requiring_reboot: Filters out Kbs that don't have an
+     InstallationRebootBehavior of 'NeverReboots' when this is set to true.
+    :type exclude_kbs_requiring_reboot: bool
+    :param max_patch_publish_date: This is used to install patches that were published on or before
+     this given max published date.
+    :type max_patch_publish_date: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'classifications_to_include': {'key': 'classificationsToInclude', 'type': '[str]'},
+        'kb_numbers_to_include': {'key': 'kbNumbersToInclude', 'type': '[str]'},
+        'kb_numbers_to_exclude': {'key': 'kbNumbersToExclude', 'type': '[str]'},
+        'exclude_kbs_requiring_reboot': {'key': 'excludeKbsRequiringReboot', 'type': 'bool'},
+        'max_patch_publish_date': {'key': 'maxPatchPublishDate', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WindowsParameters, self).__init__(**kwargs)
+        self.classifications_to_include = kwargs.get('classifications_to_include', None)
+        self.kb_numbers_to_include = kwargs.get('kb_numbers_to_include', None)
+        self.kb_numbers_to_exclude = kwargs.get('kb_numbers_to_exclude', None)
+        self.exclude_kbs_requiring_reboot = kwargs.get('exclude_kbs_requiring_reboot', None)
+        self.max_patch_publish_date = kwargs.get('max_patch_publish_date', None)
+
+
 class WinRMConfiguration(msrest.serialization.Model):
     """Describes Windows Remote Management configuration of the VM.
 
     :param listeners: The list of Windows Remote Management listeners.
-    :type listeners: list[~azure.mgmt.compute.v2020_06_01.models.WinRMListener]
+    :type listeners: list[~azure.mgmt.compute.v2020_12_01.models.WinRMListener]
     """
 
     _attribute_map = {
@@ -8387,7 +8841,7 @@ class WinRMListener(msrest.serialization.Model):
     :param protocol: Specifies the protocol of WinRM listener. :code:`<br>`:code:`<br>` Possible
      values are: :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**. Possible values include:
      "Http", "Https".
-    :type protocol: str or ~azure.mgmt.compute.v2020_06_01.models.ProtocolTypes
+    :type protocol: str or ~azure.mgmt.compute.v2020_12_01.models.ProtocolTypes
     :param certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
      a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
      <https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this case, your
