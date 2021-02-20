@@ -9,7 +9,7 @@ import six
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
-from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
+from . import DecryptionAlgorithmConfiguration, DecryptResult, EncryptionAlgorithmConfiguration, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
 from ._key_validity import raise_if_time_invalid
 from ._providers import get_local_cryptography_provider, NoLocalCryptography
 from .. import KeyOperation
@@ -154,13 +154,13 @@ class CryptographyClient(KeyVaultClientBase):
 
     @distributed_trace
     def encrypt(self, algorithm, plaintext, **kwargs):
-        # type: (EncryptionAlgorithm, bytes, **Any) -> EncryptResult
+        # type: (Union[EncryptionAlgorithm, EncryptionAlgorithmConfiguration], bytes, **Any) -> EncryptResult
         """Encrypt bytes using the client's key. Requires the keys/encrypt permission.
 
         This method encrypts only a single block of data, whose size depends on the key and encryption algorithm.
 
         :param algorithm: encryption algorithm to use
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
+        :type algorithm: EncryptionAlgorithm or EncryptionAlgorithmConfiguration
         :param bytes plaintext: bytes to encrypt
         :keyword bytes iv: optional initialization vector. For use with AES-CBC encryption.
         :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
@@ -177,7 +177,11 @@ class CryptographyClient(KeyVaultClientBase):
         """
         iv = kwargs.pop("iv", None)
         aad = kwargs.pop("additional_authenticated_data", None)
-        _validate_arguments(operation=KeyOperation.encrypt, algorithm=algorithm, iv=iv, aad=aad)
+        if isinstance(algorithm, EncryptionAlgorithmConfiguration):
+            iv = algorithm.iv
+            aad = algorithm.additional_authenticated_data
+        else:
+            _validate_arguments(operation=KeyOperation.encrypt, algorithm=algorithm, iv=iv, aad=aad)
         self._initialize(**kwargs)
 
         if self._local_provider.supports(KeyOperation.encrypt, algorithm):
@@ -206,13 +210,13 @@ class CryptographyClient(KeyVaultClientBase):
 
     @distributed_trace
     def decrypt(self, algorithm, ciphertext, **kwargs):
-        # type: (EncryptionAlgorithm, bytes, **Any) -> DecryptResult
+        # type: (Union[EncryptionAlgorithm, DecryptionAlgorithmConfiguration], bytes, **Any) -> DecryptResult
         """Decrypt a single block of encrypted data using the client's key. Requires the keys/decrypt permission.
 
         This method decrypts only a single block of data, whose size depends on the key and encryption algorithm.
 
         :param algorithm: encryption algorithm to use
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
+        :type algorithm: EncryptionAlgorithm or DecryptionAlgorithmConfiguration
         :param bytes ciphertext: encrypted bytes to decrypt
         :keyword bytes iv: the initialization vector used during encryption. For use with AES encryption.
         :keyword bytes authentication_tag: the authentication tag generated during encryption. For use with AES-GCM
@@ -232,7 +236,12 @@ class CryptographyClient(KeyVaultClientBase):
         iv = kwargs.pop("iv", None)
         tag = kwargs.pop("authentication_tag", None)
         aad = kwargs.pop("additional_authenticated_data", None)
-        _validate_arguments(operation=KeyOperation.decrypt, algorithm=algorithm, iv=iv, tag=tag, aad=aad)
+        if isinstance(algorithm, DecryptionAlgorithmConfiguration):
+            iv = algorithm.iv
+            tag = algorithm.authentication_tag
+            aad = algorithm.additional_authenticated_data
+        else:
+            _validate_arguments(operation=KeyOperation.decrypt, algorithm=algorithm, iv=iv, tag=tag, aad=aad)
         self._initialize(**kwargs)
 
         if self._local_provider.supports(KeyOperation.decrypt, algorithm):
