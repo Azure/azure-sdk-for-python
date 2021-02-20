@@ -8,7 +8,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.communication.sms._generated.models import (
     SendMessageRequest,
     SmsRecipient,
-    SmsSendResult,
     SmsSendOptions,
 )
 
@@ -109,7 +108,7 @@ class SmsClient(object):
             message=message,
             sms_send_options=sms_send_options,
             **kwargs)
-        
+
         return self._sms_service_client.sms.send(
             request,
             cls=lambda pr, r, e: r.value,
