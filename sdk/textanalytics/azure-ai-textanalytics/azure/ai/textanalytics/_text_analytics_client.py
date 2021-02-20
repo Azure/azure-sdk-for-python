@@ -690,12 +690,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         if show_opinion_mining is not None:
             kwargs.update({"opinion_mining": show_opinion_mining})
+
         try:
             return self._client.sentiment(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                opinion_mining=show_opinion_mining,
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )

@@ -576,13 +576,13 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert res == "cls result"
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_4})
     def test_opinion_mining(self, client):
         documents = [
             "It has a sleek premium aluminum design that makes it beautiful to look at."
         ]
 
-        document = client.analyze_sentiment(documents=documents)[0]
+        document = client.analyze_sentiment(documents=documents, show_opinion_mining=True)[0]
 
         for sentence in document.sentences:
             for mined_opinion in sentence.mined_opinions:
@@ -610,13 +610,13 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 self.assertFalse(premium_opinion.is_negated)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_4})
     def test_opinion_mining_with_negated_opinion(self, client):
         documents = [
             "The food and service is not good"
         ]
 
-        document = client.analyze_sentiment(documents=documents)[0]
+        document = client.analyze_sentiment(documents=documents, show_opinion_mining=True)[0]
 
         for sentence in document.sentences:
             food_aspect = sentence.mined_opinions[0].target
@@ -647,7 +647,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_4})
     def test_opinion_mining_more_than_5_documents(self, client):
         documents = [
             "The food was unacceptable",
@@ -659,7 +659,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             "The toilet smelled."
         ]
 
-        analyzed_documents = client.analyze_sentiment(documents)
+        analyzed_documents = client.analyze_sentiment(documents, show_opinion_mining=True)
         doc_5 = analyzed_documents[5]
         doc_6 = analyzed_documents[6]
 
@@ -683,7 +683,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_opinion_mining_no_mined_opinions(self, client):
-        document = client.analyze_sentiment(documents=["today is a hot day"], show_opinion_mining=False)[0]
+        document = client.analyze_sentiment(documents=["today is a hot day"])[0]
 
         assert not document.sentences[0].mined_opinions
 
@@ -691,7 +691,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     def test_opinion_mining_v3(self, client):
         with pytest.raises(ValueError) as excinfo:
-            client.analyze_sentiment(["will fail"])  # TODO: is it a problem for show_opinion_mining to be True by default in this case?
+            client.analyze_sentiment(["will fail"], show_opinion_mining=True)
 
         assert "'show_opinion_mining' is only available for API version v3.1-preview and up" in str(excinfo.value)
 
