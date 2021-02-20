@@ -37,13 +37,13 @@ class UnknownIdentifier(object):
     Represents an identifier of an unknown type.
     It will be encountered in communications with endpoints that are not
     identifiable by this version of the SDK.
-    :ivar identifier: Unknown communication identifier.
-    :vartype identifier: str
+    :ivar raw_id: Unknown communication identifier.
+    :vartype raw_id: str
     :param identifier: Value to initialize UnknownIdentifier.
     :type identifier: str
     """
     def __init__(self, identifier):
-        self.identifier = identifier
+        self.raw_id = identifier
 
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(cls, name):
