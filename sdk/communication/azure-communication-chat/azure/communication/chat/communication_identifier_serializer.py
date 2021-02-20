@@ -5,15 +5,17 @@
 # --------------------------------------------------------------------------
 from enum import Enum
 
-from .models import (
+from ._generated.models import (
     CommunicationIdentifierModel,
+    CommunicationUserIdentifierModel,
+    PhoneNumberIdentifierModel,
+    MicrosoftTeamsUserIdentifierModel
+)
+from ._shared.models import (
     CommunicationUserIdentifier,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier,
     UnknownIdentifier,
-    CommunicationUserIdentifierModel,
-    PhoneNumberIdentifierModel,
-    MicrosoftTeamsUserIdentifierModel
 )
 
 class _IdentifierType(Enum):
