@@ -11,6 +11,7 @@ from ._skus_operations import SkusOperations
 from ._storage_accounts_operations import StorageAccountsOperations
 from ._usages_operations import UsagesOperations
 from ._management_policies_operations import ManagementPoliciesOperations
+from ._blob_inventory_policies_operations import BlobInventoryPoliciesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._object_replication_policies_operations import ObjectReplicationPoliciesOperations
@@ -30,6 +31,7 @@ __all__ = [
     'StorageAccountsOperations',
     'UsagesOperations',
     'ManagementPoliciesOperations',
+    'BlobInventoryPoliciesOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
     'ObjectReplicationPoliciesOperations',
