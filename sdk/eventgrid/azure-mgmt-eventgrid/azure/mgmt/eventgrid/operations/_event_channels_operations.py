@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class PrivateEndpointConnectionsOperations(object):
-    """PrivateEndpointConnectionsOperations operations.
+class EventChannelsOperations(object):
+    """EventChannelsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -42,31 +42,25 @@ class PrivateEndpointConnectionsOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, parent_type, parent_name, private_endpoint_connection_name, custom_headers=None, raw=False, **operation_config):
-        """Get a specific private endpoint connection.
+            self, resource_group_name, partner_namespace_name, event_channel_name, custom_headers=None, raw=False, **operation_config):
+        """Get an event channel.
 
-        Get a specific private endpoint connection under a topic or domain.
+        Get properties of an event channel.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be
-         either \\'topics\\' or \\'domains\\'. Possible values include:
-         'topics', 'domains'
-        :type parent_type: str
-        :param parent_name: The name of the parent resource (namely, either,
-         the topic name or domain name).
-        :type parent_name: str
-        :param private_endpoint_connection_name: The name of the private
-         endpoint connection connection.
-        :type private_endpoint_connection_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
+        :param event_channel_name: Name of the event channel.
+        :type event_channel_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PrivateEndpointConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventgrid.models.PrivateEndpointConnection or
+        :return: EventChannel or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventgrid.models.EventChannel or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -75,9 +69,8 @@ class PrivateEndpointConnectionsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'parentType': self._serialize.url("parent_type", parent_type, 'str'),
-            'parentName': self._serialize.url("parent_name", parent_name, 'str'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
+            'partnerNamespaceName': self._serialize.url("partner_namespace_name", partner_namespace_name, 'str'),
+            'eventChannelName': self._serialize.url("event_channel_name", event_channel_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -106,26 +99,48 @@ class PrivateEndpointConnectionsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PrivateEndpointConnection', response)
+            deserialized = self._deserialize('EventChannel', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/eventChannels/{eventChannelName}'}
 
+    def create_or_update(
+            self, resource_group_name, partner_namespace_name, event_channel_name, event_channel_info, custom_headers=None, raw=False, **operation_config):
+        """Create an event channel.
 
-    def _update_initial(
-            self, resource_group_name, parent_type, parent_name, private_endpoint_connection_name, private_endpoint_connection, custom_headers=None, raw=False, **operation_config):
+        Asynchronously creates a new event channel with the specified
+        parameters.
+
+        :param resource_group_name: The name of the resource group within the
+         user's subscription.
+        :type resource_group_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
+        :param event_channel_name: Name of the event channel.
+        :type event_channel_name: str
+        :param event_channel_info: EventChannel information.
+        :type event_channel_info: ~azure.mgmt.eventgrid.models.EventChannel
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: EventChannel or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventgrid.models.EventChannel or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
         # Construct URL
-        url = self.update.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'parentType': self._serialize.url("parent_type", parent_type, 'str'),
-            'parentName': self._serialize.url("parent_name", parent_name, 'str'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
+            'partnerNamespaceName': self._serialize.url("partner_namespace_name", partner_namespace_name, 'str'),
+            'eventChannelName': self._serialize.url("event_channel_name", event_channel_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -145,107 +160,38 @@ class PrivateEndpointConnectionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(private_endpoint_connection, 'PrivateEndpointConnection')
+        body_content = self._serialize.body(event_channel_info, 'EventChannel')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('PrivateEndpointConnection', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('PrivateEndpointConnection', response)
+            deserialized = self._deserialize('EventChannel', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-
-    def update(
-            self, resource_group_name, parent_type, parent_name, private_endpoint_connection_name, private_endpoint_connection, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Update a specific private endpoint connection.
-
-        Update a specific private endpoint connection under a topic or domain.
-
-        :param resource_group_name: The name of the resource group within the
-         user's subscription.
-        :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be
-         either \\'topics\\' or \\'domains\\'. Possible values include:
-         'topics', 'domains'
-        :type parent_type: str
-        :param parent_name: The name of the parent resource (namely, either,
-         the topic name or domain name).
-        :type parent_name: str
-        :param private_endpoint_connection_name: The name of the private
-         endpoint connection connection.
-        :type private_endpoint_connection_name: str
-        :param private_endpoint_connection: The private endpoint connection
-         object to update.
-        :type private_endpoint_connection:
-         ~azure.mgmt.eventgrid.models.PrivateEndpointConnection
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         PrivateEndpointConnection or
-         ClientRawResponse<PrivateEndpointConnection> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        raw_result = self._update_initial(
-            resource_group_name=resource_group_name,
-            parent_type=parent_type,
-            parent_name=parent_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
-            private_endpoint_connection=private_endpoint_connection,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('PrivateEndpointConnection', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/eventChannels/{eventChannelName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, parent_type, parent_name, private_endpoint_connection_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, partner_namespace_name, event_channel_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'parentType': self._serialize.url("parent_type", parent_type, 'str'),
-            'parentName': self._serialize.url("parent_name", parent_name, 'str'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
+            'partnerNamespaceName': self._serialize.url("partner_namespace_name", partner_namespace_name, 'str'),
+            'eventChannelName': self._serialize.url("event_channel_name", event_channel_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -266,7 +212,7 @@ class PrivateEndpointConnectionsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -276,24 +222,18 @@ class PrivateEndpointConnectionsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, parent_type, parent_name, private_endpoint_connection_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete a specific private endpoint connection.
+            self, resource_group_name, partner_namespace_name, event_channel_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Delete an event channel.
 
-        Delete a specific private endpoint connection under a topic or domain.
+        Delete existing event channel.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be
-         either \\'topics\\' or \\'domains\\'. Possible values include:
-         'topics', 'domains'
-        :type parent_type: str
-        :param parent_name: The name of the parent resource (namely, either,
-         the topic name or domain name).
-        :type parent_name: str
-        :param private_endpoint_connection_name: The name of the private
-         endpoint connection connection.
-        :type private_endpoint_connection_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
+        :param event_channel_name: Name of the event channel.
+        :type event_channel_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -307,9 +247,8 @@ class PrivateEndpointConnectionsOperations(object):
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
-            parent_type=parent_type,
-            parent_name=parent_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
+            partner_namespace_name=partner_namespace_name,
+            event_channel_name=event_channel_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -327,24 +266,19 @@ class PrivateEndpointConnectionsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections/{privateEndpointConnectionName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/eventChannels/{eventChannelName}'}
 
-    def list_by_resource(
-            self, resource_group_name, parent_type, parent_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all private endpoint connections under a resource.
+    def list_by_partner_namespace(
+            self, resource_group_name, partner_namespace_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
+        """List event channels.
 
-        Get all private endpoint connections under a topic or domain.
+        List all the event channels in a partner namespace.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param parent_type: The type of the parent resource. This can be
-         either \\'topics\\' or \\'domains\\'. Possible values include:
-         'topics', 'domains'
-        :type parent_type: str
-        :param parent_name: The name of the parent resource (namely, either,
-         the topic name or domain name).
-        :type parent_name: str
+        :param partner_namespace_name: Name of the partner namespace.
+        :type partner_namespace_name: str
         :param filter: The query used to filter the search results using OData
          syntax. Filtering is permitted on the 'name' property only and with
          limited number of OData operations. These operations are: the
@@ -364,20 +298,19 @@ class PrivateEndpointConnectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PrivateEndpointConnection
+        :return: An iterator like instance of EventChannel
         :rtype:
-         ~azure.mgmt.eventgrid.models.PrivateEndpointConnectionPaged[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
+         ~azure.mgmt.eventgrid.models.EventChannelPaged[~azure.mgmt.eventgrid.models.EventChannel]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_resource.metadata['url']
+                url = self.list_by_partner_namespace.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'parentType': self._serialize.url("parent_type", parent_type, 'str'),
-                    'parentName': self._serialize.url("parent_name", parent_name, 'str')
+                    'partnerNamespaceName': self._serialize.url("partner_namespace_name", partner_namespace_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -423,7 +356,7 @@ class PrivateEndpointConnectionsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.PrivateEndpointConnectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.EventChannelPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/{parentType}/{parentName}/privateEndpointConnections'}
+    list_by_partner_namespace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerNamespaces/{partnerNamespaceName}/eventChannels'}
