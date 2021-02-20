@@ -3,26 +3,30 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum
 
-from ._generated.models import (
+from .models import (
     CommunicationIdentifierModel,
-    CommunicationUserIdentifierModel,
-    PhoneNumberIdentifierModel,
-    MicrosoftTeamsUserIdentifierModel
-)
-from ._shared.models import (
     CommunicationUserIdentifier,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier,
     UnknownIdentifier,
+    CommunicationUserIdentifierModel,
+    PhoneNumberIdentifierModel,
+    MicrosoftTeamsUserIdentifierModel
 )
+
+class _IdentifierType(Enum):
+    COMMUNICATION_USER_IDENTIFIER = "COMMUNICATION_USER_IDENTIFIER"
+    PHONE_NUMBER_IDENTIFIER = "PHONE_NUMBER_IDENTIFIER"
+    UNKNOWN_IDENTIFIER = "UNKNOWN_IDENTIFIER"
+    MICROSOFT_TEAMS_IDENTIFIER = "MICROSOFT_TEAMS_IDENTIFIER"
 
 class CommunicationUserIdentifierSerializer(object):
 
     @classmethod
     def serialize(cls, communicationIdentifier):
         """ Serialize the Communication identifier into CommunicationIdentifierModel
-
         :param identifier: Identifier object
         :type identifier: Union[CommunicationUserIdentifier,
            PhoneNumberIdentifier, MicrosoftTeamsUserIdentifier, UnknownIdentifier]
@@ -30,16 +34,18 @@ class CommunicationUserIdentifierSerializer(object):
         :rtype: ~azure.communication.chat.CommunicationIdentifierModel
         :raises Union[TypeError, ValueError]
         """
-        if isinstance(communicationIdentifier, CommunicationUserIdentifier):
+        identifierType = CommunicationUserIdentifierSerializer._getIdnetifierType(communicationIdentifier)
+
+        if identifierType == _IdentifierType.COMMUNICATION_USER_IDENTIFIER:
             return CommunicationIdentifierModel(
                 communication_user=CommunicationUserIdentifierModel(id=communicationIdentifier.identifier)
             )
-        if isinstance(communicationIdentifier, PhoneNumberIdentifier):
+        if identifierType == _IdentifierType.PHONE_NUMBER_IDENTIFIER:
             return CommunicationIdentifierModel(
                 raw_id=communicationIdentifier.raw_id,
                 phone_number=PhoneNumberIdentifierModel(value=communicationIdentifier.phone_number)
             )
-        if isinstance(communicationIdentifier, MicrosoftTeamsUserIdentifier):
+        if identifierType == _IdentifierType.MICROSOFT_TEAMS_IDENTIFIER:
             return CommunicationIdentifierModel(
                 raw_id=communicationIdentifier.raw_id,
                 microsoft_teams_user=MicrosoftTeamsUserIdentifierModel(user_id=communicationIdentifier.user_id,
@@ -47,9 +53,9 @@ class CommunicationUserIdentifierSerializer(object):
                 cloud=communicationIdentifier.cloud)
             )
 
-        if isinstance(communicationIdentifier, UnknownIdentifier):
+        if identifierType == _IdentifierType.UNKNOWN_IDENTIFIER:
             return CommunicationIdentifierModel(
-                raw_id=communicationIdentifier.identifier
+                raw_id=communicationIdentifier.unknownIdentifier
             )
 
         raise TypeError("Unsupported identifier type " + communicationIdentifier.__class__.__name__)
@@ -71,7 +77,6 @@ class CommunicationUserIdentifierSerializer(object):
     def deserialize(cls, identifierModel):
         """
         Deserialize the CommunicationIdentifierModel into Communication Identifier
-
         :param identifierModel: CommunicationIdentifierModel
         :type identifierModel: CommunicationIdentifierModel
         :return: Union[CommunicationUserIdentifier, CommunicationPhoneNumberIdentifier]
@@ -106,3 +111,21 @@ class CommunicationUserIdentifierSerializer(object):
             )
 
         return UnknownIdentifier(raw_id)
+
+    @classmethod
+    def _getIdentifierType(cls, communicationIdentifier):
+        def has_attributes(obj, attributes):
+            return all([hasattr(obj, attr) for attr in attributes])
+
+        if has_attributes(communicationIdentifier, ["identifier"]):
+            return _IdentifierType.COMMUNICATION_USER_IDENTIFIER
+
+        if has_attributes(communicationIdentifier, ['phone_number', 'raw_id']):
+            return _IdentifierType.PHONE_NUMBER_IDENTIFIER
+
+        if has_attributes(communicationIdentifier, ["raw_id", "user_id", "is_anonymous", "cloud"]):
+            return _IdentifierType.MICROSOFT_TEAMS_IDENTIFIER
+
+        if has_attributes(communicationIdentifier, ["unknownIdentifier"]):
+            return _IdentifierType.UNKNOWN_IDENTIFIER
+
