@@ -57,7 +57,7 @@ class CommunicationUserIdentifierSerializer(object):
 
         if identifierType == _IdentifierType.UNKNOWN_IDENTIFIER:
             return CommunicationIdentifierModel(
-                raw_id=communicationIdentifier.unknownIdentifier
+                raw_id=communicationIdentifier.raw_id
             )
 
         raise TypeError("Unsupported identifier type " + communicationIdentifier.__class__.__name__)
@@ -128,6 +128,6 @@ class CommunicationUserIdentifierSerializer(object):
         if has_attributes(communicationIdentifier, ["raw_id", "user_id", "is_anonymous", "cloud"]):
             return _IdentifierType.MICROSOFT_TEAMS_IDENTIFIER
 
-        if has_attributes(communicationIdentifier, ["unknownIdentifier"]):
+        if has_attributes(communicationIdentifier, ["raw_id"]):
             return _IdentifierType.UNKNOWN_IDENTIFIER
 

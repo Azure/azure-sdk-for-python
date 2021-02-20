@@ -108,13 +108,13 @@ class UnknownIdentifier(object):
     Represents an identifier of an unknown type.
     It will be encountered in communications with endpoints that are not
     identifiable by this version of the SDK.
-    :ivar rawId: Unknown communication identifier.
-    :vartype rawId: str
+    :ivar raw_id: Unknown communication identifier.
+    :vartype raw_id: str
     :param identifier: Value to initialize UnknownIdentifier.
     :type identifier: str
     """
     def __init__(self, identifier):
-        self.rawId = rawId
+        self.raw_id = identifier
 
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
@@ -148,7 +148,7 @@ class MicrosoftTeamsUserIdentifier(object):
     :vartype user_id: str
     :param user_id: Value to initialize MicrosoftTeamsUserIdentifier.
     :type user_id: str
-    :ivar rawId: Raw id of the Microsoft Teams user.
+    :ivar raw_id: Raw id of the Microsoft Teams user.
     :vartype raw_id: str
     :ivar cloud: Cloud environment that this identifier belongs to
     :vartype cloud: CommunicationCloudEnvironment
