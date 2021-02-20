@@ -6823,6 +6823,8 @@ class Delegation(SubResource):
     :type name: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
+    :param type: Resource type.
+    :type type: str
     :param service_name: The name of the service to whom the subnet should be delegated (e.g.
      Microsoft.Sql/servers).
     :type service_name: str
@@ -6843,6 +6845,7 @@ class Delegation(SubResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'service_name': {'key': 'properties.serviceName', 'type': 'str'},
         'actions': {'key': 'properties.actions', 'type': '[str]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -6855,6 +6858,7 @@ class Delegation(SubResource):
         super(Delegation, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.etag = None
+        self.type = kwargs.get('type', None)
         self.service_name = kwargs.get('service_name', None)
         self.actions = None
         self.provisioning_state = None
@@ -13319,6 +13323,15 @@ class NetworkInterface(Resource):
     :ivar provisioning_state: The provisioning state of the network interface resource. Possible
      values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2020_08_01.models.ProvisioningState
+    :param nic_type: Type of Network Interface resource. Possible values include: "Standard",
+     "Elastic". Default value: "Standard".
+    :type nic_type: str or ~azure.mgmt.network.v2020_08_01.models.NetworkInterfaceNicType
+    :param private_link_service: Privatelinkservice of the network interface resource.
+    :type private_link_service: ~azure.mgmt.network.v2020_08_01.models.PrivateLinkService
+    :param migration_phase: Migration phase of Network Interface resource. Possible values include:
+     "None", "Prepare", "Commit", "Abort", "Committed".
+    :type migration_phase: str or
+     ~azure.mgmt.network.v2020_08_01.models.NetworkInterfaceMigrationPhase
     """
 
     _validation = {
@@ -13358,6 +13371,9 @@ class NetworkInterface(Resource):
         'dscp_configuration': {'key': 'properties.dscpConfiguration', 'type': 'SubResource'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'nic_type': {'key': 'properties.nicType', 'type': 'str'},
+        'private_link_service': {'key': 'properties.privateLinkService', 'type': 'PrivateLinkService'},
+        'migration_phase': {'key': 'properties.migrationPhase', 'type': 'str'},
     }
 
     def __init__(
@@ -13381,6 +13397,9 @@ class NetworkInterface(Resource):
         self.dscp_configuration = None
         self.resource_guid = None
         self.provisioning_state = None
+        self.nic_type = kwargs.get('nic_type', "Standard")
+        self.private_link_service = kwargs.get('private_link_service', None)
+        self.migration_phase = kwargs.get('migration_phase', None)
 
 
 class NetworkInterfaceAssociation(msrest.serialization.Model):
@@ -13475,6 +13494,8 @@ class NetworkInterfaceIPConfiguration(SubResource):
     :type name: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
+    :param type: Resource type.
+    :type type: str
     :param virtual_network_taps: The reference to Virtual Network Taps.
     :type virtual_network_taps: list[~azure.mgmt.network.v2020_08_01.models.VirtualNetworkTap]
     :param application_gateway_backend_address_pools: The reference to
@@ -13526,6 +13547,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'virtual_network_taps': {'key': 'properties.virtualNetworkTaps', 'type': '[VirtualNetworkTap]'},
         'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[ApplicationGatewayBackendAddressPool]'},
         'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[BackendAddressPool]'},
@@ -13548,6 +13570,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
         super(NetworkInterfaceIPConfiguration, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.etag = None
+        self.type = kwargs.get('type', None)
         self.virtual_network_taps = kwargs.get('virtual_network_taps', None)
         self.application_gateway_backend_address_pools = kwargs.get('application_gateway_backend_address_pools', None)
         self.load_balancer_backend_address_pools = kwargs.get('load_balancer_backend_address_pools', None)
@@ -16563,6 +16586,18 @@ class PublicIPAddress(Resource):
     :ivar provisioning_state: The provisioning state of the public IP address resource. Possible
      values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2020_08_01.models.ProvisioningState
+    :param service_public_ip_address: The service public IP address of the public IP address
+     resource.
+    :type service_public_ip_address: ~azure.mgmt.network.v2020_08_01.models.PublicIPAddress
+    :param nat_gateway: The NatGateway for the Public IP address.
+    :type nat_gateway: ~azure.mgmt.network.v2020_08_01.models.NatGateway
+    :param migration_phase: Migration phase of Public IP Address. Possible values include: "None",
+     "Prepare", "Commit", "Abort", "Committed".
+    :type migration_phase: str or
+     ~azure.mgmt.network.v2020_08_01.models.PublicIpAddressMigrationPhase
+    :param linked_public_ip_address: The source Public IP Address (IPv6) that links to this address
+     (IPv4).
+    :type linked_public_ip_address: ~azure.mgmt.network.v2020_08_01.models.PublicIPAddress
     """
 
     _validation = {
@@ -16595,6 +16630,10 @@ class PublicIPAddress(Resource):
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'service_public_ip_address': {'key': 'properties.servicePublicIPAddress', 'type': 'PublicIPAddress'},
+        'nat_gateway': {'key': 'properties.natGateway', 'type': 'NatGateway'},
+        'migration_phase': {'key': 'properties.migrationPhase', 'type': 'str'},
+        'linked_public_ip_address': {'key': 'properties.linkedPublicIPAddress', 'type': 'PublicIPAddress'},
     }
 
     def __init__(
@@ -16617,6 +16656,10 @@ class PublicIPAddress(Resource):
         self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
         self.resource_guid = None
         self.provisioning_state = None
+        self.service_public_ip_address = kwargs.get('service_public_ip_address', None)
+        self.nat_gateway = kwargs.get('nat_gateway', None)
+        self.migration_phase = kwargs.get('migration_phase', None)
+        self.linked_public_ip_address = kwargs.get('linked_public_ip_address', None)
 
 
 class PublicIPAddressDnsSettings(msrest.serialization.Model):
@@ -16745,6 +16788,8 @@ class PublicIPPrefix(Resource):
     :ivar provisioning_state: The provisioning state of the public IP prefix resource. Possible
      values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2020_08_01.models.ProvisioningState
+    :param nat_gateway: NatGateway of Public IP Prefix.
+    :type nat_gateway: ~azure.mgmt.network.v2020_08_01.models.NatGateway
     """
 
     _validation = {
@@ -16777,6 +16822,7 @@ class PublicIPPrefix(Resource):
         'custom_ip_prefix': {'key': 'properties.customIPPrefix', 'type': 'SubResource'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'nat_gateway': {'key': 'properties.natGateway', 'type': 'NatGateway'},
     }
 
     def __init__(
@@ -16797,6 +16843,7 @@ class PublicIPPrefix(Resource):
         self.custom_ip_prefix = kwargs.get('custom_ip_prefix', None)
         self.resource_guid = None
         self.provisioning_state = None
+        self.nat_gateway = kwargs.get('nat_gateway', None)
 
 
 class PublicIPPrefixListResult(msrest.serialization.Model):
@@ -18298,6 +18345,8 @@ class Subnet(SubResource):
     :type name: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
+    :param type: Resource type.
+    :type type: str
     :param address_prefix: The address prefix for the subnet.
     :type address_prefix: str
     :param address_prefixes: List of address prefixes for the subnet.
@@ -18340,11 +18389,19 @@ class Subnet(SubResource):
      include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2020_08_01.models.ProvisioningState
     :param private_endpoint_network_policies: Enable or Disable apply network policies on private
-     end point in the subnet.
-    :type private_endpoint_network_policies: str
+     end point in the subnet. Possible values include: "Enabled", "Disabled". Default value:
+     "Enabled".
+    :type private_endpoint_network_policies: str or
+     ~azure.mgmt.network.v2020_08_01.models.VirtualNetworkPrivateEndpointNetworkPolicies
     :param private_link_service_network_policies: Enable or Disable apply network policies on
-     private link service in the subnet.
-    :type private_link_service_network_policies: str
+     private link service in the subnet. Possible values include: "Enabled", "Disabled". Default
+     value: "Enabled".
+    :type private_link_service_network_policies: str or
+     ~azure.mgmt.network.v2020_08_01.models.VirtualNetworkPrivateLinkServiceNetworkPolicies
+    :param application_gateway_ip_configurations: Application gateway IP configurations of virtual
+     network resource.
+    :type application_gateway_ip_configurations:
+     list[~azure.mgmt.network.v2020_08_01.models.ApplicationGatewayIPConfiguration]
     """
 
     _validation = {
@@ -18362,6 +18419,7 @@ class Subnet(SubResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
         'address_prefixes': {'key': 'properties.addressPrefixes', 'type': '[str]'},
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
@@ -18380,6 +18438,7 @@ class Subnet(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'private_endpoint_network_policies': {'key': 'properties.privateEndpointNetworkPolicies', 'type': 'str'},
         'private_link_service_network_policies': {'key': 'properties.privateLinkServiceNetworkPolicies', 'type': 'str'},
+        'application_gateway_ip_configurations': {'key': 'properties.applicationGatewayIpConfigurations', 'type': '[ApplicationGatewayIPConfiguration]'},
     }
 
     def __init__(
@@ -18389,6 +18448,7 @@ class Subnet(SubResource):
         super(Subnet, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.etag = None
+        self.type = kwargs.get('type', None)
         self.address_prefix = kwargs.get('address_prefix', None)
         self.address_prefixes = kwargs.get('address_prefixes', None)
         self.network_security_group = kwargs.get('network_security_group', None)
@@ -18405,8 +18465,9 @@ class Subnet(SubResource):
         self.delegations = kwargs.get('delegations', None)
         self.purpose = None
         self.provisioning_state = None
-        self.private_endpoint_network_policies = kwargs.get('private_endpoint_network_policies', None)
-        self.private_link_service_network_policies = kwargs.get('private_link_service_network_policies', None)
+        self.private_endpoint_network_policies = kwargs.get('private_endpoint_network_policies', "Enabled")
+        self.private_link_service_network_policies = kwargs.get('private_link_service_network_policies', "Enabled")
+        self.application_gateway_ip_configurations = kwargs.get('application_gateway_ip_configurations', None)
 
 
 class SubnetAssociation(msrest.serialization.Model):
@@ -20360,6 +20421,8 @@ class VirtualNetworkPeering(SubResource):
     :type name: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
+    :param type: Resource type.
+    :type type: str
     :param allow_virtual_network_access: Whether the VMs in the local virtual network space would
      be able to access the VMs in remote virtual network space.
     :type allow_virtual_network_access: bool
@@ -20390,17 +20453,24 @@ class VirtualNetworkPeering(SubResource):
     :ivar provisioning_state: The provisioning state of the virtual network peering resource.
      Possible values include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2020_08_01.models.ProvisioningState
+    :param do_not_verify_remote_gateways: If we need to verify the provisioning state of the remote
+     gateway.
+    :type do_not_verify_remote_gateways: bool
+    :ivar resource_guid: The resourceGuid property of the Virtual Network Peering resource.
+    :vartype resource_guid: str
     """
 
     _validation = {
         'etag': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'resource_guid': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'allow_virtual_network_access': {'key': 'properties.allowVirtualNetworkAccess', 'type': 'bool'},
         'allow_forwarded_traffic': {'key': 'properties.allowForwardedTraffic', 'type': 'bool'},
         'allow_gateway_transit': {'key': 'properties.allowGatewayTransit', 'type': 'bool'},
@@ -20410,6 +20480,8 @@ class VirtualNetworkPeering(SubResource):
         'remote_bgp_communities': {'key': 'properties.remoteBgpCommunities', 'type': 'VirtualNetworkBgpCommunities'},
         'peering_state': {'key': 'properties.peeringState', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'do_not_verify_remote_gateways': {'key': 'properties.doNotVerifyRemoteGateways', 'type': 'bool'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
     }
 
     def __init__(
@@ -20419,6 +20491,7 @@ class VirtualNetworkPeering(SubResource):
         super(VirtualNetworkPeering, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.etag = None
+        self.type = kwargs.get('type', None)
         self.allow_virtual_network_access = kwargs.get('allow_virtual_network_access', None)
         self.allow_forwarded_traffic = kwargs.get('allow_forwarded_traffic', None)
         self.allow_gateway_transit = kwargs.get('allow_gateway_transit', None)
@@ -20428,6 +20501,8 @@ class VirtualNetworkPeering(SubResource):
         self.remote_bgp_communities = kwargs.get('remote_bgp_communities', None)
         self.peering_state = kwargs.get('peering_state', None)
         self.provisioning_state = None
+        self.do_not_verify_remote_gateways = kwargs.get('do_not_verify_remote_gateways', None)
+        self.resource_guid = None
 
 
 class VirtualNetworkPeeringListResult(msrest.serialization.Model):
