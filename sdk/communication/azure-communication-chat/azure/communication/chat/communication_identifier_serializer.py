@@ -130,4 +130,3 @@ class CommunicationUserIdentifierSerializer(object):
 
         if has_attributes(communicationIdentifier, ["raw_id"]):
             return _IdentifierType.UNKNOWN_IDENTIFIER
-
