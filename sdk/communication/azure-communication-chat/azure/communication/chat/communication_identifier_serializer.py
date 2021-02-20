@@ -34,7 +34,7 @@ class CommunicationUserIdentifierSerializer(object):
         :rtype: ~azure.communication.chat.CommunicationIdentifierModel
         :raises Union[TypeError, ValueError]
         """
-        identifierType = CommunicationUserIdentifierSerializer._getIdnetifierType(communicationIdentifier)
+        identifierType = CommunicationUserIdentifierSerializer._getIdentifierType(communicationIdentifier)
 
         if identifierType == _IdentifierType.COMMUNICATION_USER_IDENTIFIER:
             return CommunicationIdentifierModel(
