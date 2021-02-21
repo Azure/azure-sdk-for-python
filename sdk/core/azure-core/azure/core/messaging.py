@@ -17,12 +17,12 @@ except ImportError:
     TZ_UTC = _FixedOffset(0) # type: ignore
 
 try:
-    from typing import TYPE_CHECKING
+    from typing import TYPE_CHECKING, TypeVar
 except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, TypeVar
+    from typing import Any, Dict
 
 CloudEventType = TypeVar('CloudEvent')
 
