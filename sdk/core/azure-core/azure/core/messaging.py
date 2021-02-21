@@ -22,7 +22,9 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
+    from typing import Any, Dict, TypeVar
+
+CloudEventType = TypeVar('CloudEvent')
 
 __all__ = ["CloudEvent"]
 
@@ -57,7 +59,7 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
     :keyword extensions: Optional. A CloudEvent MAY include any number of additional context attributes
      with distinct names represented as key - value pairs. Each extension must be alphanumeric, lower cased
      and must not exceed the length of 20 characters.
-    :type extensions: Optional[dict]
+    :type extensions: Optional[Dict]
     :ivar source: Identifies the context in which an event happened. The combination of id and source must
      be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
     :vartype source: str
@@ -85,7 +87,7 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
     :vartype extensions: dict
     """
     def __init__(self, source, type, **kwargs): # pylint: disable=redefined-builtin
-        # type: (str, str, Any) -> None
+        # type: (str, str, **Any) -> None
         self.source = source
         self.type = type
         self.specversion = kwargs.pop("specversion", "1.0")
@@ -115,31 +117,45 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
 
     @classmethod
     def from_dict(cls, event, **kwargs):
-        # type: (Dict, Any) -> CloudEvent
+        # type: (Type[CloudEventType], Dict, **Any) -> CloudEventType
         """
         Returns the deserialized CloudEvent object when a dict is provided.
         :param event: The dict representation of the event which needs to be deserialized.
         :type event: dict
         :rtype: CloudEvent
         """
-        data = event.pop("data", None)
-        data_base64 = event.pop("data_base64", None)
+        reserved_attr = [
+            'data',
+            'data_base64',
+            'id',
+            'source',
+            'type',
+            'specversion',
+            'time',
+            'dataschema',
+            'datacontenttype',
+            'subject'
+        ]
+
+        data = event.get("data", None)
+        data_base64 = event.get("data_base64", None)
         if data and data_base64:
             raise ValueError("Invalid input. Only one of data and data_base64 must be present.")
+
         try:
-            time = isodate.parse_datetime(event.pop("time", None))
+            time = isodate.parse_datetime(event.get("time", None))
         except AttributeError:
-            pass
+            time = None
         return cls(
-            id=event.pop("id", None),
-            source=event.pop("source", None),
-            type=event.pop("type", None),
-            specversion=event.pop("specversion", None),
-            data=data or b64decode(data_base64),
+            id=event.get("id", None),
+            source=event.get("source", None),
+            type=event.get("type", None),
+            specversion=event.get("specversion", None),
+            data=data if data is not None else b64decode(data_base64),
             time=time,
-            dataschema=event.pop("dataschema", None),
-            datacontenttype=event.pop("datacontenttype", None),
-            subject=event.pop("subject", None),
-            extensions=event,
+            dataschema=event.get("dataschema", None),
+            datacontenttype=event.get("datacontenttype", None),
+            subject=event.get("subject", None),
+            extensions={k:v for k, v in event.items() if k not in reserved_attr},
             **kwargs
         )
