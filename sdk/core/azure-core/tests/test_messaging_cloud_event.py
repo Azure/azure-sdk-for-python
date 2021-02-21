@@ -21,6 +21,19 @@ def test_cloud_event_constructor():
     assert event.source == 'Azure.Core.Sample'
     assert event.data == 'cloudevent'
 
+def test_cloud_event_constructor_blank_data():
+    event = CloudEvent(
+        source='Azure.Core.Sample',
+        type='SampleType',
+        data=''
+        )
+    
+    assert event.specversion == '1.0'
+    assert event.time.__class__ == datetime
+    assert event.id is not None
+    assert event.source == 'Azure.Core.Sample'
+    assert event.data == ''
+
 def test_cloud_storage_dict():
     cloud_storage_dict = {
         "id":"a0517898-9fa4-4e70-b4a3-afda1dd68672",
@@ -78,6 +91,19 @@ def test_cloud_custom_dict_with_extensions():
     assert event.data == {"team": "event grid squad"}
     assert event.__class__ == CloudEvent
     assert event.extensions == {"ext1": "example", "ext2": "example2"}
+
+def test_cloud_custom_dict_blank_data():
+    cloud_custom_dict_with_extensions = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "source":"https://egtest.dev/cloudcustomevent",
+        "data":'',
+        "type":"Azure.Sdk.Sample",
+        "time":"2020-08-07T02:06:08.11969Z",
+        "specversion":"1.0",
+    }
+    event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
+    assert event.data == ''
+    assert event.__class__ == CloudEvent
 
 def test_cloud_custom_dict_base64():
     cloud_custom_dict_base64 = {
