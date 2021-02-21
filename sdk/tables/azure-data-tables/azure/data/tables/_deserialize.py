@@ -96,8 +96,12 @@ class Timezone(datetime.tzinfo):
 
 def _from_entity_datetime(value):
     # Cosmos returns this with a decimal point that throws an error on deserialization
-    if value[-9:] == ".0000000Z":
-        value = value[:-9] + "Z"
+    for suffix_len in (5, 9):
+        suffix = "." + ("0" * (suffix_len - 2)) + "Z"
+        if value[-suffix_len:] == suffix:
+            value = value[:-suffix_len] + "Z"
+            break
+
     return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(
         tzinfo=Timezone()
     )
