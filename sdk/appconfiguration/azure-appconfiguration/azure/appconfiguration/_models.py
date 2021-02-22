@@ -382,5 +382,26 @@ class TimeWindowFeatureFilter(FeatureFilterBase):
 
 
 class CustomFeatureFilter(FeatureFilterBase):
+    """ A configuration setting that controls a feature flag
+    :param name:
+    :type name: string
+    """
 
-    pass
+    def __init__(self, value):
+        self._name = 'Microsoft.Percentage'
+        self.value = value
+
+    @classmethod
+    def from_service(cls, dict_repr):
+        return cls(
+            dict_repr['Value']
+        )
+
+    def _to_generated(self):
+        # type: (...) -> dict
+        return {
+            'name': self._name,
+            'parameters': {
+                'Value': self.value
+            }
+        }

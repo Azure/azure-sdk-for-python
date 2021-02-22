@@ -518,17 +518,18 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     @app_config_decorator
     def test_feature_filter_custom(self, client):
-        new = FeatureFlagConfigurationSetting('custom', True, feature_filter={
-            'name': 'Microsoft.Percentage',
-            'parameters': {
-                'Value': 50
-            }
-        })
+        new = FeatureFlagConfigurationSetting(
+            'custom',
+            True,
+            feature_filters=[
+                CustomFeatureFilter(value=50)
+            ]
+        )
 
         sent = client.set_configuration_setting(new)
         self._assert_same_keys(sent, new)
 
-        sent.value['conditions']['client_filters'][0]['parameters']['Value'] = 100
+        sent.value['conditions']['client_filters'][0].value = 100
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 
