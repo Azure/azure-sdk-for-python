@@ -229,3 +229,58 @@ def test_send_batch_pid_pk(invalid_hostname, partition_id, partition_key):
     with client:
         with pytest.raises(TypeError):
             client.send_batch(batch, partition_id=partition_id, partition_key=partition_key)
+
+
+@pytest.mark.liveTest
+def test_idempotent_sender(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+    client = EventHubProducerClient.from_connection_string(connection_str, enable_idempotent_partitions=True)
+    payload = "A1"
+    with client:
+
+        with pytest.raises(ValueError):
+            client.send_batch([EventData(payload)], partition_key="key")
+
+        with pytest.raises(ValueError):
+            client.send_batch([EventData(payload)])
+
+        event_data_batch = client.create_batch()
+        with pytest.raises(ValueError):
+            client.send_batch(event_data_batch)
+
+        event_data_batch = client.create_batch(partition_key="key")
+        with pytest.raises(ValueError):
+            client.send_batch(event_data_batch)
+
+        partition_publishing_properties = client.get_partition_publishing_properties("0")
+        assert partition_publishing_properties["is_idempotent_publishing_enabled"]
+        assert partition_publishing_properties["partition_id"] == "0"
+        assert partition_publishing_properties["last_published_sequence_number"] is None
+        assert partition_publishing_properties["producer_group_id"] is None
+        assert partition_publishing_properties["owner_level"] is None
+
+        event_data_batch = client.create_batch(partition_id="0")
+        event_data = EventData(payload)
+        event_data_batch.add(event_data)
+        client.send_batch(event_data_batch)
+
+        partition_publishing_properties = client.get_partition_publishing_properties("0")
+        assert partition_publishing_properties["last_published_sequence_number"] == 0
+        assert partition_publishing_properties["producer_group_id"] is not None
+        assert partition_publishing_properties["owner_level"] is not None
+        assert event_data_batch.starting_published_sequence_number == 0
+        assert event_data.published_sequence_number == 0
+
+        message = receivers[0].receive_message_batch(timeout=10000)[0]
+        received = EventData._from_message(message)
+        assert received.body_as_str() == payload
+
+        event_data_list = [EventData(payload), EventData(payload)]
+        client.send_batch(event_data_list, partition_id="0")
+
+        partition_publishing_properties = client.get_partition_publishing_properties("0")
+        assert partition_publishing_properties["last_published_sequence_number"] == 2
+        assert event_data_list[0].published_sequence_number == 1
+        assert event_data_list[1].published_sequence_number == 2
+        message = receivers[0].receive_message_batch(timeout=10000)
+        assert len(message) == 2

@@ -114,8 +114,7 @@ class EventHubProducer(
 
         desired_capabilities = None
         if self._enable_idempotent_partitions:
-            symbol_array = [IDEMPOTENT_PRODUCER_SYMBOL]
-            desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
+            self._set_idempotent_producer_link_configs()
 
         if self._producer_group_id is not None or\
                 self._owner_level is not None or\

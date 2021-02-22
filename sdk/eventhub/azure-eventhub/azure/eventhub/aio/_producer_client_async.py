@@ -11,9 +11,9 @@ from uamqp import constants
 from ..exceptions import ConnectError, EventHubError
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
+from .._producer_client import validate_outgoing_event_data
 from .._constants import ALL_PARTITIONS
 from .._common import EventDataBatch, EventData
-from .._utils import validate_outgoing_event_data
 
 if TYPE_CHECKING:
     from uamqp.constants import TransportType

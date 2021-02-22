@@ -14,12 +14,40 @@ from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
 from ._common import EventDataBatch, EventData
-from ._utils import validate_outgoing_event_data
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def validate_outgoing_event_data(
+    event_data_batch,
+    partition_id=None,
+    partition_key=None,
+    is_idempotent_publishing=False
+):
+    # type: (Union[EventDataBatch, List[EventData]], Optional[str], Optional[str], bool) -> None
+    # Validate the input of EventHubProducerClient.send_batch
+    # pylint:disable=protected-access
+    if isinstance(event_data_batch, EventDataBatch):
+        if is_idempotent_publishing:
+            if event_data_batch._partition_id is None:
+                raise ValueError("The EventDataBatch object must have the partition_id set when performing "
+                                 "idempotent publishing. Please create an EventDataBatch object with partition_id.")
+            if event_data_batch.starting_published_sequence_number is not None:
+                raise ValueError("EventDataBatch object that has already been published by idempotent producer"
+                                 "could not be published again. Please create a new object.")
+        if partition_id or partition_key:
+            raise TypeError("partition_id and partition_key should be None when sending an EventDataBatch "
+                            "because type EventDataBatch itself may have partition_id or partition_key")
+    else:  # list of EventData
+        if is_idempotent_publishing:
+            if partition_id is None:
+                raise ValueError("The partition_id must be set when performing idempotent publishing.")
+            if len([event for event in event_data_batch if event.published_sequence_number is not None]):
+                raise ValueError("EventData object that has already been published by "
+                                 "idempotent producer could not be published again.")
 
 
 class EventHubProducerClient(ClientBase):
