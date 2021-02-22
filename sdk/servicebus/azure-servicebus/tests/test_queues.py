@@ -2214,7 +2214,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
-    def test_queue_send_dicts_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_send_dict_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
@@ -2231,7 +2231,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send_messages(list_message_dicts)
 
                 # create and send BatchMessage with dicts
-                batch_message = sender.create_batch()
+                batch_message = sender.create_message_batch()
                 batch_message._from_list(list_message_dicts)  # pylint: disable=protected-access
                 sender.send_messages(batch_message)
 
@@ -2265,7 +2265,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     sender.send_messages(list_message_dicts)
 
                 # create and send BatchMessage with dicts
-                batch_message = sender.create_batch()
+                batch_message = sender.create_message_batch()
                 with pytest.raises(TypeError):
                     batch_message._from_list(list_message_dicts)  # pylint: disable=protected-access
 
@@ -2303,7 +2303,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         assert len(messages) == 1
                     finally:
                         for m in messages:
-                            m.complete()
+                            receiver.complete_message(m)
                 else:
                     raise Exception("Failed to receive schdeduled message.")
 
@@ -2326,7 +2326,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         assert len(messages) == 2
                     finally:
                         for m in messages:
-                            m.complete()
+                            receiver.complete_message(m)
                 else:
                     raise Exception("Failed to receive schdeduled message.")                    
 

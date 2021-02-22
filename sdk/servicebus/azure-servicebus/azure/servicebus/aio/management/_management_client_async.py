@@ -412,7 +412,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
-        queue = create_properties_from_dict_if_needed(queue, QueueProperties)
+        queue = create_properties_from_dict_if_needed(queue, QueueProperties)   # type: ignore
         to_update = queue._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -639,7 +639,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
-        topic = create_properties_from_dict_if_needed(topic, TopicProperties)
+        topic = create_properties_from_dict_if_needed(topic, TopicProperties)   # type: ignore
         to_update = topic._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -887,7 +887,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         _validate_entity_name_type(topic_name, display_name="topic_name")
 
-        subscription = create_properties_from_dict_if_needed(subscription, SubscriptionProperties)
+        subscription = create_properties_from_dict_if_needed(subscription, SubscriptionProperties)  # type: ignore
         to_update = subscription._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -1085,7 +1085,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
-        rule = create_properties_from_dict_if_needed(rule, RuleProperties)
+        rule = create_properties_from_dict_if_needed(rule, RuleProperties)  # type: ignore
         to_update = rule._to_internal_entity()
 
         create_entity_body = CreateRuleBody(

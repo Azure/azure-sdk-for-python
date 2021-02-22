@@ -9,7 +9,7 @@ import datetime
 import logging
 import functools
 import platform
-from typing import Dict, List, Iterable, TYPE_CHECKING, Union
+from typing import Dict, List, Iterable, TYPE_CHECKING, Union, Optional, Iterator, Type
 from contextlib import contextmanager
 from msrest.serialization import UTC
 
@@ -53,6 +53,12 @@ if TYPE_CHECKING:
         Dict,
         ServiceBusMessage,
         List[Dict],
+        List[ServiceBusMessage],
+        ServiceBusMessageBatch
+    ]
+
+    DictMessageReturnType = Union[
+        ServiceBusMessage,
         List[ServiceBusMessage],
         ServiceBusMessageBatch
     ]
@@ -206,16 +212,16 @@ def transform_messages_to_sendable_if_needed(messages):
             return messages
 
 def create_messages_from_dicts_if_needed(messages, message_type):
+    # type: (DictMessageType, type) -> DictMessageReturnType
     """
     This method is used to convert dict representations
     of messages and to a list of ServiceBusMessage objects or ServiceBusBatchMessage.
+    :param DictMessageType messages: A list or single instance of messages of type ServiceBusMessages or
+        dict representations of type ServiceBusMessage. Also accepts ServiceBusBatchMessage.
+    :rtype: DictMessageReturnType
     """
-    # type: (DictMessageType) -> Union[List[ServiceBusMessage], ServiceBusMessage, ServiceBusMessageBatch]
     if isinstance(messages, list):
-        for index, message in enumerate(messages):
-            if isinstance(message, dict):
-                messages[index] = message_type(**message)
-        return [(message_type(**messages) if isinstance(messages, dict) else message) for message in messages]
+        return [(message_type(**message) if isinstance(message, dict) else message) for message in messages]
 
     return message_type(**messages) if isinstance(messages, dict) else messages
 

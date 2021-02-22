@@ -209,7 +209,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # pylint: disable=protected-access
 
         self._check_live()
-        messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)
+        messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)    # type: ignore
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
