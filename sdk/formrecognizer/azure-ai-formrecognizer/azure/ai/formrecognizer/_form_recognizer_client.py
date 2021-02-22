@@ -92,10 +92,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword str locale: Locale of the receipt. Supported locales include: en-US, en-AU, en-CA, en-GB,
             and en-IN.
-        :keyword pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of
-         the pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
-         range with a comma or space.
-        :type pages: list[str]
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
@@ -173,9 +172,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword str locale: Locale of the receipt. Supported locales include: en-US, en-AU, en-CA, en-GB,
             and en-IN.
-        :keyword pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of
-         the pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
-         range with a comma or space.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
