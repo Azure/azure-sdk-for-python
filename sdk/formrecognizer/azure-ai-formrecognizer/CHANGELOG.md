@@ -1,6 +1,9 @@
 # Release History
 
-## 3.1.0b3 (Unreleased)
+## 3.1.0b4 (Unreleased)
+
+
+## 3.1.0b3 (2021-02-09)
 
 **Breaking Changes**
 
@@ -8,6 +11,9 @@
 - `Style` is renamed to `TextStyle`
 - Client property `api_version` is no longer exposed. Pass keyword argument `api_version` into the client to select the
 API version
+
+**Dependency Updates**
+
 - Bumped `six` requirement from `1.6` to `1.11.0`.
 
 ## 3.1.0b2 (2021-01-12)

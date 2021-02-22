@@ -123,6 +123,22 @@ class DirectoryTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_directory())
 
+    async def _test_directory_exists(self):
+        # Arrange
+        directory_name = self._get_directory_reference()
+
+        directory_client1 = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client2 = self.dsc.get_directory_client(self.file_system_name, "nonexistentdir")
+        await directory_client1.create_directory()
+
+        self.assertTrue(await directory_client1.exists())
+        self.assertFalse(await directory_client2.exists())
+
+    @record
+    def test_directory_exists(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_directory_exists())
+
     async def _test_using_oauth_token_credential_to_create_directory(self):
         # generate a token with directory level create permission
         directory_name = self._get_directory_reference()
