@@ -210,20 +210,14 @@ def create_messages_from_dicts_if_needed(messages, message_type):
     This method is used to convert dict representations
     of messages and to a list of ServiceBusMessage objects or ServiceBusBatchMessage.
     """
-    # type: (DictMessageType) -> Union[List[ServiceBusMessage], ServiceBusMessageBatch]
+    # type: (DictMessageType) -> Union[List[ServiceBusMessage], ServiceBusMessage, ServiceBusMessageBatch]
     if isinstance(messages, list):
         for index, message in enumerate(messages):
             if isinstance(message, dict):
                 messages[index] = message_type(**message)
+        return [(message_type(**messages) if isinstance(messages, dict) else message) for message in messages]
 
-    if isinstance(messages, dict):
-        temp_messages = message_type(**messages)
-        messages = [temp_messages]
-
-    if isinstance(messages, message_type):
-        messages = [messages]
-
-    return messages
+    return message_type(**messages) if isinstance(messages, dict) else messages
 
 def strip_protocol_from_uri(uri):
     # type: (str) -> str

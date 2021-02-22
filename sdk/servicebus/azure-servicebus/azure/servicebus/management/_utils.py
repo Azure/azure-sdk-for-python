@@ -36,8 +36,6 @@ try:
 except ImportError:
     import urlparse  # type: ignore  # for python 2.7
 
-_log = logging.getLogger(__name__)
-
 def extract_rule_data_template(feed_class, convert, feed_element):
     """Special version of function extrat_data_template for Rule.
 
@@ -327,7 +325,7 @@ def _validate_topic_subscription_and_rule_types(
             )
         )
 
-def create_properties_from_dicts_if_needed(properties, sb_resource_type):
+def create_properties_from_dict_if_needed(properties, sb_resource_type):
     """
     This method is used to create a properties object given the
     resource properties type and its corresponding dict representation.

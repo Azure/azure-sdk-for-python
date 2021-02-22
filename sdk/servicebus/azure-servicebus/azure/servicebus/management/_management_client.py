@@ -46,7 +46,7 @@ from ._utils import (
     deserialize_rule_key_values,
     serialize_rule_key_values,
     extract_rule_data_template,
-    create_properties_from_dicts_if_needed,
+    create_properties_from_dict_if_needed,
     _validate_entity_name_type,
     _validate_topic_and_subscription_types,
     _validate_topic_subscription_and_rule_types,
@@ -405,7 +405,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
-        queue = create_properties_from_dicts_if_needed(queue, QueueProperties)
+        queue = create_properties_from_dict_if_needed(queue, QueueProperties)
         to_update = queue._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -634,7 +634,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
-        topic = create_properties_from_dicts_if_needed(topic, TopicProperties)
+        topic = create_properties_from_dict_if_needed(topic, TopicProperties)
         to_update = topic._to_internal_entity()
 
         to_update.default_message_time_to_live = (
@@ -890,7 +890,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         _validate_entity_name_type(topic_name, display_name="topic_name")
 
-        subscription = create_properties_from_dicts_if_needed(subscription, SubscriptionProperties)
+        subscription = create_properties_from_dict_if_needed(subscription, SubscriptionProperties)
         to_update = subscription._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -1082,7 +1082,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
-        rule = create_properties_from_dicts_if_needed(rule, RuleProperties)
+        rule = create_properties_from_dict_if_needed(rule, RuleProperties)
         to_update = rule._to_internal_entity()
 
         create_entity_body = CreateRuleBody(

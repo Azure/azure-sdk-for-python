@@ -538,7 +538,7 @@ class ServiceBusMessageBatch(object):
     def _from_list(self, messages, parent_span=None):
         # type: (Iterable[ServiceBusMessage], AbstractSpan) -> None
         for each in messages:
-            if not isinstance(each, ServiceBusMessage) and not isinstance(each, dict):
+            if not isinstance(each, (ServiceBusMessage, dict)):
                 raise TypeError(
                     "Only ServiceBusMessage or an iterable object containing ServiceBusMessage "
                     "objects are accepted. Received instead: {}".format(
@@ -585,7 +585,7 @@ class ServiceBusMessageBatch(object):
         # type: (ServiceBusMessage, AbstractSpan) -> None
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         
-        message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)[0]
+        message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
         message = transform_messages_to_sendable_if_needed(message)
         trace_message(
             message, parent_span
@@ -633,7 +633,6 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
     def __init__(self, message, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, **kwargs):
         # type: (uamqp.message.Message, Union[ServiceBusReceiveMode, str], Any) -> None
-        message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
         super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
         self._settled = receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
         self._received_timestamp_utc = utc_now()

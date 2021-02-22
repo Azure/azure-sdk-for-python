@@ -338,9 +338,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 isinstance(message, ServiceBusMessageBatch) and len(message) == 0
             ):  # pylint: disable=len-as-condition
                 return  # Short circuit noop if an empty list or batch is provided.
-            if not isinstance(message, ServiceBusMessageBatch) and not isinstance(
-                message, ServiceBusMessage
-            ):
+            if not isinstance(message, (ServiceBusMessageBatch, ServiceBusMessage)):
                 raise TypeError(
                     "Can only send azure.servicebus.<ServiceBusMessageBatch,ServiceBusMessage> "
                     "or lists of ServiceBusMessage."
