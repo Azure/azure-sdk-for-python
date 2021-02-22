@@ -4,8 +4,10 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
+from ._enums import EncryptionAlgorithm
+
 if TYPE_CHECKING:
-    from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+    from . import KeyWrapAlgorithm, SignatureAlgorithm
 
 
 class EncryptionAlgorithmConfiguration():

@@ -9,7 +9,16 @@ import six
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
-from . import DecryptionAlgorithmConfiguration, DecryptResult, EncryptionAlgorithmConfiguration, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
+from . import (
+    DecryptionAlgorithmConfiguration,
+    DecryptResult,
+    EncryptionAlgorithmConfiguration,
+    EncryptResult,
+    SignResult,
+    VerifyResult,
+    UnwrapResult,
+    WrapResult,
+)
 from ._key_validity import raise_if_time_invalid
 from ._providers import get_local_cryptography_provider, NoLocalCryptography
 from .. import KeyOperation

@@ -20,7 +20,13 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional, Union
     from azure.core.credentials_async import AsyncTokenCredential
-    from .. import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+    from .. import (
+        DecryptionAlgorithmConfiguration,
+        EncryptionAlgorithm,
+        EncryptionAlgorithmConfiguration,
+        KeyWrapAlgorithm,
+        SignatureAlgorithm,
+    )
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -106,13 +112,18 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             self._initialized = self._keys_get_forbidden
 
     @distributed_trace_async
-    async def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs: "Any") -> EncryptResult:
+    async def encrypt(
+        self,
+        algorithm: "Union[EncryptionAlgorithm, EncryptionAlgorithmConfiguration]",
+        plaintext: bytes,
+        **kwargs: "Any"
+    ) -> EncryptResult:
         """Encrypt bytes using the client's key. Requires the keys/encrypt permission.
 
         This method encrypts only a single block of data, whose size depends on the key and encryption algorithm.
 
         :param algorithm: encryption algorithm to use
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
+        :type algorithm: EncryptionAlgorithm or EncryptionAlgorithmConfiguration
         :param bytes plaintext: bytes to encrypt
         :keyword bytes iv: optional initialization vector. For use with AES-CBC encryption.
         :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
@@ -157,13 +168,18 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs: "Any") -> DecryptResult:
+    async def decrypt(
+        self,
+        algorithm: "Union[EncryptionAlgorithm, DecryptionAlgorithmConfiguration]",
+        ciphertext: bytes,
+        **kwargs: "Any"
+    ) -> DecryptResult:
         """Decrypt a single block of encrypted data using the client's key. Requires the keys/decrypt permission.
 
         This method decrypts only a single block of data, whose size depends on the key and encryption algorithm.
 
         :param algorithm: encryption algorithm to use
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
+        :type algorithm: EncryptionAlgorithm or DecryptionAlgorithmConfiguration
         :param bytes ciphertext: encrypted bytes to decrypt
         :keyword bytes iv: the initialization vector used during encryption. For use with AES encryption.
         :keyword bytes authentication_tag: the authentication tag generated during encryption. For use with AES-GCM
