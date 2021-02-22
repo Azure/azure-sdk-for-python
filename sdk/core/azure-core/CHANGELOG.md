@@ -2,6 +2,8 @@
 
 ## 1.11.1 (Unreleased)
 
+- Added `retry_on_methods` keyword-only argument to `AsyncRetryPolicy` and `RetryPolicy`.
+  This argument enables configuring which HTTP request methods the policies will retry by default.
 
 ## 1.11.0 (2021-02-08)
 
