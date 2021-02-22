@@ -60,7 +60,7 @@ stages:
 
                     - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
                       parameters:
-                        ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$(Package.Name))
+                        ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$(Package.Name)
                         PackageRepository: PyPI
                         ReleaseSha: $(Build.SourceVersion)
                         RepoId: Azure/azure-sdk-for-python
