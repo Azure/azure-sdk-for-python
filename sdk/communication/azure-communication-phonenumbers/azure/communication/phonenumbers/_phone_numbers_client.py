@@ -110,11 +110,15 @@ class PhoneNumbersClient(object):
             assignment_type, # type: str
             capabilities, # type: PhoneNumberCapabilities
 <<<<<<< HEAD
+<<<<<<< HEAD
             quantity=None, # type: int
 =======
             area_code, # type: str
             quantity=1, # type: int
 >>>>>>> 2b281d8ce... Addresses comments
+=======
+            quantity=None, # type: int
+>>>>>>> 33c619188... Added managed identity tests and addressed apiview comments
             **kwargs # type: Any
     ):
         # type: (...) -> LROPoller[PhoneNumberSearchResult]
@@ -149,12 +153,17 @@ class PhoneNumbersClient(object):
             assignment_type=assignment_type,
             capabilities=capabilities,
 <<<<<<< HEAD
+<<<<<<< HEAD
             quantity=quantity,
             area_code=kwargs.pop('area_code', None)
 =======
             area_code=area_code,
             quantity=quantity
 >>>>>>> 2b281d8ce... Addresses comments
+=======
+            quantity=quantity,
+            area_code=kwargs.pop('area_code', None)
+>>>>>>> 33c619188... Added managed identity tests and addressed apiview comments
         )
         return self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,

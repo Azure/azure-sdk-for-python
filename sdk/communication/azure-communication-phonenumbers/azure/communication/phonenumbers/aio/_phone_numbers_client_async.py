@@ -47,6 +47,7 @@ class PhoneNumbersClient(object):
     ):
         # type: (...) -> PhoneNumbersClient
         """Create PhoneNumbersClient from a Connection String.
+<<<<<<< HEAD
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
         :returns: Instance of PhoneNumbersClient.
@@ -91,6 +92,12 @@ class PhoneNumbersClient(object):
         :returns: Instance of PhoneNumbersAdministrationClient.
         :rtype: ~azure.communication.PhoneNumbersAdministrationClient
 >>>>>>> 798b57943... Regenerated code
+=======
+        :param str conn_str:
+            A connection string to an Azure Communication Service resource.
+        :returns: Instance of PhoneNumbersClient.
+        :rtype: ~azure.communication.phonenumbers.aio.PhoneNumbersClient
+>>>>>>> 33c619188... Added managed identity tests and addressed apiview comments
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
@@ -170,11 +177,15 @@ class PhoneNumbersClient(object):
             assignment_type, # type: str
             capabilities,
 <<<<<<< HEAD
+<<<<<<< HEAD
             quantity=None, # type: int
 =======
             area_code, # type: str
             quantity=1, # type: int
 >>>>>>> 2b281d8ce... Addresses comments
+=======
+            quantity=None, # type: int
+>>>>>>> 33c619188... Added managed identity tests and addressed apiview comments
             **kwargs
     ):
         # type: (...) -> AsyncLROPoller[PhoneNumberSearchResult]
@@ -209,12 +220,17 @@ class PhoneNumbersClient(object):
             assignment_type=assignment_type,
             capabilities=capabilities,
 <<<<<<< HEAD
+<<<<<<< HEAD
             quantity=quantity,
             area_code=kwargs.pop('area_code', None)
 =======
             area_code=area_code,
             quantity=quantity
 >>>>>>> 2b281d8ce... Addresses comments
+=======
+            quantity=quantity,
+            area_code=kwargs.pop('area_code', None)
+>>>>>>> 33c619188... Added managed identity tests and addressed apiview comments
         )
         return await self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
