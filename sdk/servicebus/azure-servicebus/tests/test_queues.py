@@ -2079,32 +2079,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_send_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
-        def _hack_amqp_sender_run(cls):
-            time.sleep(6)  # sleep until timeout
-            cls.message_handler.work()
-            cls._waiting_messages = 0
-            cls._pending_messages = cls._filter_pending()
-            if cls._backoff and not cls._waiting_messages:
-                _logger.info("Client told to backoff - sleeping for %r seconds", cls._backoff)
-                cls._connection.sleep(cls._backoff)
-                cls._backoff = 0
-            cls._connection.work()
-            return True
-
-        with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                # this one doesn't need to reset the method, as it's hacking the method on the instance
-                sender._handler._client_run = types.MethodType(_hack_amqp_sender_run, sender._handler)
-                with pytest.raises(OperationTimeoutError):
-                    sender.send_messages(Message("body"), timeout=5)
-
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', lock_duration='PT5S')
     def test_queue_operation_negative(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         def _hack_amqp_message_complete(cls):
