@@ -15,6 +15,7 @@ def test_entities_recognition_general(client, documents):
         json={
             "documents": documents
         },
+
     )
     response = client.send_request(request)
     response.raise_for_status()
@@ -100,13 +101,30 @@ def test_sentiment_preparer(client, documents):
     assert json_response['documents'][0]['sentiment'] == 'positive'
     assert json_response['documents'][1]['sentiment'] == 'positive'
 
-def test_query_params(client, documents):
+def test_query_parameters_preparers(client, documents):
     request = TextAnalyticsPreparers.prepare_sentiment(
         api_version="v3.0",
         body={
             "documents": documents
         },
         show_stats=True
+    )
+    response = client.send_request(request)
+    response.raise_for_status()
+    json_response = response.json()
+    assert json_response['documents'][0]['sentiment'] == 'positive'
+    assert json_response['documents'][1]['sentiment'] == 'positive'
+    assert json_response['statistics']['documentsCount'] == 3
+
+def test_query_parameters_raw(client, documents):
+
+    request = HttpRequest(
+        "POST",
+        url='/text/analytics/v3.0/sentiment',
+        json={
+            "documents": documents
+        },
+        query={"showStats": True}
     )
     response = client.send_request(request)
     response.raise_for_status()

@@ -132,13 +132,31 @@ async def test_sentiment_preparer_opinion_mining(client, documents):
 
 
 @pytest.mark.asyncio
-async def test_query_params(client, documents):
+async def test_query_parameters_preparers(client, documents):
     request = TextAnalyticsPreparers.prepare_sentiment(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
         },
         show_stats=True
+    )
+    response = await client.send_request(request)
+    response.raise_for_status()
+    await response.load_body()
+    json_response = response.json()
+    assert json_response['documents'][0]['sentiment'] == 'positive'
+    assert json_response['documents'][1]['sentiment'] == 'positive'
+    assert json_response['statistics']['documentsCount'] == 3
+
+@pytest.mark.asyncio
+async def test_query_parameters_raw(client, documents):
+    request = HttpRequest(
+        "POST",
+        url='/text/analytics/v3.1-preview.1/sentiment',
+        json={
+            "documents": documents
+        },
+        query={"showStats": True}
     )
     response = await client.send_request(request)
     response.raise_for_status()

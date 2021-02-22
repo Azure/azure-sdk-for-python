@@ -69,9 +69,9 @@ class TextAnalyticsPreparers:
             method="POST",
             url=url,
             headers=header_parameters,
-            json=body
+            json=body,
+            query=query_parameters,
         )
-        request.format_parameters(query_parameters)
         return request
 
     @staticmethod
@@ -136,9 +136,9 @@ class TextAnalyticsPreparers:
             method="POST",
             url=url,
             headers=header_parameters,
-            json=body
+            json=body,
+            query=query_parameters,
         )
-        request.format_parameters(query_parameters)
         return request
 
     @staticmethod
@@ -196,9 +196,9 @@ class TextAnalyticsPreparers:
             method="POST",
             url=url,
             headers=header_parameters,
-            json=body
+            json=body,
+            query=query_parameters,
         )
-        request.format_parameters(query_parameters)
         return request
 
     @staticmethod
@@ -249,9 +249,9 @@ class TextAnalyticsPreparers:
             method="POST",
             url=url,
             headers=header_parameters,
-            json=body
+            json=body,
+            query=query_parameters,
         )
-        request.format_parameters(query_parameters)
         return request
 
     @staticmethod
@@ -303,9 +303,9 @@ class TextAnalyticsPreparers:
             method="POST",
             url=url,
             headers=header_parameters,
-            json=body
+            json=body,
+            query=query_parameters,
         )
-        request.format_parameters(query_parameters)
         return request
 
     @staticmethod
@@ -369,7 +369,7 @@ class TextAnalyticsPreparers:
             method="POST",
             url=url,
             headers=header_parameters,
-            json=body
+            json=body,
+            query=query_parameters,
         )
-        request.format_parameters(query_parameters)
         return request
