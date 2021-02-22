@@ -162,6 +162,8 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
         filters = None
         try:
             filters = key_value.value['conditions']['client_filters']
+            if filters == [None]:
+                key_value.value['conditions']['client_filters'] = []
             if len(filters) > 0 and filters != [None]:
                 filters = [FeatureFilterBase._from_generated(f) for f in filters]
                 key_value.value['conditions']['client_filters'] = filters
