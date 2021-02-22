@@ -163,7 +163,7 @@ When creating the transport, "use_env_settings" parameter can be used to enable 
 synchronous_transport = RequestsTransport(use_env_settings=True)
 ```
 
-If "use_env_settings" is set to True(by default), the transport will look for environment variables 
+If "use_env_settings" is set to True(by default), the transport will look for environment variables
 
 - HTTP_PROXY
 - HTTPS_PROXY
@@ -430,6 +430,7 @@ from azure.core.pipeline.policies import (
 |  |  | retry_backoff_factor | retry_backoff_factor |
 |  |  | retry_backoff_max | retry_backoff_max |
 |  |  | retry_mode | retry_mode |
+|  |  | retry_on_methods | retry_on_methods |
 |  |  | retry_on_status_codes | retry_on_status_codes |
 | AsyncRetryPolicy | AsyncHTTPPolicy | retry_total | retry_total |
 |  |  | retry_connect | retry_connect |
@@ -438,6 +439,7 @@ from azure.core.pipeline.policies import (
 |  |  | retry_backoff_factor | retry_backoff_factor |
 |  |  | retry_backoff_max | retry_backoff_max |
 |  |  | retry_mode | retry_mode |
+|  |  | retry_on_methods | retry_on_methods |
 |  |  | retry_on_status_codes | retry_on_status_codes |
 
 ### The Pipeline
