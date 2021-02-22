@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 """
-FILE: sample_publish_eg_events_to_a_topic_with_azure_sas_credential.py
+FILE: sample_publish_events_to_a_topic_using_sas_credential.py
 DESCRIPTION:
     These samples demonstrate sending an EventGrid Event using a shared access signature for authentication.
 USAGE:
-    python sample_publish_custom_events_to_a_topic_with_signature.py
+    python sample_publish_events_to_a_topic_using_sas_credential.py
     Set the environment variables with your own values before running the sample:
     1) EVENTGRID_SAS - The access key of your eventgrid account.
     2) EG_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
