@@ -143,10 +143,11 @@ class Cluster(TrackedResource):
     :type location: str
     :param sku: Required. The SKU to create, which affects price, performance, and features.
     :type sku: ~azure.mgmt.redisenterprise.models.Sku
-    :param zones: The zones where this cluster will be deployed.
+    :param zones: The Availability Zones where this cluster will be deployed.
     :type zones: list[str]
     :param minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
-    :type minimum_tls_version: str
+     Possible values include: "1.0", "1.1", "1.2".
+    :type minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Possible values include:
@@ -247,7 +248,8 @@ class ClusterUpdate(msrest.serialization.Model):
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
     :param minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
-    :type minimum_tls_version: str
+     Possible values include: "1.0", "1.1", "1.2".
+    :type minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Possible values include:
@@ -333,6 +335,8 @@ class Database(Resource):
      include: "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU",
      "VolatileTTL", "VolatileRandom", "NoEviction".
     :type eviction_policy: str or ~azure.mgmt.redisenterprise.models.EvictionPolicy
+    :param persistence: Persistence settings.
+    :type persistence: ~azure.mgmt.redisenterprise.models.Persistence
     :param modules: Optional set of redis modules to enable in this database - modules can only be
      added at creation time.
     :type modules: list[~azure.mgmt.redisenterprise.models.Module]
@@ -356,6 +360,7 @@ class Database(Resource):
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'clustering_policy': {'key': 'properties.clusteringPolicy', 'type': 'str'},
         'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
+        'persistence': {'key': 'properties.persistence', 'type': 'Persistence'},
         'modules': {'key': 'properties.modules', 'type': '[Module]'},
     }
 
@@ -370,6 +375,7 @@ class Database(Resource):
         self.resource_state = None
         self.clustering_policy = kwargs.get('clustering_policy', None)
         self.eviction_policy = kwargs.get('eviction_policy', None)
+        self.persistence = kwargs.get('persistence', None)
         self.modules = kwargs.get('modules', None)
 
 
@@ -428,6 +434,8 @@ class DatabaseUpdate(msrest.serialization.Model):
      include: "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU",
      "VolatileTTL", "VolatileRandom", "NoEviction".
     :type eviction_policy: str or ~azure.mgmt.redisenterprise.models.EvictionPolicy
+    :param persistence: Persistence settings.
+    :type persistence: ~azure.mgmt.redisenterprise.models.Persistence
     :param modules: Optional set of redis modules to enable in this database - modules can only be
      added at creation time.
     :type modules: list[~azure.mgmt.redisenterprise.models.Module]
@@ -445,6 +453,7 @@ class DatabaseUpdate(msrest.serialization.Model):
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'clustering_policy': {'key': 'properties.clusteringPolicy', 'type': 'str'},
         'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
+        'persistence': {'key': 'properties.persistence', 'type': 'Persistence'},
         'modules': {'key': 'properties.modules', 'type': '[Module]'},
     }
 
@@ -459,6 +468,7 @@ class DatabaseUpdate(msrest.serialization.Model):
         self.resource_state = None
         self.clustering_policy = kwargs.get('clustering_policy', None)
         self.eviction_policy = kwargs.get('eviction_policy', None)
+        self.persistence = kwargs.get('persistence', None)
         self.modules = kwargs.get('modules', None)
 
 
@@ -561,7 +571,7 @@ class ExportClusterParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sas_uri: Required. SAS Uri for the target directory to export to.
+    :param sas_uri: Required. SAS URI for the target directory to export to.
     :type sas_uri: str
     """
 
@@ -586,7 +596,7 @@ class ImportClusterParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sas_uri: Required. SAS Uri for the target blob to import from.
+    :param sas_uri: Required. SAS URI for the target blob to import from.
     :type sas_uri: str
     """
 
@@ -803,6 +813,39 @@ class OperationStatus(msrest.serialization.Model):
         self.end_time = kwargs.get('end_time', None)
         self.status = kwargs.get('status', None)
         self.error = kwargs.get('error', None)
+
+
+class Persistence(msrest.serialization.Model):
+    """Persistence-related configuration for the RedisEnterprise database.
+
+    :param aof_enabled: Sets whether AOF is enabled.
+    :type aof_enabled: bool
+    :param rdb_enabled: Sets whether RDB is enabled.
+    :type rdb_enabled: bool
+    :param aof_frequency: Sets the frequency at which data is written to disk. Possible values
+     include: "1s", "always".
+    :type aof_frequency: str or ~azure.mgmt.redisenterprise.models.AofFrequency
+    :param rdb_frequency: Sets the frequency at which a snapshot of the database is created.
+     Possible values include: "1h", "6h", "12h".
+    :type rdb_frequency: str or ~azure.mgmt.redisenterprise.models.RdbFrequency
+    """
+
+    _attribute_map = {
+        'aof_enabled': {'key': 'aofEnabled', 'type': 'bool'},
+        'rdb_enabled': {'key': 'rdbEnabled', 'type': 'bool'},
+        'aof_frequency': {'key': 'aofFrequency', 'type': 'str'},
+        'rdb_frequency': {'key': 'rdbFrequency', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Persistence, self).__init__(**kwargs)
+        self.aof_enabled = kwargs.get('aof_enabled', None)
+        self.rdb_enabled = kwargs.get('rdb_enabled', None)
+        self.aof_frequency = kwargs.get('aof_frequency', None)
+        self.rdb_frequency = kwargs.get('rdb_frequency', None)
 
 
 class PrivateEndpoint(msrest.serialization.Model):
