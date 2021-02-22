@@ -1,9 +1,9 @@
 {
-    "chosen_version": "2020-10-01-preview",
-    "total_api_version_list": ["2020-10-01-preview"],
+    "chosen_version": "2021-03-01",
+    "total_api_version_list": ["2021-03-01"],
     "client": {
-        "name": "RedisEnterprise",
-        "filename": "_redis_enterprise",
+        "name": "RedisEnterpriseManagementClient",
+        "filename": "_redis_enterprise_management_client",
         "description": "REST API for managing Redis Enterprise resources in Azure.",
         "base_url": "\u0027https://management.azure.com\u0027",
         "custom_base_url": null,
@@ -21,7 +21,7 @@
             },
             "subscription_id": {
                 "signature": "subscription_id,  # type: str",
-                "description": "Gets subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
+                "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
             }
@@ -35,7 +35,7 @@
             },
             "subscription_id": {
                 "signature": "subscription_id,  # type: str",
-                "description": "Gets subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
+                "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
             }
@@ -53,7 +53,7 @@
     },
     "operation_groups": {
         "operations": "Operations",
-        "get": "GetOperations",
+        "operations_status": "OperationsStatusOperations",
         "redis_enterprise": "RedisEnterpriseOperations",
         "databases": "DatabasesOperations",
         "private_endpoint_connections": "PrivateEndpointConnectionsOperations",

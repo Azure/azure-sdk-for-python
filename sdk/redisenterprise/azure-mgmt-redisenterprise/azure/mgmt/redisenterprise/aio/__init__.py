@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._redis_enterprise import RedisEnterprise
-__all__ = ['RedisEnterprise']
+from ._redis_enterprise_management_client import RedisEnterpriseManagementClient
+__all__ = ['RedisEnterpriseManagementClient']

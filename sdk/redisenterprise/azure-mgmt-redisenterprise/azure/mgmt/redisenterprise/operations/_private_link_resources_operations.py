@@ -45,7 +45,7 @@ class PrivateLinkResourcesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def list_by_redis_enterprise_cache(
+    def list_by_cluster(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
@@ -54,7 +54,7 @@ class PrivateLinkResourcesOperations(object):
         # type: (...) -> Iterable["_models.PrivateLinkResourceListResult"]
         """Gets the private link resources that need to be created for a RedisEnterprise cluster.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param cluster_name: The name of the RedisEnterprise cluster.
         :type cluster_name: str
@@ -68,7 +68,7 @@ class PrivateLinkResourcesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01-preview"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -78,11 +78,11 @@ class PrivateLinkResourcesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_redis_enterprise_cache.metadata['url']  # type: ignore
+                url = self.list_by_cluster.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -119,4 +119,4 @@ class PrivateLinkResourcesOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_redis_enterprise_cache.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/privateLinkResources'}  # type: ignore
+    list_by_cluster.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/privateLinkResources'}  # type: ignore

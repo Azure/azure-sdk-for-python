@@ -19,15 +19,15 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class RedisEnterpriseConfiguration(Configuration):
-    """Configuration for RedisEnterprise.
+class RedisEnterpriseManagementClientConfiguration(Configuration):
+    """Configuration for RedisEnterpriseManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Gets subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     """
 
@@ -41,11 +41,11 @@ class RedisEnterpriseConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(RedisEnterpriseConfiguration, self).__init__(**kwargs)
+        super(RedisEnterpriseManagementClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2020-10-01-preview"
+        self.api_version = "2021-03-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-redisenterprise/{}'.format(VERSION))
         self._configure(**kwargs)

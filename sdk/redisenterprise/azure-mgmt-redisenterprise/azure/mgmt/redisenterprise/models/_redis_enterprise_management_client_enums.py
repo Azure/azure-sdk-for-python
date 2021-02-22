@@ -39,6 +39,13 @@ class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     INTERNAL = "Internal"
 
+class AofFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Sets the frequency at which data is written to disk.
+    """
+
+    ONE_S = "1s"
+    ALWAYS = "always"
+
 class ClusteringPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Clustering policy - default is OSSCluster. Specified at create time.
     """
@@ -104,6 +111,14 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UPDATING = "Updating"
     DELETING = "Deleting"
 
+class RdbFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Sets the frequency at which a snapshot of the database is created.
+    """
+
+    ONE_H = "1h"
+    SIX_H = "6h"
+    TWELVE_H = "12h"
+
 class ResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Current resource status
     """
@@ -133,3 +148,11 @@ class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENTERPRISE_FLASH_F300 = "EnterpriseFlash_F300"
     ENTERPRISE_FLASH_F700 = "EnterpriseFlash_F700"
     ENTERPRISE_FLASH_F1500 = "EnterpriseFlash_F1500"
+
+class TlsVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The minimum TLS version for the cluster to support, e.g. '1.2'
+    """
+
+    ONE0 = "1.0"
+    ONE1 = "1.1"
+    ONE2 = "1.2"
