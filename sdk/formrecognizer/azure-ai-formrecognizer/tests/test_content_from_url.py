@@ -36,12 +36,6 @@ class TestContentFromUrl(FormRecognizerTest):
             poller = client.begin_recognize_content_from_url(self.invoice_url_pdf)
 
     @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    def test_content_url_auth_successful_key(self, client):
-        poller = client.begin_recognize_content_from_url(self.invoice_url_pdf)
-        result = poller.result()
-
-    @FormRecognizerPreparer()
     def test_content_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):

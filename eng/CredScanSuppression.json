@@ -1,4 +1,43 @@
 {
     "tool": "Credential Scanner",
-    "suppressions": []
+    "suppressions": [
+        {
+            "placeholder": [
+                "XxxxXxxxXXXxxxXXXXxxxxXXxxxXxxx",
+                "HusH_Sec4et",
+                "myPassw0rd",
+                "myPassw0rd3",
+                "SWsSsd__233$Sdsds#%Sd!",
+                "kt#_gahr!@aGERDXA",
+                "Aa1!zyx_",
+                "Aa!1()-xyz",
+                "000000000000000000000000000000000000000000000000000",
+                "UsernameAndPassword",
+                "123456",
+                "Password1!",
+                "NewPassword1!",
+                "MyStr0ngP4ssword",
+                "secret_password",
+                "secret",
+                "123",
+                "connectionstring",
+                "123_abc",
+                "pa$$w0rd",
+                "Password1!!!",
+                "Un53cuRE!",
+                "SecretBase",
+                "nodesdk",
+                "p@55wOrd",
+                "pass$w0rd"
+            ],
+            "_justification": "Secret used by test code, it is fake."
+        },
+        {
+            "file":[
+                "sdk/keyvault/azure-keyvault-certificates/tests/ca.key",
+                "sdk/identity/azure-identity/tests/ec-certificate.pem"
+            ],
+            "_justification": "File contains private key used by test code."
+        }  
+    ]
 }

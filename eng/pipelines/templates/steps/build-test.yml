@@ -65,7 +65,7 @@ steps:
 
   - pwsh: |
       if (Test-Path -Path '.\_coverage\') {
-        Get-ChildItem .\_coverage\ |
+        Get-ChildItem .\_coverage\ -Recurse |
         Foreach-Object {
           Get-Content $_
         }
