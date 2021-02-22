@@ -55,6 +55,9 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
      These are errors raised before the request is sent to the remote server,
      which we assume has not triggered the server to process the request. Default value is 3.
 
+    :keyword Iterable[str] retry_on_methods: Which HTTP request methods the policy should retry on. If unspecified, the
+     policy will retry only HEAD, GET, PUT, DELETE, OPTIONS, and TRACE requests.
+
     :keyword int retry_read: How many times to retry on read errors.
      These errors are raised after the request was sent to the server, so the
      request may have side-effects. Default value is 3.

@@ -73,7 +73,8 @@ class RetryPolicyBase(object):
         retry_codes = self._RETRY_CODES
         status_codes = kwargs.pop('retry_on_status_codes', [])
         self._retry_on_status_codes = set(status_codes) | retry_codes
-        self._retry_on_methods = frozenset(['HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'])
+        methods = kwargs.pop('retry_on_methods', None) or ['HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE']
+        self._retry_on_methods = frozenset(methods)
         self._respect_retry_after_header = True
         super(RetryPolicyBase, self).__init__()
 
@@ -338,6 +339,9 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
     :keyword int retry_connect: How many connection-related errors to retry on.
      These are errors raised before the request is sent to the remote server,
      which we assume has not triggered the server to process the request. Default value is 3.
+
+    :keyword Iterable[str] retry_on_methods: Which HTTP request methods the policy should retry on. If unspecified, the
+     policy will retry only HEAD, GET, PUT, DELETE, OPTIONS, and TRACE requests.
 
     :keyword int retry_read: How many times to retry on read errors.
      These errors are raised after the request was sent to the server, so the
