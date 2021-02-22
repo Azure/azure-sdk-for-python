@@ -13,6 +13,7 @@ from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
 from .._constants import ALL_PARTITIONS
 from .._common import EventDataBatch, EventData
+from .._utils import validate_outgoing_event_data
 
 if TYPE_CHECKING:
     from uamqp.constants import TransportType
@@ -313,30 +314,17 @@ class EventHubProducerClient(ClientBaseAsync):
         # pylint:disable=protected-access
         partition_id = kwargs.get("partition_id")
         partition_key = kwargs.get("partition_key")
+
+        validate_outgoing_event_data(
+            event_data_batch,
+            partition_id,
+            partition_key,
+            self._config.enable_idempotent_partitions
+        )
+
         if isinstance(event_data_batch, EventDataBatch):
-            if partition_id or partition_key:
-                raise TypeError("partition_id and partition_key should be None when sending an EventDataBatch "
-                                "because type EventDataBatch itself may have partition_id or partition_key")
-            if self._config.enable_idempotent_partitions:
-                if event_data_batch._partition_id is None:
-                    raise ValueError("The EventDataBatch object is missing partition_id which is required "
-                                     "by idempotent producer. "
-                                     "Please create an EventDataBatch object with only the partition_id.")
-                if event_data_batch._partition_key is not None:
-                    raise ValueError("The EventDataBatch object has a partition_key which is not allowed by "
-                                     "idempotent producer. "
-                                     "Please create an EventDataBatch object with only the partition_id.")
-                if event_data_batch.starting_published_sequence_number is not None:
-                    raise ValueError("EventDataBatch object that has already been published by idempotent producer"
-                                     "could not be published again. Please create a new object.")
             to_send_batch = event_data_batch
         else:
-            if self._config.enable_idempotent_partitions:
-                if partition_id is None:
-                    raise ValueError("The partition_id must be set when performing idempotent publishing.")
-                if len([event for event in event_data_batch if event.published_sequence_number is not None]):
-                    raise ValueError("EventData object that has already been published by "
-                                     "idempotent producer could not be published again.")
             to_send_batch = await self.create_batch(partition_id=partition_id, partition_key=partition_key)
             to_send_batch._load_events(event_data_batch)
         partition_id = (

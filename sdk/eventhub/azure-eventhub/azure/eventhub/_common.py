@@ -455,6 +455,10 @@ class EventDataBatch(object):
             if not event_data.partition_key:
                 set_message_partition_key(event_data.message, self._partition_key)
 
+        if self._is_idempotent_batch and event_data.published_sequence_number is not None:
+            raise ValueError("EventData object that has already been published by "
+                             "idempotent producer could not be published again.")
+
         trace_message(event_data)
         if self._is_idempotent_batch:
             # Reserve space for producer-owned fields that correspond to the idempotent publishing, if enabled.
