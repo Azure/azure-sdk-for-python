@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
+from azure.mixedreality.authentication import MixedRealityStsClient
 from .static_access_token_credential import StaticAccessTokenCredential
-from .._client import MixedRealityStsClient
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports

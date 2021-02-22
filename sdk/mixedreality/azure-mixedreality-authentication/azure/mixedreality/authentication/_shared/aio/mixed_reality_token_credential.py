@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
+from azure.mixedreality.authentication.aio import MixedRealityStsClient
 from .static_access_token_credential import StaticAccessTokenCredential
-from ...aio._client_async import MixedRealityStsClient
 
 if TYPE_CHECKING:
     from typing import Any
