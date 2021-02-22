@@ -424,6 +424,52 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         with pytest.raises(ResourceModifiedError):
             client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
 
+    @app_config_decorator
+    def test_sync_tokens(self, client):
+        new = FeatureFlagConfigurationSetting('custom', True, feature_filter={
+            'name': 'Microsoft.Percentage',
+            'parameters': {
+                'Value': 50
+            }
+        })
+
+        sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        keys = list(sync_tokens.keys())
+        seq_num = sync_tokens[keys[0]].sequence_number
+        sent = client.set_configuration_setting(new)
+
+        new = FeatureFlagConfigurationSetting('time_window', True, feature_filter={
+            'name': 'Microsoft.TimeWindow',
+            'parameters': {
+                'Start': 'Fri, 19 Feb 2021 18:00:00 GMT', # TODO: convert these to datetime objects
+                'End': 'Fri, 26 Feb 2021 05:00:00 GMT'
+            }
+        })
+
+        sent = client.set_configuration_setting(new)
+        sync_tokens2 = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        keys = list(sync_tokens2.keys())
+        seq_num2 = sync_tokens2[keys[0]].sequence_number
+
+        new = FeatureFlagConfigurationSetting("newflag", True, feature_filter={
+            'name': 'Microsoft.Targeting',
+            'parameters': {
+                'Audience': {
+                    'Users': [],
+                    'Groups': [],
+                    'DefaultRolloutPercentage': 75,
+                }
+            }
+        })
+
+        sent = client.set_configuration_setting(new)
+        sync_tokens3 = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        keys = list(sync_tokens3.keys())
+        seq_num3 = sync_tokens3[keys[0]].sequence_number
+
+        assert seq_num < seq_num2
+        assert seq_num2 < seq_num3
+
     def _assert_same_keys(self, key1, key2):
         assert type(key1) == type(key2)
         assert key1.key == key2.key
@@ -536,47 +582,38 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         client.delete_configuration_setting(new_sent)
 
     @app_config_decorator
-    def test_sync_tokens(self, client):
-        new = FeatureFlagConfigurationSetting('custom', True, feature_filter={
-            'name': 'Microsoft.Percentage',
-            'parameters': {
-                'Value': 50
-            }
-        })
-
-        sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
-        keys = list(sync_tokens.keys())
-        seq_num = sync_tokens[keys[0]].sequence_number
-        sent = client.set_configuration_setting(new)
-
-        new = FeatureFlagConfigurationSetting('time_window', True, feature_filter={
-            'name': 'Microsoft.TimeWindow',
-            'parameters': {
-                'Start': 'Fri, 19 Feb 2021 18:00:00 GMT', # TODO: convert these to datetime objects
-                'End': 'Fri, 26 Feb 2021 05:00:00 GMT'
-            }
-        })
+    def test_feature_filter_multiple(self, client):
+        new = FeatureFlagConfigurationSetting(
+            'custom',
+            True,
+            feature_filters=[
+                CustomFeatureFilter(value=50),
+                TimeWindowFeatureFilter(
+                    start='Fri, 19 Feb 2021 18:00:00 GMT',
+                    end='Fri, 26 Feb 2021 05:00:00 GMT'
+                ),
+                TargetingFeatureFilter(75)
+            ]
+        )
 
         sent = client.set_configuration_setting(new)
-        sync_tokens2 = copy.deepcopy(client._sync_token_policy._sync_tokens)
-        keys = list(sync_tokens2.keys())
-        seq_num2 = sync_tokens2[keys[0]].sequence_number
+        self._assert_same_keys(sent, new)
 
-        new = FeatureFlagConfigurationSetting("newflag", True, feature_filter={
-            'name': 'Microsoft.Targeting',
-            'parameters': {
-                'Audience': {
-                    'Users': [],
-                    'Groups': [],
-                    'DefaultRolloutPercentage': 75,
-                }
-            }
-        })
+        sent.value['conditions']['client_filters'][0].value = 100
+        sent.value['conditions']['client_filters'][1].end = 'Fri, 26 Feb 2021 08:00:00 GMT'
+        sent.value['conditions']['client_filters'][2].rollout_percentage = 80
 
-        sent = client.set_configuration_setting(new)
-        sync_tokens3 = copy.deepcopy(client._sync_token_policy._sync_tokens)
-        keys = list(sync_tokens3.keys())
-        seq_num3 = sync_tokens3[keys[0]].sequence_number
+        new_sent = client.set_configuration_setting(sent)
+        self._assert_same_keys(sent, new_sent)
 
-        assert seq_num < seq_num2
-        assert seq_num2 < seq_num3
+        assert new_sent.value['conditions']['client_filters'][0].value == 100
+        assert new_sent.value['conditions']['client_filters'][1].end == 'Fri, 26 Feb 2021 08:00:00 GMT'
+        assert new_sent.value['conditions']['client_filters'][2].rollout_percentage == 80
+
+        client.delete_configuration_setting(new_sent)
+
+        self._clean_up(client)
+
+    def _clean_up(self, client):
+        for config in client.list_configuration_settings():
+            client.delete_configuration_setting(config)
