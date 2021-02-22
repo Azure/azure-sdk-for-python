@@ -17,9 +17,9 @@ if TYPE_CHECKING:
 
     from azure.core.credentials import TokenCredential
 
-from ._configuration import RedisEnterpriseConfiguration
+from ._configuration import RedisEnterpriseManagementClientConfiguration
 from .operations import Operations
-from .operations import GetOperations
+from .operations import OperationsStatusOperations
 from .operations import RedisEnterpriseOperations
 from .operations import DatabasesOperations
 from .operations import PrivateEndpointConnectionsOperations
@@ -27,13 +27,13 @@ from .operations import PrivateLinkResourcesOperations
 from . import models
 
 
-class RedisEnterprise(object):
+class RedisEnterpriseManagementClient(object):
     """REST API for managing Redis Enterprise resources in Azure.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.redisenterprise.operations.Operations
-    :ivar get: GetOperations operations
-    :vartype get: azure.mgmt.redisenterprise.operations.GetOperations
+    :ivar operations_status: OperationsStatusOperations operations
+    :vartype operations_status: azure.mgmt.redisenterprise.operations.OperationsStatusOperations
     :ivar redis_enterprise: RedisEnterpriseOperations operations
     :vartype redis_enterprise: azure.mgmt.redisenterprise.operations.RedisEnterpriseOperations
     :ivar databases: DatabasesOperations operations
@@ -44,7 +44,7 @@ class RedisEnterprise(object):
     :vartype private_link_resources: azure.mgmt.redisenterprise.operations.PrivateLinkResourcesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Gets subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str base_url: Service URL
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
@@ -60,7 +60,7 @@ class RedisEnterprise(object):
         # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = RedisEnterpriseConfiguration(credential, subscription_id, **kwargs)
+        self._config = RedisEnterpriseManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -69,7 +69,7 @@ class RedisEnterprise(object):
 
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.get = GetOperations(
+        self.operations_status = OperationsStatusOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.redis_enterprise = RedisEnterpriseOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -85,7 +85,7 @@ class RedisEnterprise(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> RedisEnterprise
+        # type: () -> RedisEnterpriseManagementClient
         self._client.__enter__()
         return self
 
