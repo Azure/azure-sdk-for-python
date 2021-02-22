@@ -2,7 +2,9 @@ import os
 import pytest
 from azure.communication.phonenumbers import PhoneNumbersClient
 from _shared.testcase import CommunicationTestCase, ResponseReplacerProcessor, BodyReplacerProcessor
+from _shared.utils import create_token_credential
 from azure.communication.phonenumbers import PhoneNumberAssignmentType, PhoneNumberCapabilities, PhoneNumberCapabilityValue, PhoneNumberType
+from azure.communication.phonenumbers._shared.utils import parse_connection_str
 
 class NewTests(CommunicationTestCase):
     def setUp(self):
@@ -24,6 +26,14 @@ class NewTests(CommunicationTestCase):
             ),
             ResponseReplacerProcessor(keys=[self._resource_name])])
 
+    @pytest.mark.live_test_only
+    def test_list_all_phone_numbers_from_managed_identity(self):
+        endpoint, access_key = parse_connection_str(self.connection_str)
+        credential = create_token_credential()
+        phone_number_client = PhoneNumbersClient(endpoint, credential)
+        phone_numbers = phone_number_client.list_all_phone_numbers()
+        assert phone_numbers.next()
+    
     @pytest.mark.live_test_only
     def test_list_acquired_phone_numbers(self):
         phone_numbers = self.phone_number_client.list_acquired_phone_numbers()
@@ -50,7 +60,7 @@ class NewTests(CommunicationTestCase):
             PhoneNumberType.TOLL_FREE,
             PhoneNumberAssignmentType.APPLICATION,
             capabilities,
-            self.area_code,
+            area_code=self.area_code,
             polling = True
         )
         assert poller.result()
