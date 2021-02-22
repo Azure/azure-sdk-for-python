@@ -176,10 +176,10 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertEqual(receipt.fields.get("TransactionTime").value, time(hour=13, minute=59, second=0))
         self.assertEqual(receipt.page_range.first_page_number, 1)
         self.assertEqual(receipt.page_range.last_page_number, 1)
-        self.assertFormPagesHasValues(receipt.pages)
         receipt_type = receipt.fields.get("ReceiptType")
         self.assertIsNotNone(receipt_type.confidence)
         self.assertEqual(receipt_type.value, 'Itemized')
+        self.assertReceiptItemsHasValues(receipt.fields["Items"].value, receipt.page_range.first_page_number, True)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
