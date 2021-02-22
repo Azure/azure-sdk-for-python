@@ -28,16 +28,17 @@ async def publish():
     credential = AzureSasCredential(sas)
     client = EventGridPublisherClient(endpoint, credential)
 
-    await client.send([
-        EventGridEvent(
-            event_type="Contoso.Items.ItemReceived",
-            data={
-                "itemSku": "Contoso Item SKU #1"
-            },
-            subject="Door1",
-            data_version="2.0"
-        )
-    ])
+    async with client:
+        await client.send([
+            EventGridEvent(
+                event_type="Contoso.Items.ItemReceived",
+                data={
+                    "itemSku": "Contoso Item SKU #1"
+                },
+                subject="Door1",
+                data_version="2.0"
+            )
+        ])
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
