@@ -75,6 +75,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 
         :param str conn_str: The connection string to be used for authentication.
         :keyword str api_version: The service API version used. Defaults to latest.
+        :returns an instance of ~AzureMonitorTraceExporter
         """
         return cls(connection_string=conn_str, **kwargs)
 
