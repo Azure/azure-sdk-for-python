@@ -17,6 +17,8 @@ USAGE:
     "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
 """
 import os
+from datetime import datetime
+from msrest.serialization import UTC
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 from azure.core.credentials import AzureKeyCredential
 
@@ -34,7 +36,7 @@ def publish():
         "subject": "Door1",	
         "dataVersion": "2.0",	
         "id": "randomuuid11",	
-        "eventTime": datetime.utcnow()	
+        "eventTime": datetime.now(UTC)
     }	
     event1 = {	
         "eventType": "Contoso.Items.ItemReceived",	
@@ -44,7 +46,7 @@ def publish():
         "subject": "Door1",	
         "dataVersion": "2.0",	
         "id": "randomuuid12",	
-        "eventTime": datetime.utcnow()	
+        "eventTime": datetime.now(UTC)
     }	
     client.send([event0, event1])
 

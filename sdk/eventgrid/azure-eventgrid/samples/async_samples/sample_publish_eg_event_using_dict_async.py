@@ -18,6 +18,8 @@ USAGE:
 """
 import os
 import asyncio
+from datetime import datetime
+from msrest.serialization import UTC
 from azure.eventgrid import EventGridEvent
 from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
@@ -36,7 +38,7 @@ async def publish():
         "subject": "Door1",	
         "dataVersion": "2.0",	
         "id": "randomuuid11",	
-        "eventTime": datetime.utcnow()	
+        "eventTime": datetime.now(UTC)	
     }	
     event1 = {	
         "eventType": "Contoso.Items.ItemReceived",	
@@ -46,7 +48,7 @@ async def publish():
         "subject": "Door1",	
         "dataVersion": "2.0",	
         "id": "randomuuid12",	
-        "eventTime": datetime.utcnow()	
+        "eventTime": datetime.now(UTC)	
     }
 
     async with client:	
