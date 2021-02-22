@@ -7,8 +7,10 @@ try:
     from io import BytesIO
 except ImportError:
     from cStringIO import StringIO as BytesIO
+
+import itertools
 import pytest
-from azure.core.exceptions import AzureError, ServiceResponseError, ServiceResponseTimeoutError
+from azure.core.exceptions import AzureError, ServiceResponseError, ServiceRequestError, ServiceResponseTimeoutError
 from azure.core.pipeline.policies import (
     RetryPolicy,
     RetryMode,
@@ -22,6 +24,12 @@ from azure.core.pipeline.transport import (
 import tempfile
 import os
 import time
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
 
 def test_retry_code_class_variables():
     retry_policy = RetryPolicy()
@@ -134,6 +142,38 @@ def test_no_retry_on_201():
     pipeline = Pipeline(transport, [http_retry])
     pipeline.run(http_request)
     assert transport._count == 1
+
+def test_retry_on_methods():
+    """when given retry_on_methods, the policy should retry only requests using those methods"""
+
+    expected_message = "oops"
+
+    def send(request, **_):
+        raise ServiceRequestError(expected_message)
+
+    transport = mock.Mock(send=mock.Mock(wraps=send), sleep=lambda _: None)
+
+    methods = {"CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"}
+    for should_retry in itertools.combinations(methods, 4):
+        policy = RetryPolicy(retry_on_methods=should_retry)
+        pipeline = Pipeline(transport, [policy])
+        for method in methods:
+            with pytest.raises(ServiceRequestError, match=expected_message):
+                pipeline.run(HttpRequest(method, "http://localhost"))
+            if method in should_retry:
+                assert transport.send.call_count > 1, "policy did not retry a method in retry_on_methods"
+            else:
+                assert transport.send.call_count == 1, "policy retried a method not in retry_on_methods"
+
+            transport.send.reset_mock()
+
+        # pipeline.run's retry_on_methods should override the policy's default
+        should_not_retry_by_default = methods - set(should_retry)
+        for method in should_not_retry_by_default:
+            with pytest.raises(ServiceRequestError, match=expected_message):
+                pipeline.run(HttpRequest(method, "http://localhost"), retry_on_methods=[should_not_retry_by_default])
+                assert transport.send.call_count > 1, "pipeline.run's retry_on_methods didn't override policy default"
+            transport.send.reset_mock()
 
 def test_retry_seekable_stream():
     class MockTransport(HttpTransport):
