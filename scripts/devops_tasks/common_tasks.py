@@ -356,7 +356,7 @@ def find_whl(package_name, version, whl_directory):
     parsed_version = parse(version)
 
     logging.info("Searching whl for package {0}-{1}".format(package_name, parsed_version.base_version))
-    whl_name_format = "{0}-{1}-*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
+    whl_name_format = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
     whls = []
     for root, dirnames, filenames in os.walk(whl_directory):
         for filename in fnmatch.filter(filenames, whl_name_format):

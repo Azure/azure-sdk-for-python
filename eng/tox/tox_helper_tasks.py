@@ -118,7 +118,7 @@ def find_whl(whl_dir, pkg_name, pkg_version):
         return
 
 
-    pkg_name_format = "{0}-{1}-*.whl".format(pkg_name.replace("-", "_"), pkg_version)
+    pkg_name_format = "{0}-{1}*.whl".format(pkg_name.replace("-", "_"), pkg_version)
     whls = []
     for root, dirnames, filenames in os.walk(whl_dir):
         for filename in fnmatch.filter(filenames, pkg_name_format):
