@@ -28,7 +28,10 @@ def _to_str(value):
 
 
 def _to_utc_datetime(value):
-    return value.strftime("%Y-%m-%dT%H:%M:%SZ")
+    try:
+        return value.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    except:
+        return value.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _encode_base64(data):

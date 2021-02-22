@@ -24,14 +24,9 @@ if version_info < (3,):
             return value.encode("utf-8")
 
         return str(value)
-
-
 else:
     _str = str
 
-
-def _to_utc_datetime(value):
-    return value.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _to_str(value):

@@ -96,11 +96,26 @@ class Timezone(datetime.tzinfo):
 
 def _from_entity_datetime(value):
     # Cosmos returns this with a decimal point that throws an error on deserialization
-    if value[-9:] == ".0000000Z":
-        value = value[:-9] + "Z"
-    return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(
-        tzinfo=Timezone()
-    )
+    value = value.split(".")
+    ms = ""
+    if len(value) == 2:
+        ms = value[-1].replace("Z", "")
+        if len(ms) > 6:
+            ms = ms[:6]
+        ms = ms + "Z"
+        value = ".".join([value[0], ms])
+    else:
+        value = value[0]
+
+    try:
+        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
+            tzinfo=Timezone()
+        )
+    except ValueError:
+        # if value[-9:] == ".0000000Z":x
+        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(
+            tzinfo=Timezone()
+        )
 
 
 def _from_entity_guid(value):
