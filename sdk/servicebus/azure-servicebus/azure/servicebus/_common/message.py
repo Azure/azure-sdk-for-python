@@ -585,7 +585,7 @@ class ServiceBusMessageBatch(object):
         # type: (ServiceBusMessage, AbstractSpan) -> None
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
 
-        message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
+        message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)  # type: ignore
         message = transform_messages_to_sendable_if_needed(message)
         trace_message(
             message, parent_span
