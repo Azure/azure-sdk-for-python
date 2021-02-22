@@ -153,7 +153,7 @@ class DetectedFace(Model):
     :param face_id:
     :type face_id: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param face_rectangle: Required.
@@ -527,7 +527,7 @@ class MetaDataContract(NameAndUserDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     """
@@ -558,7 +558,7 @@ class FaceList(MetaDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param face_list_id: Required. FaceListId of the target face list.
@@ -658,7 +658,8 @@ class FindSimilarRequest(Model):
 
     :param face_id: Required. FaceId of the query face. User needs to call
      Face - Detect first to get a valid faceId. Note that this faceId is not
-     persisted and will expire 24 hours after the detection call
+     persisted and will expire at the time specified by faceIdTimeToLive after
+     the detection call
     :type face_id: str
     :param face_list_id: An existing user-specified unique candidate face
      list, created in Face List - Create a Face List. Face list contains a set
@@ -673,9 +674,10 @@ class FindSimilarRequest(Model):
      provided at the same time.
     :type large_face_list_id: str
     :param face_ids: An array of candidate faceIds. All of them are created by
-     Face - Detect and the faceIds will expire 24 hours after the detection
-     call. The number of faceIds is limited to 1000. Parameter faceListId,
-     largeFaceListId and faceIds should not be provided at the same time.
+     Face - Detect and the faceIds will expire at the time specified by
+     faceIdTimeToLive after the detection call. The number of faceIds is
+     limited to 1000. Parameter faceListId, largeFaceListId and faceIds should
+     not be provided at the same time.
     :type face_ids: list[str]
     :param max_num_of_candidates_returned: The number of top similar faces
      returned. The valid range is [1, 1000]. Default value: 20 .
@@ -983,7 +985,7 @@ class LargeFaceList(MetaDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param large_face_list_id: Required. LargeFaceListId of the target large
@@ -1019,7 +1021,7 @@ class LargePersonGroup(MetaDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param large_person_group_id: Required. LargePersonGroupId of the target
@@ -1186,8 +1188,8 @@ class PersistedFace(Model):
 
     :param persisted_face_id: Required. The persistedFaceId of the target
      face, which is persisted and will not expire. Different from faceId
-     created by Face - Detect and will expire in 24 hours after the detection
-     call.
+     created by Face - Detect and will expire in at the time specified by
+     faceIdTimeToLive after the detection call.
     :type persisted_face_id: str
     :param user_data: User-provided data attached to the face. The size limit
      is 1KB.
@@ -1256,7 +1258,7 @@ class PersonGroup(MetaDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param person_group_id: Required. PersonGroupId of the target person
@@ -1288,7 +1290,8 @@ class SimilarFace(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param face_id: FaceId of candidate face when find by faceIds. faceId is
-     created by Face - Detect and will expire 24 hours after the detection call
+     created by Face - Detect and will expire at the time specified by
+     faceIdTimeToLive after the detection call
     :type face_id: str
     :param persisted_face_id: PersistedFaceId of candidate face when find by
      faceListId. persistedFaceId in face list is persisted and will not expire.

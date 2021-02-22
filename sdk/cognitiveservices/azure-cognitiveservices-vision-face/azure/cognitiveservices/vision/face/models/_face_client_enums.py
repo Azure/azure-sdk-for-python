@@ -16,6 +16,7 @@ class RecognitionModel(str, Enum):
 
     recognition_01 = "recognition_01"
     recognition_02 = "recognition_02"
+    recognition_03 = "recognition_03"
 
 
 class Gender(str, Enum):
@@ -129,3 +130,4 @@ class DetectionModel(str, Enum):
 
     detection_01 = "detection_01"
     detection_02 = "detection_02"
+    detection_03 = "detection_03"

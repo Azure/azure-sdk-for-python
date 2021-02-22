@@ -39,17 +39,15 @@ class FaceOperations(object):
             self, face_id, face_list_id=None, large_face_list_id=None, face_ids=None, max_num_of_candidates_returned=20, mode="matchPerson", custom_headers=None, raw=False, **operation_config):
         """Given query face's faceId, to search the similar-looking faces from a
         faceId array, a face list or a large face list. faceId array contains
-        the faces created by [Face -
-        Detect](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395236),
-        which will expire 24 hours after creation. A "faceListId" is created by
-        [FaceList -
-        Create](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039524b)
-        containing persistedFaceIds that will not expire. And a
-        "largeFaceListId" is created by [LargeFaceList -
-        Create](/docs/services/563879b61984550e40cbbe8d/operations/5a157b68d2de3616c086f2cc)
-        containing persistedFaceIds that will also not expire. Depending on the
-        input the returned similar faces list contains faceIds or
-        persistedFaceIds ranked by similarity.
+        the faces created by [Face - Detect With Url](detectwithurl) or [Face -
+        Detect With Stream](detectwithstream), which will expire at the time
+        specified by faceIdTimeToLive after creation. A "faceListId" is created
+        by [FaceList - Create](../facelist/create) containing persistedFaceIds
+        that will not expire. And a "largeFaceListId" is created by
+        [LargeFaceList - Create](../largefacelist/create) containing
+        persistedFaceIds that will also not expire. Depending on the input the
+        returned similar faces list contains faceIds or persistedFaceIds ranked
+        by similarity.
         <br/>Find similar has two working modes, "matchPerson" and "matchFace".
         "matchPerson" is the default mode that it tries to find faces of the
         same person as possible by using internal same-person thresholds. It is
@@ -65,7 +63,8 @@ class FaceOperations(object):
 
         :param face_id: FaceId of the query face. User needs to call Face -
          Detect first to get a valid faceId. Note that this faceId is not
-         persisted and will expire 24 hours after the detection call
+         persisted and will expire at the time specified by faceIdTimeToLive
+         after the detection call
         :type face_id: str
         :param face_list_id: An existing user-specified unique candidate face
          list, created in Face List - Create a Face List. Face list contains a
@@ -80,10 +79,10 @@ class FaceOperations(object):
          be provided at the same time.
         :type large_face_list_id: str
         :param face_ids: An array of candidate faceIds. All of them are
-         created by Face - Detect and the faceIds will expire 24 hours after
-         the detection call. The number of faceIds is limited to 1000.
-         Parameter faceListId, largeFaceListId and faceIds should not be
-         provided at the same time.
+         created by Face - Detect and the faceIds will expire at the time
+         specified by faceIdTimeToLive after the detection call. The number of
+         faceIds is limited to 1000. Parameter faceListId, largeFaceListId and
+         faceIds should not be provided at the same time.
         :type face_ids: list[str]
         :param max_num_of_candidates_returned: The number of top similar faces
          returned. The valid range is [1, 1000].
@@ -155,9 +154,8 @@ class FaceOperations(object):
         any similar counterpart face from original faces. The messyGroup will
         not appear in the result if all faces found their counterparts.
         * Group API needs at least 2 candidate faces and 1000 at most. We
-        suggest to try [Face -
-        Verify](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039523a)
-        when you only have 2 candidate faces.
+        suggest to try [Face - Verify](verifyfacetoface) when you only have 2
+        candidate faces.
         * The 'recognitionModel' associated with the query faces' faceIds
         should be the same.
         .
@@ -226,10 +224,8 @@ class FaceOperations(object):
         largePersonGroupId), and return candidate person(s) for that face
         ranked by similarity confidence. The person group/large person group
         should be trained to make it ready for identification. See more in
-        [PersonGroup -
-        Train](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395249)
-        and [LargePersonGroup -
-        Train](/docs/services/563879b61984550e40cbbe8d/operations/599ae2d16ac60f11b48b5aa4).
+        [PersonGroup - Train](../persongroup/train) and [LargePersonGroup -
+        Train](../largepersongroup/train).
         <br/>
         Remarks:<br />
         * The algorithm allows more than one face to be identified
@@ -242,10 +238,9 @@ class FaceOperations(object):
         * Number of candidates returned is restricted by
         maxNumOfCandidatesReturned and confidenceThreshold. If no person is
         identified, the returned candidates will be an empty array.
-        * Try [Face - Find
-        Similar](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395237)
-        when you need to find similar faces from a face list/large face list
-        instead of a person group/large person group.
+        * Try [Face - Find Similar](../face/findsimilar) when you need to find
+        similar faces from a face list/large face list instead of a person
+        group/large person group.
         * The 'recognitionModel' associated with the query faces' faceIds
         should be the same as the 'recognitionModel' used by the target person
         group or large person group.
@@ -395,19 +390,16 @@ class FaceOperations(object):
     verify_face_to_face.metadata = {'url': '/verify'}
 
     def detect_with_url(
-            self, url, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, recognition_model="recognition_01", return_recognition_model=False, detection_model="detection_01", custom_headers=None, raw=False, **operation_config):
+            self, url, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, recognition_model="recognition_01", return_recognition_model=False, detection_model="detection_01", face_id_time_to_live=86400, custom_headers=None, raw=False, **operation_config):
         """Detect human faces in an image, return face rectangles, and optionally
         with faceIds, landmarks, and attributes.<br />
         * No image will be stored. Only the extracted face feature will be
         stored on server. The faceId is an identifier of the face feature and
-        will be used in [Face -
-        Identify](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395239),
-        [Face -
-        Verify](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039523a),
-        and [Face - Find
-        Similar](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395237).
-        The stored face feature(s) will expire and be deleted 24 hours after
-        the original detection call.
+        will be used in [Face - Identify](../face/identify), [Face -
+        Verify](../face/verifyfacetoface), and [Face - Find
+        Similar](../face/findsimilar). The stored face feature(s) will expire
+        and be deleted at the time specified by faceIdTimeToLive after the
+        original detection call.
         * Optional parameters include faceId, landmarks, and attributes.
         Attributes include age, gender, headPose, smile, facialHair, glasses,
         emotion, hair, makeup, occlusion, accessories, blur, exposure and
@@ -418,46 +410,25 @@ class FaceOperations(object):
         * Up to 100 faces can be returned for an image. Faces are ranked by
         face rectangle size from large to small.
         * For optimal results when querying [Face -
-        Identify](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395239),
-        [Face -
-        Verify](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039523a),
-        and [Face - Find
-        Similar](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395237)
-        ('returnFaceId' is true), please use faces that are: frontal, clear,
-        and with a minimum size of 200x200 pixels (100 pixels between eyes).
+        Identify](../face/identify), [Face - Verify](../face/verifyfacetoface),
+        and [Face - Find Similar](../face/findsimilar) ('returnFaceId' is
+        true), please use faces that are: frontal, clear, and with a minimum
+        size of 200x200 pixels (100 pixels between eyes).
         * The minimum detectable face size is 36x36 pixels in an image no
         larger than 1920x1080 pixels. Images with dimensions higher than
         1920x1080 pixels will need a proportionally larger minimum face size.
         * Different 'detectionModel' values can be provided. To use and compare
         different detection models, please refer to [How to specify a detection
-        model](https://docs.microsoft.com/en-us/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model)
-        | Model | Recommended use-case(s) |
-        | ---------- | -------- |
-        | 'detection_01': | The default detection model for [Face -
-        Detect](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395236).
-        Recommend for near frontal face detection. For scenarios with
-        exceptionally large angle (head-pose) faces, occluded faces or wrong
-        image orientation, the faces in such cases may not be detected. |
-        | 'detection_02': | Detection model released in 2019 May with improved
-        accuracy especially on small, side and blurry faces. |
+        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model).
         * Different 'recognitionModel' values are provided. If follow-up
         operations like Verify, Identify, Find Similar are needed, please
         specify the recognition model with 'recognitionModel' parameter. The
         default value for 'recognitionModel' is 'recognition_01', if latest
         model needed, please explicitly specify the model you need in this
         parameter. Once specified, the detected faceIds will be associated with
-        the specified recognition model. More details, please refer to [How to
-        specify a recognition
-        model](https://docs.microsoft.com/en-us/azure/cognitive-services/face/face-api-how-to-topics/specify-recognition-model)
-        | Model | Recommended use-case(s) |
-        | ---------- | -------- |
-        | 'recognition_01': | The default recognition model for [Face -
-        Detect](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395236).
-        All those faceIds created before 2019 March are bonded with this
-        recognition model. |
-        | 'recognition_02': | Recognition model released in 2019 March.
-        'recognition_02' is recommended since its overall accuracy is improved
-        compared with 'recognition_01'. |.
+        the specified recognition model. More details, please refer to [Specify
+        a recognition
+        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-recognition-model).
 
         :param url: Publicly reachable URL of an image
         :type url: str
@@ -482,7 +453,7 @@ class FaceOperations(object):
          (Large)FaceList - Create or (Large)PersonGroup - Create. The default
          value is 'recognition_01', if latest model needed, please explicitly
          specify the model you need. Possible values include: 'recognition_01',
-         'recognition_02'
+         'recognition_02', 'recognition_03'
         :type recognition_model: str or
          ~azure.cognitiveservices.vision.face.models.RecognitionModel
         :param return_recognition_model: A value indicating whether the
@@ -493,9 +464,14 @@ class FaceOperations(object):
          can be provided when performing Face - Detect or (Large)FaceList - Add
          Face or (Large)PersonGroup - Add Face. The default value is
          'detection_01', if another model is needed, please explicitly specify
-         it. Possible values include: 'detection_01', 'detection_02'
+         it. Possible values include: 'detection_01', 'detection_02',
+         'detection_03'
         :type detection_model: str or
          ~azure.cognitiveservices.vision.face.models.DetectionModel
+        :param face_id_time_to_live: The number of seconds for the faceId
+         being cached. Supported range from 60 seconds up to 86400 seconds. The
+         default value is 86400 (24 hours).
+        :type face_id_time_to_live: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -530,6 +506,8 @@ class FaceOperations(object):
             query_parameters['returnRecognitionModel'] = self._serialize.query("return_recognition_model", return_recognition_model, 'bool')
         if detection_model is not None:
             query_parameters['detectionModel'] = self._serialize.query("detection_model", detection_model, 'str')
+        if face_id_time_to_live is not None:
+            query_parameters['faceIdTimeToLive'] = self._serialize.query("face_id_time_to_live", face_id_time_to_live, 'int', maximum=86400, minimum=60)
 
         # Construct headers
         header_parameters = {}
@@ -632,19 +610,16 @@ class FaceOperations(object):
     verify_face_to_person.metadata = {'url': '/verify'}
 
     def detect_with_stream(
-            self, image, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, recognition_model="recognition_01", return_recognition_model=False, detection_model="detection_01", custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, recognition_model="recognition_01", return_recognition_model=False, detection_model="detection_01", face_id_time_to_live=86400, custom_headers=None, raw=False, callback=None, **operation_config):
         """Detect human faces in an image, return face rectangles, and optionally
         with faceIds, landmarks, and attributes.<br />
         * No image will be stored. Only the extracted face feature will be
         stored on server. The faceId is an identifier of the face feature and
-        will be used in [Face -
-        Identify](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395239),
-        [Face -
-        Verify](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039523a),
-        and [Face - Find
-        Similar](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395237).
-        The stored face feature(s) will expire and be deleted 24 hours after
-        the original detection call.
+        will be used in [Face - Identify](../face/identify), [Face -
+        Verify](../face/verifyfacetoface), and [Face - Find
+        Similar](../face/findsimilar). The stored face feature(s) will expire
+        and be deleted at the time specified by faceIdTimeToLive after the
+        original detection call.
         * Optional parameters include faceId, landmarks, and attributes.
         Attributes include age, gender, headPose, smile, facialHair, glasses,
         emotion, hair, makeup, occlusion, accessories, blur, exposure and
@@ -655,46 +630,25 @@ class FaceOperations(object):
         * Up to 100 faces can be returned for an image. Faces are ranked by
         face rectangle size from large to small.
         * For optimal results when querying [Face -
-        Identify](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395239),
-        [Face -
-        Verify](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039523a),
-        and [Face - Find
-        Similar](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395237)
-        ('returnFaceId' is true), please use faces that are: frontal, clear,
-        and with a minimum size of 200x200 pixels (100 pixels between eyes).
+        Identify](../face/identify), [Face - Verify](../face/verifyfacetoface),
+        and [Face - Find Similar](../face/findsimilar) ('returnFaceId' is
+        true), please use faces that are: frontal, clear, and with a minimum
+        size of 200x200 pixels (100 pixels between eyes).
         * The minimum detectable face size is 36x36 pixels in an image no
         larger than 1920x1080 pixels. Images with dimensions higher than
         1920x1080 pixels will need a proportionally larger minimum face size.
         * Different 'detectionModel' values can be provided. To use and compare
         different detection models, please refer to [How to specify a detection
-        model](https://docs.microsoft.com/en-us/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model)
-        | Model | Recommended use-case(s) |
-        | ---------- | -------- |
-        | 'detection_01': | The default detection model for [Face -
-        Detect](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395236).
-        Recommend for near frontal face detection. For scenarios with
-        exceptionally large angle (head-pose) faces, occluded faces or wrong
-        image orientation, the faces in such cases may not be detected. |
-        | 'detection_02': | Detection model released in 2019 May with improved
-        accuracy especially on small, side and blurry faces. |
+        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model)
         * Different 'recognitionModel' values are provided. If follow-up
         operations like Verify, Identify, Find Similar are needed, please
         specify the recognition model with 'recognitionModel' parameter. The
         default value for 'recognitionModel' is 'recognition_01', if latest
         model needed, please explicitly specify the model you need in this
         parameter. Once specified, the detected faceIds will be associated with
-        the specified recognition model. More details, please refer to [How to
-        specify a recognition
-        model](https://docs.microsoft.com/en-us/azure/cognitive-services/face/face-api-how-to-topics/specify-recognition-model)
-        | Model | Recommended use-case(s) |
-        | ---------- | -------- |
-        | 'recognition_01': | The default recognition model for [Face -
-        Detect](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395236).
-        All those faceIds created before 2019 March are bonded with this
-        recognition model. |
-        | 'recognition_02': | Recognition model released in 2019 March.
-        'recognition_02' is recommended since its overall accuracy is improved
-        compared with 'recognition_01'. |.
+        the specified recognition model. More details, please refer to [Specify
+        a recognition
+        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-recognition-model).
 
         :param image: An image stream.
         :type image: Generator
@@ -719,7 +673,7 @@ class FaceOperations(object):
          (Large)FaceList - Create or (Large)PersonGroup - Create. The default
          value is 'recognition_01', if latest model needed, please explicitly
          specify the model you need. Possible values include: 'recognition_01',
-         'recognition_02'
+         'recognition_02', 'recognition_03'
         :type recognition_model: str or
          ~azure.cognitiveservices.vision.face.models.RecognitionModel
         :param return_recognition_model: A value indicating whether the
@@ -730,9 +684,14 @@ class FaceOperations(object):
          can be provided when performing Face - Detect or (Large)FaceList - Add
          Face or (Large)PersonGroup - Add Face. The default value is
          'detection_01', if another model is needed, please explicitly specify
-         it. Possible values include: 'detection_01', 'detection_02'
+         it. Possible values include: 'detection_01', 'detection_02',
+         'detection_03'
         :type detection_model: str or
          ~azure.cognitiveservices.vision.face.models.DetectionModel
+        :param face_id_time_to_live: The number of seconds for the faceId
+         being cached. Supported range from 60 seconds up to 86400 seconds. The
+         default value is 86400 (24 hours).
+        :type face_id_time_to_live: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -770,6 +729,8 @@ class FaceOperations(object):
             query_parameters['returnRecognitionModel'] = self._serialize.query("return_recognition_model", return_recognition_model, 'bool')
         if detection_model is not None:
             query_parameters['detectionModel'] = self._serialize.query("detection_model", detection_model, 'str')
+        if face_id_time_to_live is not None:
+            query_parameters['faceIdTimeToLive'] = self._serialize.query("face_id_time_to_live", face_id_time_to_live, 'int', maximum=86400, minimum=60)
 
         # Construct headers
         header_parameters = {}

@@ -42,18 +42,13 @@ class PersonGroupOperations(object):
         <br /> A person group is the container of the uploaded person data,
         including face recognition features.
         <br /> After creation, use [PersonGroup Person -
-        Create](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039523c)
-        to add persons into the group, and then call [PersonGroup -
-        Train](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395249)
-        to get this group ready for [Face -
-        Identify](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395239).
+        Create](../persongroupperson/create) to add persons into the group, and
+        then call [PersonGroup - Train](../persongroup/train) to get this group
+        ready for [Face - Identify](../face/identify).
         <br /> No image will be stored. Only the person's extracted face
         features and userData will be stored on server until [PersonGroup
-        Person -
-        Delete](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039523d)
-        or [PersonGroup -
-        Delete](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395245)
-        is called.
+        Person - Delete](../persongroupperson/delete) or [PersonGroup -
+        Delete](../persongroup/delete) is called.
         <br/>'recognitionModel' should be specified to associate with this
         person group. The default value for 'recognitionModel' is
         'recognition_01', if the latest model needed, please explicitly specify
@@ -62,21 +57,13 @@ class PersonGroupOperations(object):
         associated with the collection. Existing face features in a person
         group can't be updated to features extracted by another version of
         recognition model.
-        * 'recognition_01': The default recognition model for [PersonGroup -
-        Create](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395244).
-        All those person groups created before 2019 March are bonded with this
-        recognition model.
-        * 'recognition_02': Recognition model released in 2019 March.
-        'recognition_02' is recommended since its overall accuracy is improved
-        compared with 'recognition_01'.
         Person group quota:
         * Free-tier subscription quota: 1,000 person groups. Each holds up to
         1,000 persons.
         * S0-tier subscription quota: 1,000,000 person groups. Each holds up to
         10,000 persons.
         * to handle larger scale face identification problem, please consider
-        using
-        [LargePersonGroup](/docs/services/563879b61984550e40cbbe8d/operations/599acdee6ac60f11b48b5a9d).
+        using [LargePersonGroup](../largepersongroup).
 
         :param person_group_id: Id referencing a particular person group.
         :type person_group_id: str
@@ -85,7 +72,7 @@ class PersonGroupOperations(object):
         :param user_data: User specified data. Length should not exceed 16KB.
         :type user_data: str
         :param recognition_model: Possible values include: 'recognition_01',
-         'recognition_02'
+         'recognition_02', 'recognition_03'
         :type recognition_model: str or
          ~azure.cognitiveservices.vision.face.models.RecognitionModel
         :param dict custom_headers: headers that will be added to the request
@@ -181,7 +168,7 @@ class PersonGroupOperations(object):
             self, person_group_id, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
         """Retrieve person group name, userData and recognitionModel. To get
         person information under this personGroup, use [PersonGroup Person -
-        List](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395241).
+        List](../persongroupperson/list).
 
         :param person_group_id: Id referencing a particular person group.
         :type person_group_id: str
