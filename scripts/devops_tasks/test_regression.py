@@ -170,16 +170,25 @@ class RegressionTest:
                 dep_pkg_path
             )
 
-            # install dependent package from source
-            self._install_packages(dep_pkg_path, self.context.package_name)
-            
-            # Install pre-built whl for current package
+            # Install pre-built whl for current package.
             install_package_from_whl(
                 self.whl_path,
                 self.context.temp_path,
                 self.context.venv.python_executable,
             )
+
+            # install dependent package from source
+            self._install_packages(dep_pkg_path, self.context.package_name)
             
+            # try install of pre-built whl for current package again. if unnecessary, pip does nothing.
+            # we do this to ensure that the correct development version is installed. on non-dev builds
+            # this step will just skip through.
+            install_package_from_whl(
+                self.whl_path,
+                self.context.temp_path,
+                self.context.venv.python_executable,
+            )
+
             self._execute_test(dep_pkg_path)
         finally:
             self.context.deinitialize(dep_pkg_path)
