@@ -4,8 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
-from azure.ai.textanalytics.protocol import TextAnalyticsPreparers
 from azure.core.pipeline.transport import HttpRequest
+from azure.ai.textanalytics.protocol import *
 
 def test_entities_recognition_general(client, documents):
     request = HttpRequest(
@@ -35,7 +35,7 @@ def test_entities_recognition_general_full_path(client, documents):
     assert len(json_response['documents'][0]['entities']) == 4
 
 def test_entities_recognition_general_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_entities_recognition_general(
+    request = prepare_entities_recognition_general(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -47,7 +47,7 @@ def test_entities_recognition_general_preparer(client, documents):
     assert len(json_response['documents'][0]['entities']) == 4
 
 def test_entities_linking_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_entities_linking(
+    request = prepare_entities_linking(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -59,7 +59,7 @@ def test_entities_linking_preparer(client, documents):
     assert json_response['documents'][0]['entities'][0]['matches'][0]['text'] == "Microsoft"
 
 def test_entities_recognition_pii_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_entities_recognition_pii(
+    request = prepare_entities_recognition_pii(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -72,7 +72,7 @@ def test_entities_recognition_pii_preparer(client, documents):
     assert json_response['documents'][2]["entities"][0]['category'] == "U.S. Social Security Number (SSN)"
 
 def test_languages_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_languages(
+    request = prepare_languages(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -85,7 +85,7 @@ def test_languages_preparer(client, documents):
     assert json_response['documents'][1]['detectedLanguage']['name'] == 'Chinese_Simplified'
 
 def test_sentiment_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_sentiment(
+    request = prepare_sentiment(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -98,7 +98,7 @@ def test_sentiment_preparer(client, documents):
     assert json_response['documents'][1]['sentiment'] == 'positive'
 
 def test_sentiment_preparer_opinion_mining(client, documents):
-    request = TextAnalyticsPreparers.prepare_sentiment(
+    request = prepare_sentiment(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -115,7 +115,7 @@ def test_sentiment_preparer_opinion_mining(client, documents):
 
 
 def test_query_parameters_preparers(client, documents):
-    request = TextAnalyticsPreparers.prepare_sentiment(
+    request = prepare_sentiment(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -152,7 +152,7 @@ def test_azure_key_credential(documents):
     from azure.core.credentials import AzureKeyCredential
     client = TextAnalyticsClient(endpoint="https://python-textanalytics.cognitiveservices.azure.com/", credential=AzureKeyCredential(os.environ['AZURE_TEXT_ANALYTICS_KEY']))
 
-    request = TextAnalyticsPreparers.prepare_sentiment(
+    request = prepare_sentiment(
         api_version="v3.1-preview.1",
         body={
             "documents": documents

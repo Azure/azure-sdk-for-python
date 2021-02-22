@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
-from azure.ai.textanalytics.protocol import TextAnalyticsPreparers
+from azure.ai.textanalytics.protocol import *
 from azure.core.pipeline.transport import HttpRequest
 
 
@@ -40,7 +40,7 @@ def test_entities_recognition_general_full_path(client, documents):
     assert len(json_response['documents'][0]['entities']) == 4
 
 def test_entities_recognition_general_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_entities_recognition_general(
+    request = prepare_entities_recognition_general(
         api_version="v3.0",
         body={
             "documents": documents
@@ -53,7 +53,7 @@ def test_entities_recognition_general_preparer(client, documents):
     assert len(json_response['documents'][0]['entities']) == 4
 
 def test_entities_linking_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_entities_linking(
+    request = prepare_entities_linking(
         api_version="v3.0",
         body={
             "documents": documents
@@ -66,7 +66,7 @@ def test_entities_linking_preparer(client, documents):
 
 def test_entities_recognition_pii_preparer(client, documents):
     with pytest.raises(ValueError) as ex:
-        TextAnalyticsPreparers.prepare_entities_recognition_pii(
+        prepare_entities_recognition_pii(
             api_version="v3.0",
             body={
                 "documents": documents
@@ -76,7 +76,7 @@ def test_entities_recognition_pii_preparer(client, documents):
     assert "API version v3.0 does not have operation 'prepare_entities_recognition_pii'" in str(ex.value)
 
 def test_languages_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_languages(
+    request = prepare_languages(
         api_version="v3.0",
         body={
             "documents": documents
@@ -89,7 +89,7 @@ def test_languages_preparer(client, documents):
     assert json_response['documents'][1]['detectedLanguage']['name'] == 'Chinese_Simplified'
 
 def test_sentiment_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_sentiment(
+    request = prepare_sentiment(
         api_version="v3.0",
         body={
             "documents": documents
@@ -102,7 +102,7 @@ def test_sentiment_preparer(client, documents):
     assert json_response['documents'][1]['sentiment'] == 'positive'
 
 def test_query_parameters_preparers(client, documents):
-    request = TextAnalyticsPreparers.prepare_sentiment(
+    request = prepare_sentiment(
         api_version="v3.0",
         body={
             "documents": documents
@@ -139,7 +139,7 @@ def test_azure_key_credential(documents):
     from azure.core.credentials import AzureKeyCredential
     client = TextAnalyticsClient(endpoint="https://python-textanalytics.cognitiveservices.azure.com/", credential=AzureKeyCredential(os.environ['AZURE_TEXT_ANALYTICS_KEY']))
 
-    request = TextAnalyticsPreparers.prepare_sentiment(
+    request = prepare_sentiment(
         api_version="v3.0",
         body={
             "documents": documents

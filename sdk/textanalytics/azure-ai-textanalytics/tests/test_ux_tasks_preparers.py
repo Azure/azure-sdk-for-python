@@ -14,7 +14,7 @@ def test_task_one():
     """
     import json
     import os
-    from azure.ai.textanalytics.protocol import TextAnalyticsPreparers
+    from azure.ai.textanalytics.protocol import prepare_sentiment
     from azure.identity import DefaultAzureCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -34,7 +34,7 @@ def test_task_one():
     with open(path_to_data) as file:
         documents = json.load(file)
 
-    request = TextAnalyticsPreparers.prepare_sentiment(
+    request = prepare_sentiment(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -62,7 +62,7 @@ def test_task_two():
     """
     import json
     import os
-    from azure.ai.textanalytics.protocol import TextAnalyticsPreparers
+    from azure.ai.textanalytics.protocol import prepare_entities_recognition_general
     from azure.identity import DefaultAzureCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -82,7 +82,7 @@ def test_task_two():
     with open(path_to_data) as file:
         documents = json.load(file)
 
-    request = TextAnalyticsPreparers.prepare_entities_recognition_general(
+    request = prepare_entities_recognition_general(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -109,7 +109,7 @@ def test_task_3():
     """
     import json
     import os
-    from azure.ai.textanalytics.protocol import TextAnalyticsPreparers
+    from azure.ai.textanalytics.protocol import prepare_entities_recognition_general, prepare_entities_linking
     from azure.identity import DefaultAzureCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -131,7 +131,7 @@ def test_task_3():
 
     # get person entities
 
-    request = TextAnalyticsPreparers.prepare_entities_recognition_general(
+    request = prepare_entities_recognition_general(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -149,7 +149,7 @@ def test_task_3():
 
     # Get linked entities
 
-    request = TextAnalyticsPreparers.prepare_entities_linking(
+    request = prepare_entities_linking(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -175,7 +175,7 @@ def test_task_4():
     """
     import json
     import os
-    from azure.ai.textanalytics.protocol import TextAnalyticsPreparers
+    from azure.ai.textanalytics.protocol import prepare_languages, prepare_entities_recognition_pii
     from azure.identity import DefaultAzureCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -197,7 +197,7 @@ def test_task_4():
 
     # Get languages
 
-    request = TextAnalyticsPreparers.prepare_languages(
+    request = prepare_languages(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -217,7 +217,7 @@ def test_task_4():
 
     # Get PII
 
-    request = TextAnalyticsPreparers.prepare_entities_recognition_pii(
+    request = prepare_entities_recognition_pii(
         api_version="v3.1-preview.1",
         body={
             "documents": documents

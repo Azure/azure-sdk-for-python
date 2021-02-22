@@ -5,7 +5,7 @@
 # ------------------------------------
 import pytest
 from azure.ai.textanalytics.aio import TextAnalyticsClient
-from azure.ai.textanalytics.protocol import TextAnalyticsPreparers
+from azure.ai.textanalytics.protocol import *
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.pipeline.transport import HttpRequest
 @pytest.mark.asyncio
@@ -41,7 +41,7 @@ async def test_entities_recognition_general_full_path(client, documents):
 
 @pytest.mark.asyncio
 async def test_entities_recognition_general_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_entities_recognition_general(
+    request = prepare_entities_recognition_general(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -55,7 +55,7 @@ async def test_entities_recognition_general_preparer(client, documents):
 
 @pytest.mark.asyncio
 async def test_entities_linking_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_entities_linking(
+    request = prepare_entities_linking(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -69,7 +69,7 @@ async def test_entities_linking_preparer(client, documents):
 
 @pytest.mark.asyncio
 async def test_entities_recognition_pii_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_entities_recognition_pii(
+    request = prepare_entities_recognition_pii(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -84,7 +84,7 @@ async def test_entities_recognition_pii_preparer(client, documents):
 
 @pytest.mark.asyncio
 async def test_languages_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_languages(
+    request = prepare_languages(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -99,7 +99,7 @@ async def test_languages_preparer(client, documents):
 
 @pytest.mark.asyncio
 async def test_sentiment_preparer(client, documents):
-    request = TextAnalyticsPreparers.prepare_sentiment(
+    request = prepare_sentiment(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -114,7 +114,7 @@ async def test_sentiment_preparer(client, documents):
 
 @pytest.mark.asyncio
 async def test_sentiment_preparer_opinion_mining(client, documents):
-    request = TextAnalyticsPreparers.prepare_sentiment(
+    request = prepare_sentiment(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -133,7 +133,7 @@ async def test_sentiment_preparer_opinion_mining(client, documents):
 
 @pytest.mark.asyncio
 async def test_query_parameters_preparers(client, documents):
-    request = TextAnalyticsPreparers.prepare_sentiment(
+    request = prepare_sentiment(
         api_version="v3.1-preview.1",
         body={
             "documents": documents
@@ -173,7 +173,7 @@ async def test_azure_key_credential(documents):
     from azure.core.credentials import AzureKeyCredential
 
 
-    request = TextAnalyticsPreparers.prepare_sentiment(
+    request = prepare_sentiment(
         api_version="v3.1-preview.1",
         body={
             "documents": documents

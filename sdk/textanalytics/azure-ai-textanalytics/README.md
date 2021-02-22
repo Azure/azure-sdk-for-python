@@ -17,10 +17,10 @@
    )
    ```
 
-4. Finally, our request preparers are in the `protocol` layer of our namespace, so to import them, you do:
+4. Finally, our request preparers are in the `protocol` layer of our namespace. As an example, to import `prepare_sentiment`, you would import as
 
    ```python
-   from azure.ai.textanalytics.protocol import TextAnalyticsPreparers
+   from azure.ai.textanalytics.protocol import prepare_sentiment
    ```
 
 <!-- LINKS -->
