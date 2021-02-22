@@ -6,8 +6,6 @@ parameters:
   Artifacts: []
 
 steps:
-  - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
-
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
 
   - ${{ each artifact in parameters.Artifacts }}:
@@ -113,3 +111,5 @@ steps:
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+
+  - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
