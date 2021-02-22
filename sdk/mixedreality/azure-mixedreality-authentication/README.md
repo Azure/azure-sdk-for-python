@@ -82,7 +82,6 @@ You will also need to [register a new AAD application][register_aad_app] and gra
 by assigning the appropriate role for your Mixed Reality service to your service principal.
 
 ```python
-from azure.core.credentials import AzureKeyCredential
 from azure.identity import DefaultAzureCredential
 from azure.mixedreality.authentication import MixedRealityStsClient
 
