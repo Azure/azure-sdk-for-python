@@ -19,6 +19,8 @@ try:
     from ._models_py3 import LogSpecification
     from ._models_py3 import MetricDimension
     from ._models_py3 import MetricSpecification
+    from ._models_py3 import ObjectAnchorsAccount
+    from ._models_py3 import ObjectAnchorsAccountIdentity
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationProperties
@@ -45,6 +47,8 @@ except (SyntaxError, ImportError):
     from ._models import LogSpecification
     from ._models import MetricDimension
     from ._models import MetricSpecification
+    from ._models import ObjectAnchorsAccount
+    from ._models import ObjectAnchorsAccountIdentity
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import OperationProperties
@@ -61,6 +65,7 @@ except (SyntaxError, ImportError):
     from ._models import SpatialAnchorsAccount
     from ._models import SystemData
     from ._models import TrackedResource
+from ._paged_models import ObjectAnchorsAccountPaged
 from ._paged_models import OperationPaged
 from ._paged_models import RemoteRenderingAccountPaged
 from ._paged_models import SpatialAnchorsAccountPaged
@@ -81,6 +86,8 @@ __all__ = [
     'LogSpecification',
     'MetricDimension',
     'MetricSpecification',
+    'ObjectAnchorsAccount',
+    'ObjectAnchorsAccountIdentity',
     'Operation',
     'OperationDisplay',
     'OperationProperties',
@@ -100,6 +107,7 @@ __all__ = [
     'OperationPaged',
     'SpatialAnchorsAccountPaged',
     'RemoteRenderingAccountPaged',
+    'ObjectAnchorsAccountPaged',
     'NameUnavailableReason',
     'ResourceIdentityType',
     'SkuTier',

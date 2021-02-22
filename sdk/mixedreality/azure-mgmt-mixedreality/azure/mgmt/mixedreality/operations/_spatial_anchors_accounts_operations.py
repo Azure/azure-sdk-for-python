@@ -25,7 +25,7 @@ class SpatialAnchorsAccountsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2021-01-01".
+    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2021-03-01-preview".
     """
 
     models = models
@@ -35,7 +35,7 @@ class SpatialAnchorsAccountsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2021-01-01"
+        self.api_version = "2021-03-01-preview"
 
         self.config = config
 
@@ -495,7 +495,7 @@ class SpatialAnchorsAccountsOperations(object):
         :type resource_group_name: str
         :param account_name: Name of an Mixed Reality Account.
         :type account_name: str
-        :param serial: serial of key to be regenerated
+        :param serial: Serial of key to be regenerated
         :type serial: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -16,7 +16,7 @@ from msrest.exceptions import HttpOperationError
 class AccountKeyRegenerateRequest(Model):
     """Request for account key regeneration.
 
-    :param serial: serial of key to be regenerated. Default value: 1 .
+    :param serial: Serial of key to be regenerated. Default value: 1 .
     :type serial: int
     """
 
@@ -374,6 +374,149 @@ class MetricSpecification(Model):
         self.dimensions = dimensions
 
 
+class TrackedResource(Resource):
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
+    :type location: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+        super(TrackedResource, self).__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class ObjectAnchorsAccount(TrackedResource):
+    """ObjectAnchorsAccount Response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
+    :type location: str
+    :param identity:
+    :type identity:
+     ~azure.mgmt.mixedreality.models.ObjectAnchorsAccountIdentity
+    :param storage_account_name: The name of the storage account associated
+     with this accountId
+    :type storage_account_name: str
+    :ivar account_id: unique id of certain account.
+    :vartype account_id: str
+    :ivar account_domain: Correspond domain name of certain Spatial Anchors
+     Account
+    :vartype account_domain: str
+    :ivar system_data: The system metadata related to an object anchors
+     account.
+    :vartype system_data: ~azure.mgmt.mixedreality.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'account_id': {'readonly': True},
+        'account_domain': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ObjectAnchorsAccountIdentity'},
+        'storage_account_name': {'key': 'properties.storageAccountName', 'type': 'str'},
+        'account_id': {'key': 'properties.accountId', 'type': 'str'},
+        'account_domain': {'key': 'properties.accountDomain', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(self, *, location: str, tags=None, identity=None, storage_account_name: str=None, **kwargs) -> None:
+        super(ObjectAnchorsAccount, self).__init__(tags=tags, location=location, **kwargs)
+        self.identity = identity
+        self.storage_account_name = storage_account_name
+        self.account_id = None
+        self.account_domain = None
+        self.system_data = None
+
+
+class ObjectAnchorsAccountIdentity(Identity):
+    """ObjectAnchorsAccountIdentity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: The principal ID of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource.
+    :vartype tenant_id: str
+    :param type: The identity type. Possible values include: 'SystemAssigned'
+    :type type: str or ~azure.mgmt.mixedreality.models.ResourceIdentityType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'ResourceIdentityType'},
+    }
+
+    def __init__(self, *, type=None, **kwargs) -> None:
+        super(ObjectAnchorsAccountIdentity, self).__init__(type=type, **kwargs)
+
+
 class Operation(Model):
     """REST API operation.
 
@@ -539,52 +682,6 @@ class ProxyResource(Resource):
 
     def __init__(self, **kwargs) -> None:
         super(ProxyResource, self).__init__(**kwargs)
-
-
-class TrackedResource(Resource):
-    """Tracked Resource.
-
-    The resource model definition for an Azure Resource Manager tracked top
-    level resource which has 'tags' and a 'location'.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. E.g.
-     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
-    :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives
-    :type location: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-    }
-
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
-        super(TrackedResource, self).__init__(**kwargs)
-        self.tags = tags
-        self.location = location
 
 
 class RemoteRenderingAccount(TrackedResource):
@@ -1022,8 +1119,7 @@ class SystemData(Model):
      'ManagedIdentity', 'Key'
     :type last_modified_by_type: str or
      ~azure.mgmt.mixedreality.models.CreatedByType
-    :param last_modified_at: The type of identity that last modified the
-     resource.
+    :param last_modified_at: The timestamp of resource last modification (UTC)
     :type last_modified_at: datetime
     """
 
