@@ -13,6 +13,9 @@ urlFragment: azure-eventgrid-samples
 ## Sync samples
 These code samples show common champion scenario operations with the Azure Event Grid client library.
 
+* Generate Shared Access Signature: [sample_generate_sas.py][python-eg-generate-sas]
+
+* Publish events to a topic using SAS: [sample_publish_custom_events_to_a_topic_with_signature.py][python-eg-sample-send-using-sas]
 * Publish Event Grid Events to a topic: [sample_publish_eg_events_to_a_topic.py][python-eg-sample-customevent]
 * Publish Custom events to a domain topic: [sample_publish_custom_events_to_a_domain_topic.py][python-eg-sample-customevent-to-domain]
 * Publish a Cloud Event: [sample_publish_events_using_cloud_events_1.0_schema.py][python-eg-sample-send-cloudevent]
@@ -23,17 +26,20 @@ These code samples show common champion scenario operations with the Azure Event
 ## Async samples
 These code samples show common champion scenario operations with the Azure Event Grid client library using the async client.
 
+* Publish events to a topic using SAS: [sample_publish_custom_events_to_a_topic_with_signature_async.py][python-eg-sample-send-using-sas-async]
 * Publish EventGrid Events to a topic: [sample_publish_eg_events_to_a_topic_async.py][python-eg-sample-customevent-async]
 * Publish Custom events to a domain topic: [sample_publish_custom_events_to_a_domain_topic_async.py][python-eg-sample-customevent-to-domain-async]
 * Publish a Cloud Event: [sample_publish_events_using_cloud_events_1.0_schema_async.py][python-eg-sample-send-cloudevent-async]
 
-
+[python-eg-generate-sas]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_generate_sas.py
+[python-eg-sample-send-using-sas]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_to_a_topic_with_signature.py
 [python-eg-sample-customevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_eg_events_to_a_topic.py
-[python-eg-sample-customevent-to-domain]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_custom_events_to_a_domain_topic.py
+[python-eg-sample-customevent-to-domain]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_custom_events_to_a_domain.py
 [python-eg-sample-send-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py
 
-[python-eg-sample-customevent-async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_eg_events_to_a_topic.py
-[python-eg-sample-customevent-to-domain-async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_custom_events_to_a_domain_topic.py
-[python-eg-sample-send-cloudevent-async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_events_using_cloud_events_1.0_schema.py
+[python-eg-sample-send-using-sas-async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_events_to_a_topic_with_signature_async.py
+[python-eg-sample-customevent-async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_eg_events_to_a_topic_async.py
+[python-eg-sample-customevent-to-domain-async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_eg_events_to_a_domain_async.py
+[python-eg-sample-send-cloudevent-async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_events_using_cloud_events_1.0_schema_async.py
 
 [publisher-service-doc]: https://docs.microsoft.com/azure/event-grid/concepts
