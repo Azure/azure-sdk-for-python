@@ -296,7 +296,6 @@ class FeatureFilterBase(object):
 
     def __init__(self):
         pass
-# sent_config.value['conditions']['client_filters'][0]['parameters']['Audience']['DefaultRolloutPercentage'] = 80
 
     @classmethod
     def _from_generated(self, feature_filter):
@@ -347,6 +346,7 @@ class TargetingFeatureFilter(FeatureFilterBase):
             }
         }
 
+
 class TimeWindowFeatureFilter(FeatureFilterBase):
     """ A configuration setting that controls a feature flag
     :param name:
@@ -360,7 +360,7 @@ class TimeWindowFeatureFilter(FeatureFilterBase):
         self._to_datetime_object()
 
     def _to_datetime_object(self):
-        # TODO: datetime serialization 
+        # TODO: datetime serialization
         pass
 
     @classmethod
