@@ -30,7 +30,7 @@ def _to_str(value):
 def _to_utc_datetime(value):
     try:
         return value.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-    except:
+    except ValueError:
         return value.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
