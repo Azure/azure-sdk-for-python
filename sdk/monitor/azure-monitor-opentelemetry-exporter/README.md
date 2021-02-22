@@ -33,8 +33,15 @@ Please find the samples linked below for demonstration as to how to authenticate
 ```Python
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 exporter = AzureMonitorTraceExporter.from_connection_string(
-    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
+    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
+```
+
+You can also instantiate the exporter directly via the constructor. In this case, the connection string will be automatically populated from the `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable.
+
+```python
+from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+exporter = AzureMonitorTraceExporter()
 ```
 
 ## Key concepts
