@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 """
-FILE: sample_publish_custom_events_to_a_topic_async.py
+FILE: sample_publish_eg_events_to_a_topic_async.py
 DESCRIPTION:
-    These samples demonstrate sending an EventGrid Event.
+    These samples demonstrate sending an EventGrid Event directly to a topic.
 USAGE:
-    python sample_publish_custom_events_to_a_topic_async.py
+    python sample_publish_eg_events_to_a_topic_async.py
     Set the environment variables with your own values before running the sample:
     1) EG_ACCESS_KEY - The access key of your eventgrid account.
     2) EG_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format

@@ -31,6 +31,12 @@ These code samples show common champion scenario operations with the Azure Event
 * Publish Custom events to a domain topic: [sample_publish_eg_events_to_a_domain_topic_async.py][python-eg-sample-eg-event-to-domain-async]
 * Publish a Cloud Event: [sample_publish_events_using_cloud_events_1.0_schema_async.py][python-eg-sample-send-cloudevent-async]
 
+## More Samples
+
+* More samples related to the send scenario can be seen [here][python-eg-publish-samples].
+* To see more samples related to consuming a payload from different messagin services as a typed object, please visit [Consume Samples][python-eg-consume-samples]
+
+
 [python-eg-generate-sas]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_generate_sas.py
 [python-eg-sample-send-using-sas]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_to_a_topic_with_signature.py
 [python-eg-sample-eg-event]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_eg_events_to_a_topic.py
@@ -41,5 +47,8 @@ These code samples show common champion scenario operations with the Azure Event
 [python-eg-sample-eg-event-async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_eg_events_to_a_topic_async.py
 [python-eg-sample-eg-event-to-domain-async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_eg_events_to_a_domain_async.py
 [python-eg-sample-send-cloudevent-async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_publish_events_using_cloud_events_1.0_schema_async.py
+
+[python-eg-publish-samples]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/publish_samples
+[python-eg-consume-samples]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/consume_samples
 
 [publisher-service-doc]: https://docs.microsoft.com/azure/event-grid/concepts

@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 """
-FILE: sample_publish_custom_events_to_a_domain_topic.py
+FILE: sample_publish_eg_events_to_a_domain.py
 DESCRIPTION:
-    These samples demonstrate creating a list of EventGrid Events and sending them as a list.
+    These samples demonstrate creating a list of EventGrid Events and sending them as a list to a topic in a domain.
 USAGE:
-    python sample_publish_custom_events_to_a_domain_topic.py
+    python sample_publish_eg_events_to_a_domain.py
     Set the environment variables with your own values before running the sample:
     1) EG_ACCESS_KEY - The access key of your eventgrid account.
     2) EG_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format

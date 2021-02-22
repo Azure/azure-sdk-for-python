@@ -25,7 +25,9 @@ IGNORED_SAMPLES = {
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",
         "consume_eventgrid_events_from_service_bus_queue.py",
-        "consume_cloud_events_from_storage_queue.py"],
+        "consume_cloud_events_from_storage_queue.py",
+        "sample_publish_events_to_a_topic_with_signature.py",
+        "sample_publish_events_to_a_topic_with_signature_async.py"],
     "azure-eventhub": [
         "authenticate_with_sas_token.py",
         "connection_to_custom_endpoint_address.py",
