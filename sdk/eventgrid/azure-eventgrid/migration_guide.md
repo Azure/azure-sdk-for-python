@@ -63,7 +63,7 @@ cloud_event = {
 
 | In v1.3 | Equivalent in v2.0 | Sample |
 |---|---|---|
-|`EventGridClient(credentials)`|`EventGridPublisherClient(endpoint, credential)`|[Sample for client construction](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs5_publish_events_using_cloud_events_1.0_schema.py)|
+|`EventGridClient(credentials)`|`EventGridPublisherClient(endpoint, credential)`|[Sample for client construction](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py)|
 
 ### Publishing Events
 
