@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from uuid import uuid4
+from datetime import datetime
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.sms._generated.models import (
     SendMessageRequest,
@@ -106,9 +108,15 @@ class SmsClient(object):
 
         request = SendMessageRequest(
             from_property=from_,
-            sms_recipients=[SmsRecipient(to=p) for p in to],
+            sms_recipients=[
+                SmsRecipient(
+                    to=p,
+                    repeatability_request_id=str(uuid4()),
+                    repeatability_first_sent=datetime.now()
+                ) for p in to
+            ],
             message=message,
-            sms_send_options=sms_send_options,
+            send_sms_options=sms_send_options,
             **kwargs)
 
         return await self._sms_service_client.sms.send(
