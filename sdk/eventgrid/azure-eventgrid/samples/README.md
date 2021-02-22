@@ -43,7 +43,7 @@ To publish events, dict representation of the models could also be used as follo
 ## More Samples
 
 * More samples related to the send scenario can be seen [here][python-eg-publish-samples].
-* To see more samples related to consuming a payload from different messagin services as a typed object, please visit [Consume Samples][python-eg-consume-samples]
+* To see more samples related to consuming a payload from different messaging services as a typed object, please visit [Consume Samples][python-eg-consume-samples]
 
 
 [python-eg-generate-sas]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_generate_sas.py
