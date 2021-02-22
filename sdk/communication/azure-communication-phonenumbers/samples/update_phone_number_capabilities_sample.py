@@ -37,8 +37,7 @@ def update_phone_number_capabilities():
         polling = True
     )
     poller.result()
-    print('Status of the operation:')
-    print(poller.status())
+    print('Status of the operation: ' + poller.status())
 
 if __name__ == '__main__':
     update_phone_number_capabilities()

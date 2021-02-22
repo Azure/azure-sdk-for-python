@@ -28,9 +28,7 @@ phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 def get_phone_number_information():
     phone_number_information = phone_numbers_client.get_phone_number(phone_number)
-    print('Phone number information:')
-    print(phone_number_information)
-
+    print('Phone number information: ' + phone_number_information)
 
 if __name__ == '__main__':
     get_phone_number_information()

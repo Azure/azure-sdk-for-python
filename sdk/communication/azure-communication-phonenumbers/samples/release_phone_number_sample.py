@@ -31,7 +31,7 @@ phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 def release_phone_number():
     poller = phone_numbers_client.begin_release_phone_number(phone_number_to_release)
     poller.result()
-    print('Status of the operation:')
+    print('Status of the operation: ' + poller.status)
     print(poller.status())
 
 

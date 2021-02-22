@@ -44,8 +44,7 @@ def search_available_phone_numbers():
         1,
         polling = True
     )
-    print('Acquired phone numbers:')
-    print(poller.result)
+    print('Acquired phone numbers: ' + poller.result)
 
 
 if __name__ == '__main__':

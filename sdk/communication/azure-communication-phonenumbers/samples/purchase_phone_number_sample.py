@@ -32,8 +32,7 @@ def purchase_phone_number():
         polling = True
     )
     poller.result()
-    print("Result from the purchase operation: ")
-    print(poller.status)
+    print("Result from the purchase operation: " + poller.status)
 
 
 if __name__ == '__main__':

@@ -30,7 +30,7 @@ class NewTests(AsyncCommunicationTestCase):
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
-    def test_list_all_phone_numbers_from_managed_identity(self):
+    async def test_list_all_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
         phone_number_client = PhoneNumbersClient(endpoint, credential)

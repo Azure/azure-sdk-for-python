@@ -22,7 +22,7 @@ class NewTests(CommunicationTestCase):
         self.phone_number_client = PhoneNumbersClient.from_connection_string(self.connection_str)
         self.recording_processors.extend([
             BodyReplacerProcessor(
-                keys=[]
+                keys=["id", "token", "phoneNumber", "phonenumbers"]
             ),
             ResponseReplacerProcessor(keys=[self._resource_name])])
 
