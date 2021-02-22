@@ -96,6 +96,21 @@ class Timezone(datetime.tzinfo):
 
 def _from_entity_datetime(value):
     # Cosmos returns this with a decimal point that throws an error on deserialization
+    value = clean_up_dotnet_timestamps(value)
+
+    try:
+        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
+            tzinfo=Timezone()
+        )
+    except ValueError:
+        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(
+            tzinfo=Timezone()
+        )
+
+
+def clean_up_dotnet_timestamps(value):
+    # .NET has more decimal places than Python supports in datetime objects, this truncates
+    # values after 6 decimal places.
     value = value.split(".")
     ms = ""
     if len(value) == 2:
@@ -103,19 +118,10 @@ def _from_entity_datetime(value):
         if len(ms) > 6:
             ms = ms[:6]
         ms = ms + "Z"
-        value = ".".join([value[0], ms])
-    else:
-        value = value[0]
+        return ".".join([value[0], ms])
 
-    try:
-        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
-            tzinfo=Timezone()
-        )
-    except ValueError:
-        # if value[-9:] == ".0000000Z":x
-        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(
-            tzinfo=Timezone()
-        )
+    return value[0]
+
 
 
 def _from_entity_guid(value):
