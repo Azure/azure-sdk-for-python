@@ -19,7 +19,7 @@ import ast
 import textwrap
 import io
 import re
-import pdb
+import fnmatch
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
@@ -356,9 +356,15 @@ def find_whl(package_name, version, whl_directory):
     parsed_version = parse(version)
 
     logging.info("Searching whl for package {0}-{1}".format(package_name, parsed_version.base_version))
-    whl_name = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
-    paths = glob.glob(os.path.join(whl_directory, whl_name))
-    if not paths:
+    whl_name_format = "{0}-{1}-*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
+    whls = []
+    for root, dirnames, filenames in os.walk(whl_directory):
+        for filename in fnmatch.filter(filenames, whl_name_format):
+            whls.append(os.path.join(root, filename))
+
+    whls = [os.path.relpath(w, whl_directory) for w in whls]
+
+    if not whls:
         logging.error(
             "whl is not found in whl directory {0} for package {1}-{2}".format(
                 whl_directory, package_name, parsed_version.base_version
@@ -366,7 +372,7 @@ def find_whl(package_name, version, whl_directory):
         )
         exit(1)
 
-    return paths[0]
+    return whls[0]
 
 # This method installs package from a pre-built whl
 def install_package_from_whl(

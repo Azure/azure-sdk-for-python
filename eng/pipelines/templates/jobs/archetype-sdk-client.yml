@@ -210,7 +210,7 @@ jobs:
         BeforeTestSteps:
           - task: DownloadPipelineArtifact@0
             inputs:
-              artifactName: 'artifacts'
+              artifactName: 'packages' 
               targetPath: $(Build.ArtifactStagingDirectory)
 
           - template: ../steps/set-dev-build.yml
