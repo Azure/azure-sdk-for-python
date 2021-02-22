@@ -17,12 +17,14 @@ except ImportError:
     TZ_UTC = _FixedOffset(0) # type: ignore
 
 try:
-    from typing import TYPE_CHECKING
+    from typing import TYPE_CHECKING, Type, TypeVar
 except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
     from typing import Any, Dict
+
+CloudEventType = TypeVar("CloudEventType")
 
 __all__ = ["CloudEvent"]
 
@@ -115,7 +117,7 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
 
     @classmethod
     def from_dict(cls, event, **kwargs):
-        # type: (CloudEvent, Dict, **Any) -> CloudEvent
+        # type: (Type[CloudEventType], Dict, **Any) -> CloudEventType
         """
         Returns the deserialized CloudEvent object when a dict is provided.
         :param event: The dict representation of the event which needs to be deserialized.
