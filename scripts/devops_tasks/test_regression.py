@@ -170,21 +170,21 @@ class RegressionTest:
                 dep_pkg_path
             )
 
+            # install dependent package from source
+            self._install_packages(dep_pkg_path, self.context.package_name)
+            
             # Install pre-built whl for current package
             install_package_from_whl(
                 self.whl_path,
                 self.context.temp_path,
                 self.context.venv.python_executable,
             )
-            # install package to be tested and run pytest
+            
             self._execute_test(dep_pkg_path)
         finally:
             self.context.deinitialize(dep_pkg_path)
 
     def _execute_test(self, dep_pkg_path):
-        # install dependent package from source
-        self._install_packages(dep_pkg_path, self.context.package_name)
-
         #  Ensure correct version of package is installed
         if not self._is_package_installed(self.context.package_name, self.context.pkg_version):
             logging.error("Incorrect version of package {0} is installed. Expected version {1}".format(self.context.package_name, self.context.pkg_version))
