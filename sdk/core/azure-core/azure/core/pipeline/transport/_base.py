@@ -226,8 +226,10 @@ class HttpRequest(object):
     :param files: Files list.
     :param data: Body to be sent. If you want to send a json body, you should use the
      `json` kwarg instead. We will handle json serialization for your data.
-    :keyword json: A JSON serializable object. Serializes your inputted object. Use this
+    :keyword any json: A JSON serializable object. Serializes your inputted object. Use this
      instead of data if you wish for us to handle json serialization of your object for you.
+    :keyword dict[str,any] query: A dictionary of query parameters you would like to include
+     in your request.
     :raises: TypeError if you input a non json serializable object through kwarg `json`
     """
 
@@ -239,6 +241,7 @@ class HttpRequest(object):
         files: Any = None,
         data: Any = None,
         *,
+        query: Dict[str, Any] = None,
         json: Any = None,
     ) -> None:
         self.method = method
@@ -254,6 +257,8 @@ class HttpRequest(object):
         else:
             self.data = data
         self.multipart_mixed_info = None  # type: Optional[Tuple]
+        if query:
+            self.format_parameters(query)
 
     def __repr__(self):
         return "<HttpRequest [%s]>" % (self.method)
@@ -311,6 +316,10 @@ class HttpRequest(object):
 
     def format_parameters(self, params: Dict[str, Any]) -> None:
         """Format parameters into a valid query string.
+
+        Recommended to pass query parameters directly to your
+        `HttpRequest` object through the `query` kwarg.
+
         It's assumed all parameters have already been quoted as
         valid URL strings.
 
