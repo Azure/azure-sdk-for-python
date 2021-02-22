@@ -73,7 +73,7 @@ class RetryPolicyBase(object):
         retry_codes = self._RETRY_CODES
         status_codes = kwargs.pop('retry_on_status_codes', [])
         self._retry_on_status_codes = set(status_codes) | retry_codes
-        self._method_whitelist = frozenset(['HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'])
+        self._retry_on_methods = frozenset(['HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'])
         self._respect_retry_after_header = True
         super(RetryPolicyBase, self).__init__()
 
@@ -97,7 +97,7 @@ class RetryPolicyBase(object):
             'status': options.pop("retry_status", self.status_retries),
             'backoff': options.pop("retry_backoff_factor", self.backoff_factor),
             'max_backoff': options.pop("retry_backoff_max", self.BACKOFF_MAX),
-            'methods': options.pop("retry_on_methods", self._method_whitelist),
+            'methods': options.pop("retry_on_methods", self._retry_on_methods),
             'timeout': options.pop("timeout", self.timeout),
             'history': []
         }
