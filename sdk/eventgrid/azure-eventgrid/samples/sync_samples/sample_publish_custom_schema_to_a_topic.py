@@ -15,7 +15,7 @@ USAGE:
     "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
 """
 import os
-from random import randint, sample
+from random import randint
 import time
 import uuid
 from msrest.serialization import UTC

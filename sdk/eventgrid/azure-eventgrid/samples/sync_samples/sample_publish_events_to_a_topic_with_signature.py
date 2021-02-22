@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 """
-FILE: sample_publish_custom_events_to_a_topic_with_signature.py
+FILE: sample_publish_eg_events_to_a_topic_with_azure_sas_credential.py
 DESCRIPTION:
     These samples demonstrate sending an EventGrid Event using a shared access signature for authentication.
 USAGE:
@@ -17,7 +17,6 @@ USAGE:
 import os
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
-from datetime import datetime, timedelta
 
 sas = os.environ["EVENTGRID_SAS"]
 endpoint = os.environ["EG_TOPIC_HOSTNAME"]

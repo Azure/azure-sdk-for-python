@@ -15,21 +15,20 @@ These code samples show common champion scenario operations with the Azure Event
 
 * Generate Shared Access Signature: [sample_generate_sas.py][python-eg-generate-sas]
 
-* Publish events to a topic using SAS: [sample_publish_custom_events_to_a_topic_with_signature.py][python-eg-sample-send-using-sas]
+* Publish EventGrid Events to a topic using SAS: [sample_publish_events_to_a_topic_with_signature.py][python-eg-sample-send-using-sas]
 * Publish Event Grid Events to a topic: [sample_publish_eg_events_to_a_topic.py][python-eg-sample-eg-event]
-* Publish Custom events to a domain topic: [sample_publish_eg_events_to_a_domain_topic.py][python-eg-sample-eg-event-to-domain]
+* Publish EventGrid Events to a domain topic: [sample_publish_eg_events_to_a_domain_topic.py][python-eg-sample-eg-event-to-domain]
 * Publish a Cloud Event: [sample_publish_events_using_cloud_events_1.0_schema.py][python-eg-sample-send-cloudevent]
 * Publish a Custom Schema: [sample_publish_custom_schema_to_a_topic.py][python-eg-publish-custom-schema]
 
-* Consume a Custom Payload of raw cloudevent data: [sample_consume_custom_payload.py]
-[python-eg-sample-consume-custom-payload]
+* Consume a Custom Payload of raw cloudevent data: [sample_consume_custom_payload.py][python-eg-sample-consume-custom-payload]
 
 ## Async samples
 These code samples show common champion scenario operations with the Azure Event Grid client library using the async client.
 
-* Publish events to a topic using SAS: [sample_publish_custom_events_to_a_topic_with_signature_async.py][python-eg-sample-send-using-sas-async]
+* Publish EventGrid Events to a topic using SAS: [sample_publish_events_to_a_topic_with_signature_async.py][python-eg-sample-send-using-sas-async]
 * Publish EventGrid Events to a topic: [sample_publish_eg_events_to_a_topic_async.py][python-eg-sample-eg-event-async]
-* Publish Custom events to a domain topic: [sample_publish_eg_events_to_a_domain_topic_async.py][python-eg-sample-eg-event-to-domain-async]
+* Publish EventGrid Events to a domain topic: [sample_publish_eg_events_to_a_domain_topic_async.py][python-eg-sample-eg-event-to-domain-async]
 * Publish a Cloud Event: [sample_publish_events_using_cloud_events_1.0_schema_async.py][python-eg-sample-send-cloudevent-async]
 * Publish a Custom Schema: [sample_publish_custom_schema_to_a_topic_async.py][python-eg-publish-custom-schema-async]
 

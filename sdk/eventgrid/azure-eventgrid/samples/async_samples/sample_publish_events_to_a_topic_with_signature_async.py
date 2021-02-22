@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 """
-FILE: sample_publish_custom_events_to_a_topic_with_signature_async.py
+FILE: sample_publish_events_to_a_topic_with_signature_async.py
 DESCRIPTION:
     These samples demonstrate sending an EventGrid Event using a shared access signature for authentication.
 USAGE:
-    python sample_publish_custom_events_to_a_topic_with_signature_async.py
+    python sample_publish_events_to_a_topic_with_signature_async.py
     Set the environment variables with your own values before running the sample:
     1) EVENTGRID_SAS - The access key of your eventgrid account.
     2) EG_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
@@ -16,10 +16,9 @@ USAGE:
 """
 import os
 import asyncio
-from azure.eventgrid import EventGridEvent, generate_sas
+from azure.eventgrid import EventGridEvent
 from azure.eventgrid.aio import EventGridPublisherClient
-from azure.core.credentials import AzureKeyCredential, AzureSasCredential
-from datetime import datetime, timedelta
+from azure.core.credentials import AzureSasCredential
 
 sas = os.environ["EVENTGRID_SAS"]
 endpoint = os.environ["EG_TOPIC_HOSTNAME"]

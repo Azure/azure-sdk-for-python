@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 """
-FILE: consume_cloud_events_from_eventhub.py
+FILE: consume_cloud_events_from_service_bus_queue.py
 DESCRIPTION:
     These samples demonstrate receiving events from Service Bus.
 USAGE:
-    python consume_cloud_events_from_eventhub.py
+    python consume_cloud_events_from_service_bus_queue.py
     Set the environment variables with your own values before running the sample:
     1) SB_CONN_STR: The connection string to the Service Bus account
     3) SERVICE_BUS_QUEUE_NAME: The name of the servicebus account
@@ -30,4 +30,3 @@ with ServiceBusClient.from_connection_string(connection_str) as sb_client:
 
     for event in events:
         print(type(event)) ## EventGridEvent
-
