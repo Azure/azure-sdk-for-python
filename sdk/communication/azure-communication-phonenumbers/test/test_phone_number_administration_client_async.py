@@ -77,9 +77,13 @@ class NewTests(AsyncCommunicationTestCase):
 >>>>>>> 798b57943... Regenerated code
 =======
     @pytest.mark.live_test_only
+<<<<<<< HEAD
 >>>>>>> cb958a482... Added fixed samples
 =======
     def test_list_all_phone_numbers_from_managed_identity(self):
+=======
+    async def test_list_all_phone_numbers_from_managed_identity(self):
+>>>>>>> e339e2227... Addressed comments
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
         phone_number_client = PhoneNumbersClient(endpoint, credential)

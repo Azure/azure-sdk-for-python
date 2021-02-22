@@ -61,12 +61,16 @@ phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 def get_phone_number_information():
     phone_number_information = phone_numbers_client.get_phone_number(phone_number)
 <<<<<<< HEAD
+<<<<<<< HEAD
     print('Phone number information: ' + phone_number_information)
 =======
     print('Phone number information:')
     print(phone_number_information)
 
 >>>>>>> 798b57943... Regenerated code
+=======
+    print('Phone number information: ' + phone_number_information)
+>>>>>>> e339e2227... Addressed comments
 
 if __name__ == '__main__':
     get_phone_number_information()

@@ -49,9 +49,13 @@ def update_phone_number_capabilities():
         polling = True
     )
     poller.result()
+<<<<<<< HEAD
     print('Status of the operation:')
     print(poller.status())
 >>>>>>> cb958a482... Added fixed samples
+=======
+    print('Status of the operation: ' + poller.status())
+>>>>>>> e339e2227... Addressed comments
 
 if __name__ == '__main__':
     update_phone_number_capabilities()

@@ -70,6 +70,7 @@ def search_available_phone_numbers():
         polling = True
     )
 <<<<<<< HEAD
+<<<<<<< HEAD
     print('Acquired phone numbers: ' + poller.result())
 
 
@@ -78,6 +79,9 @@ if __name__ == '__main__':
 =======
     print('Acquired phone numbers:')
     print(poller.result)
+=======
+    print('Acquired phone numbers: ' + poller.result)
+>>>>>>> e339e2227... Addressed comments
 
 
 if __name__ == '__main__':

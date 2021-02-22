@@ -13,6 +13,7 @@ interactions:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:sdk/communication/azure-communication-phonenumbers/test/recordings/test_phone_number_administration_client.test_get_phone_number.yaml
       - Mon, 22 Feb 2021 19:48:24 GMT
 =======
@@ -30,11 +31,15 @@ interactions:
 =======
       - Tue, 16 Feb 2021 19:42:45 GMT
 >>>>>>> 2b281d8ce... Addresses comments
+=======
+      - Mon, 22 Feb 2021 19:48:24 GMT
+>>>>>>> e339e2227... Addressed comments
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD:sdk/communication/azure-communication-phonenumbers/test/recordings/test_phone_number_administration_client.test_get_phone_number.yaml
     uri: https://sanitized.communication.azure.com/phoneNumbers/%2B18335260208?api-version=2021-03-07
@@ -70,10 +75,19 @@ interactions:
         "US", "phoneNumberType": "TollFree", "capabilities": {"calling": "inbound",
         "sms": "inbound+outbound"}, "assignmentType": "Application"}'
 >>>>>>> 968de8d7e... Added README and samples
+=======
+    uri: https://sanitized.communication.azure.com/phoneNumbers/%2B18335260208?api-version=2021-03-07
+  response:
+    body:
+      string: '{"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US",
+        "phoneNumberType": "TollFree", "capabilities": {"calling": "inbound+outbound",
+        "sms": "outbound"}, "assignmentType": "Application"}'
+>>>>>>> e339e2227... Addressed comments
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -107,11 +121,17 @@ interactions:
       ms-cv:
       - Npb2F6HCHUCS3PCMa+LVKA.0
 >>>>>>> 2b281d8ce... Addresses comments
+=======
+      - Mon, 22 Feb 2021 19:48:23 GMT
+      ms-cv:
+      - KQDB5Gt5/EiYmdjzTHoodQ.0
+>>>>>>> e339e2227... Addressed comments
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -133,6 +153,9 @@ interactions:
 =======
       - 810ms
 >>>>>>> 2b281d8ce... Addresses comments
+=======
+      - 847ms
+>>>>>>> e339e2227... Addressed comments
     status:
       code: 200
       message: OK

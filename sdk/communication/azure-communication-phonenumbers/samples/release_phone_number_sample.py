@@ -61,9 +61,13 @@ def release_phone_number():
     poller = phone_numbers_client.begin_release_phone_number(phone_number_to_release)
     poller.result()
 <<<<<<< HEAD
+<<<<<<< HEAD
     print('Status of the operation: ' + poller.status())
 =======
     print('Status of the operation:')
+=======
+    print('Status of the operation: ' + poller.status)
+>>>>>>> e339e2227... Addressed comments
     print(poller.status())
 
 >>>>>>> 968de8d7e... Added README and samples
