@@ -18,8 +18,8 @@ def convert_to_access_token(token_response_message):
     """
     Converts the specified token response message to an AccessToken.
     """
-    if not StsTokenResponseMessage:
-        raise ValueError("token_response_message can not be None")
+    if not token_response_message:
+        raise ValueError("token_response_message must be a non-empty string.")
 
     expiration_timestamp = retrieve_jwt_expiration_timestamp(token_response_message.access_token)
 
@@ -34,12 +34,12 @@ def retrieve_jwt_expiration_timestamp(jwt_value):
     :returns: int
     """
     if not jwt_value:
-        raise ValueError("jwt_value can not be None")
+        raise ValueError("jwt_value must be a non-empty string.")
 
     parts = jwt_value.split(".")
 
     if len(parts) < 3:
-        raise ValueError("Invalid JWT structure.")
+        raise ValueError("Invalid JWT structure. Expected a JWS Compact Serialization formatted value.")
 
     try:
         padded_base64_payload = base64.b64decode(parts[1]).decode('utf-8')

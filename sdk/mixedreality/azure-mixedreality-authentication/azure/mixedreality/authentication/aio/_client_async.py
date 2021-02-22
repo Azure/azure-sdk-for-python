@@ -47,13 +47,13 @@ class MixedRealityStsClient(object):
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"], #pylint: disable=unsubscriptable-object
         **kwargs) -> None:
         if not account_id:
-            raise ValueError("account_id can not be None")
+            raise ValueError("account_id must be a non-empty string.")
 
         if not account_domain:
-            raise ValueError("account_domain can not be None")
+            raise ValueError("account_domain must be a non-empty string.")
 
         if not credential:
-            raise ValueError("credential can not be None")
+            raise ValueError("credential can not be None.")
 
         self._account_id = account_id
         self._account_domain = account_domain
@@ -69,7 +69,7 @@ class MixedRealityStsClient(object):
             if not endpoint_url.lower().startswith('http'):
                 endpoint_url = "https://" + endpoint_url
         except AttributeError as ex:
-            raise ValueError("Host URL must be a string") from ex
+            raise ValueError("Host URL must be a string.") from ex
 
         parsed_url = urlparse(endpoint_url.rstrip('/'))
         if not parsed_url.netloc:
