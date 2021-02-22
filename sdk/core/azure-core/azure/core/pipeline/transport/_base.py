@@ -317,8 +317,9 @@ class HttpRequest(object):
     def format_parameters(self, params: Dict[str, Any]) -> None:
         """Format parameters into a valid query string.
 
-        Recommended to pass query parameters directly to your
-        `HttpRequest` object through the `query` kwarg.
+        We recommend you pass your query parameters directly through
+        the `query` kwarg of the `HttpRequest` object instead of calling
+        this method.
 
         It's assumed all parameters have already been quoted as
         valid URL strings.
@@ -390,6 +391,10 @@ class HttpRequest(object):
 
     def set_json_body(self, data):
         """Set a JSON-friendly object as the body of the request.
+
+        We recommend you pass your json body directly through
+        the `json` kwarg of the `HttpRequest` object instead of calling
+        this method.
 
         :param data: A JSON serializable object
         """
@@ -573,6 +578,7 @@ class _HttpResponseBase(object):
 
     def json(self, encoding: Optional[str] = None) -> Any:
         """Return the whole body as a json object.
+
         :param str encoding: The encoding to apply. If None, use "utf-8" with BOM parsing (utf-8-sig).
          Implementation can be smarter if they want (using headers or chardet).
         :return: The JSON deserialized response body
