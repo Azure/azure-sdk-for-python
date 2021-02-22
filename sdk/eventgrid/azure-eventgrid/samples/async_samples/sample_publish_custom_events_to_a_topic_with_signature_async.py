@@ -15,6 +15,7 @@ USAGE:
     "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
 """
 import os
+import asyncio
 from azure.eventgrid import EventGridEvent, generate_sas
 from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential

@@ -24,7 +24,7 @@ IGNORED_SAMPLES = {
     "azure-eventgrid": [
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",
-        "consume_cloud_events_from_service_bus_queue.py",
+        "consume_eventgrid_events_from_service_bus_queue.py",
         "consume_cloud_events_from_storage_queue.py"],
     "azure-eventhub": [
         "authenticate_with_sas_token.py",
