@@ -292,8 +292,8 @@ stages:
                 exit 0
               }
 
-              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$(Package.Name)/*a*.whl
+              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$(Package.Name)/*-*a*.whl
               echo "Uploaded whl to devops feed $(DevFeedName)"
-              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$(Package.Name)/*a*.zip
+              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$(Package.Name)/*-*a*.zip
               echo "Uploaded sdist to devops feed $(DevFeedName)"
             displayName: 'Publish ${{artifact.name}} alpha package'
