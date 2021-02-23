@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core import MatchConditions
-from devtools_testutils import AzureMgmtTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
@@ -41,7 +41,7 @@ import logging
 import re
 import functools
 
-class AppConfigurationClientTest(AzureMgmtTestCase):
+class AppConfigurationClientTest(AzureTestCase):
     def __init__(self, method_name):
         super(AppConfigurationClientTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
@@ -487,11 +487,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     @app_config_decorator
     def test_config_setting_feature_flag(self, client):
-        retrieved_flag = client.get_configuration_setting(".appconfig.featureflag/test_features")
-        retrieved_flag.value['enabled'] = False
-        sent_flag = client.set_configuration_setting(retrieved_flag)
-        self._assert_same_keys(retrieved_flag, sent_flag)
-
         feature_flag = FeatureFlagConfigurationSetting("test_feature", True)
         set_flag = client.set_configuration_setting(feature_flag)
 
@@ -513,6 +508,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
         client.delete_configuration_setting(secret_reference)
 
+    @pytest.mark.live_test_only
     @app_config_decorator
     def test_feature_filter_targeting(self, client):
         new = FeatureFlagConfigurationSetting(
@@ -540,6 +536,9 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
         client.delete_configuration_setting(updated_sent_config)
 
+        self._clean_up(client)
+
+    @pytest.mark.live_test_only
     @app_config_decorator
     def test_feature_filter_time_window(self, client):
         new = FeatureFlagConfigurationSetting(
@@ -562,6 +561,9 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
         client.delete_configuration_setting(new_sent)
 
+        self._clean_up(client)
+
+    @pytest.mark.live_test_only
     @app_config_decorator
     def test_feature_filter_custom(self, client):
         new = FeatureFlagConfigurationSetting(
@@ -581,6 +583,9 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
         client.delete_configuration_setting(new_sent)
 
+        self._clean_up(client)
+
+    @pytest.mark.live_test_only
     @app_config_decorator
     def test_feature_filter_multiple(self, client):
         new = FeatureFlagConfigurationSetting(
@@ -589,8 +594,8 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             feature_filters=[
                 CustomFeatureFilter(value=50),
                 TimeWindowFeatureFilter(
-                    start='Fri, 19 Feb 2021 18:00:00 GMT',
-                    end='Fri, 26 Feb 2021 05:00:00 GMT'
+                    start=datetime.datetime(2021, 2, 19, 18, 0), #'Fri, 19 Feb 2021 18:00:00 GMT',
+                    end=datetime.datetime(2021, 2, 26, 5, 0) #'Fri, 26 Feb 2021 05:00:00 GMT'
                 ),
                 TargetingFeatureFilter(75)
             ]
@@ -600,14 +605,14 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         self._assert_same_keys(sent, new)
 
         sent.value['conditions']['client_filters'][0].value = 100
-        sent.value['conditions']['client_filters'][1].end = 'Fri, 26 Feb 2021 08:00:00 GMT'
+        sent.value['conditions']['client_filters'][1].end = datetime.datetime(2021, 2, 26, 8, 0)
         sent.value['conditions']['client_filters'][2].rollout_percentage = 80
 
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 
         assert new_sent.value['conditions']['client_filters'][0].value == 100
-        assert new_sent.value['conditions']['client_filters'][1].end == 'Fri, 26 Feb 2021 08:00:00 GMT'
+        assert new_sent.value['conditions']['client_filters'][1].end == datetime.datetime(2021, 2, 26, 8, 0)
         assert new_sent.value['conditions']['client_filters'][2].rollout_percentage == 80
 
         client.delete_configuration_setting(new_sent)

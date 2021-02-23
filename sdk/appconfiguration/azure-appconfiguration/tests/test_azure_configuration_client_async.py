@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core import MatchConditions
-from devtools_testutils import AzureMgmtTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase
 from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
@@ -25,7 +25,6 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
-from async_proxy import AzureAppConfigurationClientProxy
 import pytest
 import datetime
 import os
@@ -35,7 +34,7 @@ import functools
 
 from async_wrapper import app_config_decorator
 
-class AppConfigurationClientTest(AzureMgmtTestCase):
+class AppConfigurationClientTest(AzureTestCase):
     def __init__(self, method_name):
         super(AppConfigurationClientTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]

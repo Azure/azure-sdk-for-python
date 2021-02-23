@@ -33,18 +33,6 @@ import logging
 import re
 import functools
 
-AppConfigPreparer = functools.partial(
-    PowerShellPreparer,
-    'appconfiguration',
-    appconfiguration_connection_string="Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
-    appconfiguration_endpoint_string="https://fake_app_config.azconfig-test.io")
-
-try:
-    from unittest.mock import Mock
-except ImportError:  # python < 3.3
-    from mock import Mock
-from azure.core.credentials import AccessToken
-
 from wrapper import app_config_decorator
 
 class AppConfigurationClientTest(AzureTestCase):

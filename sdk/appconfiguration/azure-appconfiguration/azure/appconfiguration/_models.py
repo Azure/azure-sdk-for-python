@@ -3,8 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-import six
-import datetime
+from datetime import datetime
 from msrest.serialization import Model
 from ._generated.models import KeyValue
 
@@ -122,7 +121,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
     feature_flag_content_type = "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
 
 
-    def __init__(self, key, value, feature_filters=[], **kwargs):
+    def __init__(self, key, value, feature_filters=None, **kwargs):
         # type: (str, bool, str) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.key = key
@@ -144,7 +143,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
                 'description': self.description,
                 'enabled': self.value,
                 'conditions': {
-                    'client_filters': feature_filters
+                    'client_filters': feature_filters or []
                 }
             }
 
@@ -165,7 +164,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
             if filters == [None]:
                 key_value.value['conditions']['client_filters'] = []
             if len(filters) > 0 and filters != [None]:
-                filters = [FeatureFilterBase._from_generated(f) for f in filters]
+                filters = [FeatureFilterBase._from_generated(f) for f in filters]  # pylint: disable=protected-access
                 key_value.value['conditions']['client_filters'] = filters
         except KeyError:
             pass
@@ -202,7 +201,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
     def _to_generated_filters(self):
         # type: (...) -> None
         for idx, f in enumerate(self.value['conditions']['client_filters']):
-            self.value['conditions']['client_filters'][idx] = f._to_generated()
+            self.value['conditions']['client_filters'][idx] = f._to_generated()   # pylint: disable=protected-access
 
     def add_feature_filter(self, feature_filter):
         # type: (FeatureFilterBase) -> None
@@ -300,15 +299,14 @@ class FeatureFilterBase(object):
         pass
 
     @classmethod
-    def _from_generated(self, feature_filter):
+    def _from_generated(cls, feature_filter):
         if feature_filter['name'] == 'Microsoft.Targeting':
             return TargetingFeatureFilter.from_service(feature_filter['parameters'])
-        elif feature_filter['name'] == 'Microsoft.TimeWindow':
+        if feature_filter['name'] == 'Microsoft.TimeWindow':
             return TimeWindowFeatureFilter.from_service(feature_filter['parameters'])
-        elif feature_filter['name'] == 'Microsoft.Percentage':
+        if feature_filter['name'] == 'Microsoft.Percentage':
             return CustomFeatureFilter.from_service(feature_filter['parameters'])
-        else:
-            raise ValueError("{} not recognized as a feature filter.".format(feature_filter['name']))
+        raise ValueError("{} not recognized as a feature filter.".format(feature_filter['name']))
 
     def _to_generated(self):
         pass
@@ -320,7 +318,7 @@ class TargetingFeatureFilter(FeatureFilterBase):
     :type name: string
     """
 
-    def __init__(self, rollout_percentage, users=None, groups=None):
+    def __init__(self, rollout_percentage, users=None, groups=None):  # pylint:disable=super-init-not-called
         # type: (str, dict) -> None
         self._name = 'Microsoft.Targeting'
         self.rollout_percentage = rollout_percentage
@@ -355,16 +353,25 @@ class TimeWindowFeatureFilter(FeatureFilterBase):
     :type name: string
     """
 
-    def __init__(self, start, end=None):
+    def __init__(self, start, end=None):  # pylint:disable=super-init-not-called
         self._name = 'Microsoft.TimeWindow'
         self.start = start
         self.end = end
         self._to_datetime_object()
 
     def _to_datetime_object(self):
-        # TODO: datetime serialization
-        pass
+        # Example: "Fri, 19 Feb 2021 18:00:00 GMT"
+        if not isinstance(self.start, datetime):
+            self.start = datetime.strptime(
+                self.start,
+                "%a, %d %b %Y %H:%M:%S %Z"
+            )
 
+        if not isinstance(self.end, datetime) and self.end is not None:
+            self.end = datetime.strptime(
+                self.end,
+                "%a, %d %b %Y %H:%M:%S %Z"
+            )
     @classmethod
     def from_service(cls, dict_repr):
         return cls(
@@ -374,11 +381,15 @@ class TimeWindowFeatureFilter(FeatureFilterBase):
 
     def _to_generated(self):
         # type: (...) -> dict
+        start = self.start.strftime("%a, %d %b %Y %H:%M:%S %Z") + "GMT"
+        end = self.end
+        if self.end and isinstance(self.end, datetime):
+            end = self.end.strftime("%a, %d %b %Y %H:%M:%S %Z") + "GMT"
         return {
             'name': self._name,
             'parameters': {
-                'Start': self.start,
-                'End': self.end
+                'Start': start,
+                'End': end
             }
         }
 
@@ -389,7 +400,7 @@ class CustomFeatureFilter(FeatureFilterBase):
     :type name: string
     """
 
-    def __init__(self, value):
+    def __init__(self, value):  # pylint:disable=super-init-not-called
         self._name = 'Microsoft.Percentage'
         self.value = value
 
