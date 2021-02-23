@@ -12,7 +12,6 @@ from azure.appconfiguration import (
 from azure.core.exceptions import (
     AzureError,
 )
-from azure.identity import DefaultAzureCredential
 from consts import (
     KEY,
     LABEL,
