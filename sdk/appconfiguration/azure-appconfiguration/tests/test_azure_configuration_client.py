@@ -498,6 +498,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         client.delete_configuration_setting(changed_flag)
 
+    @pytest.mark.live_test_only
     @app_config_decorator
     def test_config_setting_secret_reference(self, client):
         secret_reference = SecretReferenceConfigurationSetting(
