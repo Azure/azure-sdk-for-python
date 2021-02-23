@@ -73,3 +73,20 @@ def standard_metrics_processor(envelope):
             properties["operation/synthetic"] = ""
         # TODO: Add other std. metrics as implemented
         data.properties = properties
+
+
+def indicate_processed_by_metric_extractors(envelope):
+    """A processor for envelopes that cause generate standard metrics.
+
+    Certain telemetry types went sent will cause Breeze ingestion service to
+    aggregate them and generate standard metrics on the server side. This
+    processor is added to indicate to Breeze to not perform these aggregations
+    and generations, so the sdk could do it. Used together with 
+    `standard_metrics_processor`.
+    """
+    name = "Requests"
+    if envelope.data.base_type == "RemoteDependencyData":
+        name = "Dependencies"
+    envelope.data.base_data.properties["_MS.ProcessedByMetricExtractors"] = (
+        "(Name:'" + name + "',Ver:'1.1')"
+    )

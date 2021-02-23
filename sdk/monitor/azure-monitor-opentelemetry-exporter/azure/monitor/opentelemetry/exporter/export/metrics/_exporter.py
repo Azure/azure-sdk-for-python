@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import logging
-from typing import Any, Sequence
+from typing import Sequence
 
 from opentelemetry.sdk.metrics.export import (
     ExportRecord,
