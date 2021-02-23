@@ -1776,13 +1776,14 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 # create and send BatchMessage with dicts
                 batch_message = await sender.create_message_batch()
                 batch_message._from_list(list_message_dicts)  # pylint: disable=protected-access
+                batch_message.add_message(message_dict)
                 await sender.send_messages(batch_message)
 
                 received_messages = []
                 async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                     async for message in receiver:
                         received_messages.append(message)
-                assert len(received_messages) == 5
+                assert len(received_messages) == 6
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
