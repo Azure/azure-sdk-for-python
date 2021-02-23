@@ -225,7 +225,7 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
     return $null
   }
 
-  $whlDirectory = Join-Path ${artifactDir} ${artifactName.Replace("_","-")}
+  $whlDirectory = Join-Path -Path ${artifactDir} -ChildPath ${artifactName.Replace("_","-")}
 
   Write-Host "Searching for $($artifactName) wheel in artifact path $($artifactDir)"
   $files = Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")}
