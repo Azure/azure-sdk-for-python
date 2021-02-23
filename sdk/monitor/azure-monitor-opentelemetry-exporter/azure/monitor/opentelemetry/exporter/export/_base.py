@@ -36,7 +36,6 @@ class BaseExporter:
     def __init__(self, **kwargs: Any) -> None:
         """Azure Monitor base exporter for OpenTelemetry.
 
-        :keyword str connection_string: The connection string to be used for authentication.
         :keyword str api_version: The service API version used. Defaults to latest.
         :rtype: None
         """

@@ -12,6 +12,11 @@ try:
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import AzureFilesIdentityBasedAuthentication
     from ._models_py3 import BlobContainer
+    from ._models_py3 import BlobInventoryPolicy
+    from ._models_py3 import BlobInventoryPolicyDefinition
+    from ._models_py3 import BlobInventoryPolicyFilter
+    from ._models_py3 import BlobInventoryPolicyRule
+    from ._models_py3 import BlobInventoryPolicySchema
     from ._models_py3 import BlobRestoreParameters
     from ._models_py3 import BlobRestoreRange
     from ._models_py3 import BlobRestoreStatus
@@ -36,6 +41,7 @@ try:
     from ._models_py3 import EncryptionServices
     from ._models_py3 import Endpoints
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import ErrorResponseBody
     from ._models_py3 import FileServiceItems
     from ._models_py3 import FileServiceProperties
     from ._models_py3 import FileShare
@@ -47,11 +53,13 @@ try:
     from ._models_py3 import ImmutabilityPolicy
     from ._models_py3 import ImmutabilityPolicyProperties
     from ._models_py3 import KeyVaultProperties
+    from ._models_py3 import LastAccessTimeTrackingPolicy
     from ._models_py3 import LeaseContainerRequest
     from ._models_py3 import LeaseContainerResponse
     from ._models_py3 import LegalHold
     from ._models_py3 import LegalHoldProperties
     from ._models_py3 import ListAccountSasResponse
+    from ._models_py3 import ListBlobInventoryPolicy
     from ._models_py3 import ListContainerItem
     from ._models_py3 import ListContainerItems
     from ._models_py3 import ListQueue
@@ -68,6 +76,7 @@ try:
     from ._models_py3 import ManagementPolicyRule
     from ._models_py3 import ManagementPolicySchema
     from ._models_py3 import ManagementPolicySnapShot
+    from ._models_py3 import ManagementPolicyVersion
     from ._models_py3 import MetricSpecification
     from ._models_py3 import NetworkRuleSet
     from ._models_py3 import ObjectReplicationPolicies
@@ -105,6 +114,7 @@ try:
     from ._models_py3 import StorageAccountUpdateParameters
     from ._models_py3 import StorageQueue
     from ._models_py3 import StorageSkuListResult
+    from ._models_py3 import SystemData
     from ._models_py3 import Table
     from ._models_py3 import TableServiceProperties
     from ._models_py3 import TagFilter
@@ -121,6 +131,11 @@ except (SyntaxError, ImportError):
     from ._models import AzureEntityResource  # type: ignore
     from ._models import AzureFilesIdentityBasedAuthentication  # type: ignore
     from ._models import BlobContainer  # type: ignore
+    from ._models import BlobInventoryPolicy  # type: ignore
+    from ._models import BlobInventoryPolicyDefinition  # type: ignore
+    from ._models import BlobInventoryPolicyFilter  # type: ignore
+    from ._models import BlobInventoryPolicyRule  # type: ignore
+    from ._models import BlobInventoryPolicySchema  # type: ignore
     from ._models import BlobRestoreParameters  # type: ignore
     from ._models import BlobRestoreRange  # type: ignore
     from ._models import BlobRestoreStatus  # type: ignore
@@ -145,6 +160,7 @@ except (SyntaxError, ImportError):
     from ._models import EncryptionServices  # type: ignore
     from ._models import Endpoints  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import ErrorResponseBody  # type: ignore
     from ._models import FileServiceItems  # type: ignore
     from ._models import FileServiceProperties  # type: ignore
     from ._models import FileShare  # type: ignore
@@ -156,11 +172,13 @@ except (SyntaxError, ImportError):
     from ._models import ImmutabilityPolicy  # type: ignore
     from ._models import ImmutabilityPolicyProperties  # type: ignore
     from ._models import KeyVaultProperties  # type: ignore
+    from ._models import LastAccessTimeTrackingPolicy  # type: ignore
     from ._models import LeaseContainerRequest  # type: ignore
     from ._models import LeaseContainerResponse  # type: ignore
     from ._models import LegalHold  # type: ignore
     from ._models import LegalHoldProperties  # type: ignore
     from ._models import ListAccountSasResponse  # type: ignore
+    from ._models import ListBlobInventoryPolicy  # type: ignore
     from ._models import ListContainerItem  # type: ignore
     from ._models import ListContainerItems  # type: ignore
     from ._models import ListQueue  # type: ignore
@@ -177,6 +195,7 @@ except (SyntaxError, ImportError):
     from ._models import ManagementPolicyRule  # type: ignore
     from ._models import ManagementPolicySchema  # type: ignore
     from ._models import ManagementPolicySnapShot  # type: ignore
+    from ._models import ManagementPolicyVersion  # type: ignore
     from ._models import MetricSpecification  # type: ignore
     from ._models import NetworkRuleSet  # type: ignore
     from ._models import ObjectReplicationPolicies  # type: ignore
@@ -214,6 +233,7 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountUpdateParameters  # type: ignore
     from ._models import StorageQueue  # type: ignore
     from ._models import StorageSkuListResult  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import Table  # type: ignore
     from ._models import TableServiceProperties  # type: ignore
     from ._models import TagFilter  # type: ignore
@@ -228,9 +248,11 @@ except (SyntaxError, ImportError):
 from ._storage_management_client_enums import (
     AccessTier,
     AccountStatus,
+    BlobInventoryPolicyName,
     BlobRestoreProgressStatus,
     Bypass,
     CorsRuleAllowedMethodsItem,
+    CreatedByType,
     DefaultAction,
     DirectoryServiceOptions,
     EnabledProtocols,
@@ -240,6 +262,7 @@ from ._storage_management_client_enums import (
     HttpProtocol,
     ImmutabilityPolicyState,
     ImmutabilityPolicyUpdateType,
+    InventoryRuleType,
     KeyPermission,
     KeySource,
     KeyType,
@@ -252,6 +275,7 @@ from ._storage_management_client_enums import (
     ListContainersInclude,
     ManagementPolicyName,
     MinimumTlsVersion,
+    Name,
     Permissions,
     PrivateEndpointConnectionProvisioningState,
     PrivateEndpointServiceConnectionStatus,
@@ -279,6 +303,11 @@ __all__ = [
     'AzureEntityResource',
     'AzureFilesIdentityBasedAuthentication',
     'BlobContainer',
+    'BlobInventoryPolicy',
+    'BlobInventoryPolicyDefinition',
+    'BlobInventoryPolicyFilter',
+    'BlobInventoryPolicyRule',
+    'BlobInventoryPolicySchema',
     'BlobRestoreParameters',
     'BlobRestoreRange',
     'BlobRestoreStatus',
@@ -303,6 +332,7 @@ __all__ = [
     'EncryptionServices',
     'Endpoints',
     'ErrorResponse',
+    'ErrorResponseBody',
     'FileServiceItems',
     'FileServiceProperties',
     'FileShare',
@@ -314,11 +344,13 @@ __all__ = [
     'ImmutabilityPolicy',
     'ImmutabilityPolicyProperties',
     'KeyVaultProperties',
+    'LastAccessTimeTrackingPolicy',
     'LeaseContainerRequest',
     'LeaseContainerResponse',
     'LegalHold',
     'LegalHoldProperties',
     'ListAccountSasResponse',
+    'ListBlobInventoryPolicy',
     'ListContainerItem',
     'ListContainerItems',
     'ListQueue',
@@ -335,6 +367,7 @@ __all__ = [
     'ManagementPolicyRule',
     'ManagementPolicySchema',
     'ManagementPolicySnapShot',
+    'ManagementPolicyVersion',
     'MetricSpecification',
     'NetworkRuleSet',
     'ObjectReplicationPolicies',
@@ -372,6 +405,7 @@ __all__ = [
     'StorageAccountUpdateParameters',
     'StorageQueue',
     'StorageSkuListResult',
+    'SystemData',
     'Table',
     'TableServiceProperties',
     'TagFilter',
@@ -384,9 +418,11 @@ __all__ = [
     'VirtualNetworkRule',
     'AccessTier',
     'AccountStatus',
+    'BlobInventoryPolicyName',
     'BlobRestoreProgressStatus',
     'Bypass',
     'CorsRuleAllowedMethodsItem',
+    'CreatedByType',
     'DefaultAction',
     'DirectoryServiceOptions',
     'EnabledProtocols',
@@ -396,6 +432,7 @@ __all__ = [
     'HttpProtocol',
     'ImmutabilityPolicyState',
     'ImmutabilityPolicyUpdateType',
+    'InventoryRuleType',
     'KeyPermission',
     'KeySource',
     'KeyType',
@@ -408,6 +445,7 @@ __all__ = [
     'ListContainersInclude',
     'ManagementPolicyName',
     'MinimumTlsVersion',
+    'Name',
     'Permissions',
     'PrivateEndpointConnectionProvisioningState',
     'PrivateEndpointServiceConnectionStatus',

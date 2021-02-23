@@ -28,7 +28,7 @@ __all__ = ["AzureMonitorTraceExporter"]
 
 
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
-    """Azure Monitor trace exporter for OpenTelemetry."""
+    """Azure Monitor base exporter for OpenTelemetry."""
 
     def export(self, spans: Sequence[Span], **kwargs: Any) -> SpanExportResult: # pylint: disable=unused-argument
         """Export data
@@ -64,6 +64,20 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
+    @classmethod
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorTraceExporter":
+        """
+        Create an AzureMonitorTraceExporter from a connection string.
+
+        This is the recommended way of instantation if a connection string is passed in explicitly.
+        If a user wants to use a connection string provided by environment variable, the constructor
+        of the exporter can be called directly.
+
+        :param str conn_str: The connection string to be used for authentication.
+        :keyword str api_version: The service API version used. Defaults to latest.
+        :returns an instance of ~AzureMonitorTraceExporter
+        """
+        return cls(connection_string=conn_str, **kwargs)
 
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches

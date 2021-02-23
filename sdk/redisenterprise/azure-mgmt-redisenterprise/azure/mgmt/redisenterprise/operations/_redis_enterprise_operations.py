@@ -60,16 +60,16 @@ class RedisEnterpriseOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01-preview"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self._create_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -116,7 +116,7 @@ class RedisEnterpriseOperations(object):
         # type: (...) -> LROPoller["_models.Cluster"]
         """Creates or updates an existing (overwrite/recreate, with potential downtime) cache cluster.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param cluster_name: The name of the RedisEnterprise cluster.
         :type cluster_name: str
@@ -159,9 +159,9 @@ class RedisEnterpriseOperations(object):
             return deserialized
 
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, path_format_arguments=path_format_arguments,  **kwargs)
@@ -191,16 +191,16 @@ class RedisEnterpriseOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01-preview"
+        api_version = "2021-03-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -245,7 +245,7 @@ class RedisEnterpriseOperations(object):
         # type: (...) -> LROPoller["_models.Cluster"]
         """Updates an existing RedisEnterprise cluster.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param cluster_name: The name of the RedisEnterprise cluster.
         :type cluster_name: str
@@ -288,9 +288,9 @@ class RedisEnterpriseOperations(object):
             return deserialized
 
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
@@ -319,15 +319,15 @@ class RedisEnterpriseOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01-preview"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -362,7 +362,7 @@ class RedisEnterpriseOperations(object):
         # type: (...) -> LROPoller[None]
         """Deletes a RedisEnterprise cache cluster.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param cluster_name: The name of the RedisEnterprise cluster.
         :type cluster_name: str
@@ -399,9 +399,9 @@ class RedisEnterpriseOperations(object):
                 return cls(pipeline_response, None, {})
 
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
@@ -427,7 +427,7 @@ class RedisEnterpriseOperations(object):
         # type: (...) -> "_models.Cluster"
         """Gets information about a RedisEnterprise cluster.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param cluster_name: The name of the RedisEnterprise cluster.
         :type cluster_name: str
@@ -441,15 +441,15 @@ class RedisEnterpriseOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01-preview"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -486,7 +486,7 @@ class RedisEnterpriseOperations(object):
         # type: (...) -> Iterable["_models.ClusterList"]
         """Lists all RedisEnterprise clusters in a resource group.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ClusterList or the result of cls(response)
@@ -498,7 +498,7 @@ class RedisEnterpriseOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01-preview"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -510,8 +510,8 @@ class RedisEnterpriseOperations(object):
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -567,7 +567,7 @@ class RedisEnterpriseOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01-preview"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -579,7 +579,7 @@ class RedisEnterpriseOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters

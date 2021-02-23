@@ -24,6 +24,7 @@ class FakeTokenCredential(object):
 
     def get_token(self, *args):
         return self.token
+
 class CommunicationIdentityClientTest(CommunicationTestCase):
     def setUp(self):
         super(CommunicationIdentityClientTest, self).setUp()
@@ -65,7 +66,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
-    def test_issue_token_from_managed_identity(self, connection_string):
+    def test_get_token_from_managed_identity(self, connection_string):
         endpoint, access_key = parse_connection_str(connection_string)
         from devtools_testutils import is_live
         if not is_live():
@@ -75,19 +76,19 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         identity_client = CommunicationIdentityClient(endpoint, credential)
         user = identity_client.create_user()
 
-        token_response = identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
+        token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
 
         assert user.identifier is not None
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
-    def test_issue_token(self, connection_string):
+    def test_get_token(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
             connection_string)
         user = identity_client.create_user()
 
-        token_response = identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
+        token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
 
         assert user.identifier is not None
         assert token_response.token is not None
@@ -104,7 +105,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         identity_client = CommunicationIdentityClient(endpoint, credential)
         user = identity_client.create_user()
 
-        token_response = identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
+        token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
         identity_client.revoke_tokens(user)
 
         assert user.identifier is not None
@@ -117,7 +118,7 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             connection_string)
         user = identity_client.create_user()
 
-        token_response = identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
+        token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
         identity_client.revoke_tokens(user)
 
         assert user.identifier is not None

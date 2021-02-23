@@ -5,6 +5,10 @@
 This package contains a Python SDK for Azure Communication Services for SMS.
 Read more about Azure Communication Services [here](https://docs.microsoft.com/azure/communication-services/overview)
 
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-sms) | [Package (Pypi)](https://pypi.org/project/azure-communication-sms/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-sms) | [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python)
+
+
+
 ## Getting started
 
 ### Prerequisites
@@ -39,6 +43,7 @@ To initialize the SMS Client, the connection string can be used to instantiate.
 Alternatively, you can also use Active Directory authentication using DefaultAzureCredential.
 
 ```Python
+from azure.communication.sms import SmsClient
 from azure.identity import DefaultAzureCredential
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
@@ -54,19 +59,21 @@ sms_client = SmsClient(endpoint, DefaultAzureCredential())
 Once the client is initialized, the `.send()` method can be invoked:
 
 ```Python
+from azure.communication.sms import SendSmsOptions, PhoneNumberIdentifier
+
 smsresponse = sms_client.send(
     from_phone_number=PhoneNumberIdentifier("<leased-phone-number>"),
-    to_phone_numbers=[PhoneNumberIdentifier("<to-phone-number>")],
+    to_phone_number=[PhoneNumberIdentifier("<to-phone-number>")],
     message="Hello World via SMS",
     send_sms_options=SendSmsOptions(enable_delivery_report=True)) # optional property
 ```
 
-- `leased-phone-number`: an SMS enabled phone number associated with your communication service
+- `from-phone-number`: an SMS enabled phone number associated with your communication service
 - `to-phone-number`: the phone number you wish to send a message to
 - `send_sms_options`: an optional parameter that you can use to configure Delivery Reporting. This is useful for scenarios where you want to emit events when SMS messages are delivered.
 
 ## Troubleshooting
-The Azure Communication Service Identity client will raise exceptions defined in [Azure Core][azure_core].
+The Azure Communication Service Identity client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
 
 ## Next steps
 ### More sample code

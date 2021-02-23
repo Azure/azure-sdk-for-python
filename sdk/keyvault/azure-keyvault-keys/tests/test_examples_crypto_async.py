@@ -51,6 +51,11 @@ class TestCryptoExamples(KeyVaultTestCase):
         # or a key's id, which must include a version
         key_id = "https://<your vault>.vault.azure.net/keys/<key name>/fe4fdcab688c479a9aa80f01ffeac26"
         crypto_client = CryptographyClient(key_id, credential)
+
+        # the client and credential should be closed when no longer needed
+        # (both are also async context managers)
+        await crypto_client.close()
+        await credential.close()
         # [END create_client]
 
         client = CryptographyClient(key, credential)
