@@ -576,7 +576,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert res == "cls result"
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_4})
     def test_opinion_mining(self, client):
         documents = [
             "It has a sleek premium aluminum design that makes it beautiful to look at."
@@ -586,14 +586,14 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
         for sentence in document.sentences:
             for mined_opinion in sentence.mined_opinions:
-                aspect = mined_opinion.aspect
-                self.assertEqual('design', aspect.text)
-                self.assertEqual('positive', aspect.sentiment)
-                self.assertEqual(0.0, aspect.confidence_scores.neutral)
-                self.validateConfidenceScores(aspect.confidence_scores)
-                self.assertEqual(32, aspect.offset)
+                target = mined_opinion.target
+                self.assertEqual('design', target.text)
+                self.assertEqual('positive', target.sentiment)
+                self.assertEqual(0.0, target.confidence_scores.neutral)
+                self.validateConfidenceScores(target.confidence_scores)
+                self.assertEqual(32, target.offset)
 
-                sleek_opinion = mined_opinion.opinions[0]
+                sleek_opinion = mined_opinion.assessments[0]
                 self.assertEqual('sleek', sleek_opinion.text)
                 self.assertEqual('positive', sleek_opinion.sentiment)
                 self.assertEqual(0.0, sleek_opinion.confidence_scores.neutral)
@@ -601,7 +601,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 self.assertEqual(9, sleek_opinion.offset)
                 self.assertFalse(sleek_opinion.is_negated)
 
-                premium_opinion = mined_opinion.opinions[1]
+                premium_opinion = mined_opinion.assessments[1]
                 self.assertEqual('premium', premium_opinion.text)
                 self.assertEqual('positive', premium_opinion.sentiment)
                 self.assertEqual(0.0, premium_opinion.confidence_scores.neutral)
@@ -610,7 +610,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 self.assertFalse(premium_opinion.is_negated)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_4})
     def test_opinion_mining_with_negated_opinion(self, client):
         documents = [
             "The food and service is not good"
@@ -619,23 +619,23 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         document = client.analyze_sentiment(documents=documents, show_opinion_mining=True)[0]
 
         for sentence in document.sentences:
-            food_aspect = sentence.mined_opinions[0].aspect
-            service_aspect = sentence.mined_opinions[1].aspect
+            food_target = sentence.mined_opinions[0].target
+            service_target = sentence.mined_opinions[1].target
 
-            self.assertEqual('food', food_aspect.text)
-            self.assertEqual('negative', food_aspect.sentiment)
-            self.assertEqual(0.0, food_aspect.confidence_scores.neutral)
-            self.validateConfidenceScores(food_aspect.confidence_scores)
-            self.assertEqual(4, food_aspect.offset)
+            self.assertEqual('food', food_target.text)
+            self.assertEqual('negative', food_target.sentiment)
+            self.assertEqual(0.0, food_target.confidence_scores.neutral)
+            self.validateConfidenceScores(food_target.confidence_scores)
+            self.assertEqual(4, food_target.offset)
 
-            self.assertEqual('service', service_aspect.text)
-            self.assertEqual('negative', service_aspect.sentiment)
-            self.assertEqual(0.0, service_aspect.confidence_scores.neutral)
-            self.validateConfidenceScores(service_aspect.confidence_scores)
-            self.assertEqual(13, service_aspect.offset)
+            self.assertEqual('service', service_target.text)
+            self.assertEqual('negative', service_target.sentiment)
+            self.assertEqual(0.0, service_target.confidence_scores.neutral)
+            self.validateConfidenceScores(service_target.confidence_scores)
+            self.assertEqual(13, service_target.offset)
 
-            food_opinion = sentence.mined_opinions[0].opinions[0]
-            service_opinion = sentence.mined_opinions[1].opinions[0]
+            food_opinion = sentence.mined_opinions[0].assessments[0]
+            service_opinion = sentence.mined_opinions[1].assessments[0]
             self.assertOpinionsEqual(food_opinion, service_opinion)
 
             self.assertEqual('good', food_opinion.text)
@@ -647,7 +647,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_4})
     def test_opinion_mining_more_than_5_documents(self, client):
         documents = [
             "The food was unacceptable",
@@ -667,14 +667,14 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             opinion.text
             for sentence in doc_5.sentences
             for mined_opinion in sentence.mined_opinions
-            for opinion in mined_opinion.opinions
+            for opinion in mined_opinion.assessments
         ]
 
         doc_6_opinions = [
             opinion.text
             for sentence in doc_6.sentences
             for mined_opinion in sentence.mined_opinions
-            for opinion in mined_opinion.opinions
+            for opinion in mined_opinion.assessments
         ]
 
         assert doc_5_opinions == ["nice", "old", "dirty"]

@@ -2,6 +2,10 @@
 
 ## 5.1.0b6 (Unreleased)
 
+**Breaking Changes**
+
+- Renamed properties `aspect` and `opinions` to `target` and `assessments` respectively in class `MinedOpinion`.
+- Renamed classes `AspectSentiment` and `OpinionSentiment` to `TargetSentiment` and `AssessmentSentiment` respectively.
 
 ## 5.1.0b5 (2021-02-10)
 

@@ -33,7 +33,7 @@ OUTPUT:
 
     Since these reviews seem so mixed, and since I'm interested in finding exactly what it is about my hotel that should be improved, let's find the complaints users have about individual aspects of this hotel
 
-    In order to do that, I'm going to extract aspects that have a negative sentiment. I'm going to map aspect to the mined opinion object we get back to aggregate the reviews by aspect.
+    In order to do that, I'm going to extract the targets of a negative sentiment. I'm going to map each of these targets to the mined opinion object we get back to aggregate the reviews by target.
 
     Let's now go through the aspects of our hotel people have complained about and see what users have specifically said
     Users have made 1 complaints about 'food', specifically saying that it's 'unacceptable'
@@ -86,7 +86,7 @@ class AnalyzeSentimentWithOpinionMiningSampleAsync(object):
         ]
 
         async with text_analytics_client:
-            result = await text_analytics_client.analyze_sentiment(documents, show_opinion_mining=True)
+            result = await text_analytics_client.analyze_sentiment(documents)
         doc_result = [doc for doc in result if not doc.is_error]
 
         print("\nLet's first see the general sentiment of each of these reviews")
@@ -102,27 +102,27 @@ class AnalyzeSentimentWithOpinionMiningSampleAsync(object):
         )
 
         print(
-            "\nIn order to do that, I'm going to extract aspects that have a negative sentiment. "
-            "I'm going to map aspect to the mined opinion object we get back to aggregate the reviews by aspect. "
+            "\nIn order to do that, I'm going to extract the targets of a negative sentiment. "
+            "I'm going to map each of these targets to the mined opinion object we get back to aggregate the reviews by target. "
         )
-        aspect_to_complaints = {}
+        target_to_complaints = {}
 
         for document in doc_result:
             for sentence in document.sentences:
                 for mined_opinion in sentence.mined_opinions:
-                    aspect = mined_opinion.aspect
-                    if aspect.sentiment == 'negative':
-                        aspect_to_complaints.setdefault(aspect.text, [])
-                        aspect_to_complaints[aspect.text].append(mined_opinion)
+                    target = mined_opinion.target
+                    if target.sentiment == 'negative':
+                        target_to_complaints.setdefault(target.text, [])
+                        target_to_complaints[target.text].append(mined_opinion)
 
         print("\nLet's now go through the aspects of our hotel people have complained about and see what users have specifically said")
 
-        for aspect, complaints in aspect_to_complaints.items():
+        for target, complaints in target_to_complaints.items():
             print("Users have made {} complaint(s) about '{}', specifically saying that it's '{}'".format(
                 len(complaints),
-                aspect,
+                target,
                 "', '".join(
-                    [opinion.text for complaint in complaints for opinion in complaint.opinions]
+                    [assessment.text for complaint in complaints for assessment in complaint.assessments]
                 )
             ))
 
