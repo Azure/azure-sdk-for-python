@@ -28,6 +28,7 @@ async def publish():
     credential = AzureKeyCredential(topic_key)
     client = EventGridPublisherClient(endpoint, credential)
 
+    # [START publish_cloud_event_dict_async]
     async with client:
         client.send([
             {
@@ -41,6 +42,7 @@ async def publish():
                 "id": "randomclouduuid11"
             }
         ])
+    # [END publish_cloud_event_dict_async]
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

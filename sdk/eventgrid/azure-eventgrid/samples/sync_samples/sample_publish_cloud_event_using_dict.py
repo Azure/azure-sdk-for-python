@@ -16,7 +16,7 @@ USAGE:
     "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
 """
 import os
-from azure.eventgrid import EventGridPublisherClient, CloudEvent
+from azure.eventgrid import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
 topic_key = os.environ["CLOUD_ACCESS_KEY"]
@@ -25,6 +25,7 @@ endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
 credential = AzureKeyCredential(topic_key)
 client = EventGridPublisherClient(endpoint, credential)
 
+# [START publish_cloud_event_dict]
 client.send([
     {
         "type": "Contoso.Items.ItemReceived",
@@ -37,3 +38,4 @@ client.send([
         "id": "randomclouduuid11"
     }
 ])
+# [END publish_cloud_event_dict]

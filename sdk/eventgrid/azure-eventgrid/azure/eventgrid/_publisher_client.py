@@ -55,12 +55,27 @@ ListEventType = Union[
 
 
 class EventGridPublisherClient(object):
-    """EventGrid Python Publisher Client.
+    """EventGridPublisherClient publishes events to an EventGrid topic or domain.
+    It can be used to publish either an EventGridEvent, a CloudEvent or a Custom Schema.
 
     :param str endpoint: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which
      implements SAS key authentication or SAS token authentication.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
+
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/sync_samples/sample_authentication.py
+            :start-after: [START client_auth_with_key_cred]
+            :end-before: [END client_auth_with_key_cred]
+            :language: python
+            :dedent: 8
+            :caption: Creating the EventGridPublisherClient with an endpoint and AzureKeyCredential.
+        .. literalinclude:: ../samples/sync_samples/sample_authentication.py
+            :start-after: [START client_auth_with_sas_cred]
+            :end-before: [END client_auth_with_sas_cred]
+            :language: python
+            :dedent: 8
+            :caption: Creating the EventGridPublisherClient with an endpoint and AzureSasCredential.
     """
 
     def __init__(self, endpoint, credential, **kwargs):
@@ -98,18 +113,62 @@ class EventGridPublisherClient(object):
     @distributed_trace
     def send(self, events, **kwargs):
         # type: (SendType, Any) -> None
-        """Sends event data to topic hostname specified during client initialization.
-        Multiple events can be published at once by seding a list of events. It is very
-        inefficient to loop the send method for each event instead of just using a list
-        and we highly recommend against it.
+        """Sends events to a topic or a domain specified during the client initialization.
 
-        :param events: A list of CloudEvent/EventGridEvent to be sent.
+        A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
+
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/sample_publish_eg_events_to_a_topic.py
+                :start-after: [START publish_eg_event_to_topic]
+                :end-before: [END publish_eg_event_to_topic]
+                :language: python
+                :dedent: 8
+                :caption: Publishing an EventGridEvent.
+            .. literalinclude:: ../samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py
+                :start-after: [START publish_cloud_event_to_topic]
+                :end-before: [END publish_cloud_event_to_topic]
+                :language: python
+                :dedent: 8
+                :caption: Publishing a CloudEvent.
+
+        A dict representation of respective serialized models can be used to send CloudEvent(s) or
+        EventGridEvent(s) instead of the strongly typed objects.
+
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/sample_publish_eg_event_using_dict.py
+                :start-after: [START publish_eg_event_dict]
+                :end-before: [END publish_eg_event_dict]
+                :language: python
+                :dedent: 8
+                :caption: Publishing an EventGridEvent using a dict-like representation.
+            .. literalinclude:: ../samples/sync_samples/sample_publish_cloud_event_using_dict.py
+                :start-after: [START publish_cloud_event_dict]
+                :end-before: [END publish_cloud_event_dict]
+                :language: python
+                :dedent: 8
+                :caption: Publishing a CloudEvent using a dict-like representation.
+
+        When publishing a Custom schema event(s), a dict-like representation is accepted.
+        Either a single dictionary or a list of dictionaries can be passed.
+
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/sync_samples/sample_publish_custom_schema_to_a_topic.py
+                :start-after: [START publish_custom_schema]
+                :end-before: [END publish_custom_schema]
+                :language: python
+                :dedent: 8
+                :caption: Publishing a Custom Schema event.
+
+        **WARNING**: To send multiple events at once, a list of events must be used.
+        It is very inefficient to loop the send method for each event instead of just
+        using a list and we highly recommend against it.
+
+        :param events: A single event or a list of dictionaries/CloudEvent/EventGridEvent to be sent.
         :type events: SendType
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
          with "cloudevents-batch+json" for CloudEvents
         :rtype: None
-        :raises: :class:`ValueError`, when events do not follow specified SendType.
          """
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
