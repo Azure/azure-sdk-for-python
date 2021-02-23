@@ -172,7 +172,7 @@ class EventGridPublisherClient():
         **WARNING**: To gain the best performance when sending multiple events at one time,
         it is highly recommended to send a list of events instead of iterating over and sending each event in a loop.
 
-        :param events: A single event or a list of dictionaries/CloudEvent/EventGridEvent to be sent.
+        :param events: A single instance or a list of dictionaries/CloudEvent/EventGridEvent to be sent.
         :type events: SendType
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
