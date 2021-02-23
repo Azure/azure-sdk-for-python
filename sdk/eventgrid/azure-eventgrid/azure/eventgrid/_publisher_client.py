@@ -64,12 +64,14 @@ class EventGridPublisherClient(object):
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/sync_samples/sample_authentication.py
             :start-after: [START client_auth_with_key_cred]
             :end-before: [END client_auth_with_key_cred]
             :language: python
             :dedent: 8
             :caption: Creating the EventGridPublisherClient with an endpoint and AzureKeyCredential.
+
         .. literalinclude:: ../samples/sync_samples/sample_authentication.py
             :start-after: [START client_auth_with_sas_cred]
             :end-before: [END client_auth_with_sas_cred]
@@ -118,12 +120,14 @@ class EventGridPublisherClient(object):
         A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
 
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/sync_samples/sample_publish_eg_events_to_a_topic.py
                 :start-after: [START publish_eg_event_to_topic]
                 :end-before: [END publish_eg_event_to_topic]
                 :language: python
                 :dedent: 8
                 :caption: Publishing an EventGridEvent.
+
             .. literalinclude:: ../samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py
                 :start-after: [START publish_cloud_event_to_topic]
                 :end-before: [END publish_cloud_event_to_topic]
@@ -135,12 +139,14 @@ class EventGridPublisherClient(object):
         EventGridEvent(s) instead of the strongly typed objects.
 
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/sync_samples/sample_publish_eg_event_using_dict.py
                 :start-after: [START publish_eg_event_dict]
                 :end-before: [END publish_eg_event_dict]
                 :language: python
                 :dedent: 8
                 :caption: Publishing an EventGridEvent using a dict-like representation.
+
             .. literalinclude:: ../samples/sync_samples/sample_publish_cloud_event_using_dict.py
                 :start-after: [START publish_cloud_event_dict]
                 :end-before: [END publish_cloud_event_dict]
@@ -152,6 +158,7 @@ class EventGridPublisherClient(object):
         Either a single dictionary or a list of dictionaries can be passed.
 
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/sync_samples/sample_publish_custom_schema_to_a_topic.py
                 :start-after: [START publish_custom_schema]
                 :end-before: [END publish_custom_schema]

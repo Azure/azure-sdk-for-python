@@ -61,12 +61,14 @@ class EventGridPublisherClient():
     :rtype: None
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
             :start-after: [START client_auth_with_key_cred_async]
             :end-before: [END client_auth_with_key_cred_async]
             :language: python
             :dedent: 8
             :caption: Creating the EventGridPublisherClient with an endpoint and AzureKeyCredential.
+
         .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
             :start-after: [START client_auth_with_sas_cred_async]
             :end-before: [END client_auth_with_sas_cred_async]
@@ -121,12 +123,14 @@ class EventGridPublisherClient():
         A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
 
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/async_samples/sample_publish_eg_events_to_a_topic_async.py
                 :start-after: [START publish_eg_event_to_topic_async]
                 :end-before: [END publish_eg_event_to_topic_async]
                 :language: python
                 :dedent: 8
                 :caption: Publishing an EventGridEvent.
+
             .. literalinclude:: ../samples/async_samples/sample_publish_events_using_cloud_events_1.0_schema_async.py
                 :start-after: [START publish_cloud_event_to_topic_async]
                 :end-before: [END publish_cloud_event_to_topic_async]
@@ -138,12 +142,14 @@ class EventGridPublisherClient():
         EventGridEvent(s) instead of the strongly typed objects.
 
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/async_samples/sample_publish_eg_event_using_dict_async.py
                 :start-after: [START publish_eg_event_dict_async]
                 :end-before: [END publish_eg_event_dict_async]
                 :language: python
                 :dedent: 8
                 :caption: Publishing an EventGridEvent using a dict-like representation.
+
             .. literalinclude:: ../samples/async_samples/sample_publish_cloud_event_using_dict_async.py
                 :start-after: [START publish_cloud_event_dict_async]
                 :end-before: [END publish_cloud_event_dict_async]
@@ -155,6 +161,7 @@ class EventGridPublisherClient():
         Either a single dictionary or a list of dictionaries can be passed.
 
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/async_samples/sample_publish_custom_schema_to_a_topic_async.py
                 :start-after: [START publish_custom_schema_async]
                 :end-before: [END publish_custom_schema_async]
