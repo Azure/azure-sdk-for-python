@@ -14,7 +14,6 @@ from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.core.exceptions import (
     AzureError,
 )
-from azure.identity.aio import DefaultAzureCredential
 from consts import (
     KEY,
     LABEL,
@@ -79,6 +78,7 @@ def app_config_decorator(func, **kwargs):
 
         kwargs['client'] = client
         kwargs['appconfiguration_connection_string'] = appconfiguration_connection_string
+
         # Do setUp on client
         test_config_setting = _add_for_test(
             client,
