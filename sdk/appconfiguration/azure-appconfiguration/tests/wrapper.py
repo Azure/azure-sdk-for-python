@@ -9,9 +9,7 @@ from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )
-from azure.core.exceptions import (
-    AzureError,
-)
+from azure.core.exceptions import AzureError
 from consts import (
     KEY,
     LABEL,
@@ -21,7 +19,6 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
-import os
 import functools
 import inspect
 
@@ -64,7 +61,6 @@ def trim_kwargs_from_test_function(fn, kwargs):
             args = set(args)
             for key in [k for k in kwargs if k not in args]:
                 del kwargs[key]
-
 
 def app_config_decorator(func, **kwargs):
 
