@@ -16,9 +16,9 @@ autorest SWAGGER.md
 ### Rename SmsSendResponseItem to SmsSendResult
 ``` yaml
 directive:
-    - rename-model:
-        from: SmsSendResponseItem
-        to: SmsSendResult
+  - rename-model:
+      from: SmsSendResponseItem
+      to: SmsSendResult
 ```
 
 ### Settings
