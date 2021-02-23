@@ -32,9 +32,16 @@ Please find the samples linked below for demonstration as to how to authenticate
 
 ```Python
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
-exporter = AzureMonitorTraceExporter(
-    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
+exporter = AzureMonitorTraceExporter.from_connection_string(
+    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
+```
+
+You can also instantiate the exporter directly via the constructor. In this case, the connection string will be automatically populated from the `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable.
+
+```python
+from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+exporter = AzureMonitorTraceExporter()
 ```
 
 ## Key concepts
@@ -73,7 +80,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
-exporter = AzureMonitorTraceExporter(
+exporter = AzureMonitorTraceExporter.from_connection_string(
     connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
 )
 
@@ -110,8 +117,8 @@ tracer = trace.get_tracer(__name__)
 # This line causes your calls made with the requests library to be tracked.
 RequestsInstrumentor().instrument()
 span_processor = BatchExportSpanProcessor(
-    AzureMonitorTraceExporter(
-        connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
+    AzureMonitorTraceExporter.from_connection_string(
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
     )
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
