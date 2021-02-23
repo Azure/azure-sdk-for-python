@@ -28,5 +28,9 @@ extends:
   parameters:
     ServiceDirectory: mixedreality
     Artifacts:
+    - name: azure_mixedreality_nspkg
+      safeName: azuremixedrealitynspkg
     - name: azure_mgmt_mixedreality
       safeName: azuremgmtmixedreality
+    - name: azure_mixedreality_authentication
+      safeName: azuremixedrealityauthentication
