@@ -29,6 +29,8 @@ endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 async def publish():
     credential = AzureKeyCredential(topic_key)
     client = EventGridPublisherClient(endpoint, credential)
+
+    # [START publish_eg_event_dict_async]
     event0 = {	
         "eventType": "Contoso.Items.ItemReceived",	
         "data": {	
@@ -52,6 +54,7 @@ async def publish():
 
     async with client:	
         await client.send([event0, event1])
+    # [END publish_eg_event_dict_async]
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

@@ -32,6 +32,7 @@ def publish_event():
     credential = AzureKeyCredential(key)
     client = EventGridPublisherClient(endpoint, credential)
 
+    # [START publish_custom_schema]
     custom_schema_event = {
         "customSubject": "sample",
         "customEventType": "sample.event",
@@ -41,19 +42,8 @@ def publish_event():
         "customData": "sample data"
     }
 
-    # publish events
-    for _  in range(3):
-
-        event_list = []     # list of events to publish
-        # create events and append to list
-        for j in range(randint(1, 3)):
-            event_list.append(custom_schema_event)
-
-        # publish list of events
-        client.send(event_list)
-        print("Batch of size {} published".format(len(event_list)))
-        time.sleep(randint(1, 5))
-
+    client.send(custom_schema_event)
+    # [END publish_custom_schema]
 
 if __name__ == '__main__':
     publish_event()

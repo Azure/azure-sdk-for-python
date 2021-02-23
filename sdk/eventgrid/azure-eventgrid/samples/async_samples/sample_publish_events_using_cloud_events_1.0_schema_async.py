@@ -14,6 +14,7 @@ USAGE:
     2) CLOUD_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
     "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
 """
+# [START publish_cloud_event_to_topic_async]
 import os
 import asyncio
 from azure.eventgrid import CloudEvent
@@ -37,6 +38,7 @@ async def publish():
             subject="Door1"
         )
     ])
+# [END publish_cloud_event_to_topic_async]
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

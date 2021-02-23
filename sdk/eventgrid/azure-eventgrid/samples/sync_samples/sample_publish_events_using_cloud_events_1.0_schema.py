@@ -14,6 +14,7 @@ USAGE:
     2) CLOUD_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
     "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
 """
+# [START publish_cloud_event_to_topic]
 import os
 from azure.eventgrid import EventGridPublisherClient, CloudEvent
 from azure.core.credentials import AzureKeyCredential
@@ -34,3 +35,4 @@ client.send([
         subject="Door1"
     )
 ])
+# [END publish_cloud_event_to_topic]
