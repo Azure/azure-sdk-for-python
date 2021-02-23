@@ -165,6 +165,8 @@ class AppResourceProperties(Model):
     :type fqdn: str
     :param https_only: Indicate if only https is allowed.
     :type https_only: bool
+    :param enable_end_to_end_tls: Indicate if end to end TLS is enabled.
+    :type enable_end_to_end_tls: bool
     :ivar created_time: Date time when the resource is created
     :vartype created_time: datetime
     :param temporary_disk: Temporary disk settings
@@ -188,6 +190,7 @@ class AppResourceProperties(Model):
         'active_deployment_name': {'key': 'activeDeploymentName', 'type': 'str'},
         'fqdn': {'key': 'fqdn', 'type': 'str'},
         'https_only': {'key': 'httpsOnly', 'type': 'bool'},
+        'enable_end_to_end_tls': {'key': 'enableEndToEndTLS', 'type': 'bool'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'temporary_disk': {'key': 'temporaryDisk', 'type': 'TemporaryDisk'},
         'persistent_disk': {'key': 'persistentDisk', 'type': 'PersistentDisk'},
@@ -201,6 +204,7 @@ class AppResourceProperties(Model):
         self.active_deployment_name = kwargs.get('active_deployment_name', None)
         self.fqdn = kwargs.get('fqdn', None)
         self.https_only = kwargs.get('https_only', None)
+        self.enable_end_to_end_tls = kwargs.get('enable_end_to_end_tls', None)
         self.created_time = None
         self.temporary_disk = kwargs.get('temporary_disk', None)
         self.persistent_disk = kwargs.get('persistent_disk', None)
