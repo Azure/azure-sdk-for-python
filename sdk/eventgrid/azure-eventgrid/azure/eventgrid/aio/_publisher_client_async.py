@@ -138,8 +138,8 @@ class EventGridPublisherClient():
                 :dedent: 8
                 :caption: Publishing a CloudEvent.
 
-        A dict representation of respective serialized models can be used to send CloudEvent(s) or
-        EventGridEvent(s) instead of the strongly typed objects.
+        Dict representation of respective serialized models is accepted as CloudEvent(s) or
+        EventGridEvent(s) apart from the strongly typed objects.
 
         .. admonition:: Example:
 
@@ -157,7 +157,7 @@ class EventGridPublisherClient():
                 :dedent: 8
                 :caption: Publishing a CloudEvent using a dict-like representation.
 
-        When publishing a Custom schema event(s), a dict-like representation is accepted.
+        When publishing a Custom Schema Event(s), dict-like representation is accepted.
         Either a single dictionary or a list of dictionaries can be passed.
 
         .. admonition:: Example:
@@ -169,9 +169,8 @@ class EventGridPublisherClient():
                 :dedent: 8
                 :caption: Publishing a Custom Schema event.
 
-        **WARNING**: To send multiple events at once, a list of events must be used.
-        It is very inefficient to loop the send method for each event instead of just
-        using a list and we highly recommend against it.
+        **WARNING**: To gain the best performance when sending multiple events at one time,
+        it is highly recommended to send a list of events instead of iterating over and sending each event in a loop.
 
         :param events: A single event or a list of dictionaries/CloudEvent/EventGridEvent to be sent.
         :type events: SendType
