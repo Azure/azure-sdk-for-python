@@ -225,16 +225,18 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
     return $null
   }
 
+  $whlDirectory = Join-Path ${artifactDir} ${artifactName.Replace("_","-")}
+
   Write-Host "Searching for $($artifactName) wheel in artifact path $($artifactDir)"
-  $files = Get-ChildItem "${artifactDir}/${artifactName.Replace("_","-")}" | ? {$_.Name.EndsWith(".whl")}
+  $files = Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")}
   if (!$files)
   {
-    Write-Host "${artifactDir}/${artifactName.Replace("_","-")} does not have wheel package for $($artifactName)"
+    Write-Host "$whlDirectory does not have wheel package for $($artifactName)"
     return $null
   }
   elseif($files.Count -ne 1)
   {
-    Write-Host "${artifactDir}/${artifactName.Replace("_","-")} should contain only one published wheel package for $($artifactName)"
+    Write-Host "$whlDirectory should contain only one published wheel package for $($artifactName)"
     Write-Host "No of Packages $($files.Count)"
     return $null
   }
