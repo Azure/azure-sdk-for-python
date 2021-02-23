@@ -15,6 +15,11 @@ from azure.appconfiguration import (
     ResourceReadOnlyError,
     AzureAppConfigurationClient,
     ConfigurationSetting,
+    SecretReferenceConfigurationSetting,
+    FeatureFlagConfigurationSetting,
+    CustomFeatureFilter,
+    TimeWindowFeatureFilter,
+    TargetingFeatureFilter
 )
 from azure.identity import DefaultAzureCredential
 from consts import (
@@ -27,6 +32,7 @@ from consts import (
     KEY_UUID,
 )
 import pytest
+import copy
 import datetime
 import os
 import logging
@@ -408,3 +414,189 @@ class AppConfigurationClientTest(AzureTestCase):
                 and to_set_kv.tags == set_kv.tags
                 and to_set_kv.etag != set_kv.etag
         )
+
+    @app_config_decorator
+    def test_sync_tokens(self, client):
+        new = FeatureFlagConfigurationSetting('custom', True, feature_filter={
+            'name': 'Microsoft.Percentage',
+            'parameters': {
+                'Value': 50
+            }
+        })
+
+        sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        keys = list(sync_tokens.keys())
+        seq_num = sync_tokens[keys[0]].sequence_number
+        sent = client.set_configuration_setting(new)
+
+        new = FeatureFlagConfigurationSetting('time_window', True, feature_filter={
+            'name': 'Microsoft.TimeWindow',
+            'parameters': {
+                'Start': 'Fri, 19 Feb 2021 18:00:00 GMT', # TODO: convert these to datetime objects
+                'End': 'Fri, 26 Feb 2021 05:00:00 GMT'
+            }
+        })
+
+        sent = client.set_configuration_setting(new)
+        sync_tokens2 = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        keys = list(sync_tokens2.keys())
+        seq_num2 = sync_tokens2[keys[0]].sequence_number
+
+        new = FeatureFlagConfigurationSetting("newflag", True, feature_filter={
+            'name': 'Microsoft.Targeting',
+            'parameters': {
+                'Audience': {
+                    'Users': [],
+                    'Groups': [],
+                    'DefaultRolloutPercentage': 75,
+                }
+            }
+        })
+
+        sent = client.set_configuration_setting(new)
+        sync_tokens3 = copy.deepcopy(client._sync_token_policy._sync_tokens)
+        keys = list(sync_tokens3.keys())
+        seq_num3 = sync_tokens3[keys[0]].sequence_number
+
+        assert seq_num < seq_num2
+        assert seq_num2 < seq_num3
+
+    def _assert_same_keys(self, key1, key2):
+        assert type(key1) == type(key2)
+        assert key1.key == key2.key
+        assert key1.label == key2.label
+        assert key1.content_type == key2.content_type
+        assert key1.tags == key2.tags
+        assert key1.etag != key2.etag
+        if isinstance(key1, FeatureFlagConfigurationSetting):
+            assert key1.enabled == key2.enabled
+            assert len(key1.feature_filters) == len(key2.feature_filters)
+        elif isinstance(key1, SecretReferenceConfigurationSetting):
+            assert key1.uri == key2.uri
+        else:
+            assert key1.value == key2.value
+
+    @app_config_decorator
+    def test_config_setting_feature_flag(self, client):
+        feature_flag = FeatureFlagConfigurationSetting("test_feature", True)
+        set_flag = client.set_configuration_setting(feature_flag)
+
+        self._assert_same_keys(feature_flag, set_flag)
+
+        set_flag.enabled = not set_flag.enabled
+        changed_flag = client.set_configuration_setting(set_flag)
+        self._assert_same_keys(set_flag, changed_flag)
+
+        client.delete_configuration_setting(changed_flag.key)
+
+    @app_config_decorator
+    def test_config_setting_secret_reference(self, client):
+        secret_reference = SecretReferenceConfigurationSetting(
+            "ConnectionString", "https://test-test.vault.azure.net/secrets/connectionString")
+        set_flag = client.set_configuration_setting(secret_reference)
+        self._assert_same_keys(secret_reference, set_flag)
+
+        set_flag.uri = "https://test-test.vault.azure.net/new_secrets/connectionString"
+        updated_flag = client.set_configuration_setting(set_flag)
+        self._assert_same_keys(set_flag, updated_flag)
+
+        client.delete_configuration_setting(secret_reference.key)
+
+    @app_config_decorator
+    def test_feature_filter_targeting(self, client):
+        new = FeatureFlagConfigurationSetting(
+            "newflag",
+            True,
+            feature_filters=[TargetingFeatureFilter(75)]
+        )
+
+        sent_config = client.set_configuration_setting(new)
+        self._assert_same_keys(sent_config, new)
+
+        assert isinstance(sent_config.feature_filters[0], TargetingFeatureFilter)
+        assert len(sent_config.feature_filters) == 1
+
+        sent_config.feature_filters[0].rollout_percentage = 80
+        updated_sent_config = client.set_configuration_setting(sent_config)
+        self._assert_same_keys(sent_config, updated_sent_config)
+
+        updated_sent_config.add_feature_filter(TargetingFeatureFilter(50))
+        updated_sent_config.add_feature_filter(TargetingFeatureFilter(100))
+
+        sent_config = client.set_configuration_setting(updated_sent_config)
+        self._assert_same_keys(sent_config, updated_sent_config)
+        assert len(sent_config.feature_filters) == 3
+
+        client.delete_configuration_setting(updated_sent_config.key)
+
+    @app_config_decorator
+    def test_feature_filter_time_window(self, client):
+        new = FeatureFlagConfigurationSetting(
+            'time_window',
+            True,
+            feature_filters=[
+                TimeWindowFeatureFilter(
+                    start='Fri, 19 Feb 2021 18:00:00 GMT',
+                    end='Fri, 26 Feb 2021 05:00:00 GMT'
+                )
+            ]
+        )
+
+        sent = client.set_configuration_setting(new)
+        self._assert_same_keys(sent, new)
+
+        sent.feature_filters[0].end = 'Fri, 26 Feb 2021 08:00:00 GMT'
+        new_sent = client.set_configuration_setting(sent)
+        self._assert_same_keys(sent, new_sent)
+
+        client.delete_configuration_setting(new_sent.key)
+
+    @app_config_decorator
+    def test_feature_filter_custom(self, client):
+        new = FeatureFlagConfigurationSetting(
+            'custom',
+            True,
+            feature_filters=[
+                CustomFeatureFilter(value=50)
+            ]
+        )
+
+        sent = client.set_configuration_setting(new)
+        self._assert_same_keys(sent, new)
+
+        sent.feature_filters[0].value = 100
+        new_sent = client.set_configuration_setting(sent)
+        self._assert_same_keys(sent, new_sent)
+
+        client.delete_configuration_setting(new_sent.key)
+
+    @app_config_decorator
+    def test_feature_filter_multiple(self, client):
+        new = FeatureFlagConfigurationSetting(
+            'custom',
+            True,
+            feature_filters=[
+                CustomFeatureFilter(value=50),
+                TimeWindowFeatureFilter(
+                    start=datetime.datetime(2021, 2, 19, 18, 0), #'Fri, 19 Feb 2021 18:00:00 GMT',
+                    end=datetime.datetime(2021, 2, 26, 5, 0) #'Fri, 26 Feb 2021 05:00:00 GMT'
+                ),
+                TargetingFeatureFilter(75)
+            ]
+        )
+
+        sent = client.set_configuration_setting(new)
+        self._assert_same_keys(sent, new)
+
+        sent.feature_filters[0].value = 100
+        sent.feature_filters[1].end = datetime.datetime(2021, 2, 26, 8, 0)
+        sent.feature_filters[2].rollout_percentage = 80
+
+        new_sent = client.set_configuration_setting(sent)
+        self._assert_same_keys(sent, new_sent)
+
+        assert new_sent.feature_filters[0].value == 100
+        assert new_sent.feature_filters[1].end == datetime.datetime(2021, 2, 26, 8, 0)
+        assert new_sent.feature_filters[2].rollout_percentage == 80
+
+        client.delete_configuration_setting(new_sent.key)

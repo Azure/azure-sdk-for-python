@@ -426,41 +426,42 @@ class AppConfigurationClientTest(AzureTestCase):
 
     @app_config_decorator
     def test_sync_tokens(self, client):
-        new = FeatureFlagConfigurationSetting('custom', True, feature_filter={
-            'name': 'Microsoft.Percentage',
-            'parameters': {
-                'Value': 50
-            }
-        })
+        new = FeatureFlagConfigurationSetting(
+            'custom',
+            True,
+            feature_filter=[
+                CustomFeatureFilter(50)
+            ]
+        )
 
         sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
         keys = list(sync_tokens.keys())
         seq_num = sync_tokens[keys[0]].sequence_number
         sent = client.set_configuration_setting(new)
 
-        new = FeatureFlagConfigurationSetting('time_window', True, feature_filter={
-            'name': 'Microsoft.TimeWindow',
-            'parameters': {
-                'Start': 'Fri, 19 Feb 2021 18:00:00 GMT', # TODO: convert these to datetime objects
-                'End': 'Fri, 26 Feb 2021 05:00:00 GMT'
-            }
-        })
+        new = FeatureFlagConfigurationSetting(
+            'time_window',
+            True,
+            feature_filter=[
+                TimeWindowFeatureFilter(
+                    start=datetime.datetime(2021, 2, 19, 18, 0),
+                    end=datetime.datetime(2021, 2, 26, 5, 0)
+                )
+            ]
+        )
 
         sent = client.set_configuration_setting(new)
         sync_tokens2 = copy.deepcopy(client._sync_token_policy._sync_tokens)
         keys = list(sync_tokens2.keys())
         seq_num2 = sync_tokens2[keys[0]].sequence_number
 
-        new = FeatureFlagConfigurationSetting("newflag", True, feature_filter={
-            'name': 'Microsoft.Targeting',
-            'parameters': {
-                'Audience': {
-                    'Users': [],
-                    'Groups': [],
-                    'DefaultRolloutPercentage': 75,
-                }
-            }
-        })
+        new = FeatureFlagConfigurationSetting(
+            "newflag",
+            True,
+            feature_filter=[
+                TargetingFeatureFilter(75),
+            ]
+        )
 
         sent = client.set_configuration_setting(new)
         sync_tokens3 = copy.deepcopy(client._sync_token_policy._sync_tokens)
@@ -492,7 +493,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         self._assert_same_keys(feature_flag, set_flag)
 
-        set_flag.value['enabled'] = not set_flag.value['enabled']
+        set_flag.enabled = not set_flag.enabled
         changed_flag = client.set_configuration_setting(set_flag)
         self._assert_same_keys(set_flag, changed_flag)
 
@@ -545,16 +546,16 @@ class AppConfigurationClientTest(AzureTestCase):
             True,
             feature_filters=[
                 TimeWindowFeatureFilter(
-                    start='Fri, 19 Feb 2021 18:00:00 GMT',
-                    end='Fri, 26 Feb 2021 05:00:00 GMT'
-                )
+                    start=datetime.datetime(2021, 2, 19, 18, 0),
+                    end=datetime.datetime(2021, 2, 26, 5, 0)
+                ),
             ]
         )
 
         sent = client.set_configuration_setting(new)
         self._assert_same_keys(sent, new)
 
-        sent.feature_filters[0].end = 'Fri, 26 Feb 2021 08:00:00 GMT'
+        sent.feature_filters[0].end = datetime.datetime(2021, 2, 26, 8, 0)
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 

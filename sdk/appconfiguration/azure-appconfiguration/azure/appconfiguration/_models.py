@@ -86,7 +86,7 @@ class ConfigurationSetting(Model):
         )
 
 
-class FeatureFlagConfigurationSetting(ConfigurationSetting):
+class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=too-many-instance-attributes
     """A feature flag configuration value.
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -179,7 +179,9 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
             u'description': self.description,
             u'enabled': self.enabled,
             u'conditions': {
-                u'client_filters': [f._to_generated() for f in self.feature_filters]
+                u'client_filters': [
+                    f._to_generated() for f in self.feature_filters  # pylint: disable=protected-access
+                ]
             }
         }
         value = json.dumps(value)
