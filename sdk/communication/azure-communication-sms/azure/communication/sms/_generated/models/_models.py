@@ -37,7 +37,7 @@ class SendMessageRequest(msrest.serialization.Model):
         'from_property': {'key': 'from', 'type': 'str'},
         'sms_recipients': {'key': 'smsRecipients', 'type': '[SmsRecipient]'},
         'message': {'key': 'message', 'type': 'str'},
-        'sms_send_options': {'key': 'smsSendOptions', 'type': 'SmsSendOptions'},
+        'sms_send_options': {'key': 'sendSmsOptions', 'type': 'SmsSendOptions'},
     }
 
     def __init__(

@@ -8,10 +8,10 @@ from uuid import uuid4
 from datetime import datetime
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.sms._generated.models import (
+    SendMessageRequest,
     SmsRecipient,
     SmsSendOptions,
 )
-from azure.communication.sms._models import SendMessageRequest
 
 from .._generated.aio._azure_communication_sms_service import AzureCommunicationSMSService
 from .._shared.utils import parse_connection_str, get_authentication_policy
