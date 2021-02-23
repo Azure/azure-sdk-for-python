@@ -235,7 +235,7 @@ class RegressionTest:
         working_dir = self.context.package_root_path
         temp_dir = self.context.temp_path
 
-        list_to_exclude = [pkg_to_exclude, 'azure-sdk-tools', ]
+        list_to_exclude = [pkg_to_exclude, 'azure-sdk-tools', 'azure-devtools' ]
         installed_pkgs = [p.split('==')[0] for p in get_installed_packages(self.context.venv.lib_paths) if p.startswith('azure-')]
         logging.info("Installed azure sdk packages:{}".format(installed_pkgs))
 
@@ -265,7 +265,10 @@ class RegressionTest:
         if filtered_dev_req_path:
             logging.info("Extending dev requirement to include azure-sdk-tools")
             extend_dev_requirements(
-                filtered_dev_req_path, ["../../../tools/azure-sdk-tools"]
+                filtered_dev_req_path, [
+                    "../../../tools/azure-sdk-tools",
+                    "../../../tools/azure-devtools"
+                ]
             )
             logging.info(
                 "Installing filtered dev requirements from {}".format(filtered_dev_req_path)
