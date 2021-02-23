@@ -241,12 +241,12 @@ class SecretReferenceConfigurationSetting(Model):
     }
     secret_reference_content_type = "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
 
-    def __init__(self, key, value, label=None, **kwargs):
+    def __init__(self, key, uri, label=None, **kwargs):
         # type: (str, str, str) -> None
         super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
         self.key = key
         self.label = label
-        self.value = value
+        self.uri = uri
         self.content_type = kwargs.get('content_type', self.secret_reference_content_type)
         self.etag = kwargs.get('etag', None)
         self.last_modified = kwargs.get('last_modified', None)
@@ -265,7 +265,7 @@ class SecretReferenceConfigurationSetting(Model):
                 pass
         return cls(
             key=key_value.key,
-            value=key_value.value,
+            uri=key_value.value[u"uri"],
             label=key_value.label,
             secret_id=key_value.value,
             last_modified=key_value.last_modified,
@@ -276,13 +276,10 @@ class SecretReferenceConfigurationSetting(Model):
 
     def _to_generated(self):
         # type: (...) -> KeyValue
-        value = self.value
-        if isinstance(self.value, dict):
-            value = json.dumps(self.value)
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=value,
+            value=json.dumps({u"uri": self.uri}),
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,
