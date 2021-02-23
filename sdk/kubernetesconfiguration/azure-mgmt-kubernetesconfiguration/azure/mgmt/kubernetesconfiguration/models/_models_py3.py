@@ -13,6 +13,84 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class Resource(Model):
+    """Resource.
+
+    Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class AzureEntityResource(Resource):
+    """Entity Resource.
+
+    The resource model definition for an Azure Resource Manager resource with
+    an etag.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AzureEntityResource, self).__init__(**kwargs)
+        self.etag = None
+
+
 class CloudError(Model):
     """CloudError.
     """
@@ -31,7 +109,7 @@ class ComplianceStatus(Model):
      Possible values include: 'Pending', 'Compliant', 'Noncompliant',
      'Installed', 'Failed'
     :vartype compliance_state: str or
-     ~azure.mgmt.kubernetesconfiguration.models.ComplianceState
+     ~azure.mgmt.kubernetesconfiguration.models.ComplianceStateType
     :param last_config_applied: Datetime the configuration was last applied.
     :type last_config_applied: datetime
     :param message: Message from when the configuration was applied.
@@ -39,7 +117,7 @@ class ComplianceStatus(Model):
     :param message_level: Level of the message. Possible values include:
      'Error', 'Warning', 'Information'
     :type message_level: str or
-     ~azure.mgmt.kubernetesconfiguration.models.MessageLevel
+     ~azure.mgmt.kubernetesconfiguration.models.MessageLevelType
     """
 
     _validation = {
@@ -64,36 +142,29 @@ class ComplianceStatus(Model):
 class ErrorDefinition(Model):
     """Error definition.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Service specific error code which serves as the substatus for
-     the HTTP error code.
-    :vartype code: str
-    :ivar message: Description of the error.
-    :vartype message: str
-    :ivar details: Internal error details.
-    :vartype details:
-     list[~azure.mgmt.kubernetesconfiguration.models.ErrorDefinition]
+    :param code: Required. Service specific error code which serves as the
+     substatus for the HTTP error code.
+    :type code: str
+    :param message: Required. Description of the error.
+    :type message: str
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'details': {'readonly': True},
+        'code': {'required': True},
+        'message': {'required': True},
     }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDefinition]'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, code: str, message: str, **kwargs) -> None:
         super(ErrorDefinition, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.details = None
+        self.code = code
+        self.message = message
 
 
 class ErrorResponse(Model):
@@ -144,50 +215,22 @@ class HelmOperatorProperties(Model):
         self.chart_values = chart_values
 
 
-class Resource(Model):
-    """The Resource model definition.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
 class ProxyResource(Resource):
-    """ARM proxy resource.
+    """Proxy Resource.
+
+    The resource model definition for a Azure Resource Manager proxy resource.
+    It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -210,23 +253,35 @@ class ProxyResource(Resource):
 class ResourceProviderOperation(Model):
     """Supported operation of this resource provider.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param name: Operation name, in format of
      {provider}/{resource}/{operation}
     :type name: str
     :param display: Display metadata associated with the operation.
     :type display:
      ~azure.mgmt.kubernetesconfiguration.models.ResourceProviderOperationDisplay
+    :ivar is_data_action: The flag that indicates whether the operation
+     applies to data plane.
+    :vartype is_data_action: bool
     """
+
+    _validation = {
+        'is_data_action': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'ResourceProviderOperationDisplay'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
     }
 
     def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
         super(ResourceProviderOperation, self).__init__(**kwargs)
         self.name = name
         self.display = display
+        self.is_data_action = None
 
 
 class ResourceProviderOperationDisplay(Model):
@@ -274,16 +329,18 @@ class Result(Model):
 
 
 class SourceControlConfiguration(ProxyResource):
-    """The SourceControl Configuration object.
+    """The SourceControl Configuration object returned in Get & Put response.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param repository_url: Url of the SourceControl Repository.
     :type repository_url: str
@@ -301,19 +358,24 @@ class SourceControlConfiguration(ProxyResource):
     :param operator_params: Any Parameters for the Operator instance in string
      format.
     :type operator_params: str
+    :param configuration_protected_settings: Name-value pairs of protected
+     configuration settings for the configuration
+    :type configuration_protected_settings: dict[str, str]
     :param operator_scope: Scope at which the operator will be installed.
      Possible values include: 'cluster', 'namespace'. Default value: "cluster"
      .
     :type operator_scope: str or
-     ~azure.mgmt.kubernetesconfiguration.models.OperatorScope
+     ~azure.mgmt.kubernetesconfiguration.models.OperatorScopeType
     :ivar repository_public_key: Public Key associated with this SourceControl
      configuration (either generated within the cluster or provided by the
      user).
     :vartype repository_public_key: str
+    :param ssh_known_hosts_contents: Base64-encoded known_hosts contents
+     containing public SSH keys required to access private Git instances
+    :type ssh_known_hosts_contents: str
     :param enable_helm_operator: Option to enable Helm Operator for this git
-     configuration. Possible values include: 'true', 'false'
-    :type enable_helm_operator: str or
-     ~azure.mgmt.kubernetesconfiguration.models.EnableHelmOperator
+     configuration.
+    :type enable_helm_operator: bool
     :param helm_operator_properties: Properties for Helm operator.
     :type helm_operator_properties:
      ~azure.mgmt.kubernetesconfiguration.models.HelmOperatorProperties
@@ -321,10 +383,13 @@ class SourceControlConfiguration(ProxyResource):
      Possible values include: 'Accepted', 'Deleting', 'Running', 'Succeeded',
      'Failed'
     :vartype provisioning_state: str or
-     ~azure.mgmt.kubernetesconfiguration.models.ProvisioningState
+     ~azure.mgmt.kubernetesconfiguration.models.ProvisioningStateType
     :ivar compliance_status: Compliance Status of the Configuration
     :vartype compliance_status:
      ~azure.mgmt.kubernetesconfiguration.models.ComplianceStatus
+    :param system_data: Top level metadata
+     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources
+    :type system_data: ~azure.mgmt.kubernetesconfiguration.models.SystemData
     """
 
     _validation = {
@@ -345,24 +410,118 @@ class SourceControlConfiguration(ProxyResource):
         'operator_instance_name': {'key': 'properties.operatorInstanceName', 'type': 'str'},
         'operator_type': {'key': 'properties.operatorType', 'type': 'str'},
         'operator_params': {'key': 'properties.operatorParams', 'type': 'str'},
+        'configuration_protected_settings': {'key': 'properties.configurationProtectedSettings', 'type': '{str}'},
         'operator_scope': {'key': 'properties.operatorScope', 'type': 'str'},
         'repository_public_key': {'key': 'properties.repositoryPublicKey', 'type': 'str'},
-        'enable_helm_operator': {'key': 'properties.enableHelmOperator', 'type': 'str'},
+        'ssh_known_hosts_contents': {'key': 'properties.sshKnownHostsContents', 'type': 'str'},
+        'enable_helm_operator': {'key': 'properties.enableHelmOperator', 'type': 'bool'},
         'helm_operator_properties': {'key': 'properties.helmOperatorProperties', 'type': 'HelmOperatorProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'compliance_status': {'key': 'properties.complianceStatus', 'type': 'ComplianceStatus'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, *, repository_url: str=None, operator_namespace: str="default", operator_instance_name: str=None, operator_type=None, operator_params: str=None, operator_scope="cluster", enable_helm_operator=None, helm_operator_properties=None, **kwargs) -> None:
+    def __init__(self, *, repository_url: str=None, operator_namespace: str="default", operator_instance_name: str=None, operator_type=None, operator_params: str=None, configuration_protected_settings=None, operator_scope="cluster", ssh_known_hosts_contents: str=None, enable_helm_operator: bool=None, helm_operator_properties=None, system_data=None, **kwargs) -> None:
         super(SourceControlConfiguration, self).__init__(**kwargs)
         self.repository_url = repository_url
         self.operator_namespace = operator_namespace
         self.operator_instance_name = operator_instance_name
         self.operator_type = operator_type
         self.operator_params = operator_params
+        self.configuration_protected_settings = configuration_protected_settings
         self.operator_scope = operator_scope
         self.repository_public_key = None
+        self.ssh_known_hosts_contents = ssh_known_hosts_contents
         self.enable_helm_operator = enable_helm_operator
         self.helm_operator_properties = helm_operator_properties
         self.provisioning_state = None
         self.compliance_status = None
+        self.system_data = system_data
+
+
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or
+     ~azure.mgmt.kubernetesconfiguration.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.kubernetesconfiguration.models.CreatedByType
+    :param last_modified_at: The type of identity that last modified the
+     resource.
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, *, created_by: str=None, created_by_type=None, created_at=None, last_modified_by: str=None, last_modified_by_type=None, last_modified_at=None, **kwargs) -> None:
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
+class TrackedResource(Resource):
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
+    :type location: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+        super(TrackedResource, self).__init__(**kwargs)
+        self.tags = tags
+        self.location = location

@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AzureEntityResource
     from ._models_py3 import ComplianceStatus
     from ._models_py3 import ErrorDefinition
     from ._models_py3 import ErrorResponse, ErrorResponseException
@@ -20,7 +21,10 @@ try:
     from ._models_py3 import ResourceProviderOperationDisplay
     from ._models_py3 import Result
     from ._models_py3 import SourceControlConfiguration
+    from ._models_py3 import SystemData
+    from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
+    from ._models import AzureEntityResource
     from ._models import ComplianceStatus
     from ._models import ErrorDefinition
     from ._models import ErrorResponse, ErrorResponseException
@@ -31,18 +35,21 @@ except (SyntaxError, ImportError):
     from ._models import ResourceProviderOperationDisplay
     from ._models import Result
     from ._models import SourceControlConfiguration
+    from ._models import SystemData
+    from ._models import TrackedResource
 from ._paged_models import ResourceProviderOperationPaged
 from ._paged_models import SourceControlConfigurationPaged
 from ._source_control_configuration_client_enums import (
-    ComplianceState,
-    MessageLevel,
+    ComplianceStateType,
+    MessageLevelType,
     OperatorType,
-    OperatorScope,
-    EnableHelmOperator,
-    ProvisioningState,
+    OperatorScopeType,
+    ProvisioningStateType,
+    CreatedByType,
 )
 
 __all__ = [
+    'AzureEntityResource',
     'ComplianceStatus',
     'ErrorDefinition',
     'ErrorResponse', 'ErrorResponseException',
@@ -53,12 +60,14 @@ __all__ = [
     'ResourceProviderOperationDisplay',
     'Result',
     'SourceControlConfiguration',
+    'SystemData',
+    'TrackedResource',
     'SourceControlConfigurationPaged',
     'ResourceProviderOperationPaged',
-    'ComplianceState',
-    'MessageLevel',
+    'ComplianceStateType',
+    'MessageLevelType',
     'OperatorType',
-    'OperatorScope',
-    'EnableHelmOperator',
-    'ProvisioningState',
+    'OperatorScopeType',
+    'ProvisioningStateType',
+    'CreatedByType',
 ]

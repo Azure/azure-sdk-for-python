@@ -31,9 +31,9 @@ class MgmtSourceControlConfigurationClientTest(AzureMgmtTestCase):
             azure.mgmt.kubernetesconfiguration.SourceControlConfigurationClient
         )
         if self.is_live:
-            from azure.mgmt.hybridkubernetes import KubernetesConnectRPClient
+            from azure.mgmt.hybridkubernetes import ConnectedKubernetesClient
             self.kubernetes_client = self.create_mgmt_client(
-                azure.mgmt.hybridkubernetes.KubernetesConnectRPClient
+                azure.mgmt.hybridkubernetes.ConnectedKubernetesClient
             )
 
     def create_kubernetes_cluster(self, group_name, cluster_name):
