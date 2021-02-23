@@ -236,7 +236,8 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 else:
                     await asyncio.sleep(retry_interval)
                     # todo handle pre-set range & x-ms-range
-                    headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
+                    headers = self.request.headers
+                    headers.update({'range': 'bytes=' + str(self.downloaded) + '-'})
                     try:
                         resp = await self.pipeline.run(self.request, stream=True, headers=headers)
                         if not resp.http_response:
