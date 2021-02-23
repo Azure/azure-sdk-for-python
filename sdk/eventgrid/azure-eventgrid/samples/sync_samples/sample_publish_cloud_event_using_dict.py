@@ -4,11 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 """
-FILE: cs5_publish_events_using_cloud_events_1.0_schema.py
+FILE: sample_publish_cloud_event_using_dict.py
 DESCRIPTION:
-    These samples demonstrate creating a list of CloudEvents and sending then as a list.
+    These samples demonstrate creating a list of CloudEvents using dict representations
+    and sending them as a list.
 USAGE:
-    python cs5_publish_events_using_cloud_events_1.0_schema.py
+    python sample_publish_cloud_event_using_dict.py
     Set the environment variables with your own values before running the sample:
     1) CLOUD_ACCESS_KEY - The access key of your eventgrid account.
     2) CLOUD_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
@@ -25,12 +26,14 @@ credential = AzureKeyCredential(topic_key)
 client = EventGridPublisherClient(endpoint, credential)
 
 client.send([
-    CloudEvent(
-        type="Contoso.Items.ItemReceived",
-        source="/contoso/items",
-        data={
-            "itemSku": "Contoso Item SKU #1"
-        },
-        subject="Door1"
-    )
+    {
+        "type": "Contoso.Items.ItemReceived",
+        "source": "/contoso/items",	
+        "data": {	
+            "itemSku": "Contoso Item SKU #1"	
+        },	
+        "subject": "Door1",	
+        "specversion": "1.0",	
+        "id": "randomclouduuid11"
+    }
 ])
