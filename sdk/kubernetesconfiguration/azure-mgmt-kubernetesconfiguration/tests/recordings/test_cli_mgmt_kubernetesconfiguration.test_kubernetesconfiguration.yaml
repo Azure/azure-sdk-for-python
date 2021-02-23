@@ -1,0 +1,708 @@
+interactions:
+- request:
+    body: 'b''{"location": "eastus", "identity": {"type": "SystemAssigned"}, "properties":
+      {"agentPublicKeyCertificate": "MIICYzCCAcygAwIBAgIBADANBgkqhkiG9w0BAQUFADAuMQswCQYDVQQGEwJVUzEMMAoGA1UEChMDSUJNMREwDwYDVQQLEwhMb2NhbCBDQTAeFw05OTEyMjIwNTAwMDBaFw0wMDEyMjMwNDU5NTlaMC4xCzAJBgNVBAYTAlVTMQwwCgYDVQQKEwNJQk0xETAPBgNVBAsTCExvY2FsIENBMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQD2bZEo7xGaX2/0GHkrNFZvlxBou9v1Jmt/PDiTMPve8r9FeJAQ0QdvFST/0JPQYD20rH0bimdDLgNdNynmyRoS2S/IInfpmf69iyc2G0TPyRvmHIiOZbdCd+YBHQi1adkj17NDcWj6S14tVurFX73zx0sNoMS79q3tuXKrDsxeuwIDAQABo4GQMIGNMEsGCVUdDwGG+EIBDQQ+EzxHZW5lcmF0ZWQgYnkgdGhlIFNlY3VyZVdheSBTZWN1cml0eSBTZXJ2ZXIgZm9yIE9TLzM5MCAoUkFDRikwDgYDVR0PAQH/BAQDAgAGMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFJ3+ocRyCTJw067dLSwr/nalx6YMMA0GCSqGSIb3DQEBBQUAA4GBAMaQzt+zaj1GU77yzlr8iiMBXgdQrwsZZWJo5exnAucJAEYQZmOfyLiM
+      D6oYq+ZnfvM0n8G/Y79q8nhwvuxpYOnRSAXFp6xSkrIOeZtJMY1h00LKp/JX3Ng1svZ2agE126JHsQ0bhzN5TKsYfbwfTwfjdWAGy6Vf1nYi/rO+ryMO",
+      "aadProfile": {"tenantId": "00000000-0000-0000-0000-000000000000", "clientAppId":
+      "f8cd1fd9-154f-4da7-b348-595f283c13a3", "serverAppId": "45c27b16-e262-4c55-b572-b3b8f7788eb8"}}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1110'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.21
+        msrest_azure/0.6.2 azure-mgmt-hybridkubernetes/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.Kubernetes/connectedClusters/myConnectedCluster?api-version=2020-01-01-preview
+  response:
+    body:
+      string: '{"error":{"code":"MissingSubscriptionRegistration","message":"The subscription
+        is not registered to use namespace ''Microsoft.Kubernetes''. See https://aka.ms/rps-not-found
+        for how to register subscriptions.","details":[{"code":"MissingSubscriptionRegistration","target":"Microsoft.Kubernetes","message":"The
+        subscription is not registered to use namespace ''Microsoft.Kubernetes''.
+        See https://aka.ms/rps-not-found for how to register subscriptions."}]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '451'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:39:18 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - gateway
+    status:
+      code: 409
+      message: Conflict
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python-requests/2.22.0
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes/register?api-version=2016-02-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes","namespace":"Microsoft.Kubernetes","authorizations":[{"applicationId":"64b12d6e-6549-484c-8cc6-6281839ba394","roleDefinitionId":"1d1d44cf-68a1-4def-a2b6-cd7efc3515af"},{"applicationId":"359431ad-ece5-496b-8768-be4bbfd82f36","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"},{"applicationId":"0000dab9-8b21-4ba2-807f-1743968cef00","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"}],"resourceTypes":[{"resourceType":"connectedClusters","locations":["West
+        Europe","East US","West Central US","South Central US","Southeast Asia","UK
+        South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity"},{"resourceType":"locations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"locations/operationStatuses","locations":["East
+        US 2 EUAP","West Europe","East US","West Central US","South Central US","Southeast
+        Asia","UK South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"registeredSubscriptions","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"Operations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview","2019-11-01-preview","2019-09-01-privatepreview"]}],"registrationState":"Registering"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1623'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:39:22 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.22.0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes?api-version=2016-02-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes","namespace":"Microsoft.Kubernetes","authorizations":[{"applicationId":"64b12d6e-6549-484c-8cc6-6281839ba394","roleDefinitionId":"1d1d44cf-68a1-4def-a2b6-cd7efc3515af"},{"applicationId":"359431ad-ece5-496b-8768-be4bbfd82f36","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"},{"applicationId":"0000dab9-8b21-4ba2-807f-1743968cef00","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"}],"resourceTypes":[{"resourceType":"connectedClusters","locations":["West
+        Europe","East US","West Central US","South Central US","Southeast Asia","UK
+        South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity"},{"resourceType":"locations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"locations/operationStatuses","locations":["East
+        US 2 EUAP","West Europe","East US","West Central US","South Central US","Southeast
+        Asia","UK South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"registeredSubscriptions","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"Operations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview","2019-11-01-preview","2019-09-01-privatepreview"]}],"registrationState":"Registering"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1623'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:39:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.22.0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes?api-version=2016-02-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes","namespace":"Microsoft.Kubernetes","authorizations":[{"applicationId":"64b12d6e-6549-484c-8cc6-6281839ba394","roleDefinitionId":"1d1d44cf-68a1-4def-a2b6-cd7efc3515af"},{"applicationId":"359431ad-ece5-496b-8768-be4bbfd82f36","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"},{"applicationId":"0000dab9-8b21-4ba2-807f-1743968cef00","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"}],"resourceTypes":[{"resourceType":"connectedClusters","locations":["West
+        Europe","East US","West Central US","South Central US","Southeast Asia","UK
+        South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity"},{"resourceType":"locations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"locations/operationStatuses","locations":["East
+        US 2 EUAP","West Europe","East US","West Central US","South Central US","Southeast
+        Asia","UK South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"registeredSubscriptions","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"Operations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview","2019-11-01-preview","2019-09-01-privatepreview"]}],"registrationState":"Registering"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1623'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:39:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.22.0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes?api-version=2016-02-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes","namespace":"Microsoft.Kubernetes","authorizations":[{"applicationId":"64b12d6e-6549-484c-8cc6-6281839ba394","roleDefinitionId":"1d1d44cf-68a1-4def-a2b6-cd7efc3515af"},{"applicationId":"359431ad-ece5-496b-8768-be4bbfd82f36","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"},{"applicationId":"0000dab9-8b21-4ba2-807f-1743968cef00","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"}],"resourceTypes":[{"resourceType":"connectedClusters","locations":["West
+        Europe","East US","West Central US","South Central US","Southeast Asia","UK
+        South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity"},{"resourceType":"locations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"locations/operationStatuses","locations":["East
+        US 2 EUAP","West Europe","East US","West Central US","South Central US","Southeast
+        Asia","UK South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"registeredSubscriptions","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"Operations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview","2019-11-01-preview","2019-09-01-privatepreview"]}],"registrationState":"Registering"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1623'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:39:52 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.22.0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes?api-version=2016-02-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes","namespace":"Microsoft.Kubernetes","authorizations":[{"applicationId":"64b12d6e-6549-484c-8cc6-6281839ba394","roleDefinitionId":"1d1d44cf-68a1-4def-a2b6-cd7efc3515af"},{"applicationId":"359431ad-ece5-496b-8768-be4bbfd82f36","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"},{"applicationId":"0000dab9-8b21-4ba2-807f-1743968cef00","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"}],"resourceTypes":[{"resourceType":"connectedClusters","locations":["West
+        Europe","East US","West Central US","South Central US","Southeast Asia","UK
+        South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity"},{"resourceType":"locations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"locations/operationStatuses","locations":["East
+        US 2 EUAP","West Europe","East US","West Central US","South Central US","Southeast
+        Asia","UK South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"registeredSubscriptions","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"Operations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview","2019-11-01-preview","2019-09-01-privatepreview"]}],"registrationState":"Registering"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1623'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:40:02 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.22.0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes?api-version=2016-02-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes","namespace":"Microsoft.Kubernetes","authorizations":[{"applicationId":"64b12d6e-6549-484c-8cc6-6281839ba394","roleDefinitionId":"1d1d44cf-68a1-4def-a2b6-cd7efc3515af"},{"applicationId":"359431ad-ece5-496b-8768-be4bbfd82f36","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"},{"applicationId":"0000dab9-8b21-4ba2-807f-1743968cef00","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"}],"resourceTypes":[{"resourceType":"connectedClusters","locations":["West
+        Europe","East US","West Central US","South Central US","Southeast Asia","UK
+        South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity"},{"resourceType":"locations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"locations/operationStatuses","locations":["East
+        US 2 EUAP","West Europe","East US","West Central US","South Central US","Southeast
+        Asia","UK South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"registeredSubscriptions","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"Operations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview","2019-11-01-preview","2019-09-01-privatepreview"]}],"registrationState":"Registering"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1623'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:40:13 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.22.0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes?api-version=2016-02-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes","namespace":"Microsoft.Kubernetes","authorizations":[{"applicationId":"64b12d6e-6549-484c-8cc6-6281839ba394","roleDefinitionId":"1d1d44cf-68a1-4def-a2b6-cd7efc3515af"},{"applicationId":"359431ad-ece5-496b-8768-be4bbfd82f36","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"},{"applicationId":"0000dab9-8b21-4ba2-807f-1743968cef00","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"}],"resourceTypes":[{"resourceType":"connectedClusters","locations":["West
+        Europe","East US","West Central US","South Central US","Southeast Asia","UK
+        South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity"},{"resourceType":"locations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"locations/operationStatuses","locations":["East
+        US 2 EUAP","West Europe","East US","West Central US","South Central US","Southeast
+        Asia","UK South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"registeredSubscriptions","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"Operations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview","2019-11-01-preview","2019-09-01-privatepreview"]}],"registrationState":"Registering"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1623'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:40:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.22.0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes?api-version=2016-02-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Kubernetes","namespace":"Microsoft.Kubernetes","authorizations":[{"applicationId":"64b12d6e-6549-484c-8cc6-6281839ba394","roleDefinitionId":"1d1d44cf-68a1-4def-a2b6-cd7efc3515af"},{"applicationId":"359431ad-ece5-496b-8768-be4bbfd82f36","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"},{"applicationId":"0000dab9-8b21-4ba2-807f-1743968cef00","roleDefinitionId":"1b5c71b7-9814-4b40-b62a-23018af874d8"}],"resourceTypes":[{"resourceType":"connectedClusters","locations":["West
+        Europe","East US","West Central US","South Central US","Southeast Asia","UK
+        South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity"},{"resourceType":"locations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"locations/operationStatuses","locations":["East
+        US 2 EUAP","West Europe","East US","West Central US","South Central US","Southeast
+        Asia","UK South","East US 2","West US 2","Australia East","North Europe"],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"registeredSubscriptions","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview"]},{"resourceType":"Operations","locations":[],"apiVersions":["2021-04-01-preview","2021-03-01","2020-01-01-preview","2019-11-01-preview","2019-09-01-privatepreview"]}],"registrationState":"Registered"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1622'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:40:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"location": "eastus", "identity": {"type": "SystemAssigned"}, "properties":
+      {"agentPublicKeyCertificate": "MIICYzCCAcygAwIBAgIBADANBgkqhkiG9w0BAQUFADAuMQswCQYDVQQGEwJVUzEMMAoGA1UEChMDSUJNMREwDwYDVQQLEwhMb2NhbCBDQTAeFw05OTEyMjIwNTAwMDBaFw0wMDEyMjMwNDU5NTlaMC4xCzAJBgNVBAYTAlVTMQwwCgYDVQQKEwNJQk0xETAPBgNVBAsTCExvY2FsIENBMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQD2bZEo7xGaX2/0GHkrNFZvlxBou9v1Jmt/PDiTMPve8r9FeJAQ0QdvFST/0JPQYD20rH0bimdDLgNdNynmyRoS2S/IInfpmf69iyc2G0TPyRvmHIiOZbdCd+YBHQi1adkj17NDcWj6S14tVurFX73zx0sNoMS79q3tuXKrDsxeuwIDAQABo4GQMIGNMEsGCVUdDwGG+EIBDQQ+EzxHZW5lcmF0ZWQgYnkgdGhlIFNlY3VyZVdheSBTZWN1cml0eSBTZXJ2ZXIgZm9yIE9TLzM5MCAoUkFDRikwDgYDVR0PAQH/BAQDAgAGMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFJ3+ocRyCTJw067dLSwr/nalx6YMMA0GCSqGSIb3DQEBBQUAA4GBAMaQzt+zaj1GU77yzlr8iiMBXgdQrwsZZWJo5exnAucJAEYQZmOfyLiM
+      D6oYq+ZnfvM0n8G/Y79q8nhwvuxpYOnRSAXFp6xSkrIOeZtJMY1h00LKp/JX3Ng1svZ2agE126JHsQ0bhzN5TKsYfbwfTwfjdWAGy6Vf1nYi/rO+ryMO",
+      "aadProfile": {"tenantId": "00000000-0000-0000-0000-000000000000", "clientAppId":
+      "f8cd1fd9-154f-4da7-b348-595f283c13a3", "serverAppId": "45c27b16-e262-4c55-b572-b3b8f7788eb8"}}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1110'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.21
+        msrest_azure/0.6.2 azure-mgmt-hybridkubernetes/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.Kubernetes/connectedClusters/myConnectedCluster?api-version=2020-01-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.Kubernetes/connectedClusters/myConnectedCluster","name":"myConnectedCluster","type":"Microsoft.Kubernetes/connectedClusters","location":"eastus","identity":{"principalId":"f587936b-fb9f-4f04-9432-f39e63cdbb77","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"properties":{"provisioningState":"Accepted","connectivityStatus":"Connecting","agentPublicKeyCertificate":"MIICYzCCAcygAwIBAgIBADANBgkqhkiG9w0BAQUFADAuMQswCQYDVQQGEwJVUzEMMAoGA1UEChMDSUJNMREwDwYDVQQLEwhMb2NhbCBDQTAeFw05OTEyMjIwNTAwMDBaFw0wMDEyMjMwNDU5NTlaMC4xCzAJBgNVBAYTAlVTMQwwCgYDVQQKEwNJQk0xETAPBgNVBAsTCExvY2FsIENBMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQD2bZEo7xGaX2/0GHkrNFZvlxBou9v1Jmt/PDiTMPve8r9FeJAQ0QdvFST/0JPQYD20rH0bimdDLgNdNynmyRoS2S/IInfpmf69iyc2G0TPyRvmHIiOZbdCd+YBHQi1adkj17NDcWj6S14tVurFX73zx0sNoMS79q3tuXKrDsxeuwIDAQABo4GQMIGNMEsGCVUdDwGG+EIBDQQ+EzxHZW5lcmF0ZWQgYnkgdGhlIFNlY3VyZVdheSBTZWN1cml0eSBTZXJ2ZXIgZm9yIE9TLzM5MCAoUkFDRikwDgYDVR0PAQH/BAQDAgAGMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFJ3+ocRyCTJw067dLSwr/nalx6YMMA0GCSqGSIb3DQEBBQUAA4GBAMaQzt+zaj1GU77yzlr8iiMBXgdQrwsZZWJo5exnAucJAEYQZmOfyLiM
+        D6oYq+ZnfvM0n8G/Y79q8nhwvuxpYOnRSAXFp6xSkrIOeZtJMY1h00LKp/JX3Ng1svZ2agE126JHsQ0bhzN5TKsYfbwfTwfjdWAGy6Vf1nYi/rO+ryMO","aadProfile":{"tenantId":"00000000-0000-0000-0000-000000000000","clientAppId":"f8cd1fd9-154f-4da7-b348-595f283c13a3","serverAppId":"45c27b16-e262-4c55-b572-b3b8f7788eb8"}}}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/providers/Microsoft.Kubernetes/locations/EASTUS/operationStatuses/63356cd8-27c4-401b-b8f3-3178acce8ede?api-version=2020-01-01-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '1557'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:40:44 GMT
+      etag:
+      - '"4400079e-0000-0100-0000-60346b2b0000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.21
+        msrest_azure/0.6.2 azure-mgmt-hybridkubernetes/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Kubernetes/locations/EASTUS/operationStatuses/63356cd8-27c4-401b-b8f3-3178acce8ede?api-version=2020-01-01-preview
+  response:
+    body:
+      string: '{"id":"/providers/Microsoft.Kubernetes/locations/EASTUS/operationStatuses/63356cd8-27c4-401b-b8f3-3178acce8ede","name":"63356cd8-27c4-401b-b8f3-3178acce8ede","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.Kubernetes/connectedClusters/myConnectedCluster","status":"Succeeded","startTime":"2021-02-23T02:40:42.7863619Z","endTime":"2021-02-23T02:40:54.1313791Z","properties":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '506'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:41:16 GMT
+      etag:
+      - '"4c008a4b-0000-0100-0000-60346b360000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.21
+        msrest_azure/0.6.2 azure-mgmt-hybridkubernetes/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.Kubernetes/connectedClusters/myConnectedCluster?api-version=2020-01-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.Kubernetes/connectedClusters/myConnectedCluster","name":"myConnectedCluster","type":"Microsoft.Kubernetes/connectedClusters","location":"eastus","identity":{"principalId":"f587936b-fb9f-4f04-9432-f39e63cdbb77","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"properties":{"provisioningState":"Succeeded","connectivityStatus":"Connecting","agentPublicKeyCertificate":"MIICYzCCAcygAwIBAgIBADANBgkqhkiG9w0BAQUFADAuMQswCQYDVQQGEwJVUzEMMAoGA1UEChMDSUJNMREwDwYDVQQLEwhMb2NhbCBDQTAeFw05OTEyMjIwNTAwMDBaFw0wMDEyMjMwNDU5NTlaMC4xCzAJBgNVBAYTAlVTMQwwCgYDVQQKEwNJQk0xETAPBgNVBAsTCExvY2FsIENBMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQD2bZEo7xGaX2/0GHkrNFZvlxBou9v1Jmt/PDiTMPve8r9FeJAQ0QdvFST/0JPQYD20rH0bimdDLgNdNynmyRoS2S/IInfpmf69iyc2G0TPyRvmHIiOZbdCd+YBHQi1adkj17NDcWj6S14tVurFX73zx0sNoMS79q3tuXKrDsxeuwIDAQABo4GQMIGNMEsGCVUdDwGG+EIBDQQ+EzxHZW5lcmF0ZWQgYnkgdGhlIFNlY3VyZVdheSBTZWN1cml0eSBTZXJ2ZXIgZm9yIE9TLzM5MCAoUkFDRikwDgYDVR0PAQH/BAQDAgAGMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFJ3+ocRyCTJw067dLSwr/nalx6YMMA0GCSqGSIb3DQEBBQUAA4GBAMaQzt+zaj1GU77yzlr8iiMBXgdQrwsZZWJo5exnAucJAEYQZmOfyLiM
+        D6oYq+ZnfvM0n8G/Y79q8nhwvuxpYOnRSAXFp6xSkrIOeZtJMY1h00LKp/JX3Ng1svZ2agE126JHsQ0bhzN5TKsYfbwfTwfjdWAGy6Vf1nYi/rO+ryMO","aadProfile":{"tenantId":"00000000-0000-0000-0000-000000000000","clientAppId":"f8cd1fd9-154f-4da7-b348-595f283c13a3","serverAppId":"45c27b16-e262-4c55-b572-b3b8f7788eb8"}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1558'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:41:17 GMT
+      etag:
+      - '"44001a9e-0000-0100-0000-60346b360000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"repositoryUrl": "git@github.com:k8sdeveloper425/flux-get-started",
+      "operatorNamespace": "SRS_Namespace", "operatorInstanceName": "SRSGitHubFluxOp-01",
+      "operatorType": "Flux", "operatorParams": "--git-email=xyzgituser@users.srs.github.com",
+      "operatorScope": "namespace", "enableHelmOperator": true, "helmOperatorProperties":
+      {"chartVersion": "0.3.0", "chartValues": "--set git.ssh.secretName=flux-git-deploy
+      --set tillerNamespace=kube-system"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '461'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.21
+        msrest_azure/0.6.2 azure-mgmt-kubernetesconfiguration/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.Kubernetes/connectedClusters/myConnectedCluster/providers/Microsoft.KubernetesConfiguration/sourceControlConfigurations/mySourceControlConfiguration?api-version=2021-03-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.Kubernetes/connectedClusters/myConnectedCluster/providers/Microsoft.KubernetesConfiguration/sourceControlConfigurations/mySourceControlConfiguration","name":"mySourceControlConfiguration","type":"Microsoft.KubernetesConfiguration/sourceControlConfigurations","properties":{"operatorNamespace":"SRS_Namespace","provisioningState":"Succeeded","complianceStatus":{"complianceState":"Pending","lastConfigApplied":"0001-01-01T00:00:00+00:00","message":"{\"OperatorMessage\":null,\"ClusterState\":null}","messageLevel":"Information"},"enableHelmOperator":true,"helmOperatorProperties":{"chartVersion":"0.3.0","chartValues":"--set
+        git.ssh.secretName=flux-git-deploy --set tillerNamespace=kube-system"},"repositoryUrl":"git@github.com:k8sdeveloper425/flux-get-started","operatorInstanceName":"SRSGitHubFluxOp-01","operatorType":"Flux","operatorScope":"namespace","operatorParams":"--git-email=xyzgituser@users.srs.github.com","sshKnownHostsContents":null,"configurationProtectedSettings":{},"repositoryPublicKey":""},"systemData":{"createdBy":null,"createdByType":null,"createdAt":"2021-02-23T02:41:19.6236+00:00","lastModifiedBy":null,"lastModifiedByType":null,"lastModifiedAt":"2021-02-23T02:41:19.6236002+00:00"}}'
+    headers:
+      api-supported-versions:
+      - 2019-11-01-Preview, 2020-07-01-Preview, 2020-10-01-Preview, 2021-03-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '1377'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:41:19 GMT
+      expires:
+      - '-1'
+      location:
+      - file:///subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.Kubernetes/connectedClusters/myConnectedCluster/providers/Microsoft.KubernetesConfiguration/sourceControlConfigurations/mySourceControlConfiguration
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.2
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.21
+        msrest_azure/0.6.2 azure-mgmt-kubernetesconfiguration/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.Kubernetes/connectedClusters/myConnectedCluster/providers/Microsoft.KubernetesConfiguration/sourceControlConfigurations/mySourceControlConfiguration?api-version=2021-03-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.Kubernetes/connectedClusters/myConnectedCluster/providers/Microsoft.KubernetesConfiguration/sourceControlConfigurations/mySourceControlConfiguration","name":"mySourceControlConfiguration","type":"Microsoft.KubernetesConfiguration/sourceControlConfigurations","properties":{"operatorNamespace":"SRS_Namespace","provisioningState":"Succeeded","complianceStatus":{"complianceState":"Pending","lastConfigApplied":"0001-01-01T00:00:00+00:00","message":"{\"OperatorMessage\":null,\"ClusterState\":null}","messageLevel":"Information"},"enableHelmOperator":true,"helmOperatorProperties":{"chartVersion":"0.3.0","chartValues":"--set
+        git.ssh.secretName=flux-git-deploy --set tillerNamespace=kube-system"},"repositoryUrl":"git@github.com:k8sdeveloper425/flux-get-started","operatorInstanceName":"SRSGitHubFluxOp-01","operatorType":"Flux","operatorScope":"namespace","operatorParams":"--git-email=xyzgituser@users.srs.github.com","sshKnownHostsContents":null,"configurationProtectedSettings":{},"repositoryPublicKey":""},"systemData":{"createdBy":null,"createdByType":null,"createdAt":"2021-02-23T02:41:19.6236+00:00","lastModifiedBy":null,"lastModifiedByType":null,"lastModifiedAt":"2021-02-23T02:41:19.6236002+00:00"}}'
+    headers:
+      api-supported-versions:
+      - 2019-11-01-Preview, 2020-07-01-Preview, 2020-10-01-Preview, 2021-03-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '1377'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:41:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.2
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.21
+        msrest_azure/0.6.2 azure-mgmt-kubernetesconfiguration/0.3.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_kubernetesconfiguration_test_kubernetesconfiguration96801b78/providers/Microsoft.Kubernetes/connectedClusters/myConnectedCluster/providers/Microsoft.KubernetesConfiguration/sourceControlConfigurations/mySourceControlConfiguration?api-version=2021-03-01
+  response:
+    body:
+      string: '{"content":null,"statusCode":200,"headers":[],"version":"1.1","reasonPhrase":"OK","trailingHeaders":[],"requestMessage":null,"isSuccessStatusCode":true}'
+    headers:
+      api-supported-versions:
+      - 2019-11-01-Preview, 2020-07-01-Preview, 2020-10-01-Preview, 2021-03-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '152'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 23 Feb 2021 02:41:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - openresty/1.15.8.2
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 200
+      message: OK
+version: 1
