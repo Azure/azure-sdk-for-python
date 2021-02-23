@@ -17,7 +17,6 @@ import textwrap
 import io
 import glob
 import zipfile
-import pdb
 import fnmatch
 
 logging.getLogger().setLevel(logging.INFO)
