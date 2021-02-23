@@ -66,6 +66,22 @@ steps:
       -PushArgs "${{ parameters.PushArgs }}"
       -SkipCommit $${{ parameters.SkipCheckingForChanges }}
 
+- pwsh:
+    Write-Host "-RepoOwner ${{ parameters.RepoOwner }}"
+    Write-Host "-RepoName $(RepoNameWithoutOwner)"
+    Write-Host "-BaseBranch ${{ parameters.BaseBranchName }}"
+    Write-Host "-PROwner ${{ parameters.PROwner }}"
+    Write-Host "-PRBranch ${{ parameters.PRBranchName }}"
+    Write-Host "-AuthToken $(azuresdk-github-pat)"
+    Write-Host "-PRTitle ${{ parameters.PRTitle }}"
+    Write-Host "-PRBody ${{ coalesce(parameters.PRBody, parameters.CommitMsg, parameters.PRTitle) }}"
+    Write-Host "-PRLabels ${{ parameters.PRLabels }}"
+    Write-Host "-UserReviewers ${{ parameters.GHReviewersVariable }}"
+    Write-Host "-TeamReviewers ${{ parameters.GHTeamReviewersVariable }}"
+    Write-Host "-Assignees ${{ parameters.GHAssignessVariable }}"
+    Write-Host "-CloseAfterOpenForTesting $${{ coalesce(parameters.CloseAfterOpenForTesting, 'false') }}"
+  displayName: GetArguments
+  
 - task: PowerShell@2
   displayName: Create pull request
   condition: and(succeeded(), eq(variables['HasChanges'], 'true'))
