@@ -9,24 +9,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.7.9 (Linux-4.4.0-19041-Microsoft-x86_64-with-Ubuntu-16.04-xenial)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.02,"neutral":0.97,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.02,"neutral":0.97,"negative":0.01},"offset":0,"length":11,"text":"Hello
         world"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: c75cf1d5-5226-42d8-a9eb-d9e639422f07
+      apim-request-id: e2ddb3c9-34bc-4ba5-8586-e2c0e7a6f010
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Sat, 20 Feb 2021 00:08:49 GMT
+      date: Tue, 23 Feb 2021 17:11:33 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '104'
+      x-envoy-upstream-service-time: '94'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

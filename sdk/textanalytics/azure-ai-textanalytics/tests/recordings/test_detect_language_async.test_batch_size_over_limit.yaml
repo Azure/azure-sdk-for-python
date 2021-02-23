@@ -759,23 +759,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/languages?showStats=false
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
         request contains too many records. Max 1000 records are permitted."}}}'
     headers:
-      apim-request-id: d8224eef-cb01-4282-be9a-9e437d3984de
+      apim-request-id: cd8c3900-aa2d-4cf7-be1d-c6f1d0540682
       content-type: application/json; charset=utf-8
-      date: Wed, 27 Jan 2021 02:21:56 GMT
+      date: Tue, 23 Feb 2021 17:08:02 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '51'
+      x-envoy-upstream-service-time: '41'
     status:
       code: 400
       message: Bad Request
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/languages?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/languages?showStats=false
 version: 1

@@ -10,9 +10,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -21,9 +21,9 @@ interactions:
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: en,es"}}}],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: b9bf58ba-6b86-4573-a37e-c33fa1b41f93
+      apim-request-id: 27588f95-bacb-4f33-84fc-5492142530b0
       content-type: application/json; charset=utf-8
-      date: Wed, 27 Jan 2021 02:23:49 GMT
+      date: Tue, 23 Feb 2021 17:09:51 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -31,5 +31,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

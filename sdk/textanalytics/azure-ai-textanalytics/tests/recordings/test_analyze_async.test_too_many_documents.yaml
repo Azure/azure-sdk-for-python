@@ -1,8 +1,8 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "latest", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
-      [{"parameters": {"model-version": "latest", "stringIndexType": "TextElements_v8"}}],
+      "latest", "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "latest", "stringIndexType": "UnicodeCodePoint"}}],
       "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
       "analysisInput": {"documents": [{"id": "0", "text": "input document", "language":
       "en"}, {"id": "1", "text": "input document", "language": "en"}, {"id": "2",
@@ -28,27 +28,27 @@ interactions:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '1843'
+      - '1845'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innerError":{"code":"InvalidDocumentBatch","message":"Batch
         request contains too many documents. Max 25 documents are permitted."}}}'
     headers:
-      apim-request-id: d8569991-c3db-4dd3-997d-3124776e956b
+      apim-request-id: de79dedf-0672-477b-b8db-1cecc3270e90
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:34:01 GMT
+      date: Tue, 23 Feb 2021 17:06:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '9'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 400
       message: Bad Request
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/analyze
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/analyze
 version: 1
