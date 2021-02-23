@@ -8,6 +8,7 @@ from ._enums import EncryptionAlgorithm
 
 if TYPE_CHECKING:
     from . import KeyWrapAlgorithm, SignatureAlgorithm
+    from typing import Any
 
 
 class EncryptionAlgorithmConfiguration():
