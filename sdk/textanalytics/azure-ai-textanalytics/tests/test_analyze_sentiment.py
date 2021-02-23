@@ -576,7 +576,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert res == "cls result"
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_4})
+    @TextAnalyticsClientPreparer()
     def test_opinion_mining(self, client):
         documents = [
             "It has a sleek premium aluminum design that makes it beautiful to look at."
@@ -610,7 +610,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 self.assertFalse(premium_opinion.is_negated)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_4})
+    @TextAnalyticsClientPreparer()
     def test_opinion_mining_with_negated_opinion(self, client):
         documents = [
             "The food and service is not good"
@@ -647,7 +647,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_4})
+    @TextAnalyticsClientPreparer()
     def test_opinion_mining_more_than_5_documents(self, client):
         documents = [
             "The food was unacceptable",
