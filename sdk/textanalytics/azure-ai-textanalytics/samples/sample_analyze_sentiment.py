@@ -61,7 +61,7 @@ class AnalyzeSentimentSample(object):
         ]
 
 
-        result = text_analytics_client.analyze_sentiment(documents)
+        result = text_analytics_client.analyze_sentiment(documents, show_opinion_mining=True)
         docs = [doc for doc in result if not doc.is_error]
 
         print("Let's visualize the sentiment of each of these documents")
