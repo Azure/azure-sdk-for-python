@@ -44,7 +44,7 @@ async def publish_event():
     }
     async with client:
         # publish list of events
-        await client.send(event_list)
+        await client.send(custom_schema_event)
     
     # [END publish_custon_schema_async]
 
