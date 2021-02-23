@@ -8,11 +8,10 @@ from uuid import uuid4
 from datetime import datetime
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.sms._generated.models import (
-    SendMessageRequest,
     SmsRecipient,
-    SmsSendResult,
     SmsSendOptions,
 )
+from azure.communication.sms._models import SendMessageRequest
 
 from .._generated.aio._azure_communication_sms_service import AzureCommunicationSMSService
 from .._shared.utils import parse_connection_str, get_authentication_policy
@@ -83,7 +82,7 @@ class SmsClient(object):
              to, # type: Union[str, List[str]]
              message, # type: str
              **kwargs # type: Any
-             ): # type: (...) -> ItemPaged[SmsSendResult]
+             ): # type: (...) -> [SmsSendResult]
         """Sends SMSs to phone numbers.
 
         :param str from_: The sender of the SMS.
@@ -116,7 +115,7 @@ class SmsClient(object):
                 ) for p in to
             ],
             message=message,
-            send_sms_options=sms_send_options,
+            sms_send_options=sms_send_options,
             **kwargs)
 
         return await self._sms_service_client.sms.send(

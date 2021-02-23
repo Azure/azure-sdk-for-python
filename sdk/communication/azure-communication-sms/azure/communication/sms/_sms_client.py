@@ -8,10 +8,10 @@ from uuid import uuid4
 from datetime import datetime
 from azure.core.tracing.decorator import distributed_trace
 from azure.communication.sms._generated.models import (
-    SendMessageRequest,
     SmsRecipient,
     SmsSendOptions,
 )
+from azure.communication.sms._models import SendMessageRequest
 
 from ._generated._azure_communication_sms_service import AzureCommunicationSMSService
 from ._shared.utils import parse_connection_str, get_authentication_policy
@@ -114,9 +114,9 @@ class SmsClient(object):
                 ) for p in to
             ],
             message=message,
-            send_sms_options=sms_send_options,
+            sms_send_options=sms_send_options,
             **kwargs)
-        
+
         return self._sms_service_client.sms.send(
             request,
             cls=lambda pr, r, e: r.value,
