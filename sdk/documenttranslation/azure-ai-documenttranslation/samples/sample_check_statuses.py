@@ -49,12 +49,13 @@ def sample_batch_translation():
 
     while True:
         batch_detail = client.get_batch_status(poller)  # type: BatchStatusDetail
-        if batch_detail.status == ["NotStarted", "Running"]:
+        if batch_detail.status in ["NotStarted", "Running"]:
             time.sleep(5)
             continue
 
-        if batch_detail.status == ["Failed", "ValidationFailed"]:
-            print("Batch failed: {}: {}".format(batch_detail.error.code, batch_detail.error.message))
+        if batch_detail.status in ["Failed", "ValidationFailed"]:
+            if batch_detail.error:
+                print("Batch failed: {}: {}".format(batch_detail.error.code, batch_detail.error.message))
             check_documents(client, batch_detail.id)
             exit(1)
 
@@ -66,15 +67,22 @@ def sample_batch_translation():
 
 
 def check_documents(client, batch_id):
+    from azure.core.exceptions import ResourceNotFoundError
+
+    try:
+        doc_statuses = client.list_documents_statuses(batch_id)  # type: ItemPaged[DocumentStatusDetail]
+    except ResourceNotFoundError as err:
+        print("Failed to process any documents in source/target container.")
+        raise err
+
     docs_to_retry = []
-    doc_statuses = client.list_documents_statuses(batch_id)  # type: ItemPaged[DocumentStatusDetail]
     for document in doc_statuses:
         if document.status == "Failed":
             print("Document at {} failed to be translated to {} language".format(
-                document.document_url, document.translate_to
+                document.url, document.translate_to
             ))
             print("Document ID: {}, Error Code: {}, Message: {}".format(
                 document.id, document.error.code, document.error.message
             ))
-            if document.id not in docs_to_retry:
-                docs_to_retry.append(document.id)
+            if document.url not in docs_to_retry:
+                docs_to_retry.append(document.url)

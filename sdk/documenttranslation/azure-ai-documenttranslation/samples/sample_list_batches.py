@@ -23,7 +23,7 @@ def sample_list_all_batches():
         print("Batch ID: {}".format(batch.id))
         print("Batch status: {}".format(batch.status))
         print("Batch created on: {}".format(batch.created_on))
-        print("Batch last updated on: {}".format(batch.last_updated))
+        print("Batch last updated on: {}".format(batch.last_updated_on))
         print("Batch number of translations on documents: {}".format(batch.summary.total))
 
         print("Of total documents...")
