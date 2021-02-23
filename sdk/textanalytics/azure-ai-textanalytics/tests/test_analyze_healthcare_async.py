@@ -123,17 +123,14 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         assert excinfo.value.status_code == 413
 
-
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
-    async def test_output_same_order_as_input(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="one"),
-            TextDocumentInput(id="2", text="two"),
-            TextDocumentInput(id="3", text="three"),
-            TextDocumentInput(id="4", text="four"),
-            TextDocumentInput(id="5", text="five")
-        ]
+    @TextAnalyticsClientPreparer()
+    async def test_out_of_order_ids(self, client):
+        docs = [{"id": "56", "text": ":)"},
+                {"id": "0", "text": ":("},
+                {"id": "22", "text": ""},
+                {"id": "19", "text": ":P"},
+                {"id": "1", "text": ":D"}]
 
         async with client:
             result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
@@ -141,9 +138,10 @@ class TestHealth(AsyncTextAnalyticsTest):
             async for r in result:
                 response.append(r)
 
-        for idx, doc in enumerate(response):
-            self.assertEqual(str(idx + 1), doc.id)
-
+        expected_order = ["56", "0", "22", "19", "1"]
+        actual_order = [x.id for x in response]
+        for idx, resp in enumerate(response):
+            self.assertEqual(resp.id, expected_order[idx])
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
@@ -163,8 +161,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             )).result()
 
         self.assertIsNotNone(response)
-        self.assertIsNotNone(response.model_version)
-        self.assertIsNotNone(response.model_version)
+        self.assertEqual("2021-01-11", response.model_version)
         self.assertEqual(response.statistics.documents_count, 5)
         self.assertEqual(response.statistics.transactions_count, 4)
         self.assertEqual(response.statistics.valid_documents_count, 4)
