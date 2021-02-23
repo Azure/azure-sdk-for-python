@@ -36,7 +36,7 @@ def publish():
         "subject": "Door1",	
         "dataVersion": "2.0",	
         "id": "randomuuid11",	
-        "eventTime": datetime.now(UTC)
+        "eventTime": datetime.now(UTC())
     }	
     event1 = {	
         "eventType": "Contoso.Items.ItemReceived",	
@@ -46,7 +46,7 @@ def publish():
         "subject": "Door1",	
         "dataVersion": "2.0",	
         "id": "randomuuid12",	
-        "eventTime": datetime.now(UTC)
+        "eventTime": datetime.now(UTC())
     }	
     client.send([event0, event1])
 
