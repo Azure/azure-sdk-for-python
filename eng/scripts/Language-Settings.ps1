@@ -229,12 +229,12 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   $files = Get-ChildItem "${artifactDir}/${artifactName.Replace("_","-")}" | Where-Object -FilterScript {$_.Name.EndsWith(".whl")}
   if (!$files)
   {
-    Write-Host "$($artifactDir) does not have wheel package for $($artifactName)"
+    Write-Host "${artifactDir}/${artifactName.Replace("_","-")} does not have wheel package for $($artifactName)"
     return $null
   }
   elseif($files.Count -ne 1)
   {
-    Write-Host "$($artifactDir) should contain only one published wheel package for $($artifactName)"
+    Write-Host "${artifactDir}/${artifactName.Replace("_","-")} should contain only one published wheel package for $($artifactName)"
     Write-Host "No of Packages $($files.Count)"
     return $null
   }
