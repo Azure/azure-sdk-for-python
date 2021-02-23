@@ -72,6 +72,7 @@ class IdempotentProducerMixin(object):
 
     """
     def _on_attach(self, source, target, properties, error):
+        # pylint: disable=protected-access, unused-argument
         if not self._enable_idempotent_partitions or str(target) != self._target:
             return
         self._owner_level = properties.get(PRODUCER_EPOCH)
@@ -84,13 +85,14 @@ class IdempotentProducerMixin(object):
                 self._owner_level is not None or\
                 self._starting_sequence_number is not None:
             self._link_properties[PRODUCER_ID_SYMBOL] =\
-                types.AMQPLong(self._producer_group_id) if self._producer_group_id is not None else None
+                types.AMQPLong(int(self._producer_group_id)) if self._producer_group_id is not None else None
             self._link_properties[PRODUCER_EPOCH_SYMBOL] =\
-                types.AMQPShort(self._owner_level) if self._owner_level is not None else None
+                types.AMQPShort(int(self._owner_level)) if self._owner_level is not None else None
             self._link_properties[PRODUCER_SEQUENCE_NUMBER_SYMBOL] =\
-                types.AMQPInt(self._starting_sequence_number) if self._starting_sequence_number is not None else None
+                types.AMQPInt(int(self._starting_sequence_number)) if self._starting_sequence_number is not None else None
 
     def _populate_idempotent_event_annotations(self, event, idx):
+        # pylint: disable=protected-access
         event._pending_published_sequence_number = self._starting_sequence_number + idx
         event.message.annotations[PRODUCER_EPOCH_SYMBOL] = self._owner_level
         event.message.annotations[PRODUCER_ID_SYMBOL] = self._producer_group_id

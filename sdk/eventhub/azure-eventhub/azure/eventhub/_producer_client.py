@@ -462,7 +462,7 @@ class EventHubProducerClient(ClientBase):
             'owner_level': None
         }
         try:
-            producer = self._producers[partition_id]
+            producer = cast(EventHubProducer, self._producers[partition_id])
             output['last_published_sequence_number'] = producer._last_published_sequence_number
             output['producer_group_id'] = producer._producer_group_id
             output['owner_level'] = producer._owner_level

@@ -5,15 +5,15 @@
 import uuid
 import asyncio
 import logging
-from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING
+from typing import Optional, Any, AnyStr, List, TYPE_CHECKING
 import time
 
-from uamqp import types, constants, errors, utils
+from uamqp import types, constants, errors
 from uamqp import SendClientAsync
 
 from azure.core.tracing import AbstractSpan
 
-from .._common import EventData, EventDataBatch
+from .._common import EventDataBatch
 from ..exceptions import _error_handler, OperationTimeoutError
 from .._producer import IdempotentProducerMixin
 from .._utils import (
@@ -23,7 +23,6 @@ from .._utils import (
 )
 from .._constants import (
     TIMEOUT_SYMBOL,
-    IDEMPOTENT_PRODUCER_SYMBOL,
     PRODUCER_EPOCH_SYMBOL,
     PRODUCER_SEQUENCE_NUMBER_SYMBOL,
     PRODUCER_ID_SYMBOL
@@ -112,7 +111,6 @@ class EventHubProducer(
 
     def _create_handler(self, auth: "JWTTokenAsync") -> None:
 
-        desired_capabilities = None
         if self._enable_idempotent_partitions:
             self._set_idempotent_producer_link_configs()
 
