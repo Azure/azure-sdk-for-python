@@ -315,6 +315,9 @@ class PutAliasRequestProperties(msrest.serialization.Model):
     :type subscription_id: str
     :param reseller_id: Reseller ID, basically MPN Id.
     :type reseller_id: str
+    :param management_group_id: This parameter can be used to directly place a subscription into
+     a Management group.
+    :type management_group_id: str
     """
 
     _attribute_map = {
@@ -323,6 +326,7 @@ class PutAliasRequestProperties(msrest.serialization.Model):
         'billing_scope': {'key': 'billingScope', 'type': 'str'},
         'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
         'reseller_id': {'key': 'resellerId', 'type': 'str'},
+        'management_group_id': {'key': 'managementGroupId', 'type': 'str'},
     }
 
     def __init__(
@@ -335,6 +339,7 @@ class PutAliasRequestProperties(msrest.serialization.Model):
         self.billing_scope = kwargs.get('billing_scope', None)
         self.subscription_id = kwargs.get('subscription_id', None)
         self.reseller_id = kwargs.get('reseller_id', None)
+        self.management_group_id = kwargs.get('management_group_id', None)
 
 
 class PutAliasResponse(msrest.serialization.Model):
