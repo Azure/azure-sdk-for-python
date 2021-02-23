@@ -69,14 +69,14 @@ class EventGridPublisherClient(object):
             :start-after: [START client_auth_with_key_cred]
             :end-before: [END client_auth_with_key_cred]
             :language: python
-            :dedent: 8
+            :dedent: 16
             :caption: Creating the EventGridPublisherClient with an endpoint and AzureKeyCredential.
 
         .. literalinclude:: ../samples/sync_samples/sample_authentication.py
             :start-after: [START client_auth_with_sas_cred]
             :end-before: [END client_auth_with_sas_cred]
             :language: python
-            :dedent: 8
+            :dedent: 16
             :caption: Creating the EventGridPublisherClient with an endpoint and AzureSasCredential.
     """
 
@@ -125,14 +125,14 @@ class EventGridPublisherClient(object):
                 :start-after: [START publish_eg_event_to_topic]
                 :end-before: [END publish_eg_event_to_topic]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Publishing an EventGridEvent.
 
             .. literalinclude:: ../samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py
                 :start-after: [START publish_cloud_event_to_topic]
                 :end-before: [END publish_cloud_event_to_topic]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Publishing a CloudEvent.
 
         Dict representation of respective serialized models is accepted as CloudEvent(s) or
@@ -144,14 +144,14 @@ class EventGridPublisherClient(object):
                 :start-after: [START publish_eg_event_dict]
                 :end-before: [END publish_eg_event_dict]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Publishing an EventGridEvent using a dict-like representation.
 
             .. literalinclude:: ../samples/sync_samples/sample_publish_cloud_event_using_dict.py
                 :start-after: [START publish_cloud_event_dict]
                 :end-before: [END publish_cloud_event_dict]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Publishing a CloudEvent using a dict-like representation.
 
         When publishing a Custom Schema Event(s), dict-like representation is accepted.
@@ -163,7 +163,7 @@ class EventGridPublisherClient(object):
                 :start-after: [START publish_custom_schema]
                 :end-before: [END publish_custom_schema]
                 :language: python
-                :dedent: 8
+                :dedent: 16
                 :caption: Publishing a Custom Schema event.
 
         **WARNING**: To gain the best performance when sending multiple events at one time,
