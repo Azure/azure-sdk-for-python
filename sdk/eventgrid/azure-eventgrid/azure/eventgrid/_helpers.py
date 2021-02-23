@@ -37,7 +37,7 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
                 :start-after: [START generate_sas]
                 :end-before: [END generate_sas]
                 :language: python
-                :dedent: 16
+                :dedent: 0
                 :caption: Generate a shared access signature.
     """
 
