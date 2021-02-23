@@ -14,6 +14,7 @@ USAGE:
     2) EG_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
     "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
 """
+# [START generate_sas]
 import os
 from azure.eventgrid import generate_sas
 from datetime import datetime, timedelta
@@ -25,5 +26,7 @@ endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 expiration_date_utc = datetime.utcnow() + timedelta(hours=10)
 
 signature = generate_sas(endpoint, topic_key, expiration_date_utc)
+
+# [END generate_sas]
 
 print(signature)
