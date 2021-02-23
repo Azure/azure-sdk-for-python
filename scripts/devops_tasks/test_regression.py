@@ -109,7 +109,8 @@ class RegressionTest:
         pkg_name = self.context.package_name
         if pkg_name in self.package_dependency_dict:
             logging.info("Running regression test for {}".format(pkg_name))
-            self.whl_path = find_whl(pkg_name, self.context.pkg_version, self.context.whl_directory)
+
+            self.whl_path = os.path.join(self.context.whl_directory, find_whl(pkg_name, self.context.pkg_version, self.context.whl_directory))
             if find_packages_missing_on_pypi(self.whl_path):
                 logging.error("Required packages are not available on PyPI. Skipping regression test")
                 exit(0)
@@ -169,21 +170,30 @@ class RegressionTest:
                 dep_pkg_path
             )
 
-            # Install pre-built whl for current package
+            # Install pre-built whl for current package.
             install_package_from_whl(
                 self.whl_path,
                 self.context.temp_path,
                 self.context.venv.python_executable,
             )
-            # install package to be tested and run pytest
+
+            # install dependent package from source
+            self._install_packages(dep_pkg_path, self.context.package_name)
+            
+            # try install of pre-built whl for current package again. if unnecessary, pip does nothing.
+            # we do this to ensure that the correct development version is installed. on non-dev builds
+            # this step will just skip through.
+            install_package_from_whl(
+                self.whl_path,
+                self.context.temp_path,
+                self.context.venv.python_executable,
+            )
+
             self._execute_test(dep_pkg_path)
         finally:
             self.context.deinitialize(dep_pkg_path)
 
     def _execute_test(self, dep_pkg_path):
-        # install dependent package from source
-        self._install_packages(dep_pkg_path, self.context.package_name)
-
         #  Ensure correct version of package is installed
         if not self._is_package_installed(self.context.package_name, self.context.pkg_version):
             logging.error("Incorrect version of package {0} is installed. Expected version {1}".format(self.context.package_name, self.context.pkg_version))
@@ -225,7 +235,7 @@ class RegressionTest:
         working_dir = self.context.package_root_path
         temp_dir = self.context.temp_path
 
-        list_to_exclude = [pkg_to_exclude, 'azure-sdk-tools', ]
+        list_to_exclude = [pkg_to_exclude, 'azure-sdk-tools', 'azure-devtools' ]
         installed_pkgs = [p.split('==')[0] for p in get_installed_packages(self.context.venv.lib_paths) if p.startswith('azure-')]
         logging.info("Installed azure sdk packages:{}".format(installed_pkgs))
 
@@ -255,7 +265,10 @@ class RegressionTest:
         if filtered_dev_req_path:
             logging.info("Extending dev requirement to include azure-sdk-tools")
             extend_dev_requirements(
-                filtered_dev_req_path, ["../../../tools/azure-sdk-tools"]
+                filtered_dev_req_path, [
+                    "../../../tools/azure-sdk-tools",
+                    "../../../tools/azure-devtools"
+                ]
             )
             logging.info(
                 "Installing filtered dev requirements from {}".format(filtered_dev_req_path)

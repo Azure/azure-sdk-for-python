@@ -34,7 +34,7 @@ class ChatClientSamples(object):
 
     identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
     user = identity_client.create_user()
-    tokenresponse = identity_client.issue_token(user, scopes=["chat"])
+    tokenresponse = identity_client.get_token(user, scopes=["chat"])
     token = tokenresponse.token
 
     endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)

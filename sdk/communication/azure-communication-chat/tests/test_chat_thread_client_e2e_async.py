@@ -48,12 +48,12 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
 
         # create user 1
         self.user = self.identity_client.create_user()
-        token_response = self.identity_client.issue_token(self.user, scopes=["chat"])
+        token_response = self.identity_client.get_token(self.user, scopes=["chat"])
         self.token = token_response.token
 
         # create user 2
         self.new_user = self.identity_client.create_user()
-        token_response = self.identity_client.issue_token(self.new_user, scopes=["chat"])
+        token_response = self.identity_client.get_token(self.new_user, scopes=["chat"])
         self.token_new_user = token_response.token
 
         # create ChatClient

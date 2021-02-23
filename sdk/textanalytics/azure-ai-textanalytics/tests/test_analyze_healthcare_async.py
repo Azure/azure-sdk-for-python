@@ -88,16 +88,25 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertIsNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
 
-        self.assertEqual(len(response[0].entities), 2)
-        entity1 = list(filter(lambda x: x.text == "high", response[0].entities))[0]
-        entity2 = list(filter(lambda x: x.text == "blood pressure", response[0].entities))[0]
+        self.assertEqual(len(response[0].entities), 1)
+        self.assertEqual(response[0].entities[0].text, "high blood pressure")
 
-        self.assertEqual(len(entity1.related_entities), 1)
-        related_entity, relation_type = entity1.related_entities.popitem()
-        self.assertEqual(related_entity, entity2)
-        self.assertEqual(relation_type, "ValueOfExamination")
+        self.assertEqual(len(response[1].entities), 3)
+        ibuprofen = list(filter(lambda x: x.text == "ibuprofen", response[1].entities))[-1]
+        dosage = list(filter(lambda x: x.text == "100mg", response[1].entities))[-1]
+        frequency = list(filter(lambda x: x.text == "twice daily", response[1].entities))[-1]
 
-        self.assertEqual(len(entity2.related_entities), 0)
+        self.assertEqual(len(ibuprofen.related_entities), 0)
+        self.assertEqual(len(dosage.related_entities), 1)
+        self.assertEqual(len(frequency.related_entities), 1)
+
+        related_entity, relation_type = dosage.related_entities.popitem()
+        self.assertEqual(related_entity, ibuprofen)
+        self.assertEqual(relation_type, "DosageOfMedication")
+
+        related_entity, relation_type = frequency.related_entities.popitem()
+        self.assertEqual(related_entity, ibuprofen)
+        self.assertEqual(relation_type, "FrequencyOfMedication")
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -306,13 +315,13 @@ class TestHealth(AsyncTextAnalyticsTest):
             response = await (await client.begin_analyze_healthcare_entities(
                 docs,
                 show_stats=True,
-                model_version="2020-09-03",
+                model_version="2021-01-11",
                 polling_interval=self._interval()
             )).result()
 
         self.assertIsNotNone(response)
         self.assertIsNotNone(response.model_version)
-        self.assertEqual("2020-09-03", response.model_version)
+        self.assertEqual("2021-01-11", response.model_version)
         self.assertEqual(response.statistics.documents_count, 5)
         self.assertEqual(response.statistics.transactions_count, 4)
         self.assertEqual(response.statistics.valid_documents_count, 4)

@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class FileServicesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class FileServicesOperations:
         resource_group_name: str,
         account_name: str,
         **kwargs
-    ) -> "models.FileServiceItems":
+    ) -> "_models.FileServiceItems":
         """List all file services in storage accounts.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -60,7 +60,7 @@ class FileServicesOperations:
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileServiceItems
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FileServiceItems"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileServiceItems"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -105,9 +105,9 @@ class FileServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: "models.FileServiceProperties",
+        parameters: "_models.FileServiceProperties",
         **kwargs
-    ) -> "models.FileServiceProperties":
+    ) -> "_models.FileServiceProperties":
         """Sets the properties of file services in storage accounts, including CORS (Cross-Origin Resource
         Sharing) rules.
 
@@ -126,7 +126,7 @@ class FileServicesOperations:
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FileServiceProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileServiceProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -179,7 +179,7 @@ class FileServicesOperations:
         resource_group_name: str,
         account_name: str,
         **kwargs
-    ) -> "models.FileServiceProperties":
+    ) -> "_models.FileServiceProperties":
         """Gets the properties of file services in storage accounts, including CORS (Cross-Origin Resource
         Sharing) rules.
 
@@ -195,7 +195,7 @@ class FileServicesOperations:
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FileServiceProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileServiceProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

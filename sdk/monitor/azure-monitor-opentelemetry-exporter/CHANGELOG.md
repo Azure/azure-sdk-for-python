@@ -8,6 +8,10 @@
 
 ## 1.0.0b4 (Unreleased)
 
+  **Features**
+  - Add `from_connection_string` method to instantiate exporters
+      ([#16818](https://github.com/Azure/azure-sdk-for-python/pull/16818))
+
 ## 1.0.0b3 (2021-02-11)
 
   **Breaking Changes**
