@@ -10,7 +10,7 @@ class DocumentTranslationVersion(str, Enum):
     """Document Translation API versions supported by this package"""
 
     #: This is the default version
-    V1_1_PREVIEW = "1.0-preview.1"
+    V1_0_PREVIEW = "1.0-preview.1"
 
 
 def validate_api_version(api_version):
