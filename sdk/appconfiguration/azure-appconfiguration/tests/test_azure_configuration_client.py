@@ -478,10 +478,8 @@ class AppConfigurationClientTest(AzureTestCase):
         assert key1.tags == key2.tags
         assert key1.etag != key2.etag
         if isinstance(key1, FeatureFlagConfigurationSetting):
-            assert key1.value['description'] == key2.value['description']
-            assert key1.value['enabled'] == key2.value['enabled']
-            assert len(key1.value['conditions']['client_filters']) == len(key2.value['conditions']['client_filters'])
-            assert key1.value['id'] == key2.value['id']
+            assert key1.enabled == key2.enabled
+            assert len(key1.feature_filters) == len(key2.feature_filters)
         elif isinstance(key1, SecretReferenceConfigurationSetting):
             assert key1.uri == key2.uri
         else:
@@ -498,9 +496,8 @@ class AppConfigurationClientTest(AzureTestCase):
         changed_flag = client.set_configuration_setting(set_flag)
         self._assert_same_keys(set_flag, changed_flag)
 
-        client.delete_configuration_setting(changed_flag)
+        client.delete_configuration_setting(changed_flag.key)
 
-    @pytest.mark.live_test_only
     @app_config_decorator
     def test_config_setting_secret_reference(self, client):
         secret_reference = SecretReferenceConfigurationSetting(
@@ -512,9 +509,8 @@ class AppConfigurationClientTest(AzureTestCase):
         updated_flag = client.set_configuration_setting(set_flag)
         self._assert_same_keys(set_flag, updated_flag)
 
-        client.delete_configuration_setting(secret_reference)
+        client.delete_configuration_setting(secret_reference.key)
 
-    @pytest.mark.live_test_only
     @app_config_decorator
     def test_feature_filter_targeting(self, client):
         new = FeatureFlagConfigurationSetting(
@@ -526,10 +522,10 @@ class AppConfigurationClientTest(AzureTestCase):
         sent_config = client.set_configuration_setting(new)
         self._assert_same_keys(sent_config, new)
 
-        assert isinstance(sent_config.value['conditions']['client_filters'][0], TargetingFeatureFilter)
-        assert len(sent_config.value['conditions']['client_filters']) == 1
+        assert isinstance(sent_config.feature_filters[0], TargetingFeatureFilter)
+        assert len(sent_config.feature_filters) == 1
 
-        sent_config.value['conditions']['client_filters'][0].rollout_percentage = 80
+        sent_config.feature_filters[0].rollout_percentage = 80
         updated_sent_config = client.set_configuration_setting(sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)
 
@@ -538,13 +534,10 @@ class AppConfigurationClientTest(AzureTestCase):
 
         sent_config = client.set_configuration_setting(updated_sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)
-        assert len(sent_config.value['conditions']['client_filters']) == 3
+        assert len(sent_config.feature_filters) == 3
 
-        client.delete_configuration_setting(updated_sent_config)
+        client.delete_configuration_setting(updated_sent_config.key)
 
-        self._clean_up(client)
-
-    @pytest.mark.live_test_only
     @app_config_decorator
     def test_feature_filter_time_window(self, client):
         new = FeatureFlagConfigurationSetting(
@@ -561,15 +554,12 @@ class AppConfigurationClientTest(AzureTestCase):
         sent = client.set_configuration_setting(new)
         self._assert_same_keys(sent, new)
 
-        sent.value['conditions']['client_filters'][0].end = 'Fri, 26 Feb 2021 08:00:00 GMT'
+        sent.feature_filters[0].end = 'Fri, 26 Feb 2021 08:00:00 GMT'
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 
-        client.delete_configuration_setting(new_sent)
+        client.delete_configuration_setting(new_sent.key)
 
-        self._clean_up(client)
-
-    @pytest.mark.live_test_only
     @app_config_decorator
     def test_feature_filter_custom(self, client):
         new = FeatureFlagConfigurationSetting(
@@ -583,15 +573,12 @@ class AppConfigurationClientTest(AzureTestCase):
         sent = client.set_configuration_setting(new)
         self._assert_same_keys(sent, new)
 
-        sent.value['conditions']['client_filters'][0].value = 100
+        sent.feature_filters[0].value = 100
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 
-        client.delete_configuration_setting(new_sent)
+        client.delete_configuration_setting(new_sent.key)
 
-        self._clean_up(client)
-
-    @pytest.mark.live_test_only
     @app_config_decorator
     def test_feature_filter_multiple(self, client):
         new = FeatureFlagConfigurationSetting(
@@ -610,21 +597,15 @@ class AppConfigurationClientTest(AzureTestCase):
         sent = client.set_configuration_setting(new)
         self._assert_same_keys(sent, new)
 
-        sent.value['conditions']['client_filters'][0].value = 100
-        sent.value['conditions']['client_filters'][1].end = datetime.datetime(2021, 2, 26, 8, 0)
-        sent.value['conditions']['client_filters'][2].rollout_percentage = 80
+        sent.feature_filters[0].value = 100
+        sent.feature_filters[1].end = datetime.datetime(2021, 2, 26, 8, 0)
+        sent.feature_filters[2].rollout_percentage = 80
 
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 
-        assert new_sent.value['conditions']['client_filters'][0].value == 100
-        assert new_sent.value['conditions']['client_filters'][1].end == datetime.datetime(2021, 2, 26, 8, 0)
-        assert new_sent.value['conditions']['client_filters'][2].rollout_percentage == 80
+        assert new_sent.feature_filters[0].value == 100
+        assert new_sent.feature_filters[1].end == datetime.datetime(2021, 2, 26, 8, 0)
+        assert new_sent.feature_filters[2].rollout_percentage == 80
 
-        client.delete_configuration_setting(new_sent)
-
-        self._clean_up(client)
-
-    def _clean_up(self, client):
-        for config in client.list_configuration_settings():
-            client.delete_configuration_setting(config)
+        client.delete_configuration_setting(new_sent.key)

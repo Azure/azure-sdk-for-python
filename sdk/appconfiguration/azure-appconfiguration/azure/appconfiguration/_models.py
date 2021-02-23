@@ -121,13 +121,13 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
     feature_flag_content_type = "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
 
 
-    def __init__(self, key, value, feature_filters=None, **kwargs):
+    def __init__(self, key, enabled, feature_filters=None, **kwargs):
         # type: (str, bool, str) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.key = key
         if not key.startswith(self.key_prefix):
             self.key = self.key_prefix + key
-        self.value = value
+        self.enabled = enabled
         self.label = kwargs.get('label', None)
         self.content_type = kwargs.get('content_type', self.feature_flag_content_type)
         self.last_modified = kwargs.get('last_modified', None)
@@ -136,16 +136,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
         self.etag = kwargs.get('etag', None)
         self.description = kwargs.get('description', None)
         self.display_name = kwargs.get('display_name', None)
-
-        if isinstance(self.value, bool):
-            self.value = {
-                'id': self.key,
-                'description': self.description,
-                'enabled': self.value,
-                'conditions': {
-                    'client_filters': feature_filters or []
-                }
-            }
+        self.feature_filters = feature_filters or []
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -171,7 +162,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
 
         return cls(
             key=key_value.key,
-            value=key_value.value,
+            enabled=key_value.value['enabled'],
             label=key_value.label,
             content_type=key_value.content_type,
             last_modified=key_value.last_modified,
@@ -183,10 +174,16 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
 
     def _to_generated(self):
         # type: (...) -> KeyValue
-        value = self.value
-        if isinstance(self.value, dict):
-            self._to_generated_filters()
-            value = json.dumps(self.value)
+        value = {
+            u'id': self.key,
+            u'description': self.description,
+            u'enabled': self.enabled,
+            u'conditions': {
+                u'client_filters': [f._to_generated() for f in self.feature_filters]
+            }
+        }
+        value = json.dumps(value)
+
         return KeyValue(
             key=self.key,
             label=self.label,
@@ -198,14 +195,9 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):
             etag=self.etag
         )
 
-    def _to_generated_filters(self):
-        # type: (...) -> None
-        for idx, f in enumerate(self.value['conditions']['client_filters']):
-            self.value['conditions']['client_filters'][idx] = f._to_generated()   # pylint: disable=protected-access
-
     def add_feature_filter(self, feature_filter):
         # type: (FeatureFilterBase) -> None
-        self.value['conditions']['client_filters'].append(feature_filter)
+        self.feature_filters.append(feature_filter)
 
 
 class SecretReferenceConfigurationSetting(Model):
