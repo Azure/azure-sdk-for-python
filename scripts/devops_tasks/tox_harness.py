@@ -243,7 +243,7 @@ def build_whl_for_req(req, package_path):
         logging.info("Building wheel for package {}".format(pkg_name))
         run_check_call([sys.executable, "setup.py", "bdist_wheel", "-d", temp_dir], req_pkg_path)
 
-        whl_path = find_whl(pkg_name, version, temp_dir)
+        whl_path = os.path.join(temp_dir, find_whl(pkg_name, version, temp_dir))
         logging.info("Wheel for package {0} is {1}".format(pkg_name, whl_path))
         logging.info("Replacing dev requirement. Old requirement:{0}, New requirement:{1}".format(req, whl_path))
         return whl_path
@@ -265,6 +265,7 @@ def replace_dev_reqs(file, pkg_root):
 
     req_file_name = os.path.basename(file)
     logging.info("Old {0}:{1}".format(req_file_name, adjusted_req_lines))
+
     adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, pkg_root), adjusted_req_lines))
     logging.info("New {0}:{1}".format(req_file_name, adjusted_req_lines))
 

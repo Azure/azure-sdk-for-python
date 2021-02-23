@@ -88,7 +88,7 @@ steps:
   - task: DownloadPipelineArtifact@0
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
     inputs:
-      artifactName: 'artifacts'
+      artifactName: 'packages'
       targetPath: $(Build.ArtifactStagingDirectory)
 
   - template: ../steps/run_apistub.yml
