@@ -27,7 +27,7 @@ class TopicsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-06-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-10-15-preview".
     """
 
     models = models
@@ -37,7 +37,7 @@ class TopicsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-06-01"
+        self.api_version = "2020-10-15-preview"
 
         self.config = config
 
@@ -634,29 +634,9 @@ class TopicsOperations(object):
         return deserialized
     list_shared_access_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}/listKeys'}
 
-    def regenerate_key(
+
+    def _regenerate_key_initial(
             self, resource_group_name, topic_name, key_name, custom_headers=None, raw=False, **operation_config):
-        """Regenerate key for a topic.
-
-        Regenerate a shared access key for a topic.
-
-        :param resource_group_name: The name of the resource group within the
-         user's subscription.
-        :type resource_group_name: str
-        :param topic_name: Name of the topic.
-        :type topic_name: str
-        :param key_name: Key name to regenerate key1 or key2
-        :type key_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: TopicSharedAccessKeys or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.eventgrid.models.TopicSharedAccessKeys or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         regenerate_key_request = models.TopicRegenerateKeyRequest(key_name=key_name)
 
         # Construct URL
@@ -690,12 +670,13 @@ class TopicsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
             deserialized = self._deserialize('TopicSharedAccessKeys', response)
 
@@ -704,6 +685,58 @@ class TopicsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def regenerate_key(
+            self, resource_group_name, topic_name, key_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Regenerate key for a topic.
+
+        Regenerate a shared access key for a topic.
+
+        :param resource_group_name: The name of the resource group within the
+         user's subscription.
+        :type resource_group_name: str
+        :param topic_name: Name of the topic.
+        :type topic_name: str
+        :param key_name: Key name to regenerate key1 or key2
+        :type key_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns TopicSharedAccessKeys
+         or ClientRawResponse<TopicSharedAccessKeys> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventgrid.models.TopicSharedAccessKeys]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.eventgrid.models.TopicSharedAccessKeys]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._regenerate_key_initial(
+            resource_group_name=resource_group_name,
+            topic_name=topic_name,
+            key_name=key_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('TopicSharedAccessKeys', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     regenerate_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}/regenerateKey'}
 
     def list_event_types(
