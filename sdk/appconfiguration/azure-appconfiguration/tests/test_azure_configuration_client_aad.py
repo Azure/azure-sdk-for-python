@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core import MatchConditions
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase
 from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
@@ -16,7 +16,6 @@ from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )
-from azure.identity import DefaultAzureCredential
 from consts import (
     KEY,
     LABEL,
@@ -33,24 +32,7 @@ import logging
 import re
 import functools
 
-AppConfigPreparer = functools.partial(
-    PowerShellPreparer,
-    'appconfiguration',
-    appconfiguration_connection_string="Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
-    appconfiguration_endpoint_string="https://fake_app_config.azconfig-test.io")
-
-try:
-    from unittest.mock import Mock
-except ImportError:  # python < 3.3
-    from mock import Mock
-from azure.core.credentials import AccessToken
-
 from wrapper import app_config_decorator
-
-
-class FakeCredential(object):
-    def get_token(self, *scopes, **kwargs):
-        return AccessToken("fake_token", 2527537086)
 
 
 class AppConfigurationClientTest(AzureTestCase):

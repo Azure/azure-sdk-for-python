@@ -4,14 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core import MatchConditions
-from devtools_testutils import AzureMgmtTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase
 from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
     ResourceExistsError,
     AzureError,
 )
-from azure.identity.aio import DefaultAzureCredential
 from azure.appconfiguration import (
     ResourceReadOnlyError,
     ConfigurationSetting,
@@ -37,7 +36,7 @@ from async_wrapper import app_config_decorator
 from async_proxy import AzureAppConfigurationClientProxy
 
 
-class AppConfigurationClientTest(AzureMgmtTestCase):
+class AppConfigurationClientTest(AzureTestCase):
     def __init__(self, method_name):
         super(AppConfigurationClientTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
