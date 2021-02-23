@@ -635,20 +635,20 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         document = (await client.analyze_sentiment(documents=documents, show_opinion_mining=True))[0]
 
         for sentence in document.sentences:
-            food_aspect = sentence.mined_opinions[0].target
-            service_aspect = sentence.mined_opinions[1].target
+            food_target = sentence.mined_opinions[0].target
+            service_target = sentence.mined_opinions[1].target
 
-            self.assertEqual('food', food_aspect.text)
-            self.assertEqual('negative', food_aspect.sentiment)
-            self.assertEqual(0.0, food_aspect.confidence_scores.neutral)
-            self.validateConfidenceScores(food_aspect.confidence_scores)
-            self.assertEqual(4, food_aspect.offset)
+            self.assertEqual('food', food_target.text)
+            self.assertEqual('negative', food_target.sentiment)
+            self.assertEqual(0.0, food_target.confidence_scores.neutral)
+            self.validateConfidenceScores(food_target.confidence_scores)
+            self.assertEqual(4, food_target.offset)
 
-            self.assertEqual('service', service_aspect.text)
-            self.assertEqual('negative', service_aspect.sentiment)
-            self.assertEqual(0.0, service_aspect.confidence_scores.neutral)
-            self.validateConfidenceScores(service_aspect.confidence_scores)
-            self.assertEqual(13, service_aspect.offset)
+            self.assertEqual('service', service_target.text)
+            self.assertEqual('negative', service_target.sentiment)
+            self.assertEqual(0.0, service_target.confidence_scores.neutral)
+            self.validateConfidenceScores(service_target.confidence_scores)
+            self.assertEqual(13, service_target.offset)
 
             food_opinion = sentence.mined_opinions[0].assessments[0]
             service_opinion = sentence.mined_opinions[1].assessments[0]
@@ -698,7 +698,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_opinion_mining_no_mined_opinions(self, client):
-        document = (await client.analyze_sentiment(documents=["today is a hot day"]))[0]
+        document = (await client.analyze_sentiment(documents=["today is a hot day"], show_opinion_mining=True))[0]
 
         assert not document.sentences[0].mined_opinions
 

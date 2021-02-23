@@ -2,6 +2,9 @@
 
 ## 5.1.0b6 (Unreleased)
 
+**Breaking Changes**
+
+- Renamed `aspect` to `target` and `opinions` to `assessments` in class `azure.ai.textanalytics.MinedOpinion`.
 
 ## 5.1.0b5 (2021-02-10)
 
