@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import datetime
+import re
 
 
 class _FixedOffset(datetime.tzinfo):
@@ -29,3 +30,25 @@ class _FixedOffset(datetime.tzinfo):
 
     def dst(self, dt):
         return datetime.timedelta(0)
+
+def _convert_to_isoformat(date_time):
+    timestamp = re.split(r"([+|-])", re.sub(r"[:]|([-](?!((\d{2}[:]\d{2})|(\d{4}))$))", '', date_time))
+    if len(timestamp) == 3:
+        time, sign, tzone = timestamp
+    else:
+        time = timestamp[0]
+        sign, tzone = None, None
+    
+    try:
+        deserialized = datetime.datetime.strptime(time, "%Y%m%dT%H%M%S.%fZ")
+    except ValueError:
+        try:
+            deserialized = datetime.datetime.strptime(time, "%Y%m%dT%H%M%S.%f")
+        except ValueError:
+            deserialized = datetime.datetime.strptime(time, "%Y%m%dT%H%M%S")
+    
+    if tzone:
+        delta = datetime.timedelta(hours=int(sign+tzone[:-2]), minutes=int(sign+tzone[-2:]))
+        deserialized = deserialized + delta
+
+    return deserialized

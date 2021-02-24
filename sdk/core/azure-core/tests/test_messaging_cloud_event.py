@@ -51,7 +51,7 @@ def test_cloud_storage_dict():
             "storage_diagnostics":{"batchId":"b68529f3-68cd-4744-baa4-3c0498ec19f0"}
         },
         "type":"Microsoft.Storage.BlobCreated",
-        "time":"2020-08-07T01:11:49.765846Z",
+        "time":"2021-02-18T20:18:10.53986Z",
         "specversion":"1.0"
     }
 
@@ -70,9 +70,9 @@ def test_cloud_storage_dict():
     }
     assert event.specversion == "1.0"
     assert event.time.__class__ == datetime
-    assert event.time.month == 8
-    assert event.time.day == 7
-    assert event.time.hour == 1
+    assert event.time.month == 2
+    assert event.time.day == 18
+    assert event.time.hour == 20
     assert event.__class__ == CloudEvent
 
 
@@ -82,7 +82,7 @@ def test_cloud_custom_dict_with_extensions():
         "source":"https://egtest.dev/cloudcustomevent",
         "data":{"team": "event grid squad"},
         "type":"Azure.Sdk.Sample",
-        "time":"2020-08-07T02:06:08.11969Z",
+        "time":"2021-02-18T20:18:10.53986+00:00",
         "specversion":"1.0",
         "ext1": "example",
         "ext2": "example2"
@@ -90,6 +90,9 @@ def test_cloud_custom_dict_with_extensions():
     event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
     assert event.data == {"team": "event grid squad"}
     assert event.__class__ == CloudEvent
+    assert event.time.month == 2
+    assert event.time.day == 18
+    assert event.time.hour == 20
     assert event.extensions == {"ext1": "example", "ext2": "example2"}
 
 def test_cloud_custom_dict_blank_data():
@@ -98,7 +101,7 @@ def test_cloud_custom_dict_blank_data():
         "source":"https://egtest.dev/cloudcustomevent",
         "data":'',
         "type":"Azure.Sdk.Sample",
-        "time":"2020-08-07T02:06:08.11969Z",
+        "time":"2021-02-18T20:18:10+00:00",
         "specversion":"1.0",
     }
     event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
@@ -111,7 +114,7 @@ def test_cloud_custom_dict_base64():
         "source":"https://egtest.dev/cloudcustomevent",
         "data_base64":'Y2xvdWRldmVudA==',
         "type":"Azure.Sdk.Sample",
-        "time":"2020-08-07T02:06:08.11969Z",
+        "time":"2021-02-18T20:18:10.345",
         "specversion":"1.0"
     }
     event = CloudEvent.from_dict(cloud_custom_dict_base64)
