@@ -50,11 +50,8 @@ PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
-def parse_range_header(header_value, header='Range'):
-    if not isinstance(header_value, six.string_types) or len(header_value) < len(header):
-        raise ValueError("Invalid header")
-    pos = header_value.index(":")
-    range_value = header_value[pos+1:].strip()
+def parse_range_header(header_value):
+    range_value = header_value.strip()
     if not range_value.startswith("bytes="):
         raise ValueError("Invalid header")
     range = range_value[6:]
@@ -65,14 +62,14 @@ def parse_range_header(header_value, header='Range'):
     end = int(ret[1]) if ret[1] else -1
     return (start, end)
 
-def make_range_header(original_range, downloaded_size=0, header='Range'):
+def make_range_header(original_range, downloaded_size=0):
     if original_range[0] == -1:
         end = original_range[1] - downloaded_size
-        return header + ": bytes=-" + str(end)
+        return "bytes=-" + str(end)
     start = original_range[0] + downloaded_size
     if original_range[1] == -1:
-        return header + ": bytes=" + str(start) + "-"
-    return header + ": bytes=" + str(start) + "-" + str(original_range[1])
+        return "bytes=" + str(start) + "-"
+    return "bytes=" + str(start) + "-" + str(original_range[1])
 
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
