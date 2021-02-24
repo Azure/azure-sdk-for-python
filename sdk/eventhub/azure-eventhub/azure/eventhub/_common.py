@@ -339,7 +339,7 @@ class EventDataBatch(object):
     to create an EventDataBatch object instead of instantiating an EventDataBatch object directly.**
 
     **It is highly recommended not to update the value of the instance variable `max_size_in_bytes` on an
-    EventDataBatch object once instantiated which might lead to sending failure as the Event Hub service
+    instantiated EventDataBatch object which might lead to sending failure as the Event Hub service
     has a fixed quota on the maximum allowed size of events.**
 
     :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
