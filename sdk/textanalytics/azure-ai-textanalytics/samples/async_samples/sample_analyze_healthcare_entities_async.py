@@ -49,7 +49,6 @@ class AnalyzeHealthcareEntitiesSampleAsync(object):
         # [START analyze_healthcare_entities_async]
         import re
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import TextAnalyticsApiVersion
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         from collections import defaultdict
 
@@ -59,7 +58,6 @@ class AnalyzeHealthcareEntitiesSampleAsync(object):
         text_analytics_client = TextAnalyticsClient(
             endpoint=endpoint,
             credential=AzureKeyCredential(key),
-            api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3
         )
 
         documents = [
