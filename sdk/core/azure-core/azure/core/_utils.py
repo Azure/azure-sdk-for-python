@@ -48,11 +48,11 @@ def _convert_to_isoformat(date_time):
             deserialized = datetime.datetime.strptime(time, "%Y%m%dT%H%M%S")
 
     if tzone:
-        hours=int(sign+tzone[:-2])
-        delta = datetime.timedelta(minutes=int(sign+tzone[-2:])+hours*60)
+        minutes = int(sign+tzone[:-2])*60 + int(sign+tzone[-2:])
+        delta = datetime.timedelta(minutes=minutes)
         try:
             deserialized = deserialized.replace(tzinfo=datetime.timezone(delta))
         except AttributeError:
-            deserialized = deserialized.replace(tzinfo=_FixedOffset(delta))
+            deserialized = deserialized.replace(tzinfo=_FixedOffset(minutes))
 
     return deserialized
