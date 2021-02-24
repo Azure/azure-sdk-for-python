@@ -5,7 +5,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import datetime
-import re
 
 
 class _FixedOffset(datetime.tzinfo):
