@@ -161,8 +161,10 @@ class ChatMessageContent(object):
     def _from_generated(cls, chat_message_content):
         participants_list = chat_message_content.participants
         if participants_list is not None and len(participants_list) > 0:
-            participants = [ChatThreadParticipant._from_generated(participant) for participant in
-                            participants_list]  # pylint:disable=protected-access
+            participants = [
+                ChatThreadParticipant._from_generated(participant) for participant in  # pylint:disable=protected-access
+                participants_list
+            ]
         else:
             participants = []
 
