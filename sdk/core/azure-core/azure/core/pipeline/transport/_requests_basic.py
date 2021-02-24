@@ -130,6 +130,15 @@ class StreamDownloadGenerator(object):
         self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
         self.downloaded = 0
+        headers = response.request.headers
+        if "x-ms-range" in headers:
+            self.range_header = "x-ms-range"
+            self.range = headers["x-ms-range"]
+        elif "Range" in headers:
+            self.range_header = "Range"
+            self.range = headers["Range"]
+        if 'etag' in response.headers:
+            self.etag = response.headers['etag']
 
     def __len__(self):
         return self.content_length
@@ -161,13 +170,19 @@ class StreamDownloadGenerator(object):
                     time.sleep(retry_interval)
                     # todo handle pre-set range & x-ms-range
                     headers = self.request.headers
-                    headers.update( {'range': 'bytes=' + str(self.downloaded) + '-'})
+                    if not self.range_header:
+                        range_header = {'range': 'bytes=' + str(self.downloaded) + '-'}
+                    else:
+                        range_header = {self.range_header: make_range_header(self.range, self.downloaded)}
+                    if self.etag:
+                        range_header.update({'If-Match': self.etag})
+                    headers.update(range_header)
                     try:
                         resp = self.pipeline.run(self.request, stream=True, headers=headers)
                         if not resp.http_response:
                             continue
-                        if resp.http_response.status_code == 416:
-                            continue
+                        if resp.http_response.status_code == 412:
+                            raise ex
                         self.response = resp
                         self.iter_content_func = resp.http_response.iter_content(self.block_size)
                         chunk = next(self.iter_content_func)
