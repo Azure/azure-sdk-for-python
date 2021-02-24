@@ -1,5 +1,11 @@
 # Release History
 
+## 1.2.0 (2021-02-24)
+
+**Features**
+
+  - Model AppResourceProperties has a new parameter enable_end_to_end_tls
+
 ## 1.1.0 (2021-01-04)
 
 **Features**

@@ -165,6 +165,8 @@ class AppResourceProperties(Model):
     :type fqdn: str
     :param https_only: Indicate if only https is allowed.
     :type https_only: bool
+    :param enable_end_to_end_tls: Indicate if end to end TLS is enabled.
+    :type enable_end_to_end_tls: bool
     :ivar created_time: Date time when the resource is created
     :vartype created_time: datetime
     :param temporary_disk: Temporary disk settings
@@ -188,12 +190,13 @@ class AppResourceProperties(Model):
         'active_deployment_name': {'key': 'activeDeploymentName', 'type': 'str'},
         'fqdn': {'key': 'fqdn', 'type': 'str'},
         'https_only': {'key': 'httpsOnly', 'type': 'bool'},
+        'enable_end_to_end_tls': {'key': 'enableEndToEndTLS', 'type': 'bool'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'temporary_disk': {'key': 'temporaryDisk', 'type': 'TemporaryDisk'},
         'persistent_disk': {'key': 'persistentDisk', 'type': 'PersistentDisk'},
     }
 
-    def __init__(self, *, public: bool=None, active_deployment_name: str=None, fqdn: str=None, https_only: bool=None, temporary_disk=None, persistent_disk=None, **kwargs) -> None:
+    def __init__(self, *, public: bool=None, active_deployment_name: str=None, fqdn: str=None, https_only: bool=None, enable_end_to_end_tls: bool=None, temporary_disk=None, persistent_disk=None, **kwargs) -> None:
         super(AppResourceProperties, self).__init__(**kwargs)
         self.public = public
         self.url = None
@@ -201,6 +204,7 @@ class AppResourceProperties(Model):
         self.active_deployment_name = active_deployment_name
         self.fqdn = fqdn
         self.https_only = https_only
+        self.enable_end_to_end_tls = enable_end_to_end_tls
         self.created_time = None
         self.temporary_disk = temporary_disk
         self.persistent_disk = persistent_disk

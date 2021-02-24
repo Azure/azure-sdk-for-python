@@ -24,6 +24,7 @@ from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
+@unittest.skip("unavailable in py2.7")
 class MgmtAppPlatformTest(AzureMgmtTestCase):
 
     def setUp(self):
