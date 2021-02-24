@@ -10,10 +10,12 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AaddsResourceDetails
     from ._models_py3 import Application
     from ._models_py3 import ApplicationGetEndpoint
     from ._models_py3 import ApplicationGetHttpsEndpoint
     from ._models_py3 import ApplicationProperties
+    from ._models_py3 import AsyncOperationResult
     from ._models_py3 import Autoscale
     from ._models_py3 import AutoscaleCapacity
     from ._models_py3 import AutoscaleConfigurationUpdateParameter
@@ -29,6 +31,8 @@ try:
     from ._models_py3 import ClusterConfigurations
     from ._models_py3 import ClusterCreateParametersExtended
     from ._models_py3 import ClusterCreateProperties
+    from ._models_py3 import ClusterCreateRequestValidationParameters
+    from ._models_py3 import ClusterCreateValidationResult
     from ._models_py3 import ClusterDefinition
     from ._models_py3 import ClusterDiskEncryptionParameters
     from ._models_py3 import ClusterGetProperties
@@ -60,11 +64,12 @@ try:
     from ._models_py3 import LinuxOperatingSystemProfile
     from ._models_py3 import LocalizedName
     from ._models_py3 import MetricSpecifications
+    from ._models_py3 import NameAvailabilityCheckRequestParameters
+    from ._models_py3 import NameAvailabilityCheckResult
     from ._models_py3 import NetworkProperties
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationProperties
-    from ._models_py3 import OperationResource
     from ._models_py3 import OsProfile
     from ._models_py3 import ProxyResource
     from ._models_py3 import QuotaCapability
@@ -85,9 +90,11 @@ try:
     from ._models_py3 import StorageAccount
     from ._models_py3 import StorageProfile
     from ._models_py3 import TrackedResource
+    from ._models_py3 import UpdateClusterIdentityCertificateParameters
     from ._models_py3 import UpdateGatewaySettingsParameters
     from ._models_py3 import Usage
     from ._models_py3 import UsagesListResult
+    from ._models_py3 import ValidationErrorInfo
     from ._models_py3 import VersionsCapability
     from ._models_py3 import VersionSpec
     from ._models_py3 import VirtualNetworkProfile
@@ -96,10 +103,12 @@ try:
     from ._models_py3 import VmSizeProperty
     from ._models_py3 import VmSizesCapability
 except (SyntaxError, ImportError):
+    from ._models import AaddsResourceDetails
     from ._models import Application
     from ._models import ApplicationGetEndpoint
     from ._models import ApplicationGetHttpsEndpoint
     from ._models import ApplicationProperties
+    from ._models import AsyncOperationResult
     from ._models import Autoscale
     from ._models import AutoscaleCapacity
     from ._models import AutoscaleConfigurationUpdateParameter
@@ -115,6 +124,8 @@ except (SyntaxError, ImportError):
     from ._models import ClusterConfigurations
     from ._models import ClusterCreateParametersExtended
     from ._models import ClusterCreateProperties
+    from ._models import ClusterCreateRequestValidationParameters
+    from ._models import ClusterCreateValidationResult
     from ._models import ClusterDefinition
     from ._models import ClusterDiskEncryptionParameters
     from ._models import ClusterGetProperties
@@ -146,11 +157,12 @@ except (SyntaxError, ImportError):
     from ._models import LinuxOperatingSystemProfile
     from ._models import LocalizedName
     from ._models import MetricSpecifications
+    from ._models import NameAvailabilityCheckRequestParameters
+    from ._models import NameAvailabilityCheckResult
     from ._models import NetworkProperties
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import OperationProperties
-    from ._models import OperationResource
     from ._models import OsProfile
     from ._models import ProxyResource
     from ._models import QuotaCapability
@@ -171,9 +183,11 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccount
     from ._models import StorageProfile
     from ._models import TrackedResource
+    from ._models import UpdateClusterIdentityCertificateParameters
     from ._models import UpdateGatewaySettingsParameters
     from ._models import Usage
     from ._models import UsagesListResult
+    from ._models import ValidationErrorInfo
     from ._models import VersionsCapability
     from ._models import VersionSpec
     from ._models import VirtualNetworkProfile
@@ -200,10 +214,12 @@ from ._hd_insight_management_client_enums import (
 )
 
 __all__ = [
+    'AaddsResourceDetails',
     'Application',
     'ApplicationGetEndpoint',
     'ApplicationGetHttpsEndpoint',
     'ApplicationProperties',
+    'AsyncOperationResult',
     'Autoscale',
     'AutoscaleCapacity',
     'AutoscaleConfigurationUpdateParameter',
@@ -219,6 +235,8 @@ __all__ = [
     'ClusterConfigurations',
     'ClusterCreateParametersExtended',
     'ClusterCreateProperties',
+    'ClusterCreateRequestValidationParameters',
+    'ClusterCreateValidationResult',
     'ClusterDefinition',
     'ClusterDiskEncryptionParameters',
     'ClusterGetProperties',
@@ -250,11 +268,12 @@ __all__ = [
     'LinuxOperatingSystemProfile',
     'LocalizedName',
     'MetricSpecifications',
+    'NameAvailabilityCheckRequestParameters',
+    'NameAvailabilityCheckResult',
     'NetworkProperties',
     'Operation',
     'OperationDisplay',
     'OperationProperties',
-    'OperationResource',
     'OsProfile',
     'ProxyResource',
     'QuotaCapability',
@@ -275,9 +294,11 @@ __all__ = [
     'StorageAccount',
     'StorageProfile',
     'TrackedResource',
+    'UpdateClusterIdentityCertificateParameters',
     'UpdateGatewaySettingsParameters',
     'Usage',
     'UsagesListResult',
+    'ValidationErrorInfo',
     'VersionsCapability',
     'VersionSpec',
     'VirtualNetworkProfile',

@@ -90,11 +90,9 @@ class ExtensionsOperations(object):
         :type resource_group_name: str
         :param cluster_name: The name of the cluster.
         :type cluster_name: str
-        :param workspace_id: The Operations Management Suite (OMS) workspace
-         ID.
+        :param workspace_id: The cluster monitor workspace ID.
         :type workspace_id: str
-        :param primary_key: The Operations Management Suite (OMS) workspace
-         key.
+        :param primary_key: The cluster monitor workspace key.
         :type primary_key: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -384,8 +382,8 @@ class ExtensionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Extension or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.hdinsight.models.Extension or
+        :return: ClusterMonitoringResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.hdinsight.models.ClusterMonitoringResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.hdinsight.models.ErrorResponseException>`
@@ -423,7 +421,7 @@ class ExtensionsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Extension', response)
+            deserialized = self._deserialize('ClusterMonitoringResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -513,3 +511,69 @@ class ExtensionsOperations(object):
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/{extensionName}'}
+
+    def get_azure_async_operation_status(
+            self, resource_group_name, cluster_name, extension_name, operation_id, custom_headers=None, raw=False, **operation_config):
+        """Gets the async operation status.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster.
+        :type cluster_name: str
+        :param extension_name: The name of the cluster extension.
+        :type extension_name: str
+        :param operation_id: The long running operation id.
+        :type operation_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AsyncOperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.hdinsight.models.AsyncOperationResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.hdinsight.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_azure_async_operation_status.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('AsyncOperationResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_azure_async_operation_status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/extensions/{extensionName}/azureAsyncOperations/{operationId}'}

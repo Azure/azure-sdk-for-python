@@ -13,6 +13,49 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class AaddsResourceDetails(Model):
+    """The Azure active directory domain service resource details.
+
+    :param domain_name: The Azure active directory domain service name.
+    :type domain_name: str
+    :param initial_sync_complete: This indicates whether initial sync complete
+     or not.
+    :type initial_sync_complete: bool
+    :param ldaps_enabled: This indicates whether enable ldaps or not.
+    :type ldaps_enabled: bool
+    :param ldaps_public_certificate_in_base64: The base 64 format string of
+     public ldap certificate.
+    :type ldaps_public_certificate_in_base64: str
+    :param resource_id: The resource id of azure active directory domain
+     service.
+    :type resource_id: str
+    :param subnet_id: The subnet resource id.
+    :type subnet_id: str
+    :param tenant_id: The tenant id of azure active directory domain service .
+    :type tenant_id: str
+    """
+
+    _attribute_map = {
+        'domain_name': {'key': 'domainName', 'type': 'str'},
+        'initial_sync_complete': {'key': 'initialSyncComplete', 'type': 'bool'},
+        'ldaps_enabled': {'key': 'ldapsEnabled', 'type': 'bool'},
+        'ldaps_public_certificate_in_base64': {'key': 'ldapsPublicCertificateInBase64', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'subnet_id': {'key': 'subnetId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(self, *, domain_name: str=None, initial_sync_complete: bool=None, ldaps_enabled: bool=None, ldaps_public_certificate_in_base64: str=None, resource_id: str=None, subnet_id: str=None, tenant_id: str=None, **kwargs) -> None:
+        super(AaddsResourceDetails, self).__init__(**kwargs)
+        self.domain_name = domain_name
+        self.initial_sync_complete = initial_sync_complete
+        self.ldaps_enabled = ldaps_enabled
+        self.ldaps_public_certificate_in_base64 = ldaps_public_certificate_in_base64
+        self.resource_id = resource_id
+        self.subnet_id = subnet_id
+        self.tenant_id = tenant_id
+
+
 class Resource(Model):
     """The core properties of ARM resources.
 
@@ -150,14 +193,19 @@ class ApplicationGetEndpoint(Model):
 class ApplicationGetHttpsEndpoint(Model):
     """Gets the application HTTP endpoints.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param access_modes: The list of access modes for the application.
     :type access_modes: list[str]
-    :param location: The location of the endpoint.
-    :type location: str
+    :ivar location: The location of the endpoint.
+    :vartype location: str
     :param destination_port: The destination port to connect to.
     :type destination_port: int
-    :param public_port: The public port to connect to.
-    :type public_port: int
+    :ivar public_port: The public port to connect to.
+    :vartype public_port: int
+    :param private_ip_address: The private ip address of the endpoint.
+    :type private_ip_address: str
     :param sub_domain_suffix: The subdomain suffix of the application.
     :type sub_domain_suffix: str
     :param disable_gateway_auth: The value indicates whether to disable
@@ -165,21 +213,28 @@ class ApplicationGetHttpsEndpoint(Model):
     :type disable_gateway_auth: bool
     """
 
+    _validation = {
+        'location': {'readonly': True},
+        'public_port': {'readonly': True},
+    }
+
     _attribute_map = {
         'access_modes': {'key': 'accessModes', 'type': '[str]'},
         'location': {'key': 'location', 'type': 'str'},
         'destination_port': {'key': 'destinationPort', 'type': 'int'},
         'public_port': {'key': 'publicPort', 'type': 'int'},
+        'private_ip_address': {'key': 'privateIPAddress', 'type': 'str'},
         'sub_domain_suffix': {'key': 'subDomainSuffix', 'type': 'str'},
         'disable_gateway_auth': {'key': 'disableGatewayAuth', 'type': 'bool'},
     }
 
-    def __init__(self, *, access_modes=None, location: str=None, destination_port: int=None, public_port: int=None, sub_domain_suffix: str=None, disable_gateway_auth: bool=None, **kwargs) -> None:
+    def __init__(self, *, access_modes=None, destination_port: int=None, private_ip_address: str=None, sub_domain_suffix: str=None, disable_gateway_auth: bool=None, **kwargs) -> None:
         super(ApplicationGetHttpsEndpoint, self).__init__(**kwargs)
         self.access_modes = access_modes
-        self.location = location
+        self.location = None
         self.destination_port = destination_port
-        self.public_port = public_port
+        self.public_port = None
+        self.private_ip_address = private_ip_address
         self.sub_domain_suffix = sub_domain_suffix
         self.disable_gateway_auth = disable_gateway_auth
 
@@ -252,6 +307,27 @@ class ApplicationProperties(Model):
         self.errors = errors
         self.created_date = None
         self.marketplace_identifier = None
+
+
+class AsyncOperationResult(Model):
+    """The azure async operation response.
+
+    :param status: The async operation state. Possible values include:
+     'InProgress', 'Succeeded', 'Failed'
+    :type status: str or ~azure.mgmt.hdinsight.models.AsyncOperationState
+    :param error: The operation error information.
+    :type error: ~azure.mgmt.hdinsight.models.Errors
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'AsyncOperationState'},
+        'error': {'key': 'error', 'type': 'Errors'},
+    }
+
+    def __init__(self, *, status=None, error=None, **kwargs) -> None:
+        super(AsyncOperationResult, self).__init__(**kwargs)
+        self.status = status
+        self.error = error
 
 
 class Autoscale(Model):
@@ -480,10 +556,10 @@ class CapabilitiesResult(Model):
     :type versions: dict[str, ~azure.mgmt.hdinsight.models.VersionsCapability]
     :param regions: The virtual machine size compatibility features.
     :type regions: dict[str, ~azure.mgmt.hdinsight.models.RegionsCapability]
-    :param vm_sizes: The virtual machine sizes.
-    :type vm_sizes: dict[str, ~azure.mgmt.hdinsight.models.VmSizesCapability]
-    :param vm_size_filters: The virtual machine size compatibility filters.
-    :type vm_size_filters:
+    :param vmsizes: The virtual machine sizes.
+    :type vmsizes: dict[str, ~azure.mgmt.hdinsight.models.VmSizesCapability]
+    :param vmsize_filters: The virtual machine size compatibility filters.
+    :type vmsize_filters:
      list[~azure.mgmt.hdinsight.models.VmSizeCompatibilityFilter]
     :param features: The capability features.
     :type features: list[str]
@@ -494,18 +570,18 @@ class CapabilitiesResult(Model):
     _attribute_map = {
         'versions': {'key': 'versions', 'type': '{VersionsCapability}'},
         'regions': {'key': 'regions', 'type': '{RegionsCapability}'},
-        'vm_sizes': {'key': 'vmSizes', 'type': '{VmSizesCapability}'},
-        'vm_size_filters': {'key': 'vmSize_filters', 'type': '[VmSizeCompatibilityFilter]'},
+        'vmsizes': {'key': 'vmsizes', 'type': '{VmSizesCapability}'},
+        'vmsize_filters': {'key': 'vmsize_filters', 'type': '[VmSizeCompatibilityFilter]'},
         'features': {'key': 'features', 'type': '[str]'},
         'quota': {'key': 'quota', 'type': 'QuotaCapability'},
     }
 
-    def __init__(self, *, versions=None, regions=None, vm_sizes=None, vm_size_filters=None, features=None, quota=None, **kwargs) -> None:
+    def __init__(self, *, versions=None, regions=None, vmsizes=None, vmsize_filters=None, features=None, quota=None, **kwargs) -> None:
         super(CapabilitiesResult, self).__init__(**kwargs)
         self.versions = versions
         self.regions = regions
-        self.vm_sizes = vm_sizes
-        self.vm_size_filters = vm_size_filters
+        self.vmsizes = vmsizes
+        self.vmsize_filters = vmsize_filters
         self.features = features
         self.quota = quota
 
@@ -678,7 +754,7 @@ class ClusterCreateProperties(Model):
      'Windows', 'Linux'
     :type os_type: str or ~azure.mgmt.hdinsight.models.OSType
     :param tier: The cluster tier. Possible values include: 'Standard',
-     'Premium'
+     'Premium'. Default value: "Standard" .
     :type tier: str or ~azure.mgmt.hdinsight.models.Tier
     :param cluster_definition: The cluster definition.
     :type cluster_definition: ~azure.mgmt.hdinsight.models.ClusterDefinition
@@ -723,7 +799,7 @@ class ClusterCreateProperties(Model):
         'compute_isolation_properties': {'key': 'computeIsolationProperties', 'type': 'ComputeIsolationProperties'},
     }
 
-    def __init__(self, *, cluster_version: str=None, os_type=None, tier=None, cluster_definition=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, storage_profile=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, network_properties=None, compute_isolation_properties=None, **kwargs) -> None:
+    def __init__(self, *, cluster_version: str=None, os_type=None, tier="Standard", cluster_definition=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, storage_profile=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, network_properties=None, compute_isolation_properties=None, **kwargs) -> None:
         super(ClusterCreateProperties, self).__init__(**kwargs)
         self.cluster_version = cluster_version
         self.os_type = os_type
@@ -738,6 +814,79 @@ class ClusterCreateProperties(Model):
         self.min_supported_tls_version = min_supported_tls_version
         self.network_properties = network_properties
         self.compute_isolation_properties = compute_isolation_properties
+
+
+class ClusterCreateRequestValidationParameters(ClusterCreateParametersExtended):
+    """The cluster create request specification.
+
+    :param location: The location of the cluster.
+    :type location: str
+    :param tags: The resource tags.
+    :type tags: dict[str, str]
+    :param properties: The cluster create parameters.
+    :type properties: ~azure.mgmt.hdinsight.models.ClusterCreateProperties
+    :param identity: The identity of the cluster, if configured.
+    :type identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
+    :param name: The cluster name.
+    :type name: str
+    :param type: The resource type.
+    :type type: str
+    :param tenant_id: The tenant id.
+    :type tenant_id: str
+    :param fetch_aadds_resource: This indicates whether fetch Aadds resource
+     or not.
+    :type fetch_aadds_resource: bool
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'ClusterCreateProperties'},
+        'identity': {'key': 'identity', 'type': 'ClusterIdentity'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'fetch_aadds_resource': {'key': 'fetchAaddsResource', 'type': 'bool'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, properties=None, identity=None, name: str=None, type: str=None, tenant_id: str=None, fetch_aadds_resource: bool=None, **kwargs) -> None:
+        super(ClusterCreateRequestValidationParameters, self).__init__(location=location, tags=tags, properties=properties, identity=identity, **kwargs)
+        self.name = name
+        self.type = type
+        self.tenant_id = tenant_id
+        self.fetch_aadds_resource = fetch_aadds_resource
+
+
+class ClusterCreateValidationResult(Model):
+    """The response of cluster create request validation.
+
+    :param validation_errors: The validation errors.
+    :type validation_errors:
+     list[~azure.mgmt.hdinsight.models.ValidationErrorInfo]
+    :param validation_warnings: The validation warnings.
+    :type validation_warnings:
+     list[~azure.mgmt.hdinsight.models.ValidationErrorInfo]
+    :param estimated_creation_duration: The estimated creation duration.
+    :type estimated_creation_duration: timedelta
+    :param aadds_resources_details: The Azure active directory domain service
+     resource details.
+    :type aadds_resources_details:
+     list[~azure.mgmt.hdinsight.models.AaddsResourceDetails]
+    """
+
+    _attribute_map = {
+        'validation_errors': {'key': 'validationErrors', 'type': '[ValidationErrorInfo]'},
+        'validation_warnings': {'key': 'validationWarnings', 'type': '[ValidationErrorInfo]'},
+        'estimated_creation_duration': {'key': 'estimatedCreationDuration', 'type': 'duration'},
+        'aadds_resources_details': {'key': 'aaddsResourcesDetails', 'type': '[AaddsResourceDetails]'},
+    }
+
+    def __init__(self, *, validation_errors=None, validation_warnings=None, estimated_creation_duration=None, aadds_resources_details=None, **kwargs) -> None:
+        super(ClusterCreateValidationResult, self).__init__(**kwargs)
+        self.validation_errors = validation_errors
+        self.validation_warnings = validation_warnings
+        self.estimated_creation_duration = estimated_creation_duration
+        self.aadds_resources_details = aadds_resources_details
 
 
 class ClusterDefinition(Model):
@@ -1047,11 +1196,11 @@ class ClusterListRuntimeScriptActionDetailResult(Model):
 
 
 class ClusterMonitoringRequest(Model):
-    """The Operations Management Suite (OMS) parameters.
+    """The cluster monitor parameters.
 
-    :param workspace_id: The Operations Management Suite (OMS) workspace ID.
+    :param workspace_id: The cluster monitor workspace ID.
     :type workspace_id: str
-    :param primary_key: The Operations Management Suite (OMS) workspace key.
+    :param primary_key: The cluster monitor workspace key.
     :type primary_key: str
     """
 
@@ -1067,13 +1216,13 @@ class ClusterMonitoringRequest(Model):
 
 
 class ClusterMonitoringResponse(Model):
-    """The Operations Management Suite (OMS) status response.
+    """The cluster monitoring status response.
 
-    :param cluster_monitoring_enabled: The status of the Operations Management
-     Suite (OMS) on the HDInsight cluster.
+    :param cluster_monitoring_enabled: The status of the monitor on the
+     HDInsight cluster.
     :type cluster_monitoring_enabled: bool
-    :param workspace_id: The workspace ID of the Operations Management Suite
-     (OMS) on the HDInsight cluster.
+    :param workspace_id: The workspace ID of the monitor on the HDInsight
+     cluster.
     :type workspace_id: str
     """
 
@@ -1124,7 +1273,7 @@ class ComputeIsolationProperties(Model):
     """The compute isolation properties.
 
     :param enable_compute_isolation: The flag indicates whether enable compute
-     isolation or not.
+     isolation or not. Default value: False .
     :type enable_compute_isolation: bool
     :param host_sku: The host sku.
     :type host_sku: str
@@ -1135,7 +1284,7 @@ class ComputeIsolationProperties(Model):
         'host_sku': {'key': 'hostSku', 'type': 'str'},
     }
 
-    def __init__(self, *, enable_compute_isolation: bool=None, host_sku: str=None, **kwargs) -> None:
+    def __init__(self, *, enable_compute_isolation: bool=False, host_sku: str=None, **kwargs) -> None:
         super(ComputeIsolationProperties, self).__init__(**kwargs)
         self.enable_compute_isolation = enable_compute_isolation
         self.host_sku = host_sku
@@ -1537,15 +1686,20 @@ class KafkaRestProperties(Model):
 
     :param client_group_info: The information of AAD security group.
     :type client_group_info: ~azure.mgmt.hdinsight.models.ClientGroupInfo
+    :param configuration_override: The configurations that need to be
+     overriden.
+    :type configuration_override: dict[str, str]
     """
 
     _attribute_map = {
         'client_group_info': {'key': 'clientGroupInfo', 'type': 'ClientGroupInfo'},
+        'configuration_override': {'key': 'configurationOverride', 'type': '{str}'},
     }
 
-    def __init__(self, *, client_group_info=None, **kwargs) -> None:
+    def __init__(self, *, client_group_info=None, configuration_override=None, **kwargs) -> None:
         super(KafkaRestProperties, self).__init__(**kwargs)
         self.client_group_info = client_group_info
+        self.configuration_override = configuration_override
 
 
 class LinuxOperatingSystemProfile(Model):
@@ -1680,6 +1834,58 @@ class MetricSpecifications(Model):
         self.dimensions = dimensions
 
 
+class NameAvailabilityCheckRequestParameters(Model):
+    """The request spec of checking name availability.
+
+    :param name: The resource name.
+    :type name: str
+    :param type: The resource type
+    :type type: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, type: str=None, **kwargs) -> None:
+        super(NameAvailabilityCheckRequestParameters, self).__init__(**kwargs)
+        self.name = name
+        self.type = type
+
+
+class NameAvailabilityCheckResult(Model):
+    """The response spec of checking name availability.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param name_available: This indicates whether the name is available.
+    :type name_available: bool
+    :ivar reason: The reason of the result.
+    :vartype reason: str
+    :ivar message: The related message.
+    :vartype message: str
+    """
+
+    _validation = {
+        'reason': {'readonly': True},
+        'message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, *, name_available: bool=None, **kwargs) -> None:
+        super(NameAvailabilityCheckResult, self).__init__(**kwargs)
+        self.name_available = name_available
+        self.reason = None
+        self.message = None
+
+
 class NetworkProperties(Model):
     """The network properties.
 
@@ -1771,27 +1977,6 @@ class OperationProperties(Model):
     def __init__(self, *, service_specification=None, **kwargs) -> None:
         super(OperationProperties, self).__init__(**kwargs)
         self.service_specification = service_specification
-
-
-class OperationResource(Model):
-    """The azure async operation response.
-
-    :param status: The async operation state. Possible values include:
-     'InProgress', 'Succeeded', 'Failed'
-    :type status: str or ~azure.mgmt.hdinsight.models.AsyncOperationState
-    :param error: The operation error information.
-    :type error: ~azure.mgmt.hdinsight.models.Errors
-    """
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'AsyncOperationState'},
-        'error': {'key': 'error', 'type': 'Errors'},
-    }
-
-    def __init__(self, *, status=None, error=None, **kwargs) -> None:
-        super(OperationResource, self).__init__(**kwargs)
-        self.status = status
-        self.error = error
 
 
 class OsProfile(Model):
@@ -1902,6 +2087,8 @@ class Role(Model):
     :type min_instance_count: int
     :param target_instance_count: The instance count of the cluster.
     :type target_instance_count: int
+    :param vm_group_name: The name of the virtual machine group.
+    :type vm_group_name: str
     :param autoscale_configuration: The autoscale configurations.
     :type autoscale_configuration: ~azure.mgmt.hdinsight.models.Autoscale
     :param hardware_profile: The hardware profile.
@@ -1917,6 +2104,7 @@ class Role(Model):
     :param script_actions: The list of script actions on the role.
     :type script_actions: list[~azure.mgmt.hdinsight.models.ScriptAction]
     :param encrypt_data_disks: Indicates whether encrypt the data disks.
+     Default value: False .
     :type encrypt_data_disks: bool
     """
 
@@ -1924,6 +2112,7 @@ class Role(Model):
         'name': {'key': 'name', 'type': 'str'},
         'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
         'target_instance_count': {'key': 'targetInstanceCount', 'type': 'int'},
+        'vm_group_name': {'key': 'VMGroupName', 'type': 'str'},
         'autoscale_configuration': {'key': 'autoscale', 'type': 'Autoscale'},
         'hardware_profile': {'key': 'hardwareProfile', 'type': 'HardwareProfile'},
         'os_profile': {'key': 'osProfile', 'type': 'OsProfile'},
@@ -1933,11 +2122,12 @@ class Role(Model):
         'encrypt_data_disks': {'key': 'encryptDataDisks', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str=None, min_instance_count: int=None, target_instance_count: int=None, autoscale_configuration=None, hardware_profile=None, os_profile=None, virtual_network_profile=None, data_disks_groups=None, script_actions=None, encrypt_data_disks: bool=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, min_instance_count: int=None, target_instance_count: int=None, vm_group_name: str=None, autoscale_configuration=None, hardware_profile=None, os_profile=None, virtual_network_profile=None, data_disks_groups=None, script_actions=None, encrypt_data_disks: bool=False, **kwargs) -> None:
         super(Role, self).__init__(**kwargs)
         self.name = name
         self.min_instance_count = min_instance_count
         self.target_instance_count = target_instance_count
+        self.vm_group_name = vm_group_name
         self.autoscale_configuration = autoscale_configuration
         self.hardware_profile = hardware_profile
         self.os_profile = os_profile
@@ -2287,6 +2477,10 @@ class StorageAccount(Model):
      access the storage account, only to be specified for Azure Data Lake
      Storage Gen 2.
     :type msi_resource_id: str
+    :param saskey: The shared access signature key.
+    :type saskey: str
+    :param fileshare: The file share name.
+    :type fileshare: str
     """
 
     _attribute_map = {
@@ -2297,9 +2491,11 @@ class StorageAccount(Model):
         'key': {'key': 'key', 'type': 'str'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'msi_resource_id': {'key': 'msiResourceId', 'type': 'str'},
+        'saskey': {'key': 'saskey', 'type': 'str'},
+        'fileshare': {'key': 'fileshare', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, is_default: bool=None, container: str=None, file_system: str=None, key: str=None, resource_id: str=None, msi_resource_id: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, is_default: bool=None, container: str=None, file_system: str=None, key: str=None, resource_id: str=None, msi_resource_id: str=None, saskey: str=None, fileshare: str=None, **kwargs) -> None:
         super(StorageAccount, self).__init__(**kwargs)
         self.name = name
         self.is_default = is_default
@@ -2308,6 +2504,8 @@ class StorageAccount(Model):
         self.key = key
         self.resource_id = resource_id
         self.msi_resource_id = msi_resource_id
+        self.saskey = saskey
+        self.fileshare = fileshare
 
 
 class StorageProfile(Model):
@@ -2324,6 +2522,30 @@ class StorageProfile(Model):
     def __init__(self, *, storageaccounts=None, **kwargs) -> None:
         super(StorageProfile, self).__init__(**kwargs)
         self.storageaccounts = storageaccounts
+
+
+class UpdateClusterIdentityCertificateParameters(Model):
+    """The update cluster identity certificate request parameters.
+
+    :param application_id: The application id.
+    :type application_id: str
+    :param certificate: The certificate in base64 encoded format.
+    :type certificate: str
+    :param certificate_password: The password of the certificate.
+    :type certificate_password: str
+    """
+
+    _attribute_map = {
+        'application_id': {'key': 'applicationId', 'type': 'str'},
+        'certificate': {'key': 'certificate', 'type': 'str'},
+        'certificate_password': {'key': 'certificatePassword', 'type': 'str'},
+    }
+
+    def __init__(self, *, application_id: str=None, certificate: str=None, certificate_password: str=None, **kwargs) -> None:
+        super(UpdateClusterIdentityCertificateParameters, self).__init__(**kwargs)
+        self.application_id = application_id
+        self.certificate = certificate
+        self.certificate_password = certificate_password
 
 
 class UpdateGatewaySettingsParameters(Model):
@@ -2357,17 +2579,17 @@ class Usage(Model):
     :param unit: The type of measurement for usage.
     :type unit: str
     :param current_value: The current usage.
-    :type current_value: int
+    :type current_value: long
     :param limit: The maximum allowed usage.
-    :type limit: int
+    :type limit: long
     :param name: The details about the localizable name of the used resource.
     :type name: ~azure.mgmt.hdinsight.models.LocalizedName
     """
 
     _attribute_map = {
         'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'int'},
-        'limit': {'key': 'limit', 'type': 'int'},
+        'current_value': {'key': 'currentValue', 'type': 'long'},
+        'limit': {'key': 'limit', 'type': 'long'},
         'name': {'key': 'name', 'type': 'LocalizedName'},
     }
 
@@ -2395,6 +2617,34 @@ class UsagesListResult(Model):
         self.value = value
 
 
+class ValidationErrorInfo(Model):
+    """The validation error information.
+
+    :param code: The error code.
+    :type code: str
+    :param message: The error message.
+    :type message: str
+    :param error_resource: The error resource.
+    :type error_resource: str
+    :param message_arguments: The message arguments
+    :type message_arguments: list[str]
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'error_resource': {'key': 'errorResource', 'type': 'str'},
+        'message_arguments': {'key': 'messageArguments', 'type': '[str]'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, error_resource: str=None, message_arguments=None, **kwargs) -> None:
+        super(ValidationErrorInfo, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.error_resource = error_resource
+        self.message_arguments = message_arguments
+
+
 class VersionsCapability(Model):
     """The version capability.
 
@@ -2419,7 +2669,7 @@ class VersionSpec(Model):
     :param display_name: The display name
     :type display_name: str
     :param is_default: Whether or not the version is the default version.
-    :type is_default: str
+    :type is_default: bool
     :param component_versions: The component version property.
     :type component_versions: dict[str, str]
     """
@@ -2427,11 +2677,11 @@ class VersionSpec(Model):
     _attribute_map = {
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
-        'is_default': {'key': 'isDefault', 'type': 'str'},
+        'is_default': {'key': 'isDefault', 'type': 'bool'},
         'component_versions': {'key': 'componentVersions', 'type': '{str}'},
     }
 
-    def __init__(self, *, friendly_name: str=None, display_name: str=None, is_default: str=None, component_versions=None, **kwargs) -> None:
+    def __init__(self, *, friendly_name: str=None, display_name: str=None, is_default: bool=None, component_versions=None, **kwargs) -> None:
         super(VersionSpec, self).__init__(**kwargs)
         self.friendly_name = friendly_name
         self.display_name = display_name
@@ -2472,8 +2722,18 @@ class VmSizeCompatibilityFilter(Model):
     :type node_types: list[str]
     :param cluster_versions: The list of cluster versions.
     :type cluster_versions: list[str]
-    :param vmsizes: The list of virtual machine sizes.
-    :type vmsizes: list[str]
+    :param os_type: The list of OS types.
+    :type os_type: list[str]
+    :param vm_sizes: The list of virtual machine sizes.
+    :type vm_sizes: list[str]
+    :param esp_applied: Whether apply for ESP cluster. 'true' means only for
+     ESP, 'false' means only for non-ESP, null or empty string or others mean
+     for both.
+    :type esp_applied: str
+    :param compute_isolation_supported: Whether support compute isolation.
+     'true' means only for ComputeIsolationEnabled, 'false' means only for
+     regular cluster.
+    :type compute_isolation_supported: str
     """
 
     _attribute_map = {
@@ -2482,17 +2742,23 @@ class VmSizeCompatibilityFilter(Model):
         'cluster_flavors': {'key': 'ClusterFlavors', 'type': '[str]'},
         'node_types': {'key': 'NodeTypes', 'type': '[str]'},
         'cluster_versions': {'key': 'ClusterVersions', 'type': '[str]'},
-        'vmsizes': {'key': 'vmsizes', 'type': '[str]'},
+        'os_type': {'key': 'OsType', 'type': '[str]'},
+        'vm_sizes': {'key': 'VMSizes', 'type': '[str]'},
+        'esp_applied': {'key': 'ESPApplied', 'type': 'str'},
+        'compute_isolation_supported': {'key': 'ComputeIsolationSupported', 'type': 'str'},
     }
 
-    def __init__(self, *, filter_mode: str=None, regions=None, cluster_flavors=None, node_types=None, cluster_versions=None, vmsizes=None, **kwargs) -> None:
+    def __init__(self, *, filter_mode: str=None, regions=None, cluster_flavors=None, node_types=None, cluster_versions=None, os_type=None, vm_sizes=None, esp_applied: str=None, compute_isolation_supported: str=None, **kwargs) -> None:
         super(VmSizeCompatibilityFilter, self).__init__(**kwargs)
         self.filter_mode = filter_mode
         self.regions = regions
         self.cluster_flavors = cluster_flavors
         self.node_types = node_types
         self.cluster_versions = cluster_versions
-        self.vmsizes = vmsizes
+        self.os_type = os_type
+        self.vm_sizes = vm_sizes
+        self.esp_applied = esp_applied
+        self.compute_isolation_supported = compute_isolation_supported
 
 
 class VmSizeCompatibilityFilterV2(Model):
