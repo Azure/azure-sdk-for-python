@@ -42,7 +42,7 @@ class SmsSendResult(object):
             to=sms_send_response_item.to,
             message_id=sms_send_response_item.message_id,
             http_status_code=sms_send_response_item.http_status_code,
-            successful = sms_send_response_item.successful,
-            error_message = sms_send_response_item.error_message
+            successful=sms_send_response_item.successful,
+            error_message=sms_send_response_item.error_message
         )
         
