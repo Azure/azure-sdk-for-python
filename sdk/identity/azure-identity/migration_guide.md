@@ -8,7 +8,7 @@ way as `azure-common`. `azure-common` provided factory methods like [`get_client
 passwords, should not be stored in plaintext whenever possible. Instead, `azure-identity` encourages authenticating with
 environment variables (or by other supported means, like [managed identity][managed_identity]).
 
-### Use environment variables
+#### Previous authentication pattern
 
 In `azure-common` you could provide credentials in a JSON dictionary, or from a JSON file:
 ```python
@@ -25,8 +25,10 @@ json_dict = {
 client = get_client_from_json_dict(KeyVaultClient, json_dict)
 
 # Or, provide credentials from a JSON file:
-client = get_client_from_auth_file(KeyVaultClient, "auth_file.json")
+client = get_client_from_auth_file(KeyVaultClient, "credentials.json")
 ```
+
+#### Recommended authentication pattern
 
 In `azure-identity`, you can provide credentials through environment variables. After setting `AZURE_CLIENT_ID`,
 `AZURE_CLIENT_SECRET`, and `AZURE_TENANT_ID` variables with the values used for `clientId`, `clientSecret`, and
@@ -43,7 +45,7 @@ The latter approach greatly reduces the chances of accidentally exporting secret
 plaintext credentials to GitHub). It also prevents anyone who can read your files from reading your credentials
 directly.
 
-### Get credentials from JSON
+#### Use JSON credentials with azure-identity
 
 If it's too difficult to migrate away from JSON- or file-based authentication despite the security risks, you can still
 use `azure-identity` credentials. With a JSON file containing the credentials, you can use [`json.load`][json] to
