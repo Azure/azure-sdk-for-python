@@ -1,5 +1,17 @@
 # Release History
 
+## 4.0.0 (2021-02-24)
+
+**Features**
+
+  - Model OperationServiceSpecificationDefinition has a new parameter log_specifications
+  - Model Registry has a new parameter anonymous_pull_enabled
+  - Model RegistryUpdateParameters has a new parameter anonymous_pull_enabled
+
+**Breaking changes**
+
+  - Model Registry no longer has parameter storage_account
+
 ## 3.0.0rc16 (2020-12-09)
 
 **Features**
