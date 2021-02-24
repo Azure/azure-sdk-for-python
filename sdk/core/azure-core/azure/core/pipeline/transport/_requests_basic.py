@@ -27,6 +27,7 @@ from __future__ import absolute_import
 import logging
 from typing import Iterator, Optional, Any, Union, TypeVar
 import time
+import six
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
 import requests
@@ -48,6 +49,30 @@ from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
 PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
+
+def parse_range_header(header_value, header='Range'):
+    if not isinstance(header_value, six.string_types) or len(header_value) < len(header):
+        raise ValueError("Invalid header")
+    pos = header_value.index(":")
+    range_value = header_value[pos+1:].strip()
+    if not range_value.startswith("bytes="):
+        raise ValueError("Invalid header")
+    range = range_value[6:]
+    ret = range.split("-")
+    if len(ret) < 2:
+        raise ValueError("Invalid header")
+    start = int(ret[0]) if ret[0] else -1
+    end = int(ret[1]) if ret[1] else -1
+    return (start, end)
+
+def make_range_header(original_range, downloaded_size=0, header='Range'):
+    if original_range[0] == -1:
+        end = original_range[1] - downloaded_size
+        return header + ": bytes=-" + str(end)
+    start = original_range[0] + downloaded_size
+    if original_range[1] == -1:
+        return header + ": bytes=" + str(start) + "-"
+    return header + ": bytes=" + str(start) + "-" + str(original_range[1])
 
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
