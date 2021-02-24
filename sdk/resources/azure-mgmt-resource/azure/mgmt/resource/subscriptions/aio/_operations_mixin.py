@@ -22,9 +22,9 @@ class SubscriptionClientOperationsMixin(object):
 
     async def check_resource_name(
         self,
-        resource_name_definition: Optional["models.ResourceName"] = None,
+        resource_name_definition: Optional["_models.ResourceName"] = None,
         **kwargs
-    ) -> "models.CheckResourceNameResult":
+    ) -> "_models.CheckResourceNameResult":
         """Checks resource name validity.
 
         A resource name is valid if it is not a reserved word, does not contains a reserved word and

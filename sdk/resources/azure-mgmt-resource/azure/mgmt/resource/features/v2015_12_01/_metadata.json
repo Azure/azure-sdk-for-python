@@ -8,32 +8,33 @@
         "base_url": "\u0027https://management.azure.com\u0027",
         "custom_base_url": null,
         "azure_arm": true,
-        "has_lro_operations": false
+        "has_lro_operations": false,
+        "client_side_validation": true
     },
     "global_parameters": {
-        "sync_method": {
+        "sync": {
             "credential": {
-                "method_signature": "credential,  # type: \"TokenCredential\"",
+                "signature": "credential,  # type: \"TokenCredential\"",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
                 "required": true
             },
             "subscription_id": {
-                "method_signature": "subscription_id,  # type: str",
+                "signature": "subscription_id,  # type: str",
                 "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
             }
         },
-        "async_method": {
+        "async": {
             "credential": {
-                "method_signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "signature": "credential,  # type: \"AsyncTokenCredential\"",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
                 "required": true
             },
             "subscription_id": {
-                "method_signature": "subscription_id,  # type: str",
+                "signature": "subscription_id,  # type: str",
                 "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
@@ -61,7 +62,7 @@
             },
             "async": {
                 "coroutine": false,
-                "signature": "def list_operations(\n    self,\n    **kwargs\n) -\u003e AsyncItemPaged[\"models.OperationListResult\"]:\n",
+                "signature": "def list_operations(\n    self,\n    **kwargs\n) -\u003e AsyncItemPaged[\"_models.OperationListResult\"]:\n",
                 "doc": "\"\"\"Lists all of the available Microsoft.Features REST API operations.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OperationListResult or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.features.v2015_12_01.models.OperationListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
             },
             "call": ""
