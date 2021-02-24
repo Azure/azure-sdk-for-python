@@ -32,6 +32,9 @@ class _FixedOffset(datetime.tzinfo):
         return datetime.timedelta(0)
 
 def _convert_to_isoformat(date_time):
+    """Deserialize a date in RFC 3339 format to datetime object.
+    Check https://tools.ietf.org/html/rfc3339#section-5.8 for examples.
+    """
     timestamp = re.split(r"([+|-])", re.sub(r"[:]|([-](?!((\d{2}[:]\d{2})|(\d{4}))$))", '', date_time))
     if len(timestamp) == 3:
         time, sign, tzone = timestamp
