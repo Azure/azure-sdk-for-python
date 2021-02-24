@@ -43,8 +43,8 @@ class SmsSamples(object):
                 print("Message with message id {} was successful sent to {}"
                 .format(sms_response.message_id , sms_response.to))
             else:
-                print("Message with message id {} failed to send to {}"
-                .format(sms_response.message_id , sms_response.to))
+                print("Message failed to send to {}"
+                .format(sms_response.to))
                 failed_recipients.append(sms_response.to)
         
         # calling send() with failed recipients
