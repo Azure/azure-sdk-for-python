@@ -1,5 +1,11 @@
 # Release History
 
+## 0.4.0 (2021-02-23)
+
+**Features**
+
+  - Added operation group ObjectAnchorsAccountsOperations
+
 ## 0.3.0 (2021-02-07)
 
 **Features**

@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class RemoteRenderingAccountsOperations(object):
-    """RemoteRenderingAccountsOperations operations.
+class ObjectAnchorsAccountsOperations(object):
+    """ObjectAnchorsAccountsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -41,16 +41,16 @@ class RemoteRenderingAccountsOperations(object):
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
-        """List Remote Rendering Accounts by Subscription.
+        """List Object Anchors Accounts by Subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of RemoteRenderingAccount
+        :return: An iterator like instance of ObjectAnchorsAccount
         :rtype:
-         ~azure.mgmt.mixedreality.models.RemoteRenderingAccountPaged[~azure.mgmt.mixedreality.models.RemoteRenderingAccount]
+         ~azure.mgmt.mixedreality.models.ObjectAnchorsAccountPaged[~azure.mgmt.mixedreality.models.ObjectAnchorsAccount]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -100,10 +100,10 @@ class RemoteRenderingAccountsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.RemoteRenderingAccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ObjectAnchorsAccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MixedReality/remoteRenderingAccounts'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MixedReality/objectAnchorsAccounts'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -116,9 +116,9 @@ class RemoteRenderingAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of RemoteRenderingAccount
+        :return: An iterator like instance of ObjectAnchorsAccount
         :rtype:
-         ~azure.mgmt.mixedreality.models.RemoteRenderingAccountPaged[~azure.mgmt.mixedreality.models.RemoteRenderingAccount]
+         ~azure.mgmt.mixedreality.models.ObjectAnchorsAccountPaged[~azure.mgmt.mixedreality.models.ObjectAnchorsAccount]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -169,14 +169,14 @@ class RemoteRenderingAccountsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.RemoteRenderingAccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ObjectAnchorsAccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts'}
 
     def delete(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Delete a Remote Rendering Account.
+        """Delete an Object Anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -225,11 +225,11 @@ class RemoteRenderingAccountsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts/{accountName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts/{accountName}'}
 
     def get(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieve a Remote Rendering Account.
+        """Retrieve an Object Anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -240,8 +240,8 @@ class RemoteRenderingAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: RemoteRenderingAccount or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.mixedreality.models.RemoteRenderingAccount or
+        :return: ObjectAnchorsAccount or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.mixedreality.models.ObjectAnchorsAccount or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -279,33 +279,33 @@ class RemoteRenderingAccountsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('RemoteRenderingAccount', response)
+            deserialized = self._deserialize('ObjectAnchorsAccount', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts/{accountName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts/{accountName}'}
 
     def update(
-            self, resource_group_name, account_name, remote_rendering_account, custom_headers=None, raw=False, **operation_config):
-        """Updating a Remote Rendering Account.
+            self, resource_group_name, account_name, object_anchors_account, custom_headers=None, raw=False, **operation_config):
+        """Updating an Object Anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Name of an Mixed Reality Account.
         :type account_name: str
-        :param remote_rendering_account: Remote Rendering Account parameter.
-        :type remote_rendering_account:
-         ~azure.mgmt.mixedreality.models.RemoteRenderingAccount
+        :param object_anchors_account: Object Anchors Account parameter.
+        :type object_anchors_account:
+         ~azure.mgmt.mixedreality.models.ObjectAnchorsAccount
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: RemoteRenderingAccount or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.mixedreality.models.RemoteRenderingAccount or
+        :return: ObjectAnchorsAccount or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.mixedreality.models.ObjectAnchorsAccount or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -334,7 +334,7 @@ class RemoteRenderingAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(remote_rendering_account, 'RemoteRenderingAccount')
+        body_content = self._serialize.body(object_anchors_account, 'ObjectAnchorsAccount')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -347,33 +347,33 @@ class RemoteRenderingAccountsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('RemoteRenderingAccount', response)
+            deserialized = self._deserialize('ObjectAnchorsAccount', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts/{accountName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts/{accountName}'}
 
     def create(
-            self, resource_group_name, account_name, remote_rendering_account, custom_headers=None, raw=False, **operation_config):
-        """Creating or Updating a Remote Rendering Account.
+            self, resource_group_name, account_name, object_anchors_account, custom_headers=None, raw=False, **operation_config):
+        """Creating or Updating an object anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Name of an Mixed Reality Account.
         :type account_name: str
-        :param remote_rendering_account: Remote Rendering Account parameter.
-        :type remote_rendering_account:
-         ~azure.mgmt.mixedreality.models.RemoteRenderingAccount
+        :param object_anchors_account: Object Anchors Account parameter.
+        :type object_anchors_account:
+         ~azure.mgmt.mixedreality.models.ObjectAnchorsAccount
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: RemoteRenderingAccount or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.mixedreality.models.RemoteRenderingAccount or
+        :return: ObjectAnchorsAccount or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.mixedreality.models.ObjectAnchorsAccount or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -402,7 +402,7 @@ class RemoteRenderingAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(remote_rendering_account, 'RemoteRenderingAccount')
+        body_content = self._serialize.body(object_anchors_account, 'ObjectAnchorsAccount')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -415,20 +415,20 @@ class RemoteRenderingAccountsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('RemoteRenderingAccount', response)
+            deserialized = self._deserialize('ObjectAnchorsAccount', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('RemoteRenderingAccount', response)
+            deserialized = self._deserialize('ObjectAnchorsAccount', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts/{accountName}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts/{accountName}'}
 
     def list_keys(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """List Both of the 2 Keys of a Remote Rendering Account.
+        """List Both of the 2 Keys of an object anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -485,11 +485,11 @@ class RemoteRenderingAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts/{accountName}/listKeys'}
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts/{accountName}/listKeys'}
 
     def regenerate_keys(
             self, resource_group_name, account_name, serial=1, custom_headers=None, raw=False, **operation_config):
-        """Regenerate specified Key of a Remote Rendering Account.
+        """Regenerate specified Key of an object anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -554,4 +554,4 @@ class RemoteRenderingAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts/{accountName}/regenerateKeys'}
+    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts/{accountName}/regenerateKeys'}
