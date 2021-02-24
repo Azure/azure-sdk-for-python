@@ -1,5 +1,21 @@
 # Release History
 
+## 0.16.0 (2021-02-24)
+
+**Features**
+
+  - Model CustomActivity has a new parameter auto_user_specification
+  - Model PipelineResource has a new parameter policy
+  - Model WebActivityAuthentication has a new parameter user_tenant
+  - Model AzureMLExecutePipelineActivity has a new parameter version
+  - Model AzureMLExecutePipelineActivity has a new parameter ml_pipeline_endpoint_id
+  - Model AzureMLExecutePipelineActivity has a new parameter data_path_assignments
+  - Model AzureDatabricksLinkedService has a new parameter authentication
+  - Model AzureDatabricksLinkedService has a new parameter policy_id
+  - Model AzureDatabricksLinkedService has a new parameter workspace_resource_id
+  - Model ManagedIntegrationRuntime has a new parameter managed_virtual_network
+  - Model IntegrationRuntimeSsisCatalogInfo has a new parameter dual_standby_pair_name
+
 ## 0.15.0 (2020-12-09)
 
 **Features**
