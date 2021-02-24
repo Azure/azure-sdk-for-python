@@ -15,6 +15,7 @@ from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
 from ._common import EventDataBatch, EventData
 from ._configuration import PartitionPublishingConfiguration
+from ._utils import validate_producer_client_partition_config
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -133,6 +134,8 @@ class EventHubProducerClient(ClientBase):
         self._partition_ids = None  # Optional[List[str]]
         self._partition_configs = kwargs.get("partition_configs") or {}
         self._lock = threading.Lock()
+        for _, partition_config in self._partition_configs.items():
+            validate_producer_client_partition_config(partition_config)
 
     def __enter__(self):
         return self

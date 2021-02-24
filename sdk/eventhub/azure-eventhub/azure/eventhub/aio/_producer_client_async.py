@@ -15,6 +15,7 @@ from .._producer_client import validate_outgoing_event_data
 from .._constants import ALL_PARTITIONS
 from .._common import EventDataBatch, EventData
 from .._configuration import PartitionPublishingConfiguration
+from .._utils import validate_producer_client_partition_config
 
 if TYPE_CHECKING:
     from uamqp.constants import TransportType
@@ -105,6 +106,8 @@ class EventHubProducerClient(ClientBaseAsync):
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
         self._partition_configs = kwargs.get("partition_configs") or {}
+        for _, partition_config in self._partition_configs.items():
+            validate_producer_client_partition_config(partition_config)
 
     async def __aenter__(self):
         return self
