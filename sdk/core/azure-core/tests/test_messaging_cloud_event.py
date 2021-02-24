@@ -121,8 +121,9 @@ def test_cloud_custom_dict_base64():
     assert event.data == b'cloudevent'
     assert event.specversion == "1.0"
     assert event.time.hour == 17
+    assert event.time.minute == 11
     assert event.time.day == 23
-    assert event.time.tzinfo == datetime.timezone(datetime.timedelta(hours=-8))
+    assert event.time.tzinfo is not None
     assert event.__class__ == CloudEvent
 
 def test_data_and_base64_both_exist_raises():
