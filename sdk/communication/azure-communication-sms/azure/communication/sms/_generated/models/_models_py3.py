@@ -144,7 +144,7 @@ class SmsSendResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required.
-    :type value: list[~azure.communication.sms.models.SmsSendResult]
+    :type value: list[~azure.communication.sms.models.SmsSendResponseItem]
     """
 
     _validation = {
@@ -152,20 +152,20 @@ class SmsSendResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SmsSendResult]'},
+        'value': {'key': 'value', 'type': '[SmsSendResponseItem]'},
     }
 
     def __init__(
         self,
         *,
-        value: List["SmsSendResult"],
+        value: List["SmsSendResponseItem"],
         **kwargs
     ):
         super(SmsSendResponse, self).__init__(**kwargs)
         self.value = value
 
 
-class SmsSendResult(msrest.serialization.Model):
+class SmsSendResponseItem(msrest.serialization.Model):
     """Response for a single recipient.
 
     All required parameters must be populated in order to send to Azure.
@@ -180,7 +180,7 @@ class SmsSendResult(msrest.serialization.Model):
     :param repeatability_result: The result of a repeatable request with one of the case-
      insensitive values accepted or rejected. Possible values include: "accepted", "rejected".
     :type repeatability_result: str or
-     ~azure.communication.sms.models.SmsSendResultRepeatabilityResult
+     ~azure.communication.sms.models.SmsSendResponseItemRepeatabilityResult
     :param successful: Required. Indicates if the message is processed successfully or not.
     :type successful: bool
     :param error_message: Optional error message in case of 4xx/5xx/repeatable errors.
@@ -209,11 +209,11 @@ class SmsSendResult(msrest.serialization.Model):
         http_status_code: int,
         successful: bool,
         message_id: Optional[str] = None,
-        repeatability_result: Optional[Union[str, "SmsSendResultRepeatabilityResult"]] = None,
+        repeatability_result: Optional[Union[str, "SmsSendResponseItemRepeatabilityResult"]] = None,
         error_message: Optional[str] = None,
         **kwargs
     ):
-        super(SmsSendResult, self).__init__(**kwargs)
+        super(SmsSendResponseItem, self).__init__(**kwargs)
         self.to = to
         self.message_id = message_id
         self.http_status_code = http_status_code

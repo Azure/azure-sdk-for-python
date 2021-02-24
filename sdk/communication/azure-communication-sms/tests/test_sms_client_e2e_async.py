@@ -128,7 +128,6 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
         assert sms_response.to == self.phone_number
         assert sms_response.message_id is not None
         assert sms_response.http_status_code == 202
-        assert sms_response.repeatability_result == "accepted"
         assert sms_response.error_message is None
         assert sms_response.successful
             

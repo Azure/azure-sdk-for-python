@@ -12,6 +12,7 @@ from azure.communication.sms._generated.models import (
     SmsRecipient,
     SmsSendOptions,
 )
+from azure.communication.sms._models import SmsSendResult
 
 from ._generated._azure_communication_sms_service import AzureCommunicationSMSService
 from ._shared.utils import parse_connection_str, get_authentication_policy
@@ -119,5 +120,5 @@ class SmsClient(object):
 
         return self._sms_service_client.sms.send(
             request,
-            cls=lambda pr, r, e: r.value,
+            cls=lambda pr, r, e: [SmsSendResult._from_generated(x) for x in r.value],
             **kwargs)

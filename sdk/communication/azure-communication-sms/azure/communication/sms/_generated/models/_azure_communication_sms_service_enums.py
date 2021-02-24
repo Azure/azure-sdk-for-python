@@ -26,7 +26,7 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class SmsSendResultRepeatabilityResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SmsSendResponseItemRepeatabilityResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The result of a repeatable request with one of the case-insensitive values accepted or
     rejected.
     """

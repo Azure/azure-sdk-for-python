@@ -128,7 +128,7 @@ class SmsSendResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required.
-    :type value: list[~azure.communication.sms.models.SmsSendResult]
+    :type value: list[~azure.communication.sms.models.SmsSendResponseItem]
     """
 
     _validation = {
@@ -136,7 +136,7 @@ class SmsSendResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SmsSendResult]'},
+        'value': {'key': 'value', 'type': '[SmsSendResponseItem]'},
     }
 
     def __init__(
@@ -147,7 +147,7 @@ class SmsSendResponse(msrest.serialization.Model):
         self.value = kwargs['value']
 
 
-class SmsSendResult(msrest.serialization.Model):
+class SmsSendResponseItem(msrest.serialization.Model):
     """Response for a single recipient.
 
     All required parameters must be populated in order to send to Azure.
@@ -162,7 +162,7 @@ class SmsSendResult(msrest.serialization.Model):
     :param repeatability_result: The result of a repeatable request with one of the case-
      insensitive values accepted or rejected. Possible values include: "accepted", "rejected".
     :type repeatability_result: str or
-     ~azure.communication.sms.models.SmsSendResultRepeatabilityResult
+     ~azure.communication.sms.models.SmsSendResponseItemRepeatabilityResult
     :param successful: Required. Indicates if the message is processed successfully or not.
     :type successful: bool
     :param error_message: Optional error message in case of 4xx/5xx/repeatable errors.
@@ -188,7 +188,7 @@ class SmsSendResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(SmsSendResult, self).__init__(**kwargs)
+        super(SmsSendResponseItem, self).__init__(**kwargs)
         self.to = kwargs['to']
         self.message_id = kwargs.get('message_id', None)
         self.http_status_code = kwargs['http_status_code']
