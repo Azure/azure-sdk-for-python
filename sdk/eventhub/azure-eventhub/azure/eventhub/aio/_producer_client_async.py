@@ -253,8 +253,8 @@ class EventHubProducerClient(ClientBaseAsync):
          A `TypeError` will be raised if partition_key is specified and event_data_batch is an `EventDataBatch` because
          `EventDataBatch` itself has partition_key.
          If both partition_id and partition_key are provided, the partition_id will take precedence.
-         **WARNING: Please DO NOT pass the partition_key of non-string type. The Event Hub service ignores partition_key
-         of non-string type in which case events will be assigned to all partitions using round-robin.**
+         **WARNING: Please DO NOT pass a partition_key of non-string type. The Event Hub service ignores partition_key
+         of non-string type, in which case events will be assigned to all partitions using round-robin.**
         :rtype: None
         :raises: :class:`AuthenticationError<azure.eventhub.exceptions.AuthenticationError>`
          :class:`ConnectError<azure.eventhub.exceptions.ConnectError>`
@@ -315,8 +315,8 @@ class EventHubProducerClient(ClientBaseAsync):
         :param str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
          If both partition_id and partition_key are provided, the partition_id will take precedence.
-         **WARNING: Please DO NOT pass the partition_key of non-string type. The Event Hub service ignores partition_key
-         of non-string type in which case events will be assigned to all partitions using round-robin.**
+         **WARNING: Please DO NOT pass a partition_key of non-string type. The Event Hub service ignores partition_key
+         of non-string type, in which case events will be assigned to all partitions using round-robin.**
         :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
          default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch
