@@ -449,7 +449,7 @@ The example below extracts entities recognized within the healthcare domain, and
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
+from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiVersion
 
 credential = AzureKeyCredential("<api_key>")
 endpoint="https://<region>.api.cognitive.microsoft.com/"
@@ -458,7 +458,7 @@ text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = ["Subject is taking 100mg of ibuprofen twice daily"]
 
-poller = text_analytics_client.begin_analyze_healthcare_entities(documents, show_stats=True)
+poller = text_analytics_client.begin_analyze_healthcare_entities(documents, api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3)
 result = poller.result()
 
 docs = [doc for doc in result if not doc.is_error]
