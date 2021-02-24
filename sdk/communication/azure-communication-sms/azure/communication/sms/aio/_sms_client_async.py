@@ -121,7 +121,15 @@ class SmsClient(object):
 
         return await self._sms_service_client.sms.send(
             request,
-            cls=lambda pr, r, e: [SmsSendResult._from_generated(x) for x in r.value],
+            cls=lambda pr, r, e: [
+                SmsSendResult(
+                    to=item.to,
+                    message_id=item.message_id,
+                    http_status_code=item.http_status_code,
+                    successful=item.successful,
+                    error_message=item.error_message
+                ) for item in r.value
+            ],
             **kwargs)
 
     async def __aenter__(self) -> "SMSClient":

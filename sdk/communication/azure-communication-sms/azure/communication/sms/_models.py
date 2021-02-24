@@ -35,14 +35,4 @@ class SmsSendResult(object):
         self.http_status_code = kwargs['http_status_code']
         self.successful = kwargs['successful']
         self.error_message = kwargs.get('error_message', None)
-
-    @classmethod
-    def _from_generated(cls, sms_send_response_item):
-        return cls(
-            to=sms_send_response_item.to,
-            message_id=sms_send_response_item.message_id,
-            http_status_code=sms_send_response_item.http_status_code,
-            successful=sms_send_response_item.successful,
-            error_message=sms_send_response_item.error_message
-        )
         
