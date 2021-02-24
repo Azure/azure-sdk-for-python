@@ -16,7 +16,7 @@ def sample_list_all_batches():
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
-    batches = client.list_batches()
+    batches = client.list_statuses_of_batches()
 
     print("Batches summary")
     for batch in batches:
@@ -24,11 +24,11 @@ def sample_list_all_batches():
         print("Batch status: {}".format(batch.status))
         print("Batch created on: {}".format(batch.created_on))
         print("Batch last updated on: {}".format(batch.last_updated_on))
-        print("Batch number of translations on documents: {}".format(batch.summary.total))
+        print("Batch number of translations on documents: {}".format(batch.documents_total_count))
 
         print("Of total documents...")
-        print("{} failed".format(batch.summary.failed))
-        print("{} succeeded".format(batch.summary.succeeded))
-        print("{} in progress".format(batch.summary.in_progress))
-        print("{} not yet started".format(batch.summary.not_yet_started))
-        print("{} cancelled".format(batch.summary.cancelled))
+        print("{} failed".format(batch.documents_failed_count))
+        print("{} succeeded".format(batch.documents_succeeded_count))
+        print("{} in progress".format(batch.documents_in_progress_count))
+        print("{} not yet started".format(batch.documents_not_yet_started_count))
+        print("{} cancelled".format(batch.documents_cancelled_count))

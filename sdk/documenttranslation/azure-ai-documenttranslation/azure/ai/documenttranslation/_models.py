@@ -61,7 +61,7 @@ class StorageTarget(object):
         self.storage_source = kwargs.get("storage_source", None)
 
 
-class BatchDocumentInput(object):
+class BatchTranslationInput(object):
     """Definition for the input batch translation request.
 
     :param source_url: Required. Location of the folder / container or single file with your
