@@ -5,22 +5,14 @@
 # license information.
 # --------------------------------------------------------------------------
 import uuid
-from  base64 import b64decode
+from base64 import b64decode
 from datetime import datetime
-
-try:
-    from datetime import timezone
-    TZ_UTC = timezone.utc  # type: ignore
-except ImportError:
-    from azure.core._utils import _FixedOffset
-    TZ_UTC = _FixedOffset(0) # type: ignore
+from azure.core._utils import _convert_to_isoformat, TZ_UTC
 
 try:
     from typing import TYPE_CHECKING
 except ImportError:
     TYPE_CHECKING = False
-
-from azure.core._utils import _convert_to_isoformat
 
 if TYPE_CHECKING:
     from typing import Any, Dict
@@ -29,7 +21,7 @@ if TYPE_CHECKING:
 __all__ = ["CloudEvent"]
 
 
-class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
+class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
     """Properties of the CloudEvent 1.0 Schema.
     All required parameters must be populated in order to send to Azure.
     If data is of binary type, data_base64 can be used alternatively. Note that data and data_base64
@@ -86,7 +78,8 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
      and must not exceed the length of 20 characters.
     :vartype extensions: dict
     """
-    def __init__(self, source, type, **kwargs): # pylint: disable=redefined-builtin
+
+    def __init__(self, source, type, **kwargs):  # pylint: disable=redefined-builtin
         # type: (str, str, **Any) -> None
         self.source = source
         self.type = type
@@ -97,23 +90,19 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
         self.dataschema = kwargs.pop("dataschema", None)
         self.subject = kwargs.pop("subject", None)
         self.extensions = {}
-        _extensions = dict(kwargs.pop('extensions', {}))
+        _extensions = dict(kwargs.pop("extensions", {}))
         for key in _extensions.keys():
             if not key.islower() or not key.isalnum():
-                raise ValueError("Extension attributes should be lower cased and alphanumeric.")
+                raise ValueError(
+                    "Extension attributes should be lower cased and alphanumeric."
+                )
         self.extensions.update(_extensions)
         self.data = kwargs.pop("data", None)
 
     def __repr__(self):
-        return (
-            "CloudEvent(source={}, type={}, specversion={}, id={}, time={})".format(
-                self.source,
-                self.type,
-                self.specversion,
-                self.id,
-                self.time
-            )[:1024]
-        )
+        return "CloudEvent(source={}, type={}, specversion={}, id={}, time={})".format(
+            self.source, self.type, self.specversion, self.id, self.time
+        )[:1024]
 
     @classmethod
     def from_dict(cls, event, **kwargs):
@@ -125,22 +114,24 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
         :rtype: CloudEvent
         """
         reserved_attr = [
-            'data',
-            'data_base64',
-            'id',
-            'source',
-            'type',
-            'specversion',
-            'time',
-            'dataschema',
-            'datacontenttype',
-            'subject'
+            "data",
+            "data_base64",
+            "id",
+            "source",
+            "type",
+            "specversion",
+            "time",
+            "dataschema",
+            "datacontenttype",
+            "subject",
         ]
 
         data = event.get("data", None)
         data_base64 = event.get("data_base64", None)
         if data and data_base64:
-            raise ValueError("Invalid input. Only one of data and data_base64 must be present.")
+            raise ValueError(
+                "Invalid input. Only one of data and data_base64 must be present."
+            )
 
         return cls(
             id=event.get("id", None),
@@ -152,6 +143,6 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
             dataschema=event.get("dataschema", None),
             datacontenttype=event.get("datacontenttype", None),
             subject=event.get("subject", None),
-            extensions={k:v for k, v in event.items() if k not in reserved_attr},
+            extensions={k: v for k, v in event.items() if k not in reserved_attr},
             **kwargs
         )
