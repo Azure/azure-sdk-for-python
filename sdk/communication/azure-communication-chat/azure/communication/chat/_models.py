@@ -5,9 +5,11 @@
 # ------------------------------------
 
 from ._generated.models import ChatParticipant as ChatParticipantAutorest
-from ._shared.models import CommunicationUserIdentifier
 from ._generated.models import ChatMessageType
 from ._utils import CommunicationUserIdentifierConverter
+
+# pylint: disable=unused-import,ungrouped-imports
+from ._shared.models import CommunicationUserIdentifier
 
 class ChatThreadParticipant(object):
     """A participant of the chat thread.
@@ -36,16 +38,15 @@ class ChatThreadParticipant(object):
     @classmethod
     def _from_generated(cls, chat_thread_participant):
         return cls(
-            user=CommunicationUserIdentifierConverter._from_identifier_model(
-                chat_thread_participant.communication_identifier),  # pylint:disable=protected-access
+            user=CommunicationUserIdentifierConverter.from_identifier_model(
+                chat_thread_participant.communication_identifier),
             display_name=chat_thread_participant.display_name,
             share_history_time=chat_thread_participant.share_history_time
         )
 
     def _to_generated(self):
         return ChatParticipantAutorest(
-            communication_identifier=CommunicationUserIdentifierConverter._to_identifier_model(self.user),
-            # pylint:disable=protected-access
+            communication_identifier=CommunicationUserIdentifierConverter.to_identifier_model(self.user),
             display_name=self.display_name,
             share_history_time=self.share_history_time
         )
@@ -113,8 +114,8 @@ class ChatMessage(object):
 
         sender_communication_identifier = chat_message.sender_communication_identifier
         if sender_communication_identifier is not None:
-            sender_communication_identifier = CommunicationUserIdentifierConverter._from_identifier_model(
-                chat_message.sender_communication_identifier)  # pylint:disable=protected-access
+            sender_communication_identifier = CommunicationUserIdentifierConverter.from_identifier_model(
+                chat_message.sender_communication_identifier)
 
         return cls(
             id=chat_message.id,
@@ -168,8 +169,8 @@ class ChatMessageContent(object):
         initiator = chat_message_content.initiator_communication_identifier
         # check if initiator is populated
         if initiator is not None:
-            initiator = CommunicationUserIdentifierConverter._from_identifier_model(
-                chat_message_content.initiator_communication_identifier)  # pylint:disable=protected-access
+            initiator = CommunicationUserIdentifierConverter.from_identifier_model(
+                chat_message_content.initiator_communication_identifier)
 
         return cls(
             message=chat_message_content.message,
@@ -212,8 +213,8 @@ class ChatThread(object):
 
         created_by = chat_thread.created_by_communication_identifier
         if created_by is not None:
-            created_by = CommunicationUserIdentifierConverter._from_identifier_model(
-                chat_thread.created_by_communication_identifier) # pylint:disable=protected-access
+            created_by = CommunicationUserIdentifierConverter.from_identifier_model(
+                chat_thread.created_by_communication_identifier)
 
         return cls(
             id=chat_thread.id,
@@ -252,8 +253,8 @@ class ChatMessageReadReceipt(object):
 
         sender = read_receipt.sender_communication_identifier
         if sender is not None:
-            sender = CommunicationUserIdentifierConverter._from_identifier_model(
-                read_receipt.sender_communication_identifier)  # pylint:disable=protected-access
+            sender = CommunicationUserIdentifierConverter.from_identifier_model(
+                read_receipt.sender_communication_identifier)
 
         return cls(
             sender=sender,

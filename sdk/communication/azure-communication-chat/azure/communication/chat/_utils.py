@@ -17,7 +17,7 @@ class CommunicationUserIdentifierConverter(object):
 
     """
     @classmethod
-    def _to_identifier_model(cls, communicationIdentifier):
+    def to_identifier_model(cls, communicationIdentifier):
         """
         Util function to convert the Communication identifier into CommunicationIdentifierModel
 
@@ -31,7 +31,7 @@ class CommunicationUserIdentifierConverter(object):
         return CommunicationUserIdentifierSerializer.serialize(communicationIdentifier)
 
     @classmethod
-    def _from_identifier_model(cls, identifierModel):
+    def from_identifier_model(cls, identifierModel):
         """
         Util function to convert the CommunicationIdentifierModel into Communication Identifier
 

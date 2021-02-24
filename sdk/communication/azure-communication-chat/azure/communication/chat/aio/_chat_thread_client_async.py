@@ -560,8 +560,7 @@ class ChatThreadClient(object):
 
         return await self._client.chat_thread.remove_chat_participant(
             chat_thread_id=self._thread_id,
-            participant_communication_identifier=CommunicationUserIdentifierConverter._to_identifier_model(user),
-            # pylint:disable=protected-access
+            participant_communication_identifier=CommunicationUserIdentifierConverter.to_identifier_model(user),
             **kwargs)
 
     async def close(self) -> None:
