@@ -1,5 +1,16 @@
 # Release History
 
+## 2.0.0 (2021-02-24)
+
+**Features**
+
+  - Added operation BackupsOperations.begin_update
+
+**Breaking changes**
+
+  - Model Volume no longer has parameter name_properties_name
+  - Removed operation BackupsOperations.update
+
 ## 1.0.0 (2021-02-04)
 
 **Features**
