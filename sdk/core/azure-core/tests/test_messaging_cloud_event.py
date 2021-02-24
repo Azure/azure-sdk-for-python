@@ -3,7 +3,7 @@ import sys
 import os
 import pytest
 import json
-from datetime import datetime
+import datetime
 
 from azure.core.messaging import CloudEvent
 
@@ -16,7 +16,7 @@ def test_cloud_event_constructor():
         )
     
     assert event.specversion == '1.0'
-    assert event.time.__class__ == datetime
+    assert event.time.__class__ == datetime.datetime
     assert event.id is not None
     assert event.source == 'Azure.Core.Sample'
     assert event.data == 'cloudevent'
@@ -29,7 +29,7 @@ def test_cloud_event_constructor_blank_data():
         )
     
     assert event.specversion == '1.0'
-    assert event.time.__class__ == datetime
+    assert event.time.__class__ == datetime.datetime
     assert event.id is not None
     assert event.source == 'Azure.Core.Sample'
     assert event.data == ''
@@ -69,7 +69,7 @@ def test_cloud_storage_dict():
         "storage_diagnostics":{"batchId":"b68529f3-68cd-4744-baa4-3c0498ec19f0"}
     }
     assert event.specversion == "1.0"
-    assert event.time.__class__ == datetime
+    assert event.time.__class__ == datetime.datetime
     assert event.time.month == 2
     assert event.time.day == 18
     assert event.time.hour == 20
@@ -114,12 +114,15 @@ def test_cloud_custom_dict_base64():
         "source":"https://egtest.dev/cloudcustomevent",
         "data_base64":'Y2xvdWRldmVudA==',
         "type":"Azure.Sdk.Sample",
-        "time":"2021-02-18T20:18:10.345",
+        "time":"2021-02-23T17:11:13.308772-08:00",
         "specversion":"1.0"
     }
     event = CloudEvent.from_dict(cloud_custom_dict_base64)
     assert event.data == b'cloudevent'
     assert event.specversion == "1.0"
+    assert event.time.hour == 17
+    assert event.time.day == 23
+    assert event.time.tzinfo == datetime.timezone(datetime.timedelta(hours=-8))
     assert event.__class__ == CloudEvent
 
 def test_data_and_base64_both_exist_raises():

@@ -38,7 +38,7 @@ def _convert_to_isoformat(date_time):
     else:
         time = timestamp[0]
         sign, tzone = None, None
-    
+
     try:
         deserialized = datetime.datetime.strptime(time, "%Y%m%dT%H%M%S.%fZ")
     except ValueError:
@@ -46,9 +46,9 @@ def _convert_to_isoformat(date_time):
             deserialized = datetime.datetime.strptime(time, "%Y%m%dT%H%M%S.%f")
         except ValueError:
             deserialized = datetime.datetime.strptime(time, "%Y%m%dT%H%M%S")
-    
+
     if tzone:
         delta = datetime.timedelta(hours=int(sign+tzone[:-2]), minutes=int(sign+tzone[-2:]))
-        deserialized = deserialized + delta
+        deserialized = deserialized.replace(tzinfo=datetime.timezone(delta))
 
     return deserialized
