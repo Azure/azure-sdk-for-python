@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Optional, Dict, Any
+from typing import Optional, Any
 
 try:
     from urlparse import urlparse
@@ -10,6 +10,8 @@ except ImportError:
     from urllib.parse import urlparse
 
 from uamqp.constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
+
+from ._common import DictMixin
 
 
 class Configuration(object):  # pylint:disable=too-many-instance-attributes
@@ -52,3 +54,40 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
             self.custom_endpoint_hostname = endpoint.hostname
             # in case proxy and custom endpoint are both provided, we default port to 443 if it's not provided
             self.connection_port = endpoint.port or DEFAULT_AMQP_WSS_PORT
+
+
+class PartitionPublishingConfiguration(DictMixin):
+    def __init__(self, **kwargs):
+        self._owner_level = kwargs.get("owner_level")  # type: Optional[int]
+        self._producer_group_id = kwargs.get("producer_group_id")  # type: Optional[int]
+        self._starting_sequence_number = kwargs.get("starting_sequence_number")  # type: Optional[int]
+
+    @property
+    def owner_level(self):
+        # type: () -> Optional[int]
+        return self._owner_level
+
+    @owner_level.setter
+    def owner_level(self, value):
+        # type: (int) -> None
+        self._owner_level = value
+
+    @property
+    def producer_group_id(self):
+        # type: () -> Optional[int]
+        return self._producer_group_id
+
+    @producer_group_id.setter
+    def producer_group_id(self, value):
+        # type: (int) -> None
+        self._producer_group_id = value
+
+    @property
+    def starting_sequence_number(self):
+        # type: () -> Optional[int]
+        return self._starting_sequence_number
+
+    @starting_sequence_number.setter
+    def starting_sequence_number(self, value):
+        # type: (int) -> None
+        self._starting_sequence_number = value

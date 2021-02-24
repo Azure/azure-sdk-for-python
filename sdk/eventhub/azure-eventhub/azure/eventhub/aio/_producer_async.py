@@ -103,10 +103,10 @@ class EventHubProducer(
         self._enable_idempotent_partitions = kwargs.get("enable_idempotent_partitions", False)
         # the following instance variables are for idempotent producer,
         # client is expected to keep and manage these data during the life cycle of the producer instance.
-        self._partition_option = kwargs.get("partition_option") or {}
-        self._owner_level = self._partition_option.get("owner_level")
-        self._producer_group_id = self._partition_option.get("producer_group_id")
-        self._starting_sequence_number = self._partition_option.get("starting_sequence_number")
+        self._partition_config = kwargs.get("partition_config") or {}
+        self._owner_level = self._partition_config.get("owner_level")
+        self._producer_group_id = self._partition_config.get("producer_group_id")
+        self._starting_sequence_number = self._partition_config.get("starting_sequence_number")
         self._last_published_sequence_number = None
 
     def _create_handler(self, auth: "JWTTokenAsync") -> None:

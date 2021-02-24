@@ -14,6 +14,7 @@ from ._producer_async import EventHubProducer
 from .._producer_client import validate_outgoing_event_data
 from .._constants import ALL_PARTITIONS
 from .._common import EventDataBatch, EventData
+from .._configuration import PartitionPublishingConfiguration
 
 if TYPE_CHECKING:
     from uamqp.constants import TransportType
@@ -61,16 +62,15 @@ class EventHubProducerClient(ClientBaseAsync):
      publishing to the Event Hub partitions. If enabled, the producer will only be able to publish directly
      to partitions; it will not be able to publish to the Event Hubs gateway for automatic partition routing
      nor using a partition key. Default is False.
-    :keyword dict partition_options: The set of options that can be specified to influence publishing behavior
-     specific to the configured Event Hub partition. These options are not necessary in the majority of scenarios
-     and are intended for use with specialized scenarios, such as when recovering the state used for idempotent
-     publishing. It is highly recommended that these options only be specified if there is a proven need to do so;
+    :keyword partition_configs: The set of configurations that can be specified to influence publishing behavior
+     specific to the configured Event Hub partition. These configurations are not necessary in the majority of
+     scenarios and are intended for use with specialized scenarios, such as when recovering the state used for
+     idempotent publishing.
+     It is highly recommended that these configurations only be specified if there is a proven need to do so;
      Incorrectly configuring these values may result in an `EventHubProducerClient` instance that is unable to
-     publish to the Event Hubs. These options are ignored when publishing to the Event Hubs gateway for automatic
-     routing or when using a partition key.
-     The value must be a dictionary with keys being `partition_id` (str value) and values being dictionaries that
-     contain the following optional configurations for the partition: `'owner_level'` (int value),
-     `'producer_group_id'` (int value) and `'starting_sequence_number'` (int value).
+     publish to the Event Hubs. These configurations are ignored when publishing to the Event Hubs gateway for
+     automatic routing or when using a partition key.
+    :paramtype partition_config: dict[str, ~azure.eventhub.PartitionPublishingConfiguration]
 
     .. admonition:: Example:
 
@@ -104,7 +104,7 @@ class EventHubProducerClient(ClientBaseAsync):
         )  # sync the creation of self._producers
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
-        self._partition_options = kwargs.get("partition_options") or {}
+        self._partition_configs = kwargs.get("partition_configs") or {}
 
     async def __aenter__(self):
         return self
@@ -151,12 +151,12 @@ class EventHubProducerClient(ClientBaseAsync):
                 not self._producers[partition_id]
                 or cast(EventHubProducer, self._producers[partition_id]).closed
             ):
-                partition_option = self._partition_options.get(partition_id)
+                partition_config = self._partition_configs.get(partition_id)
                 self._producers[partition_id] = self._create_producer(
                     partition_id=partition_id,
                     send_timeout=send_timeout,
                     enable_idempotent_partitions=self._config.enable_idempotent_partitions,
-                    partition_option=partition_option
+                    partition_config=partition_config
                 )
 
     def _create_producer(
@@ -165,7 +165,7 @@ class EventHubProducerClient(ClientBaseAsync):
         partition_id: Optional[str] = None,
         send_timeout: Optional[Union[int, float]] = None,
         enable_idempotent_partitions: bool = False,
-        partition_option: Optional[dict] = None
+        partition_config: Optional[Union[dict, PartitionPublishingConfiguration]] = None
     ) -> EventHubProducer:
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
         send_timeout = (
@@ -179,7 +179,7 @@ class EventHubProducerClient(ClientBaseAsync):
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
             enable_idempotent_partitions=enable_idempotent_partitions,
-            partition_option=partition_option,
+            partition_config=partition_config,
             loop=self._loop,
         )
         return handler
@@ -229,16 +229,15 @@ class EventHubProducerClient(ClientBaseAsync):
          publishing to the Event Hub partitions. If enabled, the producer will only be able to publish directly
          to partitions; it will not be able to publish to the Event Hubs gateway for automatic partition routing
          nor using a partition key. Default is False.
-        :keyword dict partition_options: The set of options that can be specified to influence publishing behavior
-         specific to the configured Event Hub partition. These options are not necessary in the majority of scenarios
-         and are intended for use with specialized scenarios, such as when recovering the state used for idempotent
-         publishing. It is highly recommended that these options only be specified if there is a proven need to do so;
+        :keyword partition_configs: The set of configurations that can be specified to influence publishing behavior
+         specific to the configured Event Hub partition. These configurations are not necessary in the majority of
+         scenarios and are intended for use with specialized scenarios, such as when recovering the state used for
+         idempotent publishing.
+         It is highly recommended that these configurations only be specified if there is a proven need to do so;
          Incorrectly configuring these values may result in an `EventHubProducerClient` instance that is unable to
-         publish to the Event Hubs. These options are ignored when publishing to the Event Hubs gateway for automatic
-         routing or when using a partition key.
-         The value must be a dictionary with keys being `partition_id` (str value) and values being dictionaries that
-         contain the following optional configurations for the partition: `'owner_level'` (int value),
-         `'producer_group_id'` (int value) and `'starting_sequence_number'` (int value).
+         publish to the Event Hubs. These configurations are ignored when publishing to the Event Hubs gateway for
+         automatic routing or when using a partition key.
+        :paramtype partition_config: dict[str, ~azure.eventhub.PartitionPublishingConfiguration]
         :rtype: ~azure.eventhub.aio.EventHubProducerClient
 
         .. admonition:: Example:
@@ -370,6 +369,10 @@ class EventHubProducerClient(ClientBaseAsync):
                 :caption: Create EventDataBatch object within limited size
 
         """
+        if self._config.enable_idempotent_partitions and partition_id is None:
+            raise ValueError("The EventDataBatch object must have the partition_id set when performing "
+                             "idempotent publishing. Please create an EventDataBatch object with partition_id.")
+
         if not self._max_message_size_on_link:
             await self._get_max_mesage_size()
 
@@ -439,7 +442,7 @@ class EventHubProducerClient(ClientBaseAsync):
         """Get the information about the state of publishing for a partition as observed by
         the `EventHubProducerClient`. This data can always be read, but will only be populated with
         information relevant to the active features for the producer client.
-            - `is_idempotent_publishing_enabled` (bool)
+            - `enable_idempotent_publishing` (bool)
             - `partition_id` (str)
             - `last_published_sequence_number` (Optional[int])
             - `producer_group_id` (Optional[int])
@@ -450,7 +453,7 @@ class EventHubProducerClient(ClientBaseAsync):
         """
         # pylint:disable=protected-access
         output = {
-            'is_idempotent_publishing_enabled': self._config.enable_idempotent_partitions,
+            'enable_idempotent_publishing': self._config.enable_idempotent_partitions,
             'partition_id': partition_id,
             'last_published_sequence_number': None,
             'producer_group_id': None,
