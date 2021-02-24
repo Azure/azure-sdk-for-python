@@ -335,6 +335,124 @@ class FormRecognizerClient(FormRecognizerClientBase):
                     "only available for API version V2_1_PREVIEW and up"
                 )
             raise e
+    
+    @distributed_trace
+    def begin_recognize_id_documents(self, id_document, **kwargs):
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
+        """Extract field text and semantic values from a given ID document. 
+        The input document must be of one of the supported content types - 'application/pdf', 
+        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'. 
+        Alternatively, use 'application/json' type to specify the location (Uri) of the
+        document to be analyzed.
+
+        See fields found on an ID document here:
+        https://aka.ms/formrecognizer/TODO
+
+        :param id_document: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
+        :type id_document: bytes or IO[bytes]
+        :keyword bool include_field_elements:
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
+        :keyword content_type: Content-type of the body sent to the API. Content-type is
+            auto-detected, but can be overridden by passing this keyword argument. For options,
+            see :class:`~azure.ai.formrecognizer.FormContentType`.
+        :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *begin_recognize_id_documents* client method
+        
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_recognize_id_documents.py
+                :start-after: [START recognize_id_documents]
+                :end-before: [END recognize_id_documents]
+                :language: python
+                :dedent: 8
+                :caption: Recognize ID document fields.
+        """
+        content_type = kwargs.pop("content_type", None)
+        if content_type == "application/json":
+            raise TypeError(
+                "Call begin_recognize_id_documents_from_url() to analyze an ID document from a URL."
+            )
+        if content_type is None and kwargs.get("continuation_token", None) is None:
+            content_type = get_content_type(id_document)
+
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        try:
+            return self._client.begin_analyze_id_document_async(  # type: ignore
+                file_stream=id_document,
+                content_type=content_type,
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._prebuilt_callback),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_id_document_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_id_documents' is only available for API version V2_1_PREVIEW and up"
+                )
+            raise e
+
+
+    @distributed_trace
+    def begin_recognize_id_documents_from_url(self, id_document_url, **kwargs):
+        # type: (str, Any) -> LROPoller[List[RecognizedForm]]
+        """Extract field text and semantic values from a given ID document. 
+        The input document must be the location (URL) of the ID document to be analyzed.
+
+        See fields found on an ID document here:
+        https://aka.ms/formrecognizer/TODO
+
+        :param str id_document_url: The URL of the ID document to analyze. The input must be a valid, encoded URL
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
+        :keyword bool include_field_elements:
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *begin_recognize_id_documents_from_url* client method
+        """
+
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        try:
+            return self._client.begin_analyze_id_document_async(  # type: ignore
+                file_stream={"source": id_document_url},
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._prebuilt_callback),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_id_document_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_id_documents_from_url' is "
+                    "only available for API version V2_1_PREVIEW and up"
+                )
+            raise e
 
     @distributed_trace
     def begin_recognize_invoices(self, invoice, **kwargs):
