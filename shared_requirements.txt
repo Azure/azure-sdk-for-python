@@ -162,7 +162,7 @@ opentelemetry-sdk==0.17b0
 #override azure-eventhub-checkpointstoreblob azure-core<2.0.0,>=1.10.0
 #override azure-eventhub-checkpointstoreblob-aio azure-core<2.0.0,>=1.10.0
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
-#override azure-eventhub uamqp>=1.2.14,<2.0.0
+#override azure-eventhub uamqp>=1.2.15,<2.0.0
 #override azure-appconfiguration msrest>=0.6.10
 #override azure-servicebus uamqp>=1.2.13,<2.0.0
 #override azure-servicebus msrest>=0.6.17,<2.0.0
