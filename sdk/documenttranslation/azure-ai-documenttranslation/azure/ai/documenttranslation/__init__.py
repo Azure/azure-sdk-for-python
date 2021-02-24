@@ -11,16 +11,15 @@ from ._generated.models import (
 )
 from ._api_version import DocumentTranslationVersion
 from ._models import (
-    StorageSourceInput,
-    StorageTargetInput,
+    StorageTarget,
     BatchStatusDetail,
     DocumentStatusDetail,
     DocumentTranslationError,
     TranslationGlossary,
-    BatchDocumentInput,
-    StatusSummary,
+    BatchTranslationInput,
     FileFormat
 )
+from ._polling import DocumentTranslationPoller
 
 __VERSION__ = VERSION
 
@@ -28,14 +27,13 @@ __VERSION__ = VERSION
 __all__ = [
     "DocumentTranslationClient",
     "DocumentTranslationVersion",
-    "BatchDocumentInput",
+    "BatchTranslationInput",
     "TranslationGlossary",
     "StorageInputType",
-    "StatusSummary",
     "FileFormat",
-    "StorageSourceInput",
-    "StorageTargetInput",
+    "StorageTarget",
     "BatchStatusDetail",
     "DocumentStatusDetail",
-    "DocumentTranslationError"
+    "DocumentTranslationError",
+    "DocumentTranslationPoller"
 ]

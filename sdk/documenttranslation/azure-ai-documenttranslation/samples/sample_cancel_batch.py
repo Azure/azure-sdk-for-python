@@ -10,9 +10,8 @@ def sample_cancel_batch():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
-        BatchDocumentInput,
-        StorageSourceInput,
-        StorageTargetInput
+        BatchTranslationInput,
+        StorageTarget
     )
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
@@ -23,14 +22,11 @@ def sample_cancel_batch():
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
     batch = [
-        BatchDocumentInput(
-            source=StorageSourceInput(
-                source_url=source_container_url,
-                language="en",
-                prefix="document_2021"
-            ),
+        BatchTranslationInput(
+            source_url=source_container_url,
+            source_language="en",
             targets=[
-                StorageTargetInput(
+                StorageTarget(
                     target_url=target_container_url_es,
                     language="es"
                 )
@@ -41,13 +37,13 @@ def sample_cancel_batch():
 
     poller = client.begin_batch_translation(batch)
 
-    batch_detail = client.get_batch_status(poller)  # type: BatchStatusDetail
+    batch_detail = client.get_batch_status(poller.batch_id)  # type: BatchStatusDetail
 
     print("Batch status: {}".format(batch_detail.status))
-    print("Number of translations on documents: {}".format(batch_detail.summary.total))
+    print("Number of translations on documents: {}".format(batch_detail.documents_total_count))
 
-    client.cancel_batch(poller)
-    detail = client.get_batch_status(poller)  # type: BatchStatusDetail
+    client.cancel_batch(batch_detail.id)
+    detail = client.get_batch_status(batch_detail.id)  # type: BatchStatusDetail
 
     if detail.status in ["Cancelled", "Cancelling"]:
         print("We cancelled batch with ID: {}".format(detail.id))

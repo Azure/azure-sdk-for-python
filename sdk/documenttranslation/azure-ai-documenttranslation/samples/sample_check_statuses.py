@@ -11,9 +11,8 @@ def sample_batch_translation():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
-        BatchDocumentInput,
-        StorageSourceInput,
-        StorageTargetInput
+        BatchTranslationInput,
+        StorageTarget
     )
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
@@ -25,30 +24,28 @@ def sample_batch_translation():
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
     batch = [
-        BatchDocumentInput(
-            source=StorageSourceInput(
-                source_url=source_container_url,
-                language="en",
-                prefix="document_2021"
-            ),
+        BatchTranslationInput(
+            source_url=source_container_url,
+            source_language="en",
             targets=[
-                StorageTargetInput(
+                StorageTarget(
                     target_url=target_container_url_es,
                     language="es"
                 ),
-                StorageTargetInput(
+                StorageTarget(
                     target_url=target_container_url_fr,
                     language="fr"
                 )
             ],
-            storage_type="folder"
+            storage_type="folder",
+            prefix="document_2021"
         )
     ]
 
     poller = client.begin_batch_translation(batch)
 
     while True:
-        batch_detail = client.get_batch_status(poller)  # type: BatchStatusDetail
+        batch_detail = client.get_batch_status(poller.batch_id)  # type: BatchStatusDetail
         if batch_detail.status in ["NotStarted", "Running"]:
             time.sleep(5)
             continue
@@ -61,7 +58,7 @@ def sample_batch_translation():
 
         if batch_detail.status == "Succeeded":
             print("We translated our documents!")
-            if batch_detail.summary.failed > 0:
+            if batch_detail.documents_failed_count > 0:
                 check_documents(client, batch_detail.id)
             break
 
@@ -70,7 +67,7 @@ def check_documents(client, batch_id):
     from azure.core.exceptions import ResourceNotFoundError
 
     try:
-        doc_statuses = client.list_documents_statuses(batch_id)  # type: ItemPaged[DocumentStatusDetail]
+        doc_statuses = client.list_statuses_of_documents(batch_id)  # type: ItemPaged[DocumentStatusDetail]
     except ResourceNotFoundError as err:
         print("Failed to process any documents in source/target container.")
         raise err

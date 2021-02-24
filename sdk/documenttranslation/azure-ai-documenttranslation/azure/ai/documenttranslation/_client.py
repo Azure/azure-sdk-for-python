@@ -13,7 +13,7 @@ from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.credentials import AzureKeyCredential, TokenCredential
-    from ._models import BatchStatusDetail, DocumentStatusDetail, BatchDocumentInput, FileFormat
+    from ._models import BatchStatusDetail, DocumentStatusDetail, BatchTranslationInput, FileFormat
 
 
 class DocumentTranslationClient(object):
@@ -47,11 +47,11 @@ class DocumentTranslationClient(object):
 
     @distributed_trace
     def begin_batch_translation(self, inputs, **kwargs):
-        # type: (List[BatchDocumentInput], **Any) -> LROPoller[BatchStatusDetail]
+        # type: (List[BatchTranslationInput], **Any) -> LROPoller[BatchStatusDetail]
         """
 
         :param inputs:
-        :type inputs: List[~azure.ai.documenttranslation.BatchDocumentInput]
+        :type inputs: List[~azure.ai.documenttranslation.BatchTranslationInput]
         :return: LROPoller
         :rtype: ~azure.core.polling.LROPoller[BatchStatusDetail]
         """
@@ -64,34 +64,30 @@ class DocumentTranslationClient(object):
 
     @distributed_trace
     def get_batch_status(self, batch_id, **kwargs):
-        # type: (Union[LROPoller, str], **Any) -> BatchStatusDetail
+        # type: (str, **Any) -> BatchStatusDetail
         """
 
-        :param batch_id: guid id for batch or poller object
-        :type batch_id: Union[~azure.core.polling.LROPoller, str]
+        :param batch_id: guid id for batch
+        :type batch_id: str
         :rtype: ~azure.ai.documenttranslation.BatchStatusDetail
         """
-        if isinstance(batch_id, LROPoller):
-            batch_id = batch_id.batch_id
 
         return self._client.document_translation.get_operation_status(batch_id, **kwargs)
 
     @distributed_trace
     def cancel_batch(self, batch_id, **kwargs):
-        # type: (Union[LROPoller, str], **Any) -> None
+        # type: (str, **Any) -> None
         """
 
-        :param batch_id: guid id for batch or poller object
-        :type batch_id: Union[~azure.core.polling.LROPoller, str]
+        :param batch_id: guid id for batch
+        :type batch_id: str
         :rtype: None
         """
-        if isinstance(batch_id, LROPoller):
-            batch_id = batch_id.batch_id
 
         self._client.document_translation.cancel_operation(batch_id, **kwargs)
 
     @distributed_trace
-    def list_batches(self, **kwargs):
+    def list_statuses_of_batches(self, **kwargs):
         # type: (**Any) -> ItemPaged[BatchStatusDetail]
         """
 
@@ -102,28 +98,26 @@ class DocumentTranslationClient(object):
         return self._client.document_translation.get_operations(**kwargs)
 
     @distributed_trace
-    def list_documents_statuses(self, batch_id, **kwargs):
-        # type: (Union[LROPoller, str], **Any) -> ItemPaged[DocumentStatusDetail]
+    def list_statuses_of_documents(self, batch_id, **kwargs):
+        # type: (str, **Any) -> ItemPaged[DocumentStatusDetail]
         """
 
-        :param batch_id: guid id for batch or poller object
-        :type batch_id: Union[~azure.core.polling.LROPoller, str]
+        :param batch_id: guid id for batch
+        :type batch_id: str
         :keyword int results_per_page:
         :keyword int skip:
         :rtype: ~azure.core.paging.ItemPaged[DocumentStatusDetail]
         """
-        if isinstance(batch_id, LROPoller):
-            batch_id = batch_id.batch_id
 
         return self._client.document_translation.get_operation_documents_status(batch_id, **kwargs)
 
     @distributed_trace
     def get_document_status(self, batch_id, document_id, **kwargs):
-        # type: (Union[LROPoller, str], str, **Any) -> DocumentStatusDetail
+        # type: (str, str, **Any) -> DocumentStatusDetail
         """
 
-        :param batch_id: guid id for batch or poller object
-        :type batch_id: Union[~azure.core.polling.LROPoller, str]
+        :param batch_id: guid id for batch
+        :type batch_id: str
         :param document_id: guid id for document
         :type document_id: str
         :rtype: ~azure.ai.documenttranslation.DocumentStatusDetail

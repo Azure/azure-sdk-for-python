@@ -10,9 +10,8 @@ def batch_translation_with_storage():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
-        BatchDocumentInput,
-        StorageSourceInput,
-        StorageTargetInput
+        BatchTranslationInput,
+        StorageTarget
     )
     from azure.storage.blob import ContainerClient, generate_container_sas, ContainerSasPermissions
 
@@ -58,18 +57,16 @@ def batch_translation_with_storage():
     target_container_url = target_storage_endpoint + "/" + target_storage_container_name + "?" + target_container_sas
 
     batch = [
-        BatchDocumentInput(
-            source=StorageSourceInput(
-                source_url=source_container_url,
-                language="en",
-                prefix="document"
-            ),
+        BatchTranslationInput(
+            source_url=source_container_url,
+            source_language="en",
             targets=[
-                StorageTargetInput(
+                StorageTarget(
                     target_url=target_container_url,
                     language="es"
                 )
-            ]
+            ],
+            prefix="document"
         )
     ]
 
@@ -78,7 +75,7 @@ def batch_translation_with_storage():
     batch_detail = poller.result()
     if batch_detail.status == "Succeeded":
         print("We translated our documents!")
-        if batch_detail.summary.failed > 0:
+        if batch_detail.documents_failed_count > 0:
             check_documents(batch_client, batch_detail.id)
 
     if batch_detail.status in ["Failed", "ValidationFailed"]:
@@ -104,7 +101,7 @@ def check_documents(client, batch_id):
     from azure.core.exceptions import ResourceNotFoundError
 
     try:
-        doc_statuses = client.list_documents_statuses(batch_id)  # type: ItemPaged[DocumentStatusDetail]
+        doc_statuses = client.list_statuses_of_documents(batch_id)  # type: ItemPaged[DocumentStatusDetail]
     except ResourceNotFoundError as err:
         print("Failed to process any documents in source/target container.")
         raise err
