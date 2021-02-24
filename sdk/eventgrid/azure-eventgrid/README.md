@@ -2,7 +2,7 @@
 
 Azure Event Grid is a fully-managed intelligent event routing service that allows for uniform event consumption using a publish-subscribe model.
 
-[Source code][python-eg-src] | [Package (PyPI)][python-eg-pypi] | [API reference documentation][python-eg-ref-docs]| [Product documentation][python-eg-product-docs] | [Samples][python-eg-samples]| [Changelog][python-eg-changelog]
+[Source code][python-eg-src] | [Package (PyPI)][python-eg-pypi] | [API reference documentation][python-eg-ref-docs] | [Product documentation][python-eg-product-docs] | [Samples][python-eg-samples] | [Changelog][python-eg-changelog]
 
 ## Getting started
 
@@ -38,29 +38,47 @@ In order to interact with the Event Grid service, you will need to create an ins
 An **endpoint** and **credential** are necessary to instantiate the client object.
 
 #### Looking up the endpoint
-You can find the endpoint and the hostname on the Azure portal.
+You can find the topic endpoint within the Event Grid Topic resource on the Azure portal. This will look like:
+`"https://<event-grid-topic-name>.<topic-location>.eventgrid.azure.net/api/events"`
+The topic hostname is the URL host component of this endpoint, which will be in the format:
+`"https://<event-grid-topic-name>.<topic-location>.eventgrid.azure.net"`
 
 #### Create the client with AzureKeyCredential
 
-To use an API key as the `credential` parameter,
+To use an Access key as the `credential` parameter,
 pass the key as a string into an instance of [AzureKeyCredential][azure-key-credential].
+
+> **Note:** The Access Key may be found in the azure portal in the "Access Keys" menu of the Event Grid Topic resource.  They may also be obtained via the azure CLI, or the `azure-mgmt-eventgrid` library. A guide for getting access keys can be found [here](https://docs.microsoft.com/azure/event-grid/get-access-keys).
 
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient
 
 endpoint = "https://<name>.<region>.eventgrid.azure.net"
-credential = AzureKeyCredential("<api_key>")
+credential = AzureKeyCredential("<access_key>")
 eg_publisher_client = EventGridPublisherClient(endpoint, credential)
 ```
+> **Note:** A client may also be authenticated via SAS signature, using the `AzureSasCredential`. A sample demonstrating this, is available [here][python-eg-sample-publish-sas-signature] ([async_version][python-eg-sample-publish-sas-signature-async]).
+
+> **Note:** The `generate_sas` method can be used to generate a shared access signature. A sample demonstrating this can be seen [here][python-eg-generate-sas].
 
 ## Key concepts
 
 Information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc]
 
+### Topic
+A channel within the EventGrid service to send events.  Event must be of [CloudEvent](https://docs.microsoft.com/azure/event-grid/cloud-event-schema) or [EventGridEvent](https://docs.microsoft.com/azure/event-grid/event-schema) schema which is decided at creation time. In the case of wrong event type being used, errors will be raised.
+
+### Domain
+An event domain is a management tool for large numbers of Event Grid topics related to the same application. They allow you to publish events to thousands of topics. Domains also give you authorization and authentication control over each topic. For more explanation, visit [Event domain overview](https://docs.microsoft.com/azure/event-grid/event-domains).
+
+When you create an event domain, you're given a publishing endpoint similar to if you had created a topic in Event Grid. The only difference is that you must specify the topic you'd like the event to be delivered to.
+
 ### EventGridPublisherClient
 `EventGridPublisherClient` provides operations to send event data to topic hostname specified during client initialization.
 CloudEvents and EventGridEvents can be sent either as a single event or a list of respective typed objects or their equivalent dict representations. To send a custom schema, a dict representation can be used. Please have a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples) for detailed examples.
+
+ **Note:** It is important to know if your topic supports Cloud or EventGrid events before publishing. If you send to a topic that does not support the schema of the event you are sending, send() will throw an exception.
 
 ## Examples
 
@@ -180,6 +198,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_subscription]: https://azure.microsoft.com/free/
 
+[python-eg-sample-publish-sas-signature]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_authentication.py
+[python-eg-sample-publish-sas-signature-async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples/async_samples/sample_authentication_async.py
+[python-eg-generate-sas]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_generate_sas.py
 [python-eg-sample-egevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_eg_events_to_a_topic.py
 [python-eg-sample-egevent-to-domain]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_eg_events_to_a_domain.py
 [python-eg-sample-send-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py
