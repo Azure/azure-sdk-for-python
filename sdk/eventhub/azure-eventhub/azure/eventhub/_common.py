@@ -338,7 +338,9 @@ class EventDataBatch(object):
     **Please use the create_batch method of EventHubProducerClient
     to create an EventDataBatch object instead of instantiating an EventDataBatch object directly.**
 
-    **WARNING: Updating the value of the instance variable `max_size_in_bytes` on an instantiated EventDataBatch object is HIGHLY DISCOURAGED. The updated `max_size_in_bytes` value may conflict with the maximum size of events allowed by the Event Hubs service and result in a sending failure.**
+    **WARNING: Updating the value of the instance variable max_size_in_bytes on an instantiated EventDataBatch object
+    is HIGHLY DISCOURAGED. The updated max_size_in_bytes value may conflict with the maximum size of events allowed
+    by the Event Hubs service and result in a sending failure.**
 
     :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
     :param str partition_id: The specific partition ID to send to.
