@@ -22,7 +22,7 @@ class _FixedOffset(datetime.tzinfo):
         return self.__offset
 
     def tzname(self, dt):
-        return str(self.__offset.total_seconds()/3600)
+        return str(self.__offset.total_seconds() / 3600)
 
     def __repr__(self):
         return "<FixedOffset {}>".format(self.tzname(None))
@@ -30,25 +30,36 @@ class _FixedOffset(datetime.tzinfo):
     def dst(self, dt):
         return datetime.timedelta(0)
 
+
+try:
+    from datetime import timezone
+
+    TZ_UTC = timezone.utc  # type: ignore
+except ImportError:
+    TZ_UTC = _FixedOffset(0)  # type: ignore
+
+
 def _convert_to_isoformat(date_time):
     """Deserialize a date in RFC 3339 format to datetime object.
     Check https://tools.ietf.org/html/rfc3339#section-5.8 for examples.
     """
-    if date_time[-1] == 'Z':
+    if date_time[-1] == "Z":
         delta = 0
         timestamp = date_time[:-1]
     else:
         timestamp = date_time[:-6]
         sign, offset = date_time[-6], date_time[-5:]
-        delta = int(sign+offset[:1])*60 + int(sign+offset[-2:])
+        delta = int(sign + offset[:1]) * 60 + int(sign + offset[-2:])
 
     try:
-        deserialized = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f')
+        deserialized = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%f")
     except ValueError:
-        deserialized = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S')
+        deserialized = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S")
 
     try:
-        deserialized = deserialized.replace(tzinfo=datetime.timezone(datetime.timedelta(minutes=delta)))
+        deserialized = deserialized.replace(
+            tzinfo=datetime.timezone(datetime.timedelta(minutes=delta))
+        )
     except AttributeError:
         deserialized = deserialized.replace(tzinfo=_FixedOffset(delta))
 
