@@ -11,10 +11,10 @@ from msrest.serialization import TZ_UTC
 from uuid import uuid4
 
 from azure.communication.identity import CommunicationIdentityClient
+from azure.communication.chat._shared.user_credential_async import CommunicationTokenCredential
+from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.chat.aio import (
-    ChatClient,
-    CommunicationTokenCredential,
-    CommunicationTokenRefreshOptions
+    ChatClient
 )
 from azure.communication.chat import (
     ChatThreadParticipant
@@ -68,8 +68,8 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
             display_name='name',
             share_history_time=share_history_time
         )]
-        chat_thread_client = await self.chat_client.create_chat_thread(topic, participants, repeatability_request_id)
-        self.thread_id = chat_thread_client.thread_id
+        create_chat_thread_result = await self.chat_client.create_chat_thread(topic, participants, repeatability_request_id)
+        self.thread_id = create_chat_thread_result.chat_thread.id
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test

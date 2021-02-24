@@ -12,9 +12,10 @@ from azure.core.exceptions import HttpResponseError
 from azure.communication.chat import (
     ChatThreadClient,
     ChatThreadParticipant,
-    CommunicationUserIdentifier,
-    CommunicationTokenCredential,
     ChatMessageType
+)
+from azure.communication.chat._shared.models import(
+    CommunicationUserIdentifier
 )
 from unittest_helpers import mock_response
 
@@ -25,7 +26,7 @@ except ImportError:  # python < 3.3
 
 class TestChatThreadClient(unittest.TestCase):
     @classmethod
-    @patch('azure.communication.chat.CommunicationTokenCredential')
+    @patch('azure.communication.identity._shared.user_credential.CommunicationTokenCredential')
     def setUpClass(cls, credential):
         credential.get_token = Mock(return_value=AccessToken("some_token", datetime.now().replace(tzinfo=TZ_UTC)))
         TestChatThreadClient.credential = credential

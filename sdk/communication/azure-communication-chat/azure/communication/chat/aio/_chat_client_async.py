@@ -128,7 +128,7 @@ class ChatClient(object):
         **kwargs
     ) -> ChatThreadClient:
 
-        # type: (...) -> ChatThreadClient
+        # type: (...) -> CreateChatThreadResult
 
         """Creates a chat thread.
 
@@ -143,8 +143,8 @@ class ChatClient(object):
          representing a client-generated, globally unique for all time, identifier for the request. If not
          specified, a new unique id would be generated.
         :type repeatability_request_id: str
-        :return: ChatThreadClient
-        :rtype: ~azure.communication.chat.aio.ChatThreadClient
+        :return: CreateChatThreadResult
+        :rtype: ~azure.communication.chat.CreateChatThreadResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -180,13 +180,8 @@ class ChatClient(object):
                 errors.append('participant ' + participant.target +
                 ' failed to join thread due to: ' + participant.message)
             raise RuntimeError(errors)
-        thread_id = create_chat_thread_result.chat_thread.id
-        return ChatThreadClient(
-            endpoint=self._endpoint,
-            credential=self._credential,
-            thread_id=thread_id,
-            **kwargs
-        )
+
+        return create_chat_thread_result
 
     @distributed_trace_async
     async def get_chat_thread(

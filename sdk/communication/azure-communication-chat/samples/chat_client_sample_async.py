@@ -54,7 +54,9 @@ class ChatClientSamplesAsync(object):
 
     async def create_thread_async(self):
         from datetime import datetime
-        from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        from azure.communication.chat.aio import ChatClient
+        from azure.communication.chat._shared.user_credential_async import CommunicationTokenCredential
+        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
         from azure.communication.chat import ChatThreadParticipant, CommunicationUserIdentifier
 
         refresh_options = CommunicationTokenRefreshOptions(self.token)
@@ -68,16 +70,16 @@ class ChatClientSamplesAsync(object):
                 share_history_time=datetime.utcnow()
             )]
             # creates a new chat_thread everytime
-            chat_thread_client = await chat_client.create_chat_thread(topic, participants)
+            create_chat_thread_result = await chat_client.create_chat_thread(topic, participants)
 
             # creates a new chat_thread if not exists
             repeatability_request_id = 'b66d6031-fdcc-41df-8306-e524c9f226b8'  # unique identifier
-            chat_thread_client_w_repeatability_id = await chat_client.create_chat_thread(topic,
+            create_chat_thread_result_w_repeatability_id = await chat_client.create_chat_thread(topic,
                                                                                          participants,
                                                                                          repeatability_request_id)
             # [END create_thread]
 
-            self._thread_id = chat_thread_client.thread_id
+            self._thread_id = create_chat_thread_result.chat_thread.id
             print("thread created, id: " + self._thread_id)
 
     def get_chat_thread_client(self):

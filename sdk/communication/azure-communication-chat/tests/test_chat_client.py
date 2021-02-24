@@ -11,10 +11,12 @@ from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.communication.chat import (
     ChatClient,
-    ChatThreadParticipant,
-    CommunicationUserIdentifier,
-    CommunicationTokenCredential
+    ChatThreadParticipant
 )
+from azure.communication.chat._shared.models import(
+    CommunicationUserIdentifier
+)
+
 from unittest_helpers import mock_response
 from datetime import datetime
 
@@ -26,7 +28,7 @@ except ImportError:  # python < 3.3
 
 class TestChatClient(unittest.TestCase):
     @classmethod
-    @patch('azure.communication.chat.CommunicationTokenCredential')
+    @patch('azure.communication.identity._shared.user_credential.CommunicationTokenCredential')
     def setUpClass(cls, credential):
         credential.get_token = Mock(return_value=AccessToken("some_token", datetime.now().replace(tzinfo=TZ_UTC)))
         TestChatClient.credential = credential
@@ -56,13 +58,13 @@ class TestChatClient(unittest.TestCase):
             share_history_time=datetime.utcnow()
         )]
         try:
-            chat_thread_client = chat_client.create_chat_thread(topic, participants)
+            create_chat_thread_result = chat_client.create_chat_thread(topic, participants)
         except:
             raised = True
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        assert chat_thread_client.thread_id == thread_id
+        assert create_chat_thread_result.chat_thread.id == thread_id
 
     def test_create_chat_thread_w_repeatability_request_id(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
@@ -90,7 +92,7 @@ class TestChatClient(unittest.TestCase):
             share_history_time=datetime.utcnow()
         )]
         try:
-            chat_thread_client = chat_client.create_chat_thread(topic=topic,
+            create_chat_thread_result = chat_client.create_chat_thread(topic=topic,
                                                                 thread_participants=participants,
                                                                 repeatability_request_id=repeatability_request_id)
         except:
@@ -98,7 +100,7 @@ class TestChatClient(unittest.TestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        assert chat_thread_client.thread_id == thread_id
+        assert create_chat_thread_result.chat_thread.id == thread_id
 
     def test_create_chat_thread_raises_error(self):
         def mock_send(*_, **__):

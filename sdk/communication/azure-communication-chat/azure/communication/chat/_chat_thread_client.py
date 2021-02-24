@@ -479,14 +479,14 @@ class ChatThreadClient(object):
             thread_participant,  # type: ChatThreadParticipant
             **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> AddChatParticipantsResult
         """Adds single thread participant to a thread. If participant already exist, no change occurs.
 
         :param thread_participant: Required. Single thread participant to be added to the thread.
         :type thread_participant: ~azure.communication.chat.ChatThreadParticipant
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: AddChatParticipantsResult, or the result of cls(response)
+        :rtype: ~azure.communication.chat.AddChatParticipantsResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -515,14 +515,14 @@ class ChatThreadClient(object):
         thread_participants,  # type: list[ChatThreadParticipant]
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> AddChatParticipantsResult
         """Adds thread participants to a thread. If participants already exist, no change occurs.
 
         :param thread_participants: Required. Thread participants to be added to the thread.
         :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: AddChatParticipantsResult, or the result of cls(response)
+        :rtype: ~azure.communication.chat.AddChatParticipantsResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

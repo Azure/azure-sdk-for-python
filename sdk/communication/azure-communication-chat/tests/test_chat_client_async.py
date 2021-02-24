@@ -7,8 +7,9 @@ from azure.core.credentials import AccessToken
 from azure.communication.chat.aio import (
     ChatClient
 )
-from azure.communication.chat import (
-    ChatThreadParticipant,
+from azure.communication.chat import ChatThreadParticipant
+
+from azure.communication.chat._shared.models import(
     CommunicationUserIdentifier
 )
 from unittest_helpers import mock_response
@@ -49,8 +50,8 @@ async def test_create_chat_thread():
         display_name='name',
         share_history_time=datetime.utcnow()
     )]
-    chat_thread_client = await chat_client.create_chat_thread(topic, participants)
-    assert chat_thread_client.thread_id == thread_id
+    create_chat_thread_result = await chat_client.create_chat_thread(topic, participants)
+    assert create_chat_thread_result.chat_thread.id == thread_id
 
 @pytest.mark.asyncio
 async def test_create_chat_thread_w_repeatability_request_id():
@@ -75,10 +76,10 @@ async def test_create_chat_thread_w_repeatability_request_id():
         display_name='name',
         share_history_time=datetime.utcnow()
     )]
-    chat_thread_client = await chat_client.create_chat_thread(topic=topic,
+    create_chat_thread_result = await chat_client.create_chat_thread(topic=topic,
                                                               thread_participants=participants,
                                                               repeatability_request_id=repeatability_request_id)
-    assert chat_thread_client.thread_id == thread_id
+    assert create_chat_thread_result.chat_thread.id == thread_id
 
 @pytest.mark.asyncio
 async def test_create_chat_thread_raises_error():

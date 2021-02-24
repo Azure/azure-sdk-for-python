@@ -9,8 +9,10 @@ from msrest.serialization import TZ_UTC
 from azure.communication.chat.aio import ChatThreadClient
 from azure.communication.chat import (
     ChatThreadParticipant,
-    CommunicationUserIdentifier,
     ChatMessageType
+)
+from azure.communication.chat._shared.models import(
+    CommunicationUserIdentifier
 )
 from unittest_helpers import mock_response
 from azure.core.exceptions import HttpResponseError

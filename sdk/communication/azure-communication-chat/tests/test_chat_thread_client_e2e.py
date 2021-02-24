@@ -11,10 +11,10 @@ from devtools_testutils import AzureTestCase
 from msrest.serialization import TZ_UTC
 
 from azure.communication.identity import CommunicationIdentityClient
+from azure.communication.chat._shared.user_credential import CommunicationTokenCredential
+from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.chat import (
     ChatClient,
-    CommunicationTokenCredential,
-    CommunicationTokenRefreshOptions,
     ChatThreadParticipant,
     ChatMessageType
 )
@@ -81,7 +81,8 @@ class ChatThreadClientTest(CommunicationTestCase):
             display_name='name',
             share_history_time=share_history_time
         )]
-        self.chat_thread_client = self.chat_client.create_chat_thread(topic, participants)
+        create_chat_thread_result = self.chat_client.create_chat_thread(topic, participants)
+        self.chat_thread_client = self.chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
         self.thread_id = self.chat_thread_client.thread_id
 
     def _create_thread_w_two_users(
@@ -104,7 +105,8 @@ class ChatThreadClientTest(CommunicationTestCase):
                 share_history_time=share_history_time
             )
         ]
-        self.chat_thread_client = self.chat_client.create_chat_thread(topic, participants)
+        create_chat_thread_result = self.chat_client.create_chat_thread(topic, participants)
+        self.chat_thread_client = self.chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
         self.thread_id = self.chat_thread_client.thread_id
 
     def _send_message(self):

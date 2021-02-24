@@ -123,7 +123,7 @@ class ChatClient(object):
         repeatability_request_id=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> ChatThreadClient
+        # type: (...) -> CreateChatThreadResult
         """Creates a chat thread.
 
         :param topic: Required. The thread topic.
@@ -137,8 +137,8 @@ class ChatClient(object):
          representing a client-generated, globally unique for all time, identifier for the request. If not
          specified, a new unique id would be generated.
         :type repeatability_request_id: str
-        :return: ChatThreadClient
-        :rtype: ~azure.communication.chat.ChatThreadClient
+        :return: CreateChatThreadResult
+        :rtype: ~azure.communication.chat.CreateChatThreadResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -148,7 +148,7 @@ class ChatClient(object):
                 :end-before: [END create_thread]
                 :language: python
                 :dedent: 8
-                :caption: Creating ChatThreadClient by creating a new chat thread.
+                :caption: Creating ChatThread by creating a new chat thread.
         """
         if not topic:
             raise ValueError("topic cannot be None.")
@@ -174,13 +174,8 @@ class ChatClient(object):
                 errors.append('participant ' + participant.target +
                 ' failed to join thread due to: ' + participant.message)
             raise RuntimeError(errors)
-        thread_id = create_chat_thread_result.chat_thread.id
-        return ChatThreadClient(
-            endpoint=self._endpoint,
-            credential=self._credential,
-            thread_id=thread_id,
-            **kwargs
-        )
+
+        return create_chat_thread_result
 
     @distributed_trace
     def get_chat_thread(

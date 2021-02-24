@@ -110,6 +110,12 @@ class ChatMessage(object):
 
     @classmethod
     def _from_generated(cls, chat_message):
+
+        sender_communication_identifier = chat_message.sender_communication_identifier
+        if sender_communication_identifier is not None:
+            sender_communication_identifier = CommunicationUserIdentifierConverter._from_identifier_model(
+                chat_message.sender_communication_identifier)  # pylint:disable=protected-access
+
         return cls(
             id=chat_message.id,
             type=cls._get_message_type(chat_message.type),
@@ -118,8 +124,7 @@ class ChatMessage(object):
             content=ChatMessageContent._from_generated(chat_message.content), # pylint:disable=protected-access
             sender_display_name=chat_message.sender_display_name,
             created_on=chat_message.created_on,
-            sender_communication_identifier=CommunicationUserIdentifierConverter._from_identifier_model(
-                chat_message.sender_communication_identifier), # pylint:disable=protected-access
+            sender_communication_identifier=sender_communication_identifier,
             deleted_on=chat_message.deleted_on,
             edited_on=chat_message.edited_on
         )
@@ -159,12 +164,18 @@ class ChatMessageContent(object):
                             participants_list]  # pylint:disable=protected-access
         else:
             participants = []
+
+        initiator = chat_message_content.initiator_communication_identifier
+        # check if initiator is populated
+        if initiator is not None:
+            initiator = CommunicationUserIdentifierConverter._from_identifier_model(
+                chat_message_content.initiator_communication_identifier)  # pylint:disable=protected-access
+
         return cls(
             message=chat_message_content.message,
             topic=chat_message_content.topic,
             participants=participants,
-            initiator=CommunicationUserIdentifierConverter._from_identifier_model(
-                chat_message_content.initiator_communication_identifier)  # pylint:disable=protected-access
+            initiator=initiator
         )
 
 
@@ -198,12 +209,17 @@ class ChatThread(object):
 
     @classmethod
     def _from_generated(cls, chat_thread):
+
+        created_by = chat_thread.created_by_communication_identifier
+        if created_by is not None:
+            created_by = CommunicationUserIdentifierConverter._from_identifier_model(
+                chat_thread.created_by_communication_identifier) # pylint:disable=protected-access
+
         return cls(
             id=chat_thread.id,
             topic=chat_thread.topic,
             created_on=chat_thread.created_on,
-            created_by=CommunicationUserIdentifierConverter._from_identifier_model(
-                chat_thread.created_by_communication_identifier) # pylint:disable=protected-access
+            created_by=created_by
         )
 
 
@@ -233,9 +249,14 @@ class ChatMessageReadReceipt(object):
 
     @classmethod
     def _from_generated(cls, read_receipt):
+
+        sender = read_receipt.sender_communication_identifier
+        if sender is not None:
+            sender = CommunicationUserIdentifierConverter._from_identifier_model(
+                read_receipt.sender_communication_identifier)  # pylint:disable=protected-access
+
         return cls(
-            sender=CommunicationUserIdentifierConverter._from_identifier_model(
-                read_receipt.sender_communication_identifier),  # pylint:disable=protected-access
+            sender=sender,
             chat_message_id=read_receipt.chat_message_id,
             read_on=read_receipt.read_on
         )
