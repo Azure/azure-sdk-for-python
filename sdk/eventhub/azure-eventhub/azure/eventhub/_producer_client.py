@@ -255,6 +255,10 @@ class EventHubProducerClient(ClientBase):
         partition_id = (
             to_send_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
         )
+
+        if len(to_send_batch) == 0:
+            return
+
         send_timeout = kwargs.pop("timeout", None)
         try:
             cast(EventHubProducer, self._producers[partition_id]).send(
