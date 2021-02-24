@@ -35,27 +35,22 @@ def _convert_to_isoformat(date_time):
     """Deserialize a date in RFC 3339 format to datetime object.
     Check https://tools.ietf.org/html/rfc3339#section-5.8 for examples.
     """
-    timestamp = re.split(r"([+|-])", re.sub(r"[:]|([-](?!((\d{2}[:]\d{2})|(\d{4}))$))", '', date_time))
-    if len(timestamp) == 3:
-        time, sign, tzone = timestamp
+    if date_time[-1] == 'Z':
+        delta = 0
+        timestamp = date_time[:-1]
     else:
-        time = timestamp[0]
-        sign, tzone = None, None
+        timestamp = date_time[:-6]
+        sign, offset = date_time[-6], date_time[-5:]
+        delta = int(sign+offset[:1])*60 + int(sign+offset[-2:])
 
     try:
-        deserialized = datetime.datetime.strptime(time, "%Y%m%dT%H%M%S.%fZ")
+        deserialized = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f')
     except ValueError:
-        try:
-            deserialized = datetime.datetime.strptime(time, "%Y%m%dT%H%M%S.%f")
-        except ValueError:
-            deserialized = datetime.datetime.strptime(time, "%Y%m%dT%H%M%S")
+        deserialized = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S')
 
-    if tzone:
-        minutes = int(sign+tzone[:-2])*60 + int(sign+tzone[-2:])
-        delta = datetime.timedelta(minutes=minutes)
-        try:
-            deserialized = deserialized.replace(tzinfo=datetime.timezone(delta))
-        except AttributeError:
-            deserialized = deserialized.replace(tzinfo=_FixedOffset(minutes))
+    try:
+        deserialized = deserialized.replace(tzinfo=datetime.timezone(datetime.timedelta(minutes=delta)))
+    except AttributeError:
+        deserialized = deserialized.replace(tzinfo=_FixedOffset(delta))
 
     return deserialized
