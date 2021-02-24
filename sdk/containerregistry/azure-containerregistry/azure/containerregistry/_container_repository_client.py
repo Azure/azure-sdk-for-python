@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 
-
 class ContainerRepositoryClient(object):
 
 
@@ -28,7 +27,7 @@ class ContainerRepositoryClient(object):
         pass
 
     def get_artifact_storage_client(self):
-        # type: (...) -> ArtifactStorageClient
+        # type: (...) -> ArtifactClient
         pass
 
     def get_attributes(self):
@@ -36,10 +35,29 @@ class ContainerRepositoryClient(object):
         pass
 
     def get_manifest(self, tag_or_digest):
-        # type: (str) -> ManifestAttributes
+        # type: (str) -> ArtifactAttributes
         pass
 
     def get_tag(self, tag_name):
         # type: (str) -> TagAttributes
         pass
 
+    def list_manifests(self, **kwargs):
+        # type: (...) -> Pageable[ArtifactAttributes]
+        pass
+
+    def list_tags(self, **kwargs):
+        # type: (...) -> Pageable[TagAttributes]
+        pass
+
+    def set_manifest_permissions(self, tag_or_digest, value):
+        # type: (str, ContentPermissions) -> None
+        pass
+
+    def set_permissions(self, value):
+        # type: (ContentPermissions) -> None
+        pass
+
+    def set_tag_permissions(self, tag, permissions):
+        # type: (str, ContentPermissions) -> None
+        pass

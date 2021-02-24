@@ -50,7 +50,7 @@ class GetTagOptions(object):
         pass
 
 
-class ManifestAttributes(object):
+class ArtifactAttributes(object):
 
     def __init__(self):
         pass
