@@ -94,10 +94,10 @@ class IdempotentProducerMixin(object):
     def _populate_idempotent_event_annotations(self, event, idx):
         # pylint: disable=protected-access
         event._pending_published_sequence_number = self._starting_sequence_number + idx
-        event.message.annotations[PRODUCER_EPOCH_SYMBOL] = self._owner_level
-        event.message.annotations[PRODUCER_ID_SYMBOL] = self._producer_group_id
+        event.message.annotations[PRODUCER_EPOCH_SYMBOL] = types.AMQPShort(int(self._owner_level))
+        event.message.annotations[PRODUCER_ID_SYMBOL] = types.AMQPLong(int(self._producer_group_id))
         event.message.annotations[PRODUCER_SEQUENCE_NUMBER_SYMBOL] = \
-            event._pending_published_sequence_number
+            types.AMQPInt(int(event._pending_published_sequence_number))
 
     def _commit_idempotent_sending_events(self, event_data_batch):
         """

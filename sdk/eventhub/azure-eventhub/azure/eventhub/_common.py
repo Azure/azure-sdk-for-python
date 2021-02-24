@@ -462,9 +462,9 @@ class EventDataBatch(object):
         trace_message(event_data)
         if self._is_idempotent_batch:
             # Reserve space for producer-owned fields that correspond to the idempotent publishing, if enabled.
-            event_data.message.annotations[PRODUCER_EPOCH_SYMBOL] = MAX_SHORT
-            event_data.message.annotations[PRODUCER_ID_SYMBOL] = MAX_LONG
-            event_data.message.annotations[PRODUCER_SEQUENCE_NUMBER_SYMBOL] = MAX_INT
+            event_data.message.annotations[PRODUCER_EPOCH_SYMBOL] = types.AMQPShort(int(MAX_SHORT))
+            event_data.message.annotations[PRODUCER_ID_SYMBOL] = types.AMQPLong(int(MAX_LONG))
+            event_data.message.annotations[PRODUCER_SEQUENCE_NUMBER_SYMBOL] = types.AMQPInt(int(MAX_INT))
 
         event_data_size = event_data.message.get_message_encoded_size()
 
