@@ -1,7 +1,23 @@
 # Release History
 
-## 5.3.1 (Unreleased)
+## 5.4.0b1 (Unreleased)
 
+**New Features**
+
+- Added support for idempotent publishing which is supported by the service to endeavor to reduce the number of duplicate
+  events that are published.
+  - `EventHubProducerClient` constructor accepts two new parameters for idempotent publishing:
+    - `enable_idempotent_partitions`: A boolean value to tell the `EventHubProducerClient` whether to enable idempotency.
+    - `partition_configs`: The set of configurations that can be specified to influence publishing behavior
+     specific to the configured Event Hub partition.
+  - Introduced a new method `get_partition_publishing_properties` on `EventHubProducerClient` to inspect the information
+    about the state of publishing for a partition.
+  - Introduced a new property `published_sequence_number` on `EventData` to get the publishing sequence number assigned
+    to the event at the time it was successfully published.
+  - Introduced a new property `starting_published_sequence_number` on `EventDataBatch` to get the publishing sequence 
+    number assigned to the first event in the batch at the time the batch was successfully published.
+  - Introduced a new class `azure.eventhub.PartitionPublishingConfiguration` which is a set of configurations that can be
+    specified to influence the behavior when publishing directly to an Event Hub partition.
 
 ## 5.3.0 (2021-02-08)
 
