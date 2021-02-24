@@ -7,7 +7,6 @@
 import uuid
 from  base64 import b64decode
 from datetime import datetime
-import isodate
 
 try:
     from datetime import timezone
@@ -20,6 +19,8 @@ try:
     from typing import TYPE_CHECKING
 except ImportError:
     TYPE_CHECKING = False
+
+from azure.core._utils import _convert_to_isoformat
 
 if TYPE_CHECKING:
     from typing import Any, Dict
@@ -141,17 +142,13 @@ class CloudEvent(object):   #pylint:disable=too-many-instance-attributes
         if data and data_base64:
             raise ValueError("Invalid input. Only one of data and data_base64 must be present.")
 
-        try:
-            time = isodate.parse_datetime(event.get("time", None))
-        except AttributeError:
-            time = None
         return cls(
             id=event.get("id", None),
             source=event.get("source", None),
             type=event.get("type", None),
             specversion=event.get("specversion", None),
             data=data if data is not None else b64decode(data_base64),
-            time=time,
+            time=_convert_to_isoformat(event.get("time", None)),
             dataschema=event.get("dataschema", None),
             datacontenttype=event.get("datacontenttype", None),
             subject=event.get("subject", None),
