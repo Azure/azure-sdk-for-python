@@ -165,7 +165,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_configuration_settings(
         self, key_filter=None, label_filter=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[str], Optional[str], dict) -> AsyncItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
@@ -180,7 +180,7 @@ class AzureAppConfigurationClient:
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
-        :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
+        :rtype: :class:`AsyncItemPaged[ConfigurationSetting]`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
 
         Example
@@ -283,8 +283,12 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace_async
-    async def add_configuration_setting(self, configuration_setting, **kwargs):
-        # type: (ConfigurationSetting, dict) -> ConfigurationSetting
+    async def add_configuration_setting(
+        self,
+        configuration_setting, # type: Union[ConfigurationSetting,SecretReferenceConfigurationSetting,FeatureFlagConfigurationSetting] # pylint: disable=line-too-long
+        **kwargs # type: dict
+    ):
+        # type: (...) -> ConfigurationSetting
 
         """Add a ConfigurationSetting into the Azure App Configuration service.
 
@@ -459,7 +463,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_revisions(
         self, key_filter=None, label_filter=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], dict) -> azure.core.paging.AsyncItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[str], Optional[str], dict) -> AsyncItemPaged[ConfigurationSetting]
 
         """
         Find the ConfigurationSetting revision history.
@@ -474,7 +478,7 @@ class AzureAppConfigurationClient:
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
-        :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
+        :rtype: :class:`AsyncItemPaged[ConfigurationSetting]`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
 
         Example

@@ -203,6 +203,12 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
 
     def add_feature_filter(self, feature_filter, **kwargs):
         # type: (FeatureFilterBase) -> None
+
+        """ Add a feature filter to the ConfigurationSetting
+        :param feature_filter:
+        :type feature_filter: list[FeatureFilterBase]
+        """
+
         self.feature_filters.append(feature_filter)
 
 
@@ -327,8 +333,15 @@ class TargetingFeatureFilter(FeatureFilterBase):
         self.groups = groups or []
 
     @classmethod
-    def from_service(cls, dict_repr):
+    def from_service(cls, dict_repr, **kwargs):
         # type: (dict[str, str]) -> TargetingFeatureFilter
+
+        """Creates a TargetingFeatureFilter from the generated code call
+
+        :param dict_repr:
+        :type dict_repr: dict[str, str]
+        """
+
         return cls(
             dict_repr['Audience']['DefaultRolloutPercentage'],
             users=dict_repr['Audience']['Users'],
@@ -379,6 +392,12 @@ class TimeWindowFeatureFilter(FeatureFilterBase):
     @classmethod
     def from_service(cls, dict_repr, **kwargs):
         # type: (dict[str, str]) -> TimeWindowFeatureFilter
+
+        """Creates a TimeWindowFeatureFilter from the generated code call
+
+        :param dict_repr:
+        :type dict_repr: dict[str, str]
+        """
         return cls(
             dict_repr['Start'],
             end=dict_repr.get('End', None)
@@ -413,6 +432,12 @@ class CustomFeatureFilter(FeatureFilterBase):
     @classmethod
     def from_service(cls, dict_repr, **kwargs):
         # type: (dict[str, str]) -> CustomFeatureFilter
+
+        """Creates a CustomFeatureFilter from the generated code call
+
+        :param dict_repr:
+        :type dict_repr: dict[str, str]
+        """
         return cls(
             dict_repr['Value']
         )

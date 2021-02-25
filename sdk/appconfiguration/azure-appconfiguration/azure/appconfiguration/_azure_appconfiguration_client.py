@@ -153,7 +153,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_configuration_settings(
         self, key_filter=None, label_filter=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[str], Optional[str], dict) -> ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
@@ -168,7 +168,7 @@ class AzureAppConfigurationClient:
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
-        :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
+        :rtype: :class:`ItemPaged[ConfigurationSetting]`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
 
         Example
@@ -445,7 +445,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_revisions(
         self, key_filter=None, label_filter=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[str], Optional[str], dict) -> ItemPaged[ConfigurationSetting]
 
         """
         Find the ConfigurationSetting revision history.
@@ -460,7 +460,7 @@ class AzureAppConfigurationClient:
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
-        :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
+        :rtype: :class:`ItemPaged[ConfigurationSetting]`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
 
         Example
