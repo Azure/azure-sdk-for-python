@@ -24,15 +24,17 @@ jobs:
         architecture: 'x64'
     - bash: |
         script_path=$(pwd)
-        echo 1 $(pwd)
+        echo 111 $(pwd)
         cd ..
-        echo 2 $(pwd)
+        echo 222 $(pwd)
         git config --global user.email "PythonSdkPipelines"
         git config --global user.name "PythonSdkPipelines"
 
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
-        echo | git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8}
+        echo 333
+        echo | git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} .
         echo | ls
+        echo 444
 
         # create virtual env
         python -m venv venv-sdk
@@ -40,6 +42,7 @@ jobs:
         output_path=$(pwd)/venv-sdk
 
         echo | ls
+        echo 555
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=true
