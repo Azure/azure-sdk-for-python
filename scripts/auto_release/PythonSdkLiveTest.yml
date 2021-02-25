@@ -37,7 +37,8 @@ jobs:
         python -m venv venv-sdk
         source venv-sdk/bin/activate
         output_path=$(pwd)/venv-sdk
-        pip install packaging
+        echo | pip install packaging
+        echo | (pip list | grep packaging)
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=true
