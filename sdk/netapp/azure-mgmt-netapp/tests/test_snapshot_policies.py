@@ -1,10 +1,9 @@
 import time
-import unittest
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.netapp.models import SnapshotPolicy, HourlySchedule, DailySchedule
-from test_account import create_account, delete_account
-from setup import *
+from tests.test_account import create_account, delete_account
+from tests.setup import *
 import azure.mgmt.netapp.models
 
 TEST_SNAPSHOT_POLICY_1 = 'sdk-py-tests-snapshot-policy-1'
@@ -48,7 +47,6 @@ def wait_for_no_snapshot_policy(client, rg, account_name, snapshot_policy_name, 
             break
 
 
-@unittest.skip("skip")
 class NetAppAccountTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(NetAppAccountTestCase, self).setUp()
