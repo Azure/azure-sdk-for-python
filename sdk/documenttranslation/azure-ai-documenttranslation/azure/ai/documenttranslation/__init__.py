@@ -19,7 +19,6 @@ from ._models import (
     BatchTranslationInput,
     FileFormat
 )
-from ._polling import DocumentTranslationPoller
 
 __VERSION__ = VERSION
 
@@ -35,5 +34,4 @@ __all__ = [
     "BatchStatusDetail",
     "DocumentStatusDetail",
     "DocumentTranslationError",
-    "DocumentTranslationPoller"
 ]

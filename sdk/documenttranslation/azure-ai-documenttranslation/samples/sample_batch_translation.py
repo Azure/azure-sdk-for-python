@@ -40,23 +40,21 @@ def sample_batch_translation():
         )
     ]
 
-    poller = client.begin_batch_translation(batch)
-
-    batch_detail = client.get_batch_status(poller.batch_id)  # type: BatchStatusDetail
+    batch_detail = client.create_batch(batch)  # type: BatchStatusDetail
 
     print("Batch initial status: {}".format(batch_detail.status))
     print("Number of translations on documents: {}".format(batch_detail.documents_total_count))
 
-    batch_detail = poller.result()  # type: BatchStatusDetail
-    if batch_detail.status == "Succeeded":
+    batch_result = client.wait_until_done(batch_detail.id)  # type: BatchStatusDetail
+    if batch_result.status == "Succeeded":
         print("We translated our documents!")
-        if batch_detail.documents_failed_count > 0:
-            check_documents(client, batch_detail.id)
+        if batch_result.documents_failed_count > 0:
+            check_documents(client, batch_result.id)
 
-    if batch_detail.status in ["Failed", "ValidationFailed"]:
-        if batch_detail.error:
-            print("Batch failed: {}: {}".format(batch_detail.error.code, batch_detail.error.message))
-        check_documents(client, batch_detail.id)
+    if batch_result.status in ["Failed", "ValidationFailed"]:
+        if batch_result.error:
+            print("Batch failed: {}: {}".format(batch_result.error.code, batch_result.error.message))
+        check_documents(client, batch_result.id)
         exit(1)
 
 
@@ -64,7 +62,7 @@ def check_documents(client, batch_id):
     from azure.core.exceptions import ResourceNotFoundError
 
     try:
-        doc_statuses = client.list_statuses_of_documents(batch_id)  # type: ItemPaged[DocumentStatusDetail]
+        doc_statuses = client.list_documents_statuses(batch_id)  # type: ItemPaged[DocumentStatusDetail]
     except ResourceNotFoundError as err:
         print("Failed to process any documents in source/target container.")
         raise err

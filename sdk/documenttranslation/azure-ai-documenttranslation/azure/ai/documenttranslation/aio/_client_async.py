@@ -50,13 +50,13 @@ class DocumentTranslationClient(object):
         )
 
     @distributed_trace_async
-    async def begin_batch_translation(self, inputs, **kwargs):
-        # type: (List[BatchTranslationInput], **Any) -> AsyncLROPoller[BatchStatusDetail]
+    async def create_batch(self, inputs, **kwargs):
+        # type: (List[BatchTranslationInput], **Any) -> BatchStatusDetail
         """
 
         :param inputs:
         :type inputs: List[~azure.ai.documenttranslation.BatchTranslationInput]
-        :rtype: ~azure.core.polling.AsyncLROPoller[BatchStatusDetail]
+        :rtype: BatchStatusDetail
         """
         return await self._client.document_translation.begin_submit_batch_request(
             inputs=inputs,
@@ -76,6 +76,18 @@ class DocumentTranslationClient(object):
         return await self._client.document_translation.get_operation_status(batch_id, **kwargs)
 
     @distributed_trace_async
+    async def wait_until_done(self, batch_id, **kwargs):
+        # type: (str, **Any) -> BatchStatusDetail
+        """
+
+        :param batch_id: guid id for batch
+        :type batch_id: str
+        :return: BatchStatusDetail
+        :rtype: BatchStatusDetail
+        """
+        pass
+
+    @distributed_trace_async
     async def cancel_batch(self, batch_id, **kwargs):
         # type: (str, **Any) -> None
         """
@@ -88,7 +100,7 @@ class DocumentTranslationClient(object):
         await self._client.document_translation.cancel_operation(batch_id, **kwargs)
 
     @distributed_trace
-    def list_statuses_of_batches(self, **kwargs):
+    def list_batches_statuses(self, **kwargs):
         # type: (**Any) -> AsyncItemPaged[BatchStatusDetail]
         """
 
@@ -99,7 +111,7 @@ class DocumentTranslationClient(object):
         return self._client.document_translation.get_operations(**kwargs)
 
     @distributed_trace
-    def list_statuses_of_documents(self, batch_id, **kwargs):
+    def list_documents_statuses(self, batch_id, **kwargs):
         # type: (str, **Any) -> AsyncItemPaged[DocumentStatusDetail]
         """
 

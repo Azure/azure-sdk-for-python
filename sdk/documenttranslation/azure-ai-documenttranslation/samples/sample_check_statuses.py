@@ -42,10 +42,10 @@ def sample_batch_translation():
         )
     ]
 
-    poller = client.begin_batch_translation(batch)
+    batch_detail = client.create_batch(batch)
 
     while True:
-        batch_detail = client.get_batch_status(poller.batch_id)  # type: BatchStatusDetail
+        batch_detail = client.get_batch_status(batch_detail.id)  # type: BatchStatusDetail
         if batch_detail.status in ["NotStarted", "Running"]:
             time.sleep(5)
             continue
@@ -67,7 +67,7 @@ def check_documents(client, batch_id):
     from azure.core.exceptions import ResourceNotFoundError
 
     try:
-        doc_statuses = client.list_statuses_of_documents(batch_id)  # type: ItemPaged[DocumentStatusDetail]
+        doc_statuses = client.list_documents_statuses(batch_id)  # type: ItemPaged[DocumentStatusDetail]
     except ResourceNotFoundError as err:
         print("Failed to process any documents in source/target container.")
         raise err
