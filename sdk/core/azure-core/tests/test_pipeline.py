@@ -278,35 +278,34 @@ class TestClientRequest(unittest.TestCase):
 
         assert request.data == b"<?xml version='1.0' encoding='utf-8'?>\n<root />"
 
-    def test_request_url_with_params(self):
+    def test_request_url_with_query(self):
+
+        request = HttpRequest("GET", url="a/b/c?t=y", query={"g": "h"})
+
+        self.assertIn(request.url, ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"])
+
+    def test_request_url_with_format_parameters(self):
 
         request = HttpRequest("GET", "/")
         request.url = "a/b/c?t=y"
         request.format_parameters({"g": "h"})
 
         self.assertIn(request.url, ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"])
-    
-    def test_request_url_with_params_as_list(self):
 
-        request = HttpRequest("GET", "/")
-        request.url = "a/b/c?t=y"
-        request.format_parameters({"g": ["h","i"]})
+    def test_request_url_with_query_params_as_list(self):
+
+        request = HttpRequest("GET", url="a/b/c?t=y", query={"g": ["h","i"]})
 
         self.assertIn(request.url, ["a/b/c?g=h&g=i&t=y", "a/b/c?t=y&g=h&g=i"])
 
-    def test_request_url_with_params_with_none_in_list(self):
+    def test_request_url_with_query_params_with_none_in_list(self):
 
-        request = HttpRequest("GET", "/")
-        request.url = "a/b/c?t=y"
         with pytest.raises(ValueError):
-            request.format_parameters({"g": ["h",None]})
-    
-    def test_request_url_with_params_with_none(self):
+            HttpRequest("GET", "/", query={"g": ["h",None]})
 
-        request = HttpRequest("GET", "/")
-        request.url = "a/b/c?t=y"
+    def test_request_url_with_query_params_with_none(self):
         with pytest.raises(ValueError):
-            request.format_parameters({"g": None})
+             HttpRequest("GET", "/", query={"g": None})
 
 
     def test_request_text(self):

@@ -222,16 +222,21 @@ class HttpRequest(object):
     :param files: Files list.
     :param data: Body to be sent.
     :type data: bytes or str.
+    :keyword dict[str,any] query: A dictionary of query parameters you would like to include
+     in your request. We automatically format your query params into the inputted url.
     """
 
-    def __init__(self, method, url, headers=None, files=None, data=None):
-        # type: (str, str, Mapping[str, str], Any, Any) -> None
+    def __init__(self, method, url, headers=None, files=None, data=None, **kwargs):
+        # type: (str, str, Mapping[str, str], Any, Any, Any) -> None
         self.method = method
         self.url = url
         self.headers = _case_insensitive_dict(headers)
         self.files = files
         self.data = data
         self.multipart_mixed_info = None  # type: Optional[Tuple]
+        query = kwargs.pop("query", None)
+        if query:
+            self.format_parameters(query)
 
     def __repr__(self):
         return "<HttpRequest [%s]>" % (self.method)
@@ -290,6 +295,13 @@ class HttpRequest(object):
     def format_parameters(self, params):
         # type: (Dict[str, str]) -> None
         """Format parameters into a valid query string.
+
+        We recommend to directly pass your query parameter
+        directly through the `query` kwarg of
+        :class:`~azure.core.pipeline.transport.HttpRequest` instead
+        of calling this method, as that automatically handles
+        query parameter formatting for you.
+
         It's assumed all parameters have already been quoted as
         valid URL strings.
 

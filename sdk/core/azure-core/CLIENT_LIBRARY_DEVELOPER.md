@@ -163,7 +163,7 @@ When creating the transport, "use_env_settings" parameter can be used to enable 
 synchronous_transport = RequestsTransport(use_env_settings=True)
 ```
 
-If "use_env_settings" is set to True(by default), the transport will look for environment variables 
+If "use_env_settings" is set to True(by default), the transport will look for environment variables
 
 - HTTP_PROXY
 - HTTPS_PROXY
@@ -193,7 +193,7 @@ The HttpRequest has the following API. It does not vary between transports:
 ```python
 class HttpRequest(object):
 
-    def __init__(self, method, url, headers=None, files=None, data=None):
+    def __init__(self, method, url, headers=None, files=None, data=None, **kwargs):
         self.method = method
         self.url = url
         self.headers = CaseInsensitiveDict(headers)

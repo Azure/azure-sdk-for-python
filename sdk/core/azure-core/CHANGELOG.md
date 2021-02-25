@@ -1,6 +1,10 @@
 # Release History
 
-## 1.11.1 (Unreleased)
+## 1.12. (Unreleased)
+
+### Features
+
+- Add kwarg `query` to `HttpRequest`, which accepts your query parameters and formats them into your inputted URL.
 
 
 ## 1.11.0 (2021-02-08)
