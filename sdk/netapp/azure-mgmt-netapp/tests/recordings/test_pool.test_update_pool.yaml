@@ -21,28 +21,37 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa7/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-10?api-version=2020-11-01
   response:
     body:
-      string: '{"error":{"code":"ResourceGroupNotFound","message":"Resource group
-        ''sdk-net-test-qa7'' could not be found."}}'
+      string: '{"error":{"code":"DeserializationError","message":"Deserialization
+        error for object AccountEntityModel - Value cannot be null.\r\nParameter name:
+        jtoken"}}'
     headers:
+      access-control-expose-headers:
+      - Request-Context
       cache-control:
       - no-cache
       content-length:
-      - '108'
+      - '155'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 25 Feb 2021 04:23:00 GMT
+      - Thu, 25 Feb 2021 07:36:29 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
+      request-context:
+      - appId=cid-v1:2c4cb680-0a1f-424d-bb8d-8e650ba68d53
+      server:
+      - Microsoft-IIS/10.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
-      x-ms-failure-cause:
-      - gateway
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+      x-powered-by:
+      - ASP.NET
     status:
-      code: 404
-      message: Not Found
+      code: 400
+      message: Bad Request
 version: 1

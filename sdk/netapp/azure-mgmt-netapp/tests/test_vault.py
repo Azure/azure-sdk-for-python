@@ -1,3 +1,5 @@
+import unittest
+
 from devtools_testutils import AzureMgmtTestCase
 from test_volume import create_volume
 from setup import *
@@ -7,6 +9,7 @@ CBS_LOCATION = 'eastus2euap'
 CBS_RESOURCE_GROUP = 'vault_python_sdk_test'
 CBS_VNET = 'bprgpythonsdktestvnet464'
 
+@unittest.skip("skip")
 class NetAppAccountTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(NetAppAccountTestCase, self).setUp()

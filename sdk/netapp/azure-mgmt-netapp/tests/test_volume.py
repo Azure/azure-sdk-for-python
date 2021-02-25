@@ -1,4 +1,5 @@
 import time
+import unittest
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.netapp.models import Volume, VolumePatch, ReplicationObject, VolumePropertiesDataProtection
@@ -159,6 +160,7 @@ def wait_for_succeeded(client):
         time.sleep(1)
 
 
+@unittest.skip("skip")
 class NetAppAccountTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(NetAppAccountTestCase, self).setUp()

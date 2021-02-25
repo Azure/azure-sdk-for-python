@@ -1,4 +1,5 @@
 import time
+import unittest
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.netapp.models import CapacityPool, CapacityPoolPatch
@@ -57,6 +58,7 @@ def delete_pool(client, rg, acc_name, pool_name, live=False):
     wait_for_no_pool(client, rg, acc_name, pool_name, live)
 
 
+@unittest.skip("skip")
 class NetAppAccountTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(NetAppAccountTestCase, self).setUp()

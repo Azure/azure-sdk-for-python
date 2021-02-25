@@ -1,4 +1,5 @@
 import time
+import unittest
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.netapp.models import BackupPolicy
@@ -49,6 +50,7 @@ def wait_for_no_backup_policy(client, rg, account_name, backup_policy_name, live
             break
 
 
+@unittest.skip("skip")
 class NetAppAccountTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(NetAppAccountTestCase, self).setUp()
