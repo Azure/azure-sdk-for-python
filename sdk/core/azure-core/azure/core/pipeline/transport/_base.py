@@ -296,14 +296,13 @@ class HttpRequest(object):
         # type: (Dict[str, str]) -> None
         """Format parameters into a valid query string.
 
-        We recommend to directly pass your query parameter
-        directly through the `query` kwarg of
-        :class:`~azure.core.pipeline.transport.HttpRequest` instead
-        of calling this method, as that automatically handles
-        query parameter formatting for you.
-
         It's assumed all parameters have already been quoted as
         valid URL strings.
+
+        Passing your query parameters
+        directly through the `query` kwarg of
+        :class:`~azure.core.pipeline.transport.HttpRequest` automatically
+        calls this method for you.
 
         :param dict params: A dictionary of parameters.
         """
