@@ -94,6 +94,10 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     :vartype etag: str
     :param key:
     :type key: str
+    :param enabled:
+    :type enabled: bool
+    :param feature_filters:
+    :type feature_filters: list[FeatureFilterBase]
     :param label:
     :type label: str
     :param content_type:
@@ -122,7 +126,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
 
 
     def __init__(self, key, enabled, feature_filters=None, **kwargs):
-        # type: (str, bool, str) -> None
+        # type: (str, bool, Optional[List[FeatureFilterBase]]) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.key = key
         if not key.startswith(self.key_prefix):
@@ -197,7 +201,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             etag=self.etag
         )
 
-    def add_feature_filter(self, feature_filter):
+    def add_feature_filter(self, feature_filter, **kwargs):
         # type: (FeatureFilterBase) -> None
         self.feature_filters.append(feature_filter)
 
@@ -210,6 +214,8 @@ class SecretReferenceConfigurationSetting(Model):
     :vartype etag: str
     :param key:
     :type key: str
+    :param uri:
+    :type uri: str
     :param label:
     :type label: str
     :param content_type:
@@ -305,8 +311,12 @@ class FeatureFilterBase(object):
 
 class TargetingFeatureFilter(FeatureFilterBase):
     """ A configuration setting that controls a feature flag
-    :param name:
-    :type name: string
+    :param rollout_percentage:
+    :type rollout_percentage: int
+    :param users:
+    :type users: list[str]
+    :param groups:
+    :type groups: list[str]
     """
 
     def __init__(self, rollout_percentage, users=None, groups=None):  # pylint:disable=super-init-not-called
@@ -318,6 +328,7 @@ class TargetingFeatureFilter(FeatureFilterBase):
 
     @classmethod
     def from_service(cls, dict_repr):
+        # type: (dict[str, str]) -> TargetingFeatureFilter
         return cls(
             dict_repr['Audience']['DefaultRolloutPercentage'],
             users=dict_repr['Audience']['Users'],
@@ -340,8 +351,10 @@ class TargetingFeatureFilter(FeatureFilterBase):
 
 class TimeWindowFeatureFilter(FeatureFilterBase):
     """ A configuration setting that controls a feature flag
-    :param name:
-    :type name: string
+    :param start:
+    :type start: datetime.datetime
+    :param end:
+    :type end: datetime.datetime
     """
 
     def __init__(self, start, end=None):  # pylint:disable=super-init-not-called
@@ -364,7 +377,8 @@ class TimeWindowFeatureFilter(FeatureFilterBase):
                 "%a, %d %b %Y %H:%M:%S %Z"
             )
     @classmethod
-    def from_service(cls, dict_repr):
+    def from_service(cls, dict_repr, **kwargs):
+        # type: (dict[str, str]) -> TimeWindowFeatureFilter
         return cls(
             dict_repr['Start'],
             end=dict_repr.get('End', None)
@@ -387,16 +401,18 @@ class TimeWindowFeatureFilter(FeatureFilterBase):
 
 class CustomFeatureFilter(FeatureFilterBase):
     """ A configuration setting that controls a feature flag
-    :param name:
-    :type name: string
+    :param value: The value of the feature filter, this must range from 0-100
+    :type value: int
     """
 
     def __init__(self, value):  # pylint:disable=super-init-not-called
+        # type: (int) -> None
         self._name = 'Microsoft.Percentage'
         self.value = value
 
     @classmethod
-    def from_service(cls, dict_repr):
+    def from_service(cls, dict_repr, **kwargs):
+        # type: (dict[str, str]) -> CustomFeatureFilter
         return cls(
             dict_repr['Value']
         )
