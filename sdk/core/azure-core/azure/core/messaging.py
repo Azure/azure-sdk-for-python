@@ -79,15 +79,15 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
 
     def __init__(self, source, type, **kwargs):  # pylint: disable=redefined-builtin
         # type: (str, str, **Any) -> None
-        self.source = source # type: str
-        self.type = type # type: str
-        self.specversion = kwargs.pop("specversion", "1.0") # type: str
-        self.id = kwargs.pop("id", str(uuid.uuid4())) # type: str
-        self.time = kwargs.pop("time", datetime.now(TZ_UTC)) # type: datetime
-        self.datacontenttype = kwargs.pop("datacontenttype", None) # type: str
-        self.dataschema = kwargs.pop("dataschema", None) # type: str
-        self.subject = kwargs.pop("subject", None) # type: str
-        self.extensions = {} # type: Dict
+        self.source = source  # type: str
+        self.type = type  # type: str
+        self.specversion = kwargs.pop("specversion", "1.0")  # type: str
+        self.id = kwargs.pop("id", str(uuid.uuid4()))  # type: str
+        self.time = kwargs.pop("time", datetime.now(TZ_UTC))  # type: datetime
+        self.datacontenttype = kwargs.pop("datacontenttype", None)  # type: str
+        self.dataschema = kwargs.pop("dataschema", None)  # type: str
+        self.subject = kwargs.pop("subject", None)  # type: str
+        self.extensions = {}  # type: Dict
         _extensions = dict(kwargs.pop("extensions", {}))
         for key in _extensions.keys():
             if not key.islower() or not key.isalnum():
@@ -95,7 +95,12 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
                     "Extension attributes should be lower cased and alphanumeric."
                 )
         self.extensions.update(_extensions)
-        self.data = kwargs.pop("data", None) # type: object
+        self.data = kwargs.pop("data", None)  # type: object
+
+        if kwargs:
+            raise ValueError(
+                "Unexpected keyword argument. Any extension attribures must be passed explicitly using extensions."
+            )
 
     def __repr__(self):
         return "CloudEvent(source={}, type={}, specversion={}, id={}, time={})".format(
@@ -146,5 +151,5 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
             dataschema=event.get("dataschema", None),
             datacontenttype=event.get("datacontenttype", None),
             subject=event.get("subject", None),
-            extensions={k: v for k, v in event.items() if k not in reserved_attr}
+            extensions={k: v for k, v in event.items() if k not in reserved_attr},
         )
