@@ -276,7 +276,6 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             raise
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
-            await self.response.internal_response.close()
             raise
 
 class AioHttpTransportResponse(AsyncHttpResponse):

@@ -180,7 +180,6 @@ class StreamDownloadGenerator(object):
             raise
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.internal_response.close()
             raise
     next = __next__  # Python 2 compatibility.
 
