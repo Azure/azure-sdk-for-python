@@ -151,30 +151,16 @@ def edit_file_setup():
 def edit_file_readme():
     path = f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
     # read and edit usage part
-    with open(f'{SCRIPT_PATH}/usage.txt', 'r') as file_in:
-        usage = file_in.readlines()
     for i in range(0, len(usage)):
         usage[i] = re.sub('MyService', SERVICE_NAME.capitalize(), usage[i], flags=re.IGNORECASE)
     # edit README
-    with open(f'{path}/README.md') as file_in:
+    with open(f'{path}/README.md', 'r') as file_in:
         list_in = file_in.readlines()
-    i = 1
-    list_out = [list_in[0]]
-    while i < len(list_in):
-        if list_in[i].find('## Usage') > -1:
-            break
-        list_out.append(list_in[i])
-        i = i + 1
-    list_out.extend(usage)
-    flag = False
-    while i < len(list_in):
-        if list_in[i].find('## Provide Feedback') > -1:
-            flag = True
-        if flag:
-            list_out.append(list_in[i])
-        i = i + 1
+    for i in range(0, len(list_in)):
+        if list_in[i].find('MyService') > 0:
+            list_in[i] = list_in[i].replace('MyService', SERVICE_NAME.capitalize())
     with open(f'{path}/README.md', 'w') as file_out:
-        file_out.writelines(list_out)
+        file_out.writelines(list_in)
 
 
 def edit_first_release():
@@ -225,6 +211,8 @@ def build_wheel():
     path = os.getcwd()
     setup_path = f'{path}/sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
     print_check(f'cd {setup_path} && python setup.py bdist_wheel')
+    # check whether package could install
+    print_check(f'python -c "import azure.mgmt.{SERVICE_NAME}"')
     print_check(f'cd {path}')
 
 

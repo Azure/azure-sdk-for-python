@@ -31,15 +31,12 @@ jobs:
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
         mkdir azure-sdk-for-python
         git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/azure-sdk-for-python
-        echo 0000000000
-        echo | ls
 
         # create virtual env
         python -m venv venv-sdk
         source venv-sdk/bin/activate
         output_path=$(pwd)/venv-sdk
-        echo | pip install packaging
-        echo | (pip list | grep packaging)
+        pip install packaging
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=true
@@ -53,8 +50,6 @@ jobs:
         export AZURE_SUBSCRIPTION_ID=$(ENV_SUBSCRIPTION_ID)
 
         # run
-        echo 11111111111
-        echo | ls
         cd azure-sdk-for-python
         python /home/vsts/work/1/s/scripts/auto_release/main.py $(BASE_BRANCH) "$script_path" "$output_path"
 
