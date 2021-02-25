@@ -8,6 +8,7 @@
 
 import os
 
+
 class SampleRepositoryActions(object):
 
     base_url = os.environ.get("ACR_BASE_URL")
@@ -43,12 +44,7 @@ class SampleRepositoryActions(object):
 
         repo_client = client.get_repository_client("hello-world")
 
-        permissions = ContentPermissions(
-            list=true,
-            read=true,
-            write=true,
-            delete=false
-        )
+        permissions = ContentPermissions(list=true, read=true, write=true, delete=false)
 
         repo_client.set_permissions(permissions)
 

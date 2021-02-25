@@ -12,3 +12,4 @@ class ContainerRegistryStsClient(object):
 
     def get_access_token(self):
         # type: (...) -> None
+        pass

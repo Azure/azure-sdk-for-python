@@ -36,6 +36,7 @@ class ArtifactClient(object):
 
     def delete(self):
         # type: (...) -> None
+        pass
 
     def delete_blob(self, digest):
         # type: (str) -> Stream

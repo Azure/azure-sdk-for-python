@@ -8,8 +8,6 @@
 
 
 class ContainerRepositoryClient(object):
-
-
     def __init__(self, endpoint, repository_name, credential, **kwargs):
         # type: (str, str, TokenCredential) -> None
         pass

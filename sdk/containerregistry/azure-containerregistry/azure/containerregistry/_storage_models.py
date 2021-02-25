@@ -36,10 +36,6 @@ class ArtifactManifest(object):
         pass
 
 
-
-
-
-
 class CompleteUploadResult(object):
 
     def __init__(self, digest, location, http_range):
@@ -190,7 +186,7 @@ class DockerManifestV2(ArtifactManifest):
     @classmethod
     def from_stream(self, stream):
         # type: (Stream) -> DockerManifestV2
-
+        pass
 
 class ManifestListAttributes(object):
 

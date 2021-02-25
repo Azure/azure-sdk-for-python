@@ -10,8 +10,8 @@ from ._generated.models import (
     DeletedRepository,
 )
 
-class AzureAdminUserCredential(object):
 
+class AzureAdminUserCredential(object):
     def __init__(self, username, password):
         # type: (str, str) -> None
         self.username = username
@@ -23,7 +23,6 @@ class AzureAdminUserCredential(object):
 
 
 class ContentPermissions(object):
-
     def __init__(self, **kwargs):
         self.delete = kwargs.get("delete")
         self.list = kwargs.get("list")
@@ -31,27 +30,23 @@ class ContentPermissions(object):
         self.write = kwargs.get("write")
 
 
-class DeleteRepositoryResult(DeletedRepository):
-
+class DeletedRepositoryResult(DeletedRepository):
     def __init__(self, **kwargs):
-        super(DeleteRepositoryResult, self).__init__(**kwargs)
+        super(DeletedRepositoryResult, self).__init__(**kwargs)
         pass
 
 
 class GetManifestOptions(object):
-
     def __init__(self):
         pass
 
 
 class GetTagOptions(object):
-
     def __init__(self):
         pass
 
 
 class ArtifactAttributes(object):
-
     def __init__(self):
         pass
 
@@ -63,13 +58,11 @@ class ManifestOrderBy(int, Enum):
 
 
 class RepositoryAttributes(object):
-
     def __init__(self, **kwargs):
         pass
 
 
 class TagAttributes(object):
-
     def __init__(self, **kwargs):
         pass
 

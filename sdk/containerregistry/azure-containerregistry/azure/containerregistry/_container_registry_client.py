@@ -6,14 +6,13 @@
 
 
 class ContainerRegistryClient(object):
-
     def __init__(self, base_url, credential, **kwargs):
         # type: (str, TokenCredential) -> None
 
         pass
 
     def delete_repository(self, name):
-        # type: (str) -> DeleteRepositoryResult
+        # type: (str) -> DeletedRepositoryResult
 
         pass
 
