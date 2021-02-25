@@ -137,7 +137,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
             )
         elif data is None and data_base64 is None:
             data = None
-        else:
+        elif data or data_base64:
             data = data if data is not None else b64decode(data_base64)
 
         return cls(
