@@ -21,6 +21,15 @@ def test_cloud_event_constructor():
     assert event.source == 'Azure.Core.Sample'
     assert event.data == 'cloudevent'
 
+def test_cloud_event_constructor_unexpected_keyword():
+    with pytest.raises(ValueError):
+        event = CloudEvent(
+            source='Azure.Core.Sample',
+            type='SampleType',
+            data='cloudevent',
+            unexpected_keyword="not allowed"
+            )
+
 def test_cloud_event_constructor_blank_data():
     event = CloudEvent(
         source='Azure.Core.Sample',
