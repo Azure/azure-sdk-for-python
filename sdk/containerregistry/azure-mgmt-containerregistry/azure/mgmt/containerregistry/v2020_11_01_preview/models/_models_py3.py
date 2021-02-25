@@ -2448,6 +2448,30 @@ class OperationDisplayDefinition(Model):
         self.description = description
 
 
+class OperationLogSpecificationDefinition(Model):
+    """The definition of Azure Monitoring log.
+
+    :param name: Log name.
+    :type name: str
+    :param display_name: Log display name.
+    :type display_name: str
+    :param blob_duration: Log blob duration.
+    :type blob_duration: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, display_name: str=None, blob_duration: str=None, **kwargs) -> None:
+        super(OperationLogSpecificationDefinition, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.blob_duration = blob_duration
+
+
 class OperationMetricSpecificationDefinition(Model):
     """The definition of Azure Monitoring metric.
 
@@ -2491,15 +2515,20 @@ class OperationServiceSpecificationDefinition(Model):
      definition.
     :type metric_specifications:
      list[~azure.mgmt.containerregistry.v2020_11_01_preview.models.OperationMetricSpecificationDefinition]
+    :param log_specifications: A list of Azure Monitoring log definitions.
+    :type log_specifications:
+     list[~azure.mgmt.containerregistry.v2020_11_01_preview.models.OperationLogSpecificationDefinition]
     """
 
     _attribute_map = {
         'metric_specifications': {'key': 'metricSpecifications', 'type': '[OperationMetricSpecificationDefinition]'},
+        'log_specifications': {'key': 'logSpecifications', 'type': '[OperationLogSpecificationDefinition]'},
     }
 
-    def __init__(self, *, metric_specifications=None, **kwargs) -> None:
+    def __init__(self, *, metric_specifications=None, log_specifications=None, **kwargs) -> None:
         super(OperationServiceSpecificationDefinition, self).__init__(**kwargs)
         self.metric_specifications = metric_specifications
+        self.log_specifications = log_specifications
 
 
 class OverrideTaskStepProperties(Model):
@@ -3197,10 +3226,6 @@ class Registry(Resource):
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled. Default value: False .
     :type admin_user_enabled: bool
-    :param storage_account: The properties of the storage account for the
-     container registry. Only applicable to Classic SKU.
-    :type storage_account:
-     ~azure.mgmt.containerregistry.v2020_11_01_preview.models.StorageAccountProperties
     :param network_rule_set: The network rule set for a container registry.
     :type network_rule_set:
      ~azure.mgmt.containerregistry.v2020_11_01_preview.models.NetworkRuleSet
@@ -3235,6 +3260,9 @@ class Registry(Resource):
      Default value: "Disabled" .
     :type zone_redundancy: str or
      ~azure.mgmt.containerregistry.v2020_11_01_preview.models.ZoneRedundancy
+    :param anonymous_pull_enabled: Enables registry-wide pull from
+     unauthenticated clients.
+    :type anonymous_pull_enabled: bool
     """
 
     _validation = {
@@ -3266,7 +3294,6 @@ class Registry(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'Status'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
-        'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
         'network_rule_set': {'key': 'properties.networkRuleSet', 'type': 'NetworkRuleSet'},
         'policies': {'key': 'properties.policies', 'type': 'Policies'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
@@ -3276,9 +3303,10 @@ class Registry(Resource):
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'network_rule_bypass_options': {'key': 'properties.networkRuleBypassOptions', 'type': 'str'},
         'zone_redundancy': {'key': 'properties.zoneRedundancy', 'type': 'str'},
+        'anonymous_pull_enabled': {'key': 'properties.anonymousPullEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, location: str, sku, tags=None, identity=None, admin_user_enabled: bool=False, storage_account=None, network_rule_set=None, policies=None, encryption=None, data_endpoint_enabled: bool=None, public_network_access="Enabled", network_rule_bypass_options="AzureServices", zone_redundancy="Disabled", **kwargs) -> None:
+    def __init__(self, *, location: str, sku, tags=None, identity=None, admin_user_enabled: bool=False, network_rule_set=None, policies=None, encryption=None, data_endpoint_enabled: bool=None, public_network_access="Enabled", network_rule_bypass_options="AzureServices", zone_redundancy="Disabled", anonymous_pull_enabled: bool=None, **kwargs) -> None:
         super(Registry, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.identity = identity
@@ -3287,7 +3315,6 @@ class Registry(Resource):
         self.provisioning_state = None
         self.status = None
         self.admin_user_enabled = admin_user_enabled
-        self.storage_account = storage_account
         self.network_rule_set = network_rule_set
         self.policies = policies
         self.encryption = encryption
@@ -3297,6 +3324,7 @@ class Registry(Resource):
         self.public_network_access = public_network_access
         self.network_rule_bypass_options = network_rule_bypass_options
         self.zone_redundancy = zone_redundancy
+        self.anonymous_pull_enabled = anonymous_pull_enabled
 
 
 class RegistryListCredentialsResult(Model):
@@ -3405,13 +3433,13 @@ class RegistryPassword(Model):
 class RegistryUpdateParameters(Model):
     """The parameters for updating a container registry.
 
+    :param identity: The identity of the container registry.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2020_11_01_preview.models.IdentityProperties
     :param tags: The tags for the container registry.
     :type tags: dict[str, str]
     :param sku: The SKU of the container registry.
     :type sku: ~azure.mgmt.containerregistry.v2020_11_01_preview.models.Sku
-    :param identity: The identity of the container registry.
-    :type identity:
-     ~azure.mgmt.containerregistry.v2020_11_01_preview.models.IdentityProperties
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled.
     :type admin_user_enabled: bool
@@ -3437,12 +3465,15 @@ class RegistryUpdateParameters(Model):
      'AzureServices', 'None'. Default value: "AzureServices" .
     :type network_rule_bypass_options: str or
      ~azure.mgmt.containerregistry.v2020_11_01_preview.models.NetworkRuleBypassOptions
+    :param anonymous_pull_enabled: Enables registry-wide pull from
+     unauthenticated clients.
+    :type anonymous_pull_enabled: bool
     """
 
     _attribute_map = {
+        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkRuleSet', 'type': 'NetworkRuleSet'},
         'policies': {'key': 'properties.policies', 'type': 'Policies'},
@@ -3450,13 +3481,14 @@ class RegistryUpdateParameters(Model):
         'data_endpoint_enabled': {'key': 'properties.dataEndpointEnabled', 'type': 'bool'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'network_rule_bypass_options': {'key': 'properties.networkRuleBypassOptions', 'type': 'str'},
+        'anonymous_pull_enabled': {'key': 'properties.anonymousPullEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, tags=None, sku=None, identity=None, admin_user_enabled: bool=None, network_rule_set=None, policies=None, encryption=None, data_endpoint_enabled: bool=None, public_network_access=None, network_rule_bypass_options="AzureServices", **kwargs) -> None:
+    def __init__(self, *, identity=None, tags=None, sku=None, admin_user_enabled: bool=None, network_rule_set=None, policies=None, encryption=None, data_endpoint_enabled: bool=None, public_network_access=None, network_rule_bypass_options="AzureServices", anonymous_pull_enabled: bool=None, **kwargs) -> None:
         super(RegistryUpdateParameters, self).__init__(**kwargs)
+        self.identity = identity
         self.tags = tags
         self.sku = sku
-        self.identity = identity
         self.admin_user_enabled = admin_user_enabled
         self.network_rule_set = network_rule_set
         self.policies = policies
@@ -3464,6 +3496,7 @@ class RegistryUpdateParameters(Model):
         self.data_endpoint_enabled = data_endpoint_enabled
         self.public_network_access = public_network_access
         self.network_rule_bypass_options = network_rule_bypass_options
+        self.anonymous_pull_enabled = anonymous_pull_enabled
 
 
 class RegistryUsage(Model):
@@ -4449,29 +4482,6 @@ class StatusDetailProperties(Model):
         self.description = None
         self.timestamp = None
         self.correlation_id = None
-
-
-class StorageAccountProperties(Model):
-    """The properties of a storage account for a container registry. Only
-    applicable to Classic SKU.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. The resource ID of the storage account.
-    :type id: str
-    """
-
-    _validation = {
-        'id': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(self, *, id: str, **kwargs) -> None:
-        super(StorageAccountProperties, self).__init__(**kwargs)
-        self.id = id
 
 
 class SyncProperties(Model):

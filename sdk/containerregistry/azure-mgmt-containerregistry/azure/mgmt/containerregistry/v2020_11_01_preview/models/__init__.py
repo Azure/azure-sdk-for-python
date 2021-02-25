@@ -65,6 +65,7 @@ try:
     from ._models_py3 import NetworkRuleSet
     from ._models_py3 import OperationDefinition
     from ._models_py3 import OperationDisplayDefinition
+    from ._models_py3 import OperationLogSpecificationDefinition
     from ._models_py3 import OperationMetricSpecificationDefinition
     from ._models_py3 import OperationServiceSpecificationDefinition
     from ._models_py3 import OverrideTaskStepProperties
@@ -122,7 +123,6 @@ try:
     from ._models_py3 import SourceUploadDefinition
     from ._models_py3 import Status
     from ._models_py3 import StatusDetailProperties
-    from ._models_py3 import StorageAccountProperties
     from ._models_py3 import SyncProperties
     from ._models_py3 import SyncUpdateProperties
     from ._models_py3 import SystemData
@@ -208,6 +208,7 @@ except (SyntaxError, ImportError):
     from ._models import NetworkRuleSet
     from ._models import OperationDefinition
     from ._models import OperationDisplayDefinition
+    from ._models import OperationLogSpecificationDefinition
     from ._models import OperationMetricSpecificationDefinition
     from ._models import OperationServiceSpecificationDefinition
     from ._models import OverrideTaskStepProperties
@@ -265,7 +266,6 @@ except (SyntaxError, ImportError):
     from ._models import SourceUploadDefinition
     from ._models import Status
     from ._models import StatusDetailProperties
-    from ._models import StorageAccountProperties
     from ._models import SyncProperties
     from ._models import SyncUpdateProperties
     from ._models import SystemData
@@ -421,6 +421,7 @@ __all__ = [
     'NetworkRuleSet',
     'OperationDefinition',
     'OperationDisplayDefinition',
+    'OperationLogSpecificationDefinition',
     'OperationMetricSpecificationDefinition',
     'OperationServiceSpecificationDefinition',
     'OverrideTaskStepProperties',
@@ -478,7 +479,6 @@ __all__ = [
     'SourceUploadDefinition',
     'Status',
     'StatusDetailProperties',
-    'StorageAccountProperties',
     'SyncProperties',
     'SyncUpdateProperties',
     'SystemData',

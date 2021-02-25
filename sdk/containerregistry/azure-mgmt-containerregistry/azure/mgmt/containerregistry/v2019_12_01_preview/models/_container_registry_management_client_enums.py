@@ -145,6 +145,12 @@ class PublicNetworkAccess(str, Enum):
     disabled = "Disabled"
 
 
+class NetworkRuleBypassOptions(str, Enum):
+
+    azure_services = "AzureServices"
+    none = "None"
+
+
 class PasswordName(str, Enum):
 
     password = "password"
