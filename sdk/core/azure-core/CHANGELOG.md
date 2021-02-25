@@ -4,7 +4,7 @@
 
 ### Features
 
-- Add kwarg `query` to `HttpRequest`, which accepts your query parameters and formats them into your inputted URL.
+- Add kwarg `query` to `HttpRequest`, which accepts your query parameters and formats them into your inputted URL.  #16942
 
 
 ## 1.11.0 (2021-02-08)
