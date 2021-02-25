@@ -30,7 +30,7 @@ jobs:
 
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
         mkdir temp_folder
-        echo | git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/temp_folder
+        git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/temp_folder
         cd temp_folder
 
         # create virtual env
@@ -52,8 +52,10 @@ jobs:
         # run
         cd azure-sdk-for-python
         echo 1111111111111111111111
-        echo python /home/vsts/work/1/s/scripts/auto_release/main.py "$(BASE_BRANCH)" "$script_path" "$output_path"
-        python /home/vsts/work/1/s/scripts/auto_release/main.py "$(BASE_BRANCH)" "$script_path" "$output_path"
+        echo $BASE_BRANCH
+        echo python /home/vsts/work/1/s/scripts/auto_release/main.py $(BASE_BRANCH) "$script_path" "$output_path"
+        echo python /home/vsts/work/1/s/scripts/auto_release/main.py $BASE_BRANCH "$script_path" "$output_path"
+        python /home/vsts/work/1/s/scripts/auto_release/main.py $(BASE_BRANCH) "$script_path" "$output_path"
 
         # judge
         if [ ! -f "$output_path/output.txt" ]; then
