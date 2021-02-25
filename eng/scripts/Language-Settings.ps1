@@ -5,6 +5,55 @@ $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
 
+function Get-AllPackageInfoFromRepo ($serviceDirectoryName)
+{
+  $allPackageProps = @()
+  $searchPath = "sdk/*/*/setup.py"
+  if ($serviceDirectoryName)
+  {
+    $searchPath = "sdk/${serviceDirectoryName}/*/setup.py"
+  }
+  Push-Location $RepoRoot
+  $allSetupProps = $null
+  try
+  {
+    pip install packaging==20.4 -q -I
+    $allSetupProps = (python -c "import sys; import os; sys.path.append(os.path.join('eng', 'scripts')); \
+    import get_package_properties; get_package_properties.get_all_package_properties('$searchPath')")
+  }
+  catch
+  {
+    # This is soft error and failure is expected for python metapackages
+    LogError "Failed to get all package properties"
+  }
+  Pop-Location
+
+  foreach ($line in $allSetupProps)
+  {
+    $setupInfo = $line -Split ","
+    $packageName = $setupInfo[0].Trim("(' ")
+    $packageVersion = $setupInfo[1].Trim("' ")
+    $isNewSdk = $setupInfo[2].Trim()
+    $setupPyDir = $setupInfo[3].Trim(")' ")
+    $pkgDirectoryPath = Resolve-Path (Join-Path -Path $RepoRoot $setupPyDir)
+    $serviceDirectoryName = Split-Path (Split-Path -Path $pkgDirectoryPath -Parent) -Leaf
+    if ($packageName -match "mgmt")
+    {
+      $sdkType = "mgmt"
+    }
+    else
+    {
+      $sdkType = "client"
+    }
+    $pkgProp = [PackageProps]::new($packageName, $packageVersion, $pkgDirectoryPath, $serviceDirectoryName)
+    $pkgProp.IsNewSdk = $isNewSdk
+    $pkgProp.SdkType = $sdkType
+    $pkgProp.ArtifactName = $packageName
+    $allPackageProps += $pkgProp
+  }
+  return $allPackageProps
+}
+
 function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
 {  
   $packageName = $pkgName.Replace('_', '-')
