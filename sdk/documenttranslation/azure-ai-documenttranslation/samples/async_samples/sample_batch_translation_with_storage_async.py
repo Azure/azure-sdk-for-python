@@ -8,9 +8,9 @@ import os
 import asyncio
 
 
-class BatchTranslationWithStorageAsync(object):
+class BatchTranslationWithStorageSampleAsync(object):
 
-    async def batch_translation_with_storage(self):
+    async def batch_translation_with_storage_async(self):
         # import libraries
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import DocumentTranslationClient
@@ -132,8 +132,8 @@ class BatchTranslationWithStorageAsync(object):
                     docs_to_retry.append(document.url)
 
 async def main():
-    sample = BatchTranslationWithStorageAsync()
-    await sample.alternative_document_input()
+    sample = BatchTranslationWithStorageSampleAsync()
+    await sample.batch_translation_with_storage_async()
 
 
 if __name__ == '__main__':

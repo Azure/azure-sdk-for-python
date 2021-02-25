@@ -6,11 +6,12 @@
 
 import os
 import asyncio
+import time
 
+class CheckStatusesSampleAsync(object):
+        
+    async def check_statuses_async():
 
-class BatchTranslationSampleAsync(object):
-
-    async def batch_translation_async():
         # import libraries
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import DocumentTranslationClient
@@ -26,10 +27,7 @@ class BatchTranslationSampleAsync(object):
         target_container_url_es = os.environ["AZURE_TARGET_CONTAINER_URL_ES"]
         target_container_url_fr = os.environ["AZURE_TARGET_CONTAINER_URL_FR"]
 
-        # create service client
-        client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
-
-        # prepare translation job input
+        # prepare translation input
         batch = [
             BatchDocumentInput(
                 source_url=source_container_url,
@@ -44,29 +42,34 @@ class BatchTranslationSampleAsync(object):
                         language="fr"
                     )
                 ],
-                storage_type="file"
+                storage_type="folder",
+                prefix="document_2021"
             )
         ]
+        
+        # create translation client
+        client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
         # run translation job
         async with client:
             job_detail = await client.create_translation_job(batch)
+            while True:
+                job_detail = await client.get_job_status(job_detail.id)  # type: JobStatusDetail
+                if job_detail.status in ["NotStarted", "Running"]:
+                    time.sleep(10)
+                    continue
 
-            print("Job initial status: {}".format(job_detail.status))
-            print("Number of translations on documents: {}".format(job_detail.documents_total_count))
+                if job_detail.status in ["Failed", "ValidationFailed"]:
+                    if job_detail.error:
+                        print("Translation job failed: {}: {}".format(job_detail.error.code, job_detail.error.message))
+                    check_documents(client, job_detail.id)
+                    exit(1)
 
-            # get job result
-            job_result = await client.wait_until_done(job_detail.id)  # type: JobStatusDetail
-            if job_result.status == "Succeeded":
-                print("We translated our documents!")
-                if job_result.documents_failed_count > 0:
-                    check_documents(client, job_result.id)
-
-            if job_result.status in ["Failed", "ValidationFailed"]:
-                if job_result.error:
-                    print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
-                check_documents(client, job_result.id)
-                exit(1)
+                if job_detail.status == "Succeeded":
+                    print("We translated our documents!")
+                    if job_detail.documents_failed_count > 0:
+                        check_documents(client, job_detail.id)
+                    break
 
 
     def check_documents(client, job_id):
@@ -92,8 +95,8 @@ class BatchTranslationSampleAsync(object):
 
 
 async def main():
-    sample = BatchTranslationSampleAsync()
-    await sample.batch_translation_async()
+    sample = CheckStatusesSampleAsync()
+    await sample.check_statuses_async()
 
 
 if __name__ == '__main__':
