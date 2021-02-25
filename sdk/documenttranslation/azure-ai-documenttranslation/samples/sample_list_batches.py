@@ -16,7 +16,7 @@ def sample_list_all_batches():
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
-    batches = client.list_statuses_of_batches()
+    batches = client.list_batches_statuses()
 
     print("Batches summary")
     for batch in batches:

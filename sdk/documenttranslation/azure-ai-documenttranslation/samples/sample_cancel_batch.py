@@ -35,9 +35,7 @@ def sample_cancel_batch():
         )
     ]
 
-    poller = client.begin_batch_translation(batch)
-
-    batch_detail = client.get_batch_status(poller.batch_id)  # type: BatchStatusDetail
+    batch_detail = client.create_batch(batch)  # type: BatchStatusDetail
 
     print("Batch status: {}".format(batch_detail.status))
     print("Number of translations on documents: {}".format(batch_detail.documents_total_count))

@@ -19,7 +19,6 @@ from ._models import (
     BatchDocumentInput,
     FileFormat
 )
-from ._polling import DocumentTranslationPoller
 
 __VERSION__ = VERSION
 
