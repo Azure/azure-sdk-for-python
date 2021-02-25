@@ -286,7 +286,8 @@ stages:
               $packageDirectory = "${{artifact.name}}".Replace("_", "-")
               echo "##vso[task.setvariable variable=Package.Name]$packageDirectory"
           - pwsh: |
-              $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$packageDirectory  | Measure-Object).Count
+              $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$packageDirectory -Filter $packageDirectory-[0-9]*.[0-9]*.[0-9]*a[0-9]*  | Measure-Object).Count
+              
               if ($fileCount -eq 0) {
                 Write-Host "No alpha packages for ${{artifact.safeName}} to publish."
                 exit 0
