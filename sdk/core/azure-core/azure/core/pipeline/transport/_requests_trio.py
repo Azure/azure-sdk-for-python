@@ -93,11 +93,11 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                     self.iter_content_func,
                 )
             if not chunk:
+                await self.response.internal_response.close()
                 raise _ResponseStopIteration()
             self.downloaded += self.block_size
             return chunk
         except _ResponseStopIteration:
-            await self.response.internal_response.close()
             raise StopAsyncIteration()
         except (requests.exceptions.ChunkedEncodingError,
                 requests.exceptions.ConnectionError) as ex:
@@ -134,11 +134,11 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                             self.iter_content_func,
                         )
                     if not chunk:
+                        await self.response.internal_response.close()
                         raise StopAsyncIteration()
                     self.downloaded += self.block_size
                     return chunk
                 except StopAsyncIteration:
-                    await self.response.internal_response.close()
                     raise StopAsyncIteration()
                 except Exception:  # pylint: disable=broad-except
                     continue

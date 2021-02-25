@@ -134,11 +134,11 @@ class StreamDownloadGenerator(object):
         try:
             chunk = next(self.iter_content_func)
             if not chunk:
+                self.response.internal_response.close()
                 raise StopIteration()
             self.downloaded += self.block_size
             return chunk
         except StopIteration:
-            self.response.internal_response.close()
             raise StopIteration()
         except (requests.exceptions.ChunkedEncodingError,
                 requests.exceptions.ConnectionError) as ex:
@@ -168,11 +168,11 @@ class StreamDownloadGenerator(object):
                     self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
                     chunk = next(self.iter_content_func)
                     if not chunk:
+                        self.response.internal_response.close()
                         raise StopIteration()
                     self.downloaded += self.block_size
                     return chunk
                 except StopIteration:
-                    self.response.internal_response.close()
                     raise StopIteration()
                 except Exception:   # pylint: disable=broad-except
                     continue
