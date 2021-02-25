@@ -236,9 +236,11 @@ class HttpRequest(object):
         self.files = files
         self.multipart_mixed_info = None  # type: Optional[Tuple]
         json_kwarg = "json" in kwargs
-        if data and json_kwarg:
+        body_input = [files, data]
+        if json_kwarg and len([b for b in body_input if b]) > 0:
             raise ValueError(
-                "You can not pass values for both 'data' and 'json'. "
+                "If you pass in a value for 'json', you can not also pass "
+                "in a value of 'files' or 'data'."
             )
         self.data = data or kwargs.pop("json", None)
         if json_kwarg:
