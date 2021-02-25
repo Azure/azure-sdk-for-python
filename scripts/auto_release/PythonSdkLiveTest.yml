@@ -25,14 +25,18 @@ jobs:
     - bash: |
         script_path=$(pwd)
         echo 111 $(pwd)
+        echo | ls
         cd ..
         echo 222 $(pwd)
+        echo | ls
         git config --global user.email "PythonSdkPipelines"
         git config --global user.name "PythonSdkPipelines"
 
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
         echo 333
-        echo | git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} .
+        mkdir temp_folder
+        echo | git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/temp_folder
+        cd temp_folder
         echo | ls
         echo 444
 
