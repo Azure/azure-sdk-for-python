@@ -28,6 +28,14 @@ class FilterTrackPropertyCompareOperation(str, Enum):
     not_equal = "NotEqual"  #: The not equal operation.
 
 
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
+
+
 class MetricUnit(str, Enum):
 
     bytes = "Bytes"  #: The number of bytes.
@@ -140,6 +148,12 @@ class AacAudioProfile(str, Enum):
     he_aac_v2 = "HeAacV2"  #: Specifies that the output audio is to be encoded into HE-AAC v2 profile.
 
 
+class H265VideoProfile(str, Enum):
+
+    auto = "Auto"  #: Tells the encoder to automatically determine the appropriate H.265 profile.
+    main = "Main"  #: Main profile (https://x265.readthedocs.io/en/default/cli.html?highlight=profile#profile-level-tier)
+
+
 class StretchMode(str, Enum):
 
     none = "None"  #: Strictly respect the output resolution without considering the pixel aspect ratio or display aspect ratio of the input video.
@@ -155,10 +169,59 @@ class VideoSyncMode(str, Enum):
     vfr = "Vfr"  #: Similar to the Passthrough mode, but if the input has frames that have duplicate timestamps, then only one frame is passed through to the output, and others are dropped. Recommended when the number of output frames is expected to be equal to the number of input frames. For example, the output is used to calculate a quality metric like PSNR against the input
 
 
+class H265Complexity(str, Enum):
+
+    speed = "Speed"  #: Tells the encoder to use settings that are optimized for faster encoding. Quality is sacrificed to decrease encoding time.
+    balanced = "Balanced"  #: Tells the encoder to use settings that achieve a balance between speed and quality.
+    quality = "Quality"  #: Tells the encoder to use settings that are optimized to produce higher quality output at the expense of slower overall encode time.
+
+
+class ChannelMapping(str, Enum):
+
+    front_left = "FrontLeft"  #: The Front Left Channel.
+    front_right = "FrontRight"  #: The Front Right Channel.
+    center = "Center"  #: The Center Channel.
+    low_frequency_effects = "LowFrequencyEffects"  #: Low Frequency Effects Channel.  Sometimes referred to as the Subwoofer.
+    back_left = "BackLeft"  #: The Back Left Channel.  Sometimes referred to as the Left Surround Channel.
+    back_right = "BackRight"  #: The Back Right Channel.  Sometimes referred to as the Right Surround Channel.
+    stereo_left = "StereoLeft"  #: The Left Stereo channel.  Sometimes referred to as Down Mix Left.
+    stereo_right = "StereoRight"  #: The Right Stereo channel.  Sometimes referred to as Down Mix Right.
+
+
+class TrackAttribute(str, Enum):
+
+    bitrate = "Bitrate"  #: The bitrate of the track.
+    language = "Language"  #: The language of the track.
+
+
+class AttributeFilter(str, Enum):
+
+    all = "All"  #: All tracks will be included.
+    top = "Top"  #: The first track will be included when the attribute is sorted in descending order.  Generally used to select the largest bitrate.
+    bottom = "Bottom"  #: The first track will be included when the attribute is sorted in ascending order.  Generally used to select the smallest bitrate.
+    value_equals = "ValueEquals"  #: Any tracks that have an attribute equal to the value given will be included.
+
+
 class AnalysisResolution(str, Enum):
 
     source_resolution = "SourceResolution"
     standard_definition = "StandardDefinition"
+
+
+class FaceRedactorMode(str, Enum):
+
+    analyze = "Analyze"  #: Analyze mode detects faces and outputs a metadata file with the results. Allows editing of the metadata file before faces are blurred with Redact mode.
+    redact = "Redact"  #: Redact mode consumes the metadata file from Analyze mode and redacts the faces found.
+    combined = "Combined"  #: Combined mode does the Analyze and Redact steps in one pass when editing the analyzed faces is not desired.
+
+
+class BlurType(str, Enum):
+
+    box = "Box"  #: Box: debug filter, bounding box only
+    low = "Low"  #: Low: box-car blur filter
+    med = "Med"  #: Med: Gaussian blur filter
+    high = "High"  #: High: Confuse blur filter
+    black = "Black"  #: Black: Black out filter
 
 
 class AudioAnalysisMode(str, Enum):
@@ -226,6 +289,11 @@ class EncoderNamedPreset(str, Enum):
     h264_multiple_bitrate1080p = "H264MultipleBitrate1080p"  #: Produces a set of 8 GOP-aligned MP4 files, ranging from 6000 kbps to 400 kbps, and stereo AAC audio. Resolution starts at 1080p and goes down to 180p.
     h264_multiple_bitrate720p = "H264MultipleBitrate720p"  #: Produces a set of 6 GOP-aligned MP4 files, ranging from 3400 kbps to 400 kbps, and stereo AAC audio. Resolution starts at 720p and goes down to 180p.
     h264_multiple_bitrate_sd = "H264MultipleBitrateSD"  #: Produces a set of 5 GOP-aligned MP4 files, ranging from 1900kbps to 400 kbps, and stereo AAC audio. Resolution starts at 480p and goes down to 240p.
+    h265_content_aware_encoding = "H265ContentAwareEncoding"  #: Produces a set of GOP-aligned MP4s by using content-aware encoding. Given any input content, the service performs an initial lightweight analysis of the input content, and uses the results to determine the optimal number of layers, appropriate bitrate and resolution settings for delivery by adaptive streaming. This preset is particularly effective for low and medium complexity videos, where the output files will be at lower bitrates but at a quality that still delivers a good experience to viewers. The output will contain MP4 files with video and audio interleaved.
+    h265_adaptive_streaming = "H265AdaptiveStreaming"  #: Produces a set of GOP aligned MP4 files with H.265 video and stereo AAC audio. Auto-generates a bitrate ladder based on the input resolution, bitrate and frame rate. The auto-generated preset will never exceed the input resolution. For example, if the input is 720p, output will remain 720p at best.
+    h265_single_bitrate720p = "H265SingleBitrate720p"  #: Produces an MP4 file where the video is encoded with H.265 codec at 1800 kbps and a picture height of 720 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps.
+    h265_single_bitrate1080p = "H265SingleBitrate1080p"  #: Produces an MP4 file where the video is encoded with H.265 codec at 3500 kbps and a picture height of 1080 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps.
+    h265_single_bitrate4_k = "H265SingleBitrate4K"  #: Produces an MP4 file where the video is encoded with H.265 codec at 9500 kbps and a picture height of 2160 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps.
 
 
 class InsightsType(str, Enum):
