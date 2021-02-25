@@ -35,9 +35,11 @@
         {
             "file":[
                 "sdk/keyvault/azure-keyvault-certificates/tests/ca.key",
-                "sdk/identity/azure-identity/tests/ec-certificate.pem"
+                "sdk/identity/azure-identity/tests/ec-certificate.pem",
+                "sdk/core/azure-servicemanagement-legacy/tests/legacy_mgmt_settings_fake.py",
+                "tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py"
             ],
             "_justification": "File contains private key used by test code."
-        }  
+        }
     ]
 }
