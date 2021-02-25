@@ -135,7 +135,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
             raise ValueError(
                 "Invalid input. Only one of data and data_base64 must be present."
             )
-        elif data is None and data_base64 is None:
+        if data is None and data_base64 is None:
             data = None
         elif data or data_base64:
             data = data if data is not None else b64decode(data_base64)
