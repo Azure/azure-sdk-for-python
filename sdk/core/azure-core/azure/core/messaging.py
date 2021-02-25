@@ -29,8 +29,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
     :type source: str
     :param type: Required. Type of event related to the originating occurrence.
     :type type: str
-    :keyword data: Optional. Event data specific to the event type. If data is of bytes type, it will be sent
-     as data_base64 in the outgoing request.
+    :keyword data: Optional. Event data specific to the event type.
     :type data: object
     :keyword time: Optional. The time (in UTC) the event was generated.
     :type time: ~datetime.datetime
