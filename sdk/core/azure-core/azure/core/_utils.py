@@ -51,16 +51,18 @@ def _convert_to_isoformat(date_time):
         sign, offset = date_time[-6], date_time[-5:]
         delta = int(sign + offset[:1]) * 60 + int(sign + offset[-2:])
 
+    if delta == 0:
+        tzinfo = TZ_UTC
+    else:
+        try:
+            tzinfo = datetime.timezone(datetime.timedelta(minutes=delta))
+        except AttributeError:
+            tzinfo = _FixedOffset(delta)
+
     try:
         deserialized = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%f")
     except ValueError:
         deserialized = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S")
 
-    try:
-        deserialized = deserialized.replace(
-            tzinfo=datetime.timezone(datetime.timedelta(minutes=delta))
-        )
-    except AttributeError:
-        deserialized = deserialized.replace(tzinfo=_FixedOffset(delta))
-
+    deserialized = deserialized.replace(tzinfo=tzinfo)
     return deserialized
