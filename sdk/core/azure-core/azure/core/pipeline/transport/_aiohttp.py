@@ -235,7 +235,8 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             self.downloaded += self.block_size
             return chunk
         except _ResponseStopIteration:
-            await self.response.internal_response.close()
+            if self.response.internal_response:
+                await self.response.internal_response.close()
             raise StopAsyncIteration()
         except (ChunkedEncodingError, ConnectionError) as ex:
             while retry_active:
