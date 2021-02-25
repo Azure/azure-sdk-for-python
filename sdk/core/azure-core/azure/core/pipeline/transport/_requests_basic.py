@@ -130,7 +130,7 @@ class StreamDownloadGenerator(object):
         self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
         self.downloaded = 0
-        headers = response.request.headers
+        headers = response.headers
         if "x-ms-range" in headers:
             self.range_header = "x-ms-range"
             self.range = headers["x-ms-range"]
@@ -139,7 +139,7 @@ class StreamDownloadGenerator(object):
             self.range = headers["Range"]
         else:
             self.range_header = None
-        if 'etag' in response.headers:
+        if 'etag' in headers:
             self.etag = response.headers['etag']
         else:
             self.etag = None
@@ -171,15 +171,17 @@ class StreamDownloadGenerator(object):
                     _LOGGER.warning("Unable to stream download: %s", ex)
                     raise ex
                 else:
+                    if not self.etag:
+                        _LOGGER.warning("Unable to stream download: %s", ex)
+                        raise ex
                     time.sleep(retry_interval)
                     # todo handle pre-set range & x-ms-range
-                    headers = self.request.headers
+                    headers = self.request.headers.copy()
                     if not self.range_header:
                         range_header = {'range': 'bytes=' + str(self.downloaded) + '-'}
                     else:
                         range_header = {self.range_header: make_range_header(self.range, self.downloaded)}
-                    if self.etag:
-                        range_header.update({'If-Match': self.etag})
+                    range_header.update({'If-Match': self.etag})
                     headers.update(range_header)
                     try:
                         resp = self.pipeline.run(self.request, stream=True, headers=headers)
