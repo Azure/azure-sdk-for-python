@@ -29,9 +29,8 @@ jobs:
         git config --global user.name "PythonSdkPipelines"
 
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
-        mkdir temp_folder
-        git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/temp_folder
-        cd temp_folder
+        mkdir azure-sdk-for-python
+        git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/azure-sdk-for-python
         echo 0000000000
         echo | ls
 
