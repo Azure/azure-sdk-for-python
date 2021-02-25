@@ -51,6 +51,8 @@ jobs:
 
         # run
         cd azure-sdk-for-python
+        echo 1111111111111111111111
+        echo python /home/vsts/work/1/s/scripts/auto_release/main.py "$(BASE_BRANCH)" "$script_path" "$output_path"
         python /home/vsts/work/1/s/scripts/auto_release/main.py "$(BASE_BRANCH)" "$script_path" "$output_path"
 
         # judge
