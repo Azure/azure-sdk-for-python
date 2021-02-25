@@ -150,9 +150,6 @@ def edit_file_setup():
 
 def edit_file_readme():
     path = f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
-    # read and edit usage part
-    for i in range(0, len(usage)):
-        usage[i] = re.sub('MyService', SERVICE_NAME.capitalize(), usage[i], flags=re.IGNORECASE)
     # edit README
     with open(f'{path}/README.md', 'r') as file_in:
         list_in = file_in.readlines()
