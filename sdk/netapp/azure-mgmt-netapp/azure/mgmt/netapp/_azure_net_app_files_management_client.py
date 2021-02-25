@@ -28,7 +28,7 @@ from . import models
 
 
 class AzureNetAppFilesManagementClient(SDKClient):
-    """Microsoft NetApp Azure Resource Provider specification
+    """Microsoft NetApp Files Azure Resource Provider specification
 
     :ivar config: Configuration for client.
     :vartype config: AzureNetAppFilesManagementClientConfiguration
@@ -73,7 +73,7 @@ class AzureNetAppFilesManagementClient(SDKClient):
         super(AzureNetAppFilesManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2020-09-01'
+        self.api_version = '2020-11-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

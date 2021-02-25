@@ -27,7 +27,7 @@ class BackupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-09-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-11-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class BackupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-09-01"
+        self.api_version = "2020-11-01"
 
         self.config = config
 
@@ -314,36 +314,9 @@ class BackupsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/backups/{backupName}'}
 
-    def update(
+
+    def _update_initial(
             self, resource_group_name, account_name, pool_name, volume_name, backup_name, tags=None, label=None, custom_headers=None, raw=False, **operation_config):
-        """Patch a backup.
-
-        Patch a backup for the volume.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account
-        :type account_name: str
-        :param pool_name: The name of the capacity pool
-        :type pool_name: str
-        :param volume_name: The name of the volume
-        :type volume_name: str
-        :param backup_name: The name of the backup
-        :type backup_name: str
-        :param tags: Resource tags
-        :type tags: dict[str, str]
-        :param label: Label for backup
-        :type label: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Backup or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.netapp.models.Backup or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         body = None
         if tags is not None or label is not None:
             body = models.BackupPatch(tags=tags, label=label)
@@ -385,13 +358,16 @@ class BackupsOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
+            deserialized = self._deserialize('Backup', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('Backup', response)
 
         if raw:
@@ -399,6 +375,69 @@ class BackupsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def update(
+            self, resource_group_name, account_name, pool_name, volume_name, backup_name, tags=None, label=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Patch a backup.
+
+        Patch a backup for the volume.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account
+        :type account_name: str
+        :param pool_name: The name of the capacity pool
+        :type pool_name: str
+        :param volume_name: The name of the volume
+        :type volume_name: str
+        :param backup_name: The name of the backup
+        :type backup_name: str
+        :param tags: Resource tags
+        :type tags: dict[str, str]
+        :param label: Label for backup
+        :type label: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns Backup or
+         ClientRawResponse<Backup> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.netapp.models.Backup]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.netapp.models.Backup]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            backup_name=backup_name,
+            tags=tags,
+            label=label,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('Backup', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/backups/{backupName}'}
 
 

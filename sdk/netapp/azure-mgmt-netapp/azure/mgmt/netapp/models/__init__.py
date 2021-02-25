@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AccountEncryption
     from ._models_py3 import ActiveDirectory
     from ._models_py3 import AuthorizeRequest
     from ._models_py3 import Backup
@@ -45,6 +46,7 @@ try:
     from ._models_py3 import SnapshotPolicyDetails
     from ._models_py3 import SnapshotPolicyPatch
     from ._models_py3 import SnapshotPolicyVolumeList
+    from ._models_py3 import SystemData
     from ._models_py3 import Vault
     from ._models_py3 import Volume
     from ._models_py3 import VolumeBackupProperties
@@ -58,6 +60,7 @@ try:
     from ._models_py3 import VolumeSnapshotProperties
     from ._models_py3 import WeeklySchedule
 except (SyntaxError, ImportError):
+    from ._models import AccountEncryption
     from ._models import ActiveDirectory
     from ._models import AuthorizeRequest
     from ._models import Backup
@@ -93,6 +96,7 @@ except (SyntaxError, ImportError):
     from ._models import SnapshotPolicyDetails
     from ._models import SnapshotPolicyPatch
     from ._models import SnapshotPolicyVolumeList
+    from ._models import SystemData
     from ._models import Vault
     from ._models import Volume
     from ._models import VolumeBackupProperties
@@ -119,6 +123,8 @@ from ._azure_net_app_files_management_client_enums import (
     CheckNameResourceTypes,
     CheckQuotaNameResourceTypes,
     ActiveDirectoryStatus,
+    KeySource,
+    CreatedByType,
     ServiceLevel,
     QosType,
     EndpointType,
@@ -129,6 +135,7 @@ from ._azure_net_app_files_management_client_enums import (
 )
 
 __all__ = [
+    'AccountEncryption',
     'ActiveDirectory',
     'AuthorizeRequest',
     'Backup',
@@ -164,6 +171,7 @@ __all__ = [
     'SnapshotPolicyDetails',
     'SnapshotPolicyPatch',
     'SnapshotPolicyVolumeList',
+    'SystemData',
     'Vault',
     'Volume',
     'VolumeBackupProperties',
@@ -189,6 +197,8 @@ __all__ = [
     'CheckNameResourceTypes',
     'CheckQuotaNameResourceTypes',
     'ActiveDirectoryStatus',
+    'KeySource',
+    'CreatedByType',
     'ServiceLevel',
     'QosType',
     'EndpointType',

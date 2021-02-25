@@ -10,6 +10,24 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
+
+
+class AccountEncryption(Model):
+    """Encryption settings.
+
+    :param key_source: Encryption Key Source. Possible values are:
+     'Microsoft.NetApp'. Possible values include: 'Microsoft.NetApp'
+    :type key_source: str or ~azure.mgmt.netapp.models.KeySource
+    """
+
+    _attribute_map = {
+        'key_source': {'key': 'keySource', 'type': 'str'},
+    }
+
+    def __init__(self, *, key_source=None, **kwargs) -> None:
+        super(AccountEncryption, self).__init__(**kwargs)
+        self.key_source = key_source
 
 
 class ActiveDirectory(Model):
@@ -40,7 +58,7 @@ class ActiveDirectory(Model):
      registered as a computer account in the AD and used to mount volumes
     :type smb_server_name: str
     :param organizational_unit: The Organizational Unit (OU) within the
-     Windows Active Directory
+     Windows Active Directory. Default value: "CN=Computers" .
     :type organizational_unit: str
     :param site: The Active Directory site the service will limit Domain
      Controller discovery to
@@ -70,6 +88,9 @@ class ActiveDirectory(Model):
      given SeSecurityPrivilege privilege (Needed for SMB Continuously available
      shares for SQL). A list of unique usernames without domain specifier
     :type security_operators: list[str]
+    :param ldap_over_tls: Specifies whether or not the LDAP traffic needs to
+     be secured via TLS.
+    :type ldap_over_tls: bool
     """
 
     _validation = {
@@ -99,9 +120,10 @@ class ActiveDirectory(Model):
         'aes_encryption': {'key': 'aesEncryption', 'type': 'bool'},
         'ldap_signing': {'key': 'ldapSigning', 'type': 'bool'},
         'security_operators': {'key': 'securityOperators', 'type': '[str]'},
+        'ldap_over_tls': {'key': 'ldapOverTLS', 'type': 'bool'},
     }
 
-    def __init__(self, *, active_directory_id: str=None, username: str=None, password: str=None, domain: str=None, dns: str=None, smb_server_name: str=None, organizational_unit: str=None, site: str=None, backup_operators=None, kdc_ip: str=None, ad_name: str=None, server_root_ca_certificate: str=None, aes_encryption: bool=None, ldap_signing: bool=None, security_operators=None, **kwargs) -> None:
+    def __init__(self, *, active_directory_id: str=None, username: str=None, password: str=None, domain: str=None, dns: str=None, smb_server_name: str=None, organizational_unit: str="CN=Computers", site: str=None, backup_operators=None, kdc_ip: str=None, ad_name: str=None, server_root_ca_certificate: str=None, aes_encryption: bool=None, ldap_signing: bool=None, security_operators=None, ldap_over_tls: bool=None, **kwargs) -> None:
         super(ActiveDirectory, self).__init__(**kwargs)
         self.active_directory_id = active_directory_id
         self.username = username
@@ -120,6 +142,7 @@ class ActiveDirectory(Model):
         self.aes_encryption = aes_encryption
         self.ldap_signing = ldap_signing
         self.security_operators = security_operators
+        self.ldap_over_tls = ldap_over_tls
 
 
 class AuthorizeRequest(Model):
@@ -166,6 +189,8 @@ class Backup(Model):
     :type label: str
     :ivar backup_type: Type of backup adhoc or scheduled
     :vartype backup_type: str
+    :ivar failure_reason: Failure reason
+    :vartype failure_reason: str
     """
 
     _validation = {
@@ -178,6 +203,7 @@ class Backup(Model):
         'provisioning_state': {'readonly': True},
         'size': {'readonly': True},
         'backup_type': {'readonly': True},
+        'failure_reason': {'readonly': True},
     }
 
     _attribute_map = {
@@ -191,6 +217,7 @@ class Backup(Model):
         'size': {'key': 'properties.size', 'type': 'long'},
         'label': {'key': 'properties.label', 'type': 'str'},
         'backup_type': {'key': 'properties.backupType', 'type': 'str'},
+        'failure_reason': {'key': 'properties.failureReason', 'type': 'str'},
     }
 
     def __init__(self, *, location: str, label: str=None, **kwargs) -> None:
@@ -205,6 +232,7 @@ class Backup(Model):
         self.size = None
         self.label = label
         self.backup_type = None
+        self.failure_reason = None
 
 
 class BackupPatch(Model):
@@ -227,6 +255,8 @@ class BackupPatch(Model):
     :type label: str
     :ivar backup_type: Type of backup adhoc or scheduled
     :vartype backup_type: str
+    :ivar failure_reason: Failure reason
+    :vartype failure_reason: str
     """
 
     _validation = {
@@ -235,6 +265,7 @@ class BackupPatch(Model):
         'provisioning_state': {'readonly': True},
         'size': {'readonly': True},
         'backup_type': {'readonly': True},
+        'failure_reason': {'readonly': True},
     }
 
     _attribute_map = {
@@ -245,6 +276,7 @@ class BackupPatch(Model):
         'size': {'key': 'properties.size', 'type': 'long'},
         'label': {'key': 'properties.label', 'type': 'str'},
         'backup_type': {'key': 'properties.backupType', 'type': 'str'},
+        'failure_reason': {'key': 'properties.failureReason', 'type': 'str'},
     }
 
     def __init__(self, *, tags=None, label: str=None, **kwargs) -> None:
@@ -256,6 +288,7 @@ class BackupPatch(Model):
         self.size = None
         self.label = label
         self.backup_type = None
+        self.failure_reason = None
 
 
 class BackupPolicy(Model):
@@ -701,11 +734,53 @@ class CheckAvailabilityResponse(Model):
 
 
 class CloudError(Model):
-    """CloudError.
+    """An error response from the service.
+
+    :param error: Cloud error body.
+    :type error: ~azure.mgmt.netapp.models.CloudErrorBody
     """
 
     _attribute_map = {
+        'error': {'key': 'error', 'type': 'CloudErrorBody'},
     }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(CloudError, self).__init__(**kwargs)
+        self.error = error
+
+
+class CloudErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'CloudError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
+
+
+class CloudErrorBody(Model):
+    """An error response from the service.
+
+    :param code: An identifier for the error. Codes are invariant and are
+     intended to be consumed programmatically.
+    :type code: str
+    :param message: A message describing the error, intended to be suitable
+     for display in a user interface.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+        super(CloudErrorBody, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
 
 
 class DailySchedule(Model):
@@ -1075,6 +1150,10 @@ class NetAppAccount(Model):
     :vartype provisioning_state: str
     :param active_directories: Active Directories
     :type active_directories: list[~azure.mgmt.netapp.models.ActiveDirectory]
+    :param encryption: Encryption settings
+    :type encryption: ~azure.mgmt.netapp.models.AccountEncryption
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     """
 
     _validation = {
@@ -1083,6 +1162,7 @@ class NetAppAccount(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1093,9 +1173,11 @@ class NetAppAccount(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'active_directories': {'key': 'properties.activeDirectories', 'type': '[ActiveDirectory]'},
+        'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, *, location: str, tags=None, active_directories=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, active_directories=None, encryption=None, **kwargs) -> None:
         super(NetAppAccount, self).__init__(**kwargs)
         self.location = location
         self.id = None
@@ -1104,6 +1186,8 @@ class NetAppAccount(Model):
         self.tags = tags
         self.provisioning_state = None
         self.active_directories = active_directories
+        self.encryption = encryption
+        self.system_data = None
 
 
 class NetAppAccountPatch(Model):
@@ -1126,6 +1210,8 @@ class NetAppAccountPatch(Model):
     :vartype provisioning_state: str
     :param active_directories: Active Directories
     :type active_directories: list[~azure.mgmt.netapp.models.ActiveDirectory]
+    :param encryption: Encryption settings
+    :type encryption: ~azure.mgmt.netapp.models.AccountEncryption
     """
 
     _validation = {
@@ -1143,9 +1229,10 @@ class NetAppAccountPatch(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'active_directories': {'key': 'properties.activeDirectories', 'type': '[ActiveDirectory]'},
+        'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, active_directories=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, active_directories=None, encryption=None, **kwargs) -> None:
         super(NetAppAccountPatch, self).__init__(**kwargs)
         self.location = location
         self.id = None
@@ -1154,6 +1241,7 @@ class NetAppAccountPatch(Model):
         self.tags = tags
         self.provisioning_state = None
         self.active_directories = active_directories
+        self.encryption = encryption
 
 
 class Operation(Model):
@@ -1694,6 +1782,46 @@ class SnapshotPolicyVolumeList(Model):
         self.value = value
 
 
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or ~azure.mgmt.netapp.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.netapp.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC)
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, *, created_by: str=None, created_by_type=None, created_at=None, last_modified_by: str=None, last_modified_by_type=None, last_modified_at=None, **kwargs) -> None:
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
 class Vault(Model):
     """Vault information.
 
@@ -1773,7 +1901,8 @@ class Volume(Model):
     :param export_policy: exportPolicy. Set of export policy rules
     :type export_policy:
      ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
-    :param protocol_types: protocolTypes. Set of protocol types
+    :param protocol_types: protocolTypes. Set of protocol types, default
+     NFSv3, CIFS fro SMB protocol
     :type protocol_types: list[str]
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
@@ -1789,8 +1918,9 @@ class Volume(Model):
     :param subnet_id: Required. The Azure Resource URI for a delegated subnet.
      Must have the delegation Microsoft.NetApp/volumes
     :type subnet_id: str
-    :param mount_targets: mountTargets. List of mount targets
-    :type mount_targets: list[~azure.mgmt.netapp.models.MountTargetProperties]
+    :ivar mount_targets: mountTargets. List of mount targets
+    :vartype mount_targets:
+     list[~azure.mgmt.netapp.models.MountTargetProperties]
     :param volume_type: What type of volume is this
     :type volume_type: str
     :param data_protection: DataProtection. DataProtection type volumes
@@ -1800,14 +1930,15 @@ class Volume(Model):
     :param is_restoring: Restoring
     :type is_restoring: bool
     :param snapshot_directory_visible: If enabled (true) the volume will
-     contain a read-only .snapshot directory which provides access to each of
-     the volume's snapshots (default to true).
+     contain a read-only snapshot directory which provides access to each of
+     the volume's snapshots (default to true). Default value: True .
     :type snapshot_directory_visible: bool
     :param kerberos_enabled: Describe if a volume is KerberosEnabled. To be
      use with swagger version 2020-05-01 or later. Default value: False .
     :type kerberos_enabled: bool
-    :param security_style: The security style of volume. Possible values
-     include: 'ntfs', 'unix'
+    :param security_style: The security style of volume, default unix,
+     defaults to ntfs for dual protocol or CIFS protocol. Possible values
+     include: 'ntfs', 'unix'. Default value: "unix" .
     :type security_style: str or ~azure.mgmt.netapp.models.SecurityStyle
     :param smb_encryption: Enables encryption for in-flight smb3 data. Only
      applicable for SMB/DualProtocol volume. To be used with swagger version
@@ -1818,8 +1949,11 @@ class Volume(Model):
      False .
     :type smb_continuously_available: bool
     :param throughput_mibps: Maximum throughput in Mibps that can be achieved
-     by this volume.
+     by this volume.  Default value: 0 .
     :type throughput_mibps: float
+    :param encryption_key_source: Encryption Key Source. Possible values are:
+     'Microsoft.NetApp'
+    :type encryption_key_source: str
     """
 
     _validation = {
@@ -1835,7 +1969,8 @@ class Volume(Model):
         'backup_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|(\\?([^\/]*[\/])*)([^\/]+)$'},
         'baremetal_tenant_id': {'readonly': True},
         'subnet_id': {'required': True},
-        'throughput_mibps': {'maximum': 4500, 'minimum': 1, 'multiple': 0.001},
+        'mount_targets': {'readonly': True},
+        'throughput_mibps': {'maximum': 4500, 'minimum': 0, 'multiple': 0.001},
     }
 
     _attribute_map = {
@@ -1865,9 +2000,10 @@ class Volume(Model):
         'smb_encryption': {'key': 'properties.smbEncryption', 'type': 'bool'},
         'smb_continuously_available': {'key': 'properties.smbContinuouslyAvailable', 'type': 'bool'},
         'throughput_mibps': {'key': 'properties.throughputMibps', 'type': 'float'},
+        'encryption_key_source': {'key': 'properties.encryptionKeySource', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, creation_token: str, subnet_id: str, tags=None, service_level="Premium", usage_threshold: int=107374182400, export_policy=None, protocol_types=None, snapshot_id: str=None, backup_id: str=None, mount_targets=None, volume_type: str=None, data_protection=None, is_restoring: bool=None, snapshot_directory_visible: bool=None, kerberos_enabled: bool=False, security_style=None, smb_encryption: bool=False, smb_continuously_available: bool=False, throughput_mibps: float=None, **kwargs) -> None:
+    def __init__(self, *, location: str, creation_token: str, subnet_id: str, tags=None, service_level="Premium", usage_threshold: int=107374182400, export_policy=None, protocol_types=None, snapshot_id: str=None, backup_id: str=None, volume_type: str=None, data_protection=None, is_restoring: bool=None, snapshot_directory_visible: bool=True, kerberos_enabled: bool=False, security_style="unix", smb_encryption: bool=False, smb_continuously_available: bool=False, throughput_mibps: float=0, encryption_key_source: str=None, **kwargs) -> None:
         super(Volume, self).__init__(**kwargs)
         self.location = location
         self.id = None
@@ -1885,7 +2021,7 @@ class Volume(Model):
         self.backup_id = backup_id
         self.baremetal_tenant_id = None
         self.subnet_id = subnet_id
-        self.mount_targets = mount_targets
+        self.mount_targets = None
         self.volume_type = volume_type
         self.data_protection = data_protection
         self.is_restoring = is_restoring
@@ -1895,6 +2031,7 @@ class Volume(Model):
         self.smb_encryption = smb_encryption
         self.smb_continuously_available = smb_continuously_available
         self.throughput_mibps = throughput_mibps
+        self.encryption_key_source = encryption_key_source
 
 
 class VolumeBackupProperties(Model):

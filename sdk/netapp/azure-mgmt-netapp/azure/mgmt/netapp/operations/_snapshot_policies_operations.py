@@ -27,7 +27,7 @@ class SnapshotPoliciesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-09-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-11-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class SnapshotPoliciesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-09-01"
+        self.api_version = "2020-11-01"
 
         self.config = config
 
@@ -284,29 +284,9 @@ class SnapshotPoliciesOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies/{snapshotPolicyName}'}
 
-    def update(
-            self, body, resource_group_name, account_name, snapshot_policy_name, custom_headers=None, raw=False, **operation_config):
-        """Patch a snapshot policy.
 
-        :param body: Snapshot policy object supplied in the body of the
-         operation.
-        :type body: ~azure.mgmt.netapp.models.SnapshotPolicyPatch
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account
-        :type account_name: str
-        :param snapshot_policy_name: The name of the snapshot policy target
-        :type snapshot_policy_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: SnapshotPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.netapp.models.SnapshotPolicy or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _update_initial(
+            self, body, resource_group_name, account_name, snapshot_policy_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -339,13 +319,16 @@ class SnapshotPoliciesOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
+            deserialized = self._deserialize('SnapshotPolicy', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('SnapshotPolicy', response)
 
         if raw:
@@ -353,6 +336,59 @@ class SnapshotPoliciesOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def update(
+            self, body, resource_group_name, account_name, snapshot_policy_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Patch a snapshot policy.
+
+        :param body: Snapshot policy object supplied in the body of the
+         operation.
+        :type body: ~azure.mgmt.netapp.models.SnapshotPolicyPatch
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account
+        :type account_name: str
+        :param snapshot_policy_name: The name of the snapshot policy target
+        :type snapshot_policy_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns SnapshotPolicy or
+         ClientRawResponse<SnapshotPolicy> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.netapp.models.SnapshotPolicy]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.netapp.models.SnapshotPolicy]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._update_initial(
+            body=body,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            snapshot_policy_name=snapshot_policy_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('SnapshotPolicy', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies/{snapshotPolicyName}'}
 
 
@@ -502,4 +538,4 @@ class SnapshotPoliciesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_volumes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies/{snapshotPolicyName}/listVolumes'}
+    list_volumes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies/{snapshotPolicyName}/volumes'}
