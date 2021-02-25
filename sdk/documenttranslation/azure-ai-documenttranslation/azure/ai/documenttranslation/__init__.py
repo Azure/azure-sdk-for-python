@@ -26,7 +26,7 @@ __VERSION__ = VERSION
 __all__ = [
     "DocumentTranslationClient",
     "DocumentTranslationVersion",
-    "BatchTranslationInput",
+    "BatchDocumentInput",
     "TranslationGlossary",
     "StorageInputType",
     "FileFormat",

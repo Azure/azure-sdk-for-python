@@ -5,7 +5,7 @@
 # ------------------------------------
 
 
-def sample_list_all_batches():
+def sample_list_all_jobs():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
@@ -16,19 +16,18 @@ def sample_list_all_batches():
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
-    batches = client.list_batches_statuses()
+    jobs = client.list_submitted_jobs()
 
-    print("Batches summary")
-    for batch in batches:
-        print("Batch ID: {}".format(batch.id))
-        print("Batch status: {}".format(batch.status))
-        print("Batch created on: {}".format(batch.created_on))
-        print("Batch last updated on: {}".format(batch.last_updated_on))
-        print("Batch number of translations on documents: {}".format(batch.documents_total_count))
+    for job in jobs:
+        print("Job ID: {}".format(job.id))
+        print("Job status: {}".format(job.status))
+        print("Job created on: {}".format(job.created_on))
+        print("Job last updated on: {}".format(job.last_updated_on))
+        print("Total number of translations on documents: {}".format(job.documents_total_count))
 
         print("Of total documents...")
-        print("{} failed".format(batch.documents_failed_count))
-        print("{} succeeded".format(batch.documents_succeeded_count))
-        print("{} in progress".format(batch.documents_in_progress_count))
-        print("{} not yet started".format(batch.documents_not_yet_started_count))
-        print("{} cancelled".format(batch.documents_cancelled_count))
+        print("{} failed".format(job.documents_failed_count))
+        print("{} succeeded".format(job.documents_succeeded_count))
+        print("{} in progress".format(job.documents_in_progress_count))
+        print("{} not yet started".format(job.documents_not_yet_started_count))
+        print("{} cancelled".format(job.documents_cancelled_count))
