@@ -108,6 +108,32 @@ def test_cloud_custom_dict_blank_data():
     assert event.data == ''
     assert event.__class__ == CloudEvent
 
+def test_cloud_custom_dict_none_data():
+    cloud_custom_dict_with_none_data = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "source":"https://egtest.dev/cloudcustomevent",
+        "data":None,
+        "type":"Azure.Sdk.Sample",
+        "time":"2021-02-18T20:18:10+00:00",
+        "specversion":"1.0",
+    }
+    event = CloudEvent.from_dict(cloud_custom_dict_with_none_data)
+    assert event.data == None
+    assert event.__class__ == CloudEvent
+
+def test_cloud_custom_dict_both_data_and_base64():
+    cloud_custom_dict_with_data_and_base64 = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "source":"https://egtest.dev/cloudcustomevent",
+        "data":"abc",
+        "data_base64":"Y2Wa==",
+        "type":"Azure.Sdk.Sample",
+        "time":"2021-02-18T20:18:10+00:00",
+        "specversion":"1.0",
+    }
+    with pytest.raises(ValueError):
+        event = CloudEvent.from_dict(cloud_custom_dict_with_data_and_base64)
+
 def test_cloud_custom_dict_base64():
     cloud_custom_dict_base64 = {
         "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",

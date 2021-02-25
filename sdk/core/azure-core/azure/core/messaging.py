@@ -24,8 +24,6 @@ __all__ = ["CloudEvent"]
 class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
     """Properties of the CloudEvent 1.0 Schema.
     All required parameters must be populated in order to send to Azure.
-    If data is of binary type, data_base64 can be used alternatively. Note that data and data_base64
-    cannot be present at the same time.
     :param source: Required. Identifies the context in which an event happened. The combination of id and source must
      be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
     :type source: str
@@ -76,20 +74,20 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
     :ivar extensions: A CloudEvent MAY include any number of additional context attributes
      with distinct names represented as key - value pairs. Each extension must be alphanumeric, lower cased
      and must not exceed the length of 20 characters.
-    :vartype extensions: dict
+    :vartype extensions: Dict
     """
 
     def __init__(self, source, type, **kwargs):  # pylint: disable=redefined-builtin
         # type: (str, str, **Any) -> None
-        self.source = source
-        self.type = type
-        self.specversion = kwargs.pop("specversion", "1.0")
-        self.id = kwargs.pop("id", str(uuid.uuid4()))
-        self.time = kwargs.pop("time", datetime.now(TZ_UTC))
-        self.datacontenttype = kwargs.pop("datacontenttype", None)
-        self.dataschema = kwargs.pop("dataschema", None)
-        self.subject = kwargs.pop("subject", None)
-        self.extensions = {}
+        self.source = source # type: str
+        self.type = type # type: str
+        self.specversion = kwargs.pop("specversion", "1.0") # type: str
+        self.id = kwargs.pop("id", str(uuid.uuid4())) # type: str
+        self.time = kwargs.pop("time", datetime.now(TZ_UTC)) # type: datetime
+        self.datacontenttype = kwargs.pop("datacontenttype", None) # type: str
+        self.dataschema = kwargs.pop("dataschema", None) # type: str
+        self.subject = kwargs.pop("subject", None) # type: str
+        self.extensions = {} # type: Dict
         _extensions = dict(kwargs.pop("extensions", {}))
         for key in _extensions.keys():
             if not key.islower() or not key.isalnum():
@@ -97,7 +95,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
                     "Extension attributes should be lower cased and alphanumeric."
                 )
         self.extensions.update(_extensions)
-        self.data = kwargs.pop("data", None)
+        self.data = kwargs.pop("data", None) # type: object
 
     def __repr__(self):
         return "CloudEvent(source={}, type={}, specversion={}, id={}, time={})".format(
@@ -105,8 +103,8 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         )[:1024]
 
     @classmethod
-    def from_dict(cls, event, **kwargs):
-        # type: (Dict, **Any) -> CloudEvent
+    def from_dict(cls, event):
+        # type: (Dict) -> CloudEvent
         """
         Returns the deserialized CloudEvent object when a dict is provided.
         :param event: The dict representation of the event which needs to be deserialized.
@@ -128,21 +126,25 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
 
         data = event.get("data", None)
         data_base64 = event.get("data_base64", None)
+
         if data and data_base64:
             raise ValueError(
                 "Invalid input. Only one of data and data_base64 must be present."
             )
+        elif data is None and data_base64 is None:
+            data = None
+        else:
+            data = data if data is not None else b64decode(data_base64)
 
         return cls(
             id=event.get("id", None),
             source=event.get("source", None),
             type=event.get("type", None),
             specversion=event.get("specversion", None),
-            data=data if data is not None else b64decode(data_base64),
+            data=data,
             time=_convert_to_isoformat(event.get("time", None)),
             dataschema=event.get("dataschema", None),
             datacontenttype=event.get("datacontenttype", None),
             subject=event.get("subject", None),
-            extensions={k: v for k, v in event.items() if k not in reserved_attr},
-            **kwargs
+            extensions={k: v for k, v in event.items() if k not in reserved_attr}
         )
