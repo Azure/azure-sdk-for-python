@@ -21,7 +21,7 @@ from azure.communication.phonenumbers import PhoneNumberAssignmentType, PhoneNum
 >>>>>>> 798b57943... Regenerated code
 =======
 from _shared.utils import create_token_credential
-from azure.communication.phonenumbers import PhoneNumberAssignmentType, PhoneNumberCapabilities, PhoneNumberCapabilityValue, PhoneNumberType
+from azure.communication.phonenumbers import PhoneNumberAssignmentType, PhoneNumberCapabilities, PhoneNumberCapabilityType, PhoneNumberType
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 >>>>>>> 33c619188... Added managed identity tests and addressed apiview comments
 
@@ -199,8 +199,8 @@ class NewTests(AsyncCommunicationTestCase):
     @pytest.mark.live_test_only
     async def test_search_available_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(
-            calling = PhoneNumberCapabilityValue.INBOUND,
-            sms = PhoneNumberCapabilityValue.INBOUND_OUTBOUND
+            calling = PhoneNumberCapabilityType.INBOUND,
+            sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
         )
         async with self.phone_number_client:
             poller = await self.phone_number_client.begin_search_available_phone_numbers(
@@ -219,8 +219,8 @@ class NewTests(AsyncCommunicationTestCase):
         async with self.phone_number_client:
             poller = self.phone_number_client.begin_update_phone_number_capabilities(
             self.phone_number,
-            PhoneNumberCapabilityValue.OUTBOUND,
-            PhoneNumberCapabilityValue.OUTBOUND,
+            PhoneNumberCapabilityType.OUTBOUND,
+            PhoneNumberCapabilityType.OUTBOUND,
             polling = True
             )
         assert poller.result()
@@ -229,8 +229,8 @@ class NewTests(AsyncCommunicationTestCase):
     @pytest.mark.live_test_only
     async def test_purchase_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(
-            calling = PhoneNumberCapabilityValue.INBOUND,
-            sms = PhoneNumberCapabilityValue.INBOUND_OUTBOUND
+            calling = PhoneNumberCapabilityType.INBOUND,
+            sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
         )
         async with self.phone_number_client:
             search_poller = await self.phone_number_client.begin_search_available_phone_numbers(

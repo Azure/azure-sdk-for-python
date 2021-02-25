@@ -48,8 +48,12 @@ def list_acquired_phone_numbers():
 >>>>>>> 798b57943... Regenerated code
 =======
     for acquired_phone_number in acquired_phone_numbers:
+<<<<<<< HEAD
         print(acquired_phone_number)
 >>>>>>> a11fa64fb... Corrected samples
+=======
+        print(acquired_phone_number.phone_number)
+>>>>>>> f5c946df0... Regenerated code and addressed comments
 
 
 if __name__ == '__main__':

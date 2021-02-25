@@ -62,6 +62,7 @@ def release_phone_number():
     poller.result()
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     print('Status of the operation: ' + poller.status())
 =======
     print('Status of the operation:')
@@ -71,6 +72,9 @@ def release_phone_number():
     print(poller.status())
 
 >>>>>>> 968de8d7e... Added README and samples
+=======
+    print('Status of the operation: ' + poller.status())
+>>>>>>> f5c946df0... Regenerated code and addressed comments
 
 if __name__ == '__main__':
     release_phone_number()
