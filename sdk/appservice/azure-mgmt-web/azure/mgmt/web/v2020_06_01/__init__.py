@@ -9,5 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.49.0"
+from ._configuration import WebSiteManagementClientConfiguration
+from ._web_site_management_client import WebSiteManagementClient
+__all__ = ['WebSiteManagementClient', 'WebSiteManagementClientConfiguration']
+
+from .version import VERSION
+
+__version__ = VERSION
 
