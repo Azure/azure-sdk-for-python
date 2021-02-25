@@ -235,15 +235,12 @@ class HttpRequest(object):
         self.headers = _case_insensitive_dict(headers)
         self.files = files
         self.multipart_mixed_info = None  # type: Optional[Tuple]
-        json_kwarg = kwargs.pop("json", None)
+        json_kwarg = "json" in kwargs
         if data and json_kwarg:
-            _LOGGER.warning(
-                "You have sent data through both parameter data and kwarg json. "
-                "We will use the data you sent through the data parameter, but "
-                "still conduct json serialization on your inputted data. "
-                "In the future, just use one of these parameters."
+            raise ValueError(
+                "You can not pass values for both 'data' and 'json'. "
             )
-        self.data = data or json_kwarg
+        self.data = data or kwargs.pop("json", None)
         if json_kwarg:
             self.set_json_body(self.data)
 
@@ -381,11 +378,8 @@ class HttpRequest(object):
         :param data: A JSON serializable object
         :raises: TypeError if the object you input is not JSON serializable
         """
-        if data is None:
-            self.data = None
-        else:
-            self.data = json.dumps(data)
-            self.headers["Content-Length"] = str(len(self.data))
+        self.data = json.dumps(data)
+        self.headers["Content-Length"] = str(len(self.data))
         if not self.headers.get("Content-Type"):
             self.headers["Content-Type"] = "application/json"
         self.files = None

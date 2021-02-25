@@ -269,6 +269,14 @@ class TestClientRequest(unittest.TestCase):
         assert request.headers.get("Content-Length") == "24"
         assert request.headers.get("Content-Type") == "shouldBeMe"
 
+    def test_request_json_kwarg_none(self):
+        request = HttpRequest("GET", "/", json=None)
+        assert request.data == "null"
+
+    def test_request_data_and_json(self):
+        with pytest.raises(ValueError):
+            HttpRequest("GET", "/", data="hello", json="goodbye")
+
     def test_request_data(self):
 
         request = HttpRequest("GET", "/")
