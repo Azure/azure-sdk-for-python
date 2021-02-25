@@ -34,7 +34,7 @@ except (SyntaxError, ImportError):
 from ._phone_numbers_client_enums import (
     BillingFrequency,
     PhoneNumberAssignmentType,
-    PhoneNumberCapabilityValue,
+    PhoneNumberCapabilityType,
     PhoneNumberOperationStatus,
     PhoneNumberOperationType,
     PhoneNumberType,
@@ -54,7 +54,7 @@ __all__ = [
     'PhoneNumberSearchResult',
     'BillingFrequency',
     'PhoneNumberAssignmentType',
-    'PhoneNumberCapabilityValue',
+    'PhoneNumberCapabilityType',
     'PhoneNumberOperationStatus',
     'PhoneNumberOperationType',
     'PhoneNumberType',

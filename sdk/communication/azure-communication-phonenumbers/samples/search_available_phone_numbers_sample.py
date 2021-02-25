@@ -23,7 +23,7 @@ from azure.communication.phonenumbers import (
     PhoneNumberType,
     PhoneNumberAssignmentType,
     PhoneNumberCapabilities,
-    PhoneNumberCapabilityValue
+    PhoneNumberCapabilityType
 )
 
 connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
@@ -32,8 +32,8 @@ phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 def search_available_phone_numbers():
     capabilities = PhoneNumberCapabilities(
-        calling = PhoneNumberCapabilityValue.INBOUND,
-        sms = PhoneNumberCapabilityValue.INBOUND_OUTBOUND
+        calling = PhoneNumberCapabilityType.INBOUND,
+        sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
     )
     poller = phone_numbers_client.begin_search_available_phone_numbers(
         "US",
@@ -44,7 +44,7 @@ def search_available_phone_numbers():
         1,
         polling = True
     )
-    print('Acquired phone numbers: ' + poller.result)
+    print('Acquired phone numbers: ' + poller.result())
 
 
 if __name__ == '__main__':

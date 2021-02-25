@@ -37,9 +37,9 @@ class AcquiredPhoneNumber(msrest.serialization.Model):
      "application".
     :type assignment_type: str or
      ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
-    :param purchase_date: The date and time that the phone number was purchased.
+    :param purchase_date: Required. The date and time that the phone number was purchased.
     :type purchase_date: ~datetime.datetime
-    :param cost: The incurred cost for a single phone number.
+    :param cost: Required. The incurred cost for a single phone number.
     :type cost: ~azure.communication.phonenumbers.models.PhoneNumberCost
     """
 
@@ -50,6 +50,8 @@ class AcquiredPhoneNumber(msrest.serialization.Model):
         'phone_number_type': {'required': True},
         'capabilities': {'required': True},
         'assignment_type': {'required': True},
+        'purchase_date': {'required': True},
+        'cost': {'required': True},
     }
 
     _attribute_map = {
@@ -72,8 +74,8 @@ class AcquiredPhoneNumber(msrest.serialization.Model):
         phone_number_type: Union[str, "PhoneNumberType"],
         capabilities: "PhoneNumberCapabilities",
         assignment_type: Union[str, "PhoneNumberAssignmentType"],
-        purchase_date: Optional[datetime.datetime] = None,
-        cost: Optional["PhoneNumberCost"] = None,
+        purchase_date: datetime.datetime,
+        cost: "PhoneNumberCost",
         **kwargs
     ):
         super(AcquiredPhoneNumber, self).__init__(**kwargs)
@@ -203,10 +205,10 @@ class PhoneNumberCapabilities(msrest.serialization.Model):
 
     :param calling: Required. Capability value for calling. Possible values include: "none",
      "inbound", "outbound", "inbound+outbound".
-    :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityValue
+    :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
     :param sms: Required. Capability value for SMS. Possible values include: "none", "inbound",
      "outbound", "inbound+outbound".
-    :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityValue
+    :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
     """
 
     _validation = {
@@ -222,8 +224,8 @@ class PhoneNumberCapabilities(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        calling: Union[str, "PhoneNumberCapabilityValue"],
-        sms: Union[str, "PhoneNumberCapabilityValue"],
+        calling: Union[str, "PhoneNumberCapabilityType"],
+        sms: Union[str, "PhoneNumberCapabilityType"],
         **kwargs
     ):
         super(PhoneNumberCapabilities, self).__init__(**kwargs)
@@ -236,10 +238,10 @@ class PhoneNumberCapabilitiesRequest(msrest.serialization.Model):
 
     :param calling: Capability value for calling. Possible values include: "none", "inbound",
      "outbound", "inbound+outbound".
-    :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityValue
+    :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
     :param sms: Capability value for SMS. Possible values include: "none", "inbound", "outbound",
      "inbound+outbound".
-    :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityValue
+    :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
     """
 
     _attribute_map = {
@@ -250,8 +252,8 @@ class PhoneNumberCapabilitiesRequest(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        calling: Optional[Union[str, "PhoneNumberCapabilityValue"]] = None,
-        sms: Optional[Union[str, "PhoneNumberCapabilityValue"]] = None,
+        calling: Optional[Union[str, "PhoneNumberCapabilityType"]] = None,
+        sms: Optional[Union[str, "PhoneNumberCapabilityType"]] = None,
         **kwargs
     ):
         super(PhoneNumberCapabilitiesRequest, self).__init__(**kwargs)

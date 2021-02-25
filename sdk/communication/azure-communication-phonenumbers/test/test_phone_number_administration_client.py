@@ -3,7 +3,7 @@ import pytest
 from azure.communication.phonenumbers import PhoneNumbersClient
 from _shared.testcase import CommunicationTestCase, ResponseReplacerProcessor, BodyReplacerProcessor
 from _shared.utils import create_token_credential
-from azure.communication.phonenumbers import PhoneNumberAssignmentType, PhoneNumberCapabilities, PhoneNumberCapabilityValue, PhoneNumberType
+from azure.communication.phonenumbers import PhoneNumberAssignmentType, PhoneNumberCapabilities, PhoneNumberCapabilityType, PhoneNumberType
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 
 class NewTests(CommunicationTestCase):
@@ -52,8 +52,8 @@ class NewTests(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_search_available_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(
-            calling = PhoneNumberCapabilityValue.INBOUND,
-            sms = PhoneNumberCapabilityValue.INBOUND_OUTBOUND
+            calling = PhoneNumberCapabilityType.INBOUND,
+            sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
         )
         poller = self.phone_number_client.begin_search_available_phone_numbers(
             self.country_code,
@@ -69,8 +69,8 @@ class NewTests(CommunicationTestCase):
     def test_update_phone_number_capabilities(self):
         poller = self.phone_number_client.begin_update_phone_number_capabilities(
           self.phone_number,
-          PhoneNumberCapabilityValue.OUTBOUND,
-          PhoneNumberCapabilityValue.INBOUND_OUTBOUND,
+          PhoneNumberCapabilityType.OUTBOUND,
+          PhoneNumberCapabilityType.INBOUND_OUTBOUND,
           polling = True
         )
         assert poller.result()
@@ -78,8 +78,8 @@ class NewTests(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_purchase_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(
-            calling = PhoneNumberCapabilityValue.INBOUND,
-            sms = PhoneNumberCapabilityValue.INBOUND_OUTBOUND
+            calling = PhoneNumberCapabilityType.INBOUND,
+            sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
         )
         search_poller = self.phone_number_client.begin_search_available_phone_numbers(
             self.country_code,

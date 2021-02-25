@@ -40,7 +40,7 @@ class PhoneNumberAssignmentType(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     PERSON = "person"
     APPLICATION = "application"
 
-class PhoneNumberCapabilityValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PhoneNumberCapabilityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Capability value for calling.
     """
 

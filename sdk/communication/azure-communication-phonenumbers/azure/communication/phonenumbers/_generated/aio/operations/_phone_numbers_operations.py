@@ -234,8 +234,8 @@ class PhoneNumbersOperations:
         self,
         search_id: Optional[str] = None,
         **kwargs
-    ) -> "_models.PhoneNumberSearchResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PhoneNumberSearchResult"]
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -275,23 +275,20 @@ class PhoneNumbersOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
         response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
         response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
         response_headers['purchase-id']=self._deserialize('str', response.headers.get('purchase-id'))
-        deserialized = self._deserialize('PhoneNumberSearchResult', pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, None, response_headers)
 
-        return deserialized
     _purchase_phone_numbers_initial.metadata = {'url': '/availablePhoneNumbers/:purchase'}  # type: ignore
 
     async def begin_purchase_phone_numbers(
         self,
         search_id: Optional[str] = None,
         **kwargs
-    ) -> AsyncLROPoller["_models.PhoneNumberSearchResult"]:
+    ) -> AsyncLROPoller[None]:
         """Purchases phone numbers.
 
         Purchases phone numbers.
@@ -304,12 +301,12 @@ class PhoneNumbersOperations:
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either PhoneNumberSearchResult or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PhoneNumberSearchResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -326,23 +323,14 @@ class PhoneNumbersOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-            response_headers['operation-id']=self._deserialize('str', response.headers.get('operation-id'))
-            response_headers['purchase-id']=self._deserialize('str', response.headers.get('purchase-id'))
-            deserialized = self._deserialize('PhoneNumberSearchResult', pipeline_response)
-
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)
-            return deserialized
+                return cls(pipeline_response, None, {})
 
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -622,7 +610,7 @@ class PhoneNumbersOperations:
             'phoneNumber': self._serialize.url("phone_number", phone_number, 'str'),
         }
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -724,8 +712,8 @@ class PhoneNumbersOperations:
     async def _update_capabilities_initial(
         self,
         phone_number: str,
-        calling: Optional[Union[str, "_models.PhoneNumberCapabilityValue"]] = None,
-        sms: Optional[Union[str, "_models.PhoneNumberCapabilityValue"]] = None,
+        calling: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
+        sms: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
         **kwargs
     ) -> "_models.AcquiredPhoneNumber":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AcquiredPhoneNumber"]
@@ -787,8 +775,8 @@ class PhoneNumbersOperations:
     async def begin_update_capabilities(
         self,
         phone_number: str,
-        calling: Optional[Union[str, "_models.PhoneNumberCapabilityValue"]] = None,
-        sms: Optional[Union[str, "_models.PhoneNumberCapabilityValue"]] = None,
+        calling: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
+        sms: Optional[Union[str, "_models.PhoneNumberCapabilityType"]] = None,
         **kwargs
     ) -> AsyncLROPoller["_models.AcquiredPhoneNumber"]:
         """Updates the capabilities of a phone number.
@@ -799,9 +787,9 @@ class PhoneNumbersOperations:
          encoded as %2B, e.g. +11234567890.
         :type phone_number: str
         :param calling: Capability value for calling.
-        :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityValue
+        :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
         :param sms: Capability value for SMS.
-        :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityValue
+        :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
