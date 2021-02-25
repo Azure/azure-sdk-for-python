@@ -10,6 +10,6 @@ class ContainerRegistryStsClient(object):
         # type: (str, TokenCredential) -> None
         pass
 
-    def get_access_token(self):
+    def get_access_token(self, **kwargs):
         # type: (...) -> None
         pass

@@ -11,34 +11,34 @@ class ArtifactManifest(object):
         self.media_type = kwargs.get('media_type', None)
         self.schema_version = kwargs.get('media_version', None)
 
-    def as_docker_manifest_list(self):
+    def as_docker_manifest_list(self, **kwargs):
         # type: (...) -> DockerManifestList
         pass
 
-    def as_docker_manifest_v1(self):
+    def as_docker_manifest_v1(self, **kwargs):
         # type: (...) -> DockerManifestV1
         pass
 
-    def as_docker_manifest_v2(self):
+    def as_docker_manifest_v2(self, **kwargs):
         # type: (...) -> DockerManifestV2
         pass
 
-    def as_docker_manifest_v1(self):
+    def as_docker_manifest_v1(self, **kwargs):
         # type: (...) -> DockerManifestV1
         pass
 
-    def as_oci_index(self):
+    def as_oci_index(self, **kwargs):
         # type: (...) -> OCIIndex
         pass
 
-    def as_oci_manifest(self):
+    def as_oci_manifest(self, **kwargs):
         # type: (...) -> OCIManifest
         pass
 
 
 class CompleteUploadResult(object):
 
-    def __init__(self, digest, location, http_range):
+    def __init__(self, digest, location, http_range, **kwargs):
         # type: (str, str, HttpRange)
         self.digest = digest
         self.location = location
@@ -60,7 +60,7 @@ class ConfigMediaType(object):
         # type: (ConfigMediaType) -> bool
         return not self.__eq__(right)
 
-    def get_has_code(self):
+    def get_has_code(self, **kwargs):
         # type: (...) -> int
         pass
 
@@ -81,7 +81,7 @@ class ContentDescriptor(object):
         self.compute_digest = kwargs.get('compute_digest', None)
 
     @classmethod
-    def _from_generated(self, generated):
+    def _from_generated(self, generated, **kwargs):
         # type: (Generated) -> ContentDescriptor
         pass
 
@@ -95,7 +95,7 @@ class CreateManifestResult(object):
         self.location = kwargs.get('location', None)
 
     @classmethod
-    def _from_generated(self, generated):
+    def _from_generated(self, generated, **kwargs):
         # type: (Generated) -> CreateManifestResult
         pass
 
@@ -109,7 +109,7 @@ class CreateUploadResult(object):
         self.upload_id = kwargs.get('upload_id', None)
 
     @classmethod
-    def _from_generated(self, generated):
+    def _from_generated(self, generated, **kwargs):
         # type: (Generated) -> CreateUploadResult
         pass
 
@@ -184,7 +184,7 @@ class DockerManifestV2(ArtifactManifest):
         self.layers = kwargs.get('layers')
 
     @classmethod
-    def from_stream(self, stream):
+    def from_stream(self, stream, **kwargs):
         # type: (Stream) -> DockerManifestV2
         pass
 
@@ -216,7 +216,7 @@ class ManifestMediaType(object):
         # type: (...) -> str
         pass
 
-    def get_hash_code(self):
+    def get_hash_code(self, **kwargs):
         # type: (...) -> int
         pass
 
@@ -241,20 +241,20 @@ class OCIManifest(ArtifactManifest):
 # NOTE: This might not be needed, could return just a dict
 class OCIManifestAnnotations(dict):
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         # type: (...) -> None
         pass
 
 
 class RuntimePlatform(object):
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         # type: (...) -> None
         pass
 
 
 class UploadStatus(object):
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.http_range = kwargs.get('http_range', None)
         self.upload_id = kwargs.get('upload_id', None)

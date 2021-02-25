@@ -11,7 +11,7 @@ class ContainerRegistryClient(object):
 
         pass
 
-    def delete_repository(self, name):
+    def delete_repository(self, name, **kwargs):
         # type: (str) -> DeletedRepositoryResult
 
         pass
@@ -21,12 +21,12 @@ class ContainerRegistryClient(object):
 
         pass
 
-    def get_repository_client(self, name):
+    def get_repository_client(self, name, **kwargs):
         # type: (str) -> ContainerRepositoryClient
 
         pass
 
-    def get_repository_attributes(self, name):
+    def get_repository_attributes(self, name, **kwargs):
         # type: (str) -> RepositoryAttributes
 
         pass

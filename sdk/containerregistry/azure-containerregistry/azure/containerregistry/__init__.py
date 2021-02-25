@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._artifact_storage_client import ArtifactClient
+from ._artifact_storage_client import ArtifactStorageClient
 from ._container_registry_authentication import ContainerRegistryStsClient
 from ._container_registry_client import ContainerRegistryClient
 from ._container_repository_client import ContainerRepositoryClient
@@ -50,7 +50,7 @@ from ._version import VERSION
 __version__ = VERSION
 
 __all__ = [
-    "ArtifactClient",
+    "ArtifactStorageClient",
     "ContainerRegistryStsClient",
     "ContainerRegistryClient",
     "ContainerRepositoryClient",

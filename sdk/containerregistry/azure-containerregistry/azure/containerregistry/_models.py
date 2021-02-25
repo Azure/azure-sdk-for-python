@@ -12,12 +12,12 @@ from ._generated.models import (
 
 
 class AzureAdminUserCredential(object):
-    def __init__(self, username, password):
+    def __init__(self, username, password, **kwargs):
         # type: (str, str) -> None
         self.username = username
         self.password = password
 
-    def update_password(self, password):
+    def update_password(self, password, **kwargs):
         # type: (str) -> None
         self.password = password
 
@@ -37,17 +37,17 @@ class DeletedRepositoryResult(DeletedRepository):
 
 
 class GetManifestOptions(object):
-    def __init__(self):
+    def __init__(self, **kwargs):
         pass
 
 
 class GetTagOptions(object):
-    def __init__(self):
+    def __init__(self, **kwargs):
         pass
 
 
 class ArtifactAttributes(object):
-    def __init__(self):
+    def __init__(self, **kwargs):
         pass
 
 
