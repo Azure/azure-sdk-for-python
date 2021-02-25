@@ -176,6 +176,7 @@ class ImageTemplate(Resource):
      ~azure.mgmt.imagebuilder.models.ImageTemplateLastRunStatus
     :param build_timeout_in_minutes: Maximum duration to wait while building
      the image template. Omit or specify 0 to use the default (4 hours).
+     Default value: 0 .
     :type build_timeout_in_minutes: int
     :param vm_profile: Describes how virtual machine is set up to build images
     :type vm_profile: ~azure.mgmt.imagebuilder.models.ImageTemplateVmProfile
@@ -223,7 +224,7 @@ class ImageTemplate(Resource):
         self.provisioning_state = None
         self.provisioning_error = None
         self.last_run_status = None
-        self.build_timeout_in_minutes = kwargs.get('build_timeout_in_minutes', None)
+        self.build_timeout_in_minutes = kwargs.get('build_timeout_in_minutes', 0)
         self.vm_profile = kwargs.get('vm_profile', None)
         self.identity = kwargs.get('identity', None)
 
@@ -320,7 +321,7 @@ class ImageTemplateFileCustomizer(ImageTemplateCustomizer):
      VM. It can be a github link, SAS URI for Azure Storage, etc
     :type source_uri: str
     :param sha256_checksum: SHA256 checksum of the file provided in the
-     sourceUri field above
+     sourceUri field above. Default value: "" .
     :type sha256_checksum: str
     :param destination: The absolute path to a file (with nested directory
      structures already created) where the file (from sourceUri) will be
@@ -343,7 +344,7 @@ class ImageTemplateFileCustomizer(ImageTemplateCustomizer):
     def __init__(self, **kwargs):
         super(ImageTemplateFileCustomizer, self).__init__(**kwargs)
         self.source_uri = kwargs.get('source_uri', None)
-        self.sha256_checksum = kwargs.get('sha256_checksum', None)
+        self.sha256_checksum = kwargs.get('sha256_checksum', "")
         self.destination = kwargs.get('destination', None)
         self.type = 'File'
 
@@ -351,8 +352,9 @@ class ImageTemplateFileCustomizer(ImageTemplateCustomizer):
 class ImageTemplateIdentity(Model):
     """Identity for the image template.
 
-    :param type: The type of identity used for the image template. Possible
-     values include: 'UserAssigned'
+    :param type: The type of identity used for the image template. The type
+     'None' will remove any identities from the image template. Possible values
+     include: 'UserAssigned', 'None'
     :type type: str or ~azure.mgmt.imagebuilder.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated
      with the image template. The user identity dictionary key references will
@@ -556,6 +558,9 @@ class ImageTemplatePlatformImageSource(ImageTemplateSource):
     :type sku: str
     :param version: Image version from the [Azure Gallery
      Images](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages).
+     If 'latest' is specified here, the version is evaluated when the image
+     build takes place, not when the template is submitted. Specifying 'latest'
+     could cause ROUNDTRIP_INCONSISTENT_PROPERTY issue which will be fixed.
     :type version: str
     :param plan_info: Optional configuration of purchase plan for platform
      image.
@@ -601,13 +606,17 @@ class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
      It can be a github link, SAS URI for Azure Storage, etc
     :type script_uri: str
     :param sha256_checksum: SHA256 checksum of the power shell script provided
-     in the scriptUri field above
+     in the scriptUri field above. Default value: "" .
     :type sha256_checksum: str
     :param inline: Array of PowerShell commands to execute
     :type inline: list[str]
     :param run_elevated: If specified, the PowerShell script will be run with
-     elevated privileges
+     elevated privileges. Default value: False .
     :type run_elevated: bool
+    :param run_as_system: If specified, the PowerShell script will be run with
+     elevated privileges using the Local System user. Can only be true when the
+     runElevated field above is set to true. Default value: False .
+    :type run_as_system: bool
     :param valid_exit_codes: Valid exit codes for the PowerShell script.
      [Default: 0]
     :type valid_exit_codes: list[int]
@@ -624,15 +633,17 @@ class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
         'sha256_checksum': {'key': 'sha256Checksum', 'type': 'str'},
         'inline': {'key': 'inline', 'type': '[str]'},
         'run_elevated': {'key': 'runElevated', 'type': 'bool'},
+        'run_as_system': {'key': 'runAsSystem', 'type': 'bool'},
         'valid_exit_codes': {'key': 'validExitCodes', 'type': '[int]'},
     }
 
     def __init__(self, **kwargs):
         super(ImageTemplatePowerShellCustomizer, self).__init__(**kwargs)
         self.script_uri = kwargs.get('script_uri', None)
-        self.sha256_checksum = kwargs.get('sha256_checksum', None)
+        self.sha256_checksum = kwargs.get('sha256_checksum', "")
         self.inline = kwargs.get('inline', None)
-        self.run_elevated = kwargs.get('run_elevated', None)
+        self.run_elevated = kwargs.get('run_elevated', False)
+        self.run_as_system = kwargs.get('run_as_system', False)
         self.valid_exit_codes = kwargs.get('valid_exit_codes', None)
         self.type = 'PowerShell'
 
@@ -700,6 +711,7 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
     :type replication_regions: list[str]
     :param exclude_from_latest: Flag that indicates whether created image
      version should be excluded from latest. Omit to use the default (false).
+     Default value: False .
     :type exclude_from_latest: bool
     :param storage_account_type: Storage account type to be used to store the
      shared image. Omit to use the default (Standard_LRS). Possible values
@@ -729,7 +741,7 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
         super(ImageTemplateSharedImageDistributor, self).__init__(**kwargs)
         self.gallery_image_id = kwargs.get('gallery_image_id', None)
         self.replication_regions = kwargs.get('replication_regions', None)
-        self.exclude_from_latest = kwargs.get('exclude_from_latest', None)
+        self.exclude_from_latest = kwargs.get('exclude_from_latest', False)
         self.storage_account_type = kwargs.get('storage_account_type', None)
         self.type = 'SharedImage'
 
@@ -779,7 +791,7 @@ class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
      can be a github link, SAS URI for Azure Storage, etc
     :type script_uri: str
     :param sha256_checksum: SHA256 checksum of the shell script provided in
-     the scriptUri field
+     the scriptUri field. Default value: "" .
     :type sha256_checksum: str
     :param inline: Array of shell commands to execute
     :type inline: list[str]
@@ -800,7 +812,7 @@ class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
     def __init__(self, **kwargs):
         super(ImageTemplateShellCustomizer, self).__init__(**kwargs)
         self.script_uri = kwargs.get('script_uri', None)
-        self.sha256_checksum = kwargs.get('sha256_checksum', None)
+        self.sha256_checksum = kwargs.get('sha256_checksum', "")
         self.inline = kwargs.get('inline', None)
         self.type = 'Shell'
 
@@ -861,10 +873,10 @@ class ImageTemplateVmProfile(Model):
 
     :param vm_size: Size of the virtual machine used to build, customize and
      capture images. Omit or specify empty string to use the default
-     (Standard_D1_v2).
+     (Standard_D1_v2). Default value: "" .
     :type vm_size: str
     :param os_disk_size_gb: Size of the OS disk in GB. Omit or specify 0 to
-     use Azure's default OS disk size.
+     use Azure's default OS disk size. Default value: 0 .
     :type os_disk_size_gb: int
     :param vnet_config: Optional configuration of the virtual network to use
      to deploy the build virtual machine in. Omit if no specific virtual
@@ -884,8 +896,8 @@ class ImageTemplateVmProfile(Model):
 
     def __init__(self, **kwargs):
         super(ImageTemplateVmProfile, self).__init__(**kwargs)
-        self.vm_size = kwargs.get('vm_size', None)
-        self.os_disk_size_gb = kwargs.get('os_disk_size_gb', None)
+        self.vm_size = kwargs.get('vm_size', "")
+        self.os_disk_size_gb = kwargs.get('os_disk_size_gb', 0)
         self.vnet_config = kwargs.get('vnet_config', None)
 
 
