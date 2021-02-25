@@ -18,8 +18,8 @@ import pytest
 @pytest.mark.asyncio
 async def test_connection_error_response():
     class MockTransport(AsyncHttpTransport):
-        def __init__(self):
-            self._count = 0
+        def __init__(self, error=True):
+            self._error = error
 
         async def __aexit__(self, exc_type, exc_val, exc_tb):
             pass
@@ -32,22 +32,24 @@ async def test_connection_error_response():
             request = HttpRequest('GET', 'http://127.0.0.1/')
             response = AsyncHttpResponse(request, None)
             response.status_code = 200
+            response.internal_response = MockInternalResponse(error=False)
             return response
 
     class MockContent():
-        def __init__(self):
-            self._first = True
+        def __init__(self, error=True):
+            self._error = error
 
         async def read(self, block_size):
-            if self._first:
-                self._first = False
+            if self._error:
                 raise ConnectionError
             return None
 
     class MockInternalResponse():
-        def __init__(self):
+        def __init__(self, error=True):
             self.headers = {}
-            self.content = MockContent()
+            self._error = error
+            self.content = MockContent(error=self._error)
+            self.status_code = 200
 
         async def close(self):
             pass
@@ -60,6 +62,7 @@ async def test_connection_error_response():
     pipeline = AsyncPipeline(MockTransport())
     http_response = AsyncHttpResponse(http_request, None)
     http_response.internal_response = MockInternalResponse()
+    http_response.headers['etag'] = "etag"
     stream = AioHttpStreamDownloadGenerator(pipeline, http_response)
     with mock.patch('asyncio.sleep', new_callable=AsyncMock):
         with pytest.raises(StopAsyncIteration):
@@ -125,7 +128,7 @@ async def test_response_streaming_error_behavior():
             left = total_response_size
             while left > 0:
                 if left <= block_size:
-                    raise ConnectionError()
+                    raise requests.exceptions.ConnectionError()
                 data = b"X" * min(chunk_size, left)
                 left -= len(data)
                 yield data
@@ -152,6 +155,6 @@ async def test_response_streaming_error_behavior():
     pipeline = AsyncPipeline(transport)
     pipeline.run = mock_run
     downloader = response.stream_download(pipeline)
-    with pytest.raises(ConnectionError):
+    with pytest.raises(requests.exceptions.ConnectionError):
         while True:
             await downloader.__anext__()

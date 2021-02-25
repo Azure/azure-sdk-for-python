@@ -20,8 +20,8 @@ import pytest
 
 def test_connection_error_response():
     class MockTransport(HttpTransport):
-        def __init__(self):
-            self._count = 0
+        def __init__(self, error=True):
+            self._error = error
 
         def __exit__(self, exc_type, exc_val, exc_tb):
             pass
@@ -34,19 +34,24 @@ def test_connection_error_response():
             request = HttpRequest('GET', 'http://127.0.0.1/')
             response = HttpResponse(request, None)
             response.status_code = 200
+            response.internal_response = MockInternalResponse(error=False)
             return response
 
         def next(self):
             self.__next__()
 
         def __next__(self):
-            if self._count == 0:
-                self._count += 1
+            if self._error:
                 raise requests.exceptions.ConnectionError
+            return None
 
     class MockInternalResponse():
+        def __init__(self, error=True):
+            self._error = error
+            self.status_code = 200
+
         def iter_content(self, block_size):
-            return MockTransport()
+            return MockTransport(error=self._error)
 
         def close(self):
             pass
@@ -54,7 +59,8 @@ def test_connection_error_response():
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
     pipeline = Pipeline(MockTransport())
     http_response = HttpResponse(http_request, None)
-    http_response.internal_response = MockInternalResponse()
+    http_response.internal_response = MockInternalResponse(error=True)
+    http_response.headers['etag'] = "etag"
     stream = StreamDownloadGenerator(pipeline, http_response)
     with mock.patch('time.sleep', return_value=None):
         with pytest.raises(StopIteration):
