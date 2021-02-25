@@ -10,7 +10,7 @@ def batch_translation_with_storage():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
-        BatchTranslationInput,
+        BatchDocumentInput,
         StorageTarget
     )
     from azure.storage.blob import ContainerClient, generate_container_sas, ContainerSasPermissions
@@ -26,7 +26,7 @@ def batch_translation_with_storage():
     target_storage_container_name = os.environ["AZURE_STORAGE_TARGET_CONTAINER_NAME"]
     target_storage_key = os.environ["AZURE_STORAGE_TARGET_KEY"]
 
-    batch_client = DocumentTranslationClient(
+    translation_client = DocumentTranslationClient(
         endpoint, AzureKeyCredential(key)
     )
 
@@ -57,7 +57,7 @@ def batch_translation_with_storage():
     target_container_url = target_storage_endpoint + "/" + target_storage_container_name + "?" + target_container_sas
 
     batch = [
-        BatchTranslationInput(
+        BatchDocumentInput(
             source_url=source_container_url,
             source_language="en",
             targets=[
@@ -70,18 +70,18 @@ def batch_translation_with_storage():
         )
     ]
 
-    batch_detail = batch_client.create_batch(batch)
-    batch_result = batch_client.wait_until_done(batch_detail.id)
+    job_detail = translation_client.create_translation_job(batch)
+    job_result = translation_client.wait_until_done(job_detail.id)
 
-    if batch_result.status == "Succeeded":
+    if job_result.status == "Succeeded":
         print("We translated our documents!")
-        if batch_result.documents_failed_count > 0:
-            check_documents(batch_client, batch_result.id)
+        if job_result.documents_failed_count > 0:
+            check_documents(translation_client, job_result.id)
 
-    if batch_result.status in ["Failed", "ValidationFailed"]:
-        if batch_result.error:
-            print("Batch failed: {}: {}".format(batch_result.error.code, batch_result.error.message))
-        check_documents(batch_client, batch_result.id)
+    if job_result.status in ["Failed", "ValidationFailed"]:
+        if job_result.error:
+            print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
+        check_documents(translation_client, job_result.id)
         exit(1)
 
     container_client = ContainerClient(
@@ -97,11 +97,11 @@ def batch_translation_with_storage():
         my_blob.write(download_stream.readall())
 
 
-def check_documents(client, batch_id):
+def check_documents(client, job_id):
     from azure.core.exceptions import ResourceNotFoundError
 
     try:
-        doc_statuses = client.list_documents_statuses(batch_id)  # type: ItemPaged[DocumentStatusDetail]
+        doc_statuses = client.list_documents_statuses(job_id)  # type: ItemPaged[DocumentStatusDetail]
     except ResourceNotFoundError as err:
         print("Failed to process any documents in source/target container.")
         raise err

@@ -5,13 +5,12 @@
 # ------------------------------------
 
 from typing import Union, Any, List, TYPE_CHECKING
-from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import BatchDocumentTranslationClient as _BatchDocumentTranslationClient
 from .._user_agent import USER_AGENT
-from .._models import BatchStatusDetail, DocumentStatusDetail, BatchTranslationInput, FileFormat
+from .._models import JobStatusDetail, DocumentStatusDetail, BatchDocumentInput, FileFormat
 from .._helpers import get_authentication_policy
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -50,92 +49,95 @@ class DocumentTranslationClient(object):
         )
 
     @distributed_trace_async
-    async def create_batch(self, inputs, **kwargs):
-        # type: (List[BatchTranslationInput], **Any) -> BatchStatusDetail
+    async def create_translation_job(self, batch, **kwargs):
+        # type: (List[BatchDocumentInput], **Any) -> JobStatusDetail
         """
 
-        :param inputs:
-        :type inputs: List[~azure.ai.documenttranslation.BatchTranslationInput]
-        :rtype: BatchStatusDetail
+        :param batch:
+        :type batch: List[~azure.ai.documenttranslation.BatchDocumentInput]
+        :return: JobStatusDetail
+        :rtype: JobStatusDetail
         """
+
         return await self._client.document_translation.begin_submit_batch_request(
-            inputs=inputs,
+            inputs=batch,
             polling=True,
             **kwargs
         )
 
     @distributed_trace_async
-    async def get_batch_status(self, batch_id, **kwargs):
-        # type: (str, **Any) -> BatchStatusDetail
+    async def get_job_status(self, job_id, **kwargs):
+        # type: (str, **Any) -> JobStatusDetail
         """
 
-        :param batch_id: guid id for batch
-        :type batch_id: str
-        :rtype: ~azure.ai.documenttranslation.BatchStatusDetail
-        """
-        return await self._client.document_translation.get_operation_status(batch_id, **kwargs)
-
-    @distributed_trace_async
-    async def wait_until_done(self, batch_id, **kwargs):
-        # type: (str, **Any) -> BatchStatusDetail
+        :param job_id: guid id for job
+        :type job_id: str
+        :rtype: ~azure.ai.documenttranslation.JobStatusDetail
         """
 
-        :param batch_id: guid id for batch
-        :type batch_id: str
-        :return: BatchStatusDetail
-        :rtype: BatchStatusDetail
-        """
-        pass
+        return await self._client.document_translation.get_operation_status(job_id, **kwargs)
 
     @distributed_trace_async
-    async def cancel_batch(self, batch_id, **kwargs):
+    async def cancel_job(self, job_id, **kwargs):
         # type: (str, **Any) -> None
         """
 
-        :param batch_id: guid id for batch
-        :type batch_id: str
+        :param job_id: guid id for job
+        :type job_id: str
         :rtype: None
         """
 
-        await self._client.document_translation.cancel_operation(batch_id, **kwargs)
+        await self._client.document_translation.cancel_operation(job_id, **kwargs)
+
+    @distributed_trace_async
+    async def wait_until_done(self, job_id, **kwargs):
+        # type: (str, **Any) -> JobStatusDetail
+        """
+
+        :param job_id: guid id for job
+        :type job_id: str
+        :return: JobStatusDetail
+        :rtype: JobStatusDetail
+        """
+        pass
 
     @distributed_trace
-    def list_batches_statuses(self, **kwargs):
-        # type: (**Any) -> AsyncItemPaged[BatchStatusDetail]
+    def list_submitted_jobs(self, **kwargs):
+        # type: (**Any) -> AsyncItemPaged[JobStatusDetail]
         """
 
         :keyword int results_per_page:
         :keyword int skip:
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[BatchStatusDetail]
+        :rtype: ~azure.core.polling.AsyncItemPaged[JobStatusDetail]
         """
         return self._client.document_translation.get_operations(**kwargs)
 
     @distributed_trace
-    def list_documents_statuses(self, batch_id, **kwargs):
+    def list_documents_statuses(self, job_id, **kwargs):
         # type: (str, **Any) -> AsyncItemPaged[DocumentStatusDetail]
         """
 
-        :param batch_id: guid id for batch
-        :type batch_id: str
+        :param job_id: guid id for job
+        :type job_id: str
         :keyword int results_per_page:
         :keyword int skip:
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[DocumentStatusDetail]
+        :rtype: ~azure.core.paging.AsyncItemPaged[DocumentStatusDetail]
         """
 
-        return self._client.document_translation.get_operation_documents_status(batch_id, **kwargs)
+        return self._client.document_translation.get_operation_documents_status(job_id, **kwargs)
 
     @distributed_trace_async
-    async def get_document_status(self, batch_id, document_id, **kwargs):
+    async def get_document_status(self, job_id, document_id, **kwargs):
         # type: (str, str, **Any) -> DocumentStatusDetail
         """
 
-        :param batch_id: guid id for batch
-        :type batch_id: str
+        :param job_id: guid id for job
+        :type job_id: str
         :param document_id: guid id for document
         :type document_id: str
         :rtype: ~azure.ai.documenttranslation.DocumentStatusDetail
         """
-        return await self._client.document_translation.get_document_status(batch_id, document_id, **kwargs)
+        return await self._client.document_translation.get_document_status(job_id, document_id, **kwargs)
 
     @distributed_trace_async
     async def get_supported_storage_sources(self, **kwargs):

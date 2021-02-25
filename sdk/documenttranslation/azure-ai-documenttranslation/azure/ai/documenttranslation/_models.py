@@ -61,7 +61,7 @@ class StorageTarget(object):
         self.storage_source = kwargs.get("storage_source", None)
 
 
-class BatchTranslationInput(object):
+class BatchDocumentInput(object):
     """Definition for the input batch translation request.
 
     :param source_url: Required. Location of the folder / container or single file with your
@@ -99,10 +99,10 @@ class BatchTranslationInput(object):
         self.suffix = kwargs.get("suffix", None)
 
 
-class BatchStatusDetail(object):
+class JobStatusDetail(object):
     """Job status response.
 
-    :ivar id: Required. Id of the operation.
+    :ivar id: Required. Id of the job.
     :vartype id: str
     :ivar created_on: Required. Operation created date time.
     :vartype created_on: ~datetime.datetime

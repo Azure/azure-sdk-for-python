@@ -10,7 +10,7 @@ def sample_custom_translation():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
         DocumentTranslationClient,
-        BatchTranslationInput,
+        BatchDocumentInput,
         StorageTarget
     )
 
@@ -23,7 +23,7 @@ def sample_custom_translation():
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
     batch = [
-        BatchTranslationInput(
+        BatchDocumentInput(
             source_url=source_container_url,
             source_language="en",
             targets=[
@@ -37,29 +37,29 @@ def sample_custom_translation():
         )
     ]
 
-    batch_detail = client.create_batch(batch)  # type: BatchStatusDetail
+    job_detail = client.create_translation_job(batch)  # type: JobStatusDetail
 
-    print("Batch initial status: {}".format(batch_detail.status))
-    print("Number of translations on documents: {}".format(batch_detail.documents_total_count))
+    print("Job initial status: {}".format(job_detail.status))
+    print("Number of translations on documents: {}".format(job_detail.documents_total_count))
 
-    batch_result = client.wait_until_done(batch_detail.id)  # type: BatchStatusDetail
-    if batch_result.status == "Succeeded":
+    job_result = client.wait_until_done(job_detail.id)  # type: JobStatusDetail
+    if job_result.status == "Succeeded":
         print("We translated our documents!")
-        if batch_result.documents_failed_count > 0:
-            check_documents(client, batch_result.id)
+        if job_result.documents_failed_count > 0:
+            check_documents(client, job_result.id)
 
-        if batch_result.status in ["Failed", "ValidationFailed"]:
-            if batch_result.error:
-                print("Batch failed: {}: {}".format(batch_result.error.code, batch_result.error.message))
-            check_documents(client, batch_result.id)
+        if job_result.status in ["Failed", "ValidationFailed"]:
+            if job_result.error:
+                print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
+            check_documents(client, job_result.id)
             exit(1)
 
 
-def check_documents(client, batch_id):
+def check_documents(client, job_id):
     from azure.core.exceptions import ResourceNotFoundError
 
     try:
-        doc_statuses = client.list_documents_statuses(batch_id)  # type: ItemPaged[DocumentStatusDetail]
+        doc_statuses = client.list_documents_statuses(job_id)  # type: ItemPaged[DocumentStatusDetail]
     except ResourceNotFoundError as err:
         print("Failed to process any documents in source/target container.")
         raise err
