@@ -45,6 +45,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Optional, Union
+    from azure.core.paging import ItemPaged
 
 class AzureAppConfigurationClient:
     """Represents an client that calls restful API of Azure App Configuration service.
@@ -168,7 +169,7 @@ class AzureAppConfigurationClient:
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
-        :rtype: :class:`ItemPaged[ConfigurationSetting]`
+        :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
 
         Example
@@ -227,7 +228,7 @@ class AzureAppConfigurationClient:
         :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object
-        :rtype: :class:`ConfigurationSetting`
+        :rtype: ~azure.appconfiguration.ConfigurationSetting
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
         :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`ResourceExistsError`
 
@@ -283,7 +284,7 @@ class AzureAppConfigurationClient:
         :type configuration_setting: :class:`ConfigurationSetting<azure.appconfiguration.ConfigurationSetting>`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting object returned from the App Configuration service
-        :rtype: :class:`ConfigurationSetting`
+        :rtype: ~azure.appconfiguration.ConfigurationSetting
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceExistsError`
 
         Example
@@ -335,7 +336,7 @@ class AzureAppConfigurationClient:
         :param ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
-        :rtype: :class:`ConfigurationSetting`
+        :rtype: ~azure.appconfiguration.ConfigurationSetting
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
         :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`, \
         :class:`ResourceNotFoundError`, :class:`ResourceExistsError`
@@ -399,7 +400,7 @@ class AzureAppConfigurationClient:
         :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
-        :rtype: :class:`ConfigurationSetting`
+        :rtype: ~azure.appconfiguration.ConfigurationSetting
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
         :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`, \
         :class:`ResourceNotFoundError`, :class:`ResourceExistsError`
@@ -460,7 +461,7 @@ class AzureAppConfigurationClient:
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
-        :rtype: :class:`ItemPaged[ConfigurationSetting]`
+        :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
 
         Example
@@ -516,7 +517,7 @@ class AzureAppConfigurationClient:
         :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
-        :rtype: :class:`ConfigurationSetting`
+        :rtype: ~azure.appconfiguration.ConfigurationSetting
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`
 
         Example
