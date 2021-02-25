@@ -27,3 +27,27 @@ class ProvisioningState(str, Enum):
     updating = "Updating"
     deleting = "Deleting"
     accepted = "Accepted"
+
+
+class ConnectivityStatus(str, Enum):
+
+    connecting = "Connecting"
+    connected = "Connected"
+    offline = "Offline"
+    expired = "Expired"
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
+
+
+class LastModifiedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
