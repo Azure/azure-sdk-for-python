@@ -2,9 +2,9 @@ import time
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.netapp.models import Volume, VolumePatch, ReplicationObject, VolumePropertiesDataProtection
-from tests.test_pool import create_pool, delete_pool
-from tests.test_account import delete_account
-from tests.setup import *
+from test_pool import create_pool, delete_pool
+from test_account import delete_account
+from setup import *
 import azure.mgmt.netapp.models
 
 GIGABYTE = 1024 * 1024 * 1024

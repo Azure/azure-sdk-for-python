@@ -1,6 +1,6 @@
 from devtools_testutils import AzureMgmtTestCase
-from tests.test_volume import create_volume, delete_volume, delete_pool, delete_account
-from tests.setup import *
+from test_volume import create_volume, delete_volume, delete_pool, delete_account
+from setup import *
 import azure.mgmt.netapp.models
 
 CBS_LOCATION = 'eastus2euap'
