@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_group_name_xyz?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_group_name_xyz?api-version=2020-10-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_group_name_xyz","name":"test_group_name_xyz","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"tag1":"value1"},"properties":{"provisioningState":"Succeeded"}}'
@@ -27,24 +27,20 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 08:56:27 GMT
+      - Fri, 26 Feb 2021 06:55:31 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1197'
     status:
-      code: 200
-      message: OK
+      code: 201
+      message: Created
 - request:
     body: '{"location": "East US", "properties": {"lockLevel": "None", "displayName":
       "myManagedApplicationDef", "authorizations": [], "description": "myManagedApplicationDef
@@ -67,17 +63,17 @@ interactions:
   response:
     body:
       string: '{"properties":{"authorizations":[],"isEnabled":true,"lockLevel":"None","displayName":"myManagedApplicationDef","description":"myManagedApplicationDef
-        description","artifacts":[{"name":"ApplicationResourceTemplate","type":"Template","uri":"https://prdsapplianceprodbl01.blob.core.windows.net/applicationdefinitions/E3823_92F95D8F3C67412491C78CF07CDBF241_AA72A3C7E3B9E76E4AE1321D434F01B35432A061/fec1d14da02d4e98aa0f0d9a83797457/applicationResourceTemplate.json"},{"name":"CreateUiDefinition","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/CreateUiDefinition?api-version=2017-09-01"},{"name":"MainTemplateParameters","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/MainTemplateParameters?api-version=2017-09-01"}]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","name":"applicationdefinition","type":"Microsoft.Solutions/applicationDefinitions","location":"East
+        description","artifacts":[{"name":"ApplicationResourceTemplate","type":"Template","uri":"https://prdsapplianceprodbl01.blob.core.windows.net/applicationdefinitions/E3823_92F95D8F3C67412491C78CF07CDBF241_ED2B958A4478DFA9B7C205A721A9BC97475299F724337EDDFE7F50112CC6246F/762465f3eec14b7b8078158525c1e2d5/applicationResourceTemplate.json"},{"name":"CreateUiDefinition","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/CreateUiDefinition?api-version=2017-09-01"},{"name":"MainTemplateParameters","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/MainTemplateParameters?api-version=2017-09-01"}]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","name":"applicationdefinition","type":"Microsoft.Solutions/applicationDefinitions","location":"East
         US"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1527'
+      - '1551'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 08:56:35 GMT
+      - Fri, 26 Feb 2021 06:55:39 GMT
       expires:
       - '-1'
       pragma:
@@ -87,7 +83,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1192'
     status:
       code: 201
       message: Created
@@ -107,17 +103,17 @@ interactions:
   response:
     body:
       string: '{"properties":{"authorizations":[],"isEnabled":true,"lockLevel":"None","displayName":"myManagedApplicationDef","description":"myManagedApplicationDef
-        description","artifacts":[{"name":"ApplicationResourceTemplate","type":"Template","uri":"https://prdsapplianceprodbl01.blob.core.windows.net/applicationdefinitions/E3823_92F95D8F3C67412491C78CF07CDBF241_AA72A3C7E3B9E76E4AE1321D434F01B35432A061/fec1d14da02d4e98aa0f0d9a83797457/applicationResourceTemplate.json"},{"name":"CreateUiDefinition","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/CreateUiDefinition?api-version=2017-09-01"},{"name":"MainTemplateParameters","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/MainTemplateParameters?api-version=2017-09-01"}]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","name":"applicationdefinition","type":"Microsoft.Solutions/applicationDefinitions","location":"East
+        description","artifacts":[{"name":"ApplicationResourceTemplate","type":"Template","uri":"https://prdsapplianceprodbl01.blob.core.windows.net/applicationdefinitions/E3823_92F95D8F3C67412491C78CF07CDBF241_ED2B958A4478DFA9B7C205A721A9BC97475299F724337EDDFE7F50112CC6246F/762465f3eec14b7b8078158525c1e2d5/applicationResourceTemplate.json"},{"name":"CreateUiDefinition","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/CreateUiDefinition?api-version=2017-09-01"},{"name":"MainTemplateParameters","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/MainTemplateParameters?api-version=2017-09-01"}]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","name":"applicationdefinition","type":"Microsoft.Solutions/applicationDefinitions","location":"East
         US"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1527'
+      - '1551'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 08:57:06 GMT
+      - Fri, 26 Feb 2021 06:56:09 GMT
       expires:
       - '-1'
       pragma:
@@ -149,17 +145,17 @@ interactions:
   response:
     body:
       string: '{"properties":{"authorizations":[],"isEnabled":true,"lockLevel":"None","displayName":"myManagedApplicationDef","description":"myManagedApplicationDef
-        description","artifacts":[{"name":"ApplicationResourceTemplate","type":"Template","uri":"https://prdsapplianceprodbl01.blob.core.windows.net/applicationdefinitions/E3823_92F95D8F3C67412491C78CF07CDBF241_AA72A3C7E3B9E76E4AE1321D434F01B35432A061/fec1d14da02d4e98aa0f0d9a83797457/applicationResourceTemplate.json"},{"name":"CreateUiDefinition","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/CreateUiDefinition?api-version=2017-09-01"},{"name":"MainTemplateParameters","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/MainTemplateParameters?api-version=2017-09-01"}]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","name":"applicationdefinition","type":"Microsoft.Solutions/applicationDefinitions","location":"East
+        description","artifacts":[{"name":"ApplicationResourceTemplate","type":"Template","uri":"https://prdsapplianceprodbl01.blob.core.windows.net/applicationdefinitions/E3823_92F95D8F3C67412491C78CF07CDBF241_ED2B958A4478DFA9B7C205A721A9BC97475299F724337EDDFE7F50112CC6246F/762465f3eec14b7b8078158525c1e2d5/applicationResourceTemplate.json"},{"name":"CreateUiDefinition","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/CreateUiDefinition?api-version=2017-09-01"},{"name":"MainTemplateParameters","type":"Custom","uri":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition/applicationArtifacts/MainTemplateParameters?api-version=2017-09-01"}]},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition","name":"applicationdefinition","type":"Microsoft.Solutions/applicationDefinitions","location":"East
         US"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1527'
+      - '1551'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 08:57:06 GMT
+      - Fri, 26 Feb 2021 06:56:10 GMT
       expires:
       - '-1'
       pragma:
@@ -176,9 +172,9 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''{"location": "East US", "kind": "ServiceCatalog", "properties":
-      {"managedResourceGroupId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myManagedRGtest_group_name_xyz",
-      "applicationDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition"}}\'''''
+    body: '{"location": "East US", "kind": "ServiceCatalog", "properties": {"managedResourceGroupId":
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myManagedRGtest_group_name_xyz",
+      "applicationDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition"}}'
     headers:
       Accept:
       - application/json
@@ -201,7 +197,7 @@ interactions:
     headers:
       azure-asyncoperation:
       - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East
-        US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL29zcXFrcTc1eXY1azZwZm00cWZtYjdoNXF0eG5oZGV2eWp4eGNzdXZidXl3M3FwYmU3d3h1dHFlNXFuaWpvd2pjbzJkYnIzanNtdS9wcm92aWRlcnMvTWljcm9zb2Z0LlNvbHV0aW9ucy9hcHBsaWNhdGlvbnMvYXBwbGljYXRpb250ZXN0Iiwiam9iSWQiOiJBcHBsaWFuY2VQcm92aXNpb25pbmdKb2I6MkRSR0E6MkRPU1FRS1E3NVlWNUs2UEZNNFFGTUI3SDVRVFhOSERFVllKWFhDU1VWQlVZVzNRUDo3QzIxQUI3NTJBRDVCNzYwNUI6MkRBUFBMSUNBVElPTlRFU1QifQ?api-version=2018-06-01
+        US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL2MzaGltMmthY2IydHZmYmZucnlzcGFhd3p3aG1scmc1anl5cDM3ZG83aGZkZGE3YmVlcnl1YWVreHV3Y3A3eGJwZDNncHRvdngyMy9wcm92aWRlcnMvTWljcm9zb2Z0LlNvbHV0aW9ucy9hcHBsaWNhdGlvbnMvYXBwbGljYXRpb250ZXN0Iiwiam9iSWQiOiJBcHBsaWFuY2VQcm92aXNpb25pbmdKb2I6MkRSR0E6MkRDM0hJTTJLQUNCMlRWRkJGTlJZU1BBQVdaV0hNTFJHNUpZWVAzN0RPN0hGRERBNzo3QzNERDkwQUFFRkZFNjFEMTc6MkRBUFBMSUNBVElPTlRFU1QifQ?api-version=2018-06-01
       cache-control:
       - no-cache
       content-length:
@@ -209,11 +205,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 08:57:09 GMT
+      - Fri, 26 Feb 2021 06:56:15 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL29zcXFrcTc1eXY1azZwZm00cWZtYjdoNXF0eG5oZGV2eWp4eGNzdXZidXl3M3FwYmU3d3h1dHFlNXFuaWpvd2pjbzJkYnIzanNtdS9wcm92aWRlcnMvTWljcm9zb2Z0LlNvbHV0aW9ucy9hcHBsaWNhdGlvbnMvYXBwbGljYXRpb250ZXN0Iiwiam9iSWQiOiJBcHBsaWFuY2VQcm92aXNpb25pbmdKb2I6MkRSR0E6MkRPU1FRS1E3NVlWNUs2UEZNNFFGTUI3SDVRVFhOSERFVllKWFhDU1VWQlVZVzNRUDo3QzIxQUI3NTJBRDVCNzYwNUI6MkRBUFBMSUNBVElPTlRFU1QifQ?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL2MzaGltMmthY2IydHZmYmZucnlzcGFhd3p3aG1scmc1anl5cDM3ZG83aGZkZGE3YmVlcnl1YWVreHV3Y3A3eGJwZDNncHRvdngyMy9wcm92aWRlcnMvTWljcm9zb2Z0LlNvbHV0aW9ucy9hcHBsaWNhdGlvbnMvYXBwbGljYXRpb250ZXN0Iiwiam9iSWQiOiJBcHBsaWFuY2VQcm92aXNpb25pbmdKb2I6MkRSR0E6MkRDM0hJTTJLQUNCMlRWRkJGTlJZU1BBQVdaV0hNTFJHNUpZWVAzN0RPN0hGRERBNzo3QzNERDkwQUFFRkZFNjFEMTc6MkRBUFBMSUNBVElPTlRFU1QifQ?api-version=2018-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -221,7 +217,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1191'
     status:
       code: 201
       message: Created
@@ -250,7 +246,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 08:57:10 GMT
+      - Fri, 26 Feb 2021 06:56:16 GMT
       expires:
       - '-1'
       pragma:
@@ -267,8 +263,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"kind": "ServiceCatalog", "properties": {"managedResourceGroupId":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myManagedRGtest_group_name_xyz"}}'''
+    body: '{"kind": "ServiceCatalog", "properties": {"managedResourceGroupId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myManagedRGtest_group_name_xyz"}}'
     headers:
       Accept:
       - application/json
@@ -286,18 +281,20 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applications/applicationtest?api-version=2018-06-01
   response:
     body:
-      string: ''
+      string: '{"error":{"code":"ApplicationPatchConflict","message":"The application
+        ''applicationtest'' PATCH failed because of a conflicting provisioning state
+        ''Accepted''. Please wait for the operation to complete and try again."}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '0'
+      - '217'
+      content-type:
+      - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 08:57:11 GMT
+      - Fri, 26 Feb 2021 06:56:16 GMT
       expires:
       - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL29zcXFrcTc1eXY1azZwZm00cWZtYjdoNXF0eG5oZGV2eWp4eGNzdXZidXl3M3FwYmU3d3h1dHFlNXFuaWpvd2pjbzJkYnIzanNtdS9wcm92aWRlcnMvTWljcm9zb2Z0LlNvbHV0aW9ucy9hcHBsaWNhdGlvbnMvYXBwbGljYXRpb250ZXN0Iiwiam9iSWQiOiJBcHBsaWNhdGlvblJlc291cmNlUGF0Y2hKb2I6MkRSR0E6MkRPU1FRS1E3NVlWNUs2UEZNNFFGTUI3SDVRVFhOSERFVllKWFhDU1VWQlVZVzNRUDo3QzIxQUI3NTJBRDVCNzYwNUI6MkRBUFBMSUNBVElPTlRFU1QifQ?api-version=2018-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -305,350 +302,8 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1190'
     status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applications/applicationtest?api-version=2018-06-01
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Thu, 17 Sep 2020 08:57:11 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL29zcXFrcTc1eXY1azZwZm00cWZtYjdoNXF0eG5oZGV2eWp4eGNzdXZidXl3M3FwYmU3d3h1dHFlNXFuaWpvd2pjbzJkYnIzanNtdS9wcm92aWRlcnMvTWljcm9zb2Z0LlNvbHV0aW9ucy9hcHBsaWNhdGlvbnMvYXBwbGljYXRpb250ZXN0Iiwiam9iSWQiOiJBcHBsaWFuY2VEZXByb3Zpc2lvbmluZ0pvYjoyRFJHQToyRE9TUVFLUTc1WVY1SzZQRk00UUZNQjdINVFUWE5IREVWWUpYWENTVVZCVVlXM1FQOjdDMjFBQjc1MkFENUI3NjA1QjoyREFQUExJQ0FUSU9OVEVTVCJ9?api-version=2018-06-01
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL29zcXFrcTc1eXY1azZwZm00cWZtYjdoNXF0eG5oZGV2eWp4eGNzdXZidXl3M3FwYmU3d3h1dHFlNXFuaWpvd2pjbzJkYnIzanNtdS9wcm92aWRlcnMvTWljcm9zb2Z0LlNvbHV0aW9ucy9hcHBsaWNhdGlvbnMvYXBwbGljYXRpb250ZXN0Iiwiam9iSWQiOiJBcHBsaWFuY2VQcm92aXNpb25pbmdKb2I6MkRSR0E6MkRPU1FRS1E3NVlWNUs2UEZNNFFGTUI3SDVRVFhOSERFVllKWFhDU1VWQlVZVzNRUDo3QzIxQUI3NTJBRDVCNzYwNUI6MkRBUFBMSUNBVElPTlRFU1QifQ?api-version=2018-06-01
-  response:
-    body:
-      string: '{"status":"Failed","error":{"code":"InvalidApplianceState","message":"The
-        provisioning failed for resource type ''Microsoft.Solutions/applications''
-        with name ''applicationtest'' since the appliance is in an invalid state ''Deleting''."}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '232'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 17 Sep 2020 08:57:26 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL29zcXFrcTc1eXY1azZwZm00cWZtYjdoNXF0eG5oZGV2eWp4eGNzdXZidXl3M3FwYmU3d3h1dHFlNXFuaWpvd2pjbzJkYnIzanNtdS9wcm92aWRlcnMvTWljcm9zb2Z0LlNvbHV0aW9ucy9hcHBsaWNhdGlvbnMvYXBwbGljYXRpb250ZXN0Iiwiam9iSWQiOiJBcHBsaWFuY2VEZXByb3Zpc2lvbmluZ0pvYjoyRFJHQToyRE9TUVFLUTc1WVY1SzZQRk00UUZNQjdINVFUWE5IREVWWUpYWENTVVZCVVlXM1FQOjdDMjFBQjc1MkFENUI3NjA1QjoyREFQUExJQ0FUSU9OVEVTVCJ9?api-version=2018-06-01
-  response:
-    body:
-      string: '{"status":"Accepted"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '21'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 17 Sep 2020 08:57:28 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/locations/East%20US/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL29zcXFrcTc1eXY1azZwZm00cWZtYjdoNXF0eG5oZGV2eWp4eGNzdXZidXl3M3FwYmU3d3h1dHFlNXFuaWpvd2pjbzJkYnIzanNtdS9wcm92aWRlcnMvTWljcm9zb2Z0LlNvbHV0aW9ucy9hcHBsaWNhdGlvbnMvYXBwbGljYXRpb250ZXN0Iiwiam9iSWQiOiJBcHBsaWFuY2VEZXByb3Zpc2lvbmluZ0pvYjoyRFJHQToyRE9TUVFLUTc1WVY1SzZQRk00UUZNQjdINVFUWE5IREVWWUpYWENTVVZCVVlXM1FQOjdDMjFBQjc1MkFENUI3NjA1QjoyREFQUExJQ0FUSU9OVEVTVCJ9?api-version=2018-06-01
-  response:
-    body:
-      string: '{"status":"Succeeded"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '22'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 17 Sep 2020 08:57:58 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding,Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-mgmt-resource/unknown Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Solutions/applicationDefinitions/applicationdefinition?api-version=2018-06-01
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Thu, 17 Sep 2020 08:58:00 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_group_name_xyz?api-version=2020-06-01
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Thu, 17 Sep 2020 08:58:04 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGR1JPVVA6NUZOQU1FOjVGWFlaLUVBU1RVUyIsImpvYkxvY2F0aW9uIjoiZWFzdHVzIn0?api-version=2020-06-01
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGR1JPVVA6NUZOQU1FOjVGWFlaLUVBU1RVUyIsImpvYkxvY2F0aW9uIjoiZWFzdHVzIn0?api-version=2020-06-01
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Thu, 17 Sep 2020 08:58:20 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGR1JPVVA6NUZOQU1FOjVGWFlaLUVBU1RVUyIsImpvYkxvY2F0aW9uIjoiZWFzdHVzIn0?api-version=2020-06-01
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGR1JPVVA6NUZOQU1FOjVGWFlaLUVBU1RVUyIsImpvYkxvY2F0aW9uIjoiZWFzdHVzIn0?api-version=2020-06-01
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Thu, 17 Sep 2020 08:58:36 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGR1JPVVA6NUZOQU1FOjVGWFlaLUVBU1RVUyIsImpvYkxvY2F0aW9uIjoiZWFzdHVzIn0?api-version=2020-06-01
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGR1JPVVA6NUZOQU1FOjVGWFlaLUVBU1RVUyIsImpvYkxvY2F0aW9uIjoiZWFzdHVzIn0?api-version=2020-06-01
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Thu, 17 Sep 2020 08:58:51 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
+      code: 409
+      message: Conflict
 version: 1
