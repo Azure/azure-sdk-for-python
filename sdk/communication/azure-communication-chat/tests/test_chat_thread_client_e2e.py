@@ -210,7 +210,10 @@ class ChatThreadClientTest(CommunicationTestCase):
             display_name='name',
             share_history_time=share_history_time)
 
-        self.chat_thread_client.add_participant(new_participant)
+        participant, error = self.chat_thread_client.add_participant(new_participant)
+
+        assert participant is None
+        assert error is None
 
     @pytest.mark.live_test_only
     def test_add_participants(self):
@@ -224,7 +227,11 @@ class ChatThreadClientTest(CommunicationTestCase):
                 share_history_time=share_history_time)
         participants = [new_participant]
 
-        self.chat_thread_client.add_participants(participants)
+        failed_participants = self.chat_thread_client.add_participants(participants)
+
+        # no error occured while adding participants
+        assert len(failed_participants) == 0
+
 
     @pytest.mark.live_test_only
     def test_remove_participant(self):

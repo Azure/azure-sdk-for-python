@@ -262,7 +262,10 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                     display_name='name',
                     share_history_time=share_history_time)
 
-                await self.chat_thread_client.add_participant(new_participant)
+                participant, error = await self.chat_thread_client.add_participant(new_participant)
+
+                assert participant is None
+                assert error is None
 
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)
@@ -282,7 +285,10 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                         share_history_time=share_history_time)
                 participants = [new_participant]
 
-                await self.chat_thread_client.add_participants(participants)
+                failed_participants = await self.chat_thread_client.add_participants(participants)
+
+                # no error occured while adding participants
+                assert len(failed_participants) == 0
 
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)

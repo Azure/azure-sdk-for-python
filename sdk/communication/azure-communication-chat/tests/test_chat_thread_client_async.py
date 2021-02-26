@@ -472,6 +472,44 @@ async def test_add_participant():
     assert raised == False
 
 @pytest.mark.asyncio
+async def test_add_participant_w_failed_participants_returns_tuple():
+    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+    new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+    raised = False
+    error_message = "some error message"
+
+    async def mock_send(*_, **__):
+        return mock_response(status_code=201, json_payload={
+            "errors": {
+                "invalidParticipants": [
+                    {
+                        "code": "string",
+                        "message": error_message,
+                        "target": new_participant_id,
+                        "details": []
+                    }
+                ]
+            }
+        })
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+
+    new_participant = ChatThreadParticipant(
+            user=CommunicationUserIdentifier(new_participant_id),
+            display_name='name',
+            share_history_time=datetime.utcnow())
+
+    try:
+        failed_participant, communication_error = await chat_thread_client.add_participant(new_participant)
+    except:
+        raised = True
+
+    assert raised == False
+    assert new_participant.user.identifier == failed_participant.user.identifier
+    assert new_participant.display_name == failed_participant.display_name
+    assert new_participant.share_history_time == failed_participant.share_history_time
+    assert error_message == communication_error.message
+
+@pytest.mark.asyncio
 async def test_add_participants():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
     new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
@@ -493,6 +531,50 @@ async def test_add_participants():
         raised = True
 
     assert raised == False
+
+@pytest.mark.asyncio
+async def test_add_participants_w_failed_participants_returns_nonempty_list():
+    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+    new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+    raised = False
+    error_message = "some error message"
+
+    async def mock_send(*_, **__):
+        return mock_response(status_code=201, json_payload={
+            "errors": {
+                "invalidParticipants": [
+                    {
+                        "code": "string",
+                        "message": error_message,
+                        "target": new_participant_id,
+                        "details": []
+                    }
+                ]
+            }
+        })
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+
+    new_participant = ChatThreadParticipant(
+            user=CommunicationUserIdentifier(new_participant_id),
+            display_name='name',
+            share_history_time=datetime.utcnow())
+    participants = [new_participant]
+
+    try:
+        result = await chat_thread_client.add_participants(participants)
+    except:
+        raised = True
+
+    assert raised == False
+    assert len(result) == 1
+
+    failed_participant = result[0][0]
+    communication_error = result[0][1]
+
+    assert new_participant.user.identifier == failed_participant.user.identifier
+    assert new_participant.display_name == failed_participant.display_name
+    assert new_participant.share_history_time == failed_participant.share_history_time
+    assert error_message == communication_error.message
 
 @pytest.mark.asyncio
 async def test_remove_participant():

@@ -171,16 +171,6 @@ class ChatClient(object):
             create_chat_thread_request=create_thread_request,
             repeatability_request_id=repeatability_request_id,
             **kwargs)
-        if hasattr(create_chat_thread_result, 'errors') \
-                and create_chat_thread_result.errors is not None:
-            participants = \
-                create_chat_thread_result.errors.invalid_participants
-            errors = []
-            for participant in participants:
-                errors.append('participant ' + participant.target +
-                ' failed to join thread due to: ' + participant.message)
-            raise RuntimeError(errors)
-
         return create_chat_thread_result
 
     @distributed_trace_async

@@ -42,3 +42,50 @@ class CommunicationUserIdentifierConverter(object):
         :rasies: ValueError
         """
         return CommunicationUserIdentifierSerializer.deserialize(identifierModel)
+
+class CommunicationErrorResponseConverter(object):
+    """
+    Util to convert to List[Tuple[ChatThreadParticipant, Optional[AddChatParticipantsErrors]]
+
+    This is a one-way converter for converting the follwing:
+     - AddChatParticipantsResult -> List[Tuple[ChatThreadParticipant, AddChatParticipantsErrors]
+     - CreateChatThreadResult -> List[Tuple[ChatThreadParticipant, AddChatParticipantsErrors]
+    """
+
+    @classmethod
+    def _convert(cls, participants, communication_errors):
+        # type: (...) -> list[(ChatThreadParticipant, CommunicationError)]
+        """
+        Util function to convert AddChatParticipantsResult.
+
+        Function used to consolidate List[ChatThreadParticipant] and AddChatParticipantsResult
+        into a list of tuples of ChatThreadParticipant -> CommunicationError.
+
+        :param participants: Request object for adding participants to thread
+        :type: participants: list(~azure.communication.chat.ChatThreadParticipant)
+        :param communication_errors: list of CommunicationError
+        :type communication_errors: list[~azure.communication.chat.CommunicationError]
+        :return: A list of (ChatThreadParticipant, CommunicationError)
+        :rtype: list[(~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.CommunicationError)]
+        """
+        def create_dict(participants):
+            # type: (...) -> Dict(str, ChatThreadParticipant)
+            """
+            Create dictionary of id -> ChatThreadParticipant
+            """
+            result = {}
+            for participant in participants:
+                result[participant.user.identifier]=participant
+            return result
+
+        _thread_participants_dict = create_dict(participants=participants)
+
+        failed_chat_thread_participants = []
+
+        if communication_errors is not None:
+            for communication_error in communication_errors:
+                _thread_participant = _thread_participants_dict.get(communication_error.target)
+                failed_chat_thread_participants.append((_thread_participant, communication_error))
+
+        return failed_chat_thread_participants
+

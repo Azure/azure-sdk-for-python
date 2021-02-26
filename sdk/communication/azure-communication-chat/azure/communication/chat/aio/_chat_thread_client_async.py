@@ -28,7 +28,8 @@ from .._generated.models import (
     UpdateChatThreadRequest,
     SendChatMessageResult,
     ChatMessageType,
-    AddChatParticipantsResult
+    AddChatParticipantsResult,
+    CommunicationError
 )
 from .._models import (
     ChatThreadParticipant,
@@ -36,7 +37,11 @@ from .._models import (
     ChatMessageReadReceipt
 )
 from .._shared.models import CommunicationUserIdentifier
-from .._utils import _to_utc_datetime, CommunicationUserIdentifierConverter # pylint: disable=unused-import
+from .._utils import ( # pylint: disable=unused-import
+    _to_utc_datetime,
+    CommunicationUserIdentifierConverter,
+    CommunicationErrorResponseConverter
+)
 from .._version import SDK_MONIKER
 
 
@@ -466,14 +471,17 @@ class ChatThreadClient(object):
             self,
             thread_participant: ChatThreadParticipant,
             **kwargs
-    ) -> AddChatParticipantsResult:
+    ) -> (ChatThreadParticipant, CommunicationError):
         """Adds single thread participant to a thread. If participant already exist, no change occurs.
+
+        If participant is added successfully, a tuple of (None, None) is expected.
+        Failure to add participant to thread returns tuple of (thread_participant, communication_error).
 
         :param thread_participant: Required. Single thread participant to be added to the thread.
         :type thread_participant: ~azure.communication.chat.ChatThreadParticipant
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AddChatParticipantsResult, or the result of cls(response)
-        :rtype: ~azure.communication.chat.AddChatParticipantsResult
+        :return: Tuple(ChatThreadParticipant, CommunicationError)
+        :rtype: (~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.CommunicationError)
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -484,6 +492,13 @@ class ChatThreadClient(object):
                 :language: python
                 :dedent: 12
                 :caption: Adding single participant to chat thread.
+
+            .. literalinclude:: ../samples/chat_thread_client_sample_async.py
+                :start-after: [START add_participant_w_failed_participant]
+                :end-before: [END add_participant_w_failed_participant]
+                :language: python
+                :dedent: 12
+                :caption: Retry adding participant to chat thread after initial failure.
         """
         if not thread_participant:
             raise ValueError("thread_participant cannot be None.")
@@ -491,25 +506,44 @@ class ChatThreadClient(object):
         participants = [thread_participant._to_generated()]  # pylint:disable=protected-access
         add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
 
-        return await self._client.chat_thread.add_chat_participants(
+        add_chat_participants_result = await self._client.chat_thread.add_chat_participants(
             chat_thread_id=self._thread_id,
             add_chat_participants_request=add_thread_participants_request,
             **kwargs)
+
+        response = []
+        failed_participant = None
+        communication_error = None
+        if hasattr(add_chat_participants_result, 'errors') and \
+                add_chat_participants_result.errors is not None:
+            response = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
+                participants=[thread_participant],
+                communication_errors=add_chat_participants_result.errors.invalid_participants
+            )
+
+        if len(response) != 0:
+            failed_participant = response[0][0]
+            communication_error = response[0][1]
+
+        return (failed_participant, communication_error)
 
     @distributed_trace_async
     async def add_participants(
         self,
         thread_participants: List[ChatThreadParticipant],
         **kwargs
-    ) -> AddChatParticipantsResult:
+    ) -> list((ChatThreadParticipant, CommunicationError)):
         """Adds thread participants to a thread. If participants already exist, no change occurs.
+
+        If all participants are added successfully, then an empty list is returned;
+        otherwise, a list of tuple(chat_thread_participant, communincation_error) is returned,
+        of failed participants and its respective error
 
         :param thread_participants: Required. Thread participants to be added to the thread.
         :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AddChatParticipantsResult, or the result of cls(response)
-        :rtype: ~azure.communication.chat.AddChatParticipantsResult
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: List[(ChatThreadParticipant, CommunicationError)]
+        :rtype: list((~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.CommunicationError))
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError, RuntimeError
 
         .. admonition:: Example:
 
@@ -519,6 +553,13 @@ class ChatThreadClient(object):
                 :language: python
                 :dedent: 12
                 :caption: Adding participants to chat thread.
+
+            .. literalinclude:: ../samples/chat_thread_client_sample_async.py
+                :start-after: [START add_participants_w_failed_participants]
+                :end-before: [END add_participants_w_failed_participants]
+                :language: python
+                :dedent: 12
+                :caption: Retry adding participants to chat thread after initial failure.
         """
         if not thread_participants:
             raise ValueError("thread_participants cannot be None.")
@@ -526,10 +567,20 @@ class ChatThreadClient(object):
         participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
         add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
 
-        return await self._client.chat_thread.add_chat_participants(
+        add_chat_participants_result = await self._client.chat_thread.add_chat_participants(
             chat_thread_id=self._thread_id,
             add_chat_participants_request=add_thread_participants_request,
             **kwargs)
+
+        response = []
+        if hasattr(add_chat_participants_result, 'errors') and \
+                add_chat_participants_result.errors is not None:
+            response = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
+                participants=thread_participants,
+                communication_errors=add_chat_participants_result.errors.invalid_participants
+            )
+
+        return response
 
     @distributed_trace_async
     async def remove_participant(
