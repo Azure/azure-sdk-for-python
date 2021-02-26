@@ -151,7 +151,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         self.downloaded = 0
         headers = response.headers
         if "x-ms-range" in headers:
-            self.range_header = "x-ms-range"
+            self.range_header = "x-ms-range"    # type: Optional[str]
             self.range = headers["x-ms-range"]
         elif "Range" in headers:
             self.range_header = "Range"
