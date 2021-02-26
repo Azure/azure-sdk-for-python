@@ -235,7 +235,7 @@ class HttpRequest(object):
         self.data = data
         self.multipart_mixed_info = None  # type: Optional[Tuple]
         if "query" in kwargs:
-            self.format_parameters(kwargs.pop("query", None))
+            self.format_parameters(kwargs.pop("query"))
 
     def __repr__(self):
         return "<HttpRequest [%s]>" % (self.method)
