@@ -83,18 +83,22 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         self.specversion = kwargs.pop("specversion", "1.0")  # type: str
         self.id = kwargs.pop("id", str(uuid.uuid4()))  # type: str
         self.time = kwargs.pop("time", datetime.now(TZ_UTC))  # type: datetime
-        self.datacontenttype = kwargs.pop("datacontenttype", None)  # type: str
-        self.dataschema = kwargs.pop("dataschema", None)  # type: str
-        self.subject = kwargs.pop("subject", None)  # type: str
-        self.extensions = {}  # type: Dict
-        _extensions = dict(kwargs.pop("extensions", {}))
-        for key in _extensions.keys():
-            if not key.islower() or not key.isalnum():
-                raise ValueError(
-                    "Extension attributes should be lower cased and alphanumeric."
-                )
-        self.extensions.update(_extensions)
-        self.data = kwargs.pop("data", None)  # type: object
+
+        _optional_attributes = ["datacontenttype", "dataschema", "subject", "data"]
+
+        for attr in _optional_attributes:
+            if attr in kwargs:
+                setattr(self, attr, kwargs.pop(attr))
+
+        if "extensions" in kwargs:
+            self.extensions = {}  # type: Dict
+            _extensions = dict(kwargs.pop("extensions", {}))
+            for key in _extensions.keys():
+                if not key.islower() or not key.isalnum():
+                    raise ValueError(
+                        "Extension attributes should be lower cased and alphanumeric."
+                    )
+            self.extensions.update(_extensions)
 
         if kwargs:
             raise ValueError(
@@ -115,6 +119,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         :type event: dict
         :rtype: CloudEvent
         """
+        kwargs = {}
         reserved_attr = [
             "data",
             "data_base64",
@@ -128,27 +133,30 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
             "subject",
         ]
 
-        data = event.get("data", None)
-        data_base64 = event.get("data_base64", None)
-
-        if data and data_base64:
+        if "data" in event and "data_base64" in event:
             raise ValueError(
                 "Invalid input. Only one of data and data_base64 must be present."
             )
-        if data is None and data_base64 is None:
-            data = None
-        elif data or data_base64:
-            data = data if data is not None else b64decode(data_base64)
+
+        if "data" in event:
+            kwargs.setdefault("data", event.get("data"))
+        elif "data_base64" in event:
+            kwargs.setdefault("data", b64decode(event.get("data_base64")))
+
+        for item in ["datacontenttype", "dataschema", "subject"]:
+            if item in event:
+                kwargs.setdefault(item, event.get(item))
+        
+        extensions={k: v for k, v in event.items() if k not in reserved_attr}
+        if extensions:
+            kwargs.setdefault("extensions", extensions)
+
 
         return cls(
             id=event.get("id", None),
             source=event.get("source", None),
             type=event.get("type", None),
             specversion=event.get("specversion", None),
-            data=data,
             time=_convert_to_isoformat(event.get("time", None)),
-            dataschema=event.get("dataschema", None),
-            datacontenttype=event.get("datacontenttype", None),
-            subject=event.get("subject", None),
-            extensions={k: v for k, v in event.items() if k not in reserved_attr},
+            **kwargs
         )
