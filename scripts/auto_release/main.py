@@ -229,10 +229,10 @@ def test_env_init():
     with open(f'{SCRIPT_PATH}/mgmt_settings_real_.py', 'r') as file_in:
         list_in = file_in.readlines()
 
-    ENV_TENANT_ID = os.environ().get('ENV_TENANT_ID')
-    ENV_CLIENT_ID = os.environ().get('ENV_CLIENT_ID')
-    ENV_CLIENT_SECRET = os.environ().get('ENV_CLIENT_SECRET')
-    ENV_SUBSCRIPTION_ID = os.environ().get('ENV_SUBSCRIPTION_ID')
+    ENV_TENANT_ID = os.environ().get('TENANT_ID')
+    ENV_CLIENT_ID = os.environ().get('CLIENT_ID')
+    ENV_CLIENT_SECRET = os.environ().get('CLIENT_SECRET')
+    ENV_SUBSCRIPTION_ID = os.environ().get('SUBSCRIPTION_ID')
 
     my_print(f'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx={ENV_TENANT_ID}, {ENV_CLIENT_ID}, {ENV_CLIENT_SECRET}, {ENV_SUBSCRIPTION_ID}')
 
