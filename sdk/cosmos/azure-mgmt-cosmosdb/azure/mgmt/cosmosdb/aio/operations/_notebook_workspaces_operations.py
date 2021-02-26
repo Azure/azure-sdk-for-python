@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class NotebookWorkspacesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         **kwargs
-    ) -> AsyncIterable["models.NotebookWorkspaceListResult"]:
+    ) -> AsyncIterable["_models.NotebookWorkspaceListResult"]:
         """Gets the notebook workspace resources of an existing Cosmos DB account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -60,12 +60,12 @@ class NotebookWorkspacesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.NotebookWorkspaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotebookWorkspaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookWorkspaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -107,7 +107,7 @@ class NotebookWorkspacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -122,9 +122,9 @@ class NotebookWorkspacesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        notebook_workspace_name: Union[str, "models.NotebookWorkspaceName"],
+        notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
         **kwargs
-    ) -> "models.NotebookWorkspace":
+    ) -> "_models.NotebookWorkspace":
         """Gets the notebook workspace for a Cosmos DB account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -138,12 +138,12 @@ class NotebookWorkspacesOperations:
         :rtype: ~azure.mgmt.cosmosdb.models.NotebookWorkspace
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotebookWorkspace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookWorkspace"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -170,7 +170,7 @@ class NotebookWorkspacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NotebookWorkspace', pipeline_response)
@@ -185,16 +185,16 @@ class NotebookWorkspacesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        notebook_workspace_name: Union[str, "models.NotebookWorkspaceName"],
-        notebook_create_update_parameters: "models.ARMProxyResource",
+        notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
+        notebook_create_update_parameters: "_models.ARMProxyResource",
         **kwargs
-    ) -> "models.NotebookWorkspace":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotebookWorkspace"]
+    ) -> "_models.NotebookWorkspace":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookWorkspace"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -226,7 +226,7 @@ class NotebookWorkspacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NotebookWorkspace', pipeline_response)
@@ -241,10 +241,10 @@ class NotebookWorkspacesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        notebook_workspace_name: Union[str, "models.NotebookWorkspaceName"],
-        notebook_create_update_parameters: "models.ARMProxyResource",
+        notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
+        notebook_create_update_parameters: "_models.ARMProxyResource",
         **kwargs
-    ) -> AsyncLROPoller["models.NotebookWorkspace"]:
+    ) -> AsyncLROPoller["_models.NotebookWorkspace"]:
         """Creates the notebook workspace for a Cosmos DB account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -267,7 +267,7 @@ class NotebookWorkspacesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotebookWorkspace"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookWorkspace"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -293,7 +293,14 @@ class NotebookWorkspacesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -311,7 +318,7 @@ class NotebookWorkspacesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        notebook_workspace_name: Union[str, "models.NotebookWorkspaceName"],
+        notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -319,7 +326,7 @@ class NotebookWorkspacesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -346,7 +353,7 @@ class NotebookWorkspacesOperations:
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -358,7 +365,7 @@ class NotebookWorkspacesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        notebook_workspace_name: Union[str, "models.NotebookWorkspaceName"],
+        notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Deletes the notebook workspace for a Cosmos DB account.
@@ -402,7 +409,14 @@ class NotebookWorkspacesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -420,9 +434,9 @@ class NotebookWorkspacesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        notebook_workspace_name: Union[str, "models.NotebookWorkspaceName"],
+        notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
         **kwargs
-    ) -> "models.NotebookWorkspaceConnectionInfoResult":
+    ) -> "_models.NotebookWorkspaceConnectionInfoResult":
         """Retrieves the connection info for the notebook workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -436,12 +450,12 @@ class NotebookWorkspacesOperations:
         :rtype: ~azure.mgmt.cosmosdb.models.NotebookWorkspaceConnectionInfoResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotebookWorkspaceConnectionInfoResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookWorkspaceConnectionInfoResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -468,7 +482,7 @@ class NotebookWorkspacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NotebookWorkspaceConnectionInfoResult', pipeline_response)
@@ -483,7 +497,7 @@ class NotebookWorkspacesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        notebook_workspace_name: Union[str, "models.NotebookWorkspaceName"],
+        notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -491,7 +505,7 @@ class NotebookWorkspacesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -518,7 +532,7 @@ class NotebookWorkspacesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -530,7 +544,7 @@ class NotebookWorkspacesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        notebook_workspace_name: Union[str, "models.NotebookWorkspaceName"],
+        notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Regenerates the auth token for the notebook workspace.
@@ -574,7 +588,14 @@ class NotebookWorkspacesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -592,7 +613,7 @@ class NotebookWorkspacesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        notebook_workspace_name: Union[str, "models.NotebookWorkspaceName"],
+        notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -600,7 +621,7 @@ class NotebookWorkspacesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -627,7 +648,7 @@ class NotebookWorkspacesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -639,7 +660,7 @@ class NotebookWorkspacesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        notebook_workspace_name: Union[str, "models.NotebookWorkspaceName"],
+        notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Starts the notebook workspace.
@@ -683,7 +704,14 @@ class NotebookWorkspacesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

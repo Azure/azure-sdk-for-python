@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class CassandraResourcesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class CassandraResourcesOperations:
         resource_group_name: str,
         account_name: str,
         **kwargs
-    ) -> AsyncIterable["models.CassandraKeyspaceListResult"]:
+    ) -> AsyncIterable["_models.CassandraKeyspaceListResult"]:
         """Lists the Cassandra keyspaces under an existing Azure Cosmos DB database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -60,12 +60,12 @@ class CassandraResourcesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.CassandraKeyspaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CassandraKeyspaceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CassandraKeyspaceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -123,7 +123,7 @@ class CassandraResourcesOperations:
         account_name: str,
         keyspace_name: str,
         **kwargs
-    ) -> "models.CassandraKeyspaceGetResults":
+    ) -> "_models.CassandraKeyspaceGetResults":
         """Gets the Cassandra keyspaces under an existing Azure Cosmos DB database account with the
         provided name.
 
@@ -138,12 +138,12 @@ class CassandraResourcesOperations:
         :rtype: ~azure.mgmt.cosmosdb.models.CassandraKeyspaceGetResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CassandraKeyspaceGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CassandraKeyspaceGetResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -185,15 +185,15 @@ class CassandraResourcesOperations:
         resource_group_name: str,
         account_name: str,
         keyspace_name: str,
-        create_update_cassandra_keyspace_parameters: "models.CassandraKeyspaceCreateUpdateParameters",
+        create_update_cassandra_keyspace_parameters: "_models.CassandraKeyspaceCreateUpdateParameters",
         **kwargs
-    ) -> Optional["models.CassandraKeyspaceGetResults"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.CassandraKeyspaceGetResults"]]
+    ) -> Optional["_models.CassandraKeyspaceGetResults"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CassandraKeyspaceGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -242,9 +242,9 @@ class CassandraResourcesOperations:
         resource_group_name: str,
         account_name: str,
         keyspace_name: str,
-        create_update_cassandra_keyspace_parameters: "models.CassandraKeyspaceCreateUpdateParameters",
+        create_update_cassandra_keyspace_parameters: "_models.CassandraKeyspaceCreateUpdateParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.CassandraKeyspaceGetResults"]:
+    ) -> AsyncLROPoller["_models.CassandraKeyspaceGetResults"]:
         """Create or update an Azure Cosmos DB Cassandra keyspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -267,7 +267,7 @@ class CassandraResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CassandraKeyspaceGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CassandraKeyspaceGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -293,7 +293,14 @@ class CassandraResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -319,7 +326,7 @@ class CassandraResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
 
         # Construct URL
         url = self._delete_cassandra_keyspace_initial.metadata['url']  # type: ignore
@@ -399,7 +406,14 @@ class CassandraResourcesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -419,7 +433,7 @@ class CassandraResourcesOperations:
         account_name: str,
         keyspace_name: str,
         **kwargs
-    ) -> "models.ThroughputSettingsGetResults":
+    ) -> "_models.ThroughputSettingsGetResults":
         """Gets the RUs per second of the Cassandra Keyspace under an existing Azure Cosmos DB database
         account with the provided name.
 
@@ -434,12 +448,12 @@ class CassandraResourcesOperations:
         :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -481,15 +495,15 @@ class CassandraResourcesOperations:
         resource_group_name: str,
         account_name: str,
         keyspace_name: str,
-        update_throughput_parameters: "models.ThroughputSettingsUpdateParameters",
+        update_throughput_parameters: "_models.ThroughputSettingsUpdateParameters",
         **kwargs
-    ) -> Optional["models.ThroughputSettingsGetResults"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ThroughputSettingsGetResults"]]
+    ) -> Optional["_models.ThroughputSettingsGetResults"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ThroughputSettingsGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -538,9 +552,9 @@ class CassandraResourcesOperations:
         resource_group_name: str,
         account_name: str,
         keyspace_name: str,
-        update_throughput_parameters: "models.ThroughputSettingsUpdateParameters",
+        update_throughput_parameters: "_models.ThroughputSettingsUpdateParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.ThroughputSettingsGetResults"]:
+    ) -> AsyncLROPoller["_models.ThroughputSettingsGetResults"]:
         """Update RUs per second of an Azure Cosmos DB Cassandra Keyspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -563,7 +577,7 @@ class CassandraResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -589,7 +603,14 @@ class CassandraResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -609,13 +630,13 @@ class CassandraResourcesOperations:
         account_name: str,
         keyspace_name: str,
         **kwargs
-    ) -> Optional["models.ThroughputSettingsGetResults"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ThroughputSettingsGetResults"]]
+    ) -> Optional["_models.ThroughputSettingsGetResults"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ThroughputSettingsGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -660,7 +681,7 @@ class CassandraResourcesOperations:
         account_name: str,
         keyspace_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.ThroughputSettingsGetResults"]:
+    ) -> AsyncLROPoller["_models.ThroughputSettingsGetResults"]:
         """Migrate an Azure Cosmos DB Cassandra Keyspace from manual throughput to autoscale.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -680,7 +701,7 @@ class CassandraResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -705,7 +726,14 @@ class CassandraResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -725,13 +753,13 @@ class CassandraResourcesOperations:
         account_name: str,
         keyspace_name: str,
         **kwargs
-    ) -> Optional["models.ThroughputSettingsGetResults"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ThroughputSettingsGetResults"]]
+    ) -> Optional["_models.ThroughputSettingsGetResults"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ThroughputSettingsGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -776,7 +804,7 @@ class CassandraResourcesOperations:
         account_name: str,
         keyspace_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.ThroughputSettingsGetResults"]:
+    ) -> AsyncLROPoller["_models.ThroughputSettingsGetResults"]:
         """Migrate an Azure Cosmos DB Cassandra Keyspace from autoscale to manual throughput.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -796,7 +824,7 @@ class CassandraResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -821,7 +849,14 @@ class CassandraResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -841,7 +876,7 @@ class CassandraResourcesOperations:
         account_name: str,
         keyspace_name: str,
         **kwargs
-    ) -> AsyncIterable["models.CassandraTableListResult"]:
+    ) -> AsyncIterable["_models.CassandraTableListResult"]:
         """Lists the Cassandra table under an existing Azure Cosmos DB database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -855,12 +890,12 @@ class CassandraResourcesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.CassandraTableListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CassandraTableListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CassandraTableListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -920,7 +955,7 @@ class CassandraResourcesOperations:
         keyspace_name: str,
         table_name: str,
         **kwargs
-    ) -> "models.CassandraTableGetResults":
+    ) -> "_models.CassandraTableGetResults":
         """Gets the Cassandra table under an existing Azure Cosmos DB database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -936,12 +971,12 @@ class CassandraResourcesOperations:
         :rtype: ~azure.mgmt.cosmosdb.models.CassandraTableGetResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CassandraTableGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CassandraTableGetResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -985,15 +1020,15 @@ class CassandraResourcesOperations:
         account_name: str,
         keyspace_name: str,
         table_name: str,
-        create_update_cassandra_table_parameters: "models.CassandraTableCreateUpdateParameters",
+        create_update_cassandra_table_parameters: "_models.CassandraTableCreateUpdateParameters",
         **kwargs
-    ) -> Optional["models.CassandraTableGetResults"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.CassandraTableGetResults"]]
+    ) -> Optional["_models.CassandraTableGetResults"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CassandraTableGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1044,9 +1079,9 @@ class CassandraResourcesOperations:
         account_name: str,
         keyspace_name: str,
         table_name: str,
-        create_update_cassandra_table_parameters: "models.CassandraTableCreateUpdateParameters",
+        create_update_cassandra_table_parameters: "_models.CassandraTableCreateUpdateParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.CassandraTableGetResults"]:
+    ) -> AsyncLROPoller["_models.CassandraTableGetResults"]:
         """Create or update an Azure Cosmos DB Cassandra Table.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1071,7 +1106,7 @@ class CassandraResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CassandraTableGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CassandraTableGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1098,7 +1133,15 @@ class CassandraResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1125,7 +1168,7 @@ class CassandraResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
 
         # Construct URL
         url = self._delete_cassandra_table_initial.metadata['url']  # type: ignore
@@ -1210,7 +1253,15 @@ class CassandraResourcesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1231,7 +1282,7 @@ class CassandraResourcesOperations:
         keyspace_name: str,
         table_name: str,
         **kwargs
-    ) -> "models.ThroughputSettingsGetResults":
+    ) -> "_models.ThroughputSettingsGetResults":
         """Gets the RUs per second of the Cassandra table under an existing Azure Cosmos DB database
         account with the provided name.
 
@@ -1248,12 +1299,12 @@ class CassandraResourcesOperations:
         :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1297,15 +1348,15 @@ class CassandraResourcesOperations:
         account_name: str,
         keyspace_name: str,
         table_name: str,
-        update_throughput_parameters: "models.ThroughputSettingsUpdateParameters",
+        update_throughput_parameters: "_models.ThroughputSettingsUpdateParameters",
         **kwargs
-    ) -> Optional["models.ThroughputSettingsGetResults"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ThroughputSettingsGetResults"]]
+    ) -> Optional["_models.ThroughputSettingsGetResults"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ThroughputSettingsGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1356,9 +1407,9 @@ class CassandraResourcesOperations:
         account_name: str,
         keyspace_name: str,
         table_name: str,
-        update_throughput_parameters: "models.ThroughputSettingsUpdateParameters",
+        update_throughput_parameters: "_models.ThroughputSettingsUpdateParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.ThroughputSettingsGetResults"]:
+    ) -> AsyncLROPoller["_models.ThroughputSettingsGetResults"]:
         """Update RUs per second of an Azure Cosmos DB Cassandra table.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1383,7 +1434,7 @@ class CassandraResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1410,7 +1461,15 @@ class CassandraResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1431,13 +1490,13 @@ class CassandraResourcesOperations:
         keyspace_name: str,
         table_name: str,
         **kwargs
-    ) -> Optional["models.ThroughputSettingsGetResults"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ThroughputSettingsGetResults"]]
+    ) -> Optional["_models.ThroughputSettingsGetResults"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ThroughputSettingsGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1484,7 +1543,7 @@ class CassandraResourcesOperations:
         keyspace_name: str,
         table_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.ThroughputSettingsGetResults"]:
+    ) -> AsyncLROPoller["_models.ThroughputSettingsGetResults"]:
         """Migrate an Azure Cosmos DB Cassandra table from manual throughput to autoscale.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1506,7 +1565,7 @@ class CassandraResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1532,7 +1591,15 @@ class CassandraResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1553,13 +1620,13 @@ class CassandraResourcesOperations:
         keyspace_name: str,
         table_name: str,
         **kwargs
-    ) -> Optional["models.ThroughputSettingsGetResults"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ThroughputSettingsGetResults"]]
+    ) -> Optional["_models.ThroughputSettingsGetResults"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ThroughputSettingsGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1606,7 +1673,7 @@ class CassandraResourcesOperations:
         keyspace_name: str,
         table_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.ThroughputSettingsGetResults"]:
+    ) -> AsyncLROPoller["_models.ThroughputSettingsGetResults"]:
         """Migrate an Azure Cosmos DB Cassandra table from autoscale to manual throughput.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1628,7 +1695,7 @@ class CassandraResourcesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1654,7 +1721,15 @@ class CassandraResourcesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

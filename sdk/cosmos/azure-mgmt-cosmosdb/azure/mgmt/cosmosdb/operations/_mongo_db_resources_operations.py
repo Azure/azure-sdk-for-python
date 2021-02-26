@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class MongoDBResourcesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class MongoDBResourcesOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.MongoDBDatabaseListResult"]
+        # type: (...) -> Iterable["_models.MongoDBDatabaseListResult"]
         """Lists the MongoDB databases under an existing Azure Cosmos DB database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -65,12 +65,12 @@ class MongoDBResourcesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.MongoDBDatabaseListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MongoDBDatabaseListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoDBDatabaseListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -129,7 +129,7 @@ class MongoDBResourcesOperations(object):
         database_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.MongoDBDatabaseGetResults"
+        # type: (...) -> "_models.MongoDBDatabaseGetResults"
         """Gets the MongoDB databases under an existing Azure Cosmos DB database account with the provided
         name.
 
@@ -144,12 +144,12 @@ class MongoDBResourcesOperations(object):
         :rtype: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MongoDBDatabaseGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoDBDatabaseGetResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -191,16 +191,16 @@ class MongoDBResourcesOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         database_name,  # type: str
-        create_update_mongo_db_database_parameters,  # type: "models.MongoDBDatabaseCreateUpdateParameters"
+        create_update_mongo_db_database_parameters,  # type: "_models.MongoDBDatabaseCreateUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.MongoDBDatabaseGetResults"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.MongoDBDatabaseGetResults"]]
+        # type: (...) -> Optional["_models.MongoDBDatabaseGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MongoDBDatabaseGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -249,10 +249,10 @@ class MongoDBResourcesOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         database_name,  # type: str
-        create_update_mongo_db_database_parameters,  # type: "models.MongoDBDatabaseCreateUpdateParameters"
+        create_update_mongo_db_database_parameters,  # type: "_models.MongoDBDatabaseCreateUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.MongoDBDatabaseGetResults"]
+        # type: (...) -> LROPoller["_models.MongoDBDatabaseGetResults"]
         """Create or updates Azure Cosmos DB MongoDB database.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -275,7 +275,7 @@ class MongoDBResourcesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MongoDBDatabaseGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoDBDatabaseGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -301,7 +301,14 @@ class MongoDBResourcesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -328,7 +335,7 @@ class MongoDBResourcesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
 
         # Construct URL
         url = self._delete_mongo_db_database_initial.metadata['url']  # type: ignore
@@ -409,7 +416,14 @@ class MongoDBResourcesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -430,7 +444,7 @@ class MongoDBResourcesOperations(object):
         database_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ThroughputSettingsGetResults"
+        # type: (...) -> "_models.ThroughputSettingsGetResults"
         """Gets the RUs per second of the MongoDB database under an existing Azure Cosmos DB database
         account with the provided name.
 
@@ -445,12 +459,12 @@ class MongoDBResourcesOperations(object):
         :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -492,16 +506,16 @@ class MongoDBResourcesOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         database_name,  # type: str
-        update_throughput_parameters,  # type: "models.ThroughputSettingsUpdateParameters"
+        update_throughput_parameters,  # type: "_models.ThroughputSettingsUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ThroughputSettingsGetResults"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ThroughputSettingsGetResults"]]
+        # type: (...) -> Optional["_models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ThroughputSettingsGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -550,10 +564,10 @@ class MongoDBResourcesOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         database_name,  # type: str
-        update_throughput_parameters,  # type: "models.ThroughputSettingsUpdateParameters"
+        update_throughput_parameters,  # type: "_models.ThroughputSettingsUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ThroughputSettingsGetResults"]
+        # type: (...) -> LROPoller["_models.ThroughputSettingsGetResults"]
         """Update RUs per second of the an Azure Cosmos DB MongoDB database.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -576,7 +590,7 @@ class MongoDBResourcesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -602,7 +616,14 @@ class MongoDBResourcesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -623,13 +644,13 @@ class MongoDBResourcesOperations(object):
         database_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ThroughputSettingsGetResults"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ThroughputSettingsGetResults"]]
+        # type: (...) -> Optional["_models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ThroughputSettingsGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -675,7 +696,7 @@ class MongoDBResourcesOperations(object):
         database_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ThroughputSettingsGetResults"]
+        # type: (...) -> LROPoller["_models.ThroughputSettingsGetResults"]
         """Migrate an Azure Cosmos DB MongoDB database from manual throughput to autoscale.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -695,7 +716,7 @@ class MongoDBResourcesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -720,7 +741,14 @@ class MongoDBResourcesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -741,13 +769,13 @@ class MongoDBResourcesOperations(object):
         database_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ThroughputSettingsGetResults"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ThroughputSettingsGetResults"]]
+        # type: (...) -> Optional["_models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ThroughputSettingsGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -793,7 +821,7 @@ class MongoDBResourcesOperations(object):
         database_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ThroughputSettingsGetResults"]
+        # type: (...) -> LROPoller["_models.ThroughputSettingsGetResults"]
         """Migrate an Azure Cosmos DB MongoDB database from autoscale to manual throughput.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -813,7 +841,7 @@ class MongoDBResourcesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -838,7 +866,14 @@ class MongoDBResourcesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -859,7 +894,7 @@ class MongoDBResourcesOperations(object):
         database_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.MongoDBCollectionListResult"]
+        # type: (...) -> Iterable["_models.MongoDBCollectionListResult"]
         """Lists the MongoDB collection under an existing Azure Cosmos DB database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -873,12 +908,12 @@ class MongoDBResourcesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.MongoDBCollectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MongoDBCollectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoDBCollectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -939,7 +974,7 @@ class MongoDBResourcesOperations(object):
         collection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.MongoDBCollectionGetResults"
+        # type: (...) -> "_models.MongoDBCollectionGetResults"
         """Gets the MongoDB collection under an existing Azure Cosmos DB database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -955,12 +990,12 @@ class MongoDBResourcesOperations(object):
         :rtype: ~azure.mgmt.cosmosdb.models.MongoDBCollectionGetResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MongoDBCollectionGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoDBCollectionGetResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1004,16 +1039,16 @@ class MongoDBResourcesOperations(object):
         account_name,  # type: str
         database_name,  # type: str
         collection_name,  # type: str
-        create_update_mongo_db_collection_parameters,  # type: "models.MongoDBCollectionCreateUpdateParameters"
+        create_update_mongo_db_collection_parameters,  # type: "_models.MongoDBCollectionCreateUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.MongoDBCollectionGetResults"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.MongoDBCollectionGetResults"]]
+        # type: (...) -> Optional["_models.MongoDBCollectionGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MongoDBCollectionGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1064,10 +1099,10 @@ class MongoDBResourcesOperations(object):
         account_name,  # type: str
         database_name,  # type: str
         collection_name,  # type: str
-        create_update_mongo_db_collection_parameters,  # type: "models.MongoDBCollectionCreateUpdateParameters"
+        create_update_mongo_db_collection_parameters,  # type: "_models.MongoDBCollectionCreateUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.MongoDBCollectionGetResults"]
+        # type: (...) -> LROPoller["_models.MongoDBCollectionGetResults"]
         """Create or update an Azure Cosmos DB MongoDB Collection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1092,7 +1127,7 @@ class MongoDBResourcesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MongoDBCollectionGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MongoDBCollectionGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1119,7 +1154,15 @@ class MongoDBResourcesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1147,7 +1190,7 @@ class MongoDBResourcesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
 
         # Construct URL
         url = self._delete_mongo_db_collection_initial.metadata['url']  # type: ignore
@@ -1233,7 +1276,15 @@ class MongoDBResourcesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1255,7 +1306,7 @@ class MongoDBResourcesOperations(object):
         collection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ThroughputSettingsGetResults"
+        # type: (...) -> "_models.ThroughputSettingsGetResults"
         """Gets the RUs per second of the MongoDB collection under an existing Azure Cosmos DB database
         account with the provided name.
 
@@ -1272,12 +1323,12 @@ class MongoDBResourcesOperations(object):
         :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1321,16 +1372,16 @@ class MongoDBResourcesOperations(object):
         account_name,  # type: str
         database_name,  # type: str
         collection_name,  # type: str
-        update_throughput_parameters,  # type: "models.ThroughputSettingsUpdateParameters"
+        update_throughput_parameters,  # type: "_models.ThroughputSettingsUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ThroughputSettingsGetResults"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ThroughputSettingsGetResults"]]
+        # type: (...) -> Optional["_models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ThroughputSettingsGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1381,10 +1432,10 @@ class MongoDBResourcesOperations(object):
         account_name,  # type: str
         database_name,  # type: str
         collection_name,  # type: str
-        update_throughput_parameters,  # type: "models.ThroughputSettingsUpdateParameters"
+        update_throughput_parameters,  # type: "_models.ThroughputSettingsUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ThroughputSettingsGetResults"]
+        # type: (...) -> LROPoller["_models.ThroughputSettingsGetResults"]
         """Update the RUs per second of an Azure Cosmos DB MongoDB collection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1409,7 +1460,7 @@ class MongoDBResourcesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1436,7 +1487,15 @@ class MongoDBResourcesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1458,13 +1517,13 @@ class MongoDBResourcesOperations(object):
         collection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ThroughputSettingsGetResults"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ThroughputSettingsGetResults"]]
+        # type: (...) -> Optional["_models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ThroughputSettingsGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1512,7 +1571,7 @@ class MongoDBResourcesOperations(object):
         collection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ThroughputSettingsGetResults"]
+        # type: (...) -> LROPoller["_models.ThroughputSettingsGetResults"]
         """Migrate an Azure Cosmos DB MongoDB collection from manual throughput to autoscale.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1534,7 +1593,7 @@ class MongoDBResourcesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1560,7 +1619,15 @@ class MongoDBResourcesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1582,13 +1649,13 @@ class MongoDBResourcesOperations(object):
         collection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ThroughputSettingsGetResults"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ThroughputSettingsGetResults"]]
+        # type: (...) -> Optional["_models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ThroughputSettingsGetResults"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1636,7 +1703,7 @@ class MongoDBResourcesOperations(object):
         collection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ThroughputSettingsGetResults"]
+        # type: (...) -> LROPoller["_models.ThroughputSettingsGetResults"]
         """Migrate an Azure Cosmos DB MongoDB collection from autoscale to manual throughput.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1658,7 +1725,7 @@ class MongoDBResourcesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ThroughputSettingsGetResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ThroughputSettingsGetResults"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1684,7 +1751,15 @@ class MongoDBResourcesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

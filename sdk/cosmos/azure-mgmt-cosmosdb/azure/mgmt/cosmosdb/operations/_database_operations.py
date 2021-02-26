@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class DatabaseOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class DatabaseOperations(object):
         filter,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.MetricListResult"]
+        # type: (...) -> Iterable["_models.MetricListResult"]
         """Retrieves the metrics determined by the given filter for the given database account and
         database.
 
@@ -72,12 +72,12 @@ class DatabaseOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.MetricListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetricListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -139,7 +139,7 @@ class DatabaseOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.UsagesResult"]
+        # type: (...) -> Iterable["_models.UsagesResult"]
         """Retrieves the usages (most recent data) for the given database.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -156,12 +156,12 @@ class DatabaseOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.UsagesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.UsagesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsagesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -223,7 +223,7 @@ class DatabaseOperations(object):
         database_rid,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.MetricDefinitionsListResult"]
+        # type: (...) -> Iterable["_models.MetricDefinitionsListResult"]
         """Retrieves metric definitions for the given database.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -237,12 +237,12 @@ class DatabaseOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.MetricDefinitionsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricDefinitionsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetricDefinitionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
