@@ -40,6 +40,9 @@ jobs:
         source venv-sdk/bin/activate
         output_path=$(pwd)/venv-sdk
         pip install packaging
+        echo 2222222222222
+        pip install -r $script_path/livetest_package.txt
+        echo 3333333333333
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=true
@@ -54,7 +57,7 @@ jobs:
 
         # run
         cd azure-sdk-for-python
-        python /home/vsts/work/1/s/scripts/auto_release/main.py $(BASE_BRANCH) "$script_path" "$output_path"
+        python $script_path/main.py $(BASE_BRANCH) "$script_path" "$output_path"
 
         # judge
         if [ ! -f "$output_path/output.txt" ]; then
