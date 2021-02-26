@@ -740,7 +740,9 @@ def test_client_capabilities():
 
     record = AuthenticationRecord("tenant-id", "client_id", "authority", "home_account_id", "username")
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
-    credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=_TokenCache())
+    credential = SharedTokenCacheCredential(
+        transport=transport, authentication_record=record, token_cache=_TokenCache()
+    )
 
     with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication") as PublicClientApplication:
         credential._initialize()
@@ -764,7 +766,9 @@ def test_claims_challenge():
     )
 
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
-    credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=_TokenCache())
+    credential = SharedTokenCacheCredential(
+        transport=transport, authentication_record=record, token_cache=_TokenCache()
+    )
     with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication", lambda *_, **__: msal_app):
         credential.get_token("scope", claims=expected_claims)
 
