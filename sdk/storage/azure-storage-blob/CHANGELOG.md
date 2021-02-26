@@ -1,5 +1,10 @@
 # Release History
 
+## 12.8.0 (2021-02-26)
+**Stable release of preview features**
+- Added `ContainerClient.exists()` method
+- Added container SAS support for blob batch operations
+
 ## 12.8.0b1 (2021-02-10)
 **New Features**
 - Added `ContainerClient.exists()` method
