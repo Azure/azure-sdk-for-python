@@ -220,8 +220,7 @@ def build_wheel():
 
 
 def test_env_init():
-    my_print(print_exec_output(f'pip install -r {SCRIPT_PATH}/livetest_package.txt'))
-    print_check(f'pip install -r {SCRIPT_PATH}/livetest_package.txt')
+    print_exec(f'pip install -r {SCRIPT_PATH}/livetest_package.txt')
     file = f'{SCRIPT_PATH}/livetest_package_{SERVICE_NAME}_track{TRACK}.txt'
     if os.path.exists(file):
         print_exec(f'pip install -r {file}')
@@ -297,6 +296,8 @@ def judge_sdk_folder():
             if line.find('azure-sdk-for-python-track2') > 0:
                 TRACK = '2'
                 break
+
+    my_print(str(FOLDER_LINK))
 
 
 def git_remote_add():
