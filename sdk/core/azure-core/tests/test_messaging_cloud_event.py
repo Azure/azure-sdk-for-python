@@ -43,6 +43,21 @@ def test_cloud_event_constructor_blank_data():
     assert event.source == 'Azure.Core.Sample'
     assert event.data == ''
 
+def test_cloud_event_constructor_no_data():
+    event = CloudEvent(
+        source='Azure.Core.Sample',
+        type='SampleType',
+        )
+    
+    with pytest.raises(AttributeError):
+        doesnt_exist = event.data
+    with pytest.raises(AttributeError):
+        doesnt_exist = event.datacontenttype
+    with pytest.raises(AttributeError):
+        doesnt_exist = event.dataschema
+    with pytest.raises(AttributeError):
+        doesnt_exist = event.subject
+
 def test_cloud_storage_dict():
     cloud_storage_dict = {
         "id":"a0517898-9fa4-4e70-b4a3-afda1dd68672",
@@ -117,18 +132,18 @@ def test_cloud_custom_dict_blank_data():
     assert event.data == ''
     assert event.__class__ == CloudEvent
 
-def test_cloud_custom_dict_none_data():
+def test_cloud_custom_dict_no_data():
     cloud_custom_dict_with_none_data = {
         "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
         "source":"https://egtest.dev/cloudcustomevent",
-        "data":None,
         "type":"Azure.Sdk.Sample",
         "time":"2021-02-18T20:18:10+00:00",
         "specversion":"1.0",
     }
     event = CloudEvent.from_dict(cloud_custom_dict_with_none_data)
-    assert event.data == None
     assert event.__class__ == CloudEvent
+    with pytest.raises(AttributeError):
+        missing = event.data
 
 def test_cloud_custom_dict_both_data_and_base64():
     cloud_custom_dict_with_data_and_base64 = {

@@ -43,6 +43,8 @@ def _convert_to_isoformat(date_time):
     """Deserialize a date in RFC 3339 format to datetime object.
     Check https://tools.ietf.org/html/rfc3339#section-5.8 for examples.
     """
+    if not date_time:
+        return
     if date_time[-1] == "Z":
         delta = 0
         timestamp = date_time[:-1]
