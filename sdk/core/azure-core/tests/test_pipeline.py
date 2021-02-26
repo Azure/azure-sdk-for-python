@@ -301,12 +301,19 @@ class TestClientRequest(unittest.TestCase):
         with pytest.raises(ValueError):
             request.format_parameters({"g": ["h",None]})
 
-    def test_request_url_with_params_with_none(self):
+    def test_request_url_with_params_with_none_value(self):
 
         request = HttpRequest("GET", "/")
         request.url = "a/b/c?t=y"
         with pytest.raises(ValueError):
             request.format_parameters({"g": None})
+
+    def test_request_url_with_params_with_none(self):
+
+        request = HttpRequest("GET", "/")
+        request.url = "hello"
+        request.format_parameters(params=None)
+        assert request.url == "hello?"
 
     def test_request_url_with_query_kwarg(self):
 
@@ -330,7 +337,7 @@ class TestClientRequest(unittest.TestCase):
         with pytest.raises(ValueError):
             HttpRequest("GET", "a/b/c?t=y", query={"g": None})
 
-    def test_request_url_with_query_kwarg_none(self):
+    def test_request_url_with_query_kwarg_with_none(self):
         request = HttpRequest("GET", "hello", query=None)
         assert request.url == "hello?"
 
