@@ -40,7 +40,9 @@ function Submit-APIReview($packagename, $filePath, $uri, $apiKey, $apiLabel)
 
     try
     {
-        $Response = Invoke-WebRequest -Method 'POST' -Uri $uri -Body $multipartContent -Headers $headers
+        # Increasing time out since python package requires installation of all required packages and parse
+        # Few packages like azure-storage-file-share is taking longer time to process and times out
+        $Response = Invoke-WebRequest -Method 'POST' -Uri $uri -Body $multipartContent -Headers $headers -TimeoutSec 300
         Write-Host "API Review: $($Response)"
         $StatusCode = $Response.StatusCode
     }
