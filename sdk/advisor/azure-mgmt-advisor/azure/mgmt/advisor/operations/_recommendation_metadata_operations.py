@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -52,7 +51,8 @@ class RecommendationMetadataOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
         :rtype: object or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ArmErrorResponseException<azure.mgmt.advisor.models.ArmErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -80,9 +80,7 @@ class RecommendationMetadataOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ArmErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -109,7 +107,8 @@ class RecommendationMetadataOperations(object):
         :return: An iterator like instance of MetadataEntity
         :rtype:
          ~azure.mgmt.advisor.models.MetadataEntityPaged[~azure.mgmt.advisor.models.MetadataEntity]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ArmErrorResponseException<azure.mgmt.advisor.models.ArmErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -144,9 +143,7 @@ class RecommendationMetadataOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ArmErrorResponseException(self._deserialize, response)
 
             return response
 

@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -51,7 +50,8 @@ class Operations(object):
         :return: An iterator like instance of OperationEntity
         :rtype:
          ~azure.mgmt.advisor.models.OperationEntityPaged[~azure.mgmt.advisor.models.OperationEntity]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ArmErrorResponseException<azure.mgmt.advisor.models.ArmErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -86,9 +86,7 @@ class Operations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ArmErrorResponseException(self._deserialize, response)
 
             return response
 

@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -52,7 +51,8 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ArmErrorResponseException<azure.mgmt.advisor.models.ArmErrorResponseException>`
         """
         # Construct URL
         url = self.generate.metadata['url']
@@ -79,9 +79,7 @@ class RecommendationsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ArmErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -109,7 +107,8 @@ class RecommendationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ArmErrorResponseException<azure.mgmt.advisor.models.ArmErrorResponseException>`
         """
         # Construct URL
         url = self.get_generate_status.metadata['url']
@@ -137,9 +136,7 @@ class RecommendationsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ArmErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -151,7 +148,11 @@ class RecommendationsOperations(object):
         """Obtains cached recommendations for a subscription. The recommendations
         are generated or computed by invoking generateRecommendations.
 
-        :param filter: The filter to apply to the recommendations.
+        :param filter: The filter to apply to the recommendations.<br>Filter
+         can be applied to properties ['ResourceId', 'ResourceGroup',
+         'RecommendationTypeGuid', '[Category](#category)'] with operators
+         ['eq', 'and', 'or'].<br>Example:<br>- $filter=Category eq 'Cost' and
+         ResourceGroup eq 'MyResourceGroup'
         :type filter: str
         :param top: The number of recommendations per page if a paged version
          of this API is being used.
@@ -167,7 +168,8 @@ class RecommendationsOperations(object):
         :return: An iterator like instance of ResourceRecommendationBase
         :rtype:
          ~azure.mgmt.advisor.models.ResourceRecommendationBasePaged[~azure.mgmt.advisor.models.ResourceRecommendationBase]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ArmErrorResponseException<azure.mgmt.advisor.models.ArmErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -212,9 +214,7 @@ class RecommendationsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ArmErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -244,7 +244,8 @@ class RecommendationsOperations(object):
         :return: ResourceRecommendationBase or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.advisor.models.ResourceRecommendationBase or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ArmErrorResponseException<azure.mgmt.advisor.models.ArmErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -273,9 +274,7 @@ class RecommendationsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ArmErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

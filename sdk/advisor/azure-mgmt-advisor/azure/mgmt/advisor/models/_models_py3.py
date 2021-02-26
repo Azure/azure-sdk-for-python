@@ -310,17 +310,31 @@ class ResourceMetadata(Model):
     :type resource_id: str
     :param source: Source from which recommendation is generated
     :type source: str
+    :param action: The action to view resource.
+    :type action: dict[str, object]
+    :param singular: The singular user friendly name of resource type. eg:
+     virtual machine
+    :type singular: str
+    :param plural: The plural user friendly name of resource type. eg: virtual
+     machines
+    :type plural: str
     """
 
     _attribute_map = {
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'source': {'key': 'source', 'type': 'str'},
+        'action': {'key': 'action', 'type': '{object}'},
+        'singular': {'key': 'singular', 'type': 'str'},
+        'plural': {'key': 'plural', 'type': 'str'},
     }
 
-    def __init__(self, *, resource_id: str=None, source: str=None, **kwargs) -> None:
+    def __init__(self, *, resource_id: str=None, source: str=None, action=None, singular: str=None, plural: str=None, **kwargs) -> None:
         super(ResourceMetadata, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.source = source
+        self.action = action
+        self.singular = singular
+        self.plural = plural
 
 
 class ResourceRecommendationBase(Resource):
@@ -365,6 +379,24 @@ class ResourceRecommendationBase(Resource):
     :type extended_properties: dict[str, str]
     :param resource_metadata: Metadata of resource that was assessed
     :type resource_metadata: ~azure.mgmt.advisor.models.ResourceMetadata
+    :param description: The detailed description of recommendation.
+    :type description: str
+    :param label: The label of recommendation.
+    :type label: str
+    :param learn_more_link: The link to learn more about recommendation and
+     generation logic.
+    :type learn_more_link: str
+    :param potential_benefits: The potential benefit of implementing
+     recommendation.
+    :type potential_benefits: str
+    :param actions: The list of recommended actions to implement
+     recommendation.
+    :type actions: list[dict[str, object]]
+    :param remediation: The automated way to apply recommendation.
+    :type remediation: dict[str, object]
+    :param exposed_metadata_properties: The recommendation metadata properties
+     exposed to customer to provide additional information.
+    :type exposed_metadata_properties: dict[str, object]
     """
 
     _validation = {
@@ -389,9 +421,16 @@ class ResourceRecommendationBase(Resource):
         'suppression_ids': {'key': 'properties.suppressionIds', 'type': '[str]'},
         'extended_properties': {'key': 'properties.extendedProperties', 'type': '{str}'},
         'resource_metadata': {'key': 'properties.resourceMetadata', 'type': 'ResourceMetadata'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'label': {'key': 'properties.label', 'type': 'str'},
+        'learn_more_link': {'key': 'properties.learnMoreLink', 'type': 'str'},
+        'potential_benefits': {'key': 'properties.potentialBenefits', 'type': 'str'},
+        'actions': {'key': 'properties.actions', 'type': '[{object}]'},
+        'remediation': {'key': 'properties.remediation', 'type': '{object}'},
+        'exposed_metadata_properties': {'key': 'properties.exposedMetadataProperties', 'type': '{object}'},
     }
 
-    def __init__(self, *, category=None, impact=None, impacted_field: str=None, impacted_value: str=None, last_updated=None, metadata=None, recommendation_type_id: str=None, risk=None, short_description=None, suppression_ids=None, extended_properties=None, resource_metadata=None, **kwargs) -> None:
+    def __init__(self, *, category=None, impact=None, impacted_field: str=None, impacted_value: str=None, last_updated=None, metadata=None, recommendation_type_id: str=None, risk=None, short_description=None, suppression_ids=None, extended_properties=None, resource_metadata=None, description: str=None, label: str=None, learn_more_link: str=None, potential_benefits: str=None, actions=None, remediation=None, exposed_metadata_properties=None, **kwargs) -> None:
         super(ResourceRecommendationBase, self).__init__(**kwargs)
         self.category = category
         self.impact = impact
@@ -405,6 +444,13 @@ class ResourceRecommendationBase(Resource):
         self.suppression_ids = suppression_ids
         self.extended_properties = extended_properties
         self.resource_metadata = resource_metadata
+        self.description = description
+        self.label = label
+        self.learn_more_link = learn_more_link
+        self.potential_benefits = potential_benefits
+        self.actions = actions
+        self.remediation = remediation
+        self.exposed_metadata_properties = exposed_metadata_properties
 
 
 class ShortDescription(Model):
@@ -444,12 +490,15 @@ class SuppressionContract(Resource):
     :type suppression_id: str
     :param ttl: The duration for which the suppression is valid.
     :type ttl: str
+    :ivar expiration_time_stamp: Gets or sets the expiration time stamp.
+    :vartype expiration_time_stamp: datetime
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'expiration_time_stamp': {'readonly': True},
     }
 
     _attribute_map = {
@@ -458,9 +507,11 @@ class SuppressionContract(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'suppression_id': {'key': 'properties.suppressionId', 'type': 'str'},
         'ttl': {'key': 'properties.ttl', 'type': 'str'},
+        'expiration_time_stamp': {'key': 'properties.expirationTimeStamp', 'type': 'iso-8601'},
     }
 
     def __init__(self, *, suppression_id: str=None, ttl: str=None, **kwargs) -> None:
         super(SuppressionContract, self).__init__(**kwargs)
         self.suppression_id = suppression_id
         self.ttl = ttl
+        self.expiration_time_stamp = None
