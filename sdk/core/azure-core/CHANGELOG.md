@@ -4,7 +4,8 @@
 
 ### Features
 
-- Add `json` kwarg to `HttpRequest` object. The `json` kwarg takes your data as input and json serializes it for you. Use instead of `data` if you want this behavior. #16695
+- Add a kwarg called `json` to the `HttpRequest` object. The `json` kwarg takes the body you want to send to the service as input
+and json serializes it for you. Use instead of the `data` parameter if you want this behavior. #16695
 
 ## 1.11.0 (2021-02-08)
 
