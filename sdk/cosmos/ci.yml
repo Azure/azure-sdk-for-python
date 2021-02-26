@@ -31,7 +31,7 @@ extends:
   parameters:
     ServiceDirectory: cosmos
     Artifacts:
-    - name: azure_cosmos
+    - name: azure-cosmos
       safeName: azurecosmos
-    - name: azure_mgmt_cosmosdb
+    - name: azure-mgmt-cosmosdb
       safeName: azuremgmtcosmosdb

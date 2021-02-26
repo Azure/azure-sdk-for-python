@@ -30,7 +30,7 @@ extends:
   parameters:
     ServiceDirectory: schemaregistry
     Artifacts:
-    - name: azure_schemaregistry
+    - name: azure-schemaregistry
       safeName: azureschemaregistry
-    - name: azure_schemaregistry_avroserializer
+    - name: azure-schemaregistry-avroserializer
       safeName: azureschemaregistryavroserializer

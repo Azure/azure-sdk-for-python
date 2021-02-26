@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: azurestackhci
     Artifacts:
-    - name: azure_mgmt_azurestackhci
+    - name: azure-mgmt-azurestackhci
       safeName: azuremgmtazurestackhci

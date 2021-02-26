@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: scheduler
     Artifacts:
-    - name: azure_mgmt_scheduler
+    - name: azure-mgmt-scheduler
       safeName: azuremgmtscheduler

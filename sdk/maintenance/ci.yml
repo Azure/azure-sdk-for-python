@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: maintenance
     Artifacts:
-    - name: azure_mgmt_maintenance
+    - name: azure-mgmt-maintenance
       safeName: azuremgmtmaintenance
