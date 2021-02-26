@@ -48,7 +48,7 @@ Analyze job in both nightly CI and pull request validation pipeline runs a set o
 Change log verification is added to ensure package has valid change log for current version. Guidelines to properly maintain the change log is documented [here](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/)
 
 ## PR Validation Checks
-Each pull request runs various tests using `pytest` in addition to all the tests mentioned above in analyze check. Pull request validation performs 3 different types of test: `whl, sdist and depends`. Following section explains the purpose of each of these tests and how to execute them locally. All pull requests are validated on multiple python versions across different platforms and below is the test matrix for pull request.
+Each pull request runs various tests using `pytest` in addition to all the tests mentioned above in analyze check. Pull request validation performs 3 different types of test: `whl, sdist and depends`. The following section explains the purpose of each of these tests and how to execute them locally. All pull requests are validated on multiple python versions across different platforms. Find the test matrix below.
 
 
 |`Python  Version`|`Platform`  |
@@ -73,8 +73,8 @@ This test installs sdist of the package being tested and runs all tests cases in
 2. Run following command
    ``tox -e sdist -c ../../../eng/tox/tox.ini``
 
-####depends
-This test is to ensure all modules in the package being tested can be successfully imported. This is to ensure all package requirement is properly set in setup.py as well as to ensure modules are imported using valid namespace. This test install the package and it's required packages and executes `from <package-root-namespace> import *`. For e.g. `from azure.core import *`.
+#### depends
+The `depends` check ensures all modules in target package can be successfully imported. Actually installing and importing will verify that all package requirements are properly set in setup.py and that the `__all__` set for the package is properly defined. This test installs the package and its required packages, then executes `from <package-root-namespace> import *`. For example from `azure-core`, the following would be invoked:  `from azure.core import *`.
 
 Following is the command to run this test environment locally.
 
