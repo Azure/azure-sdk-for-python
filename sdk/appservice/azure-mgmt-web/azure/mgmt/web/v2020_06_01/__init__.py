@@ -6,4 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.42.0"
+from ._web_site_management_client import WebSiteManagementClient
+__all__ = ['WebSiteManagementClient']
+
+try:
+    from ._patch import patch_sdk  # type: ignore
+    patch_sdk()
+except ImportError:
+    pass
