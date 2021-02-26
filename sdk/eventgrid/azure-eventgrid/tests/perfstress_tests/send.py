@@ -1,4 +1,9 @@
-import random
+#-------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#--------------------------------------------------------------------------
+
 import asyncio
 from azure_devtools.perfstress_tests import PerfStressTest
 
@@ -25,13 +30,12 @@ class EventGridPerfTest(PerfStressTest):
             credential=AzureKeyCredential(topic_key)
         )
 
-        services = ["EventGrid", "ServiceBus", "EventHubs", "Storage"]
         self.event_list = []
         for _ in range(self.args.num_events):
             self.event_list.append(EventGridEvent(
                 event_type="Contoso.Items.ItemReceived",
                 data={
-                    "services": random.sample(services, k=random.randint(1, 4))
+                    "services": ["EventGrid", "ServiceBus", "EventHubs", "Storage"]
                 },
                 subject="Door1",
                 data_version="2.0"

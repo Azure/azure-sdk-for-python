@@ -30,7 +30,6 @@ These options are available for all perf tests:
 - `--duration=10` Number of seconds to run as many operations (the "run" function) as possible. Default is 10.
 - `--iterations=1` Number of test iterations to run. Default is 1.
 - `--parallel=1` Number of tests to run in parallel. Default is 1.
-- `--no-client-share` Whether each parallel test instance should share a single client, or use their own. Default is False (sharing).
 - `--warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
 - `--sync` Whether to run the tests in sync or async. Default is False (async).
 - `--no-cleanup` Whether to keep newly created resources after test run. Default is False (resources will be deleted).
