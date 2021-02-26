@@ -44,10 +44,12 @@ it with this token. It is because the initiator of the create request must be in
 This will allow you to create, get, list or delete chat threads.
 
 ```python
-from azure.communication.chat import ChatClient, CommunicationTokenCredential
+from azure.communication.chat import ChatClient
+from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
+from azure.communication.identity._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
+
 # Your unique Azure Communication service endpoint
 endpoint = "https://<RESOURCE_NAME>.communcationservices.azure.com"
-token = "<token>"
 refresh_options = CommunicationTokenRefreshOptions(token)
 chat_client = ChatClient(endpoint, CommunicationTokenCredential(refresh_options))
 ```
@@ -60,7 +62,8 @@ the chat thread topic, add participants to chat thread, etc.
 You can get it by creating a new chat thread using ChatClient:
 
 ```python
-chat_thread_client = chat_client.create_chat_thread(topic, thread_participants)
+create_chat_thread_result = chat_client.create_chat_thread(topic)
+chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
 ```
 
 Additionally, the client can also direct so that the request is repeatable; that is, if the client makes the 
@@ -69,25 +72,34 @@ the server executing the request multiple times. The value of the Repeatability-
 representing a client-generated, globally unique for all time, identifier for the request.
 
 ```python
-chat_thread_client = chat_client.create_chat_thread(topic, thread_participants, repeatability_request_id)
+create_chat_thread_result = chat_client.create_chat_thread(
+    topic, 
+    thread_participants=thread_participants, 
+    repeatability_request_id=repeatability_request_id
+)
+chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
 ```
 
 Alternatively, if you have created a chat thread before and you have its thread_id, you can create it by:
 
 ```python
-chat_thread_client = chat_client.get_chat_thread_client(thread_id)
+chat_thread_client = chat_client.get_chat_thread_client(thread_id) # thread_id is the id of an existing chat thread
 ```
 
 # Key concepts
 
-A chat conversation is represented by a chat thread. Each user in the thread is called a thread participant. Thread participants can chat with one another privately in a 1:1 chat or huddle up in a 1:N group chat. Users also get near real-time updates for when others are typing and when they have read the messages.
+A chat conversation is represented by a chat thread. Each user in the thread is called a thread participant. 
+Thread participants can chat with one another privately in a 1:1 chat or huddle up in a 1:N group chat. 
+Users also get near real-time updates for when others are typing and when they have read the messages.
 
 Once you initialized a `ChatClient` class, you can do the following chat operations:
 
 ## Create, get, update, and delete threads
 
+Perform CRD(Create-Read-Delete) operations on thread participants
+
 ```Python
-create_chat_thread(topic, thread_participants, **kwargs)
+create_chat_thread(topic, **kwargs)
 get_chat_thread(thread_id, **kwargs)
 list_chat_threads(**kwargs)
 delete_chat_thread(thread_id, **kwargs)
@@ -97,11 +109,15 @@ Once you initialized a `ChatThreadClient` class, you can do the following chat o
 
 ## Update thread
 
+Perform Update operation on thread topic
+
 ```python
 update_topic(topic, **kwargs)
 ```
 
 ## Send, get, update, and delete messages
+
+Perform CRUD(Create-Read-Update-Delete) operations on messages
 
 ```Python
 send_message(content, **kwargs)
@@ -113,13 +129,18 @@ delete_message(message_id, **kwargs)
 
 ## Get, add, and remove participants
 
+Perform CRD(Create-Read-Delete) operations on thread participants
+
 ```Python
 list_participants(**kwargs)
+add_participant(thread_participant, **kwargs)
 add_participants(thread_participants, **kwargs)
 remove_participant(participant_id, **kwargs)
 ```
 
 ## Send typing notification
+
+Notify the service of typing notification
 
 ```python
 send_typing_notification(**kwargs)
@@ -147,43 +168,47 @@ The following sections provide several code snippets covering some of the most c
 
 ### Create a thread
 
-Use the `create_chat_thread` method to create a chat thread client object.
+Use the `create_chat_thread` method to create a chat thread.
 
-- Use `topic` to give a thread topic;
-- Use `thread_participants` to list the `ChatThreadParticipant` to be added to the thread;
-- Use `repeatability_request_id` to specify the unique identifier for the request.
-- `user`, required, it is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
-<!-- [User Access Tokens](#user-access-tokens) -->
-- `display_name`, optional, is the display name for the thread participant.
-- `share_history_time`, optional, time from which the chat history is shared with the participant.
+- Use `topic`, required, to give a thread topic;
+- Use `thread_participants`, optional, to provide a list the `ChatThreadParticipant` to be added to the thread;
+    - `user`, required, it is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user()
+      from User Access Tokens
+    <!-- [User Access Tokens](#user-access-tokens) -->
+    - `display_name`, optional, is the display name for the thread participant.
+    - `share_history_time`, optional, time from which the chat history is shared with the participant.
+- Use `repeatability_request_id`, optional, to specify the unique identifier for the request.
 
-`ChatThreadClient` is the result returned from creating a thread, you can use it to perform other chat operations to this chat thread
+
+`CreateChatThreadResult` is the result returned from creating a thread, you can use it to fetch the `id` of 
+the chat thread that got created. This `id` can then be used to fetch a `ChatThreadClient` object using 
+the `get_chat_thread_client` method. `ChatThreadClient` can be used to perform other chat operations to this chat thread.
 
 ```Python
-# Without repeatability_request_id
-
-from azure.communication.chat import ChatThreadParticipant
+# Without repeatability_request_id and thread_participants
 topic = "test topic"
-thread_participants = [ChatThreadParticipant(
-    user='<user>',
-    display_name='name',
-    share_history_time=datetime.utcnow()
-)]
-
-chat_thread_client = chat_client.create_chat_thread(topic, thread_participants)
-thread_id = chat_thread_client.thread_id
+create_chat_thread_result = chat_client.create_chat_thread(topic)
+chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
 ```
 
 ```Python
-# With repeatability_request_id
-
+# With repeatability_request_id and thread_participants
+from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import ChatThreadParticipant
 import uuid
 
+# create an user
+identity_client = CommunicationIdentityClient.from_connection_string('<connection_string>')
+user = identity_client.create_user()
+
+## OR pass existing user
+# from azure.communication.identity import CommunicationUserIdentifier
+# user_id = 'some_user_id'
+# user = CommunicationUserIdentifier(user_id)
+
+
 # modify function to implement customer logic
 def get_unique_identifier_for_request(**kwargs):
-    res = None
-    # implement custom logic here
     res = uuid.uuid4()
     return res
 
@@ -194,95 +219,135 @@ thread_participants = [ChatThreadParticipant(
     share_history_time=datetime.utcnow()
 )]
 
-chat_thread_client = chat_client.create_chat_thread(topic, thread_participants, repeatability_request_id)
-thread_id = chat_thread_client.thread_id
+# obtains repeatability_request_id using some customer logic
+repeatability_request_id = get_unique_identifier_for_request()
+
+create_chat_thread_result = chat_client.create_chat_thread(
+    topic, 
+    thread_participants=thread_participants, 
+    repeatability_request_id=repeatability_request_id)
+thread_id = create_chat_thread_result.chat_thread.id
+
+# fetch ChatThreadClient
+chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
+
+# Additionally, you can also check if all participants were successfully added or not
+# and subsequently retry adding the failed participants again
+def decide_to_retry(error, **kwargs):
+    """
+    Insert some custom logic to decide if retry is applicable based on error
+    """
+    return True
+
+retry = [thread_participant for thread_participant, error in create_chat_thread_result.errors if decide_to_retry(error)]
+chat_thread_client.add_participants(retry)
 ```
 
 
 ### Get a thread
 
-The `get_chat_thread` method retrieves a thread from the service.
-`thread_id` is the unique ID of the thread.
-
+Use `get_chat_thread` method retrieves a `ChatThread` from the service; `thread_id` is the unique ID of the thread.
+- Use `thread_id`, required, to specify the unique ID of the thread. 
 ```Python
-thread = chat_client.get_chat_thread(thread_id)
+chat_thread = chat_client.get_chat_thread(thread_id=thread_id)
 ```
 
 ### List chat threads
-The `list_chat_threads` method retrieves the list of created chat threads
+Use `list_chat_threads` method retrieves the list of created chat threads
 
-- `results_per_page`, optional, The maximum number of messages to be returned per page.
-- `start_time`, optional, The start time where the range query.
+- Use `results_per_page`, optional, The maximum number of messages to be returned per page.
+- Use `start_time`, optional, The start time where the range query.
 
 An iterator of `[ChatThreadInfo]` is the response returned from listing threads
 
 ```python
 from datetime import datetime, timedelta
-chat_client = ChatClient(self.endpoint, self.token)
 start_time = datetime.utcnow() - timedelta(days=2)
 start_time = start_time.replace(tzinfo=pytz.utc)
+
 chat_thread_infos = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
+for chat_thread_info_page in chat_thread_infos.by_page():
+    for chat_thread_info in chat_thread_info_page:
+        print(chat_thread_info)
 ```
 
-### Update a thread
+### Update a thread topic
 
-Use `update_chat_thread` method to update a thread's properties
-`thread_id` is the unique ID of the thread.
-`topic` is used to describe the change of the thread topic
-
+Use `update_topic` method to update a thread's properties. `topic` is used to describe the change of the thread topic
 - Use `topic` to give thread a new topic;
 
 ```python
 topic="new topic"
-chat_thread_client.update_chat_thread(topic=topic)
+chat_thread_client.update_topic(topic=topic)
+
+chat_thread = chat_client.get_chat_thread(thread_id)
+
+assert chat_thread.topic == topic
 ```
 
 ### Delete a thread
 
-Use `delete_chat_thread` method to delete a thread
-`thread_id` is the unique ID of the thread.
-
+Use `delete_chat_thread` method to delete a thread; `thread_id` is the unique ID of the thread.
+- Use `thread_id`, required, to specify the unique ID of the thread.
 ```Python
-chat_client.delete_chat_thread(thread_id)
+chat_client.delete_chat_thread(thread_id=thread_id)
 ```
 
 ## Message Operations
 
 ### Send a message
 
-Use `send_message` method to sends a message to a thread identified by threadId.
+Use `send_message` method to sends a message to a thread identified by `thread_id`.
 
-- Use `content` to provide the chat message content, it is required
-- Use `chat_message_type` to provide the chat message type. Possible values include: `ChatMessageType.TEXT`, `ChatMessageType.HTML`, `ChatMessageType.TOPIC_UPDATED`, `ChatMessageType.PARTICIPANT_ADDED`, `ChatMessageType.PARTICIPANT_REMOVED`
-- Use `sender_display_name` to specify the display name of the sender, if not specified, empty name will be set
+- Use `content`, required, to provide the chat message content.
+- Use `chat_message_type`, optional, to provide the chat message type. Possible values include: `ChatMessageType.TEXT`, 
+  `ChatMessageType.HTML`, `'text'`, `'html'`; if not specified, `ChatMessageType.TEXT` will be set
+- Use `sender_display_name`,optional, to specify the display name of the sender, if not specified, empty name will be set
 
 `SendChatMessageResult` is the response returned from sending a message, it contains an id, which is the unique ID of the message.
 
 ```Python
-from azure.communication.chat import ChatMessagePriority
+from azure.communication.chat import ChatMessageType
+
+topic = "test topic"
+create_chat_thread_result = chat_client.create_chat_thread(topic)
+thread_id = create_chat_thread_result.chat_thread.id
+chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
+
 
 content='hello world'
 sender_display_name='sender name'
+chat_message_type = ChatMessageType.TEXT
 
-send_message_result = chat_thread_client.send_message(content, sender_display_name=sender_display_name)
+# without specifying sender_display_name and chat_message_type
+send_message_result_id = chat_thread_client.send_message(content)
+print("Message sent: id: ", send_message_result_id)
+
+# specifying sender_display_name and chat_message_type
+send_message_result_w_type_id = chat_thread_client.send_message(
+            content,
+            sender_display_name=sender_display_name,
+            chat_message_type=chat_message_type # equivalent to chat_message_type = 'text'
+)
+print("Message sent: id: ", send_message_result_w_type_id)
 ```
 
 ### Get a message
 
-The `get_message` method retrieves a message from the service.
-`message_id` is the unique ID of the message.
-
+Use `get_message` method retrieves a message from the service; `message_id` is the unique ID of the message.
+- Use `message_id`,required, to specify message id of an existing message
 `ChatMessage` is the response returned from getting a message, it contains an id, which is the unique ID of the message, and other fields please refer to azure.communication.chat.ChatMessage
 
 ```python
-chat_message = chat_thread_client.get_message(message_id)
+chat_message = chat_thread_client.get_message(message_id=send_message_result_id)
+print("get_chat_message succeeded, message id:", chat_message.id, "content: ", chat_message.content)
 ```
 
-### Get messages
+### List messages
 
-The `list_messages` method retrieves messages from the service.
-- `results_per_page`, optional, The maximum number of messages to be returned per page.
-- `start_time`, optional, The start time where the range query.
+Use `list_messages` method retrieves messages from the service.
+- Use `results_per_page`, optional, The maximum number of messages to be returned per page.
+- Use `start_time`, optional, The start time where the range query.
 
 An iterator of `[ChatMessage]` is the response returned from listing messages
 
@@ -294,63 +359,157 @@ chat_messages = chat_thread_client.list_messages(results_per_page=1, start_time=
 for chat_message_page in chat_messages.by_page():
     l = list(chat_message_page)
     print("page size: ", len(l))
+    for chat_message in chat_message_page:
+        print("ChatMessage: Id=", chat_message.id, "; Content=", chat_message.content)
 ```
 
 ### Update a message
 
 Use `update_message` to update a message identified by threadId and messageId.
-`message_id` is the unique ID of the message.
-`content` is the message content to be updated.
-
-- Use `content` to provide a new chat message content;
+- Use `message_id`,required, is the unique ID of the message.
+- Use `content`, optional, is the message content to be updated; if not specified it is assigned to be empty
 
 ```Python
 content = "updated message content"
-chat_thread_client.update_message(message_id, content=content)
+chat_thread_client.update_message(send_message_result_id, content=content)
+
+chat_message = chat_thread_client.get_message(message_id=send_message_result_id)
+
+assert chat_message.content == content
 ```
 
 ### Delete a message
 
 Use `delete_message` to delete a message.
-`message_Id` is the unique ID of the message.
+- Use `message_id`, required, is the unique ID of the message.
 
 ```python
-chat_thread_client.delete_message(message_id)
+chat_thread_client.delete_message(message_id=send_message_result_id)
 ```
 
 ## Thread Participant Operations
 
-### Get thread participants
+### List thread participants
 
 Use `list_participants` to retrieve the participants of the thread.
+- Use `results_per_page`, optional, The maximum number of participants to be returned per page.
+- Use `skip`, optional, to skips participants up to a specified position in response.
 
 An iterator of `[ChatThreadParticipant]` is the response returned from listing participants
 
 ```python
 chat_thread_participants = chat_thread_client.list_participants(results_per_page=5, skip=5)
-for chat_thread_participant in chat_thread_participants:
-    print(chat_thread_participant)
+for chat_thread_participant_page in chat_thread_participants.by_page():
+    for chat_thread_participant in chat_thread_participant_page:
+        print("ChatThreadParticipant: ", chat_thread_participant)
 ```
 
+### Add single thread participant
+Use `add_participant` method to add a single thread participants to the thread.
+
+- Use `thread_participant`, required, to specify the `ChatThreadParticipant` to be added to the thread;
+  - `user`, required, it is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
+  <!-- [User Access Tokens](#user-access-tokens) -->
+  - `display_name`, optional, is the display name for the thread participant.
+  - `share_history_time`, optional, time from which the chat history is shared with the participant.
+
+A `tuple(ChatThreadParticipant, CommunicationError)` is returned. When participant is successfully added,
+`(None, None)` is expected. In case of an error encountered while adding participant, the tuple is populated
+with the participant along with the error that was encountered.
+```python
+from azure.communication.identity import CommunicationIdentityClient
+from azure.communication.chat import ChatThreadParticipant
+from datetime import datetime
+
+# create an user
+identity_client = CommunicationIdentityClient.from_connection_string('<connection_string>')
+new_user = identity_client.create_user()
+
+# # conversely, you can also add an existing user to a chat thread; provided the user_id is known
+# from azure.communication.identity import CommunicationUserIdentifier
+#
+# user_id = 'some user id'
+# user_display_name = "Wilma Flinstone"
+# new_user = CommunicationUserIdentifier(user_id)
+# participant = ChatThreadParticipant(
+#     user=new_user,
+#     display_name=user_display_name,
+#     share_history_time=datetime.utcnow())
+
+
+participant = ChatThreadParticipant(
+    user=new_user,
+    display_name='Fred Flinstone',
+    share_history_time=datetime.utcnow())
+
+failed_participant, error = chat_thread_client.add_participant(thread_participant=participant)
+
+def decide_to_retry(error, **kwargs):
+    """
+    Insert some custom logic to decide if retry is applicable based on error
+    """
+    return True
+
+# verify if user has been added successfully
+if error is not None:
+    # error encountered while adding participant
+    if decide_to_retry(error):
+        chat_thread_client.add_participant(failed_participant)
+```
 ### Add thread participants
 
 Use `add_participants` method to add thread participants to the thread.
 
-- Use `thread_participants` to list the `ChatThreadParticipant` to be added to the thread;
-- `user`, required, it is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
-<!-- [User Access Tokens](#user-access-tokens) -->
-- `display_name`, optional, is the display name for the thread participant.
-- `share_history_time`, optional, time from which the chat history is shared with the participant.
+- Use `thread_participants`, required, to list the `ChatThreadParticipant` to be added to the thread;
+  - `user`, required, it is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
+  <!-- [User Access Tokens](#user-access-tokens) -->
+  - `display_name`, optional, is the display name for the thread participant.
+  - `share_history_time`, optional, time from which the chat history is shared with the participant.
 
+A `list(tuple(ChatThreadParticipant, CommunicationError))` is returned. When participant is successfully added,
+an empty list is expected. In case of an error encountered while adding participant, the list is populated
+with the failed participants along with the error that was encountered.
 ```Python
+from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import ChatThreadParticipant
 from datetime import datetime
-participant = ChatThreadParticipant(
-    user='<user>',
-    display_name='name',
-    share_history_time=datetime.utcnow())
-thread_participants = [participant]
-chat_thread_client.add_participants(thread_participants)
+
+# create 2 users
+identity_client = CommunicationIdentityClient.from_connection_string('<connection_string>')
+new_users = [identity_client.create_user() for i in range(2)]
+
+# # conversely, you can also add an existing user to a chat thread; provided the user_id is known
+# from azure.communication.identity import CommunicationUserIdentifier
+#
+# user_id = 'some user id'
+# user_display_name = "Wilma Flinstone"
+# new_user = CommunicationUserIdentifier(user_id)
+# participant = ChatThreadParticipant(
+#     user=new_user,
+#     display_name=user_display_name,
+#     share_history_time=datetime.utcnow())
+
+participants = []
+for _user in new_users:
+  chat_thread_participant = ChatThreadParticipant(
+    user=_user,
+    display_name='Fred Flinstone',
+    share_history_time=datetime.utcnow()
+  ) 
+  participants.append(chat_thread_participant) 
+
+response = chat_thread_client.add_participants(thread_participants=participants)
+
+def decide_to_retry(error, **kwargs):
+    """
+    Insert some custom logic to decide if retry is applicable based on error
+    """
+    return True
+
+# verify if all users has been successfully added or not
+# in case of partial failures, you can retry to add all the failed participants 
+retry = [p for p, e in response if decide_to_retry(e)]
+chat_thread_client.add_participants(retry)
 ```
 
 ### Remove thread participant
@@ -359,9 +518,16 @@ Use `remove_participant` method to remove thread participant from the thread ide
 `user` is the `CommunicationUserIdentifier` you created by CommunicationIdentityClient.create_user() from User Access Tokens
 <!-- [User Access Tokens](#user-access-tokens)  -->
 and was added into this chat thread.
-
+- Use `user` to specify the `CommunicationUserIdentifier` you created
 ```python
-chat_thread_client.remove_participant(user)
+chat_thread_client.remove_participant(user=new_user)
+
+# # converesely you can also do the following; provided the user_id is known
+# from azure.communication.identity import CommunicationUserIdentifier
+# 
+# user_id = 'some user id'
+# chat_thread_client.remove_participant(user=CommunincationUserIdentfier(new_user))
+
 ```
 
 ## Events Operations
@@ -377,24 +543,29 @@ chat_thread_client.send_typing_notification()
 ### Send read receipt
 
 Use `send_read_receipt` method to post a read receipt event to a thread, on behalf of a user.
-
+- Use `message_id` to specify the id of the message whose read receipt is to be sent
 ```python
-chat_thread_client.send_read_receipt(message_id)
+content='hello world'
+send_message_result_id = chat_thread_client.send_message(content)
+chat_thread_client.send_read_receipt(message_id=send_message_result_id)
 ```
 
-### Get read receipts
+### List read receipts
 
-`list_read_receipts` method retrieves read receipts for a thread.
+Use `list_read_receipts` method retrieves read receipts for a thread.
+- Use `results_per_page`, optional, The maximum number of read receipts to be returned per page.
+- Use `skip`,optional, to skips read receipts up to a specified position in response.
 
 An iterator of `[ChatMessageReadReceipt]` is the response returned from listing read receipts
 
 ```python
 read_receipts = chat_thread_client.list_read_receipts(results_per_page=5, skip=5)
-for read_receipt in read_receipts:
-    print(read_receipt)
-    print(read_receipt.sender)
-    print(read_receipt.chat_message_id)
-    print(read_receipt.read_on)
+for read_receipt_page in read_receipts.by_page():
+    for read_receipt in read_receipt_page:
+        print(read_receipt)
+        print(read_receipt.sender)
+        print(read_receipt.chat_message_id)
+        print(read_receipt.read_on)
 ```
 
 ## Sample Code

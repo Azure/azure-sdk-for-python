@@ -19,7 +19,6 @@ from ._generated import AzureCommunicationChatService
 from ._generated.models import CreateChatThreadRequest
 from ._models import (
     ChatThread,
-    ChatThreadParticipant,
     CreateChatThreadResult
 )
 from ._utils import ( # pylint: disable=unused-import
