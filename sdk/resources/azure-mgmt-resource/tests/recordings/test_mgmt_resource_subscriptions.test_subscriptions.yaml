@@ -14,17 +14,17 @@ interactions:
     uri: https://management.azure.com/subscriptions?api-version=2019-11-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"tags":{"tagKey1":"tagValue1","tagKey2":"tagValue2"},"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"Python
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"tags":{},"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"Python
         NodeJS Test with TTL = 7 days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}],"count":{"type":"Total","value":1}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '567'
+      - '524'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Feb 2021 06:56:50 GMT
+      - Fri, 26 Feb 2021 07:40:58 GMT
       expires:
       - '-1'
       pragma:
@@ -143,7 +143,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Feb 2021 06:56:50 GMT
+      - Fri, 26 Feb 2021 07:40:59 GMT
       expires:
       - '-1'
       pragma:
@@ -172,17 +172,17 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2019-11-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"tags":{"tagKey1":"tagValue1","tagKey2":"tagValue2"},"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"Python
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"tags":{},"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"Python
         NodeJS Test with TTL = 7 days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '520'
+      - '477'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Feb 2021 06:56:50 GMT
+      - Fri, 26 Feb 2021 07:40:59 GMT
       expires:
       - '-1'
       pragma:
