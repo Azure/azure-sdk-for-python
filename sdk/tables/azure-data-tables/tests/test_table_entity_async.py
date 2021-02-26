@@ -1829,7 +1829,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("Header authorization is malformed")
+    # @pytest.mark.skip("Header authorization is malformed")
     @pytest.mark.live_test_only
     @TablesPreparer()
     async def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -1842,7 +1842,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             access_policy = AccessPolicy()
             access_policy.start = datetime(2011, 10, 11)
-            access_policy.expiry = datetime(2020, 10, 12)
+            access_policy.expiry = datetime(2025, 10, 12)
             access_policy.permission = TableSasPermissions(read=True)
             identifiers = {'testid': access_policy}
 

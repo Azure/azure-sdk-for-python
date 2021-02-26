@@ -1847,7 +1847,26 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("Header authorization is malformed")
+    def get_sas(self, acount_name, key, **kwargs):
+        # sv=2019-02-02&si=testid&tn=uttable979d1213&sig=eHR0wL2cLfRNDE1joarE6OWloix%2BniHHga88FX63EmI%3D
+
+        token = generate_table_sas(
+            acount_name,
+            key,
+            self.table_name,
+            **kwargs
+        )
+
+        self.scrubber.register_name_pair(token, "fake_token_value")
+
+        if not self.is_live:
+            token = token.split("=")
+            token[-1] = "fake_token_value"
+            token = "".join(token)
+            print(token)
+
+        return token
+
     @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -1860,11 +1879,18 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             access_policy = AccessPolicy()
             access_policy.start = datetime(2011, 10, 11)
-            access_policy.expiry = datetime(2020, 10, 12)
+            access_policy.expiry = datetime(2025, 10, 12)
             access_policy.permission = TableSasPermissions(read=True)
             identifiers = {'testid': access_policy}
 
             self.table.set_table_access_policy(identifiers)
+
+            # token = self.get_sas(
+            #     tables_storage_account_name,
+            #     tables_primary_storage_account_key,
+            #     policy_id='testid'
+            # )
+            # self.scrubber.register_name_pair(token, "fake_token_value")
 
             token = generate_table_sas(
                 tables_storage_account_name,
