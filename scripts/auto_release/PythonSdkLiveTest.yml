@@ -23,7 +23,7 @@ jobs:
         addToPath: true
         architecture: 'x64'
     - bash: |
-        script_path=$(pwd)
+        script_path=$(pwd)/scripts/auto_release
         echo 00000000
         echo | ls
         echo 11111111
