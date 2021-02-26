@@ -24,6 +24,9 @@ jobs:
         architecture: 'x64'
     - bash: |
         script_path=$(pwd)
+        echo 00000000
+        echo | ls
+        echo 11111111
         cd ..
         git config --global user.email "PythonSdkPipelines"
         git config --global user.name "PythonSdkPipelines"
@@ -37,9 +40,6 @@ jobs:
         source venv-sdk/bin/activate
         output_path=$(pwd)/venv-sdk
         pip install packaging
-        echo 000000
-        pip install -r $script_path/livetest_package.txt
-        echo 111111
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=true
