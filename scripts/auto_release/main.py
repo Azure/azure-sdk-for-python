@@ -225,6 +225,26 @@ def test_env_init():
     if os.path.exists(file):
         print_exec(f'pip install -r {file}')
 
+    # edit mgmt_settings_real.py
+    with open(f'{SCRIPT_PATH}/mgmt_settings_real_.py', 'r') as file_in:
+        list_in = file_in.readlines()
+
+    ENV_TENANT_ID = os.environ().get('ENV_TENANT_ID')
+    ENV_CLIENT_ID = os.environ().get('ENV_CLIENT_ID')
+    ENV_CLIENT_SECRET = os.environ().get('ENV_CLIENT_SECRET')
+    ENV_SUBSCRIPTION_ID = os.environ().get('ENV_SUBSCRIPTION_ID')
+
+    my_print(f'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx={ENV_TENANT_ID}, {ENV_CLIENT_ID}, {ENV_CLIENT_SECRET}, {ENV_SUBSCRIPTION_ID}')
+
+    for i in range(0, len(list_in)):
+        list_in[i] = list_in[i].replace('ENV_TENANT_ID', ENV_TENANT_ID)
+        list_in[i] = list_in[i].replace('ENV_CLIENT_ID', ENV_CLIENT_ID)
+        list_in[i] = list_in[i].replace('ENV_CLIENT_SECRET', ENV_CLIENT_SECRET)
+        list_in[i] = list_in[i].replace('ENV_SUBSCRIPTION_ID', ENV_SUBSCRIPTION_ID)
+
+    with open('tools/azure-sdk-tools/devtools_testutils/mgmt_settings_real.py', 'w') as file_out:
+        file_out.writelines(list_in)
+
 
 def run_live_test():
     test_env_init()
@@ -296,8 +316,6 @@ def judge_sdk_folder():
             if line.find('azure-sdk-for-python-track2') > 0:
                 TRACK = '2'
                 break
-
-    my_print(str(FOLDER_LINK))
 
 
 def git_remote_add():
