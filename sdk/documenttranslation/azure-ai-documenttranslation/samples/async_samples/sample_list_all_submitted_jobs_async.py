@@ -12,7 +12,7 @@ class ListAllSubmittedJobsSampleAsync(object):
     def list_all_submitted_jobs(self):
         # import libraries
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics.aio import DocumentTranslationClient
+        from azure.ai.documenttranslation.aio import DocumentTranslationClient
 
         # get service secrets
         endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]

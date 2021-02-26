@@ -12,7 +12,7 @@ class CancelTranslationJobSampleAsync(object):
     async def cancel_translation_job_async(self):
         # import libraries
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics.aio import DocumentTranslationClient
+        from azure.ai.documenttranslation.aio import DocumentTranslationClient
         from azure.ai.documenttranslation import (
             BatchDocumentInput,
             StorageTarget

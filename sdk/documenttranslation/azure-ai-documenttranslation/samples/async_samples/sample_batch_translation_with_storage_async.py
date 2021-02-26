@@ -13,7 +13,7 @@ class BatchTranslationWithStorageSampleAsync(object):
     async def batch_translation_with_storage_async(self):
         # import libraries
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics.aio import DocumentTranslationClient
+        from azure.ai.documenttranslation.aio import DocumentTranslationClient
         from azure.ai.documenttranslation import (
             BatchDocumentInput,
             StorageTarget
