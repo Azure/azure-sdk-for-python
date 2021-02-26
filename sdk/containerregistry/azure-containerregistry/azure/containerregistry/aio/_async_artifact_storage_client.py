@@ -4,10 +4,20 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from typing import TYPE_CHECKING
+
+from .._models import (
+    CreateUploadResult,
+    ArtifactManifest,
+    ManifestMediaType
+)
+
+if TYPE_CHECKING:
+    from azure.core.async_credentials import AsyncTokenCredential
 
 class ArtifactStorageClient(object):
     def __init__(
-        self, endpoint: str, repository_name: str, credential: TokenCredential, **kwargs
+        self, endpoint: str, repository_name: str, credential: "AsyncTokenCredential", **kwargs
     ) -> None:
         pass
 
@@ -17,11 +27,11 @@ class ArtifactStorageClient(object):
     def check_blob_exists(self, digest: str, **kwargs) -> bool:
         pass
 
-    def check_chunk_exists(self, digest: str, range: HttpRange, **kwargs) -> bool:
+    def check_chunk_exists(self, digest: str, range: "HttpRange", **kwargs) -> bool:
         pass
 
     def complete_upload(
-        self, upload_details: CreateUploadResult, digest: str, value: Stream = None, **kwargs
+        self, upload_details: CreateUploadResult, digest: str, value: "Stream" = None, **kwargs
     ) -> None:
         pass
 

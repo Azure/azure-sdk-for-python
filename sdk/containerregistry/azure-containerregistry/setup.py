@@ -65,6 +65,8 @@ setup(
         #'msrest>=0.5.0',
         #'msrestazure>=0.4.32,<2.0.0',
         #'azure-common~=1.1',
+        "azure-core>=1.4.0,<2.0.0",
+        "msrest>=0.5.0"
     ],
     extras_require={
         ":python_version<'3.0'": ["azure-nspkg"],
