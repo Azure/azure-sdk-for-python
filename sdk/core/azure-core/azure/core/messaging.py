@@ -8,6 +8,7 @@ import uuid
 from base64 import b64decode
 from datetime import datetime
 from azure.core._utils import _convert_to_isoformat, TZ_UTC
+from azure.core.serialization import NULL
 
 try:
     from typing import TYPE_CHECKING
@@ -87,8 +88,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         _optional_attributes = ["datacontenttype", "dataschema", "subject", "data"]
 
         for attr in _optional_attributes:
-            if attr in kwargs:
-                setattr(self, attr, kwargs.pop(attr))
+            setattr(self, attr, kwargs.pop(attr, None))
 
         if "extensions" in kwargs:
             self.extensions = {}  # type: Dict
@@ -137,17 +137,20 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
             raise ValueError(
                 "Invalid input. Only one of data and data_base64 must be present."
             )
-
-        if "data" in event:
-            kwargs.setdefault("data", event.get("data"))
+        if 'data' not in event and 'data_base64' not in event:
+            kwargs.setdefault("data", None) 
+        elif "data" in event:
+            data = event.get("data")
+            kwargs.setdefault("data", data) if data is not None else kwargs.setdefault("data", NULL)
         elif "data_base64" in event:
             kwargs.setdefault("data", b64decode(event.get("data_base64")))
 
         for item in ["datacontenttype", "dataschema", "subject"]:
             if item in event:
-                kwargs.setdefault(item, event.get(item))
-        
-        extensions={k: v for k, v in event.items() if k not in reserved_attr}
+                val = event.get(item)
+                kwargs.setdefault(item, val) if val is not None else kwargs.setdefault(item, NULL)
+
+        extensions = {k: v for k, v in event.items() if k not in reserved_attr}
         if extensions:
             kwargs.setdefault("extensions", extensions)
 
