@@ -1,5 +1,17 @@
 # Release History
 
+## 1.0.0b6 (Unreleased)
+### Added
+- Added support for 1:N SMS messaging.
+- Added support for SMS idempotency.
+- Send method series in SmsClient are idempotent under retry policy.
+- Added support for tagging SMS messages.
+
+### Breaking
+- Send method takes in strings for phone numbers instead of `PhoneNumberIdentifier`.
+to `Task<Response<SmsSendResult>> SendAsync(string from, string to, string message, Models.SmsSendOptions options = default)`
+- Send method returns a list of `SmsSendResult`s instead of a `SendSmsResponse`.
+
 ## 1.0.0b5 (2021-02-09)
 ### Added
 - Added support for Azure Active Directory authentication.
