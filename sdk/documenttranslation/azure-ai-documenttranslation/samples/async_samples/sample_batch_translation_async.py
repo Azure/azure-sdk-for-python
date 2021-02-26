@@ -10,7 +10,7 @@ import asyncio
 
 class BatchTranslationSampleAsync(object):
 
-    async def batch_translation_async():
+    async def batch_translation_async(self):
         # import libraries
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import DocumentTranslationClient
@@ -69,7 +69,7 @@ class BatchTranslationSampleAsync(object):
                 exit(1)
 
 
-    def check_documents(client, job_id):
+    def check_documents(self, client, job_id):
         from azure.core.exceptions import ResourceNotFoundError
 
         try:

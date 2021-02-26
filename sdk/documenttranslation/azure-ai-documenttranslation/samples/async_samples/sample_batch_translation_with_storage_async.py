@@ -110,7 +110,7 @@ class BatchTranslationWithStorageSampleAsync(object):
                 my_blob.write(download_stream.readall())
 
 
-    def check_documents(client, job_id):
+    def check_documents(self, client, job_id):
         from azure.core.exceptions import ResourceNotFoundError
 
         try:

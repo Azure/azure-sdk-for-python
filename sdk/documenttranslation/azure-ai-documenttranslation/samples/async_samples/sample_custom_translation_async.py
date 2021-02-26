@@ -9,7 +9,7 @@ import asyncio
 
 class CustomTranslationSampleAsync(object):
 
-    async def custom_translation_async():
+    async def custom_translation_async(self):
         # import libraries
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import DocumentTranslationClient
@@ -64,7 +64,7 @@ class CustomTranslationSampleAsync(object):
                     exit(1)
 
 
-    def check_documents(client, job_id):
+    def check_documents(self, client, job_id):
         from azure.core.exceptions import ResourceNotFoundError
 
         try:

@@ -10,7 +10,7 @@ import time
 
 class CheckStatusesSampleAsync(object):
         
-    async def check_statuses_async():
+    async def check_statuses_async(self):
 
         # import libraries
         from azure.core.credentials import AzureKeyCredential
@@ -72,7 +72,7 @@ class CheckStatusesSampleAsync(object):
                     break
 
 
-    def check_documents(client, job_id):
+    def check_documents(self, client, job_id):
         from azure.core.exceptions import ResourceNotFoundError
 
         try:

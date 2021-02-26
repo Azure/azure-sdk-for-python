@@ -9,7 +9,7 @@ import asyncio
 
 class ListAllSubmittedJobsSampleAsync(object):
 
-    def list_all_submitted_jobs():
+    def list_all_submitted_jobs(self):
         # import libraries
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import DocumentTranslationClient
