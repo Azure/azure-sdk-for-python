@@ -103,10 +103,14 @@ def edit_version(add_content):
     num = VERSION_OLD.split('.')
     if TRACK == '1' and num[0] == '0':
         VERSION_NEW = f'0.{str(int(num[1]) + 1)}.0'
-    elif TRACK == '2' and VERSION_OLD.find('b') > -1:
+    elif VERSION_OLD.find('b') > -1:
         lastnum = num[2].split('b')
         lastnum[1] = str(int(lastnum[1]) + 1)
         VERSION_NEW = f'{num[0]}.{num[1]}.{lastnum[0]}b{lastnum[1]}'
+    elif VERSION_OLD.find('rc') > -1:
+        lastnum = num[2].split('rc')
+        lastnum[1] = str(int(lastnum[1]) + 1)
+        VERSION_NEW = f'{num[0]}.{num[1]}.{lastnum[0]}rc{lastnum[1]}'
     elif flag[0]:
         VERSION_NEW = f'{int(num[0]) + 1}.0.0'
     elif flag[1]:
@@ -208,12 +212,16 @@ def build_wheel():
     path = os.getcwd()
     setup_path = f'{path}/sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
     print_check(f'cd {setup_path} && python setup.py bdist_wheel')
-    # check whether package could install
-    print_check(f'python -c "import azure.mgmt.{SERVICE_NAME}"')
     print_check(f'cd {path}')
+
+    # check whether package can install
+    print_check(f'python -c "import azure.mgmt.{SERVICE_NAME}"')
+    print_check(f'python -m packaging_tools.code_report azure-mgmt-{SERVICE_NAME}')
 
 
 def test_env_init():
+    # need to execute twice
+    print_exec(f'pip install -r {SCRIPT_PATH}/livetest_package.txt')
     print_check(f'pip install -r {SCRIPT_PATH}/livetest_package.txt')
     file = f'{SCRIPT_PATH}/livetest_package_{SERVICE_NAME}_track{TRACK}.txt'
     if os.path.exists(file):
@@ -233,14 +241,18 @@ def run_live_test():
         my_print('live test run done !!!')
 
 
-def del_useless_file():
-    if TRACK == '1':
-        return
-
+def edit_useless_file():
+    file = 'version.py' if TRACK == '1' else '_version.py'
     path = f'{os.getcwd()}/sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}/azure/mgmt/{SERVICE_NAME}'
     for folder in os.listdir(path):
-        if os.path.isdir(f'{path}/{folder}') and os.path.exists(f'{path}/{folder}/_version.py'):
-            print_exec(f'rm -rf {path}/{folder}/_version.py')
+        if os.path.isdir(f'{path}/{folder}') and os.path.exists(f'{path}/{folder}/{file}'):
+            with open(f'{path}/{folder}/{file}', 'r') as file_in:
+                list_in = file_in.readlines()
+            for i in range(0, len(list_in)):
+                if list_in[i].find('VERSION') > -1:
+                    list_in[i] = f'VERSION = "{VERSION_NEW}"\n'
+            with open(f'{path}/{folder}/{file}', 'w') as file_out:
+                file_out.writelines(list_in)
 
 
 def commit_test():
@@ -318,8 +330,8 @@ def main():
     judge_sdk_folder()
     create_branch()
     init_env()
-    del_useless_file()
     edit_file()
+    edit_useless_file()
     check_pprint_name()
     # commit_file()
     run_live_test()
