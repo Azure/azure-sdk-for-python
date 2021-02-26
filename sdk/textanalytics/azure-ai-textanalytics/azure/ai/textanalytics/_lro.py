@@ -186,8 +186,8 @@ class AnalyzeBatchActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
-        from ._generated.v3_1_preview_3.models import JobMetadata
-        return JobMetadata.deserialize(self._pipeline_response)
+        from ._generated.v3_1_preview_3.models import AnalyzeJobMetadata
+        return AnalyzeJobMetadata.deserialize(self._pipeline_response)
 
     @property
     def created_on(self):

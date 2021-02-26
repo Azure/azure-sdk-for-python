@@ -30,6 +30,15 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
         :keyword str api_version: The API Version to include in the signature.
          If not provided, the default API version will be used.
         :rtype: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_generate_sas.py
+                :start-after: [START generate_sas]
+                :end-before: [END generate_sas]
+                :language: python
+                :dedent: 0
+                :caption: Generate a shared access signature.
     """
 
     full_endpoint = _get_full_endpoint(endpoint)

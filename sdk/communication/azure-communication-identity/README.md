@@ -4,6 +4,9 @@
 
 Azure Communication Identity client package is intended to be used to setup the basics for opening a way to use Azure Communication Service offerings. This package helps to create identities user tokens to be used by other client packages such as chat, calling, sms. 
 
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-identity) | [Package (Pypi)](https://pypi.org/project/azure-communication-identity/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-identity) | [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/access-tokens?pivots=programming-language-python)
+
+
 # Getting started
 ### Prerequisites
 - Python 2.7, or 3.5 or later is required to use this package.
@@ -65,13 +68,13 @@ print("Token issued with value: " + tokenresponse.token)
 
 ### Issuing or Refreshing an access token for a user
 
-Use the `issue_token` method to issue or refresh a scoped access token for the user. \
+Use the `get_token` method to issue or refresh a scoped access token for the user. \
 Pass in the user object as a parameter, and a list of `CommunicationTokenScope`. Scope options are:
 - `CHAT` (Chat)
 - `VOIP` (VoIP)
 
 ```python
-tokenresponse = identity_client.issue_token(user, scopes=[CommunicationTokenScope.CHAT])
+tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
 print("Token issued with value: " + tokenresponse.token)
 ```
 

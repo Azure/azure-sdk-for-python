@@ -14,7 +14,8 @@ class TextAnalyticsApiVersion(str, Enum):
     """Text Analytics API versions supported by this package"""
 
     #: this is the default version
-    V3_1_PREVIEW = "v3.1-preview.3"
+    V3_1_PREVIEW = "v3.1-preview.4"
+    V3_1_PREVIEW_3 = "v3.1-preview.3"
     V3_0 = "v3.0"
 
 def _authentication_policy(credential):

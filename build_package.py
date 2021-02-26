@@ -10,8 +10,8 @@ import argparse
 import os
 import glob
 import sys
-from subprocess import check_call
 
+from subprocess import check_call
 
 DEFAULT_DEST_FOLDER = "./dist"
 

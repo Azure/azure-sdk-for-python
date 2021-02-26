@@ -6,21 +6,25 @@ import asyncio
 import functools
 
 from azure.keyvault.secrets.aio import SecretClient
-from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+from azure.keyvault.secrets._shared import HttpChallengeCache
+from devtools_testutils import PowerShellPreparer
+import pytest
 
-from _shared.preparer_async import KeyVaultClientPreparer as _KeyVaultClientPreparer
 from _shared.test_case_async import KeyVaultTestCase
 
-
-# pre-apply the client_cls positional argument so it needn't be explicitly passed below
-KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, SecretClient)
+KeyVaultPreparer = functools.partial(
+    PowerShellPreparer,
+    "keyvault",
+    azure_keyvault_url="https://vaultname.vault.azure.net"
+)
 
 
 def print(*args):
     assert all(arg is not None for arg in args)
 
 
-def test_create_secret_client():
+@pytest.mark.asyncio
+async def test_create_secret_client():
     vault_url = "vault_url"
     # pylint:disable=unused-variable
     # [START create_secret_client]
@@ -28,17 +32,31 @@ def test_create_secret_client():
     from azure.keyvault.secrets.aio import SecretClient
 
     # Create a SecretClient using default Azure credentials
-    credentials = DefaultAzureCredential()
-    secret_client = SecretClient(vault_url, credentials)
+    credential = DefaultAzureCredential()
+    secret_client = SecretClient(vault_url, credential)
+
+    # the client and credential should be closed when no longer needed
+    # (both are also async context managers)
+    await secret_client.close()
+    await credential.close()
     # [END create_secret_client]
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
-    @ResourceGroupPreparer(random_name_enabled=True)
+    def tearDown(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        super(TestExamplesKeyVault, self).tearDown()
+
+    def create_client(self, vault_uri, **kwargs):
+        credential = self.get_credential(SecretClient, is_async=True)
+        return self.create_client_from_credential(SecretClient, credential=credential, vault_url=vault_uri, **kwargs)
+
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    async def test_example_secret_crud_operations(self, client, **kwargs):
+    async def test_example_secret_crud_operations(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         secret_client = client
+        secret_name = self.get_resource_name("secret-name")
 
         # [START set_secret]
         from dateutil import parser as date_parse
@@ -46,7 +64,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a secret, setting optional arguments
-        secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires_on=expires_on)
+        secret = await secret_client.set_secret(secret_name, "secret-value", enabled=True, expires_on=expires_on)
 
         print(secret.id)
         print(secret.name)
@@ -57,10 +75,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret_version = secret.properties.version
         # [START get_secret]
         # get the latest version of a secret
-        secret = await secret_client.get_secret("secret-name")
+        secret = await secret_client.get_secret(secret_name)
 
         # alternatively, specify a version
-        secret = await secret_client.get_secret("secret-name", secret_version)
+        secret = await secret_client.get_secret(secret_name, secret_version)
 
         print(secret.id)
         print(secret.name)
@@ -73,7 +91,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         content_type = "text/plain"
         tags = {"foo": "updated tag"}
         updated_secret_properties = await secret_client.update_secret_properties(
-            "secret-name", content_type=content_type, tags=tags
+            secret_name, content_type=content_type, tags=tags
         )
 
         print(updated_secret_properties.version)
@@ -84,7 +102,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [START delete_secret]
         # delete a secret
-        deleted_secret = await secret_client.delete_secret("secret-name")
+        deleted_secret = await secret_client.delete_secret(secret_name)
 
         print(deleted_secret.name)
 
@@ -95,14 +113,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_secret.recovery_id)
         # [END delete_secret]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    async def test_example_secret_list_operations(self, client, **kwargs):
+    async def test_example_secret_list_operations(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         secret_client = client
 
         for i in range(7):
-            await secret_client.set_secret("key{}".format(i), "value{}".format(i))
+            secret_name = self.get_resource_name("secret{}".format(i))
+            await secret_client.set_secret(secret_name, "value{}".format(i))
 
         # [START list_secrets]
         # gets a list of secrets in the vault
@@ -139,13 +157,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(secret.deleted_date)
         # [END list_deleted_secrets]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    async def test_example_secrets_backup_restore(self, client, **kwargs):
+    async def test_example_secrets_backup_restore(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         secret_client = client
-        created_secret = await secret_client.set_secret("secret-name", "secret-value")
-        secret_name = created_secret.name
+        secret_name = self.get_resource_name("secret-name")
+        await secret_client.set_secret(secret_name, "secret-value")
         # [START backup_secret]
         # backup secret
         secret_backup = await secret_client.backup_secret(secret_name)
@@ -154,8 +171,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(secret_backup)
         # [END backup_secret]
 
-        await secret_client.delete_secret(created_secret.name)
-        await secret_client.purge_deleted_secret(created_secret.name)
+        await secret_client.delete_secret(secret_name)
+        await secret_client.purge_deleted_secret(secret_name)
 
         if self.is_live:
             await asyncio.sleep(60)
@@ -167,23 +184,23 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(restored_secret.version)
         # [END restore_secret_backup]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    async def test_example_secrets_recover(self, client, **kwargs):
+    async def test_example_secrets_recover(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
         secret_client = client
-        created_secret = await secret_client.set_secret("secret-name", "secret-value")
-        await secret_client.delete_secret(created_secret.name)
+        secret_name = self.get_resource_name("secret-name")
+        await secret_client.set_secret(secret_name, "secret-value")
+        await secret_client.delete_secret(secret_name)
 
         # [START get_deleted_secret]
         # gets a deleted secret (requires soft-delete enabled for the vault)
-        deleted_secret = await secret_client.get_deleted_secret("secret-name")
+        deleted_secret = await secret_client.get_deleted_secret(secret_name)
         print(deleted_secret.name)
         # [END get_deleted_secret]
 
         # [START recover_deleted_secret]
         # recover deleted secret to the latest version
-        recovered_secret = await secret_client.recover_deleted_secret("secret-name")
+        recovered_secret = await secret_client.recover_deleted_secret(secret_name)
         print(recovered_secret.id)
         print(recovered_secret.name)
         # [END recover_deleted_secret]

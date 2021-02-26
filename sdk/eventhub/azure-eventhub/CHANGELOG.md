@@ -19,6 +19,14 @@
   - Introduced a new class `azure.eventhub.PartitionPublishingConfiguration` which is a set of configurations that can be
     specified to influence the behavior when publishing directly to an Event Hub partition.
 
+**Bug fixes**
+
+- Sending empty `event_data_batch` will be a no-op now instead of raising error.
+
+**Notes**
+
+- Updated uAMQP dependency to 1.2.15.
+
 ## 5.3.0 (2021-02-08)
 
 **New Features**
