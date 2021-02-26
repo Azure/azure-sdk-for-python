@@ -267,7 +267,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         self.status_code = aiohttp_response.status
         self.headers = CIMultiDict(aiohttp_response.headers)
         self.reason = aiohttp_response.reason
-        self.content_type = aiohttp_response.headers.get('content-type')
+        self.content_type = self.headers.get('content-type')
         self._body = None
 
     def body(self) -> bytes:
