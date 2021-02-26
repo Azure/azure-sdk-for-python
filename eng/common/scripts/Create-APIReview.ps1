@@ -42,7 +42,9 @@ function Submit-APIReview($packagename, $filePath, $uri, $apiKey, $apiLabel)
     {
         # Increasing time out since python package requires installation of all required packages and parse
         # Few packages like azure-storage-file-share is taking longer time to process and times out
-        $Response = Invoke-WebRequest -Method 'POST' -Uri $uri -Body $multipartContent -Headers $headers -TimeoutSec 300
+        # TimeOutSec parameter is not working as expected for powershell command
+        [System.Net.ServicePointManager]::MaxServicePointIdleTime = 5000000
+        $Response = Invoke-WebRequest -Method 'POST' -Uri $uri -Body $multipartContent -Headers $headers
         Write-Host "API Review: $($Response)"
         $StatusCode = $Response.StatusCode
     }
