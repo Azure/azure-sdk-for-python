@@ -93,7 +93,6 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                     self.iter_content_func,
                 )
             if not chunk:
-                await self.response.internal_response.close()
                 raise _ResponseStopIteration()
             self.downloaded += self.block_size
             return chunk
@@ -134,7 +133,6 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                             self.iter_content_func,
                         )
                     if not chunk:
-                        await self.response.internal_response.close()
                         raise StopAsyncIteration()
                     self.downloaded += self.block_size
                     return chunk

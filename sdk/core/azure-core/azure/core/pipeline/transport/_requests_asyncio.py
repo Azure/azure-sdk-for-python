@@ -211,7 +211,6 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
                         self.iter_content_func,
                     )
                     if not chunk:
-                        await self.response.internal_response.close()
                         raise StopAsyncIteration()
                     self.downloaded += self.block_size
                     return chunk
