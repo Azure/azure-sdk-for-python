@@ -159,6 +159,7 @@ try:
     from ._models_py3 import CustomActivityReferenceObject
     from ._models_py3 import CustomDataset
     from ._models_py3 import CustomDataSourceLinkedService
+    from ._models_py3 import CustomEventsTrigger
     from ._models_py3 import CustomSetupBase
     from ._models_py3 import DatabricksNotebookActivity
     from ._models_py3 import DatabricksSparkJarActivity
@@ -371,6 +372,7 @@ try:
     from ._models_py3 import ManagedPrivateEndpoint
     from ._models_py3 import ManagedPrivateEndpointResource
     from ._models_py3 import ManagedVirtualNetwork
+    from ._models_py3 import ManagedVirtualNetworkReference
     from ._models_py3 import ManagedVirtualNetworkResource
     from ._models_py3 import MappingDataFlow
     from ._models_py3 import MariaDBLinkedService
@@ -444,7 +446,9 @@ try:
     from ._models_py3 import PhoenixLinkedService
     from ._models_py3 import PhoenixObjectDataset
     from ._models_py3 import PhoenixSource
+    from ._models_py3 import PipelineElapsedTimeMetricPolicy
     from ._models_py3 import PipelineFolder
+    from ._models_py3 import PipelinePolicy
     from ._models_py3 import PipelineReference
     from ._models_py3 import PipelineResource
     from ._models_py3 import PipelineRun
@@ -791,6 +795,7 @@ except (SyntaxError, ImportError):
     from ._models import CustomActivityReferenceObject
     from ._models import CustomDataset
     from ._models import CustomDataSourceLinkedService
+    from ._models import CustomEventsTrigger
     from ._models import CustomSetupBase
     from ._models import DatabricksNotebookActivity
     from ._models import DatabricksSparkJarActivity
@@ -1003,6 +1008,7 @@ except (SyntaxError, ImportError):
     from ._models import ManagedPrivateEndpoint
     from ._models import ManagedPrivateEndpointResource
     from ._models import ManagedVirtualNetwork
+    from ._models import ManagedVirtualNetworkReference
     from ._models import ManagedVirtualNetworkResource
     from ._models import MappingDataFlow
     from ._models import MariaDBLinkedService
@@ -1076,7 +1082,9 @@ except (SyntaxError, ImportError):
     from ._models import PhoenixLinkedService
     from ._models import PhoenixObjectDataset
     from ._models import PhoenixSource
+    from ._models import PipelineElapsedTimeMetricPolicy
     from ._models import PipelineFolder
+    from ._models import PipelinePolicy
     from ._models import PipelineReference
     from ._models import PipelineResource
     from ._models import PipelineRun
@@ -1518,6 +1526,7 @@ __all__ = [
     'CustomActivityReferenceObject',
     'CustomDataset',
     'CustomDataSourceLinkedService',
+    'CustomEventsTrigger',
     'CustomSetupBase',
     'DatabricksNotebookActivity',
     'DatabricksSparkJarActivity',
@@ -1730,6 +1739,7 @@ __all__ = [
     'ManagedPrivateEndpoint',
     'ManagedPrivateEndpointResource',
     'ManagedVirtualNetwork',
+    'ManagedVirtualNetworkReference',
     'ManagedVirtualNetworkResource',
     'MappingDataFlow',
     'MariaDBLinkedService',
@@ -1803,7 +1813,9 @@ __all__ = [
     'PhoenixLinkedService',
     'PhoenixObjectDataset',
     'PhoenixSource',
+    'PipelineElapsedTimeMetricPolicy',
     'PipelineFolder',
+    'PipelinePolicy',
     'PipelineReference',
     'PipelineResource',
     'PipelineRun',

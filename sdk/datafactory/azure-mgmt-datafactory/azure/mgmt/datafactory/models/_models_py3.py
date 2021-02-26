@@ -3333,10 +3333,17 @@ class AzureDatabricksLinkedService(LinkedService):
      Databricks deployment. Type: string (or Expression with resultType
      string).
     :type domain: object
-    :param access_token: Required. Access token for databricks REST API. Refer
-     to https://docs.azuredatabricks.net/api/latest/authentication.html. Type:
+    :param access_token: Access token for databricks REST API. Refer to
+     https://docs.azuredatabricks.net/api/latest/authentication.html. Type:
      string (or Expression with resultType string).
     :type access_token: ~azure.mgmt.datafactory.models.SecretBase
+    :param authentication: Required to specify MSI, if using Workspace
+     resource id for databricks REST API. Type: string (or Expression with
+     resultType string).
+    :type authentication: object
+    :param workspace_resource_id: Workspace resource id for databricks REST
+     API. Type: string (or Expression with resultType string).
+    :type workspace_resource_id: object
     :param existing_cluster_id: The id of an existing interactive cluster that
      will be used for all runs of this activity. Type: string (or Expression
      with resultType string).
@@ -3394,12 +3401,15 @@ class AzureDatabricksLinkedService(LinkedService):
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
     :type encrypted_credential: object
+    :param policy_id: The policy id for limiting the ability to configure
+     clusters based on a user defined set of rules. Type: string (or Expression
+     with resultType string).
+    :type policy_id: object
     """
 
     _validation = {
         'type': {'required': True},
         'domain': {'required': True},
-        'access_token': {'required': True},
     }
 
     _attribute_map = {
@@ -3411,6 +3421,8 @@ class AzureDatabricksLinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'domain': {'key': 'typeProperties.domain', 'type': 'object'},
         'access_token': {'key': 'typeProperties.accessToken', 'type': 'SecretBase'},
+        'authentication': {'key': 'typeProperties.authentication', 'type': 'object'},
+        'workspace_resource_id': {'key': 'typeProperties.workspaceResourceId', 'type': 'object'},
         'existing_cluster_id': {'key': 'typeProperties.existingClusterId', 'type': 'object'},
         'instance_pool_id': {'key': 'typeProperties.instancePoolId', 'type': 'object'},
         'new_cluster_version': {'key': 'typeProperties.newClusterVersion', 'type': 'object'},
@@ -3424,12 +3436,15 @@ class AzureDatabricksLinkedService(LinkedService):
         'new_cluster_init_scripts': {'key': 'typeProperties.newClusterInitScripts', 'type': 'object'},
         'new_cluster_enable_elastic_disk': {'key': 'typeProperties.newClusterEnableElasticDisk', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+        'policy_id': {'key': 'typeProperties.policyId', 'type': 'object'},
     }
 
-    def __init__(self, *, domain, access_token, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, existing_cluster_id=None, instance_pool_id=None, new_cluster_version=None, new_cluster_num_of_worker=None, new_cluster_node_type=None, new_cluster_spark_conf=None, new_cluster_spark_env_vars=None, new_cluster_custom_tags=None, new_cluster_log_destination=None, new_cluster_driver_node_type=None, new_cluster_init_scripts=None, new_cluster_enable_elastic_disk=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, domain, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, access_token=None, authentication=None, workspace_resource_id=None, existing_cluster_id=None, instance_pool_id=None, new_cluster_version=None, new_cluster_num_of_worker=None, new_cluster_node_type=None, new_cluster_spark_conf=None, new_cluster_spark_env_vars=None, new_cluster_custom_tags=None, new_cluster_log_destination=None, new_cluster_driver_node_type=None, new_cluster_init_scripts=None, new_cluster_enable_elastic_disk=None, encrypted_credential=None, policy_id=None, **kwargs) -> None:
         super(AzureDatabricksLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.domain = domain
         self.access_token = access_token
+        self.authentication = authentication
+        self.workspace_resource_id = workspace_resource_id
         self.existing_cluster_id = existing_cluster_id
         self.instance_pool_id = instance_pool_id
         self.new_cluster_version = new_cluster_version
@@ -3443,6 +3458,7 @@ class AzureDatabricksLinkedService(LinkedService):
         self.new_cluster_init_scripts = new_cluster_init_scripts
         self.new_cluster_enable_elastic_disk = new_cluster_enable_elastic_disk
         self.encrypted_credential = encrypted_credential
+        self.policy_id = policy_id
         self.type = 'AzureDatabricks'
 
 
@@ -5119,9 +5135,15 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param ml_pipeline_id: Required. ID of the published Azure ML pipeline.
-     Type: string (or Expression with resultType string).
+    :param ml_pipeline_id: ID of the published Azure ML pipeline. Type: string
+     (or Expression with resultType string).
     :type ml_pipeline_id: object
+    :param ml_pipeline_endpoint_id: ID of the published Azure ML pipeline
+     endpoint. Type: string (or Expression with resultType string).
+    :type ml_pipeline_endpoint_id: object
+    :param version: Version of the published Azure ML pipeline endpoint. Type:
+     string (or Expression with resultType string).
+    :type version: object
     :param experiment_name: Run history experiment name of the pipeline run.
      This information will be passed in the ExperimentName property of the
      published pipeline execution request. Type: string (or Expression with
@@ -5134,6 +5156,11 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):
      execution request. Type: object with key value pairs (or Expression with
      resultType object).
     :type ml_pipeline_parameters: object
+    :param data_path_assignments: Dictionary used for changing data path
+     assignments without retraining. Values will be passed in the
+     dataPathAssignments property of the published pipeline execution request.
+     Type: object with key value pairs (or Expression with resultType object).
+    :type data_path_assignments: object
     :param ml_parent_run_id: The parent Azure ML Service pipeline run id. This
      information will be passed in the ParentRunId property of the published
      pipeline execution request. Type: string (or Expression with resultType
@@ -5149,7 +5176,6 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
-        'ml_pipeline_id': {'required': True},
     }
 
     _attribute_map = {
@@ -5162,17 +5188,23 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'ml_pipeline_id': {'key': 'typeProperties.mlPipelineId', 'type': 'object'},
+        'ml_pipeline_endpoint_id': {'key': 'typeProperties.mlPipelineEndpointId', 'type': 'object'},
+        'version': {'key': 'typeProperties.version', 'type': 'object'},
         'experiment_name': {'key': 'typeProperties.experimentName', 'type': 'object'},
         'ml_pipeline_parameters': {'key': 'typeProperties.mlPipelineParameters', 'type': 'object'},
+        'data_path_assignments': {'key': 'typeProperties.dataPathAssignments', 'type': 'object'},
         'ml_parent_run_id': {'key': 'typeProperties.mlParentRunId', 'type': 'object'},
         'continue_on_step_failure': {'key': 'typeProperties.continueOnStepFailure', 'type': 'object'},
     }
 
-    def __init__(self, *, name: str, ml_pipeline_id, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, experiment_name=None, ml_pipeline_parameters=None, ml_parent_run_id=None, continue_on_step_failure=None, **kwargs) -> None:
+    def __init__(self, *, name: str, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, ml_pipeline_id=None, ml_pipeline_endpoint_id=None, version=None, experiment_name=None, ml_pipeline_parameters=None, data_path_assignments=None, ml_parent_run_id=None, continue_on_step_failure=None, **kwargs) -> None:
         super(AzureMLExecutePipelineActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.ml_pipeline_id = ml_pipeline_id
+        self.ml_pipeline_endpoint_id = ml_pipeline_endpoint_id
+        self.version = version
         self.experiment_name = experiment_name
         self.ml_pipeline_parameters = ml_pipeline_parameters
+        self.data_path_assignments = data_path_assignments
         self.ml_parent_run_id = ml_parent_run_id
         self.continue_on_step_failure = continue_on_step_failure
         self.type = 'AzureMLExecutePipeline'
@@ -7388,7 +7420,8 @@ class MultiplePipelineTrigger(Trigger):
     pipeline.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: BlobEventsTrigger, BlobTrigger, ScheduleTrigger
+    sub-classes are: CustomEventsTrigger, BlobEventsTrigger, BlobTrigger,
+    ScheduleTrigger
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -7430,7 +7463,7 @@ class MultiplePipelineTrigger(Trigger):
     }
 
     _subtype_map = {
-        'type': {'BlobEventsTrigger': 'BlobEventsTrigger', 'BlobTrigger': 'BlobTrigger', 'ScheduleTrigger': 'ScheduleTrigger'}
+        'type': {'CustomEventsTrigger': 'CustomEventsTrigger', 'BlobEventsTrigger': 'BlobEventsTrigger', 'BlobTrigger': 'BlobTrigger', 'ScheduleTrigger': 'ScheduleTrigger'}
     }
 
     def __init__(self, *, additional_properties=None, description: str=None, annotations=None, pipelines=None, **kwargs) -> None:
@@ -9697,6 +9730,10 @@ class CustomActivity(ExecutionActivity):
     :param retention_time_in_days: The retention time for the files submitted
      for custom activity. Type: double (or Expression with resultType double).
     :type retention_time_in_days: object
+    :param auto_user_specification: Elevation level and scope for the user,
+     default is nonadmin task. Type: string (or Expression with resultType
+     double).
+    :type auto_user_specification: object
     """
 
     _validation = {
@@ -9720,9 +9757,10 @@ class CustomActivity(ExecutionActivity):
         'reference_objects': {'key': 'typeProperties.referenceObjects', 'type': 'CustomActivityReferenceObject'},
         'extended_properties': {'key': 'typeProperties.extendedProperties', 'type': '{object}'},
         'retention_time_in_days': {'key': 'typeProperties.retentionTimeInDays', 'type': 'object'},
+        'auto_user_specification': {'key': 'typeProperties.autoUserSpecification', 'type': 'object'},
     }
 
-    def __init__(self, *, name: str, command, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, resource_linked_service=None, folder_path=None, reference_objects=None, extended_properties=None, retention_time_in_days=None, **kwargs) -> None:
+    def __init__(self, *, name: str, command, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, resource_linked_service=None, folder_path=None, reference_objects=None, extended_properties=None, retention_time_in_days=None, auto_user_specification=None, **kwargs) -> None:
         super(CustomActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.command = command
         self.resource_linked_service = resource_linked_service
@@ -9730,6 +9768,7 @@ class CustomActivity(ExecutionActivity):
         self.reference_objects = reference_objects
         self.extended_properties = extended_properties
         self.retention_time_in_days = retention_time_in_days
+        self.auto_user_specification = auto_user_specification
         self.type = 'Custom'
 
 
@@ -9857,6 +9896,76 @@ class CustomDataSourceLinkedService(LinkedService):
         super(CustomDataSourceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.type_properties = type_properties
         self.type = 'CustomDataSource'
+
+
+class CustomEventsTrigger(MultiplePipelineTrigger):
+    """Trigger that runs every time a custom event is received.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param description: Trigger description.
+    :type description: str
+    :ivar runtime_state: Indicates if trigger is running or not. Updated when
+     Start/Stop APIs are called on the Trigger. Possible values include:
+     'Started', 'Stopped', 'Disabled'
+    :vartype runtime_state: str or
+     ~azure.mgmt.datafactory.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the
+     trigger.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param pipelines: Pipelines that need to be started.
+    :type pipelines:
+     list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
+    :param subject_begins_with: The event subject must begin with the pattern
+     provided for trigger to fire. At least one of these must be provided:
+     subjectBeginsWith, subjectEndsWith.
+    :type subject_begins_with: str
+    :param subject_ends_with: The event subject must end with the pattern
+     provided for trigger to fire. At least one of these must be provided:
+     subjectBeginsWith, subjectEndsWith.
+    :type subject_ends_with: str
+    :param events: Required. The list of event types that cause this trigger
+     to fire.
+    :type events: list[object]
+    :param scope: Required. The ARM resource ID of the Azure Event Grid Topic.
+    :type scope: str
+    """
+
+    _validation = {
+        'runtime_state': {'readonly': True},
+        'type': {'required': True},
+        'events': {'required': True},
+        'scope': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'description': {'key': 'description', 'type': 'str'},
+        'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
+        'subject_begins_with': {'key': 'typeProperties.subjectBeginsWith', 'type': 'str'},
+        'subject_ends_with': {'key': 'typeProperties.subjectEndsWith', 'type': 'str'},
+        'events': {'key': 'typeProperties.events', 'type': '[object]'},
+        'scope': {'key': 'typeProperties.scope', 'type': 'str'},
+    }
+
+    def __init__(self, *, events, scope: str, additional_properties=None, description: str=None, annotations=None, pipelines=None, subject_begins_with: str=None, subject_ends_with: str=None, **kwargs) -> None:
+        super(CustomEventsTrigger, self).__init__(additional_properties=additional_properties, description=description, annotations=annotations, pipelines=pipelines, **kwargs)
+        self.subject_begins_with = subject_begins_with
+        self.subject_ends_with = subject_ends_with
+        self.events = events
+        self.scope = scope
+        self.type = 'CustomEventsTrigger'
 
 
 class DatabricksNotebookActivity(ExecutionActivity):
@@ -18982,6 +19091,9 @@ class IntegrationRuntimeSsisCatalogInfo(Model):
      values include: 'Basic', 'Standard', 'Premium', 'PremiumRS'
     :type catalog_pricing_tier: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeSsisCatalogPricingTier
+    :param dual_standby_pair_name: The dual standby pair name of Azure-SSIS
+     Integration Runtimes to support SSISDB failover.
+    :type dual_standby_pair_name: str
     """
 
     _validation = {
@@ -18994,15 +19106,17 @@ class IntegrationRuntimeSsisCatalogInfo(Model):
         'catalog_admin_user_name': {'key': 'catalogAdminUserName', 'type': 'str'},
         'catalog_admin_password': {'key': 'catalogAdminPassword', 'type': 'SecureString'},
         'catalog_pricing_tier': {'key': 'catalogPricingTier', 'type': 'str'},
+        'dual_standby_pair_name': {'key': 'dualStandbyPairName', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, catalog_server_endpoint: str=None, catalog_admin_user_name: str=None, catalog_admin_password=None, catalog_pricing_tier=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, catalog_server_endpoint: str=None, catalog_admin_user_name: str=None, catalog_admin_password=None, catalog_pricing_tier=None, dual_standby_pair_name: str=None, **kwargs) -> None:
         super(IntegrationRuntimeSsisCatalogInfo, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.catalog_server_endpoint = catalog_server_endpoint
         self.catalog_admin_user_name = catalog_admin_user_name
         self.catalog_admin_password = catalog_admin_password
         self.catalog_pricing_tier = catalog_pricing_tier
+        self.dual_standby_pair_name = dual_standby_pair_name
 
 
 class IntegrationRuntimeSsisProperties(Model):
@@ -20370,6 +20484,9 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
     :param ssis_properties: SSIS properties for managed integration runtime.
     :type ssis_properties:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeSsisProperties
+    :param managed_virtual_network: Managed Virtual Network reference.
+    :type managed_virtual_network:
+     ~azure.mgmt.datafactory.models.ManagedVirtualNetworkReference
     """
 
     _validation = {
@@ -20384,13 +20501,15 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
         'state': {'key': 'state', 'type': 'str'},
         'compute_properties': {'key': 'typeProperties.computeProperties', 'type': 'IntegrationRuntimeComputeProperties'},
         'ssis_properties': {'key': 'typeProperties.ssisProperties', 'type': 'IntegrationRuntimeSsisProperties'},
+        'managed_virtual_network': {'key': 'managedVirtualNetwork', 'type': 'ManagedVirtualNetworkReference'},
     }
 
-    def __init__(self, *, additional_properties=None, description: str=None, compute_properties=None, ssis_properties=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, description: str=None, compute_properties=None, ssis_properties=None, managed_virtual_network=None, **kwargs) -> None:
         super(ManagedIntegrationRuntime, self).__init__(additional_properties=additional_properties, description=description, **kwargs)
         self.state = None
         self.compute_properties = compute_properties
         self.ssis_properties = ssis_properties
+        self.managed_virtual_network = managed_virtual_network
         self.type = 'Managed'
 
 
@@ -20721,6 +20840,38 @@ class ManagedVirtualNetwork(Model):
         self.additional_properties = additional_properties
         self.v_net_id = None
         self.alias = None
+
+
+class ManagedVirtualNetworkReference(Model):
+    """Managed Virtual Network reference type.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Managed Virtual Network reference type. Default
+     value: "ManagedVirtualNetworkReference" .
+    :vartype type: str
+    :param reference_name: Required. Reference ManagedVirtualNetwork name.
+    :type reference_name: str
+    """
+
+    _validation = {
+        'type': {'required': True, 'constant': True},
+        'reference_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'reference_name': {'key': 'referenceName', 'type': 'str'},
+    }
+
+    type = "ManagedVirtualNetworkReference"
+
+    def __init__(self, *, reference_name: str, **kwargs) -> None:
+        super(ManagedVirtualNetworkReference, self).__init__(**kwargs)
+        self.reference_name = reference_name
 
 
 class ManagedVirtualNetworkResource(SubResource):
@@ -24812,6 +24963,23 @@ class PhoenixSource(TabularSource):
         self.type = 'PhoenixSource'
 
 
+class PipelineElapsedTimeMetricPolicy(Model):
+    """Pipeline ElapsedTime Metric Policy.
+
+    :param duration: TimeSpan value, after which an Azure Monitoring Metric is
+     fired.
+    :type duration: object
+    """
+
+    _attribute_map = {
+        'duration': {'key': 'duration', 'type': 'object'},
+    }
+
+    def __init__(self, *, duration=None, **kwargs) -> None:
+        super(PipelineElapsedTimeMetricPolicy, self).__init__(**kwargs)
+        self.duration = duration
+
+
 class PipelineFolder(Model):
     """The folder that this Pipeline is in. If not specified, Pipeline will appear
     at the root level.
@@ -24827,6 +24995,23 @@ class PipelineFolder(Model):
     def __init__(self, *, name: str=None, **kwargs) -> None:
         super(PipelineFolder, self).__init__(**kwargs)
         self.name = name
+
+
+class PipelinePolicy(Model):
+    """Pipeline Policy.
+
+    :param elapsed_time_metric:
+    :type elapsed_time_metric:
+     ~azure.mgmt.datafactory.models.PipelineElapsedTimeMetricPolicy
+    """
+
+    _attribute_map = {
+        'elapsed_time_metric': {'key': 'elapsedTimeMetric', 'type': 'PipelineElapsedTimeMetricPolicy'},
+    }
+
+    def __init__(self, *, elapsed_time_metric=None, **kwargs) -> None:
+        super(PipelinePolicy, self).__init__(**kwargs)
+        self.elapsed_time_metric = elapsed_time_metric
 
 
 class PipelineReference(Model):
@@ -24902,6 +25087,8 @@ class PipelineResource(SubResource):
     :param folder: The folder that this Pipeline is in. If not specified,
      Pipeline will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.PipelineFolder
+    :param policy:
+    :type policy: ~azure.mgmt.datafactory.models.PipelinePolicy
     """
 
     _validation = {
@@ -24926,9 +25113,10 @@ class PipelineResource(SubResource):
         'annotations': {'key': 'properties.annotations', 'type': '[object]'},
         'run_dimensions': {'key': 'properties.runDimensions', 'type': '{object}'},
         'folder': {'key': 'properties.folder', 'type': 'PipelineFolder'},
+        'policy': {'key': 'properties.policy', 'type': 'PipelinePolicy'},
     }
 
-    def __init__(self, *, additional_properties=None, description: str=None, activities=None, parameters=None, variables=None, concurrency: int=None, annotations=None, run_dimensions=None, folder=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, description: str=None, activities=None, parameters=None, variables=None, concurrency: int=None, annotations=None, run_dimensions=None, folder=None, policy=None, **kwargs) -> None:
         super(PipelineResource, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.description = description
@@ -24939,6 +25127,7 @@ class PipelineResource(SubResource):
         self.annotations = annotations
         self.run_dimensions = run_dimensions
         self.folder = folder
+        self.policy = policy
 
 
 class PipelineRun(Model):
@@ -34528,18 +34717,24 @@ class WebActivityAuthentication(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. Web activity authentication
-     (Basic/ClientCertificate/MSI)
+     (Basic/ClientCertificate/MSI/ServicePrincipal)
     :type type: str
-    :param pfx: Base64-encoded contents of a PFX file.
+    :param pfx: Base64-encoded contents of a PFX file or Certificate when used
+     for ServicePrincipal
     :type pfx: ~azure.mgmt.datafactory.models.SecretBase
     :param username: Web activity authentication user name for basic
-     authentication.
+     authentication or ClientID when used for ServicePrincipal
     :type username: str
-    :param password: Password for the PFX file or basic authentication.
+    :param password: Password for the PFX file or basic authentication /
+     Secret when used for ServicePrincipal
     :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param resource: Resource for which Azure Auth token will be requested
      when using MSI Authentication.
     :type resource: str
+    :param user_tenant: TenantId for which Azure Auth token will be requested
+     when using ServicePrincipal Authentication. Type: string (or Expression
+     with resultType string).
+    :type user_tenant: object
     """
 
     _validation = {
@@ -34552,15 +34747,17 @@ class WebActivityAuthentication(Model):
         'username': {'key': 'username', 'type': 'str'},
         'password': {'key': 'password', 'type': 'SecretBase'},
         'resource': {'key': 'resource', 'type': 'str'},
+        'user_tenant': {'key': 'userTenant', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, pfx=None, username: str=None, password=None, resource: str=None, **kwargs) -> None:
+    def __init__(self, *, type: str, pfx=None, username: str=None, password=None, resource: str=None, user_tenant=None, **kwargs) -> None:
         super(WebActivityAuthentication, self).__init__(**kwargs)
         self.type = type
         self.pfx = pfx
         self.username = username
         self.password = password
         self.resource = resource
+        self.user_tenant = user_tenant
 
 
 class WebLinkedServiceTypeProperties(Model):
