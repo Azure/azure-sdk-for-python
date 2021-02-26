@@ -187,8 +187,8 @@ class ChatClient(object):
                 communication_errors=create_chat_thread_result.errors.invalid_participants
             )
 
-        chat_thread = ChatThread._from_generated(
-            create_chat_thread_result.chat_thread)  # pylint:disable=protected-access
+        chat_thread = ChatThread._from_generated( # pylint:disable=protected-access
+            create_chat_thread_result.chat_thread)
 
         create_chat_thread_result = CreateChatThreadResult(
             chat_thread=chat_thread,
