@@ -278,13 +278,7 @@ class TestClientRequest(unittest.TestCase):
 
         assert request.data == b"<?xml version='1.0' encoding='utf-8'?>\n<root />"
 
-    def test_request_url_with_query(self):
-
-        request = HttpRequest("GET", url="a/b/c?t=y", query={"g": "h"})
-
-        self.assertIn(request.url, ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"])
-
-    def test_request_url_with_format_parameters(self):
+    def test_request_url_with_params(self):
 
         request = HttpRequest("GET", "/")
         request.url = "a/b/c?t=y"
@@ -292,21 +286,49 @@ class TestClientRequest(unittest.TestCase):
 
         self.assertIn(request.url, ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"])
 
-    def test_request_url_with_query_params_as_list(self):
+    def test_request_url_with_params_as_list(self):
 
-        request = HttpRequest("GET", url="a/b/c?t=y", query={"g": ["h","i"]})
+        request = HttpRequest("GET", "/")
+        request.url = "a/b/c?t=y"
+        request.format_parameters({"g": ["h","i"]})
 
         self.assertIn(request.url, ["a/b/c?g=h&g=i&t=y", "a/b/c?t=y&g=h&g=i"])
 
-    def test_request_url_with_query_params_with_none_in_list(self):
+    def test_request_url_with_params_with_none_in_list(self):
+
+        request = HttpRequest("GET", "/")
+        request.url = "a/b/c?t=y"
+        with pytest.raises(ValueError):
+            request.format_parameters({"g": ["h",None]})
+
+    def test_request_url_with_params_with_none(self):
+
+        request = HttpRequest("GET", "/")
+        request.url = "a/b/c?t=y"
+        with pytest.raises(ValueError):
+            request.format_parameters({"g": None})
+
+    def test_request_url_with_query_kwarg(self):
+
+        request = HttpRequest("GET", "a/b/c?t=y", query={"g": "h"})
+
+        self.assertIn(request.url, ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"])
+
+    def test_request_url_with_query_kwarg_as_list(self):
+
+        request = HttpRequest("GET", "a/b/c?t=y", query={"g": ["h","i"]})
+
+        self.assertIn(request.url, ["a/b/c?g=h&g=i&t=y", "a/b/c?t=y&g=h&g=i"])
+
+    def test_request_url_with_query_kwarg_with_none_in_list(self):
 
         with pytest.raises(ValueError):
-            HttpRequest("GET", "/", query={"g": ["h",None]})
+            HttpRequest("GET", "a/b/c?t=y", query={"g": ["h",None]})
 
-    def test_request_url_with_query_params_with_none(self):
+    def test_request_url_with_params_with_none(self):
+
         with pytest.raises(ValueError):
-             HttpRequest("GET", "/", query={"g": None})
-
+            HttpRequest("GET", "a/b/c?t=y", query={"g": None})
 
     def test_request_text(self):
         client = PipelineClientBase('http://example.org')
