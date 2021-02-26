@@ -13,6 +13,84 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class Resource(Model):
+    """Resource.
+
+    Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class AzureEntityResource(Resource):
+    """Entity Resource.
+
+    The resource model definition for an Azure Resource Manager resource with
+    an etag.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AzureEntityResource, self).__init__(**kwargs)
+        self.etag = None
+
+
 class CloudError(Model):
     """CloudError.
     """
@@ -79,21 +157,17 @@ class Display(Model):
 class ErrorResponse(Model):
     """Describes the format of Error response.
 
-    :param code: Error code
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :param error: Describes the error object.
+    :type error: ~azure.mgmt.hanaonazure.models.ErrorResponseError
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ErrorResponseError'},
     }
 
-    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+    def __init__(self, *, error=None, **kwargs) -> None:
         super(ErrorResponse, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
+        self.error = error
 
 
 class ErrorResponseException(HttpOperationError):
@@ -106,6 +180,34 @@ class ErrorResponseException(HttpOperationError):
     def __init__(self, deserialize, response, *args):
 
         super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+
+
+class ErrorResponseError(Model):
+    """Describes the error object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Error code
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ErrorResponseError, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
 
 
 class Operation(Model):
@@ -137,55 +239,22 @@ class Operation(Model):
         self.display = display
 
 
-class Resource(Model):
-    """The core properties of ARM resources.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Network/trafficManagerProfiles.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+    """Proxy Resource.
+
+    The resource model definition for a Azure Resource Manager proxy resource.
+    It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Network/trafficManagerProfiles.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -211,13 +280,13 @@ class ProviderInstance(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Network/trafficManagerProfiles.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param provider_instance_type: The type of provider instance.
     :type provider_instance_type: str
@@ -260,22 +329,27 @@ class ProviderInstance(ProxyResource):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Network/trafficManagerProfiles.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param location: The Azure Region where the resource lives
+    :param location: Required. The geo-location where the resource lives
     :type location: str
     """
 
@@ -283,6 +357,7 @@ class TrackedResource(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -293,7 +368,7 @@ class TrackedResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -305,17 +380,19 @@ class SapMonitor(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Network/trafficManagerProfiles.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param location: The Azure Region where the resource lives
+    :param location: Required. The geo-location where the resource lives
     :type location: str
     :ivar provisioning_state: State of provisioning of the HanaInstance.
      Possible values include: 'Accepted', 'Creating', 'Updating', 'Failed',
@@ -349,6 +426,7 @@ class SapMonitor(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'managed_resource_group_name': {'readonly': True},
         'sap_monitor_collector_version': {'readonly': True},
@@ -370,7 +448,7 @@ class SapMonitor(TrackedResource):
         'monitor_subnet': {'key': 'properties.monitorSubnet', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, log_analytics_workspace_arm_id: str=None, enable_customer_analytics: bool=None, log_analytics_workspace_id: str=None, log_analytics_workspace_shared_key: str=None, monitor_subnet: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, log_analytics_workspace_arm_id: str=None, enable_customer_analytics: bool=None, log_analytics_workspace_id: str=None, log_analytics_workspace_shared_key: str=None, monitor_subnet: str=None, **kwargs) -> None:
         super(SapMonitor, self).__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = None
         self.managed_resource_group_name = None
