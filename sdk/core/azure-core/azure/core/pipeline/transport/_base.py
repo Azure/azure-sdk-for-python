@@ -234,9 +234,8 @@ class HttpRequest(object):
         self.files = files
         self.data = data
         self.multipart_mixed_info = None  # type: Optional[Tuple]
-        query = kwargs.pop("query", None)
-        if query:
-            self.format_parameters(query)
+        if "query" in kwargs:
+            self.format_parameters(kwargs.pop("query", None))
 
     def __repr__(self):
         return "<HttpRequest [%s]>" % (self.method)
@@ -306,6 +305,7 @@ class HttpRequest(object):
 
         :param dict params: A dictionary of parameters.
         """
+        params = params or {}
         query = urlparse(self.url).query
         if query:
             self.url = self.url.partition("?")[0]

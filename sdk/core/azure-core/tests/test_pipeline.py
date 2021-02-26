@@ -325,10 +325,14 @@ class TestClientRequest(unittest.TestCase):
         with pytest.raises(ValueError):
             HttpRequest("GET", "a/b/c?t=y", query={"g": ["h",None]})
 
-    def test_request_url_with_params_with_none(self):
+    def test_request_url_with_query_kwarg_with_none_value(self):
 
         with pytest.raises(ValueError):
             HttpRequest("GET", "a/b/c?t=y", query={"g": None})
+
+    def test_request_url_with_query_kwarg_none(self):
+        request = HttpRequest("GET", "hello", query=None)
+        assert request.url == "hello?"
 
     def test_request_text(self):
         client = PipelineClientBase('http://example.org')
