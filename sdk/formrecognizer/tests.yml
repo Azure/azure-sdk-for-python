@@ -8,12 +8,12 @@ stages:
       ServiceDirectory: formrecognizer
       TestTimeoutInMinutes: 200
       TestSamples: true
-      Clouds: 'Prod,Canary'
+      Clouds: 'Public,Canary,UsGov,China'
       # This is a specific request from the formrecognizer service team
       # their claim is that the full matrix ends up stress-testing their service.
       # As such, the canary test runs should run on a reduced matrix.
       CloudConfig:
-        Prod:
+        Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           Location: $(LOCATION)
         Canary:

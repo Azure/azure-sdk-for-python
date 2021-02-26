@@ -42,7 +42,7 @@
                 "description": "The application client secret used to run tests."
             }
         },
-        "formRecognizerEndpointSuffix": {
+        "cognitiveServicesEndpointSuffix": {
             "defaultValue": ".cognitiveservices.azure.com/",
             "type": "String"
         },
@@ -56,7 +56,7 @@
         },
         "blobResourceId": {
             "type": "string",
-            "defaultValue": "[resourceId('2cd617ea-1866-46b1-90e3-fffb087ebf9b', 'TrainingData', 'Microsoft.Storage/storageAccounts', parameters('blobStorageAccount'))]"
+            "defaultValue": "[resourceId(subscription().subscriptionId, 'TrainingData', 'Microsoft.Storage/storageAccounts', parameters('blobStorageAccount'))]"
         },
         "trainingDataSasProperties": {
             "type": "object",
@@ -124,7 +124,7 @@
         "authorizationApiVersion": "2018-09-01-preview",
         "formRecognizerBaseName": "[concat('formrecognizer', parameters('baseName'))]",
         "formRecognizerApiVersion": "2017-04-18",
-        "azureFormRecognizerUrl": "[concat('https://', variables('formRecognizerBaseName'), parameters('formRecognizerEndpointSuffix'))]",
+        "azureFormRecognizerUrl": "[concat('https://', variables('formRecognizerBaseName'), parameters('cognitiveServicesEndpointSuffix'))]",
         "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]"
     },
     "resources": [
