@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+from ._monitor_client_enums import *
 
 
 class ActionGroupList(msrest.serialization.Model):
@@ -382,7 +382,7 @@ class MultiMetricCriteria(msrest.serialization.Model):
     :type metric_namespace: str
     :param time_aggregation: Required. the criteria time aggregation types. Possible values
      include: "Average", "Count", "Minimum", "Maximum", "Total".
-    :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationType
+    :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
     :param dimensions: List of dimension conditions.
     :type dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
     :param skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
@@ -417,7 +417,7 @@ class MultiMetricCriteria(msrest.serialization.Model):
         *,
         name: str,
         metric_name: str,
-        time_aggregation: Union[str, "AggregationType"],
+        time_aggregation: Union[str, "AggregationTypeEnum"],
         additional_properties: Optional[Dict[str, object]] = None,
         metric_namespace: Optional[str] = None,
         dimensions: Optional[List["MetricDimension"]] = None,
@@ -454,7 +454,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):
     :type metric_namespace: str
     :param time_aggregation: Required. the criteria time aggregation types. Possible values
      include: "Average", "Count", "Minimum", "Maximum", "Total".
-    :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationType
+    :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
     :param dimensions: List of dimension conditions.
     :type dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
     :param skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
@@ -507,7 +507,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):
         *,
         name: str,
         metric_name: str,
-        time_aggregation: Union[str, "AggregationType"],
+        time_aggregation: Union[str, "AggregationTypeEnum"],
         operator: Union[str, "DynamicThresholdOperator"],
         alert_sensitivity: Union[str, "DynamicThresholdSensitivity"],
         failing_periods: "DynamicThresholdFailingPeriods",
@@ -757,7 +757,8 @@ class MetricAlertAction(msrest.serialization.Model):
 
     :param action_group_id: the id of the action group to use.
     :type action_group_id: str
-    :param web_hook_properties: The properties of a webhook object.
+    :param web_hook_properties: This field allows specifying custom properties, which would be
+     appended to the alert payload sent as input to the webhook.
     :type web_hook_properties: dict[str, str]
     """
 
@@ -878,14 +879,14 @@ class MetricAlertResource(Resource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param description: Required. the description of the metric alert that will be included in the
-     alert email.
+    :param description: the description of the metric alert that will be included in the alert
+     email.
     :type description: str
     :param severity: Required. Alert severity {0, 1, 2, 3, 4}.
     :type severity: int
     :param enabled: Required. the flag that indicates whether the metric alert is enabled.
     :type enabled: bool
-    :param scopes: the list of resource id's that this metric alert is scoped to.
+    :param scopes: Required. the list of resource id's that this metric alert is scoped to.
     :type scopes: list[str]
     :param evaluation_frequency: Required. how often the metric alert is evaluated represented in
      ISO 8601 duration format.
@@ -894,10 +895,12 @@ class MetricAlertResource(Resource):
      monitor alert activity based on the threshold.
     :type window_size: ~datetime.timedelta
     :param target_resource_type: the resource type of the target resource(s) on which the alert is
-     created/updated. Mandatory for MultipleResourceMultipleMetricCriteria.
+     created/updated. Mandatory if the scope contains a subscription, resource group, or more than
+     one resource.
     :type target_resource_type: str
     :param target_resource_region: the region of the target resource(s) on which the alert is
-     created/updated. Mandatory for MultipleResourceMultipleMetricCriteria.
+     created/updated. Mandatory if the scope contains a subscription, resource group, or more than
+     one resource.
     :type target_resource_region: str
     :param criteria: Required. defines the specific alert criteria information.
     :type criteria: ~$(python-base-namespace).v2018_03_01.models.MetricAlertCriteria
@@ -909,6 +912,8 @@ class MetricAlertResource(Resource):
     :type actions: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: ~datetime.datetime
+    :ivar is_migrated: the value indicating whether this alert rule is migrated.
+    :vartype is_migrated: bool
     """
 
     _validation = {
@@ -916,13 +921,14 @@ class MetricAlertResource(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'description': {'required': True},
         'severity': {'required': True},
         'enabled': {'required': True},
+        'scopes': {'required': True},
         'evaluation_frequency': {'required': True},
         'window_size': {'required': True},
         'criteria': {'required': True},
         'last_updated_time': {'readonly': True},
+        'is_migrated': {'readonly': True},
     }
 
     _attribute_map = {
@@ -943,20 +949,21 @@ class MetricAlertResource(Resource):
         'auto_mitigate': {'key': 'properties.autoMitigate', 'type': 'bool'},
         'actions': {'key': 'properties.actions', 'type': '[MetricAlertAction]'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
+        'is_migrated': {'key': 'properties.isMigrated', 'type': 'bool'},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        description: str,
         severity: int,
         enabled: bool,
+        scopes: List[str],
         evaluation_frequency: datetime.timedelta,
         window_size: datetime.timedelta,
         criteria: "MetricAlertCriteria",
         tags: Optional[Dict[str, str]] = None,
-        scopes: Optional[List[str]] = None,
+        description: Optional[str] = None,
         target_resource_type: Optional[str] = None,
         target_resource_region: Optional[str] = None,
         auto_mitigate: Optional[bool] = None,
@@ -976,6 +983,7 @@ class MetricAlertResource(Resource):
         self.auto_mitigate = auto_mitigate
         self.actions = actions
         self.last_updated_time = None
+        self.is_migrated = None
 
 
 class MetricAlertResourceCollection(msrest.serialization.Model):
@@ -1037,10 +1045,13 @@ class MetricAlertResourcePatch(msrest.serialization.Model):
     :type actions: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: ~datetime.datetime
+    :ivar is_migrated: the value indicating whether this alert rule is migrated.
+    :vartype is_migrated: bool
     """
 
     _validation = {
         'last_updated_time': {'readonly': True},
+        'is_migrated': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1057,6 +1068,7 @@ class MetricAlertResourcePatch(msrest.serialization.Model):
         'auto_mitigate': {'key': 'properties.autoMitigate', 'type': 'bool'},
         'actions': {'key': 'properties.actions', 'type': '[MetricAlertAction]'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
+        'is_migrated': {'key': 'properties.isMigrated', 'type': 'bool'},
     }
 
     def __init__(
@@ -1090,6 +1102,7 @@ class MetricAlertResourcePatch(msrest.serialization.Model):
         self.auto_mitigate = auto_mitigate
         self.actions = actions
         self.last_updated_time = None
+        self.is_migrated = None
 
 
 class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
@@ -1239,7 +1252,7 @@ class MetricCriteria(MultiMetricCriteria):
     :type metric_namespace: str
     :param time_aggregation: Required. the criteria time aggregation types. Possible values
      include: "Average", "Count", "Minimum", "Maximum", "Total".
-    :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationType
+    :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
     :param dimensions: List of dimension conditions.
     :type dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
     :param skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
@@ -1279,7 +1292,7 @@ class MetricCriteria(MultiMetricCriteria):
         *,
         name: str,
         metric_name: str,
-        time_aggregation: Union[str, "AggregationType"],
+        time_aggregation: Union[str, "AggregationTypeEnum"],
         operator: Union[str, "Operator"],
         threshold: float,
         additional_properties: Optional[Dict[str, object]] = None,

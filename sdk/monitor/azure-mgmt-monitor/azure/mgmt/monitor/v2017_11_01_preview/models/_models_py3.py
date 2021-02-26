@@ -12,7 +12,7 @@ from typing import List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._monitor_management_client_enums import *
+from ._monitor_client_enums import *
 
 
 class Baseline(msrest.serialization.Model):
@@ -27,6 +27,8 @@ class Baseline(msrest.serialization.Model):
     :type low_thresholds: list[float]
     :param high_thresholds: Required. The high thresholds of the baseline.
     :type high_thresholds: list[float]
+    :param timestamps: the array of timestamps of the baselines.
+    :type timestamps: list[~datetime.datetime]
     """
 
     _validation = {
@@ -39,6 +41,7 @@ class Baseline(msrest.serialization.Model):
         'sensitivity': {'key': 'sensitivity', 'type': 'str'},
         'low_thresholds': {'key': 'lowThresholds', 'type': '[float]'},
         'high_thresholds': {'key': 'highThresholds', 'type': '[float]'},
+        'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
     }
 
     def __init__(
@@ -47,12 +50,14 @@ class Baseline(msrest.serialization.Model):
         sensitivity: Union[str, "Sensitivity"],
         low_thresholds: List[float],
         high_thresholds: List[float],
+        timestamps: Optional[List[datetime.datetime]] = None,
         **kwargs
     ):
         super(Baseline, self).__init__(**kwargs)
         self.sensitivity = sensitivity
         self.low_thresholds = low_thresholds
         self.high_thresholds = high_thresholds
+        self.timestamps = timestamps
 
 
 class BaselineMetadataValue(msrest.serialization.Model):

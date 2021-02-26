@@ -144,4 +144,4 @@ class BaselineOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/baseline'}  # type: ignore
+    get.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/baseline'}  # type: ignore
