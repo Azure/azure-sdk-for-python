@@ -22,8 +22,8 @@ from ._models import (
     ChatThreadParticipant,
     CreateChatThreadResult
 )
-from ._utils import (
-    _to_utc_datetime,  # pylint: disable=unused-import
+from ._utils import ( # pylint: disable=unused-import
+    _to_utc_datetime,
     return_response,
     CommunicationErrorResponseConverter
 )
@@ -180,8 +180,8 @@ class ChatClient(object):
                 communication_errors=create_chat_thread_result.errors.invalid_participants
             )
 
-        chat_thread = ChatThread._from_generated(
-            create_chat_thread_result.chat_thread)  # pylint:disable=protected-access
+        chat_thread = ChatThread._from_generated( # pylint:disable=protected-access
+            create_chat_thread_result.chat_thread)
 
         create_chat_thread_result = CreateChatThreadResult(
             chat_thread=chat_thread,

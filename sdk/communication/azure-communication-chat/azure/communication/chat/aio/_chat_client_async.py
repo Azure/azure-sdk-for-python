@@ -32,7 +32,11 @@ from .._models import (
     ChatThreadParticipant,
     CreateChatThreadResult
 )
-from .._utils import _to_utc_datetime, return_response  # pylint: disable=unused-import
+from .._utils import ( # pylint: disable=unused-import
+    _to_utc_datetime,
+    return_response,
+    CommunicationErrorResponseConverter
+)
 from .._version import SDK_MONIKER
 
 

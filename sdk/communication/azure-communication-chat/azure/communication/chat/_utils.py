@@ -75,7 +75,7 @@ class CommunicationErrorResponseConverter(object):
             """
             result = {}
             for participant in participants:
-                result[participant.user.identifier]=participant
+                result[participant.user.identifier] = participant
             return result
 
         _thread_participants_dict = create_dict(participants=participants)
@@ -88,4 +88,3 @@ class CommunicationErrorResponseConverter(object):
                 failed_chat_thread_participants.append((_thread_participant, communication_error))
 
         return failed_chat_thread_participants
-
