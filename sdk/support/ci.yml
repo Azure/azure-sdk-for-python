@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: support
     Artifacts:
-    - name: azure_mgmt_support
+    - name: azure-mgmt-support
       safeName: azuremgmtsupport

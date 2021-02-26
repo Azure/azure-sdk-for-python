@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: commerce
     Artifacts:
-    - name: azure_mgmt_commerce
+    - name: azure-mgmt-commerce
       safeName: azuremgmtcommerce

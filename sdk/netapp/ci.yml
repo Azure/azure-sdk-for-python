@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: netapp
     Artifacts:
-    - name: azure_mgmt_netapp
+    - name: azure-mgmt-netapp
       safeName: azuremgmtnetapp

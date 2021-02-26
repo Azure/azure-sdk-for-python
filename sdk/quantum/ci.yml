@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: quantum
     Artifacts:
-    - name: azure_mgmt_quantum
+    - name: azure-mgmt-quantum
       safeName: azuremgmtquantum

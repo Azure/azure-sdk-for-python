@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: azureadb2c
     Artifacts:
-    - name: azure_mgmt_azureadb2c
+    - name: azure-mgmt-azureadb2c
       safeName: azuremgmtazureadb2c
