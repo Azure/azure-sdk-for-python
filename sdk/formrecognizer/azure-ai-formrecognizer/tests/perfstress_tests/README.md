@@ -41,5 +41,5 @@ These options are available for all perf tests:
 
 ## Example command
 ```cmd
-(env) ~/azure-ai-formrecognizer/tests/perfstress_tests> perfstress CustomModel
+(env) ~/azure-ai-formrecognizer/tests/perfstress_tests> perfstress RecognizeCustomForms
 ```

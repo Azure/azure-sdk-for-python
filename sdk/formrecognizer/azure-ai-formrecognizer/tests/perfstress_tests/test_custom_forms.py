@@ -14,7 +14,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import FormRecognizerClient, FormTrainingClient, FormContentType
 from azure.ai.formrecognizer.aio import FormRecognizerClient as AsyncFormRecognizerClient
 
-class TestCustomForms(PerfStressTest):   
+class RecognizeCustomForms(PerfStressTest):   
 
     def __init__(self, arguments):
         super().__init__(arguments)
