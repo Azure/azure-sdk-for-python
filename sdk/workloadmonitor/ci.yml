@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: workloadmonitor
     Artifacts:
-    - name: azure_mgmt_workloadmonitor
+    - name: azure-mgmt-workloadmonitor
       safeName: azuremgmtworkloadmonitor

@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: appservice
     Artifacts:
-    - name: azure_mgmt_web
+    - name: azure-mgmt-web
       safeName: azuremgmtweb

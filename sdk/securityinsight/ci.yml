@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: securityinsight
     Artifacts:
-    - name: azure_mgmt_securityinsight
+    - name: azure-mgmt-securityinsight
       safeName: azuremgmtsecurityinsight

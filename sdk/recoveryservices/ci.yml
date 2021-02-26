@@ -30,7 +30,7 @@ extends:
   parameters:
     ServiceDirectory: recoveryservices
     Artifacts:
-    - name: azure_mgmt_recoveryservices
+    - name: azure-mgmt-recoveryservices
       safeName: azuremgmtrecoveryservices
-    - name: azure_mgmt_recoveryservicesbackup
+    - name: azure-mgmt-recoveryservicesbackup
       safeName: azuremgmtrecoveryservicesbackup

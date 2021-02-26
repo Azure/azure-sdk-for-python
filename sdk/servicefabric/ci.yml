@@ -30,8 +30,8 @@ extends:
   parameters:
     ServiceDirectory: servicefabric
     Artifacts:
-    - name: azure_mgmt_servicefabric
+    - name: azure-mgmt-servicefabric
       safeName: azuremgmtservicefabric
-    - name: azure_servicefabric
+    - name: azure-servicefabric
       skipVerifyChangeLog: true
       safeName: azureservicefabric

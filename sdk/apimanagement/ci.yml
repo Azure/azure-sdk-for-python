@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: apimanagement
     Artifacts:
-    - name: azure_mgmt_apimanagement
+    - name: azure-mgmt-apimanagement
       safeName: azuremgmtapimanagement

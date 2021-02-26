@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: resourcemover
     Artifacts:
-    - name: azure_mgmt_resourcemover
+    - name: azure-mgmt-resourcemover
       safeName: azuremgmtresourcemover
