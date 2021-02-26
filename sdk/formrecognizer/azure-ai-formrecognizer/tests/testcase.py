@@ -59,9 +59,11 @@ class OperationLocationReplacer(RecordingProcessor):
             if 'location' in headers:
                 location_header = "location"
             if location_header:
-                if len(headers[location_header]) > 0:
+                if isinstance(headers[location_header], list):
                     suffix = headers[location_header][0].split("/formrecognizer/")[1]
-                    response['headers'][location_header] = [self._replacement + suffix]
+                else:
+                    suffix = headers[location_header].split("/formrecognizer/")[1]
+                response['headers'][location_header] = [self._replacement + suffix]
             return response
         except (KeyError, ValueError):
             return response
