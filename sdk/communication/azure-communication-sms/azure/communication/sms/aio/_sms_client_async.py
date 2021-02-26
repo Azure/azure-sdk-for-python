@@ -112,7 +112,7 @@ class SmsClient(object):
                 SmsRecipient(
                     to=p,
                     repeatability_request_id=str(uuid4()),
-                    repeatability_first_sent=datetime.now()
+                    repeatability_first_sent=datetime.utcnow()
                 ) for p in to
             ],
             message=message,
