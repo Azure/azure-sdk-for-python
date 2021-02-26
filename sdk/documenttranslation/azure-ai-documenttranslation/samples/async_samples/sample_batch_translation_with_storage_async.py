@@ -88,12 +88,12 @@ class BatchTranslationWithStorageSampleAsync(object):
             if job_result.status == "Succeeded":
                 print("We translated our documents!")
                 if job_result.documents_failed_count > 0:
-                    check_documents(translation_client, job_result.id)
+                    self.check_documents(translation_client, job_result.id)
 
             if job_result.status in ["Failed", "ValidationFailed"]:
                 if job_result.error:
                     print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
-                check_documents(translation_client, job_result.id)
+                self.check_documents(translation_client, job_result.id)
                 exit(1)
 
             # store result documents

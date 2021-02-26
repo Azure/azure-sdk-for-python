@@ -62,13 +62,13 @@ class CheckStatusesSampleAsync(object):
                 if job_detail.status in ["Failed", "ValidationFailed"]:
                     if job_detail.error:
                         print("Translation job failed: {}: {}".format(job_detail.error.code, job_detail.error.message))
-                    check_documents(client, job_detail.id)
+                    self.check_documents(client, job_detail.id)
                     exit(1)
 
                 if job_detail.status == "Succeeded":
                     print("We translated our documents!")
                     if job_detail.documents_failed_count > 0:
-                        check_documents(client, job_detail.id)
+                        self.check_documents(client, job_detail.id)
                     break
 
 
