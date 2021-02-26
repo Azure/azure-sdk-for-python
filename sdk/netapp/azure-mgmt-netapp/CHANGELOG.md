@@ -1,5 +1,17 @@
 # Release History
 
+## 0.16.0 (2021-02-25)
+
+**Features**
+
+  - Model BackupPatch has a new parameter failure_reason
+  - Model NetAppAccount has a new parameter encryption
+  - Model NetAppAccount has a new parameter system_data
+  - Model Backup has a new parameter failure_reason
+  - Model Volume has a new parameter encryption_key_source
+  - Model NetAppAccountPatch has a new parameter encryption
+  - Model ActiveDirectory has a new parameter ldap_over_tls
+
 ## 0.15.0 (2021-01-05)
 
 **Features**

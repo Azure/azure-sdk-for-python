@@ -141,22 +141,24 @@ def delete_volume(client, rg, account_name, pool_name, volume_name, live=False):
     wait_for_no_volume(client, rg, account_name, pool_name, volume_name, live)
 
 
-def wait_for_replication_status(client, target_state):
+def wait_for_replication_status(client, target_state, live=False):
     # python isn't good at do-while loops but loop until we get the target state
     while True:
         replication_status = client.volumes.replication_status_method(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
         if replication_status.mirror_state == target_state:
             break
-        time.sleep(1)
+        if live:
+            time.sleep(1)
 
-def wait_for_succeeded(client):
+def wait_for_succeeded(client, live=False):
     # python isn't good at do-while loops but loop until we get volumes in succeeded state
     while True:
         source_volume = client.volumes.get(TEST_REPL_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
         dp_volume = client.volumes.get(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
         if (source_volume.provisioning_state == "Succeeded") and (dp_volume.provisioning_state == "Succeeded"):
             break
-        time.sleep(1)
+        if live:
+            time.sleep(1)
 
 
 class NetAppAccountTestCase(AzureMgmtTestCase):
@@ -241,27 +243,27 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
 
         # sync replication
         self.client.volumes.authorize_replication(TEST_REPL_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, dp_volume.id)
-        wait_for_succeeded(self.client)
+        wait_for_succeeded(self.client, self.is_live)
         if self.is_live:
             time.sleep(30)
-        wait_for_replication_status(self.client, "Mirrored")
+        wait_for_replication_status(self.client, "Mirrored", self.is_live)
 
         # break replication
         self.client.volumes.break_replication(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
-        wait_for_replication_status(self.client, "Broken")
+        wait_for_replication_status(self.client, "Broken", self.is_live)
         if self.is_live:
             time.sleep(30)
-        wait_for_succeeded(self.client)
+        wait_for_succeeded(self.client, self.is_live)
 
         # resync
         self.client.volumes.resync_replication(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
-        wait_for_replication_status(self.client, "Mirrored")
+        wait_for_replication_status(self.client, "Mirrored", self.is_live)
         if self.is_live:
             time.sleep(30)
 
         # break again
         self.client.volumes.break_replication(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
-        wait_for_replication_status(self.client, "Broken")
+        wait_for_replication_status(self.client, "Broken", self.is_live)
         if self.is_live:
             time.sleep(30)
 

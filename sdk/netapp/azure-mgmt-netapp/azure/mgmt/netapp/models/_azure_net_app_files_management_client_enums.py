@@ -43,6 +43,19 @@ class ActiveDirectoryStatus(str, Enum):
     updating = "Updating"  #: Active Directory Updating
 
 
+class KeySource(str, Enum):
+
+    microsoft_net_app = "Microsoft.NetApp"  #: The service manages the keys.
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
+
+
 class ServiceLevel(str, Enum):
 
     standard = "Standard"  #: Standard service level

@@ -27,7 +27,7 @@ class BackupPoliciesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-09-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-11-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class BackupPoliciesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-09-01"
+        self.api_version = "2020-11-01"
 
         self.config = config
 
@@ -350,13 +350,15 @@ class BackupPoliciesOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
         if response.status_code == 200:
+            deserialized = self._deserialize('BackupPolicy', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('BackupPolicy', response)
 
         if raw:
