@@ -1,5 +1,11 @@
 # Release History
 
+## 0.5.0 (2021-03-09)
+
+** Features **
+
+- Add library operations
+
 ## 0.4.0 (2020-12-08)
 
 ** Features **
