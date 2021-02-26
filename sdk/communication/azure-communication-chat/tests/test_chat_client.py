@@ -58,7 +58,7 @@ class TestChatClient(unittest.TestCase):
             share_history_time=datetime.utcnow()
         )]
         try:
-            create_chat_thread_result = chat_client.create_chat_thread(topic, participants)
+            create_chat_thread_result = chat_client.create_chat_thread(topic, thread_participants=participants)
         except:
             raised = True
             raise

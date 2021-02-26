@@ -448,12 +448,13 @@ class TestChatThreadClient(unittest.TestCase):
                 share_history_time=datetime.utcnow())
 
         try:
-            result = chat_thread_client.add_participant(new_participant)
+            failed_participant, communication_error = chat_thread_client.add_participant(new_participant)
         except:
             raised = True
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertTrue(len(result) == 0)
+        self.assertIsNone(failed_participant)
+        self.assertIsNone(communication_error)
 
     def test_add_participant_w_failed_participants_returns_tuple(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"

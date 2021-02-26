@@ -465,11 +465,13 @@ async def test_add_participant():
             share_history_time=datetime.utcnow())
 
     try:
-        await chat_thread_client.add_participant(new_participant)
+        failed_participant, communication_error = await chat_thread_client.add_participant(new_participant)
     except:
         raised = True
 
     assert raised == False
+    assert failed_participant is None
+    assert communication_error is None
 
 @pytest.mark.asyncio
 async def test_add_participant_w_failed_participants_returns_tuple():

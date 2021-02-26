@@ -263,3 +263,20 @@ class ChatMessageReadReceipt(object):
             chat_message_id=read_receipt.chat_message_id,
             read_on=read_receipt.read_on
         )
+
+class CreateChatThreadResult(object):
+    """Result of the create chat thread operation.
+
+    :param chat_thread: Chat thread.
+    :type chat_thread: ~azure.communication.chat.ChatThread
+    :param errors: Errors encountered during the creation of the chat thread.
+    :type errors: list((~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.CommunicationError))
+    """
+
+    def __init__(
+        self,
+        **kwargs # type: Any
+    ):
+        # type: (...) -> None
+        self.chat_thread = kwargs['chat_thread']
+        self.errors = kwargs.get('errors', None)

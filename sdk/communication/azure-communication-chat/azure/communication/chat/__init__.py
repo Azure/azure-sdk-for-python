@@ -5,7 +5,6 @@ from ._generated.models import (
     SendChatMessageResult,
     ChatThreadInfo,
     ChatMessageType,
-    CreateChatThreadResult,
     AddChatParticipantsResult,
     CommunicationError
 )
@@ -15,7 +14,8 @@ from ._models import (
     ChatMessage,
     ChatThread,
     ChatMessageReadReceipt,
-    ChatMessageContent
+    ChatMessageContent,
+    CreateChatThreadResult
 )
 
 __all__ = [

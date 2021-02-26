@@ -80,7 +80,7 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             display_name='name',
             share_history_time=share_history_time
         )]
-        create_chat_thread_result = await self.chat_client.create_chat_thread(topic, participants)
+        create_chat_thread_result = await self.chat_client.create_chat_thread(topic, thread_participants=participants)
         self.chat_thread_client = self.chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
         self.thread_id = self.chat_thread_client.thread_id
 
@@ -101,7 +101,7 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 share_history_time=share_history_time
             )
         ]
-        create_chat_thread_result = await self.chat_client.create_chat_thread(topic, participants)
+        create_chat_thread_result = await self.chat_client.create_chat_thread(topic, thread_participants=participants)
         self.chat_thread_client = self.chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
         self.thread_id = self.chat_thread_client.thread_id
 

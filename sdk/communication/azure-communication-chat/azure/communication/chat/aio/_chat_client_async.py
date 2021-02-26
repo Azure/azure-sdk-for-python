@@ -29,7 +29,8 @@ from .._generated.models import (
 )
 from .._models import (
     ChatThread,
-    ChatThreadParticipant
+    ChatThreadParticipant,
+    CreateChatThreadResult
 )
 from .._utils import _to_utc_datetime, return_response  # pylint: disable=unused-import
 from .._version import SDK_MONIKER
@@ -123,8 +124,6 @@ class ChatClient(object):
     @distributed_trace_async
     async def create_chat_thread(
         self, topic: str,
-        thread_participants: List[ChatThreadParticipant],
-        repeatability_request_id: Optional[str] = None,
         **kwargs
     ) -> ChatThreadClient:
 
@@ -134,15 +133,15 @@ class ChatClient(object):
 
         :param topic: Required. The thread topic.
         :type topic: str
-        :param thread_participants: Required. Participants to be added to the thread.
-        :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
-        :param repeatability_request_id: If specified, the client directs that the request is
+        :keyword thread_participants: Optional. Participants to be added to the thread.
+        :paramtype thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
+        :keyword repeatability_request_id: Optional. If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-ID and get back an appropriate response without the server executing the
          request multiple times. The value of the Repeatability-Request-ID is an opaque string
          representing a client-generated, globally unique for all time, identifier for the request. If not
          specified, a new unique id would be generated.
-        :type repeatability_request_id: str
+        :paramtype repeatability_request_id: str
         :return: CreateChatThreadResult
         :rtype: ~azure.communication.chat.CreateChatThreadResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -158,12 +157,16 @@ class ChatClient(object):
         """
         if not topic:
             raise ValueError("topic cannot be None.")
-        if not thread_participants:
-            raise ValueError("List of ThreadParticipant cannot be None.")
+
+        repeatability_request_id = kwargs.pop('repeatability_request_id', None)
         if repeatability_request_id is None:
             repeatability_request_id = str(uuid4())
 
-        participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
+        thread_participants = kwargs.pop('thread_participants', None)
+        participants = []
+        if thread_participants is not None:
+            participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
+
         create_thread_request = \
             CreateChatThreadRequest(topic=topic, participants=participants)
 
@@ -171,6 +174,23 @@ class ChatClient(object):
             create_chat_thread_request=create_thread_request,
             repeatability_request_id=repeatability_request_id,
             **kwargs)
+
+        errors = None
+        if hasattr(create_chat_thread_result, 'errors') and \
+                create_chat_thread_result.errors is not None:
+            errors = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
+                participants=[thread_participants],
+                communication_errors=create_chat_thread_result.errors.invalid_participants
+            )
+
+        chat_thread = ChatThread._from_generated(
+            create_chat_thread_result.chat_thread)  # pylint:disable=protected-access
+
+        create_chat_thread_result = CreateChatThreadResult(
+            chat_thread=chat_thread,
+            errors=errors
+        )
+
         return create_chat_thread_result
 
     @distributed_trace_async

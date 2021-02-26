@@ -50,7 +50,7 @@ async def test_create_chat_thread():
         display_name='name',
         share_history_time=datetime.utcnow()
     )]
-    create_chat_thread_result = await chat_client.create_chat_thread(topic, participants)
+    create_chat_thread_result = await chat_client.create_chat_thread(topic, thread_participants=participants)
     assert create_chat_thread_result.chat_thread.id == thread_id
 
 @pytest.mark.asyncio

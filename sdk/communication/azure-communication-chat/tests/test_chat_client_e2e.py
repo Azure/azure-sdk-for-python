@@ -71,13 +71,24 @@ class ChatClientTest(CommunicationTestCase):
             display_name='name',
             share_history_time=share_history_time
         )]
-        create_chat_thread_result = self.chat_client.create_chat_thread(topic, participants, repeatability_request_id)
+        create_chat_thread_result = self.chat_client.create_chat_thread(topic,
+                                                                        thread_participants=participants,
+                                                                        repeatability_request_id=repeatability_request_id)
         self.thread_id = create_chat_thread_result.chat_thread.id
 
     @pytest.mark.live_test_only
     def test_create_chat_thread(self):
         self._create_thread()
         assert self.thread_id is not None
+
+    @pytest.mark.live_test_only
+    def test_create_chat_thread_w_no_participants(self):
+        # create chat thread
+        topic = "test topic"
+        create_chat_thread_result = self.chat_client.create_chat_thread(topic)
+        self.thread_id = create_chat_thread_result.chat_thread.id
+        assert create_chat_thread_result.chat_thread is not None
+        assert create_chat_thread_result.errors is None
 
     @pytest.mark.live_test_only
     def test_create_chat_thread_w_repeatability_request_id(self):

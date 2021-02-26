@@ -19,9 +19,14 @@ from ._generated import AzureCommunicationChatService
 from ._generated.models import CreateChatThreadRequest
 from ._models import (
     ChatThread,
-    ChatThreadParticipant
+    ChatThreadParticipant,
+    CreateChatThreadResult
 )
-from ._utils import _to_utc_datetime, return_response # pylint: disable=unused-import
+from ._utils import (
+    _to_utc_datetime,  # pylint: disable=unused-import
+    return_response,
+    CommunicationErrorResponseConverter
+)
 from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
@@ -119,8 +124,6 @@ class ChatClient(object):
     @distributed_trace
     def create_chat_thread(
         self, topic,  # type: str
-        thread_participants,  # type: list[ChatThreadParticipant]
-        repeatability_request_id=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> CreateChatThreadResult
@@ -128,8 +131,7 @@ class ChatClient(object):
 
         :param topic: Required. The thread topic.
         :type topic: str
-        :keyword thread_participants: Optional. Participants
-            to be added to the thread.
+        :keyword thread_participants: Optional. Participants to be added to the thread.
         :paramtype thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
         :keyword repeatability_request_id: Optional. If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
@@ -169,6 +171,23 @@ class ChatClient(object):
             create_chat_thread_request=create_thread_request,
             repeatability_request_id=repeatability_request_id,
             **kwargs)
+
+        errors = None
+        if hasattr(create_chat_thread_result, 'errors') and \
+                create_chat_thread_result.errors is not None:
+            errors = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
+                participants=[thread_participants],
+                communication_errors=create_chat_thread_result.errors.invalid_participants
+            )
+
+        chat_thread = ChatThread._from_generated(
+            create_chat_thread_result.chat_thread)  # pylint:disable=protected-access
+
+        create_chat_thread_result = CreateChatThreadResult(
+            chat_thread=chat_thread,
+            errors=errors
+        )
+
         return create_chat_thread_result
 
     @distributed_trace
