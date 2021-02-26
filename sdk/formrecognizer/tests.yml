@@ -22,6 +22,11 @@ stages:
           MatrixFilters:
             - OSVmImage=^(?!macOS).*
             - PythonVersion=^(?!pypy3).*
+      ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')}}:
+        UsGov:
+          SubscriptionConfiguration: $(sub-config-gov-test-resources)
+        China:
+          SubscriptionConfiguration: $(sub-config-cn-test-resources)
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
