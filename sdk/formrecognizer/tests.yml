@@ -12,21 +12,32 @@ stages:
       # This is a specific request from the formrecognizer service team
       # their claim is that the full matrix ends up stress-testing their service.
       # As such, the canary test runs should run on a reduced matrix.
-      CloudConfig:
-        Public:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-          Location: $(LOCATION)
-        Canary:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-          Location: 'centraluseuap'
-          MatrixFilters:
-            - OSVmImage=^(?!macOS).*
-            - PythonVersion=^(?!pypy3).*
-      ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')}}:
-        UsGov:
-          SubscriptionConfiguration: $(sub-config-gov-test-resources)
-        China:
-          SubscriptionConfiguration: $(sub-config-cn-test-resources)
+      ${{ if not(contains(variables['Build.DefinitionName'], 'tests-weekly')) }}:
+        CloudConfig:
+          Public:
+            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+            Location: $(LOCATION)
+          Canary:
+            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+            Location: 'centraluseuap'
+            MatrixFilters:
+              - OSVmImage=^(?!macOS).*
+              - PythonVersion=^(?!pypy3).*
+      ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly') }}:
+        CloudConfig:
+          Public:
+            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+            Location: $(LOCATION)
+          Canary:
+            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+            Location: 'centraluseuap'
+            MatrixFilters:
+              - OSVmImage=^(?!macOS).*
+              - PythonVersion=^(?!pypy3).*
+          UsGov:
+            SubscriptionConfiguration: $(sub-config-gov-test-resources)
+          China:
+            SubscriptionConfiguration: $(sub-config-cn-test-resources)
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
