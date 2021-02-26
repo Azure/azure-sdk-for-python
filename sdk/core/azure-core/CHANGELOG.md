@@ -2,6 +2,10 @@
 
 ## 1.11.1 (Unreleased)
 
+### Bug Fixes
+
+- Improve `repr`s for `HttpRequest` and `HttpResponse`s  #16972
+
 
 ## 1.11.0 (2021-02-08)
 
