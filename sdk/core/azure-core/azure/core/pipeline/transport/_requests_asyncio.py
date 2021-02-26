@@ -152,10 +152,10 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         headers = response.headers
         if "x-ms-range" in headers:
             self.range_header = "x-ms-range"    # type: Optional[str]
-            self.range = headers["x-ms-range"]
+            self.range = parse_range_header(headers["x-ms-range"])
         elif "Range" in headers:
             self.range_header = "Range"
-            self.range = headers["Range"]
+            self.range = parse_range_header(headers["Range"])
         else:
             self.range_header = None
         self.etag = response.headers['etag'] if 'etag' in headers else None
@@ -163,7 +163,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
     def __len__(self):
         return self.content_length
 
-    async def __anext__(self):
+    async def __anext__(self):  # pylint:disable=too-many-statements
         loop = _get_running_loop()
         retry_active = True
         retry_total = 3

@@ -213,10 +213,10 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         headers = response.headers
         if "x-ms-range" in headers:
             self.range_header = "x-ms-range"    # type: Optional[str]
-            self.range = headers["x-ms-range"]
+            self.range = parse_range_header(headers["x-ms-range"])
         elif "Range" in headers:
             self.range_header = "Range"
-            self.range = headers["Range"]
+            self.range = parse_range_header(headers["Range"])
         else:
             self.range_header = None
         self.etag = response.headers['etag'] if 'etag' in headers else None
@@ -224,13 +224,14 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     def __len__(self):
         return self.content_length
 
-    async def __anext__(self):
+    async def __anext__(self):  # pylint:disable=too-many-statements
         retry_active = True
         retry_total = 3
         retry_interval = 1  # 1 second
         try:
             chunk = await self.response.internal_response.content.read(self.block_size)
             if not chunk:
+                self.response.internal_response.close()
                 raise _ResponseStopIteration()
             self.downloaded += self.block_size
             return chunk
@@ -262,6 +263,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                     self.response = resp.http_response
                     chunk = await self.response.internal_response.content.read(self.block_size)
                     if not chunk:
+                        self.response.internal_response.close()
                         raise StopAsyncIteration()
                     self.downloaded += self.block_size
                     return chunk

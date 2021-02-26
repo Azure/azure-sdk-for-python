@@ -113,10 +113,10 @@ class StreamDownloadGenerator(object):
         headers = response.headers
         if "x-ms-range" in headers:
             self.range_header = "x-ms-range"
-            self.range = headers["x-ms-range"]
+            self.range = parse_range_header(headers["x-ms-range"])
         elif "Range" in headers:
             self.range_header = "Range"
-            self.range = headers["Range"]
+            self.range = parse_range_header(headers["Range"])
         else:
             self.range_header = None
         self.etag = response.headers['etag'] if 'etag' in headers else None
@@ -127,7 +127,7 @@ class StreamDownloadGenerator(object):
     def __iter__(self):
         return self
 
-    def __next__(self):
+    def __next__(self): # pylint:disable=too-many-statements
         retry_active = True
         retry_total = 3
         retry_interval = 1  # 1 second

@@ -969,8 +969,8 @@ def parse_range_header(header_value):
     range_value = header_value.strip()
     if not range_value.startswith("bytes="):
         raise ValueError("Invalid header")
-    range = range_value[6:]
-    ret = range.split("-")
+    range_str = range_value[6:]
+    ret = range_str.split("-")
     if len(ret) < 2:
         raise ValueError("Invalid header")
     start = int(ret[0]) if ret[0] else -1
@@ -985,4 +985,3 @@ def make_range_header(original_range, downloaded_size=0):
     if original_range[1] == -1:
         return "bytes=" + str(start) + "-"
     return "bytes=" + str(start) + "-" + str(original_range[1])
-
