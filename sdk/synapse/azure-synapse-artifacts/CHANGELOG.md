@@ -5,6 +5,7 @@
 ** Features **
 
 - Add library operations
+- Change create_or_update_sql_script, delete_sql_script, rename_sql_script to long running operations
 
 ## 0.4.0 (2020-12-08)
 
