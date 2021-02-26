@@ -74,7 +74,7 @@ This test installs sdist of the package being tested and runs all tests cases in
    ``tox -e sdist -c ../../../eng/tox/tox.ini``
 
 #### depends
-The `depends` check ensures all modules in target package can be successfully imported. Actually installing and importing will verify that all package requirements are properly set in setup.py and that the `__all__` set for the package is properly defined. This test installs the package and its required packages, then executes `from <package-root-namespace> import *`. For example from `azure-core`, the following would be invoked:  `from azure.core import *`.
+The `depends` check ensures all modules in a target package can be successfully imported. Actually installing and importing will verify that all package requirements are properly set in setup.py and that the `__all__` set for the package is properly defined. This test installs the package and its required packages, then executes `from <package-root-namespace> import *`. For example from `azure-core`, the following would be invoked:  `from azure.core import *`.
 
 Following is the command to run this test environment locally.
 
