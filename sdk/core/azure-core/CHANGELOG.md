@@ -5,6 +5,7 @@
 ### Features
 
 - Added `azure.core.messaging.CloudEvent` model that follows the cloud event spec.
+- Added `azure.core.serialization.NULL` sentinel value 
 
 ## 1.11.0 (2021-02-08)
 
