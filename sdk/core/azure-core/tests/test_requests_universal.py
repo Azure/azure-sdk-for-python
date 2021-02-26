@@ -88,4 +88,4 @@ def test_repr():
         b'\xef\xbb\xbf56',
         {'Content-Type': 'text/plain'}
     )
-    assert repr(res) == "<RequestsTransportResponse: 200 OK, Content-Type:text/plain>"
+    assert repr(res) == "<RequestsTransportResponse: 200 OK, Content-Type: text/plain>"

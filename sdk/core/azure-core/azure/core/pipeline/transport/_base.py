@@ -595,9 +595,13 @@ class _HttpResponseBase(object):
             raise HttpResponseError(response=self)
 
     def __repr__(self) -> str:
+        # there doesn't have to be a content type
+        content_type_str = (
+            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        )
         reason = " {}".format(self.reason) if self.reason else ""
-        return "<{}: {}{}, Content-Type:{}>".format(
-            type(self).__name__, self.status_code, reason, self.content_type
+        return "<{}: {} {}{}>".format(
+            type(self).__name__, self.status_code, self.reason, content_type_str
         )
 
 
