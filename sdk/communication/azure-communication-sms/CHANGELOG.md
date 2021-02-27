@@ -9,7 +9,6 @@
 
 ### Breaking
 - Send method takes in strings for phone numbers instead of `PhoneNumberIdentifier`.
-to `Task<Response<SmsSendResult>> SendAsync(string from, string to, string message, Models.SmsSendOptions options = default)`
 - Send method returns a list of `SmsSendResult`s instead of a `SendSmsResponse`.
 
 ## 1.0.0b5 (2021-02-09)
