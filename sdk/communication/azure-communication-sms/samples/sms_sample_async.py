@@ -46,11 +46,12 @@ class SmsSamples(object):
             for sms_response in sms_responses:
                 if (sms_response.successful):
                     print("Message with message id {} was successful sent to {}"
-                    .format(sms_response.message_id , sms_response.to))
+                    .format(sms_response.message_id, sms_response.to))
                 else:
-                    print("Message failed to send to {}"
-                    .format(sms_response.to))
-                    failed_recipients.append(sms_response.to)
+                    print("Message failed to send to {} with the status code {} and error: {}"
+                    .format(sms_response.to, sms_response.http_status_code, sms_response.error_message))
+                    if (sms_response.http_status_code != 400):
+                        failed_recipients.append(sms_response.to)
             
             try:
                 # calling send() with failed recipients
