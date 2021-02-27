@@ -71,7 +71,7 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
                 to=[self.phone_number, self.phone_number],
                 message="Hello World via SMS",
                 enable_delivery_report=True,  # optional property
-                tag="custom-tag")  # optional propert
+                tag="custom-tag")  # optional property
             
             assert len(sms_responses) is 2
 
@@ -96,7 +96,7 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
                 to=[self.phone_number],
                 message="Hello World via SMS",
                 enable_delivery_report=True,  # optional property
-                tag="custom-tag")  # optional propert
+                tag="custom-tag")  # optional property
             
             assert len(sms_responses) is 1
 
@@ -116,14 +116,35 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
                 to=["+1234567891011"],
                 message="Hello World via SMS",
                 enable_delivery_report=True,  # optional property
-                tag="custom-tag")  # optional propert
+                tag="custom-tag")  # optional property
             
             assert len(sms_responses) is 1
 
         for sms_response in sms_responses:
             assert sms_response.http_status_code == 400
             assert not sms_response.successful
+    
+    @AsyncCommunicationTestCase.await_prepared_test
+    @pytest.mark.live_test_only
+    async def test_send_sms_unique_message_ids_async(self):
 
+        sms_client = SmsClient.from_connection_string(self.connection_str)
+
+        async with sms_client:
+            # calling send() with sms values
+            sms_responses_1 = await sms_client.send(
+                from_=self.phone_number,
+                to=[self.phone_number],
+                message="Hello World via SMS")
+        
+            # calling send() again with the same sms values
+            sms_responses_2 = await sms_client.send(
+                from_=self.phone_number,
+                to=[self.phone_number],
+                message="Hello World via SMS")
+        
+            assert sms_responses_1[0].message_id != sms_responses_2[0].message_id
+    
     def verify_sms_response(self, sms_response):
         assert sms_response.to == self.phone_number
         assert sms_response.message_id is not None

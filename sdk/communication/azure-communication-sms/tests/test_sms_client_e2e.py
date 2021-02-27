@@ -79,6 +79,24 @@ class SMSClientTest(CommunicationTestCase):
         for sms_response in sms_responses:
             assert sms_response.http_status_code == 400
             assert not sms_response.successful
+    
+    @pytest.mark.live_test_only
+    def test_send_sms_unique_message_ids(self):
+
+        # calling send() with sms values
+        sms_responses_1 = self.sms_client.send(
+            from_=self.phone_number,
+            to=[self.phone_number],
+            message="Hello World via SMS")
+        
+        # calling send() again with the same sms values
+        sms_responses_2 = self.sms_client.send(
+            from_=self.phone_number,
+            to=[self.phone_number],
+            message="Hello World via SMS")
+        
+        # message ids should be unique due to having a different idempotency key
+        assert sms_responses_1[0].message_id != sms_responses_2[0].message_id
 
     def verify_sms_response(self, sms_response):
         assert sms_response.to == self.phone_number
