@@ -28,6 +28,7 @@ from azure.keyvault.certificates import (
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates._shared import HttpChallengeCache
 from devtools_testutils import PowerShellPreparer
+from parameterized import parameterized, param
 import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
@@ -37,6 +38,10 @@ KeyVaultPreparer = functools.partial(
     "keyvault",
     azure_keyvault_url="https://vaultname.vault.azure.net"
 )
+
+
+def suffixed_test_name(testcase_func, param_num, param):
+    return "{}_{}".format(testcase_func.__name__, parameterized.to_safe_name(param.kwargs.get("api_version")))
 
 
 class RetryAfterReplacer(RecordingProcessor):
@@ -73,6 +78,11 @@ class CertificateClientTests(KeyVaultTestCase):
         return self.create_client_from_credential(
             CertificateClient, credential=credential, vault_url=vault_uri, **kwargs
         )
+
+    def _should_skip_test(self, api_version):
+        if self.is_live:
+            return api_version != ApiVersion.V7_1  # test only the default version live
+        return False
 
     async def _import_common_certificate(self, client, cert_name):
         cert_password = "123"
@@ -175,9 +185,10 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(a.name, b.name)
         self.assertEqual(a.provider, b.provider)
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_crud_operations(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [LifetimeAction(lifetime_percentage=80, action=CertificatePolicyAction.auto_renew)]
@@ -229,9 +240,10 @@ class CertificateClientTests(KeyVaultTestCase):
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
-    async def test_import_certificate_not_password_encoded_no_policy(self, azure_keyvault_url):
-        client = self.create_client(azure_keyvault_url)
+    async def test_import_certificate_not_password_encoded_no_policy(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         # If a certificate is not password encoded, we can import the certificate
         # without passing in 'password'
@@ -241,9 +253,12 @@ class CertificateClientTests(KeyVaultTestCase):
         )
         self.assertIsNotNone(certificate.policy)
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
-    async def test_import_certificate_password_encoded_no_policy(self, azure_keyvault_url):
-        client = self.create_client(azure_keyvault_url)
+    async def test_import_certificate_password_encoded_no_policy(self, azure_keyvault_url, **kwargs):
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         # If a certificate is password encoded, we have to pass in 'password'
         # when importing the certificate
@@ -254,9 +269,10 @@ class CertificateClientTests(KeyVaultTestCase):
         )
         self.assertIsNotNone(certificate.policy)
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_list(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         max_certificates = self.list_test_size
         expected = {}
@@ -283,9 +299,12 @@ class CertificateClientTests(KeyVaultTestCase):
         returned_certificates = client.list_properties_of_certificates(max_page_size=max_certificates - 1)
         await self._validate_certificate_list(expected, returned_certificates)
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_list_certificate_versions(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         cert_name = self.get_resource_name("certver")
 
@@ -316,9 +335,12 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_crud_contacts(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         contact_list = [
             CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
@@ -345,9 +367,10 @@ class CertificateClientTests(KeyVaultTestCase):
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_recover_and_purge(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         certs = {}
         # create certificates to recover
@@ -396,10 +419,13 @@ class CertificateClientTests(KeyVaultTestCase):
             actual[k] = await client.get_certificate_version(certificate_name=k, version="")
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @pytest.mark.skip("Skipping because service doesn't allow cancellation of certificates with issuer 'Unknown'")
     @KeyVaultPreparer()
     async def test_async_request_cancellation_and_deletion(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         cert_name = self.get_resource_name("asyncCanceledDeletedCert")
         cert_policy = CertificatePolicy.get_default()
@@ -456,9 +482,15 @@ class CertificateClientTests(KeyVaultTestCase):
         # delete cancelled certificate
         await client.delete_certificate(cert_name)
 
+    @parameterized.expand(
+        [param(api_version=api_version) for api_version in ApiVersion if api_version != ApiVersion.V2016_10_01],
+        name_func=suffixed_test_name
+    )
     @KeyVaultPreparer()
     async def test_policy(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         cert_name = self.get_resource_name("policyCertificate")
         cert_policy = CertificatePolicy(
@@ -492,9 +524,12 @@ class CertificateClientTests(KeyVaultTestCase):
 
         self._validate_certificate_policy(cert_policy, returned_policy)
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_get_pending_certificate_signing_request(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         cert_name = self.get_resource_name("unknownIssuerCert")
 
@@ -504,9 +539,13 @@ class CertificateClientTests(KeyVaultTestCase):
         pending_version_csr = operation.csr
         self.assertEqual((await client.get_certificate_operation(certificate_name=cert_name)).csr, pending_version_csr)
 
+    @parameterized.expand(
+        [param(api_version=api_version) for api_version in ApiVersion if api_version != ApiVersion.V2016_10_01],
+        name_func=suffixed_test_name
+    )
     @KeyVaultPreparer()
     async def test_backup_restore(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         cert_name = self.get_resource_name("cert")
         policy = CertificatePolicy.get_default()
@@ -531,9 +570,12 @@ class CertificateClientTests(KeyVaultTestCase):
         )
         self._validate_certificate_bundle(cert=restored_certificate, cert_name=cert_name, cert_policy=policy)
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_crud_issuer(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         issuer_name = self.get_resource_name("issuer")
         admin_contacts = [
@@ -611,9 +653,12 @@ class CertificateClientTests(KeyVaultTestCase):
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_logging_enabled(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url, logging_enable=True)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, logging_enable=True, **kwargs)
 
         mock_handler = MockHandler()
 
@@ -636,9 +681,12 @@ class CertificateClientTests(KeyVaultTestCase):
 
         assert False, "Expected request body wasn't logged"
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_logging_disabled(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url, logging_enable=False)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, logging_enable=False, **kwargs)
 
         mock_handler = MockHandler()
 
@@ -658,9 +706,12 @@ class CertificateClientTests(KeyVaultTestCase):
                     # this means the message is not JSON or has no kty property
                     pass
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_get_certificate_version(self, azure_keyvault_url, **kwargs):
-        client = self.create_client(azure_keyvault_url)
+        if self._should_skip_test(kwargs.get("api_version")):
+            pytest.skip()
+        client = self.create_client(azure_keyvault_url, **kwargs)
 
         cert_name = self.get_resource_name("cert")
         policy = CertificatePolicy.get_default()
@@ -685,6 +736,7 @@ class CertificateClientTests(KeyVaultTestCase):
             assert version_properties.version == cert.properties.version
             assert version_properties.x509_thumbprint == cert.properties.x509_thumbprint
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_list_properties_of_certificates_2016_10_01(self, azure_keyvault_url, **kwargs):
         client = self.create_client(azure_keyvault_url, api_version=ApiVersion.V2016_10_01)
@@ -700,6 +752,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         assert "The 'include_pending' parameter to `list_properties_of_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
 
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @KeyVaultPreparer()
     async def test_list_deleted_certificates_2016_10_01(self, azure_keyvault_url, **kwargs):
         client = self.create_client(azure_keyvault_url, api_version=ApiVersion.V2016_10_01)
