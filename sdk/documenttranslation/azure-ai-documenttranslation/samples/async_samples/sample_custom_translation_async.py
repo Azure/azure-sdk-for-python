@@ -55,16 +55,16 @@ class CustomTranslationSampleAsync(object):
             if job_result.status == "Succeeded":
                 print("We translated our documents!")
                 if job_result.documents_failed_count > 0:
-                    self.check_documents(client, job_result.id)
+                    await self.check_documents(client, job_result.id)
 
                 if job_result.status in ["Failed", "ValidationFailed"]:
                     if job_result.error:
                         print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
-                    self.check_documents(client, job_result.id)
+                    await self.check_documents(client, job_result.id)
                     exit(1)
 
 
-    def check_documents(self, client, job_id):
+    async def check_documents(self, client, job_id):
         from azure.core.exceptions import ResourceNotFoundError
 
         try:
