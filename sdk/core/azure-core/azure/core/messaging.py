@@ -155,7 +155,10 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         for item in ["datacontenttype", "dataschema", "subject"]:
             if item in event:
                 val = event.get(item)
-                kwargs.setdefault(item, val) if val is not None else kwargs.setdefault(item, NULL)
+                if val is not None:
+                    kwargs.setdefault(item, val)
+                else:
+                    kwargs.setdefault(item, NULL)
 
         extensions = {k: v for k, v in event.items() if k not in reserved_attr}
         if extensions:
