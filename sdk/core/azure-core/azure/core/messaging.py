@@ -11,12 +11,12 @@ from azure.core._utils import _convert_to_isoformat, TZ_UTC
 from azure.core.serialization import NULL
 
 try:
-    from typing import TYPE_CHECKING
+    from typing import TYPE_CHECKING, cast
 except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
+    from typing import Any, Dict, Union
 
 
 __all__ = ["CloudEvent"]
@@ -88,7 +88,11 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         _optional_attributes = ["datacontenttype", "dataschema", "subject", "data"]
 
         for attr in _optional_attributes:
-            setattr(self, attr, kwargs.pop(attr, None))
+            if attr not in kwargs:
+                val = None
+            else:
+                val = kwargs.pop(attr, NULL)
+            setattr(self, attr, val)
 
         if "extensions" in kwargs:
             self.extensions = {}  # type: Dict
@@ -119,7 +123,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         :type event: dict
         :rtype: CloudEvent
         """
-        kwargs = {}
+        kwargs = {} # type: Dict[Any, Any]
         reserved_attr = [
             "data",
             "data_base64",
@@ -138,12 +142,15 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
                 "Invalid input. Only one of data and data_base64 must be present."
             )
         if 'data' not in event and 'data_base64' not in event:
-            kwargs.setdefault("data", None) 
+            kwargs.setdefault("data", None)
         elif "data" in event:
             data = event.get("data")
-            kwargs.setdefault("data", data) if data is not None else kwargs.setdefault("data", NULL)
+            if data is not None:
+                kwargs.setdefault("data", data)
+            else:
+                kwargs.setdefault("data", NULL)
         elif "data_base64" in event:
-            kwargs.setdefault("data", b64decode(event.get("data_base64")))
+            kwargs.setdefault("data", b64decode(cast(Union[str, bytes], event.get("data_base64"))))
 
         for item in ["datacontenttype", "dataschema", "subject"]:
             if item in event:
