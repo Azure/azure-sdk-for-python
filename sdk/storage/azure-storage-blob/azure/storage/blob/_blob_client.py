@@ -10,6 +10,9 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
 )
+
+from build.lib.azure.core.pipeline import Pipeline
+
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -21,7 +24,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from ._shared import encode_base64
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
 from ._shared.request_handlers import (
@@ -164,6 +167,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
 
+        # This parameter is used for the hierarchy traversal. Give precedence to credential.
+        self.client_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
@@ -3741,3 +3746,39 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return self._client.append_blob.seal(**options) # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace
+    def get_container_client(self, **kwargs):
+        # type: (...) -> ContainerClient
+        """Get a client to interact with the blob's parent container.
+
+        The container need not already exist. Defaults to current blob's credentials.
+
+        :keyword credential:
+            This enables you to change credentials when its necessary. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+        :returns: A ContainerClient.
+        :rtype: ~azure.storage.blob.ContainerClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_containers.py
+                :start-after: [START get_blob_client]
+                :end-before: [END get_blob_client]
+                :language: python
+                :dedent: 8
+                :caption: Get the blob client.
+        """
+        from ._container_client import ContainerClient
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+
+        return ContainerClient(
+            "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
+            credential=kwargs.pop("credential", self.client_credential), api_version=self.api_version,
+            _configuration=self._config, _pipeline=_pipeline, _location_mode=self._location_mode,
+            _hosts=self._hosts, require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function)

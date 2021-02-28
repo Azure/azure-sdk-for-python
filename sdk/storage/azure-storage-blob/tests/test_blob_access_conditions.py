@@ -8,15 +8,12 @@
 import pytest
 
 from datetime import datetime, timedelta
-import os
 import unittest
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
-
 from azure.storage.blob import (
     BlobServiceClient,
-    ContainerClient,
     BlobClient,
     BlobLeaseClient,
     StorageErrorCode,
@@ -26,6 +23,11 @@ from azure.storage.blob import (
     BlobProperties,
     ContainerSasPermissions,
     AccessPolicy,
+    generate_blob_sas,
+    BlobSasPermissions,
+    generate_account_sas,
+    ResourceTypes,
+    AccountSasPermissions,
 )
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
@@ -67,6 +69,95 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         return container, blob
 
     # --Test cases for blob service --------------------------------------------
+    @GlobalStorageAccountPreparer()
+    def test_get_container_client_from_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        self._setup()
+        container_client1 = self._create_container(self.container_name, bsc)
+        test_datetime = (datetime.utcnow() - timedelta(minutes=15))
+
+        # Act
+        metadata = {'hello': 'world', 'number': '43'}
+        # Set metadata to check against later
+        container_client1.set_container_metadata(metadata, if_modified_since=test_datetime)
+
+        # Assert metadata is set
+        md1 = container_client1.get_container_properties().metadata
+        self.assertDictEqual(metadata, md1)
+
+        # Create a blob from container_client1
+        blob_name = self.get_resource_name("testblob1")
+        blob_client1 = container_client1.get_blob_client(blob_name)
+
+        # Upload data to blob and get container_client again
+        blob_client1.upload_blob(b"this is test data")
+        blob_client1_data = blob_client1.download_blob().readall()
+        container_client2 = blob_client1.get_container_client()
+
+        md2 = container_client2.get_container_properties().metadata
+        self.assertEqual(md1, md2)
+
+        # Ensure we can get blob client again
+        blob_client2 = container_client2.get_blob_client(blob_name)
+        blob_client2_data = blob_client2.download_blob().readall()
+
+        self.assertEqual(blob_client1_data, blob_client2_data)
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_get_container_client_from_blob_with_sas(
+            self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        self._setup()
+        container_client1 = self._create_container(self.container_name, bsc)
+        test_datetime = (datetime.utcnow() - timedelta(minutes=15))
+
+        # Act
+        metadata = {'hello': 'world', 'number': '43'}
+        # Set metadata to check against later
+        container_client1.set_container_metadata(metadata, if_modified_since=test_datetime)
+
+        # Assert metadata is set
+        md1 = container_client1.get_container_properties().metadata
+        self.assertDictEqual(metadata, md1)
+
+        # Create a blob from container_client1
+        blob_name = self.get_resource_name("testblob")
+        blob_client1 = container_client1.get_blob_client(blob_name)
+        blob_client1.upload_blob(b"this is test data")
+        container_sas_token = generate_account_sas(
+            container_client1.account_name,
+            account_key=container_client1.credential.account_key,
+            resource_types=ResourceTypes(container=True, object=True),
+            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        blob_sas_token = generate_blob_sas(
+            blob_client1.account_name,
+            blob_client1.container_name,
+            blob_client1.blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True, create=True, write=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        # Get a container client from a blob client using an account sas
+        container_client2_with_container_sas = BlobClient.from_blob_url(
+            blob_client1.url, credential=container_sas_token).get_container_client()
+        md2 = container_client2_with_container_sas.get_container_properties().metadata
+        self.assertEqual(md1, md2)
+
+        # Get a container client from a blob client using a blob sas - which should fail
+        container_client3_with_invalid_sas = BlobClient.from_blob_url(
+            blob_client1.url, blob_sas_token).get_container_client()
+        with self.assertRaises(HttpResponseError):
+            container_client3_with_invalid_sas.get_container_properties()
+
+        # Ensure passing a superior credential works
+        BlobClient.from_blob_url(blob_client1.url, blob_sas_token).get_container_client(
+            credential=container_sas_token).get_container_properties()
+
     @GlobalStorageAccountPreparer()
     def test_set_container_metadata_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
