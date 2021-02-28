@@ -18,7 +18,11 @@ class BatchTranslationWithStorageSampleAsync(object):
             BatchDocumentInput,
             StorageTarget
         )
-        from azure.storage.blob import ContainerClient, generate_container_sas, ContainerSasPermissions
+        from azure.storage.blob.aio import ContainerClient
+        from azure.storage.blob import (
+            generate_container_sas,
+            ContainerSasPermissions
+        )
 
         # get service secrets
         endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
@@ -45,7 +49,7 @@ class BatchTranslationWithStorageSampleAsync(object):
 
         # upload some document for translation
         with open("document.txt", "rb") as doc:
-            container_client.upload_blob("document.txt", doc)
+            await container_client.upload_blob(name="document.txt", data=doc)
 
         # prepare translation job input
         source_container_sas = generate_container_sas(
@@ -103,10 +107,8 @@ class BatchTranslationWithStorageSampleAsync(object):
                 credential=target_storage_key
             )
 
-            target_container_client = container_client.from_container_url(target_container_url)
-
             with open("translated.txt", "wb") as my_blob:
-                download_stream = target_container_client.download_blob("document.txt")
+                download_stream = await container_client.download_blob("document.txt")
                 my_blob.write(download_stream.readall())
 
 
