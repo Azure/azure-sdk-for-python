@@ -7,4 +7,10 @@
 
 __all__ = ["NULL"]
 
-NULL = False
+class _Null(object):
+    """To create a Falsy object
+    """
+    def __bool__(self):
+        return False
+
+NULL = _Null()

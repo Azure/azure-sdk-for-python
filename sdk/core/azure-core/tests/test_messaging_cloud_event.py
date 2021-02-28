@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import logging
 import sys
 import os
@@ -59,11 +63,8 @@ def test_cloud_event_constructor_none_data():
         type='SampleType',
         data=None
         )
-    
+
     assert event.data == None
-    assert event.datacontenttype == None
-    assert event.dataschema == None
-    assert event.subject == None
 
 def test_cloud_event_constructor_missing_data():
     event = CloudEvent(
