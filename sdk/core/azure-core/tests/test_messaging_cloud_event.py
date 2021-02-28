@@ -117,6 +117,8 @@ def test_cloud_storage_dict():
     assert event.time.day == 18
     assert event.time.hour == 20
     assert event.__class__ == CloudEvent
+    assert "id" in cloud_storage_dict
+    assert "data" in cloud_storage_dict
 
 
 def test_cloud_custom_dict_with_extensions():

@@ -11,12 +11,12 @@ from azure.core._utils import _convert_to_isoformat, TZ_UTC
 from azure.core.serialization import NULL
 
 try:
-    from typing import TYPE_CHECKING, cast
+    from typing import TYPE_CHECKING, cast, Union
 except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Union
+    from typing import Any, Dict
 
 
 __all__ = ["CloudEvent"]
