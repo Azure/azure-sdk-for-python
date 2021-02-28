@@ -114,13 +114,13 @@ class BatchTranslationWithStorageSampleAsync(object):
         from azure.core.exceptions import ResourceNotFoundError
 
         try:
-            doc_statuses = client.list_documents_statuses(job_id)  # type: ItemPaged[DocumentStatusDetail]
+            doc_statuses = client.list_documents_statuses(job_id)  # type: AsyncItemPaged[DocumentStatusDetail]
         except ResourceNotFoundError as err:
             print("Failed to process any documents in source/target container.")
             raise err
 
         docs_to_retry = []
-        for document in doc_statuses:
+        async for document in doc_statuses:
             if document.status == "Failed":
                 print("Document at {} failed to be translated to {} language".format(
                     document.url, document.translate_to
