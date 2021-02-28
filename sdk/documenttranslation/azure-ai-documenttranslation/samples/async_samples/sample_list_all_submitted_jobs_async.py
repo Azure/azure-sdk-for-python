@@ -24,7 +24,7 @@ class ListAllSubmittedJobsSampleAsync(object):
         # list submitted jobs
         jobs = client.list_submitted_jobs()
 
-        for job in jobs:
+        async for job in jobs:
             print("Job ID: {}".format(job.id))
             print("Job status: {}".format(job.status))
             print("Job created on: {}".format(job.created_on))

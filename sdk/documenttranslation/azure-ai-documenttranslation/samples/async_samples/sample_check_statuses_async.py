@@ -56,7 +56,7 @@ class CheckStatusesSampleAsync(object):
             while True:
                 job_detail = await client.get_job_status(job_detail.id)  # type: JobStatusDetail
                 if job_detail.status in ["NotStarted", "Running"]:
-                    time.sleep(10)
+                    await asyncio.sleep(10)
                     continue
 
                 if job_detail.status in ["Failed", "ValidationFailed"]:
