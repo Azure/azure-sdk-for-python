@@ -108,8 +108,8 @@ class BatchTranslationWithStorageSampleAsync(object):
             )
 
             with open("translated.txt", "wb") as my_blob:
-                download_stream = await container_client.download_blob("document.txt")
-                my_blob.write(download_stream.readall())
+                download_stream = container_client.download_blob("document.txt")
+                my_blob.write(await download_stream.readall())
 
 
     def check_documents(self, client, job_id):
