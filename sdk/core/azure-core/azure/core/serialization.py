@@ -13,4 +13,7 @@ class _Null(object):
     def __bool__(self):
         return False
 
+    __nonzero__ = __bool__ # Python2 compatibility
+
+
 NULL = _Null()
