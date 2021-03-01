@@ -64,6 +64,10 @@ class OperationLocationReplacer(RecordingProcessor):
                 else:
                     suffix = headers[location_header].split("/formrecognizer/")[1]
                 response['headers'][location_header] = [self._replacement + suffix]
+            url = response["url"]
+            if url is not None:
+                suffix = url.split("/formrecognizer/")[1]
+                response['url'] = self._replacement + suffix
             return response
         except (KeyError, ValueError):
             return response
