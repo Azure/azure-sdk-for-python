@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from ._api_versions import get_api_version
 from ._headers_mixin import HeadersMixin
