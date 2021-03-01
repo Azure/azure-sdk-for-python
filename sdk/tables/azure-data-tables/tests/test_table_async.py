@@ -424,42 +424,6 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         await ts.delete_table(table)
         locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
 
-    @pytest.mark.live_test_only
-    @TablesPreparer()
-    async def test_azure_sas_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
-        token = generate_account_sas(
-            tables_storage_account_name,
-            tables_primary_storage_account_key,
-            ResourceTypes(object=True, service=True),
-            AccountSasPermissions(read=True, list=True, create=True, delete=True),
-            datetime.utcnow() + timedelta(hours=1),
-        )
-
-        entity = {
-            u"PartitionKey": u"pk",
-            u"RowKey": u"rk",
-            u"Value": 10,
-        }
-
-        table_name = self._get_table_reference()
-
-        client = TableServiceClient(
-            self.account_url(tables_storage_account_name, "table"),
-            credential=AzureSasCredential(token)
-        )
-
-        table_client = await client.create_table(table_name)
-
-        assert client is not None
-        total = 0
-        async for table in client.list_tables():
-            total += 1
-
-        assert total == 1
-
-        assert table_client is not None
-
-        await client.delete_table(table_name)
 
 class TestTablesUnitTest(AsyncTableTestCase):
     tables_storage_account_name = "fake_storage_account"
