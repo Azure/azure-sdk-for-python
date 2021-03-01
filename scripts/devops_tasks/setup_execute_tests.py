@@ -295,7 +295,7 @@ if __name__ == "__main__":
         target_dir = root_dir
 
     targeted_packages = process_glob_string(args.glob_string, target_dir, "", args.filter_type)
-    extended_pytest_args = ["-sk test_sas"]
+    extended_pytest_args = []
 
     if len(targeted_packages) == 0:
         exit(0)
