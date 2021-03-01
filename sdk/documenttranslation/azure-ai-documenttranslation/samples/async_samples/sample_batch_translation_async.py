@@ -50,7 +50,7 @@ class BatchTranslationSampleAsync(object):
 
         # run translation job
         async with client:
-            job_detail = await client.create_translation_job(batch)
+            job_detail = await client.create_translation_job(batch)  # type: JobStatusDetail
 
             print("Job initial status: {}".format(job_detail.status))
             print("Number of translations on documents: {}".format(job_detail.documents_total_count))
