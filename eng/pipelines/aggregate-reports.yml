@@ -14,7 +14,7 @@ jobs:
   - template: ./templates/variables/globals.yml
 
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'ubuntu-1804'
 
   steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
