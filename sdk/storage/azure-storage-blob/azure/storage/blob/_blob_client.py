@@ -985,7 +985,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def delete_blob(self, delete_snapshots=False, **kwargs):
+    def delete_blob(self, delete_snapshots=None, **kwargs):
         # type: (str, **Any) -> None
         """Marks the specified blob for deletion.
 
