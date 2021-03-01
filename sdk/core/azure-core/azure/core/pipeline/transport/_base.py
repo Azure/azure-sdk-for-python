@@ -37,6 +37,7 @@ import logging
 import os
 import time
 import copy
+import warnings
 
 try:
     binary_type = str
@@ -241,6 +242,11 @@ class HttpRequest(object):
             raise ValueError(
                 "If you pass in a value for 'json', you can not also pass "
                 "in a value of 'files' or 'data'."
+            )
+        if files and data:
+            warnings.warn(
+                "You have specified values for both data and files. "
+                "Please only put in values for data or for files."
             )
         self.data = data or kwargs.pop("json", None)
         if json_kwarg:
