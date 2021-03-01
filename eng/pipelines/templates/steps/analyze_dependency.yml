@@ -5,10 +5,7 @@ steps:
      versionSpec: '$(PythonVersion)'
 
   - pwsh: |
-     if($IsWindows){
-       $prefix="sudo"
-     }
-     $prefix pip install -r eng/ci_tools.txt
+     pip install -r eng/ci_tools.txt --user
      ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
     displayName: 'Verify Readmes'
 
