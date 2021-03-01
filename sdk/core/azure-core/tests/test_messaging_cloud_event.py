@@ -27,8 +27,7 @@ def test_cloud_event_constructor():
     assert event.data == 'cloudevent'
 
 def test_cloud_event_constructor_unexpected_keyword():
-    remaining = "unexpected_keyword, another_bad_kwarg"
-    with pytest.raises(ValueError, match="Unexpected keyword arguments {}. Any extension attributes must be passed explicitly using extensions.".format(remaining)):
+    with pytest.raises(ValueError) as e:
         event = CloudEvent(
             source='Azure.Core.Sample',
             type='SampleType',
@@ -36,6 +35,8 @@ def test_cloud_event_constructor_unexpected_keyword():
             unexpected_keyword="not allowed",
             another_bad_kwarg="not allowed either"
             )
+        assert "unexpected_keyword" in e
+        assert "another_bad_kwarg" in e
 
 def test_cloud_event_constructor_blank_data():
     event = CloudEvent(
