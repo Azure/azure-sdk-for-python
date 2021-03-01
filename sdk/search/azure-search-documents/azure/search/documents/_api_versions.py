@@ -5,9 +5,12 @@
 
 _SUPPORTED_API_VERSIONS = [
     "2020-06-30",
+    "2020-06-30-preview",
 ]
 
-def validate_api_version(api_version):
+DEFAULT_VERSION = "2020-06-30"
+
+def _validate_api_version(api_version):
     # type: (str) -> None
     """Raise error if api_version is invalid """
     if not api_version:
@@ -17,8 +20,8 @@ def validate_api_version(api_version):
         raise ValueError("Unsupported API version '{}'. Please select from:\n{}".format(api_version, versions))
 
 
-def get_api_version(kwargs, default):
+def get_api_version(kwargs):
     # type: (Dict[str, Any], str) -> str
     api_version = kwargs.pop('api_version', None)
-    validate_api_version(api_version)
-    return api_version or default
+    _validate_api_version(api_version)
+    return api_version or DEFAULT_VERSION

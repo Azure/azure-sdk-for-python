@@ -14,7 +14,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 from azure.search.documents.indexes.models import SearchIndexerDataContainer, SearchIndexerDataSourceConnection
-from azure.search.documents.indexes._internal._utils import pack_search_indexer_data_source
+from azure.search.documents.indexes._utils import pack_search_indexer_data_source
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
@@ -47,7 +47,7 @@ class TestSearchIndexClient(object):
         assert isinstance(search_client, SearchClient)
 
     @mock.patch(
-        "azure.search.documents.indexes._internal._generated._search_service_client.SearchServiceClient.get_service_statistics"
+        "azure.search.documents.indexes._generated._operations_mixin.SearchClientOperationsMixin.get_service_statistics"
     )
     def test_get_service_statistics(self, mock_get_stats):
         client = SearchIndexClient("endpoint", CREDENTIAL)
