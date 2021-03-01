@@ -214,33 +214,10 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
-    @staticmethod
-    def _update_related_entities(entities, relations_result):
-        relation_dict = {}
-        for r in relations_result:
-            _, source_idx = _get_indices(r.source)
-            _, target_idx = _get_indices(r.target)
-
-            if entities[source_idx] not in relation_dict.keys():
-                relation_dict[entities[source_idx]] = {}
-
-            if entities[target_idx] not in relation_dict.keys():
-                relation_dict[entities[target_idx]] = {}
-
-            if r.bidirectional:
-                relation_dict[entities[target_idx]][entities[source_idx]] = r.relation_type
-
-            relation_dict[entities[source_idx]][entities[target_idx]] = r.relation_type
-
-        for entity in entities:
-            if entity in relation_dict.keys():
-                entity.related_entities.update(relation_dict[entity])
 
     @classmethod
     def _from_generated(cls, healthcare_result):
         entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities] # pylint: disable=protected-access
-        if healthcare_result.relations:
-            cls._update_related_entities(entities, healthcare_result.relations)
 
         return cls(
             id=healthcare_result.id,
@@ -421,9 +398,6 @@ class HealthcareEntity(DictMixin):
     :ivar int offset: The entity text offset from the start of the document.
         This value depends on the value of the `string_index_type` parameter specified
         in the original request, which is UnicodeCodePoints by default.
-    :ivar related_entities: Other healthcare entities that are related to this
-        specific entity.
-    :vartype related_entities: list[~azure.ai.textanalytics.HealthcareEntity]
     :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :ivar data_sources: A collection of entity references in known data sources.
@@ -438,7 +412,6 @@ class HealthcareEntity(DictMixin):
         self.offset = kwargs.get("offset", None)
         self.confidence_score = kwargs.get("confidence_score", None)
         self.data_sources = kwargs.get("data_sources", [])
-        self.related_entities = {}
 
     @classmethod
     def _from_generated(cls, healthcare_entity):
@@ -459,7 +432,7 @@ class HealthcareEntity(DictMixin):
 
     def __repr__(self):
         return "HealthcareEntity(text={}, category={}, subcategory={}, length={}, offset={}, confidence_score={}, "\
-        "data_sources={}, related_entities={})".format(
+        "data_sources={})".format(
             self.text,
             self.category,
             self.subcategory,
@@ -467,7 +440,6 @@ class HealthcareEntity(DictMixin):
             self.offset,
             self.confidence_score,
             repr(self.data_sources),
-            repr(self.related_entities)
         )[:1024]
 
 
