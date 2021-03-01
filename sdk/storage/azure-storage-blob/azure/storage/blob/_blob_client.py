@@ -11,8 +11,6 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
-from build.lib.azure.core.pipeline import Pipeline
-
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -22,6 +20,7 @@ except ImportError:
 import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.pipeline import Pipeline
 
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
