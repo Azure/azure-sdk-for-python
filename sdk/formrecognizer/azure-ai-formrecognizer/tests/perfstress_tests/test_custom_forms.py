@@ -11,8 +11,8 @@ from io import BytesIO
 from datetime import date, time
 from azure_devtools.perfstress_tests import PerfStressTest
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer import FormRecognizerClient, FormTrainingClient, FormContentType
-from azure.ai.formrecognizer.aio import FormRecognizerClient as AsyncFormRecognizerClient
+from azure.ai.formrecognizer import FormRecognizerClient, FormContentType
+from azure.ai.formrecognizer.aio import FormRecognizerClient as AsyncFormRecognizerClient, FormTrainingClient as AsyncFormTrainingClient
 
 class RecognizeCustomForms(PerfStressTest):   
 
@@ -32,26 +32,26 @@ class RecognizeCustomForms(PerfStressTest):
         self.async_service_client = AsyncFormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(form_recognizer_account_key))
 
         # training client will be used for model training in set up
-        self.training_client = FormTrainingClient(formrecognizer_test_endpoint, AzureKeyCredential(form_recognizer_account_key))
+        self.async_training_client = AsyncFormTrainingClient(formrecognizer_test_endpoint, AzureKeyCredential(form_recognizer_account_key))
 
     async def global_setup(self):
         """The global setup is run only once."""
-        poller = self.training_client.begin_training(
+        poller = await self.async_training_client.begin_training(
             self.formrecognizer_storage_container_sas_url, 
             use_training_labels=True, 
             model_name="labeled")
-        model = poller.result()
+        model = await poller.result()
         self.model_id = model.model_id
 
     async def global_cleanup(self):
         """The global cleanup is run only once."""
-        self.training_client.delete_model(self.model_id)
+        await self.async_training_client.delete_model(self.model_id)
 
     async def close(self):
         """This is run after cleanup."""
         await self.async_service_client.close()
         self.service_client.close()
-        self.training_client.close()
+        await self.async_training_client.close()
         await super().close()
 
     def run_sync(self):
