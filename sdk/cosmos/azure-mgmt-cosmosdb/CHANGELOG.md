@@ -1,5 +1,63 @@
 # Release History
 
+## 4.0.0 (2021-03-01)
+
+**Features**
+
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter restore_parameters
+  - Model DatabaseAccountGetResults has a new parameter system_data
+  - Model DatabaseAccountGetResults has a new parameter create_mode
+  - Model DatabaseAccountGetResults has a new parameter instance_id
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model PeriodicModeProperties has a new parameter backup_storage_redundancy
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model ARMResourceProperties has a new parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model TableGetResults has a new parameter identity
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Added operation SqlResourcesOperations.get_sql_role_definition
+  - Added operation SqlResourcesOperations.delete_sql_role_assignment
+  - Added operation SqlResourcesOperations.create_update_sql_role_definition
+  - Added operation SqlResourcesOperations.get_sql_role_assignment
+  - Added operation SqlResourcesOperations.create_update_sql_role_assignment
+  - Added operation SqlResourcesOperations.list_sql_role_definitions
+  - Added operation SqlResourcesOperations.list_sql_role_assignments
+  - Added operation SqlResourcesOperations.delete_sql_role_definition
+  - Added operation group RestorableSqlContainersOperations
+  - Added operation group RestorableSqlResourcesOperations
+  - Added operation group RestorableMongodbResourcesOperations
+  - Added operation group RestorableSqlDatabasesOperations
+  - Added operation group CassandraDataCentersOperations
+  - Added operation group RestorableDatabaseAccountsOperations
+  - Added operation group CassandraClustersOperations
+  - Added operation group RestorableMongodbCollectionsOperations
+  - Added operation group RestorableMongodbDatabasesOperations
+
+**Breaking changes**
+
+  - Model DatabaseAccountCreateUpdateParameters has a new signature
+
 ## 3.0.0 (2021-02-18)
 
 **Features**
