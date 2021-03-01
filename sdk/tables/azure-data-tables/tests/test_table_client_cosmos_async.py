@@ -36,13 +36,21 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
-            assert response.http_request.headers['User-Agent'] == "azsdk-python-storage-table/{} Python/{} ({})".format(
+            assert "azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
-                    platform.platform())
+                    platform.platform()) in response.http_request.headers['User-Agent']
 
         tables = service.list_tables(raw_response_hook=callback)
         assert tables is not None
+
+        # The count doesn't matter, going through the PagedItem calls `callback`
+        count = 0
+        async for table in tables:
+            count += 1
+
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_user_agent_custom_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -52,7 +60,7 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
-            assert "TestApp/v1.0 azsdk-python-storage-table/{} Python/{} ({})".format(
+            assert "TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()) in response.http_request.headers['User-Agent']
@@ -60,15 +68,25 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         tables = service.list_tables(raw_response_hook=callback)
         assert tables is not None
 
+        # The count doesn't matter, going through the PagedItem calls `callback`
+        count = 0
+        async for table in tables:
+            count += 1
+
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
-            assert "TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-table/{} Python/{} ({})".format(
+            assert "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()) in response.http_request.headers['User-Agent']
 
-        tables = service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0")
-        assert tables is not None
+        # The count doesn't matter, going through the PagedItem calls `callback`
+        count = 0
+        async for table in tables:
+            count += 1
+
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -76,13 +94,18 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
-            assert response.http_request.headers['User-Agent'] == "azsdk-python-storage-tables/{} Python/{} ({}) customer_user_agent".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform())
+            assert response.http_request.headers['User-Agent'] == 'customer_user_agent'
 
         custom_headers = {'User-Agent': 'customer_user_agent'}
         tables = service.list_tables(raw_response_hook=callback, headers=custom_headers)
+
+        # The count doesn't matter, going through the PagedItem calls `callback`
+        count = 0
+        async for table in tables:
+            count += 1
+
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
 
 class TestTableClientUnit(AsyncTableTestCase):

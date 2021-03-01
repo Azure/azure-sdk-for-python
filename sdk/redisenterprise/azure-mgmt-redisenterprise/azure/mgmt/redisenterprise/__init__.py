@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._redis_enterprise import RedisEnterprise
+from ._redis_enterprise_management_client import RedisEnterpriseManagementClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['RedisEnterprise']
+__all__ = ['RedisEnterpriseManagementClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

@@ -17,6 +17,9 @@
     "certificateThumbprint": {
         "value": "<REPLACE THIS: Hexadecimal string that can be found as Thumbprint or X.509 SHA-1 Thumbprint (in hex) in the certificate's properties>"
     },
+    "sshKeyData": {
+        "value": "<REPLACE THIS: An SSH public key (the content of the key's .pub file, with no trailing whitespace). Looks like ssh-rsa {base64 content} {user}@{machine}>"
+    },
     "nicName": {
         "value": "NIC-sfmi-test"
     },

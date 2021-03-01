@@ -10,6 +10,7 @@ import os
 from unittest import mock
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyVaultKey
 from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.keys.crypto._key_validity import _UTC
@@ -43,6 +44,8 @@ class CryptoClientTests(KeyVaultTestCase):
         super(CryptoClientTests, self).tearDown()
 
     plaintext = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
+    iv = codecs.decode("89b8adbfb07345e3598932a09c517441", "hex_codec")
+    aad = b"test"
 
     def create_key_client(self, vault_uri, **kwargs):
         credential = self.get_credential(KeyClient, is_async=True)
@@ -99,6 +102,15 @@ class CryptoClientTests(KeyVaultTestCase):
         )
         imported_key = await client.import_key(name, key)
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
+        return imported_key
+
+    async def _import_symmetric_test_key(self, client, name):
+        key = JsonWebKey(
+            kty="oct-HSM",
+            key_ops=["encrypt", "decrypt", "wrapKey", "unwrapKey"],
+            k=codecs.decode("e27ed0c84512bbd55b6af434d237c11feba311870f80f2c2e3364260f31c82c8", "hex_codec"),
+        )
+        imported_key = await client.import_key(name, key)
         return imported_key
 
     @KeyVaultPreparer()
@@ -187,6 +199,65 @@ class CryptoClientTests(KeyVaultTestCase):
         self.assertEqual(key_bytes, result.key)
 
     @KeyVaultPreparer()
+    async def test_symmetric_encrypt_and_decrypt(self, azure_keyvault_url, **kwargs):
+        if self.is_live:
+            pytest.skip("MHSM-only algorithms can't be tested in CI yet")
+
+        key_client = self.create_key_client(azure_keyvault_url)
+        key_name = self.get_resource_name("symmetric-encrypt")
+
+        imported_key = await self._import_symmetric_test_key(key_client, key_name)
+        assert imported_key is not None
+        crypto_client = self.create_crypto_client(imported_key.id)
+        # Use 256-bit AES algorithms for the 256-bit key
+        symmetric_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("A256")]
+
+        for algorithm in symmetric_algorithms:
+            if algorithm.endswith("GCM"):
+                result = await crypto_client.encrypt(algorithm, self.plaintext, additional_authenticated_data=self.aad)
+                assert result.key_id == imported_key.id
+                result = await crypto_client.decrypt(
+                    result.algorithm,
+                    result.ciphertext,
+                    iv=result.iv,
+                    authentication_tag=result.tag,
+                    additional_authenticated_data=self.aad
+                )
+            else:
+                result = await crypto_client.encrypt(
+                    algorithm, self.plaintext, iv=self.iv, additional_authenticated_data=self.aad
+                )
+                self.assertEqual(result.key_id, imported_key.id)
+                result = await crypto_client.decrypt(
+                    result.algorithm, result.ciphertext, iv=self.iv, additional_authenticated_data=self.aad
+                )
+
+            assert result.key_id == imported_key.id
+            assert result.algorithm == algorithm
+            if algorithm.endswith("CBC"):
+                assert result.plaintext.startswith(self.plaintext)  # AES-CBC returns a zero-padded plaintext
+            else:
+                assert result.plaintext == self.plaintext
+
+    @KeyVaultPreparer()
+    async def test_symmetric_wrap_and_unwrap(self, azure_keyvault_url, **kwargs):
+        if self.is_live:
+            pytest.skip("MHSM-only algorithms can't be tested in CI yet")
+
+        key_client = self.create_key_client(azure_keyvault_url)
+        key_name = self.get_resource_name("symmetric-kw")
+
+        imported_key = await self._import_symmetric_test_key(key_client, key_name)
+        assert imported_key is not None
+        crypto_client = self.create_crypto_client(imported_key.id)
+
+        result = await crypto_client.wrap_key(KeyWrapAlgorithm.aes_256, self.plaintext)
+        assert result.key_id == imported_key.id
+
+        result = await crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
+        assert result.key == self.plaintext
+
+    @KeyVaultPreparer()
     async def test_encrypt_local(self, azure_keyvault_url, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
         key_client = self.create_key_client(azure_keyvault_url)
@@ -194,7 +265,8 @@ class CryptoClientTests(KeyVaultTestCase):
         key = await key_client.create_rsa_key(key_name, size=4096)
         crypto_client = self.create_crypto_client(key)
 
-        for encrypt_algorithm in EncryptionAlgorithm:
+        rsa_encrypt_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("RSA")]
+        for encrypt_algorithm in rsa_encrypt_algorithms:
             result = await crypto_client.encrypt(encrypt_algorithm, self.plaintext)
             self.assertEqual(result.key_id, key.id)
 
@@ -209,7 +281,7 @@ class CryptoClientTests(KeyVaultTestCase):
         key = await key_client.create_rsa_key(key_name, size=4096)
         crypto_client = self.create_crypto_client(key)
 
-        for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.value.startswith("RSA")):
+        for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")):
             result = await crypto_client.wrap_key(wrap_algorithm, self.plaintext)
             self.assertEqual(result.key_id, key.id)
 
@@ -285,16 +357,17 @@ class CryptoClientTests(KeyVaultTestCase):
         the_year_3000 = datetime(3000, 1, 1, tzinfo=_UTC)
 
         rsa_wrap_algorithms = [algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")]
+        rsa_encryption_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("RSA")]
         key_name = self.get_resource_name("rsa-not-yet-valid")
         not_yet_valid_key = await key_client.create_rsa_key(key_name, not_before=the_year_3000)
-        await test_operations(not_yet_valid_key, [str(the_year_3000)], EncryptionAlgorithm, rsa_wrap_algorithms)
+        await test_operations(not_yet_valid_key, [str(the_year_3000)], rsa_encryption_algorithms, rsa_wrap_algorithms)
 
         # nor should they succeed with a key whose exp has passed
         the_year_2000 = datetime(2000, 1, 1, tzinfo=_UTC)
 
         key_name = self.get_resource_name("rsa-expired")
         expired_key = await key_client.create_rsa_key(key_name, expires_on=the_year_2000)
-        await test_operations(expired_key, [str(the_year_2000)], EncryptionAlgorithm, rsa_wrap_algorithms)
+        await test_operations(expired_key, [str(the_year_2000)], rsa_encryption_algorithms, rsa_wrap_algorithms)
 
         # when exp and nbf are set, error messages should contain both
         the_year_3001 = datetime(3001, 1, 1, tzinfo=_UTC)
@@ -302,12 +375,12 @@ class CryptoClientTests(KeyVaultTestCase):
         key_name = self.get_resource_name("rsa-valid")
         valid_key = await key_client.create_rsa_key(key_name, not_before=the_year_3000, expires_on=the_year_3001)
         await test_operations(
-            valid_key, (str(the_year_3000), str(the_year_3001)), EncryptionAlgorithm, rsa_wrap_algorithms
+            valid_key, (str(the_year_3000), str(the_year_3001)), rsa_encryption_algorithms, rsa_wrap_algorithms
         )
 
 
 def test_custom_hook_policy():
-    class CustomHookPolicy(object):
+    class CustomHookPolicy(SansIOHTTPPolicy):
         pass
 
     client = CryptographyClient("https://localhost/fake/key/version", object(), custom_hook_policy=CustomHookPolicy())
@@ -482,3 +555,49 @@ async def test_prefers_local_provider():
     await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
     assert mock_client.wrap_key.call_count == 0
     assert supports_everything.wrap_key.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_encrypt_argument_validation():
+    """The client should raise an error when arguments don't work with the specified algorithm"""
+    mock_client = mock.Mock()
+    key = mock.Mock(
+        spec=KeyVaultKey,
+        id="https://localhost/fake/key/version",
+        properties=mock.Mock(
+            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+        ),
+    )
+    client = CryptographyClient(key, mock.Mock())
+    client._client = mock_client
+
+    with pytest.raises(ValueError) as ex:
+        await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...", iv=b"...")
+    assert "iv" in str(ex.value)
+    with pytest.raises(ValueError) as ex:
+        await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...", additional_authenticated_data=b"...")
+    assert "additional_authenticated_data" in str(ex.value)
+
+
+@pytest.mark.asyncio
+async def test_decrypt_argument_validation():
+    mock_client = mock.Mock()
+    key = mock.Mock(
+        spec=KeyVaultKey,
+        id="https://localhost/fake/key/version",
+        properties=mock.Mock(
+            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+        ),
+    )
+    client = CryptographyClient(key, mock.Mock())
+    client._client = mock_client
+
+    with pytest.raises(ValueError) as ex:
+        await client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...", iv=b"...")
+    assert "iv" in str(ex.value)
+    with pytest.raises(ValueError) as ex:
+        await client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...", additional_authenticated_data=b"...")
+    assert "additional_authenticated_data" in str(ex.value)
+    with pytest.raises(ValueError) as ex:
+        await client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...", authentication_tag=b"...")
+    assert "authentication_tag" in str(ex.value)

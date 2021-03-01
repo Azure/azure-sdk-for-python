@@ -68,8 +68,6 @@ The following sections provide several code snippets covering some of the most c
 
 * [Send an Event Grid Event](#send-an-event-grid-event)
 * [Send a Cloud Event](#send-a-cloud-event)
-* [Consume an eventgrid Event](#consume-an-event-grid-event)
-* [Consume a cloud Event](#consume-a-cloud-event)
 
 ### Send an Event Grid Event
 
@@ -147,9 +145,9 @@ The following section provides several code snippets illustrating common pattern
 
 These code samples show common champion scenario operations with the Azure Event Grid client library.
 
-* Publish Custom Events to a topic: [cs1_publish_custom_events_to_a_topic.py][python-eg-sample-customevent]
-* Publish Custom events to a domain topic: [cs2_publish_custom_events_to_a_domain_topic.py][python-eg-sample-customevent-to-domain]
-* Publish a Cloud Event: [cs6_publish_events_using_cloud_events_1.0_schema.py][python-eg-sample-send-cloudevent]
+* Publish EventGrid Events to a topic: [sample_publish_eg_events_to_a_topic.py][python-eg-sample-egevent]
+* Publish EventGrid Events to a domain: [sample_publish_eg_events_to_a_domain.py][python-eg-sample-egevent-to-domain]
+* Publish a Cloud Event: [sample_publish_events_using_cloud_events_1.0_schema.py][python-eg-sample-send-cloudevent]
 
 More samples can be found [here][python-eg-samples].
 
@@ -182,9 +180,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_subscription]: https://azure.microsoft.com/free/
 
-[python-eg-sample-customevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs1_publish_custom_events_to_a_topic.py
-[python-eg-sample-customevent-to-domain]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs2_publish_custom_events_to_a_domain_topic.py
-[python-eg-sample-send-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs5_publish_events_using_cloud_events_1.0_schema.py
+[python-eg-sample-egevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_eg_events_to_a_topic.py
+[python-eg-sample-egevent-to-domain]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_eg_events_to_a_domain.py
+[python-eg-sample-send-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py
 [publisher-service-doc]: https://docs.microsoft.com/azure/event-grid/concepts
 
 [cla]: https://cla.microsoft.com

@@ -25,5 +25,6 @@ def validate_api_version(api_version):
     except ValueError:
         raise ValueError(
             "Unsupported API version '{}'. Please select from:\n{}".format(
-                api_version, ", ".join(v.value for v in FormRecognizerApiVersion))
+                api_version, ", ".join(v.value for v in FormRecognizerApiVersion)
+            )
         )

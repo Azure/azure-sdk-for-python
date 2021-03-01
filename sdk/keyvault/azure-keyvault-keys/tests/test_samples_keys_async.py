@@ -9,6 +9,7 @@ from azure.keyvault.keys import KeyType
 from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.keys._shared import HttpChallengeCache
 from devtools_testutils import PowerShellPreparer
+import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
 
@@ -24,7 +25,8 @@ def print(*args):
     assert all(arg is not None for arg in args)
 
 
-def test_create_key_client():
+@pytest.mark.asyncio
+async def test_create_key_client():
     vault_url = "vault_url"
     # pylint:disable=unused-variable
     # [START create_key_client]
@@ -34,6 +36,11 @@ def test_create_key_client():
     # Create a KeyClient using default Azure credentials
     credential = DefaultAzureCredential()
     key_client = KeyClient(vault_url, credential)
+
+    # the client and credential should be closed when no longer needed
+    # (both are also async context managers)
+    await key_client.close()
+    await credential.close()
     # [END create_key_client]
 
 

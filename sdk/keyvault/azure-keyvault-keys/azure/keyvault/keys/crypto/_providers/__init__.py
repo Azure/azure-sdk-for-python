@@ -20,7 +20,7 @@ def get_local_cryptography_provider(key):
         return EllipticCurveCryptographyProvider(key)
     if key.key_type in (KeyType.rsa, KeyType.rsa_hsm):
         return RsaCryptographyProvider(key)
-    if key.key_type == KeyType.oct:
+    if key.key_type in (KeyType.oct, KeyType.oct_hsm):
         return SymmetricCryptographyProvider(key)
 
     raise ValueError('Unsupported key type "{}"'.format(key.key_type))

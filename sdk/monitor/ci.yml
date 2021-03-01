@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -31,5 +33,5 @@ extends:
     Artifacts:
     - name: azure_mgmt_monitor
       safeName: azuremgmtmonitor
-    - name: azure_opentelemetry_exporter_azuremonitor
-      safeName: azureopentelemetryexporterazuremonitor
+    - name: azure_monitor_opentelemetry_exporter
+      safeName: azuremonitoropentelemetryexporter

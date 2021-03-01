@@ -1870,3 +1870,25 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             self._assert_default_entity(entities[0])
         finally:
             await self._tear_down()
+
+    @TablesPreparer()
+    async def test_datetime_milliseconds(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+        url = self.account_url(tables_storage_account_name, "table")
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity = self._create_random_entity_dict()
+
+            entity['milliseconds'] = datetime(2011, 11, 4, 0, 5, 23, 283000, tzinfo=tzutc())
+
+            await self.table.create_entity(entity)
+
+            received_entity = await self.table.get_entity(
+                partition_key=entity['PartitionKey'],
+                row_key=entity['RowKey']
+            )
+
+            assert entity['milliseconds'] == received_entity['milliseconds']
+
+        finally:
+            await self._tear_down()
