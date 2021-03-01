@@ -59,6 +59,9 @@ class EventHubProducer(
      periods of inactivity. The default value is `None`, i.e. no keep alive pings.
     :keyword bool auto_reconnect: Whether to automatically reconnect the producer if a retryable error occurs.
      Default value is `True`.
+    :keyword dict partition_config: The optional producer configuration. This must be a dictionary that
+     contains the following optional configurations for the partition: `'owner_level'` (int value),
+     `'producer_group_id '` (int value) and `'starting_sequence_number'` (int value).
     :keyword ~asyncio.AbstractEventLoop loop: An event loop. If not specified the default event loop will be used.
     """
 

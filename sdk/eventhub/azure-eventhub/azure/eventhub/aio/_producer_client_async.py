@@ -62,8 +62,8 @@ class EventHubProducerClient(ClientBaseAsync):
     :keyword bool enable_idempotent_partitions: Indicates whether or not the producer should enable idempotent
      publishing to the Event Hub partitions. If enabled, the producer will only be able to publish directly
      to partitions; it will not be able to publish to the Event Hubs gateway for automatic partition routing
-     nor using a partition key. Default is False.
-    :keyword partition_configs: The set of configurations that can be specified to influence publishing behavior
+     nor will it be able to use a partition key. Default is False.
+    :keyword partition_config: The set of configurations that can be specified to influence publishing behavior
      specific to the configured Event Hub partition. These configurations are not necessary in the majority of
      scenarios and are intended for use with specialized scenarios, such as when recovering the state used for
      idempotent publishing.
@@ -105,9 +105,9 @@ class EventHubProducerClient(ClientBaseAsync):
         )  # sync the creation of self._producers
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
-        self._partition_configs = kwargs.get("partition_configs") or {}
-        for _, partition_config in self._partition_configs.items():
-            validate_producer_client_partition_config(partition_config)
+        self._partition_config = kwargs.get("partition_config") or {}
+        for _, each_partition_config in self._partition_config.items():
+            validate_producer_client_partition_config(each_partition_config)
 
     async def __aenter__(self):
         return self
@@ -154,7 +154,7 @@ class EventHubProducerClient(ClientBaseAsync):
                 not self._producers[partition_id]
                 or cast(EventHubProducer, self._producers[partition_id]).closed
             ):
-                partition_config = self._partition_configs.get(partition_id)
+                partition_config = self._partition_config.get(partition_id)
                 self._producers[partition_id] = self._create_producer(
                     partition_id=partition_id,
                     send_timeout=send_timeout,
@@ -231,7 +231,7 @@ class EventHubProducerClient(ClientBaseAsync):
         :keyword bool enable_idempotent_partitions: Indicates whether or not the producer should enable idempotent
          publishing to the Event Hub partitions. If enabled, the producer will only be able to publish directly
          to partitions; it will not be able to publish to the Event Hubs gateway for automatic partition routing
-         nor using a partition key. Default is False.
+         nor will it be able to use a partition key. Default is False.
         :keyword partition_configs: The set of configurations that can be specified to influence publishing behavior
          specific to the configured Event Hub partition. These configurations are not necessary in the majority of
          scenarios and are intended for use with specialized scenarios, such as when recovering the state used for

@@ -154,7 +154,7 @@ class EventHubProducer(
      Default value is `True`.
     :keyword bool enable_idempotent_partitions: Indicates whether or not the producer should enable idempotent
      publishing to the Event Hub partitions.
-    :keyword dict partition_option: The optional producer configuration. This must be a dictionary that
+    :keyword dict partition_config: The optional producer configuration. This must be a dictionary that
      contains the following optional configurations for the partition: `'owner_level'` (int value),
      `'producer_group_id '` (int value) and `'starting_sequence_number'` (int value).
     """

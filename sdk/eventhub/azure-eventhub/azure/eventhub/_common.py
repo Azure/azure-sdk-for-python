@@ -193,11 +193,8 @@ class EventData(object):
         # type: () -> Optional[int]
         """
         The publishing sequence number assigned to the event at the time it was successfully published.
-
-        The sequence number that was assigned during publishing, if the event was successfully
-        published by a sequence-aware producer. If the producer was not configured to apply
-        sequence numbering or if the event has not yet been successfully published, the value
-        will be None.
+        If the producer was not configured to apply sequence numbering or if the event has not yet been successfully
+        published, the value will be None.
 
         :rtype: int
         """
@@ -426,12 +423,11 @@ class EventDataBatch(object):
         # type() -> Optional[int]
         """
         The publishing sequence number assigned to the first event in the batch at the time
-        the batch was successfully published.
-
-        The sequence number of the first event in the batch, if the batch was successfully
-        published by a sequence-aware producer.  If the producer was not configured to apply
+        the batch was successfully published. If the producer was not configured to apply
         sequence numbering or if the batch has not yet been successfully published, the value
         will be None.
+
+        :rtype: int
         """
         return self._starting_published_sequence_number
 
@@ -461,7 +457,7 @@ class EventDataBatch(object):
 
         if self._is_idempotent_batch and event_data.published_sequence_number is not None:
             raise ValueError("EventData object that has already been published by "
-                             "idempotent producer could not be published again.")
+                             "idempotent producer cannot be published again.")
 
         trace_message(event_data)
         if self._is_idempotent_batch:
