@@ -2,7 +2,7 @@ import time
 import pytest
 import threading
 import sys
-from azure.eventhub import EventData
+from azure.eventhub import EventData, EventDataBatch
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub._eventprocessor.in_memory_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._constants import ALL_PARTITIONS
@@ -11,8 +11,8 @@ from azure.eventhub._constants import ALL_PARTITIONS
 @pytest.mark.liveTest
 def test_receive_no_partition(connstr_senders):
     connection_str, senders = connstr_senders
-    senders[0].send([EventData("Test EventData")])
-    senders[1].send([EventData("Test EventData")])
+    senders[0].send(EventDataBatch._from_batch([EventData("Test EventData")]))
+    senders[1].send(EventDataBatch._from_batch([EventData("Test EventData")]))
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', receive_timeout=1)
 
     def on_event(partition_context, event):
@@ -48,7 +48,7 @@ def test_receive_no_partition(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_partition(connstr_senders):
     connection_str, senders = connstr_senders
-    senders[0].send([EventData("Test EventData")])
+    senders[0].send(EventDataBatch._from_batch([EventData("Test EventData")]))
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
 
     def on_event(partition_context, event):
@@ -109,8 +109,8 @@ def test_receive_batch_no_max_wait_time(connstr_senders):
     '''Test whether callback is called when max_wait_time is None and max_batch_size has reached
     '''
     connection_str, senders = connstr_senders
-    senders[0].send([EventData("Test EventData")])
-    senders[1].send([EventData("Test EventData")])
+    senders[0].send(EventDataBatch._from_batch([EventData("Test EventData")]))
+    senders[1].send(EventDataBatch._from_batch([EventData("Test EventData")]))
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
 
     def on_event_batch(partition_context, event_batch):
@@ -173,7 +173,7 @@ def test_receive_batch_early_callback(connstr_senders):
     '''
     connection_str, senders = connstr_senders
     for _ in range(10):
-        senders[0].send([EventData("Test EventData")])
+        senders[0].send(EventDataBatch._from_batch([EventData("Test EventData")]))
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
 
     def on_event_batch(partition_context, event_batch):
