@@ -19,7 +19,7 @@ from . import models
 
 
 class SourceControlConfigurationClient(SDKClient):
-    """Use these APIs to create Source Control Configuration resources through ARM, for Kubernetes Clusters.
+    """KubernetesConfiguration Client
 
     :ivar config: Configuration for client.
     :vartype config: SourceControlConfigurationClientConfiguration
