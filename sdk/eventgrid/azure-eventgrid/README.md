@@ -208,9 +208,9 @@ with ServiceBusClient.from_connection_string(connection_str) as sb_client:
 
 You can use opentelemetry for Python as usual with EventGrid since it's compatible with azure-core tracing integration.
 
-Here is an example of how you would use Opentelemetry to send a CloudEvent.
+Here is an example of how you would use Opentelemetry to trace sending a CloudEvent.
 
-First, OpenTelemetry as enabled tracing plugin for EventGrid.
+First, set OpenTelemetry as enabled tracing plugin for EventGrid.
 
 ```python
 from azure.core.settings import settings
