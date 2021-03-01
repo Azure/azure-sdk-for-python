@@ -226,7 +226,7 @@ def test_env_init():
         print_exec(f'pip install -r {file}')
 
     # edit mgmt_settings_real.py
-    with open(f'{SCRIPT_PATH}/mgmt_settings_real_.py', 'r') as file_in:
+    with open(f'{SCRIPT_PATH}/mgmt_settings_real.py', 'r') as file_in:
         list_in = file_in.readlines()
 
     ENV_TENANT_ID = os.environ().get('TENANT_ID')
