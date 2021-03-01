@@ -1,6 +1,6 @@
 # Release History
 
-## 12.3.0 (2021-02-26)
+## 12.3.0 (2021-03-01)
 **Stable release of preview features**
 - Added support for `DatalakeServiceClient.undelete_filesystem()`
 
