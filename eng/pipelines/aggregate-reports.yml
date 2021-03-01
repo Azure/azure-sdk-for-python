@@ -20,7 +20,7 @@ jobs:
   steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
   
-  - task: AzureFileCopy@2
+  - task: AzureFileCopy@4
     displayName: 'Upload dependency report'
     condition: and(succeededOrFailed(), eq(variables['System.TeamProject'], 'internal'))
     inputs:
