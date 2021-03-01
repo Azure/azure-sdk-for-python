@@ -32,7 +32,6 @@ from .._helpers import (
     _eventgrid_data_typecheck,
 )
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
-from .._generated.models import CloudEvent as InternalCloudEvent
 from .._version import VERSION
 
 SendType = Union[
@@ -173,8 +172,8 @@ class EventGridPublisherClient:
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
                 events = [
-                    cast(CloudEvent, e)._to_generated(**kwargs) for e in events
-                ]  # pylint: disable=protected-access
+                    cast(CloudEvent, e)._to_generated(**kwargs) for e in events # pylint: disable=protected-access
+                ]
             except AttributeError:
                 pass  # means it's a dictionary
             kwargs.setdefault(

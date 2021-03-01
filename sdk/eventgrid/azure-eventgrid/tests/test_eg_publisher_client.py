@@ -103,6 +103,39 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
             client.send(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    def test_send_event_grid_event_dict_data_str(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        eg_event = {
+                "subject":"sample", 
+                "data":"eventgridevent", 
+                "eventType":"Sample.EventGrid.Event",
+                "dataVersion":"2.0",
+                "id": uuid.uuid4(),
+                "eventTime": datetime.now()
+        }
+        client.send(eg_event)
+
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    def test_send_event_grid_event_dict_data_dict(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        eg_event = {
+                "subject":"sample", 
+                "data":{"key1": "Sample.EventGrid.Event"}, 
+                "eventType":"Sample.EventGrid.Event",
+                "dataVersion":"2.0",
+                "id": uuid.uuid4(),
+                "eventTime": datetime.now()
+        }
+        client.send(eg_event)
+
+
+    ### CLOUD EVENT TESTS
+
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     def test_send_cloud_event_data_dict(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
@@ -257,6 +290,12 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send(eg_event)
 
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    def test_send_NONE_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        with pytest.raises(ValueError, match="Parameter 'self._credential' must not be None."):
+            client = EventGridPublisherClient(eventgrid_topic_endpoint, None)
+        
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='customeventgridtest')
     def test_send_custom_schema_event(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):

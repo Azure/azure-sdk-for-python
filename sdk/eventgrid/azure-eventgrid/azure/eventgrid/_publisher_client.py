@@ -35,7 +35,6 @@ from ._generated._event_grid_publisher_client import (
 )
 from ._policies import CloudEventDistributedTracingPolicy
 from ._version import VERSION
-from ._generated.models import CloudEvent as InternalCloudEvent
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -180,8 +179,8 @@ class EventGridPublisherClient(object):
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
                 events = [
-                    cast(CloudEvent, e)._to_generated(**kwargs) for e in events
-                ]  # pylint: disable=protected-access
+                    cast(CloudEvent, e)._to_generated(**kwargs) for e in events # pylint: disable=protected-access
+                ]
             except AttributeError:
                 pass  # means it's a dictionary
             kwargs.setdefault(

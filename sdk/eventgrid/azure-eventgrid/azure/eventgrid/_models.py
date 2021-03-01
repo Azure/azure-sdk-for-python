@@ -198,10 +198,10 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
      If not provided, EventGrid will stamp onto event.
     :vartype metadata_version: str
     :ivar id: An identifier for the event. In not provided, a random UUID will be generated and used.
-    :vartype id: Optional[str]
+    :vartype id: str
     :ivar event_time: The time (in UTC) of the event. If not provided,
      it will be the time (in UTC) the event was generated.
-    :vartype event_time: Optional[~datetime.datetime]
+    :vartype event_time: ~datetime.datetime
     """
 
     _validation = {
