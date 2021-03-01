@@ -46,9 +46,9 @@ jobs:
         source venv-sdk/bin/activate
         output_path=$(pwd)/venv-sdk
         pip install packaging
-        echoo 333333333
+        echo 333333333
         pip install -r $script_path/livetest_package.txt
-        echoo 444444444
+        echo 444444444
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=true
@@ -60,6 +60,10 @@ jobs:
         export AZURE_CLIENT_ID=$(ENV_CLIENT_ID)
         export AZURE_CLIENT_SECRET=$(ENV_CLIENT_SECRET)
         export AZURE_SUBSCRIPTION_ID=$(ENV_SUBSCRIPTION_ID)
+
+        echo 5555555
+        echo TENANT_ID $TENANT_ID
+        echo 6666666
 
         # run
         cd azure-sdk-for-python
