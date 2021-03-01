@@ -2,10 +2,13 @@
 
 ## 12.0.0b5 (Unreleased)
 
-* Bumped minimum requirement of msrest from `0.6.10` to `0.6.11`.
+* Bumped minimum requirement of msrest from `0.6.10` to `0.6.19`.
+* Adds support for datetime entities with milliseconds
+* Adds support for Shared Access Signature authentication
+
 ## 12.0.0b4 (2020-01-12)
 * Fixes an [issue](https://github.com/Azure/azure-sdk-for-python/issues/15554) where `query_entities` kwarg `parameters` would not work with multiple parameters or with non-string parameters. This now works with multiple parameters and numeric, string, boolean, UUID, and datetime objects.
-* Fixes an [issue](https://github.com/Azure/azure-sdk-for-python/issues/15653) where `delete_entity` will return an `ClientAuthenticationError` when the '@' symbol is included in the entity.
+* Fixes an [issue](https://github.com/Azure/azure-sdk-for-python/issues/15653) where `delete_entity` will return a `ClientAuthenticationError` when the '@' symbol is included in the entity.
 
 ## 12.0.0b3 (2020-11-12)
 * Add support for transactional batching of entity operations.

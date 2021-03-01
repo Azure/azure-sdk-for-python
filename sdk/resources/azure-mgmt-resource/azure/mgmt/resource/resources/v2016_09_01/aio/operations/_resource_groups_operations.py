@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ResourceGroupsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -50,7 +50,7 @@ class ResourceGroupsOperations:
         expand: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.ResourceListResult"]:
+    ) -> AsyncIterable["_models.ResourceListResult"]:
         """Get all the resources for a resource group.
 
         :param resource_group_name: The resource group with the resources to get.
@@ -68,7 +68,7 @@ class ResourceGroupsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2016_09_01.models.ResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -184,9 +184,9 @@ class ResourceGroupsOperations:
     async def create_or_update(
         self,
         resource_group_name: str,
-        parameters: "models.ResourceGroup",
+        parameters: "_models.ResourceGroup",
         **kwargs
-    ) -> "models.ResourceGroup":
+    ) -> "_models.ResourceGroup":
         """Creates a resource group.
 
         :param resource_group_name: The name of the resource group to create or update.
@@ -198,7 +198,7 @@ class ResourceGroupsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2016_09_01.models.ResourceGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -331,7 +331,12 @@ class ResourceGroupsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -349,7 +354,7 @@ class ResourceGroupsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> "models.ResourceGroup":
+    ) -> "_models.ResourceGroup":
         """Gets a resource group.
 
         :param resource_group_name: The name of the resource group to get. The name is case
@@ -360,7 +365,7 @@ class ResourceGroupsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2016_09_01.models.ResourceGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -403,9 +408,9 @@ class ResourceGroupsOperations:
     async def patch(
         self,
         resource_group_name: str,
-        parameters: "models.ResourceGroup",
+        parameters: "_models.ResourceGroup",
         **kwargs
-    ) -> "models.ResourceGroup":
+    ) -> "_models.ResourceGroup":
         """Updates a resource group.
 
         Resource groups can be updated through a simple PATCH operation to a group address. The format
@@ -422,7 +427,7 @@ class ResourceGroupsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2016_09_01.models.ResourceGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -470,9 +475,9 @@ class ResourceGroupsOperations:
     async def export_template(
         self,
         resource_group_name: str,
-        parameters: "models.ExportTemplateRequest",
+        parameters: "_models.ExportTemplateRequest",
         **kwargs
-    ) -> "models.ResourceGroupExportResult":
+    ) -> "_models.ResourceGroupExportResult":
         """Captures the specified resource group as a template.
 
         :param resource_group_name: The name of the resource group to export as a template.
@@ -484,7 +489,7 @@ class ResourceGroupsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2016_09_01.models.ResourceGroupExportResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceGroupExportResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceGroupExportResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -534,7 +539,7 @@ class ResourceGroupsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.ResourceGroupListResult"]:
+    ) -> AsyncIterable["_models.ResourceGroupListResult"]:
         """Gets all the resource groups for a subscription.
 
         :param filter: The filter to apply on the operation.
@@ -546,7 +551,7 @@ class ResourceGroupsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2016_09_01.models.ResourceGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

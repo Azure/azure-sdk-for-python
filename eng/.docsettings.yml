@@ -102,8 +102,8 @@ known_content_issues:
   - ['sdk/storage/azure-storage-queue/swagger/README.md', '#4554']
   - ['sdk/storage/README.md', '#4554']
   - ['sdk/textanalytics/azure-ai-textanalytics/samples/README.md', '#4554']
-  - ['sdk/monitor/azure-opentelemetry-exporter-azuremonitor/swagger/README.md', '#4554']
-  - ['sdk/monitor/azure-opentelemetry-exporter-azuremonitor/README.md', '#4554']
+  - ['sdk/monitor/azure-monitor-opentelemetry-exporter/swagger/README.md', '#4554']
+  - ['sdk/monitor/azure-monitor-opentelemetry-exporter/README.md', '#4554']
   - ['sdk/digitaltwins/azure-digitaltwins-core/swagger/README.md', '#4554']
   - ['sdk/media/azure-media-nspkg/README.md', '#4554']
 
@@ -124,6 +124,7 @@ known_content_issues:
   - ['sdk/core/azure-mgmt-nspkg/README.rst', 'nspkg and common']
   - ['sdk/core/azure-nspkg/README.rst', 'nspkg and common']
   - ['sdk/keyvault/azure-keyvault-nspkg/README.md', 'nspkg and common']
+  - ['sdk/mixedreality/azure-mixedreality-nspkg/README.md', 'nspkg and common']
   - ['sdk/search/azure-search-nspkg/README.md', 'nspkg and common']
   - ['sdk/storage/azure-storage-blob/samples/README.md', 'nspkg and common']
   - ['sdk/storage/azure-storage-file-datalake/samples/README.md', 'nspkg and common']

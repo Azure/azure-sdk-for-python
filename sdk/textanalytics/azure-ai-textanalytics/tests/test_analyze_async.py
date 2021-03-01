@@ -149,11 +149,13 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert len(action_result.document_results) == len(docs)
 
             self.assertEqual(action_result.document_results[0].entities[0].text, "859-98-0987")
-            self.assertEqual(action_result.document_results[0].entities[0].category, "U.S. Social Security Number (SSN)")
+            self.assertEqual(action_result.document_results[0].entities[0].category, "USSocialSecurityNumber")
             self.assertEqual(action_result.document_results[1].entities[0].text, "111000025")
             # self.assertEqual(results[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumber here
-            self.assertEqual(action_result.document_results[2].entities[0].text, "998.214.865-68")
-            self.assertEqual(action_result.document_results[2].entities[0].category, "Brazil CPF Number")
+
+            # commenting out brazil cpf, currently service is not returning it
+            # self.assertEqual(action_result.document_results[2].entities[0].text, "998.214.865-68")
+            # self.assertEqual(action_result.document_results[2].entities[0].category, "Brazil CPF Number")
             for doc in action_result.document_results:
                 self.assertIsNotNone(doc.id)
                 # self.assertIsNotNone(doc.statistics)

@@ -28,8 +28,7 @@ endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 # authenticate client
 credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(endpoint, credential)
-
-team_members = ["Josh", "Kerri", "Kieran", "Laurent", "Lily", "Matt", "Soren", "Srikanta", "Swathi"]    # possible values for data field
+services = ["EventGrid", "ServiceBus", "EventHubs", "Storage"]    # possible values for data field
 
 def publish_event():
     # publish events
@@ -38,7 +37,7 @@ def publish_event():
         event_list = []     # list of events to publish
         # create events and append to list
         for j in range(randint(1, 3)):
-            sample_members = sample(team_members, k=randint(1, 9))      # select random subset of team members
+            sample_members = sample(services, k=randint(1, 4))      # select random subset of team members
             event = EventGridEvent(
                     subject="Door1",
                     data={"team": sample_members},

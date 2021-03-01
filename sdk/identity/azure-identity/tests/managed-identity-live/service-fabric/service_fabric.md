@@ -11,6 +11,7 @@ The `arm-templates` directory contains Azure resource templates for creating the
 > **Note:** All Azure resources used in the sample should be in the same region & resource group.
 
 - This sample requires access to an Azure subscription and required privileges to create resources.
+- [An SSH key pair is required.](https://docs.microsoft.com/azure/virtual-machines/linux/mac-create-ssh-keys#provide-an-ssh-public-key-when-deploying-a-vm)
 - [Azure CLI is used to deploy resources and applications.](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
 - Docker is needed to build and push the sample containerized services. Docker should be using Linux containers for building the application images that are provided.
 
@@ -73,7 +74,7 @@ At the time of writing, Service Fabric clusters must be deployed using the Azure
 
 To use the provided template:
 
-1. Open `arm-templates/cluster.parameters.json` and complete the fields `clusterLocation`, `adminUserName`, `adminPassword`, `sourceVaultValue`, `certificateUrlValue`, and `certificateThumbprint`. The placeholder values will describe how they should be completed.
+1. Open `arm-templates/cluster.parameters.json` and complete the fields `clusterLocation`, `adminUserName`, `adminPassword`, `sourceVaultValue`, `certificateUrlValue`, `certificateThumbprint`, and `sshKeyData`. The placeholder values will describe how they should be completed.
 2. In `arm-templates/cluster.parameters.json`, change all instances of `sfmi-test` to a unique name, like `<myusername>-sfmi-test`. Also, change the values of `applicationDiagnosticsStorageAccountName` and `supportLogStorageAccountName` to be similarly unique, but without hyphens. This will help ensure the deployment resource names do not conflict with the names of other public resources.
 3. Start the deployment by running the following command in your command prompt:
 ```

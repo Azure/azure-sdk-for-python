@@ -34,7 +34,9 @@ secret_client = SecretClient(os.environ["AZURE_KEYVAULT_URL"], credential)
 test_certificates = [c for c in cert_client.list_properties_of_certificates() if c.name.startswith("livekvtest")]
 for certificate in test_certificates:
     cert_client.begin_delete_certificate(certificate.name).wait()
-deleted_test_certificates = [c for c in cert_client.list_deleted_certificates() if c.name.startswith("livekvtest")]
+deleted_test_certificates = [
+    c for c in cert_client.list_deleted_certificates(include_pending=True) if c.name.startswith("livekvtest")
+]
 for certificate in deleted_test_certificates:
     cert_client.purge_deleted_certificate(certificate.name)
 

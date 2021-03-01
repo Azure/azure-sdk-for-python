@@ -24,8 +24,62 @@ IGNORED_SAMPLES = {
     "azure-eventgrid": [
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",
-        "consume_cloud_events_from_service_bus_queue.py",
-        "consume_cloud_events_from_storage_queue.py"]
+        "consume_eventgrid_events_from_service_bus_queue.py",
+        "consume_cloud_events_from_storage_queue.py",
+        "sample_publish_events_to_a_topic_using_sas_credential.py",
+        "sample_publish_events_to_a_topic_using_sas_credential_async.py"],
+    "azure-eventhub": [
+        "authenticate_with_sas_token.py",
+        "connection_to_custom_endpoint_address.py",
+        "proxy.py",
+        "receive_batch_with_checkpoint.py",
+        "recv.py",
+        "recv_track_last_enqueued_event_prop.py",
+        "recv_with_checkpoint_by_event_count.py",
+        "recv_with_checkpoint_by_time_interval.py",
+        "recv_with_checkpoint_store.py",
+        "recv_with_custom_starting_position.py",
+        "sample_code_eventhub.py",
+        "authenticate_with_sas_token_async.py",
+        "connection_to_custom_endpoint_address_async.py",
+        "iot_hub_connection_string_receive_async.py",
+        "proxy_async.py",
+        "receive_batch_with_checkpoint_async.py",
+        "recv_async.py",
+        "recv_track_last_enqueued_event_prop_async.py",
+        "recv_with_checkpoint_by_event_count_async.py",
+        "recv_with_checkpoint_by_time_interval_async.py",
+        "recv_with_checkpoint_store_async.py",
+        "recv_with_custom_starting_position_async.py",
+        "sample_code_eventhub_async.py"
+    ],
+    "azure-eventhub-checkpointstoreblob": [
+        "receive_events_using_checkpoint_store.py",
+        "receive_events_using_checkpoint_store_storage_api_version.py"
+    ],
+    "azure-eventhub-checkpointstoreblob-aio": [
+        "receive_events_using_checkpoint_store_async.py",
+        "receive_events_using_checkpoint_store_storage_api_version_async.py"
+    ],
+    "azure-servicebus": [
+        "failure_and_recovery.py",
+        "mgmt_queue.py",
+        "mgmt_rule.py",
+        "mgmt_subscription.py",
+        "mgmt_topic.py",
+        "proxy.py",
+        "receive_deferred_message_queue.py",
+        "receive_iterator_queue.py",
+        "session_pool_receive.py",
+        "mgmt_queue_async.py",
+        "mgmt_rule_async.py",
+        "mgmt_subscription_async.py",
+        "mgmt_topic_async.py",
+        "proxy_async.py",
+        "receive_deferred_message_queue_async.py",
+        "receive_iterator_queue_async.py",
+        "session_pool_receive_async.py"
+    ]
 }
 
 

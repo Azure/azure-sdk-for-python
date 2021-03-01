@@ -6,11 +6,10 @@ import functools
 import json
 import logging
 import time
-import pytest
 
 from azure.core.exceptions import ResourceExistsError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure_devtools.scenario_tests import RecordingProcessor, RequestUrlNormalizer
-
 from azure.keyvault.certificates import (
     AdministratorContact,
     ApiVersion,
@@ -27,13 +26,17 @@ from azure.keyvault.certificates import (
     IssuerProperties,
     parse_key_vault_certificate_id
 )
-from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+from azure.keyvault.certificates._shared import HttpChallengeCache
+from devtools_testutils import PowerShellPreparer
+import pytest
 
-from _shared.preparer import KeyVaultClientPreparer as _KeyVaultClientPreparer
 from _shared.test_case import KeyVaultTestCase
 
-# pre-apply the client_cls positional argument so it needn't be explicitly passed below
-KeyVaultClientPreparer = functools.partial(_KeyVaultClientPreparer, CertificateClient)
+KeyVaultPreparer = functools.partial(
+    PowerShellPreparer,
+    "keyvault",
+    azure_keyvault_url="https://vaultname.vault.azure.net"
+)
 
 
 class RetryAfterReplacer(RecordingProcessor):
@@ -62,6 +65,17 @@ class CertificateClientTests(KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         super(CertificateClientTests, self).__init__(
             *args, replay_processors=[RetryAfterReplacer(), RequestUrlNormalizer()], **kwargs
+        )
+
+    def tearDown(self):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        super(CertificateClientTests, self).tearDown()
+
+    def create_client(self, vault_uri, **kwargs):
+        credential = self.get_credential(CertificateClient)
+        return self.create_client_from_credential(
+            CertificateClient, credential=credential, vault_url=vault_uri, **kwargs
         )
 
     def _import_common_certificate(self, client, cert_name):
@@ -132,13 +146,10 @@ class CertificateClientTests(KeyVaultTestCase):
             self.assertEqual(a_entry.days_before_expiry, b_entry.days_before_expiry)
 
     def _validate_certificate_list(self, a, b):
+        # verify that all certificates in a exist in b
         for cert in b:
             if cert.id in a.keys():
                 del a[cert.id]
-            else:
-                assert False, "Returned certificate with id {} not found in list of original certificates".format(
-                    cert.id
-                )
         self.assertEqual(len(a), 0)
 
     def _validate_certificate_contacts(self, a, b):
@@ -168,10 +179,10 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(a.name, b.name)
         self.assertEqual(a.provider, b.provider)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_crud_operations(self, client, **kwargs):
+    def test_crud_operations(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
+
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [LifetimeAction(lifetime_percentage=80, action=CertificatePolicyAction.auto_renew)]
         cert_policy = CertificatePolicy(
@@ -222,35 +233,35 @@ class CertificateClientTests(KeyVaultTestCase):
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_import_certificate_not_password_encoded_no_policy(self, client):
+    def test_import_certificate_not_password_encoded_no_policy(self, azure_keyvault_url):
+        client = self.create_client(azure_keyvault_url)
+
         # If a certificate is not password encoded, we can import the certificate
         # without passing in 'password'
         certificate = client.import_certificate(
-            certificate_name="importNotPasswordEncodedCertificate",
+            certificate_name=self.get_resource_name("importNotPasswordEncodedCertificate"),
             certificate_bytes=CertificateClientTests.CERT_CONTENT_NOT_PASSWORD_ENCODED,
         )
         self.assertIsNotNone(certificate.policy)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_import_certificate_password_encoded_no_policy(self, client):
+    def test_import_certificate_password_encoded_no_policy(self, azure_keyvault_url):
+        client = self.create_client(azure_keyvault_url)
+
         # If a certificate is password encoded, we have to pass in 'password'
         # when importing the certificate
         certificate = client.import_certificate(
-            certificate_name="importPasswordEncodedCertificate",
+            certificate_name=self.get_resource_name("importPasswordEncodedCertificate"),
             certificate_bytes=CertificateClientTests.CERT_CONTENT_PASSWORD_ENODED,
             password="123"
         )
         self.assertIsNotNone(certificate.policy)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_list(self, client, **kwargs):
+    def test_list(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
+
         max_certificates = self.list_test_size
         expected = {}
 
@@ -276,10 +287,10 @@ class CertificateClientTests(KeyVaultTestCase):
         returned_certificates = client.list_properties_of_certificates(max_page_size=max_certificates - 1)
         self._validate_certificate_list(expected, returned_certificates)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_list_certificate_versions(self, client, **kwargs):
+    def test_list_certificate_versions(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
+
         cert_name = self.get_resource_name("certver")
 
         max_certificates = self.list_test_size
@@ -307,10 +318,10 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_crud_contacts(self, client, **kwargs):
+    def test_crud_contacts(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
+
         contact_list = [
             CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
             CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
@@ -336,10 +347,10 @@ class CertificateClientTests(KeyVaultTestCase):
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_recover_and_purge(self, client, **kwargs):
+    def test_recover_and_purge(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
+
         certs = {}
         # create certificates to recover
         for i in range(self.list_test_size):
@@ -359,12 +370,12 @@ class CertificateClientTests(KeyVaultTestCase):
         deleted = [parse_key_vault_certificate_id(source_id=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(all(c in deleted for c in certs.keys()))
 
-        # recover select certificates
-        for certificate_name in [c for c in certs.keys() if c.startswith("certrec")]:
+        # recover select certificates (test resources have a "livekvtest" prefix)
+        for certificate_name in [c for c in certs.keys() if c.startswith("livekvtestcertrec")]:
             client.begin_recover_deleted_certificate(certificate_name=certificate_name).wait()
 
         # purge select certificates
-        for certificate_name in [c for c in certs.keys() if c.startswith("certprg")]:
+        for certificate_name in [c for c in certs.keys() if c.startswith("livekvtestcertprg")]:
             client.purge_deleted_certificate(certificate_name)
 
         if not self.is_playback():
@@ -375,15 +386,15 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertTrue(not any(c in deleted for c in certs.keys()))
 
         # validate the recovered certificates
-        expected = {k: v for k, v in certs.items() if k.startswith("certrec")}
+        expected = {k: v for k, v in certs.items() if k.startswith("livekvtestcertrec")}
         actual = {k: client.get_certificate_version(certificate_name=k, version="") for k in expected.keys()}
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_async_request_cancellation_and_deletion(self, client, **kwargs):
-        cert_name = "asyncCanceledDeletedCert"
+    def test_async_request_cancellation_and_deletion(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
+
+        cert_name = self.get_resource_name("asyncCanceledDeletedCert")
         cert_policy = CertificatePolicy.get_default()
         # create certificate
         create_certificate_poller = client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy)
@@ -431,11 +442,11 @@ class CertificateClientTests(KeyVaultTestCase):
         # delete cancelled certificate
         client.begin_delete_certificate(cert_name).wait()
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_policy(self, client, **kwargs):
-        cert_name = "policyCertificate"
+    def test_policy(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
+
+        cert_name = self.get_resource_name("policyCertificate")
         cert_policy = CertificatePolicy(
             issuer_name="Self",
             subject="CN=DefaultPolicy",
@@ -467,11 +478,11 @@ class CertificateClientTests(KeyVaultTestCase):
 
         self._validate_certificate_policy(cert_policy, returned_policy)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_get_pending_certificate_signing_request(self, client, **kwargs):
-        cert_name = "unknownIssuerCert"
+    def test_get_pending_certificate_signing_request(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
+
+        cert_name = self.get_resource_name("unknownIssuerCert")
 
         # get pending certificate signing request
         certificate = client.begin_create_certificate(
@@ -480,10 +491,10 @@ class CertificateClientTests(KeyVaultTestCase):
         pending_version_csr = client.get_certificate_operation(certificate_name=cert_name).csr
         self.assertEqual(client.get_certificate_operation(certificate_name=cert_name).csr, pending_version_csr)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_backup_restore(self, client, **kwargs):
+    def test_backup_restore(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
+
         policy = CertificatePolicy.get_default()
         policy._san_user_principal_names = ["john.doe@domain.com"]
         cert_name = self.get_resource_name("cert")
@@ -505,11 +516,11 @@ class CertificateClientTests(KeyVaultTestCase):
         restored_certificate = self._poll_until_no_exception(restore_function, ResourceExistsError)
         self._validate_certificate_bundle(cert=restored_certificate, cert_name=cert_name, cert_policy=policy)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_crud_issuer(self, client, **kwargs):
-        issuer_name = "issuer"
+    def test_crud_issuer(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
+
+        issuer_name = self.get_resource_name("issuer")
         admin_contacts = [
             AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
@@ -533,9 +544,10 @@ class CertificateClientTests(KeyVaultTestCase):
         self._validate_certificate_issuer(expected, issuer)
 
         # list certificate issuers
+        issuer2_name = self.get_resource_name("issuer2")
 
         client.create_issuer(
-            issuer_name=issuer_name + "2",
+            issuer_name=issuer2_name,
             provider="Test",
             account_id="keyvaultuser2",
             admin_contacts=admin_contacts,
@@ -547,16 +559,17 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         expected_base_2 = IssuerProperties(
-            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name + "2", provider="Test"
+            issuer_id=client.vault_url + "/certificates/issuers/" + issuer2_name, provider="Test"
         )
         expected_issuers = [expected_base_1, expected_base_2]
 
         issuers = list(client.list_properties_of_issuers())
-        self.assertEqual(len(issuers), len(expected_issuers))
         for issuer in issuers:
             exp_issuer = next((i for i in expected_issuers if i.name == issuer.name), None)
-            self.assertIsNotNone(exp_issuer)
-            self._validate_certificate_issuer_properties(exp_issuer, issuer)
+            if exp_issuer:
+                self._validate_certificate_issuer_properties(exp_issuer, issuer)
+                expected_issuers.remove(exp_issuer)
+        self.assertEqual(len(expected_issuers), 0)
 
         # update certificate issuer
         admin_contacts = [
@@ -583,17 +596,18 @@ class CertificateClientTests(KeyVaultTestCase):
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer(client_kwargs={"logging_enable": True})
-    def test_logging_enabled(self, client, **kwargs):
+    def test_logging_enabled(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url, logging_enable=True)
+
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
-        client.create_issuer(issuer_name="cert-name", provider="Test")
+        issuer_name = self.get_resource_name("issuer")
+        client.create_issuer(issuer_name=issuer_name, provider="Test")
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
@@ -607,17 +621,18 @@ class CertificateClientTests(KeyVaultTestCase):
 
         assert False, "Expected request body wasn't logged"
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_logging_disabled(self, client, **kwargs):
+    def test_logging_disabled(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url, logging_enable=False)
+
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
-        client.create_issuer(issuer_name="cert-name", provider="Test")
+        issuer_name = self.get_resource_name("issuer")
+        client.create_issuer(issuer_name=issuer_name, provider="Test")
 
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
@@ -628,10 +643,10 @@ class CertificateClientTests(KeyVaultTestCase):
                     # this means the message is not JSON or has no kty property
                     pass
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
-    def test_2016_10_01_models(self, client, **kwargs):
+    def test_2016_10_01_models(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url, api_version=ApiVersion.V2016_10_01)
+
         """The client should correctly deserialize version 2016-10-01 models"""
 
         cert_name = self.get_resource_name("cert")
@@ -641,10 +656,10 @@ class CertificateClientTests(KeyVaultTestCase):
         assert cert.policy.key_curve_name is None
         assert cert.policy.certificate_transparency is None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    def test_get_certificate_version(self, client, **kwargs):
+    def test_get_certificate_version(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url)
+
         cert_name = self.get_resource_name("cert")
         for _ in range(self.list_test_size):
             client.begin_create_certificate(cert_name, CertificatePolicy.get_default()).wait()
@@ -667,10 +682,10 @@ class CertificateClientTests(KeyVaultTestCase):
             assert version_properties.version == cert.properties.version
             assert version_properties.x509_thumbprint == cert.properties.x509_thumbprint
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
-    def test_list_properties_of_certificates_2016_10_01(self, client, **kwargs):
+    def test_list_properties_of_certificates_2016_10_01(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url, api_version=ApiVersion.V2016_10_01)
+
         [_ for _ in client.list_properties_of_certificates()]
 
         with pytest.raises(NotImplementedError) as excinfo:
@@ -678,10 +693,10 @@ class CertificateClientTests(KeyVaultTestCase):
 
         assert "The 'include_pending' parameter to `list_properties_of_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
 
-    @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
-    def test_list_deleted_certificates_2016_10_01(self, client, **kwargs):
+    def test_list_deleted_certificates_2016_10_01(self, azure_keyvault_url, **kwargs):
+        client = self.create_client(azure_keyvault_url, api_version=ApiVersion.V2016_10_01)
+
 
         [_ for _ in client.list_deleted_certificates()]
 
@@ -698,7 +713,7 @@ def test_service_headers_allowed_in_logs():
 
 
 def test_custom_hook_policy():
-    class CustomHookPolicy(object):
+    class CustomHookPolicy(SansIOHTTPPolicy):
         pass
 
     client = CertificateClient("...", object(), custom_hook_policy=CustomHookPolicy())

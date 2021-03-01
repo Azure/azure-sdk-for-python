@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ResourceGroupsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -102,10 +102,10 @@ class ResourceGroupsOperations(object):
     def create_or_update(
         self,
         resource_group_name,  # type: str
-        parameters,  # type: "models.ResourceGroup"
+        parameters,  # type: "_models.ResourceGroup"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ResourceGroup"
+        # type: (...) -> "_models.ResourceGroup"
         """Creates or updates a resource group.
 
         :param resource_group_name: The name of the resource group to create or update.
@@ -117,7 +117,7 @@ class ResourceGroupsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -252,7 +252,12 @@ class ResourceGroupsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -271,7 +276,7 @@ class ResourceGroupsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ResourceGroup"
+        # type: (...) -> "_models.ResourceGroup"
         """Gets a resource group.
 
         :param resource_group_name: The name of the resource group to get. The name is case
@@ -282,7 +287,7 @@ class ResourceGroupsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -325,10 +330,10 @@ class ResourceGroupsOperations(object):
     def update(
         self,
         resource_group_name,  # type: str
-        parameters,  # type: "models.ResourceGroupPatchable"
+        parameters,  # type: "_models.ResourceGroupPatchable"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ResourceGroup"
+        # type: (...) -> "_models.ResourceGroup"
         """Updates a resource group.
 
         Resource groups can be updated through a simple PATCH operation to a group address. The format
@@ -345,7 +350,7 @@ class ResourceGroupsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -393,10 +398,10 @@ class ResourceGroupsOperations(object):
     def export_template(
         self,
         resource_group_name,  # type: str
-        parameters,  # type: "models.ExportTemplateRequest"
+        parameters,  # type: "_models.ExportTemplateRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ResourceGroupExportResult"
+        # type: (...) -> "_models.ResourceGroupExportResult"
         """Captures the specified resource group as a template.
 
         :param resource_group_name: The name of the resource group to export as a template.
@@ -408,7 +413,7 @@ class ResourceGroupsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupExportResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceGroupExportResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceGroupExportResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -459,7 +464,7 @@ class ResourceGroupsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ResourceGroupListResult"]
+        # type: (...) -> Iterable["_models.ResourceGroupListResult"]
         """Gets all the resource groups for a subscription.
 
         :param filter: The filter to apply on the operation.
@@ -471,7 +476,7 @@ class ResourceGroupsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

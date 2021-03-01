@@ -1985,3 +1985,71 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
             if self.is_live:
                 sleep(SLEEP_DELAY)
+
+    @pytest.mark.skip("Cosmos Tables does not yet support sas")
+    @pytest.mark.live_test_only
+    @CosmosPreparer()
+    async def test_sas_signed_identifier(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            # Arrange
+            entity, _ = await self._insert_random_entity()
+
+            access_policy = AccessPolicy()
+            access_policy.start = datetime(2011, 10, 11)
+            access_policy.expiry = datetime(2020, 10, 12)
+            access_policy.permission = TableSasPermissions(read=True)
+            identifiers = {'testid': access_policy}
+
+            await self.table.set_table_access_policy(identifiers)
+
+            token = generate_table_sas(
+                tables_cosmos_account_name,
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                policy_id='testid',
+            )
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=token,
+            )
+            table = service.get_table_client(table=self.table_name)
+            entities = []
+            async for t in table.query_entities(
+                    filter="PartitionKey eq '{}'".format(entity.PartitionKey)):
+                entities.append(t)
+
+            # Assert
+            assert len(entities) ==  1
+            self._assert_default_entity(entities[0])
+        finally:
+            await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
+
+    @CosmosPreparer()
+    async def test_datetime_milliseconds(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+        url = self.account_url(tables_cosmos_account_name, "table")
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity = self._create_random_entity_dict()
+
+            entity['milliseconds'] = datetime(2011, 11, 4, 0, 5, 23, 283000, tzinfo=tzutc())
+
+            await self.table.create_entity(entity)
+
+            received_entity = await self.table.get_entity(
+                partition_key=entity['PartitionKey'],
+                row_key=entity['RowKey']
+            )
+
+            assert entity['milliseconds'] == received_entity['milliseconds']
+
+        finally:
+            await self._tear_down()
+            self.sleep(SLEEP_DELAY)
