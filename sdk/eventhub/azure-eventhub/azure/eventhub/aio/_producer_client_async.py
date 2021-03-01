@@ -71,7 +71,10 @@ class EventHubProducerClient(ClientBaseAsync):
      Incorrectly configuring these values may result in an `EventHubProducerClient` instance that is unable to
      publish to the Event Hubs. These configurations are ignored when publishing to the Event Hubs gateway for
      automatic routing or when using a partition key.
-    :paramtype partition_config: dict[str, ~azure.eventhub.PartitionPublishingConfiguration]
+     If a dict is provided as the value instead of a PartitionPublishingConfiguration object, it may contain the
+     optional keys: `'producer_group_id'` (int value), `'owner_level'` (int value) and
+     `'starting_sequence_number'` (int value).
+    :paramtype partition_config: dict[str, Union[~azure.eventhub.PartitionPublishingConfiguration, dict]]
 
     .. admonition:: Example:
 
@@ -232,7 +235,7 @@ class EventHubProducerClient(ClientBaseAsync):
          publishing to the Event Hub partitions. If enabled, the producer will only be able to publish directly
          to partitions; it will not be able to publish to the Event Hubs gateway for automatic partition routing
          nor will it be able to use a partition key. Default is False.
-        :keyword partition_configs: The set of configurations that can be specified to influence publishing behavior
+        :keyword partition_config: The set of configurations that can be specified to influence publishing behavior
          specific to the configured Event Hub partition. These configurations are not necessary in the majority of
          scenarios and are intended for use with specialized scenarios, such as when recovering the state used for
          idempotent publishing.
@@ -240,7 +243,10 @@ class EventHubProducerClient(ClientBaseAsync):
          Incorrectly configuring these values may result in an `EventHubProducerClient` instance that is unable to
          publish to the Event Hubs. These configurations are ignored when publishing to the Event Hubs gateway for
          automatic routing or when using a partition key.
-        :paramtype partition_config: dict[str, ~azure.eventhub.PartitionPublishingConfiguration]
+         If a dict is provided as the value instead of a PartitionPublishingConfiguration object, it may contain the
+         optional keys: `'producer_group_id'` (int value), `'owner_level'` (int value) and
+         `'starting_sequence_number'` (int value).
+        :paramtype partition_config: dict[str, Union[~azure.eventhub.PartitionPublishingConfiguration, dict]]
         :rtype: ~azure.eventhub.aio.EventHubProducerClient
 
         .. admonition:: Example:
