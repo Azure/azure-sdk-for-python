@@ -11,7 +11,7 @@ from ._generated.models import (
 )
 
 from ._generated.v3_0 import models as _v3_0_models
-from ._generated.v3_1_preview_3 import models as _v3_1_preview_3_models
+from ._generated.v3_1_preview_4 import models as _latest_preview_models
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
@@ -193,9 +193,15 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
     :ivar str id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :ivar entities: Identified Healthcare entities in the document.
+    :ivar entities: Identified Healthcare entities in the document, i.e. in
+        the document "The subject took ibuprofen", "ibuprofen" is an identified entity
+        from the document.
     :vartype entities:
         list[~azure.ai.textanalytics.HealthcareEntity]
+    :ivar relations: Identified Healthcare relations between entities. For example, in the
+        document "The subject took 100mg of ibuprofen", we would identify the relationship
+        between the dosage of 100mg and the medication ibuprofen.
+    :vartype relations: list[~azure.ai.textanalytics.HealthcareRelation]
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -210,6 +216,7 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
+        self.relations = kwargs.get("relations", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
@@ -218,23 +225,94 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
     @classmethod
     def _from_generated(cls, healthcare_result):
         entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities] # pylint: disable=protected-access
+        relations = [HealthcareRelation._from_generated(r, entities) for r in healthcare_result.relations]  # pylint: disable=protected-access
 
         return cls(
             id=healthcare_result.id,
             entities=entities,
+            relations=relations,
             warnings=healthcare_result.warnings,
-            statistics=healthcare_result.statistics
+            statistics=healthcare_result.statistics,
         )
 
     def __repr__(self):
-        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, warnings={}, statistics={}, \
+        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, relations={}, warnings={}, statistics={}, \
         is_error={})".format(
             self.id,
             self.entities,
+            self.relations,
             self.warnings,
             self.statistics,
             self.is_error
         )[:1024]
+
+class HealthcareRelation(DictMixin):
+    """HealthcareRelation is a result object which represents a relation detected in a document.
+
+    Every HealthcareRelation is an entity graph of a certain relation type,
+    where all entities are connected and have specific roles within the relation context.
+
+    :ivar relation_type: The type of relation, i.e. the relationship between "100mg" and
+        "ibuprofen" in the document "The subject took 100 mg of ibuprofen" is "DosageOfMedication".
+    :vartype relation_type: str or ~azure.ai.textanalytics.HealthcareEntityRelationType
+    :ivar roles: The roles present in this relation. I.e., in the document
+        "The subject took 100 mg of ibuprofen", the present roles are TODO
+    :vartype roles: list[~azure.ai.textanalytics.HealthcareRelationRole]
+    """
+
+    def __init__(self, **kwargs):
+        self.relation_type = kwargs.get("relation_type")
+        self.roles = kwargs.get("roles")
+
+    @classmethod
+    def _from_generated(cls, healthcare_relation_result, entities):
+        roles = [
+            HealthcareRelationRole._from_generated(r, entities)  # pylint: disable=protected-access
+            for r in healthcare_relation_result.entities
+        ]
+        return cls(
+            relation_type=healthcare_relation_result.relation_type,
+            roles=roles,
+        )
+
+    def __repr__(self):
+        return "HealthcareRelation(relation_type={}, roles={}".format(
+            self.relation_type,
+            repr(self.roles),
+        )[:1024]
+
+class HealthcareRelationRole(DictMixin):
+    """A model representing a role in a relation.
+
+    For example, in "The subject took 100 mg of ibuprofen",
+    "100 mg" is a dosage entity fulfilling the role TODO
+    in the extracted relation.
+
+    :ivar str name: The role of the entity in the relationship. I.e., in the relation
+        "The subject took 100 mg of ibuprofen", the dosage entity "100 mg" has role
+        TODO
+    :ivar entity: The entity that is present in the relationship. For example, in
+        "The subject took 100 mg of ibuprofen", this property holds the dosage entity
+        of "100 mg".
+    :vartype entity: ~azure.ai.textanalytics.HealthcareEntity
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name")
+        self.entity = kwargs.get("entity")
+
+    @staticmethod
+    def _get_entity(healthcare_role_result, entities):
+        nums = _get_indices(healthcare_role_result.ref)
+        entity_index = nums[1]
+        return entities[entity_index]
+
+    @classmethod
+    def _from_generated(cls, healthcare_role_result, entities):
+        return cls(
+            name=healthcare_role_result.role,
+            entity=HealthcareRelationRole._get_entity(healthcare_role_result, entities)
+        )
 
 
 class DetectLanguageResult(DictMixin):
@@ -1282,8 +1360,8 @@ class RecognizeEntitiesAction(DictMixin):
             .format(self.model_version, self.string_index_type)[:1024]
 
     def to_generated(self):
-        return _v3_1_preview_3_models.EntitiesTask(
-            parameters=_v3_1_preview_3_models.EntitiesTaskParameters(
+        return _latest_preview_models.EntitiesTask(
+            parameters=_latest_preview_models.EntitiesTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type
             )
@@ -1324,8 +1402,8 @@ class RecognizePiiEntitiesAction(DictMixin):
             .format(self.model_version, self.domain_filter, self.string_index_type)[:1024]
 
     def to_generated(self):
-        return _v3_1_preview_3_models.PiiTask(
-            parameters=_v3_1_preview_3_models.PiiTaskParameters(
+        return _latest_preview_models.PiiTask(
+            parameters=_latest_preview_models.PiiTaskParameters(
                 model_version=self.model_version,
                 domain=self.domain_filter,
                 string_index_type=self.string_index_type
@@ -1353,8 +1431,8 @@ class ExtractKeyPhrasesAction(DictMixin):
             .format(self.model_version)[:1024]
 
     def to_generated(self):
-        return _v3_1_preview_3_models.KeyPhrasesTask(
-            parameters=_v3_1_preview_3_models.KeyPhrasesTaskParameters(
+        return _latest_preview_models.KeyPhrasesTask(
+            parameters=_latest_preview_models.KeyPhrasesTaskParameters(
                 model_version=self.model_version
             )
         )
