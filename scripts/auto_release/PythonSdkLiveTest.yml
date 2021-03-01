@@ -24,7 +24,16 @@ jobs:
         architecture: 'x64'
     - bash: |
         script_path=$(pwd)/scripts/auto_release
+        echo 00000
+        cd scripts
+        echo | ls
+        echo 1111
+        cd auto_release
+        echo | ls
         cd ..
+        cd ..
+        cd ..
+        echo 2222
         git config --global user.email "PythonSdkPipelines"
         git config --global user.name "PythonSdkPipelines"
 
@@ -37,6 +46,9 @@ jobs:
         source venv-sdk/bin/activate
         output_path=$(pwd)/venv-sdk
         pip install packaging
+        echoo 333333333
+        pip install -r $script_path/livetest_package.txt
+        echoo 444444444
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=true
