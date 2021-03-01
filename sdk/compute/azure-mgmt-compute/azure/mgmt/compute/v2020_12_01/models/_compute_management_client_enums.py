@@ -309,16 +309,20 @@ class StorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the storage account type for the managed disk. Managed OS disk storage account type
     can only be set when you create the scale set. NOTE: UltraSSD_LRS can only be used with data
     disks. It cannot be used with OS Disk. Standard_LRS uses Standard HDD. StandardSSD_LRS uses
-    Standard SSD. Premium_LRS uses Premium SSD. UltraSSD_LRS uses Ultra disk. For more information
-    regarding disks supported for Windows Virtual Machines, refer to https://docs.microsoft.com/en-
-    us/azure/virtual-machines/windows/disks-types and, for Linux Virtual Machines, refer to
-    https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-types
+    Standard SSD. Premium_LRS uses Premium SSD. UltraSSD_LRS uses Ultra disk. Premium_ZRS uses
+    Premium SSD zone redundant storage. StandardSSD_ZRS uses Standard SSD zone redundant storage.
+    For more information regarding disks supported for Windows Virtual Machines, refer to
+    https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disks-types and, for Linux
+    Virtual Machines, refer to https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-
+    types
     """
 
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"
     STANDARD_SSD_LRS = "StandardSSD_LRS"
     ULTRA_SSD_LRS = "UltraSSD_LRS"
+    PREMIUM_ZRS = "Premium_ZRS"
+    STANDARD_SSD_ZRS = "StandardSSD_ZRS"
 
 class UpgradeMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br

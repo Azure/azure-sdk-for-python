@@ -1642,7 +1642,8 @@ class ImageDisk(msrest.serialization.Model):
     :type disk_size_gb: int
     :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
      UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
+     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     "StandardSSD_ZRS".
     :type storage_account_type: str or ~azure.mgmt.compute.v2020_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed image disk.
@@ -1696,7 +1697,8 @@ class ImageDataDisk(ImageDisk):
     :type disk_size_gb: int
     :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
      UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
+     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     "StandardSSD_ZRS".
     :type storage_account_type: str or ~azure.mgmt.compute.v2020_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed image disk.
@@ -1783,7 +1785,8 @@ class ImageOSDisk(ImageDisk):
     :type disk_size_gb: int
     :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
      UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
+     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     "StandardSSD_ZRS".
     :type storage_account_type: str or ~azure.mgmt.compute.v2020_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed image disk.
@@ -2436,7 +2439,8 @@ class ManagedDiskParameters(SubResource):
     :type id: str
     :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
      UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
+     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     "StandardSSD_ZRS".
     :type storage_account_type: str or ~azure.mgmt.compute.v2020_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed disk.
@@ -6769,7 +6773,8 @@ class VirtualMachineScaleSetManagedDiskParameters(msrest.serialization.Model):
 
     :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
      UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
+     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     "StandardSSD_ZRS".
     :type storage_account_type: str or ~azure.mgmt.compute.v2020_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed disk.
