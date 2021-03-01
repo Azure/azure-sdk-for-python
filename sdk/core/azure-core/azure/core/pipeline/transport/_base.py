@@ -594,12 +594,11 @@ class _HttpResponseBase(object):
         if self.status_code >= 400:
             raise HttpResponseError(response=self)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         # there doesn't have to be a content type
         content_type_str = (
             ", Content-Type: {}".format(self.content_type) if self.content_type else ""
         )
-        reason = " {}".format(self.reason) if self.reason else ""
         return "<{}: {} {}{}>".format(
             type(self).__name__, self.status_code, self.reason, content_type_str
         )
