@@ -261,7 +261,7 @@ async def test_idempotent_sender_async(connstr_receivers):
         await client.send_batch(event_data_batch)
 
         partition_publishing_properties = await client.get_partition_publishing_properties("0")
-        assert partition_publishing_properties["enable_idempotent_publishing"] == 0
+        assert partition_publishing_properties["enable_idempotent_publishing"]
         assert partition_publishing_properties["producer_group_id"] is not None
         assert partition_publishing_properties["owner_level"] is not None
         assert event_data_batch.starting_published_sequence_number == 0

@@ -13,6 +13,7 @@ from uamqp import authentication, errors, c_uamqp, compat
 
 from azure.eventhub import (
     EventData,
+    EventDataBatch,
     EventHubSharedKeyCredential,
     EventHubProducerClient,
     EventHubConsumerClient
@@ -109,7 +110,7 @@ def test_receive_connection_idle_timeout_and_reconnect_sync(connstr_senders):
             time.sleep(11)
 
             ed = EventData("Event")
-            senders[0].send([ed])
+            senders[0].send(EventDataBatch._from_batch([ed]))
 
             consumer._handler.do_work()
             assert consumer._handler._connection._state == c_uamqp.ConnectionState.DISCARDING
