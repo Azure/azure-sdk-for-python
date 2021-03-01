@@ -9,7 +9,7 @@ import six
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
 from .._generated.aio import SearchClient as SearchIndexClient
-from .._generated.models import IndexBatch, IndexingResult
+from .._generated.models import IndexingResult
 from .._search_documents_error import RequestEntityTooLargeError
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery

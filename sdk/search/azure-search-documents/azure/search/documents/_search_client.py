@@ -9,7 +9,7 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 from ._api_versions import get_api_version
 from ._generated import SearchClient as SearchIndexClient
-from ._generated.models import IndexBatch, IndexingResult
+from ._generated.models import IndexingResult
 from ._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator

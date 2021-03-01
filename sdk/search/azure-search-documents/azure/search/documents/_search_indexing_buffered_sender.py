@@ -13,7 +13,7 @@ from ._utils import is_retryable_status_code
 from .indexes import SearchIndexClient as SearchServiceClient
 from ._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
 from ._generated import SearchClient as SearchIndexClient
-from ._generated.models import IndexBatch, IndexingResult
+from ._generated.models import IndexingResult
 from ._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
 from ._headers_mixin import HeadersMixin
