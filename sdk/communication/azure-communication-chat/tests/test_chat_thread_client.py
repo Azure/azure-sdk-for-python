@@ -448,15 +448,13 @@ class TestChatThreadClient(unittest.TestCase):
                 share_history_time=datetime.utcnow())
 
         try:
-            failed_participant, communication_error = chat_thread_client.add_participant(new_participant)
+            chat_thread_client.add_participant(new_participant)
         except:
             raised = True
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertIsNone(failed_participant)
-        self.assertIsNone(communication_error)
 
-    def test_add_participant_w_failed_participants_returns_tuple(self):
+    def test_add_participant_w_failed_participants(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
         new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
         raised = False
@@ -483,15 +481,11 @@ class TestChatThreadClient(unittest.TestCase):
                 share_history_time=datetime.utcnow())
 
         try:
-            failed_participant, communication_error = chat_thread_client.add_participant(new_participant)
+            chat_thread_client.add_participant(new_participant)
         except:
             raised = True
 
-        self.assertFalse(raised, 'Expected is no excpetion raised')
-        self.assertEqual(new_participant.user.identifier, failed_participant.user.identifier)
-        self.assertEqual(new_participant.display_name, failed_participant.display_name)
-        self.assertEqual(new_participant.share_history_time, failed_participant.share_history_time)
-        self.assertEqual(error_message, communication_error.message)
+        self.assertTrue(raised, 'Expected is no excpetion raised')
 
     def test_add_participants(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"

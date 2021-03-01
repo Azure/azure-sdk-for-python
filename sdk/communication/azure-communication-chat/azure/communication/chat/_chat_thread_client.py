@@ -401,7 +401,7 @@ class ChatThreadClient(object):
         if not message_id:
             raise ValueError("message_id cannot be None.")
 
-        update_message_request = UpdateChatMessageRequest(content=content, priority=None)
+        update_message_request = UpdateChatMessageRequest(content=content)
 
         return self._client.chat_thread.update_chat_message(
             chat_thread_id=self._thread_id,
@@ -483,7 +483,7 @@ class ChatThreadClient(object):
             thread_participant,  # type: ChatThreadParticipant
             **kwargs  # type: Any
     ):
-        # type: (...) -> tuple(ChatThreadParticipant, CommunicationError)
+        # type: (...) -> None
         """Adds single thread participant to a thread. If participant already exist, no change occurs.
 
         If participant is added successfully, a tuple of (None, None) is expected.
@@ -491,9 +491,9 @@ class ChatThreadClient(object):
 
         :param thread_participant: Required. Single thread participant to be added to the thread.
         :type thread_participant: ~azure.communication.chat.ChatThreadParticipant
-        :return: Tuple(ChatThreadParticipant, CommunicationError)
-        :rtype: tuple(~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.CommunicationError)
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError, RuntimeError
 
         .. admonition:: Example:
 
@@ -503,13 +503,6 @@ class ChatThreadClient(object):
                 :language: python
                 :dedent: 8
                 :caption: Adding single participant to chat thread.
-
-            .. literalinclude:: ../samples/chat_thread_client_sample.py
-                :start-after: [START add_participant_w_failed_participant]
-                :end-before: [END add_participant_w_failed_participant]
-                :language: python
-                :dedent: 8
-                :caption: Retry adding participant to chat thread after initial failure.
         """
         if not thread_participant:
             raise ValueError("thread_participant cannot be None.")
@@ -535,8 +528,10 @@ class ChatThreadClient(object):
         if len(response) != 0:
             failed_participant = response[0][0]
             communication_error = response[0][1]
+            raise RuntimeError('Participant: ', communication_error.target, ' failed to join thread due to: ',
+                               communication_error.message)
 
-        return (failed_participant, communication_error)
+        return None
 
     @distributed_trace
     def add_participants(
@@ -565,13 +560,6 @@ class ChatThreadClient(object):
                 :language: python
                 :dedent: 8
                 :caption: Adding participants to chat thread.
-
-            .. literalinclude:: ../samples/chat_thread_client_sample.py
-                :start-after: [START add_participants_w_failed_participants]
-                :end-before: [END add_participants_w_failed_participants]
-                :language: python
-                :dedent: 8
-                :caption: Retry adding participants to chat thread after initial failure.
         """
         if not thread_participants:
             raise ValueError("thread_participants cannot be None.")

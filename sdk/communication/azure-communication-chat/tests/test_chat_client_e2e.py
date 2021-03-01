@@ -12,7 +12,7 @@ from msrest.serialization import TZ_UTC
 from uuid import uuid4
 
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.chat._shared.user_credential import CommunicationTokenCredential
+from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
 from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.chat import (
     ChatClient,
@@ -75,6 +75,41 @@ class ChatClientTest(CommunicationTestCase):
                                                                         thread_participants=participants,
                                                                         repeatability_request_id=repeatability_request_id)
         self.thread_id = create_chat_thread_result.chat_thread.id
+
+    @pytest.mark.live_test_only
+    def test_access_token_validation(self):
+        """
+        This is to make sure that consecutive calls made using the same chat_client or chat_thread_client
+        does not throw an exception due to mismatch in the generation of azure.core.credentials.AccessToken
+        """
+        from azure.communication.identity._shared.user_token_refresh_options import \
+            CommunicationTokenRefreshOptions as IdentityCommunicationTokenRefreshOptions
+
+        # create ChatClient
+        refresh_options = IdentityCommunicationTokenRefreshOptions(self.token)
+        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
+        raised = False
+        try:
+            # create chat thread
+            topic1 = "test topic1"
+            create_chat_thread1_result = chat_client.create_chat_thread(topic1)
+            self.thread_id = create_chat_thread1_result.chat_thread.id
+
+            # get chat thread
+            chat_thread1 = chat_client.get_chat_thread(create_chat_thread1_result.chat_thread.id)
+
+            # get chat thread client
+            chat_thread1_client = chat_client.get_chat_thread_client(self.thread_id)
+
+            # list all chat threads
+            chat_thead_infos = chat_client.list_chat_threads()
+            for chat_threads_info_page in chat_thead_infos.by_page():
+                for chat_thread_info in chat_threads_info_page:
+                    print("ChatThreadInfo: ", chat_thread_info)
+        except:
+           raised = True
+
+        assert raised is True
 
     @pytest.mark.live_test_only
     def test_create_chat_thread(self):

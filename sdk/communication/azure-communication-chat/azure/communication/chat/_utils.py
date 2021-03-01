@@ -59,7 +59,8 @@ class CommunicationErrorResponseConverter(object):
         Util function to convert AddChatParticipantsResult.
 
         Function used to consolidate List[ChatThreadParticipant] and AddChatParticipantsResult
-        into a list of tuples of ChatThreadParticipant -> CommunicationError.
+        into a list of tuples of ChatThreadParticipant -> CommunicationError. In case of no error, empty
+        list is returned
 
         :param participants: Request object for adding participants to thread
         :type: participants: list(~azure.communication.chat.ChatThreadParticipant)

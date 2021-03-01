@@ -10,7 +10,7 @@ from datetime import datetime
 from msrest.serialization import TZ_UTC
 
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.chat._shared.user_credential_async import CommunicationTokenCredential
+from azure.communication.identity._shared.user_credential_async import CommunicationTokenCredential
 from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.chat.aio import (
     ChatClient
@@ -261,11 +261,13 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                     user=self.new_user,
                     display_name='name',
                     share_history_time=share_history_time)
+                raised = False
+                try:
+                    await self.chat_thread_client.add_participant(new_participant)
+                except RuntimeError as e:
+                    raised = True
 
-                participant, error = await self.chat_thread_client.add_participant(new_participant)
-
-                assert participant is None
-                assert error is None
+                assert raised is False
 
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)

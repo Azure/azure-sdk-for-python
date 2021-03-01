@@ -11,7 +11,7 @@ from msrest.serialization import TZ_UTC
 from uuid import uuid4
 
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.chat._shared.user_credential_async import CommunicationTokenCredential
+from azure.communication.identity._shared.user_credential_async import CommunicationTokenCredential
 from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.chat.aio import (
     ChatClient

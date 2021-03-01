@@ -11,7 +11,7 @@ from devtools_testutils import AzureTestCase
 from msrest.serialization import TZ_UTC
 
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.chat._shared.user_credential import CommunicationTokenCredential
+from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
 from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.chat import (
     ChatClient,
@@ -209,11 +209,14 @@ class ChatThreadClientTest(CommunicationTestCase):
             user=self.new_user,
             display_name='name',
             share_history_time=share_history_time)
+        raised = False
 
-        participant, error = self.chat_thread_client.add_participant(new_participant)
+        try:
+            self.chat_thread_client.add_participant(new_participant)
+        except RuntimeError as e:
+            raised = True
 
-        assert participant is None
-        assert error is None
+        assert raised is False
 
     @pytest.mark.live_test_only
     def test_add_participants(self):

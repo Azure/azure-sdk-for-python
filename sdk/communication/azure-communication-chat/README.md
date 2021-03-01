@@ -357,8 +357,6 @@ start_time = datetime.utcnow() - timedelta(days=1)
 start_time = start_time.replace(tzinfo=pytz.utc)
 chat_messages = chat_thread_client.list_messages(results_per_page=1, start_time=start_time)
 for chat_message_page in chat_messages.by_page():
-    l = list(chat_message_page)
-    print("page size: ", len(l))
     for chat_message in chat_message_page:
         print("ChatMessage: Id=", chat_message.id, "; Content=", chat_message.content)
 ```
@@ -436,25 +434,23 @@ new_user = identity_client.create_user()
 #     display_name=user_display_name,
 #     share_history_time=datetime.utcnow())
 
-
-participant = ChatThreadParticipant(
-    user=new_user,
-    display_name='Fred Flinstone',
-    share_history_time=datetime.utcnow())
-
-failed_participant, error = chat_thread_client.add_participant(thread_participant=participant)
-
 def decide_to_retry(error, **kwargs):
     """
     Insert some custom logic to decide if retry is applicable based on error
     """
     return True
 
-# verify if user has been added successfully
-if error is not None:
-    # error encountered while adding participant
-    if decide_to_retry(error):
-        chat_thread_client.add_participant(failed_participant)
+participant = ChatThreadParticipant(
+    user=new_user,
+    display_name='Fred Flinstone',
+    share_history_time=datetime.utcnow())
+
+try:
+    chat_thread_client.add_participant(thread_participant=participant)
+except RuntimeError as e:
+    if e is not None and decide_to_retry(error=e):
+        chat_thread_client.add_participant(thread_participant=participant)
+
 ```
 ### Add thread participants
 

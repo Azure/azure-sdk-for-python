@@ -129,7 +129,7 @@ class ChatClient(object):
     async def create_chat_thread(
         self, topic: str,
         **kwargs
-    ) -> ChatThreadClient:
+    ) -> CreateChatThreadResult:
 
         # type: (...) -> CreateChatThreadResult
 
