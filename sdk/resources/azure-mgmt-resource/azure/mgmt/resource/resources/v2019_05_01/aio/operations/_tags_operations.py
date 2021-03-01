@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class TagsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -99,7 +99,7 @@ class TagsOperations:
         tag_name: str,
         tag_value: str,
         **kwargs
-    ) -> "models.TagValue":
+    ) -> "_models.TagValue":
         """Creates a tag value. The name of the tag must already exist.
 
         :param tag_name: The name of the tag.
@@ -111,7 +111,7 @@ class TagsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_05_01.models.TagValue
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagValue"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagValue"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -160,7 +160,7 @@ class TagsOperations:
         self,
         tag_name: str,
         **kwargs
-    ) -> "models.TagDetails":
+    ) -> "_models.TagDetails":
         """Creates a tag in the subscription.
 
         The tag name can have a maximum of 512 characters and is case insensitive. Tag names created by
@@ -174,7 +174,7 @@ class TagsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_05_01.models.TagDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagDetails"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagDetails"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -272,7 +272,7 @@ class TagsOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.TagsListResult"]:
+    ) -> AsyncIterable["_models.TagsListResult"]:
         """Gets the names and values of all resource tags that are defined in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -280,7 +280,7 @@ class TagsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.resources.v2019_05_01.models.TagsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
