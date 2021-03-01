@@ -36,7 +36,7 @@ The modern Event Grid client library also provides the ability to share in some 
 The v2.x major version comes with support for [CloudEvents](https://github.com/cloudevents/spec). Now the cloud native Cloud Events can be directly published using the `CloudEvent` constructor or as a dictionary as follows:
 
 ```Python
-from azure.eventgrid import CloudEvent
+from azure.core.messaging import CloudEvent
 
 cloud_event = CloudEvent(
     type="Contoso.Items.ItemReceived",
@@ -72,6 +72,29 @@ The `publish_events` API is replaced with `send` in v2.0. Additionally, `send` A
 | In v1.3 | Equivalent in v2.0 | Sample |
 |---|---|---|
 |`EventGridClient(credentials).publish_events(topic_hostname, events)`|`EventGridPublisherClient(endpoint, credential).send(events)`|[Sample for client construction](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py)|
+
+### Consuming Events
+
+The v2.x major version supports deserializing dictionaries into strongly typed objects. The `from_dict` methods in the `CloudEvent` and `EventGridEvent` models can be used for the same.
+
+This example consumes a payload message received from ServiceBus and deserializes it to an EventGridEvent object.
+
+```Python
+from azure.eventgrid import EventGridEvent
+from azure.servicebus import ServiceBusClient
+import os
+import json
+
+# all types of EventGridEvents below produce same DeserializedEvent
+connection_str = os.environ['SERVICE_BUS_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+
+with ServiceBusClient.from_connection_string(connection_str) as sb_client:
+    payload =  sb_client.get_queue_receiver(queue_name).receive_messages()
+
+    ## deserialize payload into a list of typed Events
+    events = [EventGridEvent.from_dict(json.loads(next(msg.body).decode('utf-8'))) for msg in payload]
+```
 
 ## Additional samples
 

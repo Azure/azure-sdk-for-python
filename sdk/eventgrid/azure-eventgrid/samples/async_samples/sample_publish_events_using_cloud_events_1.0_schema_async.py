@@ -28,7 +28,7 @@ async def publish():
     credential = AzureKeyCredential(topic_key)
     client = EventGridPublisherClient(endpoint, credential)
 
-    client.send([
+    await client.send([
         CloudEvent(
             type="Contoso.Items.ItemReceived",
             source="/contoso/items",
