@@ -15,9 +15,8 @@ class _Null(object):
 
     __nonzero__ = __bool__ # Python2 compatibility
 
-
+NULL = _Null()
 """
-NULL is a falsy sentinel object which is supposed to be used to specify attributes
+A falsy sentinel object which is supposed to be used to specify attributes
 with no data. This gets serialized to `null` on the wire.
 """
-NULL = _Null()
