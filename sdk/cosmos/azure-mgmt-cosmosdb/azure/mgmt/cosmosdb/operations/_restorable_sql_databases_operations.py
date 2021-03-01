@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class PartitionKeyRangeIdRegionOperations(object):
-    """PartitionKeyRangeIdRegionOperations operations.
+class RestorableSqlDatabasesOperations(object):
+    """RestorableSqlDatabasesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,60 +39,45 @@ class PartitionKeyRangeIdRegionOperations(object):
 
         self.config = config
 
-    def list_metrics(
-            self, resource_group_name, account_name, region, database_rid, collection_rid, partition_key_range_id, filter, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the metrics determined by the given filter for the given
-        partition key range id and region.
+    def list(
+            self, location, instance_id, custom_headers=None, raw=False, **operation_config):
+        """Show the event feed of all mutations done on all the Azure Cosmos DB
+        SQL databases under the restorable account.  This helps in scenario
+        where database was accidentally deleted to get the deletion time.  This
+        API requires
+        'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read'
+        permission.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :param region: Cosmos DB region, with spaces between words and each
+        :param location: Cosmos DB region, with spaces between words and each
          word capitalized.
-        :type region: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param collection_rid: Cosmos DB collection rid.
-        :type collection_rid: str
-        :param partition_key_range_id: Partition Key Range Id for which to get
-         data.
-        :type partition_key_range_id: str
-        :param filter: An OData filter expression that describes a subset of
-         metrics to return. The parameters that can be filtered are name.value
-         (name of the metric, can have an or of multiple names), startTime,
-         endTime, and timeGrain. The supported operator is eq.
-        :type filter: str
+        :type location: str
+        :param instance_id: The instanceId GUID of a restorable database
+         account.
+        :type instance_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PartitionMetric
+        :return: An iterator like instance of RestorableSqlDatabaseGetResult
         :rtype:
-         ~azure.mgmt.cosmosdb.models.PartitionMetricPaged[~azure.mgmt.cosmosdb.models.PartitionMetric]
+         ~azure.mgmt.cosmosdb.models.RestorableSqlDatabaseGetResultPaged[~azure.mgmt.cosmosdb.models.RestorableSqlDatabaseGetResult]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_metrics.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
-                    'region': self._serialize.url("region", region, 'str'),
-                    'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-                    'collectionRid': self._serialize.url("collection_rid", collection_rid, 'str'),
-                    'partitionKeyRangeId': self._serialize.url("partition_key_range_id", partition_key_range_id, 'str')
+                    'location': self._serialize.url("location", location, 'str'),
+                    'instanceId': self._serialize.url("instance_id", instance_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -128,7 +113,7 @@ class PartitionKeyRangeIdRegionOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.PartitionMetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.RestorableSqlDatabaseGetResultPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/region/{region}/databases/{databaseRid}/collections/{collectionRid}/partitionKeyRangeId/{partitionKeyRangeId}/metrics'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{instanceId}/restorableSqlDatabases'}

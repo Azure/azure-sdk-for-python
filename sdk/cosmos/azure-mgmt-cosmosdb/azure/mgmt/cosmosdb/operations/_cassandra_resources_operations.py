@@ -27,7 +27,7 @@ class CassandraResourcesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2021-01-15".
+    :ivar api_version: The API version to use for this operation. Constant value: "2021-03-01-preview".
     """
 
     models = models
@@ -37,7 +37,7 @@ class CassandraResourcesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2021-01-15"
+        self.api_version = "2021-03-01-preview"
 
         self.config = config
 
@@ -579,7 +579,9 @@ class CassandraResourcesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            raise models.ErrorResponseUpdatedFormatException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -616,8 +618,7 @@ class CassandraResourcesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
-        :raises:
-         :class:`ErrorResponseUpdatedFormatException<azure.mgmt.cosmosdb.models.ErrorResponseUpdatedFormatException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._migrate_cassandra_keyspace_to_autoscale_initial(
             resource_group_name=resource_group_name,
@@ -678,7 +679,9 @@ class CassandraResourcesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            raise models.ErrorResponseUpdatedFormatException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -715,8 +718,7 @@ class CassandraResourcesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
-        :raises:
-         :class:`ErrorResponseUpdatedFormatException<azure.mgmt.cosmosdb.models.ErrorResponseUpdatedFormatException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._migrate_cassandra_keyspace_to_manual_throughput_initial(
             resource_group_name=resource_group_name,
@@ -1305,7 +1307,9 @@ class CassandraResourcesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            raise models.ErrorResponseUpdatedFormatException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -1344,8 +1348,7 @@ class CassandraResourcesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
-        :raises:
-         :class:`ErrorResponseUpdatedFormatException<azure.mgmt.cosmosdb.models.ErrorResponseUpdatedFormatException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._migrate_cassandra_table_to_autoscale_initial(
             resource_group_name=resource_group_name,
@@ -1408,7 +1411,9 @@ class CassandraResourcesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            raise models.ErrorResponseUpdatedFormatException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -1447,8 +1452,7 @@ class CassandraResourcesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
-        :raises:
-         :class:`ErrorResponseUpdatedFormatException<azure.mgmt.cosmosdb.models.ErrorResponseUpdatedFormatException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._migrate_cassandra_table_to_manual_throughput_initial(
             resource_group_name=resource_group_name,

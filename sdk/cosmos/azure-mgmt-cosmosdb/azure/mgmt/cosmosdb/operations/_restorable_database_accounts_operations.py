@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class CollectionPartitionOperations(object):
-    """CollectionPartitionOperations operations.
+class RestorableDatabaseAccountsOperations(object):
+    """RestorableDatabaseAccountsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,52 +39,40 @@ class CollectionPartitionOperations(object):
 
         self.config = config
 
-    def list_metrics(
-            self, resource_group_name, account_name, database_rid, collection_rid, filter, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the metrics determined by the given filter for the given
-        collection, split by partition.
+    def list_by_location(
+            self, location, custom_headers=None, raw=False, **operation_config):
+        """Lists all the restorable Azure Cosmos DB database accounts available
+        under the subscription and in a region.  This call requires
+        'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/read'
+        permission.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param collection_rid: Cosmos DB collection rid.
-        :type collection_rid: str
-        :param filter: An OData filter expression that describes a subset of
-         metrics to return. The parameters that can be filtered are name.value
-         (name of the metric, can have an or of multiple names), startTime,
-         endTime, and timeGrain. The supported operator is eq.
-        :type filter: str
+        :param location: Cosmos DB region, with spaces between words and each
+         word capitalized.
+        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PartitionMetric
+        :return: An iterator like instance of
+         RestorableDatabaseAccountGetResult
         :rtype:
-         ~azure.mgmt.cosmosdb.models.PartitionMetricPaged[~azure.mgmt.cosmosdb.models.PartitionMetric]
+         ~azure.mgmt.cosmosdb.models.RestorableDatabaseAccountGetResultPaged[~azure.mgmt.cosmosdb.models.RestorableDatabaseAccountGetResult]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_metrics.metadata['url']
+                url = self.list_by_location.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
-                    'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-                    'collectionRid': self._serialize.url("collection_rid", collection_rid, 'str')
+                    'location': self._serialize.url("location", location, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -120,57 +108,41 @@ class CollectionPartitionOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.PartitionMetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.RestorableDatabaseAccountGetResultPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/databases/{databaseRid}/collections/{collectionRid}/partitions/metrics'}
+    list_by_location.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts'}
 
-    def list_usages(
-            self, resource_group_name, account_name, database_rid, collection_rid, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the usages (most recent storage data) for the given
-        collection, split by partition.
+    def list(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Lists all the restorable Azure Cosmos DB database accounts available
+        under the subscription. This call requires
+        'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/read'
+        permission.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name.
-        :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param collection_rid: Cosmos DB collection rid.
-        :type collection_rid: str
-        :param filter: An OData filter expression that describes a subset of
-         usages to return. The supported parameter is name.value (name of the
-         metric, can have an or of multiple names).
-        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PartitionUsage
+        :return: An iterator like instance of
+         RestorableDatabaseAccountGetResult
         :rtype:
-         ~azure.mgmt.cosmosdb.models.PartitionUsagePaged[~azure.mgmt.cosmosdb.models.PartitionUsage]
+         ~azure.mgmt.cosmosdb.models.RestorableDatabaseAccountGetResultPaged[~azure.mgmt.cosmosdb.models.RestorableDatabaseAccountGetResult]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_usages.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
-                    'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-                    'collectionRid': self._serialize.url("collection_rid", collection_rid, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -206,7 +178,74 @@ class CollectionPartitionOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.PartitionUsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.RestorableDatabaseAccountGetResultPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_usages.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/databases/{databaseRid}/collections/{collectionRid}/partitions/usages'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/restorableDatabaseAccounts'}
+
+    def get_by_location(
+            self, location, instance_id, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the properties of an existing Azure Cosmos DB restorable
+        database account.  This call requires
+        'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/read/*'
+        permission.
+
+        :param location: Cosmos DB region, with spaces between words and each
+         word capitalized.
+        :type location: str
+        :param instance_id: The instanceId GUID of a restorable database
+         account.
+        :type instance_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: RestorableDatabaseAccountGetResult or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.RestorableDatabaseAccountGetResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_by_location.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'location': self._serialize.url("location", location, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('RestorableDatabaseAccountGetResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_by_location.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{instanceId}'}

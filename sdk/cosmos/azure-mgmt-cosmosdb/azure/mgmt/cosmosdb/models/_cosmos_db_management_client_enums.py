@@ -19,14 +19,6 @@ class DatabaseAccountKind(str, Enum):
     parse = "Parse"
 
 
-class ResourceIdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
-    system_assigned_user_assigned = "SystemAssigned,UserAssigned"
-    none = "None"
-
-
 class DatabaseAccountOfferType(str, Enum):
 
     standard = "Standard"
@@ -59,10 +51,29 @@ class ServerVersion(str, Enum):
     four_full_stop_zero = "4.0"
 
 
+class CreateMode(str, Enum):
+
+    default = "Default"
+    restore = "Restore"
+
+
+class RestoreMode(str, Enum):
+
+    point_in_time = "PointInTime"
+
+
 class NetworkAclBypass(str, Enum):
 
     none = "None"
     azure_services = "AzureServices"
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
 
 
 class IndexingMode(str, Enum):
@@ -131,6 +142,14 @@ class TriggerOperation(str, Enum):
     replace = "Replace"
 
 
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned,UserAssigned"
+    none = "None"
+
+
 class KeyKind(str, Enum):
 
     primary = "primary"
@@ -164,3 +183,65 @@ class BackupPolicyType(str, Enum):
 
     periodic = "Periodic"
     continuous = "Continuous"
+
+
+class BackupStorageRedundancy(str, Enum):
+
+    geo = "Geo"
+    local = "Local"
+    zone = "Zone"
+
+
+class ApiType(str, Enum):
+
+    mongo_db = "MongoDB"
+    gremlin = "Gremlin"
+    cassandra = "Cassandra"
+    table = "Table"
+    sql = "Sql"
+    gremlin_v2 = "GremlinV2"
+
+
+class RoleDefinitionType(str, Enum):
+
+    built_in_role = "BuiltInRole"
+    custom_role = "CustomRole"
+
+
+class OperationType(str, Enum):
+
+    create = "Create"
+    replace = "Replace"
+    delete = "Delete"
+    system_operation = "SystemOperation"
+
+
+class ManagedCassandraProvisioningState(str, Enum):
+
+    creating = "Creating"
+    updating = "Updating"
+    deleting = "Deleting"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"
+
+
+class AuthenticationMethod(str, Enum):
+
+    none = "None"
+    cassandra = "Cassandra"
+
+
+class NodeStatus(str, Enum):
+
+    up = "Up"
+    down = "Down"
+
+
+class NodeState(str, Enum):
+
+    normal = "Normal"
+    leaving = "Leaving"
+    joining = "Joining"
+    moving = "Moving"
+    stopped = "Stopped"
