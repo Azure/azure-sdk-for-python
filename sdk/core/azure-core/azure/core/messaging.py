@@ -100,7 +100,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
                         "Extension attributes should be lower cased and alphanumeric."
                     )
         except KeyError:
-            self.extensions = None
+            self.extensions = cast(Dict, None)
 
         if kwargs:
             remaining = ", ".join(kwargs.keys())
