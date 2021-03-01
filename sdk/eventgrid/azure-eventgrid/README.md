@@ -68,18 +68,20 @@ eg_publisher_client = EventGridPublisherClient(endpoint, credential)
 Information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc]
 
 ### Topic
-A channel within the EventGrid service to send events.  Event must be of [CloudEvent](https://docs.microsoft.com/azure/event-grid/cloud-event-schema) or [EventGridEvent](https://docs.microsoft.com/azure/event-grid/event-schema) schema which is decided at creation time. In the case of wrong event type being used, errors will be raised.
+A [topic](https://docs.microsoft.com/azure/event-grid/concepts#topics) is a channel within the EventGrid service to send events. The event schema that a topic accepts is decided at topic creation time. If events of a schema type are sent to a topic that requires a different schema type, errors will be raised.
 
 ### Domain
-An event domain is a management tool for large numbers of Event Grid topics related to the same application. They allow you to publish events to thousands of topics. Domains also give you authorization and authentication control over each topic. For more explanation, visit [Event domain overview](https://docs.microsoft.com/azure/event-grid/event-domains).
+An event [domain](https://docs.microsoft.com/azure/event-grid/event-domains) is a management tool for large numbers of Event Grid topics related to the same application. They allow you to publish events to thousands of topics. Domains also give you authorization and authentication control over each topic. For more information, visit [Event domain overview](https://docs.microsoft.com/azure/event-grid/event-domains).
 
-When you create an event domain, you're given a publishing endpoint similar to if you had created a topic in Event Grid. The only difference is that you must specify the topic you'd like the event to be delivered to.
+When you create an event domain, a publishing endpoint for this domain is made available to you. This process is similar to creating an Event Grid Topic. The only difference is that, when publishing to a domain, you must specify the topic within the domain that you'd like the event to be delivered to.
 
 ### Event schemas
-An **event** is the smallest amount of information that fully describes something that happened in the system. Event Grid supports multiple schemas for encoding events. When a custom topic or domain is created, you specify the schema that will be used when publishing events.
+An [**event**](https://docs.microsoft.com/azure/event-grid/concepts#events) is the smallest amount of information that fully describes something that happened in the system. When a custom topic or domain is created, you must specify the schema that will be used when publishing events.
+
+Event Grid supports multiple schemas for encoding events.
 
 #### Event Grid schema
-While you may configure your topic to use a custom schema, it is more common to use the already-defined Event Grid schema. See the specifications and requirements [here](https://docs.microsoft.com/azure/event-grid/event-schema).
+While you may configure your topic to use a [custom schema](https://docs.microsoft.com/azure/event-grid/input-mappings), it is more common to use the already-defined Event Grid schema. See the specifications and requirements [here](https://docs.microsoft.com/azure/event-grid/event-schema).
 
 #### CloudEvents v1.0 schema
 Another option is to use the CloudEvents v1.0 schema. [CloudEvents](https://cloudevents.io/) is a Cloud Native Computing Foundation project which produces a specification for describing event data in a common way. The service summary of CloudEvents can be found [here](https://docs.microsoft.com/azure/event-grid/cloud-event-schema).
@@ -87,7 +89,7 @@ Another option is to use the CloudEvents v1.0 schema. [CloudEvents](https://clou
 ### EventGridPublisherClient
 `EventGridPublisherClient` provides operations to send event data to a topic hostname specified during client initialization.
 
-Regardless of what schema your topic or domain is configured to use, `EventGridPublisherClient` will be used to publish events to it. Use the `send` method publishing events.
+Regardless of the schema that your topic or domain is configured to use, `EventGridPublisherClient` will be used to publish events to it. Use the `send` method publishing events.
 
 The following formats of events are allowed to be sent:
 - A list or a single instance of strongly typed EventGridEvents.
@@ -208,7 +210,7 @@ with ServiceBusClient.from_connection_string(connection_str) as sb_client:
 
 You can use opentelemetry for Python as usual with EventGrid since it's compatible with azure-core tracing integration.
 
-Here is an example of how you would use Opentelemetry to trace sending a CloudEvent.
+Here is an example of using OpenTelemetry to trace sending a CloudEvent.
 
 First, set OpenTelemetry as enabled tracing plugin for EventGrid.
 
@@ -219,7 +221,7 @@ from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 settings.tracing_implementation = OpenTelemetrySpan
 ```
 
-Regular open telemetry usage from here. See [Opentelemetry](https://github.com/open-telemetry/opentelemetry-python) for details.
+Regular open telemetry usage from here. See [OpenTelemetry](https://github.com/open-telemetry/opentelemetry-python) for details.
 This example uses a simple console exporter to export the traces. Any exporter can be used here including `azure-monitor-opentelemetry-exporter`, `jaeger`, `zipkin` etc.
 
 ```python
@@ -238,7 +240,7 @@ trace.get_tracer_provider().add_span_processor(
 )
 ```
 
-Once the `tracer` and `exporter` are set, please follow the example below to start collecting traces while sending a Cloud Event object using the `send` method from the `EventGridPublosherClient`.
+Once the `tracer` and `exporter` are set, please follow the example below to start collecting traces while using the `send` method from the `EventGridPublisherClient` to send a CloudEvent object.
 
 ```python
 import os
@@ -294,7 +296,7 @@ These code samples show common champion scenario operations with the Azure Event
 * Publish a Cloud Event: [sample_publish_events_using_cloud_events_1.0_schema.py][python-eg-sample-send-cloudevent] ([async_version][python-eg-sample-send-cloudevent-async])
 * Publish a Custom Schema: [sample_publish_custom_schema_to_a_topic.py][python-eg-publish-custom-schema] ([async_version][python-eg-publish-custom-schema-async])
 
-To publish events, dict representation of the models could also be used as follows:
+The following samples cover publishing and consuming `dict` representations of EventGridEvents and CloudEvents.
 * Publish EventGridEvent as dict like representation: [sample_publish_eg_event_using_dict.py][python-eg-sample-send-eg-as-dict] ([async_version][python-eg-sample-send-eg-as-dict-async])
 
 * Publish CloudEvent as dict like representation: [sample_publish_cloud_event_using_dict.py][python-eg-sample-send-cloudevent-as-dict] ([async_version][python-eg-sample-send-cloudevent-as-dict-async])
