@@ -3764,11 +3764,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/blob_samples_containers.py
-                :start-after: [START get_blob_client]
-                :end-before: [END get_blob_client]
+                :start-after: [START get_container_client_from_blob_client]
+                :end-before: [END get_container_client_from_blob_client]
                 :language: python
                 :dedent: 8
-                :caption: Get the blob client.
+                :caption: Get container client from blob object.
         """
         from ._container_client import ContainerClient
         _pipeline = Pipeline(

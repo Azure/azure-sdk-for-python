@@ -2460,12 +2460,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/blob_samples_containers.py
-                :start-after: [START get_blob_client]
-                :end-before: [END get_blob_client]
+            .. literalinclude:: ../samples/blob_samples_containers_async.py
+                :start-after: [START get_container_client_from_blob_client]
+                :end-before: [END get_container_client_from_blob_client]
                 :language: python
-                :dedent: 8
-                :caption: Get the blob client.
+                :dedent: 12
+                :caption: Get container client from blob object.
         """
         from ._container_client_async import ContainerClient
         _pipeline = AsyncPipeline(
