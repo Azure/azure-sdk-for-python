@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"TableName": "uttablebfd90c40"}'
+    body: '{"TableName": "uttable979d1213"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 01 Mar 2021 13:58:25 GMT
+      - Mon, 01 Mar 2021 15:57:09 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 01 Mar 2021 13:58:25 GMT
+      - Mon, 01 Mar 2021 15:57:09 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -27,14 +27,14 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"TableBeingDeleted","message":{"lang":"en-US","value":"The
-        specified table is being deleted. Try operation later.\nRequestId:f47d5fba-5002-002d-2ba2-0e55a3000000\nTime:2021-03-01T13:58:26.0169714Z"}}}'
+        specified table is being deleted. Try operation later.\nRequestId:2aeb5fe6-7002-0005-02b3-0e340b000000\nTime:2021-03-01T15:57:09.6801090Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Mon, 01 Mar 2021 13:58:25 GMT
+      - Mon, 01 Mar 2021 15:57:09 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

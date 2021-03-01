@@ -348,3 +348,31 @@ class AzureTestCase(ReplayableTest):
     def sleep(self, seconds):
         if self.is_live:
             time.sleep(seconds)
+
+    def generate_sas(self, *args, **kwargs):
+
+        # sv=2019-02-02&si=testid&tn=uttable979d1213&sig=eHR0wL2cLfRNDE1joarE6OWloix%2BniHHga88FX63EmI%3D
+
+        sas_func = args[0]
+        sas_func_pos_args = args[1:]
+
+        fake_value = kwargs.pop('fake_value', "fake_token_value")
+        token = sas_func(*sas_func_pos_args, **kwargs)
+
+        fake_token = self._create_fake_token(token, fake_value)
+        print(fake_token)
+
+        self.scrubber.register_name_pair(token, fake_token)
+
+        if self.is_live:
+            return token
+
+        return fake_token
+
+    def _create_fake_token(self, token, fake_value):
+        split = token.split("&")
+        key = split[-1].split("=")
+        key[1] = fake_value
+        key = "=".join(key)
+        split[-1] = key
+        return "&".join(split)
