@@ -2327,4 +2327,3 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         sender.schedule_messages(message_dict, scheduled_enqueue_time)
                     with pytest.raises(TypeError):
                         sender.schedule_messages(list_message_dicts, scheduled_enqueue_time)
-    

@@ -9,7 +9,18 @@ import datetime
 import logging
 import functools
 import platform
-from typing import Dict, List, Iterable, TYPE_CHECKING, Union, Optional, Iterator, Type
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Mapping,
+    Optional,
+    Type,
+    TYPE_CHECKING,
+    Union
+)
 from contextlib import contextmanager
 from msrest.serialization import UTC
 
@@ -50,9 +61,9 @@ if TYPE_CHECKING:
 
     # pylint: disable=unused-import, ungrouped-imports
     DictMessageType = Union[
-        Dict,
+        Mapping,
         ServiceBusMessage,
-        List[Dict],
+        List[Mapping[str, Any]],
         List[ServiceBusMessage],
         ServiceBusMessageBatch
     ]
@@ -215,15 +226,16 @@ def create_messages_from_dicts_if_needed(messages, message_type):
     # type: (DictMessageType, type) -> DictMessageReturnType
     """
     This method is used to convert dict representations
-    of messages and to a list of ServiceBusMessage objects or ServiceBusBatchMessage.
+    of messages to a list of ServiceBusMessage objects or ServiceBusBatchMessage.
     :param DictMessageType messages: A list or single instance of messages of type ServiceBusMessages or
         dict representations of type ServiceBusMessage. Also accepts ServiceBusBatchMessage.
     :rtype: DictMessageReturnType
     """
     if isinstance(messages, list):
-        return [(message_type(**message) if isinstance(message, dict) else message) for message in messages]
+        return [(message_type(**message) if isinstance(message, Mapping) else message) for message in messages]
 
-    return message_type(**messages) if isinstance(messages, dict) else messages
+    return_messages = message_type(**messages) if isinstance(messages, Mapping) else messages
+    return return_messages
 
 def strip_protocol_from_uri(uri):
     # type: (str) -> str

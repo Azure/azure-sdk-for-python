@@ -3,12 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, cast, Union, Dict
+from typing import TYPE_CHECKING, cast, Union, Mapping
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
 import six
 
-from azure.servicebus.management import _constants as constants
+from . import _constants as constants
 from ._handle_response_error import _handle_response_error
 if TYPE_CHECKING:
     # pylint: disable=unused-import, ungrouped-imports
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
         TopicProperties,
         SubscriptionProperties,
         RuleProperties,
-        Dict
+        Mapping
     ]
     DictPropertiesReturnType = Union[
         QueueProperties,
@@ -326,7 +326,7 @@ def _validate_topic_subscription_and_rule_types(
         )
 
 def create_properties_from_dict_if_needed(properties, sb_resource_type):
-    # type: (DictPropertiesType, type) -> DictPropertiesType
+    # type: (DictPropertiesType, type) -> DictPropertiesReturnType
     """
     This method is used to create a properties object given the
     resource properties type and its corresponding dict representation.
@@ -335,8 +335,5 @@ def create_properties_from_dict_if_needed(properties, sb_resource_type):
     :param type sb_resource_type: The type of properties object.
     :rtype: DictPropertiesReturnType
     """
-    if isinstance(properties, dict):
-        dict_to_props = sb_resource_type(**properties)
-        properties = dict_to_props
-
-    return properties
+    return_properties = sb_resource_type(**properties) if isinstance(properties, Mapping) else properties
+    return return_properties
