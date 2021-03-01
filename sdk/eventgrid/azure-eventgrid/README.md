@@ -183,7 +183,7 @@ with QueueServiceClient.from_connection_string(connection_str) as qsc:
     events = [CloudEvent.from_dict(json.loads(msg.content)) for msg in payload]
 ```
 
-### Consume from storage queue
+### Consume from servicebus
 
 This example consumes a payload message received from ServiceBus and deserializes it to an EventGridEvent object.
 
