@@ -1,6 +1,12 @@
 # Release History
 
-## 4.0.0b3 (Unreleased)
+## 4.0.0b4 (Unreleased)
+
+
+## 4.0.0b3 (2021-02-09)
+### Added
+- `KeyVaultAccessControlClient` supports managing custom role definitions
+
 ### Breaking Changes
 - Renamed `KeyVaultBackupClient.begin_full_backup()` to `.begin_backup()`
 - Renamed `KeyVaultBackupClient.begin_full_restore()` to `.begin_restore()`
@@ -18,6 +24,9 @@
   - `not_actions` -> `denied_actions`
   - `not_data_actions` -> `denied_data_actions`
 - Renamed `KeyVaultRoleAssignment.assignment_id` to `.role_assignment_id`
+- Renamed `KeyVaultRoleScope` enum values:
+  - `global_value` -> `GLOBAL`
+  - `keys_value` -> `KEYS`
 
 ## 4.0.0b2 (2020-10-06)
 ### Added

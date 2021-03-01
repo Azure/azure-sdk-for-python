@@ -4,17 +4,20 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
   paths:
     include:
     - sdk/template/
+    - scripts/
 
 pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*

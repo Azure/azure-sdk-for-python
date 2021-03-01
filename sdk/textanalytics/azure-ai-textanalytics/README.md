@@ -81,7 +81,7 @@ This table shows the relationship between SDK versions and supported API version
 | SDK version                                                               | Supported API version of service  |
 | ------------------------------------------------------------------------- | --------------------------------- |
 | 5.0.0 - Latest GA release (can be installed by removing the `--pre` flag) | 3.0                               |
-| 5.1.0b4 - Latest release (beta)                                           | 3.0, 3.1-preview.2, 3.1-preview.3 |
+| 5.1.0b6 - Latest release (beta)                                           | 3.0, 3.1-preview.4 |
 
 ### Authenticate the client
 
@@ -458,7 +458,7 @@ text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = ["Subject is taking 100mg of ibuprofen twice daily"]
 
-poller = text_analytics_client.begin_analyze_healthcare_entities(documents, show_stats=True)
+poller = text_analytics_client.begin_analyze_healthcare_entities(documents)
 result = poller.result()
 
 docs = [doc for doc in result if not doc.is_error]
@@ -476,12 +476,11 @@ for idx, doc in enumerate(docs):
             for data_source in entity.data_sources:
                 print("......Entity ID: {}".format(data_source.entity_id))
                 print("......Name: {}".format(data_source.name))
-    for relation in doc.relations:
-        print("Relation:")
-        print("...Source: {}".format(relation.source.text))
-        print("...Target: {}".format(relation.target.text))
-        print("...Type: {}".format(relation.relation_type))
-        print("...Bidirectional: {}".format(relation.is_bidirectional))
+        if len(entity.related_entities) > 0:
+            print("...Related Entities:")
+            for related_entity, relation_type in entity.related_entities.items():
+                print("......Entity Text: {}".format(related_entity.text))
+                print("......Relation Type: {}".format(relation_type))
     print("------------------------------------------")
 ```
 

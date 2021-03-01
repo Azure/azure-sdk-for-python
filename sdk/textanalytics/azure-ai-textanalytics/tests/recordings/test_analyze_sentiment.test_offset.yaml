@@ -14,9 +14,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"0","sentiment":"mixed","confidenceScores":{"positive":0.44,"neutral":0.27,"negative":0.29},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":0.88,"neutral":0.11,"negative":0.01},"offset":0,"length":14,"text":"I
@@ -24,13 +24,13 @@ interactions:
         do not like being inside"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - d0204fa0-5729-433c-9126-02332b9098e4
+      - a6a5bedf-aeb2-44fe-8f92-1fedc0be5952
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Wed, 27 Jan 2021 02:21:21 GMT
+      - Tue, 23 Feb 2021 17:14:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '810'
+      - '80'
     status:
       code: 200
       message: OK

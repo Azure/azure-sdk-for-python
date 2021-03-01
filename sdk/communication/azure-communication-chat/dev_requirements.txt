@@ -2,3 +2,4 @@
 ../azure-communication-nspkg
 -e ../azure-communication-identity
 aiohttp>=3.0; python_version >= '3.5'
+-e ../../../tools/azure-devtools

@@ -49,13 +49,13 @@ from .._models import (
 from .._lro import TextAnalyticsOperationResourcePolling
 from .._async_lro import (
     AnalyzeHealthcareEntitiesAsyncLROPollingMethod,
-    AnalyzeHealthcareEntitiesAsyncLROPoller,
     AsyncAnalyzeBatchActionsLROPollingMethod
 )
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.credentials import AzureKeyCredential
+    from .._models import AnalyzeHealthcareEntitiesResultItem
 
 
 class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
@@ -148,6 +148,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResult`
@@ -213,6 +214,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -290,6 +292,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
@@ -380,6 +383,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -458,6 +462,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResult` and
@@ -529,6 +534,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -606,8 +612,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeHealthcareEntitiesAsyncLROPoller
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareEntitiesResultItem]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
+
+        NOTE: this endpoint is currently in gated preview, meaning your subscription needs to be allow-listed
+        for you to use this endpoint. More information about that here:
+        https://aka.ms/text-analytics-health-request-access
 
         Entities are associated with references that can be found in existing knowledge bases,
         such as UMLS, CHV, MSH, etc.
@@ -625,6 +635,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
@@ -633,14 +644,17 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AnalyzeHealthcareEntitiesAsyncLROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`].
+            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`.
+        :rtype:
+            ~azure.core.polling.AsyncLROPoller[~azure.core.paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_analyze_healthcare_async.py
-                :start-after: [START analyze_healthcare_async]
-                :end-before: [END analyze_healthcare_async]
+            .. literalinclude:: ../samples/async_samples/sample_analyze_healthcare_entities_async.py
+                :start-after: [START analyze_healthcare_entities_async]
+                :end-before: [END analyze_healthcare_entities_async]
                 :language: python
                 :dedent: 8
                 :caption: Analyze healthcare entities in a batch of documents.

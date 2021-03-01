@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey096d6174c/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey096d6174c/create?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:26 GMT
+      date: Sat, 06 Feb 2021 02:43:43 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -29,12 +29,12 @@ interactions:
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey096d6174c/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey096d6174c/create?api-version=7.2-preview
 - request:
     body: '{"kty": "EC"}'
     headers:
@@ -47,27 +47,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey096d6174c/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey096d6174c/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey096d6174c/ba5400de94b248a8853adb7c13735190","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"q-VW-O6gWPXklPnfKuLamMu6RndpHFBNZEIVBDuH_OU","y":"DJYz5mMEDgWTDjkHQDX-is_2a5R7nRJhBOBGiWzwjJk"},"attributes":{"enabled":true,"created":1612518566,"updated":1612518566,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey096d6174c/6b8bdf2f0293419f9690e42bba6b5ed7","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"ATuNZK8WQ6ztJyNKD5cLsxuwS5sAUseypoQT8xZxvRA","y":"DPEqsLUn4EmZu5XOcuelDE8iFkXtXrNspMJuZsuxvB8"},"attributes":{"enabled":true,"created":1612579424,"updated":1612579424,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '401'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:26 GMT
+      date: Sat, 06 Feb 2021 02:43:44 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey096d6174c/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey096d6174c/create?api-version=7.2-preview
 - request:
     body: '{"kty": "EC"}'
     headers:
@@ -80,27 +80,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey196d6174c/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey196d6174c/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey196d6174c/0879057bab0d42749207b54ce5687ee1","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"jL0GO2SIfmDHcLMv3jgzVzVw1RpDoLjjMcL2nIuGESY","y":"FZSbBPV261xlONSLTpv24IYKf2kzS0L6__0Vg8vGiRI"},"attributes":{"enabled":true,"created":1612518567,"updated":1612518567,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey196d6174c/3e566b3d7cc9423b98050a7bdc8ec32a","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"6F-MBAsDXLSOKw-7auSRrbXLlR1-UvVnLnYecjC-_7c","y":"27R6oPRqN05Ztch-LVlsqJN0xJooFSz2qPIaVOOnGpE"},"attributes":{"enabled":true,"created":1612579425,"updated":1612579425,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '401'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:27 GMT
+      date: Sat, 06 Feb 2021 02:43:44 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey196d6174c/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey196d6174c/create?api-version=7.2-preview
 - request:
     body: '{"kty": "EC"}'
     headers:
@@ -113,27 +113,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey296d6174c/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey296d6174c/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey296d6174c/605fab5fb68b4afd841cec207afc4dec","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"fEHduUK0hYVdzGnDMTHuZcnUdX077Kyahe2dDJ7Pqvo","y":"J_EU19SOvoamkITY41Hfd0pqpu3o4NsMEMiwePqr_8U"},"attributes":{"enabled":true,"created":1612518567,"updated":1612518567,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey296d6174c/afbd1174a2db424fba4ae8f816998f3a","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"WlWKRNCT1QErkM6ZSaaS9jwuI-6RrmdnJ7TxkaZvcSQ","y":"J7bAruQG0C-0YEhK0kMVOnRwD3N0vmtWuwgPlc0B2G8"},"attributes":{"enabled":true,"created":1612579425,"updated":1612579425,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '401'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:27 GMT
+      date: Sat, 06 Feb 2021 02:43:44 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey296d6174c/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey296d6174c/create?api-version=7.2-preview
 - request:
     body: '{"kty": "EC"}'
     headers:
@@ -146,27 +146,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey396d6174c/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey396d6174c/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey396d6174c/88504fab02dd4d379f707b49af9c7729","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"nHTwN28mhXtw6KaWVdzCUw6zKdHL9Fjx19Q1Y4QCwz8","y":"mytwKYJdnixPodzefauJoj-_A_CSsn0IxXrpqiMngE0"},"attributes":{"enabled":true,"created":1612518567,"updated":1612518567,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey396d6174c/5ae61a9610e541a19d175d587477d44e","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"dKBXJBzynjck3DM-7704uJ-b_NhtoAPQE7nBo0XwhNs","y":"FFXbgbIIB98YZoOvEduPYK-1p1NsGCrnVVDFF7oJfmI"},"attributes":{"enabled":true,"created":1612579425,"updated":1612579425,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '401'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:27 GMT
+      date: Sat, 06 Feb 2021 02:43:44 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey396d6174c/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey396d6174c/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -179,27 +179,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey096d6174c/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey096d6174c/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey096d6174c/9e42faa8356f421e8d9d801927994326","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"q3v3BbRpRJByxuUrltQmH7bBORc5lcuiIqF1SBtDyCEk-TtaPHUr-JqSw9Gq6HmOuMCJatP4Sc-F8bDhZTATHtiVaMGO_vO0VU_I-y5a35TkVvJ5zM5kGvl_IUsZaEGAkJ1fW1iiXp-4l2uOfHOm1QWzxpKSqsfj47uuYK-pUFFs-5Myg6vRWImrVNkOfMumBsqkOMex7nB8w27QFbfCb2BwWRKgDP3DtOlq7XTKJNW-f0kGbb2CBxTB3jdVObSWkiTfcY9kwwmoXHkFs6mq_DJdsJ56-ow1P6ZibbzWIxTvH29Edtq4bsGENwYiHzYRhsBazhOvSGKaSDDRy1xH-Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612518568,"updated":1612518568,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey096d6174c/2a6195d33f7e43e3a5b65951d89aef88","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"s2eJS8aySw-AjOjjwYLCfEzXboKXLUM47rLiwF20kCCzQhPPuxUN5Rj2NwVsbxe79uHMpDJqFsjuUHfeopDYxNlpH0RF9O8mhFfr6f0YjMnl8x84r0Sc7EgvBSIK5H-jLsQ8xnQNMA5oqOhRjYtWsr411mKkJLcuraK8suZ62C8nUOil4I-RqnlUBm6WQyQMeE4DI7J3UCR6k2NytQHhPjEWiPGBh0TwOQdt428FM7sHOrlmWr-xMeJDdzj0E9AZYnj1IY3DZ4RDSfrxldKheXygXr-NaEGLUxSsZxlIIAhla_lzvHte43Hd7JZchYEI_Hb_aCOGDKBQMTg6oSpfnQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579425,"updated":1612579425,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '690'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:27 GMT
+      date: Sat, 06 Feb 2021 02:43:46 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey096d6174c/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey096d6174c/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -212,27 +212,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey196d6174c/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey196d6174c/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey196d6174c/b8a8f9ecc5b84bbb8d269ae3265ebf54","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xzxHBWq6IahkFz2Yi34SSzs4i1qIrXzM2fuCnsavCzFEYu5mvNmTYCsm13Or1PrK_3ck26v5n633wcHis03AowmYCnq7LLpHgsa77G-JYq_TeOVeAHwCQOx7gyyXi2FnfCvGgh7FNG99W1nGTTpEHNws0xvWm9AuqInC_E_W_u_Vw_yGkFLStYpur-hgaOVI6ej1iAa_1hWMlkRmHsOwnRfwJgdCsKvP2DA2iF0hv0CbSfiLv6QZad0B7nUpSQKFTRui19kanMZQ5AyRUFOSN62AF8tbD1F32x7g_kx30BNgR2aK2wRbSZ4vO9G_CSZ9xh2u98OYjmbR4QpX2CxR2Q","e":"AQAB"},"attributes":{"enabled":true,"created":1612518568,"updated":1612518568,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey196d6174c/e417c18a05cb4a509577dd2f0782980c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"9MYXgU2NE8k5OfStxOrN4hARsCUJhCVC1e9_VqSV_qn9aWfTx9rx6zYj92BnBCzxbTfUDFHW2fCpw3QEAr4HN23lUILSgTsRLkjBFA_Oz7Yc-8DHSh9whRYZCHAX1iRIV_L0h7MrrI3QCk6lfAriTCOEYl7e8P8K8nY-BvcH-R4wY-YiLp5RVuvdbncNoA1oJBffTzw3Ny8uAkB5hyze2Mq5oAinrViSc-OU25tuomIHzn0uUPK4DB19nJzUmmFt6dmCtHTBmv0KuAE1Pl8_KolmuoVdjffCXQBv5NoScCR8t6O0hPnja5I9Aw16sr-v_l-BacffrxcfBw1-7iv_ZQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579426,"updated":1612579426,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '690'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:28 GMT
+      date: Sat, 06 Feb 2021 02:43:46 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey196d6174c/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey196d6174c/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -245,27 +245,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey296d6174c/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey296d6174c/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey296d6174c/992c9ead881b4a4b914b2cc6e0503d28","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"u-ezDFLExH3d-_JdtQRIDAIgyS0LucmIHmbn_iWk-zZilkoIKt25QSLj13OuIGdxuYioneqVCSnzVNUSEG4RyLbZFxiZeatZUtaDimsYH1gnVHZjAHcnZRdnCo4qblEfHdlJMOPDS_VEmLLzd8A7F01zi1y6xUdIaaxxPZm2wcCAbS_vB10Q4eqNFWqfdVENHB2bkvUah-XzrX5pI_vZYTWG2AxRYoEtQTHvQTZobL9xixprLyDBYI0aZWZk60l4xM__FW58V_w0TzwIJ-kFeyQQHUpYj_KD5JWRid__jD6-d21fcbfzuw6VvNmnzoMbkc2RN1mPVnQwTWYA_fEhvQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612518568,"updated":1612518568,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey296d6174c/26292134e0d1417ea12815de43438bf9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yzEApgJJyKajeB1_IVjp4cwinAFjQE-H5s2VYal6pvt_sfuoFXg_TyNbQUjou9eYzn-_UR3NQuL7PmDDGr4VIR-JKIQRxhSaZ6-xv9ymEDJAxo339EwLh42bJRVfaPzE2i7v8d5R9Jb4Jm4BTMM4-CqbjVr9BEQJH2ojJvVKq6H0Hj_aQy82XFB2c5sHPkbI4sYhatlYXwl47u8pIW7EqICrcMFN9wpcXh2s2Ltyy-LEnnr_tiXOlTk7yt-m57Xau12QLz5XLhkv6z7_OFRolS6N-p1D-QJR15hoKzEHtwXa9d6mVANQCnF0LSMkbP1K2ru68IjoH_0-f88YAfkpDQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579426,"updated":1612579426,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '690'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:28 GMT
+      date: Sat, 06 Feb 2021 02:43:46 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey296d6174c/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey296d6174c/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -278,27 +278,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestkey396d6174c/create?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/livekvtestkey396d6174c/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey396d6174c/346ccc53b18b4f2390512014a7abd7f1","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vjTyh_Lf94GXVWrOU25aMMpD6hS99T34pXSmCw0MJZKPu_B_vfo5CNxVUT8LTZGu8lYVEYSaIru44xZdZzjVmwTBFfa0xyBdTQO40BzfwYKatYzAPFDm1MVPUBFhucb5sAbvdWJ_EK4ARhKLJU-t_9mLCxq9kzyQ8GHKh70Iw_6JaRt0JQ_54kRygJ6srCzSMPmnIOVXIKahL2XDGJGzSTyJ-gidrT4SBnEXeX7NonLbU1GplGvTQ-DFxz53PBRYiuYEv1CAMs1TRx2t0Q8Ud1z4O8QXWXfHknzrZmdwWk9RNuDB_rqmHeJN1811ghUsDAd1_zqbo77M2Zzs3gfiJQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612518569,"updated":1612518569,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey396d6174c/b5f5305a9ac34782b672a7a7e8877d4e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"taq9f3nfT29DvH2Rvo2QDnVxUVFd6kVkbflsJRQCNOsbP_uW8GlwG1F5HqaWpUDL2YJGT-vxat4Yqek5fl6mvX4TBTyKPF-CVQGYdHijjxaA54sVPq8mN8rqlxQZUGAehUWYU3TbFVy7QJJ47hpcsMC_Gw-e7yv09cChKHLn-CM4lBNjVEbPbNZyzFYh3fkLIaOYDuZYmRvZe7lDa2diUWYjBjoMaa4AeZBRmtYfFOTFdcYEjcdu6OiZC_P1l9TROKqeldS0Uxb_3yEa-noda_rTl8L9F7ym0d69RWD8sK66JvkG8M5sGeMFW6kFjtvC3U5_GhDPOrz0gGTORCI_SQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579427,"updated":1612579427,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
       content-length: '690'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:28 GMT
+      date: Sat, 06 Feb 2021 02:43:47 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey396d6174c/create?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestkey396d6174c/create?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -307,29 +307,29 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/keys?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys?api-version=7.2-preview
   response:
     body:
-      string: '{"value":[{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-ec-key51c4108d","attributes":{"enabled":true,"created":1612518125,"updated":1612518125,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"purpose":"unit
-        test","test name":"CreateECKeyTest"}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-ec-key5416109f","attributes":{"enabled":true,"created":1612518271,"updated":1612518271,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"test
-        name":"CreateECKeyTest","purpose":"unit test"}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-P-256-ec-key51c4108d","attributes":{"enabled":true,"created":1612518127,"updated":1612518127,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-P-256-ec-key5416109f","attributes":{"enabled":true,"created":1612518273,"updated":1612518273,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestimport-test-key51c4108d","attributes":{"enabled":true,"created":1612518128,"updated":1612518128,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestimport-test-key5416109f","attributes":{"enabled":true,"created":1612518273,"updated":1612518273,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name889211d9","attributes":{"enabled":true,"created":1612518521,"updated":1612518521,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey0110414cf","attributes":{"enabled":true,"created":1612518448,"updated":1612518448,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey096d6174c","attributes":{"enabled":true,"created":1612518568,"updated":1612518568,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey0a7710b8a","attributes":{"enabled":true,"created":1612518212,"updated":1612518212,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey0a8eb0b9c","attributes":{"enabled":true,"created":1612518350,"updated":1612518350,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey0b3510bf8","attributes":{"enabled":true,"created":1612518134,"updated":1612518134,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey0b4dd0c0a","attributes":{"enabled":true,"created":1612518280,"updated":1612518280,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey1110414cf","attributes":{"enabled":true,"created":1612518449,"updated":1612518449,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey196d6174c","attributes":{"enabled":true,"created":1612518568,"updated":1612518568,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey1a7710b8a","attributes":{"enabled":true,"created":1612518213,"updated":1612518213,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey1a8eb0b9c","attributes":{"enabled":true,"created":1612518350,"updated":1612518350,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/keys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1VSXpOVEV3UWtZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+      string: '{"value":[{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-ec-key51c4108d","attributes":{"enabled":true,"created":1612578993,"updated":1612578993,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"test
+        name":"CreateECKeyTest","purpose":"unit test"}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-ec-key5416109f","attributes":{"enabled":true,"created":1612579130,"updated":1612579130,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"purpose":"unit
+        test","test name":"CreateECKeyTest"}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-P-256-ec-key51c4108d","attributes":{"enabled":true,"created":1612578995,"updated":1612578995,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-P-256-ec-key5416109f","attributes":{"enabled":true,"created":1612579132,"updated":1612579132,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestimport-test-key51c4108d","attributes":{"enabled":true,"created":1612578995,"updated":1612578995,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestimport-test-key5416109f","attributes":{"enabled":true,"created":1612579132,"updated":1612579132,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name889211d9","attributes":{"enabled":true,"created":1612579353,"updated":1612579353,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey0110414cf","attributes":{"enabled":true,"created":1612579281,"updated":1612579281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey096d6174c","attributes":{"enabled":true,"created":1612579425,"updated":1612579425,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey0a7710b8a","attributes":{"enabled":true,"created":1612579077,"updated":1612579077,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey0a8eb0b9c","attributes":{"enabled":true,"created":1612579219,"updated":1612579219,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey0b3510bf8","attributes":{"enabled":true,"created":1612579002,"updated":1612579002,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey0b4dd0c0a","attributes":{"enabled":true,"created":1612579139,"updated":1612579139,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey1110414cf","attributes":{"enabled":true,"created":1612579281,"updated":1612579281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey196d6174c","attributes":{"enabled":true,"created":1612579426,"updated":1612579426,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey1a7710b8a","attributes":{"enabled":true,"created":1612579078,"updated":1612579078,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey1a8eb0b9c","attributes":{"enabled":true,"created":1612579220,"updated":1612579220,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/keys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1VSXpOVEV3UWtZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control: no-cache
-      content-length: '4005'
+      content-length: '4013'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:29 GMT
+      date: Sat, 06 Feb 2021 02:43:48 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -338,27 +338,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net:443/keys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1VSXpOVEV3UWtZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    uri: https://vaultname.vault.azure.net:443/keys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1VSXpOVEV3UWtZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
-      string: '{"value":[{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey1b3510bf8","attributes":{"enabled":true,"created":1612518135,"updated":1612518135,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey1b4dd0c0a","attributes":{"enabled":true,"created":1612518280,"updated":1612518280,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey2110414cf","attributes":{"enabled":true,"created":1612518449,"updated":1612518449,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey296d6174c","attributes":{"enabled":true,"created":1612518568,"updated":1612518568,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey2a7710b8a","attributes":{"enabled":true,"created":1612518213,"updated":1612518213,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey2a8eb0b9c","attributes":{"enabled":true,"created":1612518350,"updated":1612518350,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey2b3510bf8","attributes":{"enabled":true,"created":1612518135,"updated":1612518135,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey2b4dd0c0a","attributes":{"enabled":true,"created":1612518280,"updated":1612518280,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey3110414cf","attributes":{"enabled":true,"created":1612518449,"updated":1612518449,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey396d6174c","attributes":{"enabled":true,"created":1612518569,"updated":1612518569,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey3a7710b8a","attributes":{"enabled":true,"created":1612518213,"updated":1612518213,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey3a8eb0b9c","attributes":{"enabled":true,"created":1612518351,"updated":1612518351,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey3b3510bf8","attributes":{"enabled":true,"created":1612518135,"updated":1612518135,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey3b4dd0c0a","attributes":{"enabled":true,"created":1612518281,"updated":1612518281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey4a7710b8a","attributes":{"enabled":true,"created":1612518214,"updated":1612518214,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey4a8eb0b9c","attributes":{"enabled":true,"created":1612518351,"updated":1612518351,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey4b3510bf8","attributes":{"enabled":true,"created":1612518136,"updated":1612518136,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey4b4dd0c0a","attributes":{"enabled":true,"created":1612518281,"updated":1612518281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/keys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk5UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+      string: '{"value":[{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey1b3510bf8","attributes":{"enabled":true,"created":1612579002,"updated":1612579002,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey1b4dd0c0a","attributes":{"enabled":true,"created":1612579139,"updated":1612579139,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey2110414cf","attributes":{"enabled":true,"created":1612579281,"updated":1612579281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey296d6174c","attributes":{"enabled":true,"created":1612579426,"updated":1612579426,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey2a7710b8a","attributes":{"enabled":true,"created":1612579078,"updated":1612579078,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey2a8eb0b9c","attributes":{"enabled":true,"created":1612579220,"updated":1612579220,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey2b3510bf8","attributes":{"enabled":true,"created":1612579003,"updated":1612579003,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey2b4dd0c0a","attributes":{"enabled":true,"created":1612579139,"updated":1612579139,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey3110414cf","attributes":{"enabled":true,"created":1612579282,"updated":1612579282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey396d6174c","attributes":{"enabled":true,"created":1612579427,"updated":1612579427,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey3a7710b8a","attributes":{"enabled":true,"created":1612579078,"updated":1612579078,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey3a8eb0b9c","attributes":{"enabled":true,"created":1612579221,"updated":1612579221,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey3b3510bf8","attributes":{"enabled":true,"created":1612579003,"updated":1612579003,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey3b4dd0c0a","attributes":{"enabled":true,"created":1612579140,"updated":1612579140,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey4a7710b8a","attributes":{"enabled":true,"created":1612579079,"updated":1612579079,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey4a8eb0b9c","attributes":{"enabled":true,"created":1612579221,"updated":1612579221,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey4b3510bf8","attributes":{"enabled":true,"created":1612579003,"updated":1612579003,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey4b4dd0c0a","attributes":{"enabled":true,"created":1612579140,"updated":1612579140,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/keys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk5UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control: no-cache
-      content-length: '4025'
+      content-length: '4033'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:29 GMT
+      date: Sat, 06 Feb 2021 02:43:49 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net:443/keys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1VSXpOVEV3UWtZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    url: https://mcpatinotest.vault.azure.net:443/keys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1VSXpOVEV3UWtZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
 - request:
     body: null
     headers:
@@ -367,27 +367,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net:443/keys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk5UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    uri: https://vaultname.vault.azure.net:443/keys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk5UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
-      string: '{"value":[{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey5a7710b8a","attributes":{"enabled":true,"created":1612518214,"updated":1612518214,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey5a8eb0b9c","attributes":{"enabled":true,"created":1612518352,"updated":1612518352,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey5b3510bf8","attributes":{"enabled":true,"created":1612518136,"updated":1612518136,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey5b4dd0c0a","attributes":{"enabled":true,"created":1612518281,"updated":1612518281,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey6a7710b8a","attributes":{"enabled":true,"created":1612518214,"updated":1612518214,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey6a8eb0b9c","attributes":{"enabled":true,"created":1612518352,"updated":1612518352,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey6b3510bf8","attributes":{"enabled":true,"created":1612518137,"updated":1612518137,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey6b4dd0c0a","attributes":{"enabled":true,"created":1612518282,"updated":1612518282,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey95c61223","attributes":{"enabled":true,"created":1612518423,"updated":1612518423,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkeybak2e80e6d","attributes":{"enabled":true,"created":1612518114,"updated":1612518114,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkeybak4e00e7f","attributes":{"enabled":true,"created":1612518260,"updated":1612518260,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkeyrec103214bc","attributes":{"enabled":true,"created":1612518455,"updated":1612518455,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name116c0ea5","attributes":{"enabled":true,"created":1612518175,"updated":1612518175,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name13760eb7","attributes":{"enabled":true,"created":1612518317,"updated":1612518317,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12","attributes":{"enabled":true,"created":1612518173,"updated":1612518173,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name22bc0f24","attributes":{"enabled":true,"created":1612518315,"updated":1612518315,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtesttestKeyf5fa0e28","attributes":{"enabled":true,"created":1612518171,"updated":1612518171,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtesttestKeyf7e00e3a","attributes":{"enabled":true,"created":1612518313,"updated":1612518313,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/test-rsa","attributes":{"enabled":true,"created":1612504531,"updated":1612504531,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":null}'
+      string: '{"value":[{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey5a7710b8a","attributes":{"enabled":true,"created":1612579079,"updated":1612579079,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey5a8eb0b9c","attributes":{"enabled":true,"created":1612579221,"updated":1612579221,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey5b3510bf8","attributes":{"enabled":true,"created":1612579004,"updated":1612579004,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey5b4dd0c0a","attributes":{"enabled":true,"created":1612579140,"updated":1612579140,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey6a7710b8a","attributes":{"enabled":true,"created":1612579079,"updated":1612579079,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey6a8eb0b9c","attributes":{"enabled":true,"created":1612579222,"updated":1612579222,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey6b3510bf8","attributes":{"enabled":true,"created":1612579004,"updated":1612579004,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey6b4dd0c0a","attributes":{"enabled":true,"created":1612579141,"updated":1612579141,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkeybak2e80e6d","attributes":{"enabled":true,"created":1612578984,"updated":1612578984,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkeybak4e00e7f","attributes":{"enabled":true,"created":1612579121,"updated":1612579121,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestkeyrec103214bc","attributes":{"enabled":true,"created":1612579287,"updated":1612579287,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name116c0ea5","attributes":{"enabled":true,"created":1612579046,"updated":1612579046,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name13760eb7","attributes":{"enabled":true,"created":1612579184,"updated":1612579184,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12","attributes":{"enabled":true,"created":1612579044,"updated":1612579044,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name22bc0f24","attributes":{"enabled":true,"created":1612579182,"updated":1612579182,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtesttestKeyf5fa0e28","attributes":{"enabled":true,"created":1612579042,"updated":1612579042,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/livekvtesttestKeyf7e00e3a","attributes":{"enabled":true,"created":1612579180,"updated":1612579180,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"kid":"https://vaultname.vault.azure.net/keys/test-rsa","attributes":{"enabled":true,"created":1612558238,"updated":1612558238,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":null}'
     headers:
       cache-control: no-cache
-      content-length: '4006'
+      content-length: '3799'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:30 GMT
+      date: Sat, 06 Feb 2021 02:43:50 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net:443/keys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk5UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    url: https://mcpatinotest.vault.azure.net:443/keys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk5UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
 - request:
     body: null
     headers:
@@ -396,7 +396,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/keys/key-name/versions?api-version=7.1
+    uri: https://vaultname.vault.azure.net/keys/key-name/versions?api-version=7.2-preview
   response:
     body:
       string: '{"value":[],"nextLink":null}'
@@ -404,19 +404,19 @@ interactions:
       cache-control: no-cache
       content-length: '28'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:30 GMT
+      date: Sat, 06 Feb 2021 02:43:50 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/key-name/versions?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/keys/key-name/versions?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -425,31 +425,31 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.1
+    uri: https://vaultname.vault.azure.net/deletedkeys?api-version=7.2-preview
   response:
     body:
-      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key51c4108d","deletedDate":1612518130,"scheduledPurgeDate":1620294130,"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-rsa-key51c4108d","attributes":{"enabled":true,"exp":2524723200,"created":1612518128,"updated":1612518130,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
-        tag"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key5416109f","deletedDate":1612518276,"scheduledPurgeDate":1620294276,"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-rsa-key5416109f","attributes":{"enabled":true,"exp":2524723200,"created":1612518274,"updated":1612518275,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
-        tag"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey-name105514c1","deletedDate":1612518441,"scheduledPurgeDate":1620294441,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name105514c1","attributes":{"enabled":true,"exp":2524723200,"created":1612518440,"updated":1612518440,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
-        tag"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey-name9627173e","deletedDate":1612518563,"scheduledPurgeDate":1620294563,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e","attributes":{"enabled":true,"exp":2524723200,"created":1612518562,"updated":1612518562,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
-        tag"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey030c90fa1","deletedDate":1612518154,"scheduledPurgeDate":1620294154,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey030c90fa1","attributes":{"enabled":true,"created":1612518139,"updated":1612518139,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNRE13UXprd1JrRXhMelV5TmpNMVFUYzJOMFU1UXpReVJUYzROa0l3UlVZeE16STNRelZCTXpoRklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key51c4108d","deletedDate":1612578997,"scheduledPurgeDate":1620354997,"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-rsa-key51c4108d","attributes":{"enabled":true,"exp":2524723200,"created":1612578995,"updated":1612578997,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
+        tag"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key5416109f","deletedDate":1612579135,"scheduledPurgeDate":1620355135,"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrud-rsa-key5416109f","attributes":{"enabled":true,"exp":2524723200,"created":1612579133,"updated":1612579134,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
+        tag"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey-name105514c1","deletedDate":1612579276,"scheduledPurgeDate":1620355276,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name105514c1","attributes":{"enabled":true,"exp":2524723200,"created":1612579275,"updated":1612579275,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
+        tag"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey-name9627173e","deletedDate":1612579420,"scheduledPurgeDate":1620355420,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey-name9627173e","attributes":{"enabled":true,"exp":2524723200,"created":1612579419,"updated":1612579420,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90},"tags":{"foo":"updated
+        tag"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey030c90fa1","deletedDate":1612579032,"scheduledPurgeDate":1620355032,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey030c90fa1","attributes":{"enabled":true,"created":1612579007,"updated":1612579007,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNRE13UXprd1JrRXhMelV5TmpNMVFUYzJOMFU1UXpReVJUYzROa0l3UlVZeE16STNRelZCTXpoRklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control: no-cache
-      content-length: '2340'
+      content-length: '2348'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:30 GMT
+      date: Sat, 06 Feb 2021 02:43:50 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/deletedkeys?api-version=7.1
+    url: https://mcpatinotest.vault.azure.net/deletedkeys?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -458,27 +458,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNRE13UXprd1JrRXhMelV5TmpNMVFUYzJOMFU1UXpReVJUYzROa0l3UlVZeE16STNRelZCTXpoRklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNRE13UXprd1JrRXhMelV5TmpNMVFUYzJOMFU1UXpReVJUYzROa0l3UlVZeE16STNRelZCTXpoRklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
-      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey032f70fb3","deletedDate":1612518288,"scheduledPurgeDate":1620294288,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey032f70fb3","attributes":{"enabled":true,"created":1612518286,"updated":1612518286,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey130c90fa1","deletedDate":1612518163,"scheduledPurgeDate":1620294163,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey130c90fa1","attributes":{"enabled":true,"created":1612518140,"updated":1612518140,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey132f70fb3","deletedDate":1612518304,"scheduledPurgeDate":1620294304,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey132f70fb3","attributes":{"enabled":true,"created":1612518286,"updated":1612518286,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1VSXpOVEV3UWtZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey032f70fb3","deletedDate":1612579164,"scheduledPurgeDate":1620355164,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey032f70fb3","attributes":{"enabled":true,"created":1612579144,"updated":1612579144,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey130c90fa1","deletedDate":1612579022,"scheduledPurgeDate":1620355022,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey130c90fa1","attributes":{"enabled":true,"created":1612579007,"updated":1612579007,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey132f70fb3","deletedDate":1612579160,"scheduledPurgeDate":1620355160,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey132f70fb3","attributes":{"enabled":true,"created":1612579145,"updated":1612579145,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1VSXpOVEV3UWtZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control: no-cache
-      content-length: '1344'
+      content-length: '1352'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:31 GMT
+      date: Sat, 06 Feb 2021 02:43:51 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNRE13UXprd1JrRXhMelV5TmpNMVFUYzJOMFU1UXpReVJUYzROa0l3UlVZeE16STNRelZCTXpoRklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNRE13UXprd1JrRXhMelV5TmpNMVFUYzJOMFU1UXpReVJUYzROa0l3UlVZeE16STNRelZCTXpoRklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
 - request:
     body: null
     headers:
@@ -487,27 +487,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1VSXpOVEV3UWtZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1VSXpOVEV3UWtZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
-      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey230c90fa1","deletedDate":1612518152,"scheduledPurgeDate":1620294152,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey230c90fa1","attributes":{"enabled":true,"created":1612518140,"updated":1612518140,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey232f70fb3","deletedDate":1612518293,"scheduledPurgeDate":1620294293,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey232f70fb3","attributes":{"enabled":true,"created":1612518286,"updated":1612518286,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey330c90fa1","deletedDate":1612518142,"scheduledPurgeDate":1620294142,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey330c90fa1","attributes":{"enabled":true,"created":1612518141,"updated":1612518141,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey332f70fb3","deletedDate":1612518298,"scheduledPurgeDate":1620294298,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey332f70fb3","attributes":{"enabled":true,"created":1612518287,"updated":1612518287,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNek15Umpjd1JrSXpMemxEUkVNME9UZzFNVFUxUlRRelJqWTVNakk1TURNM01FVkVNVFJGTkRCRklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey230c90fa1","deletedDate":1612579009,"scheduledPurgeDate":1620355009,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey230c90fa1","attributes":{"enabled":true,"created":1612579007,"updated":1612579007,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey232f70fb3","deletedDate":1612579147,"scheduledPurgeDate":1620355147,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey232f70fb3","attributes":{"enabled":true,"created":1612579145,"updated":1612579145,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey330c90fa1","deletedDate":1612579027,"scheduledPurgeDate":1620355027,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey330c90fa1","attributes":{"enabled":true,"created":1612579008,"updated":1612579008,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey332f70fb3","deletedDate":1612579169,"scheduledPurgeDate":1620355169,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey332f70fb3","attributes":{"enabled":true,"created":1612579145,"updated":1612579145,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNek15Umpjd1JrSXpMekkwUVRkQlFqVkdOMFk1T1RSQ016aEJRakkxTnpoQlFrRTNOa00yUmpJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control: no-cache
-      content-length: '1756'
+      content-length: '1764'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:31 GMT
+      date: Sat, 06 Feb 2021 02:43:51 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1VSXpOVEV3UWtZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk1VSXpOVEV3UWtZNElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
 - request:
     body: null
     headers:
@@ -516,27 +516,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNek15Umpjd1JrSXpMemxEUkVNME9UZzFNVFUxUlRRelJqWTVNakk1TURNM01FVkVNVFJGTkRCRklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNek15Umpjd1JrSXpMekkwUVRkQlFqVkdOMFk1T1RSQ016aEJRakkxTnpoQlFrRTNOa00yUmpJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
-      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey430c90fa1","deletedDate":1612518158,"scheduledPurgeDate":1620294158,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey430c90fa1","attributes":{"enabled":true,"created":1612518141,"updated":1612518141,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey432f70fb3","deletedDate":1612518301,"scheduledPurgeDate":1620294301,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey432f70fb3","attributes":{"enabled":true,"created":1612518287,"updated":1612518287,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey530c90fa1","deletedDate":1612518147,"scheduledPurgeDate":1620294147,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey530c90fa1","attributes":{"enabled":true,"created":1612518141,"updated":1612518141,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk5UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey430c90fa1","deletedDate":1612579034,"scheduledPurgeDate":1620355034,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey430c90fa1","attributes":{"enabled":true,"created":1612579008,"updated":1612579008,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey432f70fb3","deletedDate":1612579152,"scheduledPurgeDate":1620355152,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey432f70fb3","attributes":{"enabled":true,"created":1612579146,"updated":1612579146,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey530c90fa1","deletedDate":1612579012,"scheduledPurgeDate":1620355012,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey530c90fa1","attributes":{"enabled":true,"created":1612579009,"updated":1612579009,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk5UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control: no-cache
-      content-length: '1344'
+      content-length: '1352'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:31 GMT
+      date: Sat, 06 Feb 2021 02:43:52 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNek15Umpjd1JrSXpMemxEUkVNME9UZzFNVFUxUlRRelJqWTVNakk1TURNM01FVkVNVFJGTkRCRklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EVTVJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpNek15Umpjd1JrSXpMekkwUVRkQlFqVkdOMFk1T1RSQ016aEJRakkxTnpoQlFrRTNOa00yUmpJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
 - request:
     body: null
     headers:
@@ -545,27 +545,27 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk5UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk5UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
-      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey532f70fb3","deletedDate":1612518290,"scheduledPurgeDate":1620294290,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey532f70fb3","attributes":{"enabled":true,"created":1612518287,"updated":1612518287,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey630c90fa1","deletedDate":1612518160,"scheduledPurgeDate":1620294160,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey630c90fa1","attributes":{"enabled":true,"created":1612518142,"updated":1612518142,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey632f70fb3","deletedDate":1612518296,"scheduledPurgeDate":1620294296,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey632f70fb3","attributes":{"enabled":true,"created":1612518287,"updated":1612518287,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EWXdJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpRa0ZMTWtVNE1FVTJSQzh3TVVaQk9VSXlORU0xT1VJME1ETkJPRVpFUXpSQ05UYzFNekpFTmtVMFFpRXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey532f70fb3","deletedDate":1612579154,"scheduledPurgeDate":1620355154,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey532f70fb3","attributes":{"enabled":true,"created":1612579146,"updated":1612579146,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey630c90fa1","deletedDate":1612579017,"scheduledPurgeDate":1620355017,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey630c90fa1","attributes":{"enabled":true,"created":1612579009,"updated":1612579009,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}},{"recoveryId":"https://vaultname.vault.azure.net/deletedkeys/livekvtestkey632f70fb3","deletedDate":1612579157,"scheduledPurgeDate":1620355157,"kid":"https://vaultname.vault.azure.net/keys/livekvtestkey632f70fb3","attributes":{"enabled":true,"created":1612579147,"updated":1612579147,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}],"nextLink":"https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EWXdJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpRa0ZMTkVVd01FVTNSaTh4UWpBNE1rUTFOemxEUWpBME5EQXlPVGxDUXpCQk1qQTJOVFl5TWpreU55RXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control: no-cache
-      content-length: '1404'
+      content-length: '1412'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:31 GMT
+      date: Sat, 06 Feb 2021 02:43:52 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk5UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5NiFNREF3TURJMklXdGxlUzlNU1ZaRlMxWlVSVk5VUzBWWk5UTXlSamN3UmtJeklUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
 - request:
     body: null
     headers:
@@ -574,7 +574,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EWXdJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpRa0ZMTWtVNE1FVTJSQzh3TVVaQk9VSXlORU0xT1VJME1ETkJPRVpFUXpSQ05UYzFNekpFTmtVMFFpRXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    uri: https://vaultname.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EWXdJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpRa0ZMTkVVd01FVTNSaTh4UWpBNE1rUTFOemxEUWpBME5EQXlPVGxDUXpCQk1qQTJOVFl5TWpreU55RXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
       string: '{"value":[],"nextLink":null}'
@@ -582,17 +582,17 @@ interactions:
       cache-control: no-cache
       content-length: '28'
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Feb 2021 09:49:33 GMT
+      date: Sat, 06 Feb 2021 02:43:53 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       x-content-type-options: nosniff
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: northeurope
-      x-ms-keyvault-service-version: 1.2.139.0
+      x-ms-keyvault-service-version: 1.2.164.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.1&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EWXdJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpRa0ZMTWtVNE1FVTJSQzh3TVVaQk9VSXlORU0xT1VJME1ETkJPRVpFUXpSQ05UYzFNekpFTmtVMFFpRXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+    url: https://mcpatinotest.vault.azure.net:443/deletedkeys?api-version=7.2-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDAhTURBd01EWXdJV3RsZVM5TVNWWkZTMVpVUlZOVVMwVlpRa0ZMTkVVd01FVTNSaTh4UWpBNE1rUTFOemxEUWpBME5EQXlPVGxDUXpCQk1qQTJOVFl5TWpreU55RXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
 version: 1

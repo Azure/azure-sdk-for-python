@@ -1300,7 +1300,7 @@ class StorageCommonBlobTest(StorageTestCase):
         target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
 
         # Assert
-        with self.assertRaises(ResourceNotFoundError):
+        with self.assertRaises(ClientAuthenticationError):
             target_blob.start_copy_from_url(source_blob.url)
 
     @GlobalStorageAccountPreparer()

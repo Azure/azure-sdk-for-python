@@ -1,2 +1,3 @@
-C:\github.com\azure-sdk-for-python\sdk\tables\azure-data-tables\.tmp_whl_dir\azure_sdk_tools-0.0.0-py3-none-any.whl
+../../../tools/azure-sdk-tools
+../../../tools/azure-devtools
 aiohttp>=3.0; python_version >= '3.5'

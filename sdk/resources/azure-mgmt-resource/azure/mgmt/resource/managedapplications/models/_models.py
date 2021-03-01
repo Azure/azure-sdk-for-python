@@ -537,6 +537,79 @@ class Identity(msrest.serialization.Model):
         self.tenant_id = None
 
 
+class Operation(msrest.serialization.Model):
+    """Microsoft.Solutions operation.
+
+    :param name: Operation name: {provider}/{resource}/{operation}.
+    :type name: str
+    :param display: The object that represents the operation.
+    :type display: ~azure.mgmt.resource.managedapplications.models.OperationDisplay
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Operation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+
+
+class OperationDisplay(msrest.serialization.Model):
+    """The object that represents the operation.
+
+    :param provider: Service provider: Microsoft.Solutions.
+    :type provider: str
+    :param resource: Resource on which the operation is performed: Application, JitRequest, etc.
+    :type resource: str
+    :param operation: Operation type: Read, write, delete, etc.
+    :type operation: str
+    """
+
+    _attribute_map = {
+        'provider': {'key': 'provider', 'type': 'str'},
+        'resource': {'key': 'resource', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationDisplay, self).__init__(**kwargs)
+        self.provider = kwargs.get('provider', None)
+        self.resource = kwargs.get('resource', None)
+        self.operation = kwargs.get('operation', None)
+
+
+class OperationListResult(msrest.serialization.Model):
+    """Result of the request to list Microsoft.Solutions operations. It contains a list of operations and a URL link to get the next set of results.
+
+    :param value: List of Microsoft.Solutions operations.
+    :type value: list[~azure.mgmt.resource.managedapplications.models.Operation]
+    :param next_link: URL to get the next set of operation list results if there are any.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
 class Plan(msrest.serialization.Model):
     """Plan for the managed application.
 
