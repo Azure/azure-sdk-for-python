@@ -78,6 +78,7 @@ jobs:
         test_result = ''
         if [ -f "$output_path/live_test_fail.txt" ]; then
           test_result=`cat $output_path/live_test_fail.txt`
+          echo test_result: $test_result
         fi
 
         # create PR
@@ -86,12 +87,13 @@ jobs:
         echo 777777777
         echo new_branch: $new_branch
         echo target_branch: $target_branch
+        echo test_result: $test_result
         echo 88888888
         curl \
           --user "anything:$(USR_TOKEN)" \
           -d "{\
                   \"title\":\"[AutoRelease_Python] $new_branch\",\
-                  \"body\":\"Please Add the link issue\n$test_result\",\
+                  \"body\":\"Please Add the link issue\n \",\
                   \"head\":\"$(USR_NAME):$new_branch\",\
                   \"base\":\"$target_branch\"\
               }" \

@@ -333,7 +333,7 @@ def create_branch():
     # create new branch
     t = time.time()
     d = time.localtime(t)
-    NEW_BRANCH = 't{}-{}-{}-{:02d}-{:02d}-{}'.format(TRACK, SERVICE_NAME, d.tm_year, d.tm_mon, d.tm_mday, str(t)[-6:])
+    NEW_BRANCH = 't{}-{}-{}-{:02d}-{:02d}-{}'.format(TRACK, SERVICE_NAME, d.tm_year, d.tm_mon, d.tm_mday, str(t)[-5:])
     print_exec(f'git checkout -b {NEW_BRANCH}')
 
 
