@@ -242,7 +242,6 @@ class TestTableClientUnit(AsyncTableTestCase):
             self.validate_standard_account_endpoints(service, self.tables_cosmos_account_name, self.tables_primary_cosmos_account_key)
             assert service.scheme ==  'https'
 
-    # @pytest.mark.skip("Error with sas formation")
     @pytest.mark.asyncio
     async def test_create_service_with_connection_string_sas_async(self):
         self.sas_token = self.generate_sas_token()
@@ -440,7 +439,6 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert service.table_name ==  'bar'
         assert service.account_name ==  self.tables_cosmos_account_name
 
-    # @pytest.mark.skip("cosmos differential")
     @pytest.mark.asyncio
     async def test_create_table_client_with_complete_url_async(self):
         # Arrange

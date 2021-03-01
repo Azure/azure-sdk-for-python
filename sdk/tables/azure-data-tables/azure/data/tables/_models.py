@@ -604,19 +604,17 @@ class ResourceTypes(object):
 
     :param bool service:
         Access to service-level APIs (e.g., Get/Set Service Properties,
-        Get Service Stats, List Containers/Queues/Shares)
+        Get Service Stats, List Tables)
     :param bool object:
-        Access to object-level APIs for blobs, queue messages, and
-        files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
+        Access to object-level APIs for tables (e.g. Get/Create/Query Entity etc.)
     """
 
     def __init__(
-        self, service=False, object=False, container=False
+        self, service=False, object=False
     ):  # pylint: disable=redefined-builtin
         self.service = service
         self.object = object
-        self.container = container
-        self._str = ("s" if self.service else "") + ("o" if self.object else "") + ("c" if self.container else "")
+        self._str = ("s" if self.service else "") + ("o" if self.object else "")
 
     def __str__(self):
         return self._str
