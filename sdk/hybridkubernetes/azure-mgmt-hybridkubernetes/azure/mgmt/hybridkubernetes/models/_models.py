@@ -16,16 +16,19 @@ from msrest.exceptions import HttpOperationError
 class Resource(Model):
     """Resource.
 
+    Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -49,19 +52,21 @@ class Resource(Model):
 
 
 class AzureEntityResource(Resource):
-    """The resource model definition for a Azure Resource Manager resource with an
-    etag.
+    """Entity Resource.
+
+    The resource model definition for an Azure Resource Manager resource with
+    an etag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -95,20 +100,23 @@ class CloudError(Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -145,13 +153,13 @@ class ConnectedCluster(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -164,22 +172,45 @@ class ConnectedCluster(TrackedResource):
      certificate used by the agent to do the initial handshake to the backend
      services in Azure.
     :type agent_public_key_certificate: str
-    :param aad_profile: Required.
-    :type aad_profile:
-     ~azure.mgmt.hybridkubernetes.models.ConnectedClusterAADProfile
     :ivar kubernetes_version: The Kubernetes version of the connected cluster
      resource
     :vartype kubernetes_version: str
     :ivar total_node_count: Number of nodes present in the connected cluster
      resource
     :vartype total_node_count: int
+    :ivar total_core_count: Number of CPU cores present in the connected
+     cluster resource
+    :vartype total_core_count: int
     :ivar agent_version: Version of the agent running on the connected cluster
      resource
     :vartype agent_version: str
-    :param provisioning_state: Possible values include: 'Succeeded', 'Failed',
-     'Canceled', 'Provisioning', 'Updating', 'Deleting', 'Accepted'
+    :param provisioning_state: Provisioning state of the connected cluster
+     resource. Possible values include: 'Succeeded', 'Failed', 'Canceled',
+     'Provisioning', 'Updating', 'Deleting', 'Accepted'
     :type provisioning_state: str or
      ~azure.mgmt.hybridkubernetes.models.ProvisioningState
+    :param distribution: The Kubernetes distribution running on this connected
+     cluster.
+    :type distribution: str
+    :param infrastructure: The infrastructure on which the Kubernetes cluster
+     represented by this connected cluster is running on.
+    :type infrastructure: str
+    :ivar offering: Connected cluster offering
+    :vartype offering: str
+    :ivar managed_identity_certificate_expiration_time: Expiration time of the
+     managed identity certificate
+    :vartype managed_identity_certificate_expiration_time: datetime
+    :ivar last_connectivity_time: Time representing the last instance when
+     heart beat was received from the cluster
+    :vartype last_connectivity_time: datetime
+    :ivar connectivity_status: Represents the connectivity status of the
+     connected cluster. Possible values include: 'Connecting', 'Connected',
+     'Offline', 'Expired'
+    :vartype connectivity_status: str or
+     ~azure.mgmt.hybridkubernetes.models.ConnectivityStatus
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource
+    :vartype system_data: ~azure.mgmt.hybridkubernetes.models.SystemData
     """
 
     _validation = {
@@ -189,10 +220,15 @@ class ConnectedCluster(TrackedResource):
         'location': {'required': True},
         'identity': {'required': True},
         'agent_public_key_certificate': {'required': True},
-        'aad_profile': {'required': True},
         'kubernetes_version': {'readonly': True},
         'total_node_count': {'readonly': True},
+        'total_core_count': {'readonly': True},
         'agent_version': {'readonly': True},
+        'offering': {'readonly': True},
+        'managed_identity_certificate_expiration_time': {'readonly': True},
+        'last_connectivity_time': {'readonly': True},
+        'connectivity_status': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -203,56 +239,36 @@ class ConnectedCluster(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ConnectedClusterIdentity'},
         'agent_public_key_certificate': {'key': 'properties.agentPublicKeyCertificate', 'type': 'str'},
-        'aad_profile': {'key': 'properties.aadProfile', 'type': 'ConnectedClusterAADProfile'},
         'kubernetes_version': {'key': 'properties.kubernetesVersion', 'type': 'str'},
         'total_node_count': {'key': 'properties.totalNodeCount', 'type': 'int'},
+        'total_core_count': {'key': 'properties.totalCoreCount', 'type': 'int'},
         'agent_version': {'key': 'properties.agentVersion', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'distribution': {'key': 'properties.distribution', 'type': 'str'},
+        'infrastructure': {'key': 'properties.infrastructure', 'type': 'str'},
+        'offering': {'key': 'properties.offering', 'type': 'str'},
+        'managed_identity_certificate_expiration_time': {'key': 'properties.managedIdentityCertificateExpirationTime', 'type': 'iso-8601'},
+        'last_connectivity_time': {'key': 'properties.lastConnectivityTime', 'type': 'iso-8601'},
+        'connectivity_status': {'key': 'properties.connectivityStatus', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(self, **kwargs):
         super(ConnectedCluster, self).__init__(**kwargs)
         self.identity = kwargs.get('identity', None)
         self.agent_public_key_certificate = kwargs.get('agent_public_key_certificate', None)
-        self.aad_profile = kwargs.get('aad_profile', None)
         self.kubernetes_version = None
         self.total_node_count = None
+        self.total_core_count = None
         self.agent_version = None
         self.provisioning_state = kwargs.get('provisioning_state', None)
-
-
-class ConnectedClusterAADProfile(Model):
-    """ConnectedClusterAADProfile.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param tenant_id: Required. The aad tenant id which is configured on
-     target K8s cluster
-    :type tenant_id: str
-    :param client_app_id: Required. The client app id configured on target K8
-     cluster
-    :type client_app_id: str
-    :param server_app_id: Required. The server app id to access AD server
-    :type server_app_id: str
-    """
-
-    _validation = {
-        'tenant_id': {'required': True},
-        'client_app_id': {'required': True},
-        'server_app_id': {'required': True},
-    }
-
-    _attribute_map = {
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'client_app_id': {'key': 'clientAppId', 'type': 'str'},
-        'server_app_id': {'key': 'serverAppId', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ConnectedClusterAADProfile, self).__init__(**kwargs)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.client_app_id = kwargs.get('client_app_id', None)
-        self.server_app_id = kwargs.get('server_app_id', None)
+        self.distribution = kwargs.get('distribution', None)
+        self.infrastructure = kwargs.get('infrastructure', None)
+        self.offering = None
+        self.managed_identity_certificate_expiration_time = None
+        self.last_connectivity_time = None
+        self.connectivity_status = None
+        self.system_data = None
 
 
 class ConnectedClusterIdentity(Model):
@@ -272,7 +288,8 @@ class ConnectedClusterIdentity(Model):
     :param type: Required. The type of identity used for the connected
      cluster. The type 'SystemAssigned, includes a system created identity. The
      type 'None' means no identity is assigned to the connected cluster.
-     Possible values include: 'None', 'SystemAssigned'
+     Possible values include: 'None', 'SystemAssigned'. Default value:
+     "SystemAssigned" .
     :type type: str or
      ~azure.mgmt.hybridkubernetes.models.ResourceIdentityType
     """
@@ -293,7 +310,7 @@ class ConnectedClusterIdentity(Model):
         super(ConnectedClusterIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
-        self.type = kwargs.get('type', None)
+        self.type = kwargs.get('type', "SystemAssigned")
 
 
 class ConnectedClusterPatch(Model):
@@ -301,77 +318,52 @@ class ConnectedClusterPatch(Model):
 
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param agent_public_key_certificate: Base64 encoded public certificate
-     used by the agent to do the initial handshake to the backend services in
-     Azure.
-    :type agent_public_key_certificate: str
+    :param properties: Describes the connected cluster resource properties
+     that can be updated during PATCH operation.
+    :type properties: object
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'agent_public_key_certificate': {'key': 'properties.agentPublicKeyCertificate', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(ConnectedClusterPatch, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
-        self.agent_public_key_certificate = kwargs.get('agent_public_key_certificate', None)
+        self.properties = kwargs.get('properties', None)
 
 
-class CredentialResult(Model):
-    """The credential result response.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar name: The name of the credential.
-    :vartype name: str
-    :ivar value: Base64-encoded Kubernetes configuration file.
-    :vartype value: bytearray
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'bytearray'},
-    }
-
-    def __init__(self, **kwargs):
-        super(CredentialResult, self).__init__(**kwargs)
-        self.name = None
-        self.value = None
-
-
-class CredentialResults(Model):
-    """The list of credential result response.
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar kubeconfigs: Base64-encoded Kubernetes configuration file.
-    :vartype kubeconfigs:
-     list[~azure.mgmt.hybridkubernetes.models.CredentialResult]
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
     """
 
     _validation = {
-        'kubeconfigs': {'readonly': True},
+        'type': {'readonly': True},
+        'info': {'readonly': True},
     }
 
     _attribute_map = {
-        'kubeconfigs': {'key': 'kubeconfigs', 'type': '[CredentialResult]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(CredentialResults, self).__init__(**kwargs)
-        self.kubeconfigs = None
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
 
 
-class ErrorDetails(Model):
-    """The error response details containing error code and error message.
+class ErrorDetail(Model):
+    """The error detail.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -380,33 +372,53 @@ class ErrorDetails(Model):
     :vartype code: str
     :ivar message: The error message.
     :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.hybridkubernetes.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.hybridkubernetes.models.ErrorAdditionalInfo]
     """
 
     _validation = {
         'code': {'readonly': True},
         'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
     }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
     def __init__(self, **kwargs):
-        super(ErrorDetails, self).__init__(**kwargs)
+        super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
 
 
 class ErrorResponse(Model):
-    """The error response that indicates why an operation has failed.
+    """Error response.
 
-    :param error:
-    :type error: ~azure.mgmt.hybridkubernetes.models.ErrorDetails
+    Common error response for all Azure Resource Manager APIs to return error
+    details for failed operations. (This also follows the OData error response
+    format.).
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.hybridkubernetes.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetails'},
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
     }
 
     def __init__(self, **kwargs):
@@ -484,19 +496,21 @@ class OperationDisplay(Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+    """Proxy Resource.
+
+    The resource model definition for a Azure Resource Manager proxy resource.
+    It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -514,3 +528,44 @@ class ProxyResource(Resource):
 
     def __init__(self, **kwargs):
         super(ProxyResource, self).__init__(**kwargs)
+
+
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or
+     ~azure.mgmt.hybridkubernetes.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.hybridkubernetes.models.LastModifiedByType
+    :param last_modified_at: The timestamp of resource modification (UTC).
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
