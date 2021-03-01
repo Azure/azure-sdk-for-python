@@ -307,9 +307,9 @@ def test_idempotent_sender_partition_configs(connstr_receivers):
     client.send_batch(event_data_batch)
 
     partition_publishing_properties = client.get_partition_publishing_properties("0")
-    assert partition_publishing_properties["last_published_sequence_number"] == 0
-    assert partition_publishing_properties["producer_group_id"] == 0
-    assert partition_publishing_properties["owner_level"] == 0
+    assert partition_publishing_properties["last_published_sequence_number"] is not None
+    assert partition_publishing_properties["producer_group_id"] is not None
+    assert partition_publishing_properties["owner_level"] is not None
     assert event_data_batch.starting_published_sequence_number == 0
     assert event_data.published_sequence_number == 0
 
@@ -330,7 +330,7 @@ def test_idempotent_sender_partition_configs(connstr_receivers):
     partition_publishing_properties_2 = client_2.get_partition_publishing_properties("0")
     # with the new owner_level, the sequence number starts from 0 again
     assert partition_publishing_properties_2["last_published_sequence_number"] == 1
-    assert partition_publishing_properties_2["producer_group_id"] == 0
+    assert partition_publishing_properties_2["producer_group_id"] == partition_publishing_properties["producer_group_id"]
     assert partition_publishing_properties_2["owner_level"] == partition_publishing_properties["owner_level"] + 1
 
     # test producer-epoch-stolen

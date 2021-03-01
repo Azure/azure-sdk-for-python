@@ -10,8 +10,8 @@ from azure.eventhub._constants import ALL_PARTITIONS
 @pytest.mark.asyncio
 async def test_receive_no_partition_async(connstr_senders):
     connection_str, senders = connstr_senders
-    senders[0].send(EventData("Test EventData"))
-    senders[1].send(EventData("Test EventData"))
+    senders[0].send([EventData("Test EventData")])
+    senders[1].send([EventData("Test EventData")])
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
 
     async def on_event(partition_context, event):
@@ -51,7 +51,7 @@ async def test_receive_no_partition_async(connstr_senders):
 @pytest.mark.asyncio
 async def test_receive_partition_async(connstr_senders):
     connection_str, senders = connstr_senders
-    senders[0].send(EventData("Test EventData"))
+    senders[0].send([EventData("Test EventData")])
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
 
     async def on_event(partition_context, event):
@@ -102,8 +102,8 @@ async def test_receive_batch_no_max_wait_time_async(connstr_senders):
     '''Test whether callback is called when max_wait_time is None and max_batch_size has reached
     '''
     connection_str, senders = connstr_senders
-    senders[0].send(EventData("Test EventData"))
-    senders[1].send(EventData("Test EventData"))
+    senders[0].send([EventData("Test EventData")])
+    senders[1].send([EventData("Test EventData")])
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
 
     async def on_event_batch(partition_context, event_batch):
@@ -168,7 +168,7 @@ async def test_receive_batch_early_callback_async(connstr_senders):
     '''
     connection_str, senders = connstr_senders
     for _ in range(10):
-        senders[0].send(EventData("Test EventData"))
+        senders[0].send([EventData("Test EventData")])
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
 
     async def on_event_batch(partition_context, event_batch):

@@ -242,13 +242,11 @@ async def test_idempotent_sender_async(connstr_receivers):
         with pytest.raises(ValueError):
             await client.send_batch([EventData(payload)])
 
-        event_data_batch = await client.create_batch()
         with pytest.raises(ValueError):
-            await client.send_batch(event_data_batch)
+            await client.create_batch()
 
-        event_data_batch = await client.create_batch(partition_key="key")
         with pytest.raises(ValueError):
-            await client.send_batch(event_data_batch)
+            await client.create_batch(partition_key="key")
 
         partition_publishing_properties = await client.get_partition_publishing_properties("0")
         assert partition_publishing_properties["enable_idempotent_publishing"]
@@ -301,9 +299,9 @@ async def test_idempotent_sender_partition_configs_async(connstr_receivers):
     await client.send_batch(event_data_batch)
 
     partition_publishing_properties = await client.get_partition_publishing_properties("0")
-    assert partition_publishing_properties["last_published_sequence_number"] == 0
-    assert partition_publishing_properties["producer_group_id"] == 0
-    assert partition_publishing_properties["owner_level"] == 0
+    assert partition_publishing_properties["last_published_sequence_number"] is not None
+    assert partition_publishing_properties["producer_group_id"] is not None
+    assert partition_publishing_properties["owner_level"] is not None
     assert event_data_batch.starting_published_sequence_number == 0
     assert event_data.published_sequence_number == 0
 
@@ -324,7 +322,7 @@ async def test_idempotent_sender_partition_configs_async(connstr_receivers):
     partition_publishing_properties_2 = await client_2.get_partition_publishing_properties("0")
     # with the new owner_level, the sequence number starts from 0 again
     assert partition_publishing_properties_2["last_published_sequence_number"] == 1
-    assert partition_publishing_properties_2["producer_group_id"] == 0
+    assert partition_publishing_properties_2["producer_group_id"] == partition_publishing_properties["producer_group_id"]
     assert partition_publishing_properties_2["owner_level"] == partition_publishing_properties["owner_level"] + 1
 
     # test producer-epoch-stolen

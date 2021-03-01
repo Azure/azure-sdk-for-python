@@ -28,7 +28,7 @@ async def test_receive_end_of_stream_async(connstr_senders):
         task = asyncio.ensure_future(client.receive(on_event, partition_id="0", starting_position="@latest"))
         await asyncio.sleep(10)
         assert on_event.called is False
-        senders[0].send(EventData(b"Receiving only a single event"))
+        senders[0].send([EventData(b"Receiving only a single event")])
         await asyncio.sleep(10)
         assert on_event.called is True
     await task
@@ -59,7 +59,7 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
 
     on_event.event_position = None
     connection_str, senders = connstr_senders
-    senders[0].send(EventData(b"Inclusive"))
+    senders[0].send([EventData(b"Inclusive")])
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client:
         task = asyncio.ensure_future(client.receive(on_event,
@@ -69,7 +69,7 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
         await asyncio.sleep(10)
         assert on_event.event_position is not None
     await task
-    senders[0].send(EventData(expected_result))
+    senders[0].send([EventData(expected_result)])
     client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client2:
         task = asyncio.ensure_future(
@@ -101,14 +101,14 @@ async def test_receive_owner_level_async(connstr_senders):
                                                       on_error=on_error))
         for i in range(5):
             ed = EventData("Event Number {}".format(i))
-            senders[0].send(ed)
+            senders[0].send([ed])
         await asyncio.sleep(10)
         task2 = asyncio.ensure_future(client2.receive(on_event,
                                                       partition_id="0", starting_position="-1",
                                                       owner_level=1))
         for i in range(5):
             ed = EventData("Event Number {}".format(i))
-            senders[0].send(ed)
+            senders[0].send([ed])
         await asyncio.sleep(10)
     await task1
     await task2
