@@ -454,7 +454,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         token = generate_account_sas(
             tables_cosmos_account_name,
             tables_primary_cosmos_account_key,
-            ResourceTypes(object=True, container=True, service=True),
+            ResourceTypes(object=True, service=True),
             AccountSasPermissions(read=True, list=True, create=True, delete=True),
             datetime.utcnow() + timedelta(hours=1),
         )

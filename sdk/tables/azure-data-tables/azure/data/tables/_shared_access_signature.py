@@ -11,9 +11,13 @@ from ._deserialize import url_quote
 from ._common_conversion import (
     _sign_string,
     _to_str,
-    _to_utc_datetime,
+    # _to_utc_datetime,
 )
 from ._constants import DEFAULT_X_MS_VERSION
+
+
+def _to_utc_datetime(value):
+    return value.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 class SharedAccessSignature(object):

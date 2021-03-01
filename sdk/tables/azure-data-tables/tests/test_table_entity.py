@@ -1839,7 +1839,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
+                filter="PartitionKey eq '{}'".format(entity.PartitionKey)))
 
             # Assert
             assert len(entities) ==  1
