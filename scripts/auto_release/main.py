@@ -251,7 +251,7 @@ def run_live_test():
     print_exec(f'python scripts/dev_setup.py -p azure-mgmt-{SERVICE_NAME}')
     # run live test
     try:
-        print_check(f'pytest -s sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}/')
+        result = print_exec_output(f'pytest -s sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}/')
     except:
         my_print('some test failed, please fix it locally')
         print_check(f'touch {OUT_PATH}/live_test_fail.txt')
