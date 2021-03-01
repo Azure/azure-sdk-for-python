@@ -1,72 +1,73 @@
 interactions:
 - request:
-    body: 'b''{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/selection_mark_form.pdf"}'''
+    body: 'b''{"source": "blob_sas_url"}'''
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '173'
+      - '226'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyze
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?readingOrder=basic
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 4d024c44-683d-4d7b-902e-2c15298c22ed
+      apim-request-id: 23ce1622-9507-4313-9fbe-db8e3c065f2b
       content-length: '0'
-      date: Fri, 30 Oct 2020 00:06:43 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyzeResults/4d024c44-683d-4d7b-902e-2c15298c22ed
+      date: Mon, 01 Mar 2021 18:38:24 GMT
+      operation-location:
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/23ce1622-9507-4313-9fbe-db8e3c065f2b
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '182'
+      x-envoy-upstream-service-time: '134'
     status:
       code: 202
       message: Accepted
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/layout/analyze
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?readingOrder=basic
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyzeResults/4d024c44-683d-4d7b-902e-2c15298c22ed
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/23ce1622-9507-4313-9fbe-db8e3c065f2b
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2020-10-30T00:06:43Z", "lastUpdatedDateTime":
-        "2020-10-30T00:06:43Z"}'
+      string: '{"status": "running", "createdDateTime": "2021-03-01T18:38:24Z", "lastUpdatedDateTime":
+        "2021-03-01T18:38:24Z"}'
     headers:
-      apim-request-id: c2f20d9e-03ae-42fc-9b39-d23de95deb3e
+      apim-request-id: 72d241af-b2a7-4ff1-8c11-88d907dd1d53
       content-length: '106'
       content-type: application/json; charset=utf-8
-      date: Fri, 30 Oct 2020 00:06:48 GMT
+      date: Mon, 01 Mar 2021 18:38:29 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
       x-envoy-upstream-service-time: '10'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyzeResults/4d024c44-683d-4d7b-902e-2c15298c22ed
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/23ce1622-9507-4313-9fbe-db8e3c065f2b
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyzeResults/4d024c44-683d-4d7b-902e-2c15298c22ed
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/23ce1622-9507-4313-9fbe-db8e3c065f2b
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-10-30T00:06:43Z",
-        "lastUpdatedDateTime": "2020-10-30T00:06:49Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-01T18:38:24Z",
+        "lastUpdatedDateTime": "2021-03-01T18:38:30Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "lines": [{"boundingBox": [0.5301, 0.697, 2.3829, 0.7018,
         2.3829, 1.3034, 0.5301, 1.2986], "text": "Contoso", "appearance": {"style":
-        {"name": "other", "confidence": 0.899}}, "words": [{"boundingBox": [0.5348,
+        {"name": "other", "confidence": 0.878}}, "words": [{"boundingBox": [0.5348,
         0.7066, 2.3876, 0.826, 2.3781, 1.1888, 0.5587, 1.3034], "text": "Contoso",
-        "confidence": 0.952}]}, {"boundingBox": [3.2791, 0.7167, 5.0584, 0.7167, 5.0584,
+        "confidence": 0.991}]}, {"boundingBox": [3.2791, 0.7167, 5.0584, 0.7167, 5.0584,
         0.8109, 3.2791, 0.8109], "text": "STATE OF CALIFORNIA: CONTOSO", "appearance":
         {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [3.2791,
         0.7373, 3.5799, 0.7373, 3.5799, 0.8109, 3.2791, 0.8109], "text": "STATE",
@@ -110,10 +111,10 @@ interactions:
         6.0557, 2.2185, 6.0557, 2.3325, 5.256, 2.3325], "text": "PAYMENT", "confidence":
         1}]}, {"boundingBox": [3.3522, 3.0269, 5.186, 3.0269, 5.186, 3.2274, 3.3522,
         3.2274], "text": "CONTOSO BANK", "appearance": {"style": {"name": "other",
-        "confidence": 1.0}}, "words": [{"boundingBox": [3.357, 3.0317, 4.5126, 3.0269,
-        4.5126, 3.2274, 3.3618, 3.2322], "text": "CONTOSO", "confidence": 0.985},
-        {"boundingBox": [4.5556, 3.0269, 5.186, 3.0317, 5.186, 3.2274, 4.5556, 3.2274],
-        "text": "BANK", "confidence": 0.986}]}, {"boundingBox": [0.8106, 3.5128, 7.4009,
+        "confidence": 0.878}}, "words": [{"boundingBox": [3.357, 3.0317, 4.4267, 3.0269,
+        4.4267, 3.2274, 3.3618, 3.2322], "text": "CONTOSO", "confidence": 0.985},
+        {"boundingBox": [4.5365, 3.0269, 5.143, 3.0317, 5.1382, 3.2274, 4.5365, 3.2274],
+        "text": "BANK", "confidence": 0.994}]}, {"boundingBox": [0.8106, 3.5128, 7.4009,
         3.5128, 7.4009, 3.6446, 0.8106, 3.6446], "text": "Fees owed to this Department
         may be paid by the use of a credit card. If you wish to pay your fee(s)",
         "appearance": {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox":
@@ -442,10 +443,10 @@ interactions:
         8.1896, 2.2444, 8.1896], "text": "clearly)", "confidence": 1}]}, {"boundingBox":
         [1.8862, 8.2595, 3.2329, 8.2691, 3.2329, 8.5556, 1.8862, 8.5508], "text":
         "John Singer", "appearance": {"style": {"name": "handwriting", "confidence":
-        0.848}}, "words": [{"boundingBox": [1.9674, 8.2643, 2.5166, 8.2834, 2.5166,
-        8.5412, 1.9674, 8.5556], "text": "John", "confidence": 0.979}, {"boundingBox":
-        [2.5739, 8.2834, 3.2233, 8.3073, 3.2233, 8.5317, 2.5787, 8.5412], "text":
-        "Singer", "confidence": 0.945}]}, {"boundingBox": [0.8059, 8.3968, 5.2429,
+        0.676}}, "words": [{"boundingBox": [1.891, 8.2595, 2.4354, 8.2786, 2.4354,
+        8.5412, 1.891, 8.5556], "text": "John", "confidence": 0.87}, {"boundingBox":
+        [2.4927, 8.2834, 3.2233, 8.3073, 3.2233, 8.5317, 2.4927, 8.5412], "text":
+        "Singer", "confidence": 0.956}]}, {"boundingBox": [0.8059, 8.3968, 5.2429,
         8.3968, 5.2429, 8.5421, 0.8059, 8.5421], "text": "Signature: ___________________________________________",
         "appearance": {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox":
         [0.8059, 8.3968, 1.5333, 8.3968, 1.5333, 8.5421, 0.8059, 8.5421], "text":
@@ -541,15 +542,15 @@ interactions:
         5.4481, 3.2448, 5.6108, 3.0846, 5.6108], "confidence": 1, "state": "unselected"}]}],
         "pageResults": [{"page": 1, "tables": []}]}}'
     headers:
-      apim-request-id: ccc26522-d99d-45df-b351-49caf9839533
-      content-length: '33902'
+      apim-request-id: 0e3348ab-1b25-46b4-b151-13a7aa9716c7
+      content-length: '34139'
       content-type: application/json; charset=utf-8
-      date: Fri, 30 Oct 2020 00:06:52 GMT
+      date: Mon, 01 Mar 2021 18:38:34 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '27'
+      x-envoy-upstream-service-time: '18'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyzeResults/4d024c44-683d-4d7b-902e-2c15298c22ed
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/23ce1622-9507-4313-9fbe-db8e3c065f2b
 version: 1
