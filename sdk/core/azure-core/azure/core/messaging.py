@@ -88,25 +88,24 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         _optional_attributes = ["datacontenttype", "dataschema", "subject", "data"]
 
         for attr in _optional_attributes:
-            if attr not in kwargs:
-                val = None
-            else:
-                val = kwargs.pop(attr, NULL)
+            val = None if attr not in kwargs else kwargs.pop(attr)
             setattr(self, attr, val)
 
-        if "extensions" in kwargs:
-            self.extensions = {}  # type: Dict
-            _extensions = dict(kwargs.pop("extensions", {}))
-            for key in _extensions.keys():
+        try:
+            self.extensions = kwargs.pop("extensions") # type: Dict
+            for key in self.extensions.keys():
                 if not key.islower() or not key.isalnum():
                     raise ValueError(
                         "Extension attributes should be lower cased and alphanumeric."
                     )
-            self.extensions.update(_extensions)
+        except KeyError:
+            pass
 
         if kwargs:
+            remaining = ", ".join(kwargs.keys())
             raise ValueError(
-                "Unexpected keyword argument. Any extension attribures must be passed explicitly using extensions."
+                "Unexpected keyword arguments {}. Any extension attributes must be passed explicitly using extensions."
+                .format(remaining)
             )
 
     def __repr__(self):
