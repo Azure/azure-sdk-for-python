@@ -77,12 +77,16 @@ jobs:
 
         test_result = ''
         if [ -f "$output_path/live_test_fail.txt" ]; then
-          test_result = `cat $output_path/live_test_fail.txt`
+          test_result=`cat $output_path/live_test_fail.txt`
         fi
 
         # create PR
-        new_branch = `sed -n '1p' $output_path/output.txt`
-        target_branch = `sed -n '2p' $output_path/output.txt`
+        new_branch=`sed -n '1p' $output_path/output.txt`
+        target_branch=`sed -n '2p' $output_path/output.txt`
+        echo 777777777
+        echo new_branch: $new_branch
+        echo target_branch: $target_branch
+        echo 88888888
         curl \
           --user "anything:$(USR_TOKEN)" \
           -d "{\
