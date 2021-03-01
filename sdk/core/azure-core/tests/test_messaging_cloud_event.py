@@ -56,6 +56,7 @@ def test_cloud_event_constructor_NULL_data():
         )
 
     assert event.data == NULL
+    assert event.data is NULL
 
 def test_cloud_event_constructor_none_data():
     event = CloudEvent(
