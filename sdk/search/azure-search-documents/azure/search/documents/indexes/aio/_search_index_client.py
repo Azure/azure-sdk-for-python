@@ -86,7 +86,7 @@ class SearchIndexClient(HeadersMixin):
         """List the indexes in an Azure Search service.
 
         :return: List of indexes
-        :rtype: list[:class:`~azure.search.documents.indexes.models.SearchIndex`]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[:class:`~azure.search.documents.indexes.models.SearchIndex`]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -100,7 +100,7 @@ class SearchIndexClient(HeadersMixin):
         """List the index names in an Azure Search service.
 
         :return: List of index names
-        :rtype: list[str]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
