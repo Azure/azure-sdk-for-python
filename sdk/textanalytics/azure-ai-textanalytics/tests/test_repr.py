@@ -263,6 +263,60 @@ def extract_key_phrases_result(text_analytics_warning, text_document_statistics)
     assert repr(model) == model_repr
     return model, model_repr
 
+@pytest.fixture
+def data_source():
+    model = _models.HealthcareEntityDataSource(
+        entity_id="BONJOUR",
+        name="UMLS",
+    )
+    model_repr = "HealthcareEntityDataSource(entity_id=BONJOUR, name=UMLS)"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_entity(data_source):
+    model = _models.HealthcareEntity(
+        text="Bonjour",
+        category="MyCategory",
+        subcategory="MySubcategory",
+        length=7,
+        offset=12,
+        confidence_score=0.95,
+        data_sources=[data_source[0]],
+    )
+    model_repr = (
+        "HealthcareEntity(text=Bonjour, category=MyCategory, subcategory=MySubcategory, length=7, offset=12, " +
+        "confidence_score=0.95, data_sources=[{}])".format(data_source[1])
+    )
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_relation_role(healthcare_entity):
+    model = _models.HealthcareRelationRole(
+        name="ROLE",
+        entity=healthcare_entity[0]
+    )
+
+    model_repr = "HealthcareRelationRole(name=ROLE, entity={})".format(healthcare_entity[1])
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_relation(healthcare_relation_role):
+    model = _models.HealthcareRelation(
+        relation_type="DOSAGE",
+        roles=[healthcare_relation_role[0]]
+    )
+
+    model_repr = "HealthcareRelation(relation_type=DOSAGE, roles=[{}])".format(healthcare_relation_role[1])
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
 class TestRepr():
     def test_text_document_input(self):
         model = _models.TextDocumentInput(
@@ -416,6 +470,26 @@ class TestRepr():
         model_repr = (
             "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={})".format(
                 extract_key_phrases_result[1], False, "extract_key_phrases", datetime.datetime(1, 1, 1)
+            )
+        )
+
+        assert repr(model) == model_repr
+
+    def test_analyze_healthcare_entities_result_item(
+        self, healthcare_entity, healthcare_relation, text_analytics_warning, text_document_statistics
+    ):
+        model = _models.AnalyzeHealthcareEntitiesResultItem(
+            id=1,
+            entities=[healthcare_entity[0]],
+            relations=[healthcare_relation[0]],
+            warnings=[text_analytics_warning[0]],
+            statistics=text_document_statistics[0],
+            is_error=False
+        )
+
+        model_repr = (
+            "AnalyzeHealthcareEntitiesResultItem(id=1, entities=[{}], relations=[{}], warnings=[{}], statistics={}, is_error=False)".format(
+                healthcare_entity[1], healthcare_relation[1], text_analytics_warning[1], text_document_statistics[1]
             )
         )
 

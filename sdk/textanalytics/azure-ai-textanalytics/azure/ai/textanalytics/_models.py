@@ -236,13 +236,13 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
         )
 
     def __repr__(self):
-        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, relations={}, warnings={}, statistics={}, \
-        is_error={})".format(
+        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, relations={}, warnings={}, statistics={}, "\
+        "is_error={})".format(
             self.id,
             self.entities,
             self.relations,
             self.warnings,
-            self.statistics,
+            repr(self.statistics),
             self.is_error
         )[:1024]
 
@@ -276,7 +276,7 @@ class HealthcareRelation(DictMixin):
         )
 
     def __repr__(self):
-        return "HealthcareRelation(relation_type={}, roles={}".format(
+        return "HealthcareRelation(relation_type={}, roles={})".format(
             self.relation_type,
             repr(self.roles),
         )[:1024]
@@ -312,6 +312,11 @@ class HealthcareRelationRole(DictMixin):
         return cls(
             name=healthcare_role_result.role,
             entity=HealthcareRelationRole._get_entity(healthcare_role_result, entities)
+        )
+
+    def __repr__(self):
+        return "HealthcareRelationRole(name={}, entity={})".format(
+            self.name, repr(self.entity)
         )
 
 
