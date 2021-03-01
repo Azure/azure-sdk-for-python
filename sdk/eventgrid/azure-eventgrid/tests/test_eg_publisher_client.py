@@ -104,21 +104,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
-    def test_send_event_grid_event_dict_data_str(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
-        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
-        eg_event = {
-                "subject":"sample", 
-                "data":"eventgridevent", 
-                "eventType":"Sample.EventGrid.Event",
-                "dataVersion":"2.0",
-                "id": uuid.uuid4(),
-                "eventTime": datetime.now()
-        }
-        client.send(eg_event)
-
-    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     def test_send_event_grid_event_dict_data_dict(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
