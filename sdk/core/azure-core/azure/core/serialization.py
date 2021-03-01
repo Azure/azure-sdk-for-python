@@ -15,6 +15,7 @@ class _Null(object):
 
     __nonzero__ = __bool__ # Python2 compatibility
 
+
 NULL = _Null()
 """
 A falsy sentinel object which is supposed to be used to specify attributes
