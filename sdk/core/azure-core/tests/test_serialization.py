@@ -6,6 +6,6 @@
 from azure.core.serialization import NULL
 
 def test_NULL_is_falsy():
-    assert NULL != False
-    assert (not NULL)
+    assert NULL is not False
+    assert bool(NULL) is False
     assert NULL is NULL
