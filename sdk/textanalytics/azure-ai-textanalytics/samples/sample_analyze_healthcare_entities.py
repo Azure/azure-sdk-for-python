@@ -63,11 +63,10 @@ class AnalyzeHealthcareEntitiesSample(object):
                     for data_source in entity.data_sources:
                         print("......Entity ID: {}".format(data_source.entity_id))
                         print("......Name: {}".format(data_source.name))
-                if len(entity.related_entities) > 0:
-                    print("...Related Entities:")
-                    for related_entity, relation_type in entity.related_entities.items():
-                        print("......Entity Text: {}".format(related_entity.text))
-                        print("......Relation Type: {}".format(relation_type))
+            for relation in doc.relations:
+                print("Relation of type: {} has the following roles".format(relation.relation_type))
+                for role in relation.roles:
+                    print("...Role '{}' with entity '{}'".format(role.name, role.entity.text))
             print("------------------------------------------")
 
         # [END analyze_healthcare_entities]

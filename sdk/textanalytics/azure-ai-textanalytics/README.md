@@ -458,7 +458,7 @@ text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = ["Subject is taking 100mg of ibuprofen twice daily"]
 
-poller = text_analytics_client.begin_analyze_healthcare_entities(documents, show_stats=True)
+poller = text_analytics_client.begin_analyze_healthcare_entities(documents)
 result = poller.result()
 
 docs = [doc for doc in result if not doc.is_error]
@@ -476,15 +476,14 @@ for idx, doc in enumerate(docs):
             for data_source in entity.data_sources:
                 print("......Entity ID: {}".format(data_source.entity_id))
                 print("......Name: {}".format(data_source.name))
-        if len(entity.related_entities) > 0:
-            print("...Related Entities:")
-            for related_entity, relation_type in entity.related_entities.items():
-                print("......Entity Text: {}".format(related_entity.text))
-                print("......Relation Type: {}".format(relation_type))
+    for relation in doc.relations:
+        print("Relation of type: {} has the following roles".format(relation.relation_type))
+        for role in relation.roles:
+            print("...Role '{}' with entity '{}'".format(role.name, role.entity.text))
     print("------------------------------------------")
 ```
 
-Note: The Healthcare Entities Analysis service is currently available only in API version v3.1-preview.3 in gated preview. Since this is a gated preview, AAD is not supported. More information [here](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
+Note: The Healthcare Entities Analysis service is currently available only in API version the v3.1 preview versions and is in gated preview. Since this is a gated preview, AAD is not supported. More information [here](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
 
 ### Batch Analysis
 
@@ -559,7 +558,7 @@ for idx, doc in enumerate(docs):
 
 The returned response is an object encapsulating multiple iterables, each representing results of individual analyses.
 
-Note: Batch analysis is currently available only in API version v3.1-preview.3.
+Note: Batch analysis is currently available only in our v3.1-preview API version.
 
 ## Optional Configuration
 
