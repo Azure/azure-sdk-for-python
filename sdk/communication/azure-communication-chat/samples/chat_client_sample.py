@@ -57,7 +57,7 @@ class ChatClientSamples(object):
             ChatClient,
             CommunicationUserIdentifier,
             CommunicationTokenCredential,
-            CommunicationTokenRefreshOptions
+            CommunicationTokenRefreshOptions,
             ChatThreadParticipant
         )
 

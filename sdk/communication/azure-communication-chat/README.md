@@ -5,6 +5,8 @@
 This package contains a Python SDK for Azure Communication Services for Chat.
 Read more about Azure Communication Services [here](https://docs.microsoft.com/azure/communication-services/overview)
 
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-chat) | [Package (Pypi)](https://pypi.org/project/azure-communication-chat/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-chat) | [Product documentation](https://docs.microsoft.com/en-us/azure/communication-services/quickstarts/chat/get-started?pivots=programming-language-python)
+
 # Getting started
 
 ## Prerequisites
@@ -138,10 +140,10 @@ list_read_receipts(**kwargs)
 
 The following sections provide several code snippets covering some of the most common tasks, including:
 
-<!-- - [Thread Operations](#thread-operations)
+- [Thread Operations](#thread-operations)
 - [Message Operations](#message-operations)
 - [Thread Participant Operations](#thread-participant-operations)
-- [Events Operations](#events-operations) -->
+- [Events Operations](#events-operations)
 
 ## Thread Operations
 
@@ -163,6 +165,8 @@ Use the `create_chat_thread` method to create a chat thread client object.
 # Without repeatability_request_id
 
 from azure.communication.chat import ChatThreadParticipant
+from datetime import datetime
+
 topic = "test topic"
 thread_participants = [ChatThreadParticipant(
     user='<user>',
@@ -179,6 +183,7 @@ thread_id = chat_thread_client.thread_id
 
 from azure.communication.chat import ChatThreadParticipant
 import uuid
+from datetime import datetime
 
 # modify function to implement customer logic
 def get_unique_identifier_for_request(**kwargs):
@@ -193,6 +198,7 @@ thread_participants = [ChatThreadParticipant(
     display_name='name',
     share_history_time=datetime.utcnow()
 )]
+repeatability_request_id=get_unique_identifier_for_request()
 
 chat_thread_client = chat_client.create_chat_thread(topic, thread_participants, repeatability_request_id)
 thread_id = chat_thread_client.thread_id
@@ -217,8 +223,13 @@ The `list_chat_threads` method retrieves the list of created chat threads
 An iterator of `[ChatThreadInfo]` is the response returned from listing threads
 
 ```python
+from azure.communication.chat import ChatClient, CommunicationUserCredential
 from datetime import datetime, timedelta
-chat_client = ChatClient(self.endpoint, self.token)
+import pytz
+
+token = "<token>"
+endpoint = "https://<RESOURCE_NAME>.communcationservices.azure.com"
+chat_client = ChatClient(endpoint, CommunicationUserCredential(token))
 start_time = datetime.utcnow() - timedelta(days=2)
 start_time = start_time.replace(tzinfo=pytz.utc)
 chat_thread_infos = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
@@ -226,7 +237,7 @@ chat_thread_infos = chat_client.list_chat_threads(results_per_page=5, start_time
 
 ### Update a thread
 
-Use `update_chat_thread` method to update a thread's properties
+Use `update_topic` method to update a thread's properties
 `thread_id` is the unique ID of the thread.
 `topic` is used to describe the change of the thread topic
 
@@ -234,7 +245,7 @@ Use `update_chat_thread` method to update a thread's properties
 
 ```python
 topic="new topic"
-chat_thread_client.update_chat_thread(topic=topic)
+chat_thread_client.update_topic(topic=topic)
 ```
 
 ### Delete a thread
@@ -259,8 +270,6 @@ Use `send_message` method to sends a message to a thread identified by threadId.
 `SendChatMessageResult` is the response returned from sending a message, it contains an id, which is the unique ID of the message.
 
 ```Python
-from azure.communication.chat import ChatMessagePriority
-
 content='hello world'
 sender_display_name='sender name'
 
@@ -288,6 +297,8 @@ An iterator of `[ChatMessage]` is the response returned from listing messages
 
 ```Python
 from datetime import datetime, timedelta
+import pytz
+
 start_time = datetime.utcnow() - timedelta(days=1)
 start_time = start_time.replace(tzinfo=pytz.utc)
 chat_messages = chat_thread_client.list_messages(results_per_page=1, start_time=start_time)
@@ -424,7 +435,7 @@ Running into issues? This section should contain details as to what to do there.
 
 # Next steps
 
-More sample code should go here, along with links out to the appropriate example tests.
+More sample code should go [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-chat/samples), along with links out to the appropriate example tests.
 
 # Contributing
 

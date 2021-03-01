@@ -86,7 +86,7 @@ class ChatThreadClientSamples(object):
         refresh_options = CommunicationTokenRefreshOptions(self.token)
         chat_thread_client = ChatThreadClient(self.endpoint, CommunicationTokenCredential(refresh_options), self._thread_id)
         # [START send_message]
-        from azure.communication.chat import ChatMessagePriority
+        from azure.communication.chat import ChatMessageType
 
         content = 'hello world'
         sender_display_name = 'sender name'

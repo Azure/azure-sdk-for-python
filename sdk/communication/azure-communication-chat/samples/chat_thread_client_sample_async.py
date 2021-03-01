@@ -90,15 +90,13 @@ class ChatThreadClientSamplesAsync(object):
 
         async with chat_thread_client:
             # [START send_message]
-            from azure.communication.chat import ChatMessagePriority
+            from azure.communication.chat import ChatMessageType
 
-            priority=ChatMessagePriority.NORMAL
             content='hello world'
             sender_display_name='sender name'
 
             send_message_result_id = await chat_thread_client.send_message(
                 content,
-                priority=priority,
                 sender_display_name=sender_display_name)
 
             send_message_result_w_type_id = await chat_thread_client.send_message(
