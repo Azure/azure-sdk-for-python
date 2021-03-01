@@ -94,7 +94,7 @@ class SmsClient(object):
          message on the Azure Resource EventGrid.
         :keyword str tag: Use this field to provide metadata that will then be sent back in the corresponding
          Delivery Report.
-        :return: A list of SmsSendResults.
+        :return: A list of SmsSendResult.
         :rtype: [~azure.communication.sms.models.SmsSendResult]
         """
 
