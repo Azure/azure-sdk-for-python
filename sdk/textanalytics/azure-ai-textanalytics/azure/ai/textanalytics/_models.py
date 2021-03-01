@@ -73,6 +73,26 @@ class PiiEntityDomainType(str, Enum):
     """The different domains of PII entities that users can filter by"""
     PROTECTED_HEALTH_INFORMATION = "phi"  # See https://aka.ms/tanerpii for more information.
 
+class HealthcareEntityRelationRoleType(str, Enum):
+    """Type of roles entities can have in relations. There may be roles not covered in this enum"""
+    ABBREVIATED_TERM = "AbbreviatedTerm"
+    FULL_TERM = "FullTerm"
+    DIRECTION = "Direction"
+    BODY_STRUCTURE = "BodyStructure"
+    CONDITION = "Condition"
+    EXAMINATION = "Examination"
+    TREATMENT = "Treatment"
+    DOSAGE = "Dosage"
+    MEDICATION = "Medication"
+    FORM = "Form"
+    FREQUENCY = "Frequency"
+    QUALIFIER = "Qualifier"
+    RELATION = "Relation"
+    ROUTE = "Route"
+    TIME = "Time"
+    EVENT = "Event"
+    UNIT = "Unit"
+    VALUE = "Value"
 
 class DetectedLanguage(DictMixin):
     """DetectedLanguage contains the predicted language found in text,
@@ -256,7 +276,7 @@ class HealthcareRelation(DictMixin):
         "ibuprofen" in the document "The subject took 100 mg of ibuprofen" is "DosageOfMedication".
     :vartype relation_type: str or ~azure.ai.textanalytics.HealthcareEntityRelationType
     :ivar roles: The roles present in this relation. I.e., in the document
-        "The subject took 100 mg of ibuprofen", the present roles are TODO
+        "The subject took 100 mg of ibuprofen", the present roles are "Dosage" and "Medication".
     :vartype roles: list[~azure.ai.textanalytics.HealthcareRelationRole]
     """
 
@@ -285,12 +305,13 @@ class HealthcareRelationRole(DictMixin):
     """A model representing a role in a relation.
 
     For example, in "The subject took 100 mg of ibuprofen",
-    "100 mg" is a dosage entity fulfilling the role TODO
-    in the extracted relation.
+    "100 mg" is a dosage entity fulfilling the role "Dosage"
+    in the extracted relation "DosageofMedication".
 
-    :ivar str name: The role of the entity in the relationship. I.e., in the relation
+    :ivar name: The role of the entity in the relationship. I.e., in the relation
         "The subject took 100 mg of ibuprofen", the dosage entity "100 mg" has role
-        TODO
+        "Dosage".
+    :vartype name: str or ~azure.ai.textanalytics.HealthcareEntityRelationRoleType
     :ivar entity: The entity that is present in the relationship. For example, in
         "The subject took 100 mg of ibuprofen", this property holds the dosage entity
         of "100 mg".

@@ -19,7 +19,8 @@ from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,
-    HealthcareEntityRelationType
+    HealthcareEntityRelationType,
+    HealthcareEntityRelationRoleType,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -367,8 +368,8 @@ class TestHealth(TextAnalyticsTest):
         parkinsons_abbreviation_entity = list(filter(lambda x: x.text == "PD", result.entities))[0]
 
         for role in relation.roles:
-            if role.name == "FullTerm":
+            if role.name == HealthcareEntityRelationRoleType.FULL_TERM:
                 self.assert_healthcare_entities_equal(role.entity, parkinsons_entity)
             else:
-                assert role.name == "AbbreviatedTerm"
+                assert role.name == HealthcareEntityRelationRoleType.ABBREVIATED_TERM
                 self.assert_healthcare_entities_equal(role.entity, parkinsons_abbreviation_entity)
