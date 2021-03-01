@@ -30,7 +30,7 @@ async def publish():
 
     # [START publish_cloud_event_dict_async]
     async with client:
-        client.send([
+        await client.send([
             {
                 "type": "Contoso.Items.ItemReceived",
                 "source": "/contoso/items",	

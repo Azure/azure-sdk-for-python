@@ -65,8 +65,8 @@ class MgmtResourceDeploymentScriptTest(AzureMgmtTestCase):
                 # "https://uri1.to.supporting.script",
                 # "https://uri2.to.supporting.script"
                 # ],
-                "retentionInterval": "P7D",
-                "timeout": "PT1H",
+                "retentionInterval": "PT26H",
+                "timeout": "PT30M",
                 "cleanupPreference": "Always"
             }
         )

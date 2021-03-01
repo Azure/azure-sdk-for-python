@@ -11,8 +11,14 @@ FILE: sample_analyze_healthcare_entities_async.py
 
 DESCRIPTION:
     This sample demonstrates how to detect healthcare entities in a batch of documents.
-    Each entity found in the document will have a link associated with it from a
-    data source.  Relations between entities will also be included in the response.
+
+    In this sample we will be a newly-hired engineer working in a pharmacy. We are going to
+    comb through all of the prescriptions our pharmacy has fulfilled so we can catalog how
+    much inventory we have.
+
+    As a usage note: healthcare is currently in gated preview. Your subscription needs to
+    be allow-listed before you can use this endpoint. More information about that here:
+    https://aka.ms/text-analytics-health-request-access
 
 USAGE:
     python sample_analyze_healthcare_entities_async.py
@@ -30,7 +36,9 @@ import asyncio
 class AnalyzeHealthcareEntitiesSampleAsync(object):
 
     async def analyze_healthcare_entities_async(self):
+
         # [START analyze_healthcare_entities_async]
+        import os
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -43,7 +51,13 @@ class AnalyzeHealthcareEntitiesSampleAsync(object):
         )
 
         documents = [
-            "Subject is taking 100mg of ibuprofen twice daily"
+            """
+            Patient needs to take 100 mg of ibuprofen, and 3 mg of potassium. Also needs to take
+            10 mg of Zocor.
+            """,
+            """
+            Patient needs to take 50 mg of ibuprofen, and 2 mg of Coumadin.
+            """
         ]
 
         async with text_analytics_client:
@@ -72,7 +86,6 @@ class AnalyzeHealthcareEntitiesSampleAsync(object):
 
         # [END analyze_healthcare_entities_async]
 
-
 async def main():
     sample = AnalyzeHealthcareEntitiesSampleAsync()
     await sample.analyze_healthcare_entities_async()
@@ -81,5 +94,3 @@ async def main():
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
-
-

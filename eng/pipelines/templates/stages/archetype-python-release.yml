@@ -286,14 +286,15 @@ stages:
               $packageDirectory = "${{artifact.name}}".Replace("_", "-")
               echo "##vso[task.setvariable variable=Package.Name]$packageDirectory"
           - pwsh: |
-              $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$packageDirectory  | Measure-Object).Count
+              $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$(Package.Name) | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
+
               if ($fileCount -eq 0) {
                 Write-Host "No alpha packages for ${{artifact.safeName}} to publish."
                 exit 0
               }
 
-              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$(Package.Name)/*a*.whl
+              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$(Package.Name)/*-*a*.whl
               echo "Uploaded whl to devops feed $(DevFeedName)"
-              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$(Package.Name)/*a*.zip
+              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$(Package.Name)/*-*a*.zip
               echo "Uploaded sdist to devops feed $(DevFeedName)"
             displayName: 'Publish ${{artifact.name}} alpha package'

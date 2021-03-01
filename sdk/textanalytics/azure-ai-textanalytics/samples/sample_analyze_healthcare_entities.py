@@ -11,8 +11,14 @@ FILE: sample_analyze_healthcare_entities.py
 
 DESCRIPTION:
     This sample demonstrates how to detect healthcare entities in a batch of documents.
-    Each entity found in the document will have a link associated with it from a
-    data source.  Relations between entities will also be included in the response.
+
+    In this sample we will be a newly-hired engineer working in a pharmacy. We are going to
+    comb through all of the prescriptions our pharmacy has fulfilled so we can catalog how
+    much inventory we have.
+
+    As a usage note: healthcare is currently in gated preview. Your subscription needs to
+    be allow-listed before you can use this endpoint. More information about that here:
+    https://aka.ms/text-analytics-health-request-access
 
 USAGE:
     python sample_analyze_healthcare_entities.py
@@ -23,13 +29,13 @@ USAGE:
 """
 
 
-import os
-
 
 class AnalyzeHealthcareEntitiesSample(object):
 
     def analyze_healthcare_entities(self):
+
         # [START analyze_healthcare_entities]
+        import os
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -42,10 +48,16 @@ class AnalyzeHealthcareEntitiesSample(object):
         )
 
         documents = [
-            "Subject is taking 100mg of ibuprofen twice daily"
+            """
+            Patient needs to take 100 mg of ibuprofen, and 3 mg of potassium. Also needs to take
+            10 mg of Zocor.
+            """,
+            """
+            Patient needs to take 50 mg of ibuprofen, and 2 mg of Coumadin.
+            """
         ]
 
-        poller = text_analytics_client.begin_analyze_healthcare_entities(documents, show_stats=True)
+        poller = text_analytics_client.begin_analyze_healthcare_entities(documents)
         result = poller.result()
 
         docs = [doc for doc in result if not doc.is_error]
@@ -68,7 +80,6 @@ class AnalyzeHealthcareEntitiesSample(object):
                 for role in relation.roles:
                     print("...Role '{}' with entity '{}'".format(role.name, role.entity.text))
             print("------------------------------------------")
-
         # [END analyze_healthcare_entities]
 
 if __name__ == "__main__":
