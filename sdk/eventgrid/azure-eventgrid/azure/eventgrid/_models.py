@@ -9,13 +9,17 @@ import uuid
 import json
 import six
 from msrest.serialization import UTC
-from ._generated.models import EventGridEvent as InternalEventGridEvent, CloudEvent as InternalCloudEvent
+from ._generated.models import (
+    EventGridEvent as InternalEventGridEvent,
+    CloudEvent as InternalCloudEvent,
+)
 
 
 class EventMixin(object):
     """
     Mixin for the event models comprising of some helper methods.
     """
+
     @staticmethod
     def _from_json(event, encode):
         """
@@ -31,7 +35,7 @@ class EventMixin(object):
         return event
 
 
-class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
+class CloudEvent(EventMixin):  # pylint:disable=too-many-instance-attributes
     """Properties of an event published to an Event Grid topic using the CloudEvent 1.0 Schema.
 
     All required parameters must be populated in order to send to Azure.
@@ -88,7 +92,8 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :vartype id: Optional[str]
     """
-    def __init__(self, source, type, **kwargs): # pylint: disable=redefined-builtin
+
+    def __init__(self, source, type, **kwargs):  # pylint: disable=redefined-builtin
         # type: (str, str, Any) -> None
         self.source = source
         self.type = type
@@ -101,10 +106,12 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
         self.subject = kwargs.pop("subject", None)
         self.data_base64 = kwargs.pop("data_base64", None)
         self.extensions = {}
-        self.extensions.update(dict(kwargs.pop('extensions', {})))
+        self.extensions.update(dict(kwargs.pop("extensions", {})))
         if self.data is not None and self.data_base64 is not None:
-            raise ValueError("data and data_base64 cannot be provided at the same time.\
-                Use data_base64 only if you are sending bytes, and use data otherwise.")
+            raise ValueError(
+                "data and data_base64 cannot be provided at the same time.\
+                Use data_base64 only if you are sending bytes, and use data otherwise."
+            )
 
     @classmethod
     def _from_generated(cls, cloud_event, **kwargs):
@@ -112,7 +119,7 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
         generated = InternalCloudEvent.deserialize(cloud_event)
         if generated.additional_properties:
             extensions = dict(generated.additional_properties)
-            kwargs.setdefault('extensions', extensions)
+            kwargs.setdefault("extensions", extensions)
         return cls(
             id=generated.id,
             source=generated.source,
@@ -198,33 +205,33 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     """
 
     _validation = {
-        'id': {'required': True},
-        'subject': {'required': True},
-        'data': {'required': True},
-        'event_type': {'required': True},
-        'event_time': {'required': True},
-        'metadata_version': {'readonly': True},
-        'data_version': {'required': True},
+        "id": {"required": True},
+        "subject": {"required": True},
+        "data": {"required": True},
+        "event_type": {"required": True},
+        "event_time": {"required": True},
+        "metadata_version": {"readonly": True},
+        "data_version": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'topic': {'key': 'topic', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'object'},
-        'event_type': {'key': 'eventType', 'type': 'str'},
-        'event_time': {'key': 'eventTime', 'type': 'iso-8601'},
-        'metadata_version': {'key': 'metadataVersion', 'type': 'str'},
-        'data_version': {'key': 'dataVersion', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "topic": {"key": "topic", "type": "str"},
+        "subject": {"key": "subject", "type": "str"},
+        "data": {"key": "data", "type": "object"},
+        "event_type": {"key": "eventType", "type": "str"},
+        "event_time": {"key": "eventTime", "type": "iso-8601"},
+        "metadata_version": {"key": "metadataVersion", "type": "str"},
+        "data_version": {"key": "dataVersion", "type": "str"},
     }
 
     def __init__(self, subject, event_type, data, data_version, **kwargs):
         # type: (str, str, object, str, Any) -> None
-        kwargs.setdefault('id', uuid.uuid4())
-        kwargs.setdefault('subject', subject)
+        kwargs.setdefault("id", uuid.uuid4())
+        kwargs.setdefault("subject", subject)
         kwargs.setdefault("event_type", event_type)
-        kwargs.setdefault('event_time', dt.datetime.now(UTC()).isoformat())
-        kwargs.setdefault('data', data)
-        kwargs.setdefault('data_version', data_version)
+        kwargs.setdefault("event_time", dt.datetime.now(UTC()).isoformat())
+        kwargs.setdefault("data", data)
+        kwargs.setdefault("data_version", data_version)
 
         super(EventGridEvent, self).__init__(**kwargs)
