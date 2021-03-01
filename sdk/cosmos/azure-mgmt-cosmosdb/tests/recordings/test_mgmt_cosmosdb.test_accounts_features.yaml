@@ -1,7 +1,8 @@
 interactions:
 - request:
     body: '{"location": "westus", "properties": {"locations": [{"locationName": "westus",
-      "failoverPriority": 0}], "databaseAccountOfferType": "Standard"}}'
+      "failoverPriority": 0}], "databaseAccountOfferType": "Standard", "createMode":
+      "Default"}}'
     headers:
       Accept:
       - application/json
@@ -10,37 +11,37 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '169'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/3.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9?api-version=2021-03-01-preview
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9","name":"spycosmosdbx22640310f9","location":"West
-        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-02-18T08:48:06.4998332Z"},"properties":{"provisioningState":"Creating","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"a4e2edc3-7591-4662-8ffd-d980a3361855","createMode":"Default","databaseAccountOfferType":"Standard","networkAclBypass":0,"consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-03-01T06:59:25.3755475Z"},"properties":{"provisioningState":"Creating","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"d5f15404-902e-4900-b48f-0142ea543325","createMode":"Default","databaseAccountOfferType":"Standard","defaultIdentity":"","networkAclBypass":"None","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","provisioningState":"Creating","failoverPriority":0,"isZoneRedundant":false}],"readLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","provisioningState":"Creating","failoverPriority":0,"isZoneRedundant":false}],"locations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","provisioningState":"Creating","failoverPriority":0,"isZoneRedundant":false}],"failoverPolicies":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","failoverPriority":0}],"cors":[],"capabilities":[],"ipRules":[],"backupPolicy":{"type":"Periodic","periodicModeProperties":{"backupIntervalInMinutes":240,"backupRetentionIntervalInHours":8,"backupStorageRedundancy":1}},"networkAclBypassResourceIds":[]},"identity":{"type":"None"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/b7240187-1bd1-450e-9984-d18569efa2b6?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/abf7b455-a227-43c9-912f-14d91f5b9af7?api-version=2021-03-01-preview
       cache-control:
       - no-store, no-cache
       content-length:
-      - '1859'
+      - '1885'
       content-type:
       - application/json
       date:
-      - Thu, 18 Feb 2021 08:48:08 GMT
+      - Mon, 01 Mar 2021 06:59:30 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/operationResults/b7240187-1bd1-450e-9984-d18569efa2b6?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/operationResults/abf7b455-a227-43c9-912f-14d91f5b9af7?api-version=2021-03-01-preview
       pragma:
       - no-cache
       server:
@@ -56,7 +57,7 @@ interactions:
       x-ms-gatewayversion:
       - version=2.11.0
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1196'
     status:
       code: 200
       message: Ok
@@ -70,10 +71,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/3.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/b7240187-1bd1-450e-9984-d18569efa2b6?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/abf7b455-a227-43c9-912f-14d91f5b9af7?api-version=2021-03-01-preview
   response:
     body:
       string: '{"status":"Dequeued"}'
@@ -85,7 +86,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Thu, 18 Feb 2021 08:48:39 GMT
+      - Mon, 01 Mar 2021 07:00:02 GMT
       pragma:
       - no-cache
       server:
@@ -113,10 +114,53 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/3.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/b7240187-1bd1-450e-9984-d18569efa2b6?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/abf7b455-a227-43c9-912f-14d91f5b9af7?api-version=2021-03-01-preview
+  response:
+    body:
+      string: '{"status":"Dequeued"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '21'
+      content-type:
+      - application/json
+      date:
+      - Mon, 01 Mar 2021 07:00:32 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-gatewayversion:
+      - version=2.11.0
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/abf7b455-a227-43c9-912f-14d91f5b9af7?api-version=2021-03-01-preview
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -128,7 +172,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Thu, 18 Feb 2021 08:49:09 GMT
+      - Mon, 01 Mar 2021 07:01:04 GMT
       pragma:
       - no-cache
       server:
@@ -156,14 +200,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/3.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9?api-version=2021-03-01-preview
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9","name":"spycosmosdbx22640310f9","location":"West
-        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-02-18T08:48:38.4112416Z"},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://spycosmosdbx22640310f9.documents.azure.com:443/","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"a4e2edc3-7591-4662-8ffd-d980a3361855","createMode":"Default","databaseAccountOfferType":"Standard","networkAclBypass":0,"consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-03-01T07:00:16.4152386Z"},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://spycosmosdbx22640310f9.documents.azure.com:443/","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"d5f15404-902e-4900-b48f-0142ea543325","createMode":"Default","databaseAccountOfferType":"Standard","defaultIdentity":"FirstPartyIdentity","networkAclBypass":"None","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","documentEndpoint":"https://spycosmosdbx22640310f9-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"readLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","documentEndpoint":"https://spycosmosdbx22640310f9-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"locations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","documentEndpoint":"https://spycosmosdbx22640310f9-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"failoverPolicies":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
@@ -172,11 +216,11 @@ interactions:
       cache-control:
       - no-store, no-cache
       content-length:
-      - '2192'
+      - '2236'
       content-type:
       - application/json
       date:
-      - Thu, 18 Feb 2021 08:49:09 GMT
+      - Mon, 01 Mar 2021 07:01:04 GMT
       pragma:
       - no-cache
       server:
@@ -204,16 +248,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/3.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9?api-version=2021-03-01-preview
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9","name":"spycosmosdbx22640310f9","location":"West
-        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-02-18T08:48:38.4112416Z"},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://spycosmosdbx22640310f9.documents.azure.com:443/","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"a4e2edc3-7591-4662-8ffd-d980a3361855","createMode":"Default","databaseAccountOfferType":"Standard","networkAclBypass":0,"consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-03-01T07:00:16.4152386Z"},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://spycosmosdbx22640310f9.documents.azure.com:443/","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"d5f15404-902e-4900-b48f-0142ea543325","createMode":"Default","databaseAccountOfferType":"Standard","defaultIdentity":"FirstPartyIdentity","networkAclBypass":"None","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","documentEndpoint":"https://spycosmosdbx22640310f9-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"readLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","documentEndpoint":"https://spycosmosdbx22640310f9-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"locations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","documentEndpoint":"https://spycosmosdbx22640310f9-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"failoverPolicies":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
@@ -222,11 +266,11 @@ interactions:
       cache-control:
       - no-store, no-cache
       content-length:
-      - '2192'
+      - '2236'
       content-type:
       - application/json
       date:
-      - Thu, 18 Feb 2021 08:49:10 GMT
+      - Mon, 01 Mar 2021 07:01:05 GMT
       pragma:
       - no-cache
       server:
@@ -254,16 +298,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/3.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts?api-version=2021-03-01-preview
   response:
     body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9","name":"spycosmosdbx22640310f9","location":"West
-        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-02-18T08:48:38.4112416Z"},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://spycosmosdbx22640310f9.documents.azure.com:443/","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"a4e2edc3-7591-4662-8ffd-d980a3361855","createMode":"Default","databaseAccountOfferType":"Standard","networkAclBypass":0,"consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-03-01T07:00:16.4152386Z"},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://spycosmosdbx22640310f9.documents.azure.com:443/","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"d5f15404-902e-4900-b48f-0142ea543325","createMode":"Default","databaseAccountOfferType":"Standard","defaultIdentity":"FirstPartyIdentity","networkAclBypass":"None","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","documentEndpoint":"https://spycosmosdbx22640310f9-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"readLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","documentEndpoint":"https://spycosmosdbx22640310f9-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"locations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","documentEndpoint":"https://spycosmosdbx22640310f9-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"failoverPolicies":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
@@ -272,11 +316,11 @@ interactions:
       cache-control:
       - no-store, no-cache
       content-length:
-      - '2204'
+      - '2248'
       content-type:
       - application/json
       date:
-      - Thu, 18 Feb 2021 08:49:10 GMT
+      - Mon, 01 Mar 2021 07:01:05 GMT
       pragma:
       - no-cache
       server:
@@ -304,16 +348,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/3.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/databaseAccounts?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/databaseAccounts?api-version=2021-03-01-preview
   response:
     body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9","name":"spycosmosdbx22640310f9","location":"West
-        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-02-18T08:48:38.4112416Z"},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://spycosmosdbx22640310f9.documents.azure.com:443/","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"a4e2edc3-7591-4662-8ffd-d980a3361855","createMode":"Default","databaseAccountOfferType":"Standard","networkAclBypass":0,"consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"systemData":{"createdAt":"2021-03-01T07:00:16.4152386Z"},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://spycosmosdbx22640310f9.documents.azure.com:443/","publicNetworkAccess":"Enabled","enableAutomaticFailover":false,"enableMultipleWriteLocations":false,"enablePartitionKeyMonitor":false,"isVirtualNetworkFilterEnabled":false,"virtualNetworkRules":[],"EnabledApiTypes":"Sql","disableKeyBasedMetadataWriteAccess":false,"enableFreeTier":false,"enableAnalyticalStorage":false,"instanceId":"d5f15404-902e-4900-b48f-0142ea543325","createMode":"Default","databaseAccountOfferType":"Standard","defaultIdentity":"FirstPartyIdentity","networkAclBypass":"None","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"configurationOverrides":{},"writeLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","documentEndpoint":"https://spycosmosdbx22640310f9-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"readLocations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","documentEndpoint":"https://spycosmosdbx22640310f9-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"locations":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
         US","documentEndpoint":"https://spycosmosdbx22640310f9-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0,"isZoneRedundant":false}],"failoverPolicies":[{"id":"spycosmosdbx22640310f9-westus","locationName":"West
@@ -322,11 +366,11 @@ interactions:
       cache-control:
       - no-store, no-cache
       content-length:
-      - '2204'
+      - '2248'
       content-type:
       - application/json
       date:
-      - Thu, 18 Feb 2021 08:49:10 GMT
+      - Mon, 01 Mar 2021 07:01:06 GMT
       pragma:
       - no-cache
       server:
@@ -358,18 +402,18 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/3.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/failoverPriorityChange?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/failoverPriorityChange?api-version=2021-03-01-preview
   response:
     body:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/b3484cc4-5e6a-4615-a648-0e0fa5fa8e74?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/04171b07-82aa-4573-854b-f41c89f34c9e?api-version=2021-03-01-preview
       cache-control:
       - no-store, no-cache
       content-length:
@@ -377,9 +421,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Thu, 18 Feb 2021 08:49:12 GMT
+      - Mon, 01 Mar 2021 07:01:10 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/failoverPriorityChange/operationResults/b3484cc4-5e6a-4615-a648-0e0fa5fa8e74?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/failoverPriorityChange/operationResults/04171b07-82aa-4573-854b-f41c89f34c9e?api-version=2021-03-01-preview
       pragma:
       - no-cache
       server:
@@ -405,10 +449,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/3.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/b3484cc4-5e6a-4615-a648-0e0fa5fa8e74?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/04171b07-82aa-4573-854b-f41c89f34c9e?api-version=2021-03-01-preview
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -420,7 +464,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Thu, 18 Feb 2021 08:49:42 GMT
+      - Mon, 01 Mar 2021 07:01:43 GMT
       pragma:
       - no-cache
       server:
@@ -450,15 +494,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/3.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/listKeys?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/listKeys?api-version=2021-03-01-preview
   response:
     body:
-      string: '{"primaryMasterKey":"ECDUuDR8fznSFDAsgEDQ0Yjh2wEDYN6pYBVRqDSvFTLm3DlE91qGTXDCtqL4ZSXSDi24KquqwXOpzRqxK0uLJw==","secondaryMasterKey":"AhXwnR8kwrzVTCmmYTUSY9KrgeafVdIvL0tQnARl2RGcbSDe79y16ayg3csfk99xGX7gZMJsZYEXDI4d4MOJIQ==","primaryReadonlyMasterKey":"TRIgW0C8zIS31dctuLMRb8EArmWquXGZ5ADVFpjFRJiRCPflGvjuZwCqRBSW5wD7caA1XniP29z3lprIhPiRAA==","secondaryReadonlyMasterKey":"vObKlcl4S0G43IYkt7c3zQBcWau1XE8Zz9poWlPRS1kuuhyOYCHdxqBK5Jx0HmIGp4wwS3Ul8Hf6GkCCAbF6Aw=="}'
+      string: '{"primaryMasterKey":"cv67T7uQJU0KQOurwbJcClT7kjU72HHXJDtqOK2E5bll1pDbuzVAfpz4T3YQWJTT1y7X8MTR8147ro2Ul5QAQA==","secondaryMasterKey":"LFSEumpBwPvsqED2fVXcrfyG8IZEzzkRW3MYpHIXhgYWFKPOC8soaXKq9oXcxM8nUNS2QeOPODTMdxZRsLF2vg==","primaryReadonlyMasterKey":"Lzjlm8KFr9xWEMgGKIzoZxJjwfe6V7hKftA2FHAHKiEkdWviEn0rVREYSKljNkOUwJhrnmH0CS3NjK2oOrX69g==","secondaryReadonlyMasterKey":"n3qypCqfBiGeJT9aBvYwPE2ZogtbhMu9VTKn7sNGDd8Gv9o5PTUuxzKSfGyBxX0H9UV2fZDGAWwcHHFk5gYxAw=="}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -467,7 +511,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Thu, 18 Feb 2021 08:49:43 GMT
+      - Mon, 01 Mar 2021 07:01:43 GMT
       pragma:
       - no-cache
       server:
@@ -499,15 +543,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/3.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/readonlykeys?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/readonlykeys?api-version=2021-03-01-preview
   response:
     body:
-      string: '{"primaryReadonlyMasterKey":"TRIgW0C8zIS31dctuLMRb8EArmWquXGZ5ADVFpjFRJiRCPflGvjuZwCqRBSW5wD7caA1XniP29z3lprIhPiRAA==","secondaryReadonlyMasterKey":"vObKlcl4S0G43IYkt7c3zQBcWau1XE8Zz9poWlPRS1kuuhyOYCHdxqBK5Jx0HmIGp4wwS3Ul8Hf6GkCCAbF6Aw=="}'
+      string: '{"primaryReadonlyMasterKey":"Lzjlm8KFr9xWEMgGKIzoZxJjwfe6V7hKftA2FHAHKiEkdWviEn0rVREYSKljNkOUwJhrnmH0CS3NjK2oOrX69g==","secondaryReadonlyMasterKey":"n3qypCqfBiGeJT9aBvYwPE2ZogtbhMu9VTKn7sNGDd8Gv9o5PTUuxzKSfGyBxX0H9UV2fZDGAWwcHHFk5gYxAw=="}'
     headers:
       cache-control:
       - no-store, no-cache
@@ -516,7 +560,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Thu, 18 Feb 2021 08:49:44 GMT
+      - Mon, 01 Mar 2021 07:01:43 GMT
       pragma:
       - no-cache
       server:
@@ -550,18 +594,18 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/3.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/regenerateKey?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/regenerateKey?api-version=2021-03-01-preview
   response:
     body:
       string: '{"status":"Enqueued"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/2001fdc5-4bad-41b0-ab9a-5ee82190f545?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/f5b0feac-6470-4e8f-9749-36ab10b3e771?api-version=2021-03-01-preview
       cache-control:
       - no-store, no-cache
       content-length:
@@ -569,9 +613,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Thu, 18 Feb 2021 08:49:45 GMT
+      - Mon, 01 Mar 2021 07:01:47 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/regenerateKey/operationResults/2001fdc5-4bad-41b0-ab9a-5ee82190f545?api-version=2021-01-15
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cosmosdb_test_accounts_features640310f9/providers/Microsoft.DocumentDB/databaseAccounts/spycosmosdbx22640310f9/regenerateKey/operationResults/f5b0feac-6470-4e8f-9749-36ab10b3e771?api-version=2021-03-01-preview
       pragma:
       - no-cache
       server:
@@ -597,10 +641,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-cosmosdb/3.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-cosmosdb/4.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/2001fdc5-4bad-41b0-ab9a-5ee82190f545?api-version=2021-01-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/locations/westus/operationsStatus/f5b0feac-6470-4e8f-9749-36ab10b3e771?api-version=2021-03-01-preview
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -612,7 +656,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Thu, 18 Feb 2021 08:50:17 GMT
+      - Mon, 01 Mar 2021 07:02:20 GMT
       pragma:
       - no-cache
       server:
