@@ -75,6 +75,11 @@ jobs:
           exit 1
         fi
 
+        test_result = ''
+        if [ -f "$output_path/live_test_fail.txt" ]; then
+          test_result = `cat $output_path/live_test_fail.txt`
+        fi
+
         # create PR
         new_branch = `sed -n '1p' $output_path/output.txt`
         target_branch = `sed -n '2p' $output_path/output.txt`
@@ -82,7 +87,7 @@ jobs:
           --user "anything:$(USR_TOKEN)" \
           -d "{\
                   \"title\":\"[AutoRelease_Python] $new_branch\",\
-                  \"body\":\"Please Add the link issue\",\
+                  \"body\":\"Please Add the link issue\n$test_result\",\
                   \"head\":\"$(USR_NAME):$new_branch\",\
                   \"base\":\"$target_branch\"\
               }" \
@@ -90,8 +95,8 @@ jobs:
 
         echo "\'[AutoRelease_Python] $new_branch \' has been created!!!"
 
-        # if test failed, still push and crete PR. But pipeline failed to remind user
+        # if test failed, still push and crete PR. But pipeline would fail to remind user
         if [ -f "$output_path/live_test_fail.txt" ]; then
-          echo "please fix failed test!!! \'[AutoRelease_Python] $new_branch \' has been created!!! "
+          echo "please fix failed test!!! \'[AutoRelease_Python] $new_branch \' has been created!!!"
           exit 1
         fi
