@@ -98,6 +98,9 @@ class SmsClient(object):
         :rtype: [~azure.communication.sms.models.SmsSendResult]
         """
 
+        if isinstance(to, str):
+            to = [to]
+
         enable_delivery_report = kwargs.pop('enable_delivery_report', False)
         tag = kwargs.pop('tag', None)
 

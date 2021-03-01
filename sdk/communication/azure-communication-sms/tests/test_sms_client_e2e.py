@@ -37,7 +37,7 @@ class SMSClientTest(CommunicationTestCase):
         # calling send() with sms values
         sms_responses = self.sms_client.send(
             from_=self.phone_number,
-            to=[self.phone_number],
+            to=self.phone_number,
             message="Hello World via SMS",
             enable_delivery_report=True,  # optional property
             tag="custom-tag")  # optional property

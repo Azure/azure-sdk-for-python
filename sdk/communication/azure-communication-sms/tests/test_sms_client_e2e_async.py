@@ -40,7 +40,7 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
-    async def test_send_sms_async(self):
+    async def test_send_sms_single_async(self):
 
         sms_client = SmsClient.from_connection_string(self.connection_str)
 
@@ -48,7 +48,7 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
             # calling send() with sms values
             sms_responses = await sms_client.send(
                 from_=self.phone_number,
-                to=[self.phone_number],
+                to=self.phone_number,
                 message="Hello World via SMS",
                 enable_delivery_report=True,  # optional property
                 tag="custom-tag")  # optional property
