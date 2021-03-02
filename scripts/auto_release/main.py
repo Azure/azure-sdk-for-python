@@ -251,14 +251,14 @@ def run_live_test():
     test_env_init()
     print_exec(f'python scripts/dev_setup.py -p azure-mgmt-{SERVICE_NAME}')
     # run live test
-    result = print_exec_output(f'pytest -s sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}/')
-    for line in result:
-        if line.find('FAILED ') > -1:
-            with open(f'{OUT_PATH}/live_test_fail.txt', 'w') as file_out:
-                file_out.writelines(result)
-            my_print('some test failed, please fix it locally')
-            return
-    my_print('live test run done, do not find failure !!!')
+    try:
+        print_check(f'pytest -s sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}/')
+    except:
+        with open(f'{OUT_PATH}/live_test_fail.txt', 'w') as file_out:
+            file_out.writelines([''])
+        my_print('some test failed, please fix it locally')
+    else:
+        my_print('live test run done, do not find failure !!!')
 
 
 def edit_useless_file():
