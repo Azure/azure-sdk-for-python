@@ -21,28 +21,9 @@
   - Model DatabaseAccountCreateUpdateParameters has a new parameter identity
   - Model DatabaseAccountCreateUpdateParameters has a new parameter network_acl_bypass_resource_ids
 
-## 0.8.0 (2021-02-23)
-
-**Features**
-
-  - Model PrivateEndpointConnection has a new parameter provisioning_state
-  - Model PrivateEndpointConnection has a new parameter group_id
-  - Model ContainerPartitionKey has a new parameter system_key
-  - Model PrivateLinkServiceConnectionStateProperty has a new parameter description
-  - Model DatabaseAccountUpdateParameters has a new parameter identity
-  - Model DatabaseAccountUpdateParameters has a new parameter backup_policy
-  - Model DatabaseAccountUpdateParameters has a new parameter network_acl_bypass_resource_ids
-  - Model DatabaseAccountUpdateParameters has a new parameter network_acl_bypass
-  - Model DatabaseAccountCreateUpdateParameters has a new parameter identity
-  - Model DatabaseAccountCreateUpdateParameters has a new parameter backup_policy
-  - Model DatabaseAccountCreateUpdateParameters has a new parameter network_acl_bypass_resource_ids
-  - Model DatabaseAccountCreateUpdateParameters has a new parameter network_acl_bypass
-  - Model DatabaseAccountGetResults has a new parameter identity
-  - Model DatabaseAccountGetResults has a new parameter backup_policy
-  - Model DatabaseAccountGetResults has a new parameter network_acl_bypass_resource_ids
-  - Model DatabaseAccountGetResults has a new parameter network_acl_bypass
-
 ## 6.0.0 (2020-11-24)
+
+- GA release
 
 ## 6.0.0b1 (2020-10-12)
 
