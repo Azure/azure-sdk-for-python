@@ -68,25 +68,20 @@ jobs:
         # create PR
         new_branch=`sed -n '1p' $output_path/output.txt`
         target_branch=`sed -n '2p' $output_path/output.txt`
-        echo 777777777
-        echo new_branch: $new_branch
-        echo target_branch: $target_branch
-        echo test_result: $test_result
-        echo 88888888
         curl \
           --user "anything:$(USR_TOKEN)" \
           -d "{\
-                  \"title\":\"[AutoRelease_Python] $new_branch\",\
+                  \"title\":\"[AutoRelease] $new_branch\",\
                   \"body\":\"$test_result Please Add the link issue \",\
                   \"head\":\"$(USR_NAME):$new_branch\",\
                   \"base\":\"$target_branch\"\
               }" \
               https://api.github.com/repos/Azure/azure-sdk-for-python/pulls
 
-        echo "\'[AutoRelease_Python] $new_branch \' has been created!!!"
+        echo "\'[AutoRelease] $new_branch \' has been created!!!"
 
         # if test failed, still push and crete PR. But pipeline would fail to remind user
         if [ -f "$output_path/live_test_fail.txt" ]; then
-          echo "please fix failed test!!! \'[AutoRelease_Python] $new_branch \' has been created!!!"
+          echo "please fix failed test!!! \'[AutoRelease] $new_branch \' has been created!!!"
           exit 1
         fi
