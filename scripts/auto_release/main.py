@@ -146,10 +146,8 @@ def edit_file_setup():
     path = f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
     with open(f'{path}/setup.py', 'r') as file_in:
         list_in = file_in.readlines()
-    my_print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
     for i in range(0, len(list_in)):
         list_in[i] = list_in[i].replace('msrestazure>=0.4.32,<2.0.0', 'azure-mgmt-core>=1.2.0,<2.0.0')
-        my_print(list_in[i])
     with open(f'{path}/setup.py', 'w') as file_out:
         file_out.writelines(list_in)
 
@@ -194,6 +192,9 @@ def edit_file():
     except:
         print_changelog(['* Initial Release'])
         edit_first_release()
+        edit_file_readme()
+        if TRACK == '2':
+            edit_file_setup()
         my_print(f'CHANGELOG and version(new:{VERSION_NEW}) generate successfully. It is first release')
     else:
         add_content = create_changelog_content()
@@ -203,9 +204,9 @@ def edit_file():
             print_changelog(add_content)
             edit_version(add_content)
             edit_changelog(add_content)
+            edit_file_readme()
             if TRACK == '2':
                 edit_file_setup()
-                edit_file_readme()
             my_print(f'CHANGELOG and version(new:{VERSION_NEW}) generate successfully, please check it(compare with '
                      f'{VERSION_LAST_RELEASE}[https://pypi.org/pypi/azure-mgmt-{SERVICE_NAME}/{VERSION_LAST_RELEASE}])')
 
@@ -297,7 +298,7 @@ def check_pprint_name():
                 list_in[i] = list_in[i].replace('MyService', pprint_name)
             with open(file_path, 'w') as file_out:
                 file_out.writelines(list_in)
-    my_print(f'== replace\"MyService\" with \"{pprint_name}\" successfully ==')
+    my_print(f' replace \"MyService\" with \"{pprint_name}\" successfully ')
 
 
 def judge_sdk_folder():
@@ -386,3 +387,4 @@ if __name__ == '__main__':
     else:
         with open(f'{OUT_PATH}/output.txt', 'w') as file_out:
             file_out.writelines([f'{NEW_BRANCH}\n', "master" if TRACK == '2' else 'release/v3'])
+`
