@@ -274,11 +274,11 @@ def validate_producer_client_partition_config(partition_config):
     owner_level = partition_config.get("owner_level")
     producer_group_id = partition_config.get("producer_group_id")
     starting_sequence_number = partition_config.get("starting_sequence_number")
-    if owner_level is not None and not (0 <= int(owner_level) <= MAX_SHORT):
+    if owner_level is not None and not 0 <= int(owner_level) <= MAX_SHORT:
         raise ValueError("owner_level must be in the range from 0 to max short(32,767).")
 
-    if producer_group_id is not None and not (0 <= int(producer_group_id) <= MAX_LONG):
+    if producer_group_id is not None and not 0 <= int(producer_group_id) <= MAX_LONG:
         raise ValueError("producer_group_id must be in the range from 0 to max long(9,223,372,036,854,775,808).")
 
-    if starting_sequence_number is not None and not (0 <= int(starting_sequence_number) <= MAX_INT):
+    if starting_sequence_number is not None and not 0 <= int(starting_sequence_number) <= MAX_INT:
         raise ValueError("starting_sequence_number must be in the range from 0 to max int(2,147,483,647).")

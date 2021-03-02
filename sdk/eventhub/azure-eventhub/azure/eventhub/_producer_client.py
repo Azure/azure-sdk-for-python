@@ -48,7 +48,8 @@ def validate_outgoing_event_data(
         if is_idempotent_publishing:
             if partition_id is None:
                 raise ValueError("The partition_id must be set when performing idempotent publishing.")
-            if len([event for event in event_data_batch if event.published_sequence_number is not None]):
+            if event_data_batch and\
+                    len([event for event in event_data_batch if event.published_sequence_number is not None]):
                 raise ValueError("EventData object that has already been published by "
                                  "idempotent producer cannot be published again.")
 

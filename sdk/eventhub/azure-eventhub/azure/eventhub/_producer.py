@@ -89,7 +89,8 @@ class IdempotentProducerMixin(object):
             self._link_properties[PRODUCER_EPOCH_SYMBOL] =\
                 types.AMQPShort(int(self._owner_level)) if self._owner_level is not None else None
             self._link_properties[PRODUCER_SEQUENCE_NUMBER_SYMBOL] =\
-                types.AMQPInt(int(self._starting_sequence_number)) if self._starting_sequence_number is not None else None
+                types.AMQPInt(int(self._starting_sequence_number)) if self._starting_sequence_number is not None else\
+                None
 
     def _populate_idempotent_event_annotations(self, event, idx):
         # pylint: disable=protected-access
