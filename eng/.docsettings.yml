@@ -33,6 +33,7 @@ known_presence_issues:
   - ['sdk/template/azure-template/HISTORY.rst','#4554']
   - ['sdk/storage/azure-storage-nspkg/HISTORY.rst', '#4554']
   - ['sdk/textanalytics/azure-ai-nspkg/HISTORY.rst', '#4554']
+  - ['sdk/iothub/azure-iot-nspkg/HISTORY.rst', '#4554']
   # Converted from README.rst to README.md
   - ['sdk/batch/azure-batch/README.md', '#4554']
   - ['sdk/core/azure-nspkg/README.md', '#4554']
