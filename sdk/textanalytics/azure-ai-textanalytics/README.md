@@ -483,7 +483,7 @@ for idx, doc in enumerate(docs):
     print("------------------------------------------")
 ```
 
-Note: The Healthcare Entities Analysis service is currently available only in API version the v3.1 preview versions and is in gated preview. Since this is a gated preview, AAD is not supported. More information [here](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
+Note: The Healthcare Entities Analysis service is currently available only in the API v3.1 preview versions and is in gated preview. Since this is a gated preview, AAD is not supported. More information [here](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
 
 ### Batch Analysis
 
@@ -558,7 +558,7 @@ for idx, doc in enumerate(docs):
 
 The returned response is an object encapsulating multiple iterables, each representing results of individual analyses.
 
-Note: Batch analysis is currently available only in our v3.1-preview API version.
+Note: Batch analysis is currently available only in the v3.1-preview API version.
 
 ## Optional Configuration
 

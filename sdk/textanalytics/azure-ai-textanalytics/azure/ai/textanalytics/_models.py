@@ -325,7 +325,7 @@ class HealthcareRelationRole(DictMixin):
     @staticmethod
     def _get_entity(healthcare_role_result, entities):
         nums = _get_indices(healthcare_role_result.ref)
-        entity_index = nums[1]
+        entity_index = nums[1]  # first num parsed from index is document #, second is entity index
         return entities[entity_index]
 
     @classmethod

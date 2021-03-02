@@ -3,7 +3,7 @@
 To generate this file, simply type
 
 ```
-autorest samples/README.md
+autorest swagger/README.md
 ```
 
 We automatically hardcode in that this is `python` and `multiapi`.

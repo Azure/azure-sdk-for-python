@@ -22,11 +22,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 6f1c1413-efa1-4098-b426-8745757f81a1
+      - ffbf35f5-ec93-4688-9e23-bd081cf93d1b
       date:
-      - Mon, 01 Mar 2021 19:49:31 GMT
+      - Tue, 02 Mar 2021 16:02:33 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/82d37041-771b-43f1-bb52-86b5df730b5c
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/3e2ec56c-74ad-4c14-93c2-935c941551d8
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -34,7 +34,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '106'
+      - '344'
     status:
       code: 202
       message: Accepted
@@ -50,54 +50,20 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/82d37041-771b-43f1-bb52-86b5df730b5c
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/3e2ec56c-74ad-4c14-93c2-935c941551d8
   response:
     body:
-      string: '{"jobId":"82d37041-771b-43f1-bb52-86b5df730b5c","lastUpdateDateTime":"2021-03-01T19:49:31Z","createdDateTime":"2021-03-01T19:49:31Z","expirationDateTime":"2021-03-02T19:49:31Z","status":"notStarted","errors":[]}'
-    headers:
-      apim-request-id:
-      - fd98d47f-1302-4d46-8ef0-37b6920ec5c2
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 01 Mar 2021 19:49:36 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '6'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/82d37041-771b-43f1-bb52-86b5df730b5c
-  response:
-    body:
-      string: '{"jobId":"82d37041-771b-43f1-bb52-86b5df730b5c","lastUpdateDateTime":"2021-03-01T19:49:39Z","createdDateTime":"2021-03-01T19:49:31Z","expirationDateTime":"2021-03-02T19:49:31Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[{"offset":31,"length":18,"text":"Parkinsons
+      string: '{"jobId":"3e2ec56c-74ad-4c14-93c2-935c941551d8","lastUpdateDateTime":"2021-03-02T16:02:36Z","createdDateTime":"2021-03-02T16:02:33Z","expirationDateTime":"2021-03-03T16:02:33Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[{"offset":31,"length":18,"text":"Parkinsons
         Disease","category":"Diagnosis","confidenceScore":1.0,"links":[{"dataSource":"UMLS","id":"C0030567"},{"dataSource":"AOD","id":"0000006203"},{"dataSource":"BI","id":"BI00554"},{"dataSource":"CCPSS","id":"1018057"},{"dataSource":"CCS","id":"6.2.1"},{"dataSource":"CCSR_10","id":"NVS004"},{"dataSource":"CHV","id":"0000009319"},{"dataSource":"COSTAR","id":"559"},{"dataSource":"CSP","id":"2057-3689"},{"dataSource":"CST","id":"EXTRAPYR
         SYND"},{"dataSource":"ICD10","id":"G20"},{"dataSource":"ICD10AM","id":"G20"},{"dataSource":"ICD10CM","id":"G20"},{"dataSource":"ICD9CM","id":"332.0"},{"dataSource":"ICPC2ICD10ENG","id":"MTHU004748"},{"dataSource":"ICPC2P","id":"N87001"},{"dataSource":"LCH_NW","id":"sh85098115"},{"dataSource":"LNC","id":"MTHU020807"},{"dataSource":"MDR","id":"10061536"},{"dataSource":"MEDCIN","id":"32004"},{"dataSource":"MEDLINEPLUS","id":"85"},{"dataSource":"MSH","id":"D010300"},{"dataSource":"NANDA-I","id":"03003"},{"dataSource":"NCI","id":"C26845"},{"dataSource":"NCI_CELLOSAURUS","id":"C26845"},{"dataSource":"NCI_CPTAC","id":"C26845"},{"dataSource":"NCI_NCI-GLOSS","id":"CDR0000044140"},{"dataSource":"OMIM","id":"516000"},{"dataSource":"PSY","id":"36720"},{"dataSource":"QMR","id":"R0121461"},{"dataSource":"RAM","id":"DX353"},{"dataSource":"RCD","id":"F12.."},{"dataSource":"SNM","id":"D-8450"},{"dataSource":"SNMI","id":"DA-21012"},{"dataSource":"SNOMEDCT_US","id":"49049000"},{"dataSource":"WHO","id":"0106"}]},{"offset":51,"length":2,"text":"PD","category":"Diagnosis","confidenceScore":1.0,"links":[{"dataSource":"UMLS","id":"C0030567"},{"dataSource":"AOD","id":"0000006203"},{"dataSource":"BI","id":"BI00554"},{"dataSource":"CCPSS","id":"1018057"},{"dataSource":"CCS","id":"6.2.1"},{"dataSource":"CCSR_10","id":"NVS004"},{"dataSource":"CHV","id":"0000009319"},{"dataSource":"COSTAR","id":"559"},{"dataSource":"CSP","id":"2057-3689"},{"dataSource":"CST","id":"EXTRAPYR
         SYND"},{"dataSource":"ICD10","id":"G20"},{"dataSource":"ICD10AM","id":"G20"},{"dataSource":"ICD10CM","id":"G20"},{"dataSource":"ICD9CM","id":"332.0"},{"dataSource":"ICPC2ICD10ENG","id":"MTHU004748"},{"dataSource":"ICPC2P","id":"N87001"},{"dataSource":"LCH_NW","id":"sh85098115"},{"dataSource":"LNC","id":"MTHU020807"},{"dataSource":"MDR","id":"10061536"},{"dataSource":"MEDCIN","id":"32004"},{"dataSource":"MEDLINEPLUS","id":"85"},{"dataSource":"MSH","id":"D010300"},{"dataSource":"NANDA-I","id":"03003"},{"dataSource":"NCI","id":"C26845"},{"dataSource":"NCI_CELLOSAURUS","id":"C26845"},{"dataSource":"NCI_CPTAC","id":"C26845"},{"dataSource":"NCI_NCI-GLOSS","id":"CDR0000044140"},{"dataSource":"OMIM","id":"516000"},{"dataSource":"PSY","id":"36720"},{"dataSource":"QMR","id":"R0121461"},{"dataSource":"RAM","id":"DX353"},{"dataSource":"RCD","id":"F12.."},{"dataSource":"SNM","id":"D-8450"},{"dataSource":"SNMI","id":"DA-21012"},{"dataSource":"SNOMEDCT_US","id":"49049000"},{"dataSource":"WHO","id":"0106"}]}],"relations":[{"relationType":"Abbreviation","entities":[{"ref":"#/results/documents/0/entities/0","role":"FullTerm"},{"ref":"#/results/documents/0/entities/1","role":"AbbreviatedTerm"}]}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-11"}}'
     headers:
       apim-request-id:
-      - 00fc57e8-2e95-498e-ad72-d31490a1e1b8
+      - 4341e029-5117-4724-bbbc-677e2cd8df9c
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 01 Mar 2021 19:49:41 GMT
+      - Tue, 02 Mar 2021 16:02:39 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -105,7 +71,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '32'
+      - '125'
     status:
       code: 200
       message: OK

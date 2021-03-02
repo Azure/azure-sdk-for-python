@@ -349,7 +349,7 @@ class TestHealth(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_bidirectional_relation_type(self, client):
+    def test_relations(self, client):
         result = list(client.begin_analyze_healthcare_entities(
             documents=["The patient was diagnosed with Parkinsons Disease (PD)"]
         ).result())

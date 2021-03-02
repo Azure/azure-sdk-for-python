@@ -391,7 +391,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    async def test_bidirectional_relation_type(self, client):
+    async def test_relations(self, client):
         response = await (await client.begin_analyze_healthcare_entities(
             documents=["The patient was diagnosed with Parkinsons Disease (PD)"]
         )).result()
