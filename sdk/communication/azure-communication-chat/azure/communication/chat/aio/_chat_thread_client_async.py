@@ -119,7 +119,6 @@ class ChatThreadClient(object):
     @distributed_trace_async
     async def update_topic(
         self,
-        *,
         topic: str = None,
         **kwargs
     ) -> None:

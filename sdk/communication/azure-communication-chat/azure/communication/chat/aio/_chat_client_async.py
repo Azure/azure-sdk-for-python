@@ -207,8 +207,7 @@ class ChatClient(object):
 
         :param thread_id: Required. Thread id to get.
         :type thread_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ChatThread, or the result of cls(response)
+        :return: ChatThread
         :rtype: ~azure.communication.chat.ChatThread
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -236,7 +235,6 @@ class ChatClient(object):
 
         :keyword int results_per_page: The maximum number of chat threads to be returned per page.
         :keyword ~datetime.datetime start_time: The earliest point in time to get chat threads up to.
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of ChatThreadInfo
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatThreadInfo]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -268,8 +266,7 @@ class ChatClient(object):
 
         :param thread_id: Required. Thread id to delete.
         :type thread_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 

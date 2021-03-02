@@ -199,8 +199,7 @@ class ChatClient(object):
 
         :param thread_id: Required. Thread id to get.
         :type thread_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ChatThread, or the result of cls(response)
+        :return: ChatThread
         :rtype: ~azure.communication.chat.ChatThread
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -261,8 +260,7 @@ class ChatClient(object):
 
         :param thread_id: Required. Thread id to delete.
         :type thread_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
