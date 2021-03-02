@@ -5,7 +5,7 @@
 # ------------------------------------
 
 
-def sample_cancel_batch():
+def sample_cancel_job():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
@@ -24,7 +24,6 @@ def sample_cancel_batch():
     batch = [
         BatchDocumentInput(
             source_url=source_container_url,
-            source_language="en",
             targets=[
                 StorageTarget(
                     target_url=target_container_url_es,
@@ -45,3 +44,7 @@ def sample_cancel_batch():
 
     if job_detail.status in ["Cancelled", "Cancelling"]:
         print("We cancelled job with ID: {}".format(job_detail.id))
+
+
+if __name__ == '__main__':
+    sample_cancel_job()

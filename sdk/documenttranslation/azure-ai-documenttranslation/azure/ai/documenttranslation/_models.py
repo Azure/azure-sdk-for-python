@@ -67,10 +67,10 @@ class BatchDocumentInput(object):
     :param source_url: Required. Location of the folder / container or single file with your
      documents.
     :type source_url: str
-    :param str source_language: Language code
-     If none is specified, we will perform auto detect on the document.
     :param targets: Required. Location of the destination for the output.
     :type targets: list[StorageTarget]
+    :keyword str source_language: Language code
+     If none is specified, we will perform auto detect on the document.
     :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
      translation. For example, when using a Azure storage blob Uri, use the prefix to restrict sub folders for
      translation.
@@ -85,14 +85,13 @@ class BatchDocumentInput(object):
     def __init__(
         self,
         source_url,
-        source_language,
         targets,
         **kwargs
     ):
-        # type: (str, str, List[StorageTarget], **Any) -> None
+        # type: (str, List[StorageTarget], **Any) -> None
         self.source_url = source_url
-        self.source_language = source_language
         self.targets = targets
+        self.source_language = kwargs.get("source_language", None)
         self.storage_type = kwargs.get("storage_type", None)
         self.storage_source = kwargs.get("storage_source", None)
         self.prefix = kwargs.get("prefix", None)

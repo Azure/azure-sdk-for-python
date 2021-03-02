@@ -25,12 +25,12 @@ def sample_custom_translation():
     batch = [
         BatchDocumentInput(
             source_url=source_container_url,
-            source_language="en",
             targets=[
                 StorageTarget(
                     target_url=target_container_url_fr,
                     language="fr",
-                    category_id=category_id
+                    category_id=category_id,
+                    glossaries=["https://exampleglossary"]
                 )
             ],
             prefix="document_2021"
@@ -48,11 +48,11 @@ def sample_custom_translation():
         if job_result.documents_failed_count > 0:
             check_documents(client, job_result.id)
 
-        if job_result.status in ["Failed", "ValidationFailed"]:
-            if job_result.error:
-                print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
-            check_documents(client, job_result.id)
-            exit(1)
+    elif job_result.status in ["Failed", "ValidationFailed"]:
+        if job_result.error:
+            print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
+        check_documents(client, job_result.id)
+        exit(1)
 
 
 def check_documents(client, job_id):
@@ -61,7 +61,7 @@ def check_documents(client, job_id):
     try:
         doc_statuses = client.list_documents_statuses(job_id)  # type: ItemPaged[DocumentStatusDetail]
     except ResourceNotFoundError as err:
-        print("Failed to process any documents in source/target container.")
+        print("Failed to process any documents in source/target container due to insufficient permissions.")
         raise err
 
     docs_to_retry = []
@@ -75,3 +75,7 @@ def check_documents(client, job_id):
             ))
             if document.url not in docs_to_retry:
                 docs_to_retry.append(document.url)
+
+
+if __name__ == '__main__':
+    sample_custom_translation()

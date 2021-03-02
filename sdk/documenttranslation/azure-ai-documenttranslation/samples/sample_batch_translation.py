@@ -16,7 +16,8 @@ def sample_batch_translation():
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
-    source_container_url = os.environ["AZURE_SOURCE_CONTAINER_URL"]
+    source_container_url_en = os.environ["AZURE_SOURCE_CONTAINER_URL_EN"]
+    source_container_url_de = os.environ["AZURE_SOURCE_CONTAINER_URL_DE"]
     target_container_url_es = os.environ["AZURE_TARGET_CONTAINER_URL_ES"]
     target_container_url_fr = os.environ["AZURE_TARGET_CONTAINER_URL_FR"]
 
@@ -24,8 +25,7 @@ def sample_batch_translation():
 
     batch = [
         BatchDocumentInput(
-            source_url=source_container_url,
-            source_language="en",
+            source_url=source_container_url_en,
             targets=[
                 StorageTarget(
                     target_url=target_container_url_es,
@@ -35,8 +35,20 @@ def sample_batch_translation():
                     target_url=target_container_url_fr,
                     language="fr"
                 )
-            ],
-            storage_type="file"
+            ]
+        ),
+        BatchDocumentInput(
+            source_url=source_container_url_de,
+            targets=[
+                StorageTarget(
+                    target_url=target_container_url_es,
+                    language="es"
+                ),
+                StorageTarget(
+                    target_url=target_container_url_fr,
+                    language="fr"
+                )
+            ]
         )
     ]
 
@@ -51,7 +63,7 @@ def sample_batch_translation():
         if job_result.documents_failed_count > 0:
             check_documents(client, job_result.id)
 
-    if job_result.status in ["Failed", "ValidationFailed"]:
+    elif job_result.status in ["Failed", "ValidationFailed"]:
         if job_result.error:
             print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
         check_documents(client, job_result.id)
@@ -64,7 +76,7 @@ def check_documents(client, job_id):
     try:
         doc_statuses = client.list_documents_statuses(job_id)  # type: ItemPaged[DocumentStatusDetail]
     except ResourceNotFoundError as err:
-        print("Failed to process any documents in source/target container.")
+        print("Failed to process any documents in source/target container due to insufficient permissions.")
         raise err
 
     docs_to_retry = []
@@ -78,3 +90,7 @@ def check_documents(client, job_id):
             ))
             if document.url not in docs_to_retry:
                 docs_to_retry.append(document.url)
+
+
+if __name__ == '__main__':
+    sample_batch_translation()

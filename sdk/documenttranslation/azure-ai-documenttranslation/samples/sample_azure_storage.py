@@ -59,7 +59,6 @@ def batch_translation_with_storage():
     batch = [
         BatchDocumentInput(
             source_url=source_container_url,
-            source_language="en",
             targets=[
                 StorageTarget(
                     target_url=target_container_url,
@@ -78,7 +77,7 @@ def batch_translation_with_storage():
         if job_result.documents_failed_count > 0:
             check_documents(translation_client, job_result.id)
 
-    if job_result.status in ["Failed", "ValidationFailed"]:
+    elif job_result.status in ["Failed", "ValidationFailed"]:
         if job_result.error:
             print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
         check_documents(translation_client, job_result.id)
@@ -117,3 +116,7 @@ def check_documents(client, job_id):
             ))
             if document.url not in docs_to_retry:
                 docs_to_retry.append(document.url)
+
+
+if __name__ == '__main__':
+    batch_translation_with_storage()
