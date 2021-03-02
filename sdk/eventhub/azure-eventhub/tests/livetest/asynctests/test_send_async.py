@@ -284,7 +284,7 @@ async def test_idempotent_sender_async(connstr_receivers):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_idempotent_sender_partition_configs_async(connstr_receivers):
+async def test_idempotent_sender_partition_config_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
 
     client = EventHubProducerClient.from_connection_string(
@@ -315,7 +315,7 @@ async def test_idempotent_sender_partition_configs_async(connstr_receivers):
     client_2 = EventHubProducerClient.from_connection_string(
         connection_str,
         enable_idempotent_partitions=True,
-        partition_configs=partition_config_for_producer_2
+        partition_config=partition_config_for_producer_2
     )
     event_data_list = [EventData(payload), EventData(payload)]
     await client_2.send_batch(event_data_list, partition_id="0")
@@ -340,7 +340,7 @@ async def test_idempotent_sender_partition_configs_async(connstr_receivers):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_idempotent_sender_wrong_partition_configs_async(connstr_receivers):
+async def test_idempotent_sender_wrong_partition_config_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
     payload = "A1"
     with pytest.raises(ValueError):
@@ -353,10 +353,10 @@ async def test_idempotent_sender_wrong_partition_configs_async(connstr_receivers
         EventHubProducerClient.from_connection_string(
             connection_str,
             enable_idempotent_partitions=True,
-            partition_configs={"0": {"starting_sequence_number": 2**31}}
+            partition_config={"0": {"starting_sequence_number": 2**31}}
         )
 
-    partition_configs = {
+    partition_config = {
         "0": {
             "producer_group_id": 100,
             "owner_level": 100,
@@ -366,7 +366,7 @@ async def test_idempotent_sender_wrong_partition_configs_async(connstr_receivers
     client = EventHubProducerClient.from_connection_string(
         connection_str,
         enable_idempotent_partitions=True,
-        partition_configs=partition_configs
+        partition_config=partition_config
     )
 
     # test invalid init setting
@@ -401,7 +401,7 @@ async def test_idempotent_sender_wrong_partition_configs_async(connstr_receivers
     client_2 = EventHubProducerClient.from_connection_string(
         connection_str,
         enable_idempotent_partitions=True,
-        partition_configs=partition_config_for_producer_2
+        partition_config=partition_config_for_producer_2
     )
     with pytest.raises(EventDataSendError):
         try:
