@@ -1615,7 +1615,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_query(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1635,15 +1634,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 start=datetime.utcnow() - timedelta(minutes=1),
             )
 
-            # token = generate_table_sas(
-            #     tables_storage_account_name,
-            #     tables_primary_storage_account_key,
-            #     self.table_name,
-            #     permission=TableSasPermissions(read=True),
-            #     expiry=datetime.utcnow() + timedelta(hours=1),
-            #     start=datetime.utcnow() - timedelta(minutes=1),
-            # )
-
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
@@ -1659,7 +1649,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_add(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1676,15 +1665,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 expiry=datetime.utcnow() + timedelta(hours=1),
                 start=datetime.utcnow() - timedelta(minutes=1),
             )
-
-            # token = generate_table_sas(
-            #     tables_storage_account_name,
-            #     tables_primary_storage_account_key,
-            #     self.table_name,
-            #     permission=TableSasPermissions(add=True),
-            #     expiry=datetime.utcnow() + timedelta(hours=1),
-            #     start=datetime.utcnow() - timedelta(minutes=1),
-            # )
 
             # Act
             service = TableServiceClient(
@@ -1703,7 +1683,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_add_inside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1721,15 +1700,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 start_pk=u'test', start_rk=u'test1',
                 end_pk=u'test', end_rk=u'test1',
             )
-            # token = generate_table_sas(
-            #     tables_storage_account_name,
-            #     tables_primary_storage_account_key,
-            #     self.table_name,
-            #     permission=TableSasPermissions(add=True),
-            #     expiry=datetime.utcnow() + timedelta(hours=1),
-            #     start_pk=u'test', start_rk=u'test1',
-            #     end_pk=u'test', end_rk=u'test1',
-            # )
 
             # Act
             service = TableServiceClient(
@@ -1746,7 +1716,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_add_outside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1764,15 +1733,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 start_pk='test', start_rk='test1',
                 end_pk='test', end_rk='test1',
             )
-            # token = generate_table_sas(
-            #     tables_storage_account_name,
-            #     tables_primary_storage_account_key,
-            #     self.table_name,
-            #     permission=TableSasPermissions(add=True),
-            #     expiry=datetime.utcnow() + timedelta(hours=1),
-            #     start_pk='test', start_rk='test1',
-            #     end_pk='test', end_rk='test1',
-            # )
 
             # Act
             service = TableServiceClient(
@@ -1788,7 +1748,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1829,7 +1788,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1846,13 +1804,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 permission=TableSasPermissions(delete=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
             )
-            # token = generate_table_sas(
-            #     tables_storage_account_name,
-            #     tables_primary_storage_account_key,
-            #     self.table_name,
-            #     permission=TableSasPermissions(delete=True),
-            #     expiry=datetime.utcnow() + timedelta(hours=1),
-            # )
 
             # Act
             service = TableServiceClient(
@@ -1868,7 +1819,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_upper_case_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1896,15 +1846,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 start=datetime.utcnow() - timedelta(minutes=1),
             )
 
-            # token = generate_table_sas(
-            #     tables_storage_account_name,
-            #     tables_primary_storage_account_key,
-            #     self.table_name.upper(),
-            #     permission=TableSasPermissions(read=True),
-            #     expiry=datetime.utcnow() + timedelta(hours=1),
-            #     start=datetime.utcnow() - timedelta(minutes=1),
-            # )
-
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
@@ -1920,7 +1861,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1938,7 +1878,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             self.table.set_table_access_policy(identifiers)
 
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,

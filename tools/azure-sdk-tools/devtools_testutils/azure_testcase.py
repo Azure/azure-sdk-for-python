@@ -16,6 +16,11 @@ try:
 except ImportError:
     from inspect import getargspec as get_arg_spec
 
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib2 import quote  # type: ignore
+
 import pytest
 from dotenv import load_dotenv, find_dotenv
 
@@ -355,14 +360,16 @@ class AzureTestCase(ReplayableTest):
 
         fake_value = kwargs.pop("fake_value", "fake_token_value")
         token = sas_func(*sas_func_pos_args, **kwargs)
+        url_safe_token = token.replace("/", u"%2F")
 
         fake_token = self._create_fake_token(token, fake_value)
 
+        self.scrubber.register_name_pair(url_safe_token, fake_token)
         self.scrubber.register_name_pair(token, fake_token)
 
-        # print()
-        # print(token)
-        # print(fake_token)
+        print()
+        print(url_safe_token)
+        print(fake_token)
 
         if self.is_live:
             return token
