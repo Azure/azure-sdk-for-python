@@ -33,10 +33,9 @@ class UsernamePasswordCredential(InteractiveCredential):
           defines authorities for other clouds.
     :keyword str tenant_id: tenant ID or a domain associated with a tenant. If not provided, defaults to the
           'organizations' tenant, which supports only Azure Active Directory work or school accounts.
-    :keyword token_cache: token cache the credential should use. Defaults to an in memory
-          cache not shared with other credential instances. To enable persistent caching, provide a
-          :class:`~azure.identity.PersistentTokenCache` instance.
-    :paramtype token_cache: ~azure.identity.PersistentTokenCache
+    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+          will cache tokens in memory.
+    :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
     def __init__(self, client_id, username, password, **kwargs):

@@ -8,8 +8,9 @@ from azure.identity import (
     AuthenticationRecord,
     KnownAuthorities,
     CredentialUnavailableError,
+    TokenCachePersistenceOptions,
 )
-from azure.identity._internal import _TokenCache, InteractiveCredential
+from azure.identity._internal import InteractiveCredential
 import pytest
 
 try:
@@ -215,7 +216,7 @@ def test_get_token_wraps_exceptions():
 
 
 def test_token_cache():
-    """the credential should use the cache it's given, and default to an in memory cache otherwise"""
+    """the credential should default to an in memory cache, and optionally use a persistent cache"""
 
     class TestCredential(InteractiveCredential):
         def __init__(self, **kwargs):
@@ -224,12 +225,14 @@ def test_token_cache():
         def _request_token(self, *_, **__):
             pass
 
-    credential = TestCredential()
-    assert isinstance(credential._cache, _TokenCache)
+    with patch("azure.identity._persistent_cache.msal_extensions") as mock_msal_extensions:
+        with patch("azure.identity._internal.msal_credentials.msal") as mock_msal:
+            TestCredential()
+        assert not mock_msal_extensions.PersistedTokenCache.called
+        assert mock_msal.TokenCache.call_count == 1
 
-    expected_cache = _TokenCache()
-    credential = TestCredential(token_cache=expected_cache)
-    assert credential._cache is expected_cache
+        TestCredential(cache_persistence_options=TokenCachePersistenceOptions())
+        assert mock_msal_extensions.PersistedTokenCache.call_count == 1
 
 
 def test_home_account_id_client_info():

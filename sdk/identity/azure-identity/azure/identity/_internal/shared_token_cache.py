@@ -14,7 +14,7 @@ from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
 from .._constants import KnownAuthorities
 from .._internal import get_default_authority, normalize_authority, wrap_exceptions
-from .._persistent_cache import PersistentTokenCache  # importing this from azure.identity creates a cycle
+from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
 
 try:
     ABC = abc.ABC
@@ -94,7 +94,7 @@ class SharedTokenCacheBase(ABC):
         self._environment_aliases = KNOWN_ALIASES.get(environment) or frozenset((environment,))
         self._username = username
         self._tenant_id = kwargs.pop("tenant_id", None)
-        self._cache = kwargs.pop("token_cache", None)
+        self._cache = kwargs.pop("_cache", None)
         self._client = None  # type: Optional[AadClientBase]
         self._client_kwargs = kwargs
         self._client_kwargs["tenant_id"] = "organizations"
@@ -108,7 +108,7 @@ class SharedTokenCacheBase(ABC):
         if self._cache:
             # pylint:disable=protected-access
             self._client = self._get_auth_client(
-                authority=self._authority, cache=self._cache._cache, **self._client_kwargs
+                authority=self._authority, cache=self._cache, **self._client_kwargs
             )
 
         self._initialized = True
@@ -119,7 +119,7 @@ class SharedTokenCacheBase(ABC):
                 # This credential accepts the user's default cache regardless of whether it's encrypted. It doesn't
                 # create a new cache. If the default cache exists, the user must have created it earlier. If it's
                 # unencrypted, the user must have allowed that.
-                self._cache = PersistentTokenCache(allow_unencrypted=True)
+                self._cache = _load_persistent_cache(TokenCachePersistenceOptions(allow_unencrypted_storage=True))
             except Exception:  # pylint:disable=broad-except
                 pass
 
@@ -133,7 +133,7 @@ class SharedTokenCacheBase(ABC):
         """yield cache items matching this credential's authority or one of its aliases"""
 
         items = []
-        for item in self._cache._cache.find(credential_type):  # pylint:disable=protected-access
+        for item in self._cache.find(credential_type):
             environment = item.get("environment")
             if environment in self._environment_aliases:
                 items.append(item)
@@ -194,7 +194,7 @@ class SharedTokenCacheBase(ABC):
             return None
 
         try:
-            cache_entries = self._cache._cache.find(  # pylint:disable=protected-access
+            cache_entries = self._cache.find(
                 msal.TokenCache.CredentialType.ACCESS_TOKEN,
                 target=list(scopes),
                 query={"home_account_id": account["home_account_id"]},
@@ -214,7 +214,7 @@ class SharedTokenCacheBase(ABC):
             return None
 
         try:
-            cache_entries = self._cache._cache.find(  # pylint:disable=protected-access
+            cache_entries = self._cache.find(
                 msal.TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account["home_account_id"]}
             )
             return [token["secret"] for token in cache_entries if "secret" in token]

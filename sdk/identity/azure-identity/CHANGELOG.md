@@ -6,21 +6,21 @@
 > Only code written against a beta version such as 1.6.0b1 may be affected.
 - Credentials accepting keyword arguments `allow_unencrypted_cache` and
   `enable_persistent_cache` to configure persistent caching accept a
-  `token_cache` argument instead whose value should be an instance of
-  `PersistentTokenCache`. For example:
+  `cache_persistence_options` argument instead whose value should be an
+  instance of `TokenCachePersistenceOptions`. For example:
   ```
   # before (e.g. in 1.6.0b1):
   DeviceCodeCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
   
   # after:
-  cache = PersistentTokenCache(allow_unencrypted_storage=True)
-  DeviceCodeCredential(token_cache=cache)
+  cache_options = TokenCachePersistenceOptions(allow_unencrypted_storage=True)
+  DeviceCodeCredential(cache_persistence_options=cache_options)
   ```
   
   See the documentation and samples for more details.
   
 ### Added
-- New class `PersistentTokenCache` configures persistent caching
+- New class `TokenCachePersistenceOptions` configures persistent caching
 
 ## 1.6.0b1 (2021-02-09)
 ### Changed

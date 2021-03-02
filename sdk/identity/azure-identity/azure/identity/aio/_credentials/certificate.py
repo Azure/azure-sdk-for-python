@@ -4,10 +4,13 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
+import msal
+
 from .._internal import AadClient, AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ..._credentials.certificate import get_client_credential
-from ..._internal import _TokenCache, AadClientCertificate, validate_tenant_id
+from ..._internal import AadClientCertificate, validate_tenant_id
+from ..._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
 
 if TYPE_CHECKING:
     from typing import Any, Optional
@@ -31,10 +34,9 @@ class CertificateCredential(AsyncContextManager):
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
           requires a different encoding, pass appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword token_cache: token cache the credential should use. Defaults to an in memory
-          cache not shared with other credential instances. To enable persistent caching, provide a
-          :class:`~azure.identity.PersistentTokenCache` instance.
-    :paramtype token_cache: ~azure.identity.PersistentTokenCache
+    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+          will cache tokens in memory.
+    :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
     def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):
@@ -47,8 +49,15 @@ class CertificateCredential(AsyncContextManager):
             client_credential["private_key"], password=client_credential.get("passphrase")
         )
 
-        cache = kwargs.pop("token_cache", None) or _TokenCache()
-        self._client = AadClient(tenant_id, client_id, cache=cache._cache, **kwargs)
+        cache = kwargs.pop("_cache", None)
+        if not cache:
+            options = kwargs.pop("cache_persistence_options", None)
+            if options:
+                cache = _load_persistent_cache(options)
+            else:
+                cache = msal.TokenCache()
+
+        self._client = AadClient(tenant_id, client_id, cache=cache, **kwargs)
         self._client_id = client_id
 
     async def __aenter__(self):

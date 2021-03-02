@@ -7,7 +7,8 @@ import abc
 import msal
 
 from .msal_client import MsalClient
-from .._internal import _TokenCache, get_default_authority, normalize_authority, validate_tenant_id
+from .._internal import get_default_authority, normalize_authority, validate_tenant_id
+from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
 
 try:
     ABC = abc.ABC
@@ -37,7 +38,14 @@ class MsalCredential(ABC):
         self._client_credential = client_credential
         self._client_id = client_id
 
-        self._cache = kwargs.pop("token_cache", None) or _TokenCache()
+        self._cache = kwargs.pop("_cache", None)
+        if not self._cache:
+            options = kwargs.pop("cache_persistence_options", None)
+            if options:
+                self._cache = _load_persistent_cache(options)
+            else:
+                self._cache = msal.TokenCache()
+
         self._client = MsalClient(**kwargs)
 
         # postpone creating the wrapped application because its initializer uses the network
@@ -55,7 +63,7 @@ class MsalCredential(ABC):
             client_id=self._client_id,
             client_credential=self._client_credential,
             authority="{}/{}".format(self._authority, self._tenant_id),
-            token_cache=self._cache._cache,  # pylint:disable=protected-access
+            token_cache=self._cache,
             http_client=self._client,
             **kwargs
         )

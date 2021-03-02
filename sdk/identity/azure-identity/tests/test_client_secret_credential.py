@@ -3,10 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
-from azure.identity import ClientSecretCredential
+from azure.identity import ClientSecretCredential, TokenCachePersistenceOptions
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._internal import _TokenCache
 from azure.identity._internal.user_agent import USER_AGENT
+from msal import TokenCache
 import pytest
 from six.moves.urllib_parse import urlparse
 
@@ -118,11 +118,44 @@ def test_authority(authority):
 
 
 def test_token_cache():
-    """the credential should use the cache it's given, and default to an in memory cache otherwise"""
+    """the credential should default to an in memory cache, and optionally use a persistent cache"""
 
-    credential = ClientSecretCredential("tenant", "client-id", "secret")
-    assert isinstance(credential._cache, _TokenCache)
+    with patch("azure.identity._persistent_cache.msal_extensions") as mock_msal_extensions:
+        credential = ClientSecretCredential("tenant", "client-id", "secret")
+        assert not mock_msal_extensions.PersistedTokenCache.called
+        assert isinstance(credential._cache, TokenCache)
 
-    expected_cache = _TokenCache()
-    credential = ClientSecretCredential("tenant", "client-id", "secret", token_cache=expected_cache)
-    assert credential._cache is expected_cache
+        ClientSecretCredential(
+            "tenant", "client-id", "secret", cache_persistence_options=TokenCachePersistenceOptions(),
+        )
+        assert mock_msal_extensions.PersistedTokenCache.call_count == 1
+
+
+def test_cache_multiple_clients():
+    """the credential shouldn't use tokens issued to other service principals"""
+
+    access_token_a = "token a"
+    access_token_b = "not " + access_token_a
+    transport_a = msal_validating_transport(
+        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_a))]
+    )
+    transport_b = msal_validating_transport(
+        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_b))]
+    )
+
+    cache = TokenCache()
+    credential_a = ClientSecretCredential("tenant", "client-a", "secret", transport=transport_a, _cache=cache)
+    credential_b = ClientSecretCredential("tenant", "client-b", "secret", transport=transport_b, _cache=cache)
+
+    # A caches a token
+    scope = "scope"
+    token_a = credential_a.get_token(scope)
+    assert token_a.token == access_token_a
+    assert transport_a.send.call_count == 3  # two MSAL discovery requests, one token request
+
+    # B should get a different token for the same scope
+    token_b = credential_b.get_token(scope)
+    assert token_b.token == access_token_b
+    assert transport_b.send.call_count == 3
+
+    assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2

@@ -6,14 +6,14 @@ import json
 import os
 
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
-from azure.identity import CertificateCredential
+from azure.identity import CertificateCredential, TokenCachePersistenceOptions
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._internal import _TokenCache
 from azure.identity._internal.user_agent import USER_AGENT
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
+from msal import TokenCache
 import pytest
 import six
 from six.moves.urllib_parse import urlparse
@@ -238,16 +238,21 @@ def validate_jwt(request, client_id, pem_bytes, expect_x5c=False):
 
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
 def test_token_cache(cert_path, cert_password):
-    """the credential should use the cache it's given, and default to an in memory cache otherwise"""
+    """the credential should optionally use a persistent cache, and default to an in memory cache"""
 
-    credential = CertificateCredential("tenant", "client-id", cert_path, password=cert_password)
-    assert isinstance(credential._cache, _TokenCache)
+    with patch("azure.identity._persistent_cache.msal_extensions") as mock_msal_extensions:
+        credential = CertificateCredential("tenant", "client-id", cert_path, password=cert_password)
+        assert not mock_msal_extensions.PersistedTokenCache.called
+        assert isinstance(credential._cache, TokenCache)
 
-    expected_cache = _TokenCache()
-    credential = CertificateCredential(
-        "tenant", "client-id", cert_path, password=cert_password, token_cache=expected_cache
-    )
-    assert credential._cache is expected_cache
+        CertificateCredential(
+            "tenant",
+            "client-id",
+            cert_path,
+            password=cert_password,
+            cache_persistence_options=TokenCachePersistenceOptions(),
+        )
+        assert mock_msal_extensions.PersistedTokenCache.call_count == 1
 
 
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
@@ -263,12 +268,12 @@ def test_cache_multiple_clients(cert_path, cert_password):
         requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_b))]
     )
 
-    cache = _TokenCache()
+    cache = TokenCache()
     credential_a = CertificateCredential(
-        "tenant", "client-a", cert_path, password=cert_password, transport=transport_a, token_cache=cache
+        "tenant", "client-a", cert_path, password=cert_password, transport=transport_a, _cache=cache
     )
     credential_b = CertificateCredential(
-        "tenant", "client-b", cert_path, password=cert_password, transport=transport_b, token_cache=cache
+        "tenant", "client-b", cert_path, password=cert_password, transport=transport_b, _cache=cache
     )
 
     # A caches a token
@@ -281,3 +286,5 @@ def test_cache_multiple_clients(cert_path, cert_password):
     token_b = credential_b.get_token(scope)
     assert token_b.token == access_token_b
     assert transport_b.send.call_count == 3
+
+    assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2

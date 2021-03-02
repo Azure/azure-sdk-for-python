@@ -8,10 +8,11 @@ from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
+from azure.identity import TokenCachePersistenceOptions
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._internal import _TokenCache
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import ClientSecretCredential
+from msal import TokenCache
 import pytest
 
 from helpers import build_aad_response, mock_response, Request
@@ -186,11 +187,46 @@ async def test_cache():
 
 
 def test_token_cache():
-    """the credential should use the cache it's given, and default to an in memory cache otherwise"""
+    """the credential should default to an in memory cache, and optionally use a persistent cache"""
 
-    credential = ClientSecretCredential("tenant", "client-id", "secret")
-    assert isinstance(credential._cache, _TokenCache)
+    with patch("azure.identity._persistent_cache.msal_extensions") as mock_msal_extensions:
+        with patch(ClientSecretCredential.__module__ + ".msal") as mock_msal:
+            ClientSecretCredential("tenant", "client-id", "secret")
+        assert mock_msal.TokenCache.call_count == 1
+        assert not mock_msal_extensions.PersistedTokenCache.called
 
-    expected_cache = _TokenCache()
-    credential = ClientSecretCredential("tenant", "client-id", "secret", token_cache=expected_cache)
-    assert credential._cache is expected_cache
+        ClientSecretCredential(
+            "tenant", "client-id", "secret", cache_persistence_options=TokenCachePersistenceOptions(),
+        )
+        assert mock_msal_extensions.PersistedTokenCache.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_cache_multiple_clients():
+    """the credential shouldn't use tokens issued to other service principals"""
+
+    access_token_a = "token a"
+    access_token_b = "not " + access_token_a
+    transport_a = async_validating_transport(
+        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_a))]
+    )
+    transport_b = async_validating_transport(
+        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_b))]
+    )
+
+    cache = TokenCache()
+    credential_a = ClientSecretCredential("tenant", "client-a", "secret", transport=transport_a, _cache=cache)
+    credential_b = ClientSecretCredential("tenant", "client-b", "secret", transport=transport_b, _cache=cache)
+
+    # A caches a token
+    scope = "scope"
+    token_a = await credential_a.get_token(scope)
+    assert token_a.token == access_token_a
+    assert transport_a.send.call_count == 1
+
+    # B should get a different token for the same scope
+    token_b = await credential_b.get_token(scope)
+    assert token_b.token == access_token_b
+    assert transport_b.send.call_count == 1
+
+    assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2

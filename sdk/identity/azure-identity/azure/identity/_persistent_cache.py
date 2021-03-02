@@ -12,34 +12,47 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-class PersistentTokenCache(object):
-    """Token cache backed by persistent storage.
+class TokenCachePersistenceOptions(object):
+    """Options for persistent token caching.
 
-    This class encrypts its data by default. On Linux, libsecret and pygobject are required for encryption. On macOS,
-    Keychain protects the cache. On Windows, the cache is protected by the data protection API (DPAPI).
+    Most credentials accept an instance of this class to configure persistent token caching. The default values
+    configure a credential to use a cache shared with Microsoft developer tools and
+    :class:`~azure.identity.SharedTokenCacheCredential`. To isolate a credential's data from other applications,
+    specify a `name` for the cache.
+
+    By default, the cache is encrypted with the current platform's user data protection API, and will raise an error
+    when this is not available. To configure the cache to fall back to an unencrypted file instead of raising an
+    error, specify `allow_unencrypted_storage=True`.
+
+    .. warning:: The cache contains authentication secrets. If the cache is not encrypted, protecting it is the
+       application's responsibility. A breach of its contents will fully compromise accounts.
+
+        .. literalinclude:: ../tests/test_cache_options_samples.py
+            :start-after: [START snippet]
+            :end-before: [END snippet]
+            :language: python
+            :caption: Configuring a credential for persistent caching
+            :dedent: 8
 
     :keyword str name: name of the cache, used to isolate its data from other applications. Defaults to the name of the
         cache shared by Microsoft dev tools and :class:`~azure.identity.SharedTokenCacheCredential`.
     :keyword bool allow_unencrypted_storage: whether the cache should fall back to storing its data in plain text when
         encryption isn't possible. False by default. Setting this to True does not disable encryption. The cache will
         always try to encrypt its data.
-
-    :raises NotImplementedError: persistent token caching isn't supported on the current platform
-    :raises ValueError: encryption isn't available on the current platform, and `allow_unencrypted_storage` is False.
-        Specify `allow_unencrypted_storage=True` to work around this, if it's acceptable for the cache to store data
-        without encryption.
     """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        persistence = kwargs.get("_persistence")
-        if not persistence:
-            persistence = _get_persistence(
-                allow_unencrypted=kwargs.get("allow_unencrypted_storage", False),
-                account_name="MSALCache",
-                cache_name=kwargs.get("name", "msal.cache"),
-            )
-        self._cache = msal_extensions.PersistedTokenCache(persistence)
+        self.allow_unencrypted_storage = kwargs.get("allow_unencrypted_storage", False)
+        self.name = kwargs.get("name", "msal.cache")
+
+
+def _load_persistent_cache(options):
+    # type: (TokenCachePersistenceOptions) -> msal_extensions.PersistedTokenCache
+    persistence = _get_persistence(
+        allow_unencrypted=options.allow_unencrypted_storage, account_name="MSALCache", cache_name=options.name,
+    )
+    return msal_extensions.PersistedTokenCache(persistence)
 
 
 def _get_persistence(allow_unencrypted, account_name, cache_name):

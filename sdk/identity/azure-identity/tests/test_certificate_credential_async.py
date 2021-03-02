@@ -6,11 +6,12 @@ from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
+from azure.identity import TokenCachePersistenceOptions
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._internal import _TokenCache
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import CertificateCredential
 
+from msal import TokenCache
 import pytest
 
 from helpers import build_aad_response, urlsafeb64_decode, mock_response, Request
@@ -186,6 +187,26 @@ async def test_request_body(cert_path, cert_password):
     assert token.token == access_token
 
 
+@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+def test_token_cache(cert_path, cert_password):
+    """the credential should optionally use a persistent cache, and default to an in memory cache"""
+
+    with patch("azure.identity._persistent_cache.msal_extensions") as mock_msal_extensions:
+        with patch(CertificateCredential.__module__ + ".msal") as mock_msal:
+            CertificateCredential("tenant", "client-id", cert_path, password=cert_password)
+        assert mock_msal.TokenCache.call_count == 1
+        assert not mock_msal_extensions.PersistedTokenCache.called
+
+        CertificateCredential(
+            "tenant",
+            "client-id",
+            cert_path,
+            password=cert_password,
+            cache_persistence_options=TokenCachePersistenceOptions(),
+        )
+        assert mock_msal_extensions.PersistedTokenCache.call_count == 1
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
 async def test_cache_multiple_clients(cert_path, cert_password):
@@ -200,12 +221,12 @@ async def test_cache_multiple_clients(cert_path, cert_password):
         requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_b))]
     )
 
-    cache = _TokenCache()
+    cache = TokenCache()
     credential_a = CertificateCredential(
-        "tenant", "client-a", cert_path, password=cert_password, transport=transport_a, token_cache=cache
+        "tenant", "client-a", cert_path, password=cert_password, transport=transport_a, _cache=cache
     )
     credential_b = CertificateCredential(
-        "tenant", "client-b", cert_path, password=cert_password, transport=transport_b, token_cache=cache
+        "tenant", "client-b", cert_path, password=cert_password, transport=transport_b, _cache=cache
     )
 
     # A caches a token
@@ -218,3 +239,5 @@ async def test_cache_multiple_clients(cert_path, cert_password):
     token_b = await credential_b.get_token(scope)
     assert token_b.token == access_token_b
     assert transport_b.send.call_count == 1
+
+    assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2
