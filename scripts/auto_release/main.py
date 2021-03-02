@@ -146,8 +146,10 @@ def edit_file_setup():
     path = f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
     with open(f'{path}/setup.py', 'r') as file_in:
         list_in = file_in.readlines()
+    my_print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
     for i in range(0, len(list_in)):
         list_in[i] = list_in[i].replace('msrestazure>=0.4.32,<2.0.0', 'azure-mgmt-core>=1.2.0,<2.0.0')
+        my_print(list_in[i])
     with open(f'{path}/setup.py', 'w') as file_out:
         file_out.writelines(list_in)
 
