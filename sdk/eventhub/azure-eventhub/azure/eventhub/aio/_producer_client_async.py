@@ -459,11 +459,13 @@ class EventHubProducerClient(ClientBaseAsync):
         """Get the information about the state of publishing for a partition as observed by
         the `EventHubProducerClient`. This data can always be read, but will only be populated with
         information relevant to the active features for the producer client.
+
             - `enable_idempotent_publishing` (bool)
             - `partition_id` (str)
             - `last_published_sequence_number` (Optional[int])
             - `producer_group_id` (Optional[int])
             - `owner_level` (Optional[int]
+
         :param partition_id: The target partition ID.
         :type partition_id: str
         :rtype: dict
