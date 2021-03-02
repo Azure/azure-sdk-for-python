@@ -34,15 +34,7 @@ class AcquiredPhoneNumber(msrest.serialization.Model):
      ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
     :param purchase_date: Required. The date and time that the phone number was purchased.
     :type purchase_date: ~datetime.datetime
-<<<<<<< HEAD
-<<<<<<< HEAD
     :param cost: Required. The incurred cost for a single phone number.
-=======
-    :param cost: The incurred cost for a single phone number.
->>>>>>> 798b57943... Regenerated code
-=======
-    :param cost: Required. The incurred cost for a single phone number.
->>>>>>> f5c946df0... Regenerated code and addressed comments
     :type cost: ~azure.communication.phonenumbers.models.PhoneNumberCost
     """
 
@@ -79,18 +71,8 @@ class AcquiredPhoneNumber(msrest.serialization.Model):
         self.phone_number_type = kwargs['phone_number_type']
         self.capabilities = kwargs['capabilities']
         self.assignment_type = kwargs['assignment_type']
-<<<<<<< HEAD
-<<<<<<< HEAD
         self.purchase_date = kwargs['purchase_date']
         self.cost = kwargs['cost']
-=======
-        self.purchase_date = kwargs.get('purchase_date', None)
-        self.cost = kwargs.get('cost', None)
->>>>>>> 798b57943... Regenerated code
-=======
-        self.purchase_date = kwargs['purchase_date']
-        self.cost = kwargs['cost']
->>>>>>> f5c946df0... Regenerated code and addressed comments
 
 
 class AcquiredPhoneNumbers(msrest.serialization.Model):

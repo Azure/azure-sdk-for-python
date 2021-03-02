@@ -5,26 +5,12 @@ interactions:
       Accept:
       - application/json
       Date:
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
       - Tue, 16 Feb 2021 19:45:38 GMT
-=======
-      - Thu, 11 Feb 2021 20:34:10 GMT
->>>>>>> 798b57943... Regenerated code
-=======
-      - Tue, 16 Feb 2021 19:28:29 GMT
->>>>>>> 2deb4f44c... Tests work with new area code
-=======
-      - Tue, 16 Feb 2021 19:45:38 GMT
->>>>>>> 2b281d8ce... Addresses comments
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-<<<<<<< HEAD
-<<<<<<< HEAD
     uri: https://sanitized.communication.azure.com/phoneNumbers/%2B18332272412?api-version=2021-03-07
   response:
     body:
@@ -42,32 +28,4 @@ interactions:
       code: 200
       message: OK
     url: https://sanitized.communication.azure.com/phoneNumbers/%2B18332272412?api-version=2021-03-07
-=======
-    uri: https://sanitized.communication.azure.com/phoneNumbers/%2B16194895875?api-version=2021-03-07
-=======
-    uri: https://sanitized.communication.azure.com/phoneNumbers/%2B18332272412?api-version=2021-03-07
->>>>>>> 2b281d8ce... Addresses comments
-  response:
-    body:
-      string: '{"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US",
-        "phoneNumberType": "TollFree", "capabilities": {"calling": "inbound", "sms":
-        "inbound+outbound"}, "assignmentType": "Application"}'
-    headers:
-      content-type: application/json; charset=utf-8
-      date: Tue, 16 Feb 2021 19:45:39 GMT
-      ms-cv: pDmuqc/E1EGttt2gQZMupQ.0
-      request-context: appId=
-      transfer-encoding: chunked
-      x-processing-time: 960ms
-    status:
-<<<<<<< HEAD
-      code: 401
-      message: Unauthorized
-    url: https://sanitized.communication.azure.com/phoneNumbers/%2B16194895875?api-version=2021-03-07
->>>>>>> 798b57943... Regenerated code
-=======
-      code: 200
-      message: OK
-    url: https://sanitized.communication.azure.com/phoneNumbers/%2B18332272412?api-version=2021-03-07
->>>>>>> 2b281d8ce... Addresses comments
 version: 1

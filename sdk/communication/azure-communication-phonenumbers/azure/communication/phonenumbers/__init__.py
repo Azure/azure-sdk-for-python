@@ -8,40 +8,24 @@ from ._phone_numbers_client import PhoneNumbersClient
 
 from ._generated.models import (
     AcquiredPhoneNumber,
-<<<<<<< HEAD
     PhoneNumberCapabilities,
     PhoneNumberCost,
-=======
-    AcquiredPhoneNumbers,
-    CommunicationError,
-    PhoneNumberCapabilities,
-    PhoneNumberCost,
-    PhoneNumberOperation,
->>>>>>> cb958a482... Added fixed samples
     PhoneNumberSearchResult,
     BillingFrequency,
     PhoneNumberAssignmentType,
-    PhoneNumberCapabilityValue,
+    PhoneNumberCapabilityType,
     PhoneNumberOperationStatus,
     PhoneNumberType,
 )
 
 __all__ = [
     'AcquiredPhoneNumber',
-<<<<<<< HEAD
     'PhoneNumberCapabilities',
     'PhoneNumberCost',
-=======
-    'AcquiredPhoneNumbers',
-    'CommunicationError',
-    'PhoneNumberCapabilities',
-    'PhoneNumberCost',
-    'PhoneNumberOperation',
->>>>>>> cb958a482... Added fixed samples
     'PhoneNumberSearchResult',
     'BillingFrequency',
     'PhoneNumberAssignmentType',
-    'PhoneNumberCapabilityValue',
+    'PhoneNumberCapabilityType',
     'PhoneNumberOperationStatus',
     'PhoneNumberType',
     'PhoneNumbersClient'

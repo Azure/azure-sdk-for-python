@@ -16,8 +16,6 @@ from .._version import SDK_MONIKER
 class PhoneNumbersClient(object):
     def __init__(
                 self,
-<<<<<<< HEAD
-<<<<<<< HEAD
                 endpoint, # type: str
                 credential, # type: str
                 **kwargs # type: Any
@@ -47,71 +45,15 @@ class PhoneNumbersClient(object):
     ):
         # type: (...) -> PhoneNumbersClient
         """Create PhoneNumbersClient from a Connection String.
-<<<<<<< HEAD
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
         :returns: Instance of PhoneNumbersClient.
         :rtype: ~azure.communication.phonenumbers.aio.PhoneNumbersClient
-=======
-                endpoint,  # type: str
-                credential,  # type: str
-                **kwargs  # type: Any
-=======
-                endpoint, # type: str
-                credential, # type: str
-                **kwargs # type: Any
->>>>>>> 2b281d8ce... Addresses comments
-        ):
-        # type: (...) -> None
-        try:
-            if not endpoint.lower().startswith('http'):
-                endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
-
-        if not credential:
-            raise ValueError(
-                "You need to provide account shared key to authenticate.")
-
-        self._endpoint = endpoint
-        self._phone_number_client = PhoneNumbersClientGen(
-            self._endpoint,
-            authentication_policy=get_authentication_policy(endpoint, credential),
-            sdk_moniker=SDK_MONIKER,
-            **kwargs)
-
-    @classmethod
-    def from_connection_string(
-            cls, conn_str, # type: str
-            **kwargs # type: Any
-    ):
-        # type: (...) -> PhoneNumbersAdministrationClient
-        """Create PhoneNumbersAdministrationClient from a Connection String.
-        :param str conn_str:
-            A connection string to an Azure Communication Service resource.
-        :returns: Instance of PhoneNumbersAdministrationClient.
-        :rtype: ~azure.communication.PhoneNumbersAdministrationClient
->>>>>>> 798b57943... Regenerated code
-=======
-        :param str conn_str:
-            A connection string to an Azure Communication Service resource.
-        :returns: Instance of PhoneNumbersClient.
-        :rtype: ~azure.communication.phonenumbers.aio.PhoneNumbersClient
->>>>>>> 33c619188... Added managed identity tests and addressed apiview comments
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
         return cls(endpoint, access_key, **kwargs)
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
-    
-    
->>>>>>> 798b57943... Regenerated code
-=======
-
->>>>>>> 2b281d8ce... Addresses comments
     @distributed_trace_async
     async def begin_purchase_phone_numbers(
             self,
@@ -135,15 +77,7 @@ class PhoneNumbersClient(object):
             search_id,
             **kwargs
         )
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 798b57943... Regenerated code
-=======
-
->>>>>>> 2b281d8ce... Addresses comments
     @distributed_trace_async
     async def begin_release_phone_number(
             self,
@@ -176,16 +110,7 @@ class PhoneNumbersClient(object):
             phone_number_type, # type: str
             assignment_type, # type: str
             capabilities,
-<<<<<<< HEAD
-<<<<<<< HEAD
             quantity=None, # type: int
-=======
-            area_code, # type: str
-            quantity=1, # type: int
->>>>>>> 2b281d8ce... Addresses comments
-=======
-            quantity=None, # type: int
->>>>>>> 33c619188... Added managed identity tests and addressed apiview comments
             **kwargs
     ):
         # type: (...) -> AsyncLROPoller[PhoneNumberSearchResult]
@@ -205,7 +130,7 @@ class PhoneNumbersClient(object):
         :type capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
         :param quantity: The quantity of phone numbers in the search. Should be at least 1.
         :type quantity: int
-        :keyword str area_code: The area code of the desired phone number, e.g. 425. If not set, 
+        :keyword str area_code: The area code of the desired phone number, e.g. 425. If not set,
             any area code could be used in the final search.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
@@ -219,18 +144,8 @@ class PhoneNumbersClient(object):
             phone_number_type=phone_number_type,
             assignment_type=assignment_type,
             capabilities=capabilities,
-<<<<<<< HEAD
-<<<<<<< HEAD
             quantity=quantity,
             area_code=kwargs.pop('area_code', None)
-=======
-            area_code=area_code,
-            quantity=quantity
->>>>>>> 2b281d8ce... Addresses comments
-=======
-            quantity=quantity,
-            area_code=kwargs.pop('area_code', None)
->>>>>>> 33c619188... Added managed identity tests and addressed apiview comments
         )
         return await self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
@@ -242,13 +157,8 @@ class PhoneNumbersClient(object):
     async def begin_update_phone_number_capabilities(
             self,
             phone_number, # type: str
-<<<<<<< HEAD
-            sms = None, # type: str
-            calling = None, # type: str
-=======
-            sms, # type: str
-            calling, # type: str
->>>>>>> 2b281d8ce... Addresses comments
+            sms=None, # type: str
+            calling=None, # type: str
             **kwargs # type: Any
     ):
         # type: (...) -> AsyncLROPoller["_models.AcquiredPhoneNumber"]
@@ -258,9 +168,9 @@ class PhoneNumbersClient(object):
             encoded as %2B, e.g. +11234567890.
         :type phone_number: str
         :param calling: Capability value for calling.
-        :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityValue
+        :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
         :param sms: Capability value for SMS.
-        :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityValue
+        :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
@@ -299,18 +209,8 @@ class PhoneNumbersClient(object):
 
     @distributed_trace
     def list_acquired_phone_numbers(
-<<<<<<< HEAD
-<<<<<<< HEAD
         self,
         **kwargs # type: Any
-=======
-        self, 
-        **kwargs
->>>>>>> 798b57943... Regenerated code
-=======
-        self,
-        **kwargs # type: Any
->>>>>>> 2b281d8ce... Addresses comments
     ):
         # type: (...) -> AsyncItemPaged[AcquiredPhoneNumbers]
         """Gets the list of all acquired phone numbers.
@@ -326,44 +226,6 @@ class PhoneNumbersClient(object):
         return self._phone_number_client.phone_numbers.list_phone_numbers(
             **kwargs
         )
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    
-    @distributed_trace_async
-    async def update_phone_number(
-            self, 
-            phone_number,
-            callback_uri,
-            application_id,
-            **kwargs
-    ):
-        # type: (...) -> AcquiredPhoneNumber
-        """Updates the configuration of a phone number.
->>>>>>> 798b57943... Regenerated code
-
-    async def __aenter__(self) -> "PhoneNumbersClient":
-        await self._phone_number_client.__aenter__()
-        return self
-
-    async def __aexit__(self, *args: "Any") -> None:
-        await self.close()
-
-    async def close(self) -> None:
-        """Close the :class:
-        `~azure.communication.phonenumbers.aio.PhoneNumbersClient` session.
-        """
-<<<<<<< HEAD
-        await self._phone_number_client.__aexit__()
-=======
-        return await self._phone_number_client.phone_numbers.update(
-            phone_number,
-            callback_uri,
-            application_id,
-            **kwargs
-        )
-=======
->>>>>>> 2b281d8ce... Addresses comments
 
     async def __aenter__(self) -> "PhoneNumbersClient":
         await self._phone_number_client.__aenter__()
@@ -377,7 +239,3 @@ class PhoneNumbersClient(object):
         `~azure.communication.phonenumbers.aio.PhoneNumbersClient` session.
         """
         await self._phone_number_client.__aexit__()
-<<<<<<< HEAD
->>>>>>> 798b57943... Regenerated code
-=======
->>>>>>> 2b281d8ce... Addresses comments

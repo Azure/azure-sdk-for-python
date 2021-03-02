@@ -109,16 +109,7 @@ class PhoneNumbersClient(object):
             phone_number_type, # type: str
             assignment_type, # type: str
             capabilities, # type: PhoneNumberCapabilities
-<<<<<<< HEAD
-<<<<<<< HEAD
             quantity=None, # type: int
-=======
-            area_code, # type: str
-            quantity=1, # type: int
->>>>>>> 2b281d8ce... Addresses comments
-=======
-            quantity=None, # type: int
->>>>>>> 33c619188... Added managed identity tests and addressed apiview comments
             **kwargs # type: Any
     ):
         # type: (...) -> LROPoller[PhoneNumberSearchResult]
@@ -152,39 +143,20 @@ class PhoneNumbersClient(object):
             phone_number_type=phone_number_type,
             assignment_type=assignment_type,
             capabilities=capabilities,
-<<<<<<< HEAD
-<<<<<<< HEAD
             quantity=quantity,
             area_code=kwargs.pop('area_code', None)
-=======
-            area_code=area_code,
-            quantity=quantity
->>>>>>> 2b281d8ce... Addresses comments
-=======
-            quantity=quantity,
-            area_code=kwargs.pop('area_code', None)
->>>>>>> 33c619188... Added managed identity tests and addressed apiview comments
         )
         return self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
             search_request,
             **kwargs
         )
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 798b57943... Regenerated code
-=======
-
->>>>>>> 2b281d8ce... Addresses comments
     @distributed_trace
     def begin_update_phone_number_capabilities(
             self,
             phone_number, # type: str
-            sms, #type: str or PhoneNumberCapabilityValue
-            calling, #type: str or PhoneNumberCapabilityValue
+            sms=None, #type: str or PhoneNumberCapabilityType
+            calling=None, #type: str or PhoneNumberCapabilityType
             **kwargs # type: Any
     ):
         # type: (...) -> LROPoller["_models.AcquiredPhoneNumber"]
@@ -194,9 +166,9 @@ class PhoneNumbersClient(object):
             encoded as %2B, e.g. +11234567890.
         :type phone_number: str
         :param calling: Capability value for calling.
-        :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityValue
+        :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
         :param sms: Capability value for SMS.
-        :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityValue
+        :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
@@ -208,8 +180,8 @@ class PhoneNumbersClient(object):
         """
         return self._phone_number_client.phone_numbers.begin_update_capabilities(
             phone_number,
-            calling,
-            sms,
+            calling=calling,
+            sms=sms,
             **kwargs
         )
 
@@ -244,15 +216,6 @@ class PhoneNumbersClient(object):
         :param skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0.
         :type skip: int
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        :param top: An optional parameter for how many entries to return, for pagination purposes. The
-         default value is 100.
-        :type top: int
->>>>>>> 2b281d8ce... Addresses comments
-=======
->>>>>>> a11fa64fb... Corrected samples
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AcquiredPhoneNumber]
         """
         return self._phone_number_client.phone_numbers.list_phone_numbers(
