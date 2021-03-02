@@ -503,8 +503,6 @@ class ChatThreadClient(object):
             **kwargs)
 
         response = []
-        failed_participant = None
-        communication_error = None
         if hasattr(add_chat_participants_result, 'errors') and \
                 add_chat_participants_result.errors is not None:
             response = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
@@ -515,10 +513,8 @@ class ChatThreadClient(object):
         if len(response) != 0:
             failed_participant = response[0][0]
             communication_error = response[0][1]
-            raise RuntimeError('Participant: ', communication_error.target, ' failed to join thread due to: ',
+            raise RuntimeError('Participant: ', failed_participant, ' failed to join thread due to: ',
                                communication_error.message)
-
-        return None
 
     @distributed_trace_async
     async def add_participants(
