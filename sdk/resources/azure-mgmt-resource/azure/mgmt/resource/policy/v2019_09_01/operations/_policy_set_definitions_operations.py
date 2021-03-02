@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class PolicySetDefinitionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,10 +48,10 @@ class PolicySetDefinitionsOperations(object):
     def create_or_update(
         self,
         policy_set_definition_name,  # type: str
-        parameters,  # type: "models.PolicySetDefinition"
+        parameters,  # type: "_models.PolicySetDefinition"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicySetDefinition"
+        # type: (...) -> "_models.PolicySetDefinition"
         """Creates or updates a policy set definition.
 
         This operation creates or updates a policy set definition in the given subscription with the
@@ -66,7 +66,7 @@ class PolicySetDefinitionsOperations(object):
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -174,7 +174,7 @@ class PolicySetDefinitionsOperations(object):
         policy_set_definition_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicySetDefinition"
+        # type: (...) -> "_models.PolicySetDefinition"
         """Retrieves a policy set definition.
 
         This operation retrieves the policy set definition in the given subscription with the given
@@ -187,7 +187,7 @@ class PolicySetDefinitionsOperations(object):
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -232,7 +232,7 @@ class PolicySetDefinitionsOperations(object):
         policy_set_definition_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicySetDefinition"
+        # type: (...) -> "_models.PolicySetDefinition"
         """Retrieves a built in policy set definition.
 
         This operation retrieves the built-in policy set definition with the given name.
@@ -244,7 +244,7 @@ class PolicySetDefinitionsOperations(object):
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -287,7 +287,7 @@ class PolicySetDefinitionsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PolicySetDefinitionListResult"]
+        # type: (...) -> Iterable["_models.PolicySetDefinitionListResult"]
         """Retrieves the policy set definitions for a subscription.
 
         This operation retrieves a list of all the policy set definitions in the given subscription.
@@ -297,7 +297,7 @@ class PolicySetDefinitionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -356,7 +356,7 @@ class PolicySetDefinitionsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PolicySetDefinitionListResult"]
+        # type: (...) -> Iterable["_models.PolicySetDefinitionListResult"]
         """Retrieves built-in policy set definitions.
 
         This operation retrieves a list of all the built-in policy set definitions.
@@ -366,7 +366,7 @@ class PolicySetDefinitionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -421,10 +421,10 @@ class PolicySetDefinitionsOperations(object):
         self,
         policy_set_definition_name,  # type: str
         management_group_id,  # type: str
-        parameters,  # type: "models.PolicySetDefinition"
+        parameters,  # type: "_models.PolicySetDefinition"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicySetDefinition"
+        # type: (...) -> "_models.PolicySetDefinition"
         """Creates or updates a policy set definition.
 
         This operation creates or updates a policy set definition in the given management group with
@@ -441,7 +441,7 @@ class PolicySetDefinitionsOperations(object):
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -554,7 +554,7 @@ class PolicySetDefinitionsOperations(object):
         management_group_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PolicySetDefinition"
+        # type: (...) -> "_models.PolicySetDefinition"
         """Retrieves a policy set definition.
 
         This operation retrieves the policy set definition in the given management group with the given
@@ -569,7 +569,7 @@ class PolicySetDefinitionsOperations(object):
         :rtype: ~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -614,7 +614,7 @@ class PolicySetDefinitionsOperations(object):
         management_group_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PolicySetDefinitionListResult"]
+        # type: (...) -> Iterable["_models.PolicySetDefinitionListResult"]
         """Retrieves all policy set definitions in management group.
 
         This operation retrieves a list of all the a policy set definition in the given management
@@ -627,7 +627,7 @@ class PolicySetDefinitionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2019_09_01.models.PolicySetDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicySetDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicySetDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

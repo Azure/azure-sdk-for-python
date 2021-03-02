@@ -1,0 +1,28 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-mixedreality-authentication/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      X-MRC-CV:
+      - DOGUG9rex0lylvLZmhuJgR
+    method: GET
+    uri: https://sts.mixedreality.azure.com/Accounts/68321d5a-7978-4ceb-b880-0f49751daae9/token?api-version=2019-02-28-preview
+  response:
+    body:
+      string: '{"AccessToken":"eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJlbWFpbCI6IkJvYkBjb250b3NvLmNvbSIsImdpdmVuX25hbWUiOiJCb2IiLCJpc3MiOiJodHRwOi8vRGVmYXVsdC5Jc3N1ZXIuY29tIiwiYXVkIjoiaHR0cDovL0RlZmF1bHQuQXVkaWVuY2UuY29tIiwiaWF0IjoiMTYwNzk3ODY4MyIsIm5iZiI6IjE2MDc5Nzg2ODMiLCJleHAiOiIxNjA3OTc4OTgzIn0=."}'
+    headers:
+      cache-control: no-store,no-cache
+      content-length: '1264'
+      content-type: application/json; charset=utf-8
+      date: Thu, 28 Jan 2021 18:31:51 GMT
+      ms-cv: K89E7J8QQ0qfkjIiukWztw.0
+      pragma: no-cache
+      x-content-type-options: nosniff
+    status:
+      code: 200
+      message: OK
+    url: https://sts.mixedreality.azure.com/Accounts/68321d5a-7978-4ceb-b880-0f49751daae9/token?api-version=2019-02-28-preview
+version: 1

@@ -457,6 +457,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeHealthcareEntitiesResultItem]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
+        NOTE: this endpoint is currently in gated preview, meaning your subscription needs to be allow-listed
+        for you to use this endpoint. More information about that here:
+        https://aka.ms/text-analytics-health-request-access
+
         Entities are associated with references that can be found in existing knowledge bases,
         such as UMLS, CHV, MSH, etc.
 
@@ -690,6 +694,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         if show_opinion_mining is not None:
             kwargs.update({"opinion_mining": show_opinion_mining})
+
         try:
             return self._client.sentiment(
                 documents=docs,

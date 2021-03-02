@@ -259,7 +259,7 @@ class ContentSettings(BlobContentSettings):
     :ivar str cache_control:
         If the cache_control has previously been set for
         the file, that value is stored.
-    :ivar str content_md5:
+    :ivar bytearray content_md5:
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.
@@ -280,7 +280,7 @@ class ContentSettings(BlobContentSettings):
     :keyword str cache_control:
         If the cache_control has previously been set for
         the file, that value is stored.
-    :keyword str content_md5:
+    :keyword bytearray content_md5:
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.

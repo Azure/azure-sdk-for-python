@@ -4,30 +4,52 @@
 # --------------------------------------------------------------------------------------------
 from enum import Enum
 
+
 class SystemEventNames(str, Enum):
     """
     This enum represents the names of the various event types for the system events published to
     Azure Event Grid. To check the list of recognizable system topics,
     visit https://docs.microsoft.com/azure/event-grid/system-topics.
     """
-    ACSChatMemberAddedToThreadWithUserEventName = "Microsoft.Communication.ChatMemberAddedToThreadWithUser"
-    ACSChatMemberRemovedFromThreadWithUserEventName = "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser"
+
+    ACSChatMemberAddedToThreadWithUserEventName = (
+        "Microsoft.Communication.ChatMemberAddedToThreadWithUser"
+    )
+    ACSChatMemberRemovedFromThreadWithUserEventName = (
+        "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser"
+    )
     ACSChatMessageDeletedEventName = "Microsoft.Communication.ChatMessageDeleted"
     ACSChatMessageEditedEventName = "Microsoft.Communication.ChatMessageEdited"
     ACSChatMessageReceivedEventName = "Microsoft.Communication.ChatMessageReceived"
-    ACSChatThreadCreatedWithUserEventName = "Microsoft.Communication.ChatThreadCreatedWithUser"
-    ACSChatThreadPropertiesUpdatedPerUserEventName = "Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser"
-    ACSChatThreadWithUserDeletedEventName = "Microsoft.Communication.ChatThreadWithUserDeleted"
-    ACSSMSDeliveryReportReceivedEventName = "Microsoft.Communication.SMSDeliveryReportReceived"
+    ACSChatThreadCreatedWithUserEventName = (
+        "Microsoft.Communication.ChatThreadCreatedWithUser"
+    )
+    ACSChatThreadPropertiesUpdatedPerUserEventName = (
+        "Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser"
+    )
+    ACSChatThreadWithUserDeletedEventName = (
+        "Microsoft.Communication.ChatThreadWithUserDeleted"
+    )
+    ACSSMSDeliveryReportReceivedEventName = (
+        "Microsoft.Communication.SMSDeliveryReportReceived"
+    )
     ACSSMSReceivedEventName = "Microsoft.Communication.SMSReceived"
-    AppConfigurationKeyValueDeletedEventName = "Microsoft.AppConfiguration.KeyValueDeleted"
-    AppConfigurationKeyValueModifiedEventName = "Microsoft.AppConfiguration.KeyValueModified"
+    AppConfigurationKeyValueDeletedEventName = (
+        "Microsoft.AppConfiguration.KeyValueDeleted"
+    )
+    AppConfigurationKeyValueModifiedEventName = (
+        "Microsoft.AppConfiguration.KeyValueModified"
+    )
     ContainerRegistryChartDeletedEventName = "Microsoft.ContainerRegistry.ChartDeleted"
     ContainerRegistryChartPushedEventName = "Microsoft.ContainerRegistry.ChartPushed"
     ContainerRegistryImageDeletedEventName = "Microsoft.ContainerRegistry.ImageDeleted"
     ContainerRegistryImagePushedEventName = "Microsoft.ContainerRegistry.ImagePushed"
-    EventGridSubscriptionDeletedEventName = "Microsoft.EventGrid.SubscriptionDeletedEvent"
-    EventGridSubscriptionValidationEventName = "Microsoft.EventGrid.SubscriptionValidationEvent"
+    EventGridSubscriptionDeletedEventName = (
+        "Microsoft.EventGrid.SubscriptionDeletedEvent"
+    )
+    EventGridSubscriptionValidationEventName = (
+        "Microsoft.EventGrid.SubscriptionValidationEvent"
+    )
     EventHubCaptureFileCreatedEventName = "Microsoft.EventHub.CaptureFileCreated"
     IoTHubDeviceConnectedEventName = "Microsoft.Devices.DeviceConnected"
     IoTHubDeviceCreatedEventName = "Microsoft.Devices.DeviceCreated"
@@ -37,18 +59,32 @@ class SystemEventNames(str, Enum):
     KeyVaultAccessPolicyChangedEventName = "Microsoft.KeyVault.VaultAccessPolicyChanged"
     KeyVaultCertificateExpiredEventName = "Microsoft.KeyVault.CertificateExpired"
     KeyVaultCertificateNearExpiryEventName = "Microsoft.KeyVault.CertificateNearExpiry"
-    KeyVaultCertificateNewVersionCreatedEventName = "Microsoft.KeyVault.CertificateNewVersionCreated"
+    KeyVaultCertificateNewVersionCreatedEventName = (
+        "Microsoft.KeyVault.CertificateNewVersionCreated"
+    )
     KeyVaultKeyExpiredEventName = "Microsoft.KeyVault.KeyExpired"
     KeyVaultKeyNearExpiryEventName = "Microsoft.KeyVault.KeyNearExpiry"
     KeyVaultKeyNewVersionCreatedEventName = "Microsoft.KeyVault.KeyNewVersionCreated"
     KeyVaultSecretExpiredEventName = "Microsoft.KeyVault.SecretExpired"
     KeyVaultSecretNearExpiryEventName = "Microsoft.KeyVault.SecretNearExpiry"
-    KeyVaultSecretNewVersionCreatedEventName = "Microsoft.KeyVault.SecretNewVersionCreated"
-    MachineLearningServicesDatasetDriftDetectedEventName = "Microsoft.MachineLearningServices.DatasetDriftDetected"
-    MachineLearningServicesModelDeployedEventName = "Microsoft.MachineLearningServices.ModelDeployed"
-    MachineLearningServicesModelRegisteredEventName = "Microsoft.MachineLearningServices.ModelRegistered"
-    MachineLearningServicesRunCompletedEventName = "Microsoft.MachineLearningServices.RunCompleted"
-    MachineLearningServicesRunStatusChangedEventName = "Microsoft.MachineLearningServices.RunStatusChanged"
+    KeyVaultSecretNewVersionCreatedEventName = (
+        "Microsoft.KeyVault.SecretNewVersionCreated"
+    )
+    MachineLearningServicesDatasetDriftDetectedEventName = (
+        "Microsoft.MachineLearningServices.DatasetDriftDetected"
+    )
+    MachineLearningServicesModelDeployedEventName = (
+        "Microsoft.MachineLearningServices.ModelDeployed"
+    )
+    MachineLearningServicesModelRegisteredEventName = (
+        "Microsoft.MachineLearningServices.ModelRegistered"
+    )
+    MachineLearningServicesRunCompletedEventName = (
+        "Microsoft.MachineLearningServices.RunCompleted"
+    )
+    MachineLearningServicesRunStatusChangedEventName = (
+        "Microsoft.MachineLearningServices.RunStatusChanged"
+    )
     MapsGeofenceEnteredEventName = "Microsoft.Maps.GeofenceEntered"
     MapsGeofenceExitedEventName = "Microsoft.Maps.GeofenceExited"
     MapsGeofenceResultEventName = "Microsoft.Maps.GeofenceResult"
@@ -67,15 +103,31 @@ class SystemEventNames(str, Enum):
     MediaJobProcessingEventName = "Microsoft.Media.JobProcessing"
     MediaJobScheduledEventName = "Microsoft.Media.JobScheduled"
     MediaJobStateChangeEventName = "Microsoft.Media.JobStateChange"
-    MediaLiveEventConnectionRejectedEventName = "Microsoft.Media.LiveEventConnectionRejected"
-    MediaLiveEventEncoderConnectedEventName = "Microsoft.Media.LiveEventEncoderConnected"
-    MediaLiveEventEncoderDisconnectedEventName = "Microsoft.Media.LiveEventEncoderDisconnected"
-    MediaLiveEventIncomingDataChunkDroppedEventName = "Microsoft.Media.LiveEventIncomingDataChunkDropped"
-    MediaLiveEventIncomingStreamReceivedEventName = "Microsoft.Media.LiveEventIncomingStreamReceived"
-    MediaLiveEventIncomingStreamsOutOfSyncEventName = "Microsoft.Media.LiveEventIncomingStreamsOutOfSync"
-    MediaLiveEventIncomingVideoStreamsOutOfSyncEventName = "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync"
+    MediaLiveEventConnectionRejectedEventName = (
+        "Microsoft.Media.LiveEventConnectionRejected"
+    )
+    MediaLiveEventEncoderConnectedEventName = (
+        "Microsoft.Media.LiveEventEncoderConnected"
+    )
+    MediaLiveEventEncoderDisconnectedEventName = (
+        "Microsoft.Media.LiveEventEncoderDisconnected"
+    )
+    MediaLiveEventIncomingDataChunkDroppedEventName = (
+        "Microsoft.Media.LiveEventIncomingDataChunkDropped"
+    )
+    MediaLiveEventIncomingStreamReceivedEventName = (
+        "Microsoft.Media.LiveEventIncomingStreamReceived"
+    )
+    MediaLiveEventIncomingStreamsOutOfSyncEventName = (
+        "Microsoft.Media.LiveEventIncomingStreamsOutOfSync"
+    )
+    MediaLiveEventIncomingVideoStreamsOutOfSyncEventName = (
+        "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync"
+    )
     MediaLiveEventIngestHeartbeatEventName = "Microsoft.Media.LiveEventIngestHeartbeat"
-    MediaLiveEventTrackDiscontinuityDetectedEventName = "Microsoft.Media.LiveEventTrackDiscontinuityDetected"
+    MediaLiveEventTrackDiscontinuityDetectedEventName = (
+        "Microsoft.Media.LiveEventTrackDiscontinuityDetected"
+    )
     ResourceActionCancelEventName = "Microsoft.Resources.ResourceActionCancel"
     ResourceActionFailureEventName = "Microsoft.Resources.ResourceActionFailure"
     ResourceActionSuccessEventName = "Microsoft.Resources.ResourceActionSuccess"
@@ -85,17 +137,21 @@ class SystemEventNames(str, Enum):
     ResourceWriteCancelEventName = "Microsoft.Resources.ResourceWriteCancel"
     ResourceWriteFailureEventName = "Microsoft.Resources.ResourceWriteFailure"
     ResourceWriteSuccessEventName = "Microsoft.Resources.ResourceWriteSuccess"
-    ServiceBusActiveMessagesAvailableWithNoListenersEventName = \
-    "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners"
-    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = \
-    "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener"
+    ServiceBusActiveMessagesAvailableWithNoListenersEventName = (
+        "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners"
+    )
+    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = (
+        "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener"
+    )
     StorageBlobCreatedEventName = "Microsoft.Storage.BlobCreated"
     StorageBlobDeletedEventName = "Microsoft.Storage.BlobDeleted"
     StorageBlobRenamedEventName = "Microsoft.Storage.BlobRenamed"
     StorageDirectoryCreatedEventName = "Microsoft.Storage.DirectoryCreated"
     StorageDirectoryDeletedEventName = "Microsoft.Storage.DirectoryDeleted"
     StorageDirectoryRenamedEventName = "Microsoft.Storage.DirectoryRenamed"
-    StorageLifecyclePolicyCompletedEventName = "Microsoft.Storage.LifecyclePolicyCompleted"
+    StorageLifecyclePolicyCompletedEventName = (
+        "Microsoft.Storage.LifecyclePolicyCompleted"
+    )
     WebAppServicePlanUpdatedEventName = "Microsoft.Web.AppServicePlanUpdated"
     WebAppUpdatedEventName = "Microsoft.Web.AppUpdated"
     WebBackupOperationCompletedEventName = "Microsoft.Web.BackupOperationCompleted"
@@ -107,5 +163,7 @@ class SystemEventNames(str, Enum):
     WebSlotSwapCompletedEventName = "Microsoft.Web.SlotSwapCompleted"
     WebSlotSwapFailedEventName = "Microsoft.Web.SlotSwapFailed"
     WebSlotSwapStartedEventName = "Microsoft.Web.SlotSwapStarted"
-    WebSlotSwapWithPreviewCancelledEventName = "Microsoft.Web.SlotSwapWithPreviewCancelled"
+    WebSlotSwapWithPreviewCancelledEventName = (
+        "Microsoft.Web.SlotSwapWithPreviewCancelled"
+    )
     WebSlotSwapWithPreviewStartedEventName = "Microsoft.Web.SlotSwapWithPreviewStarted"

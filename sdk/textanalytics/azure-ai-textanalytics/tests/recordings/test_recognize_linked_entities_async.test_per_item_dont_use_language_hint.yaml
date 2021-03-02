@@ -12,23 +12,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: b452e858-199c-4882-b6ec-feb44a6a41b6
+      apim-request-id: ff7177a4-27a7-4819-aa54-94c6d13ed76b
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 27 Jan 2021 02:23:52 GMT
+      date: Tue, 23 Feb 2021 17:09:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '21'
+      x-envoy-upstream-service-time: '23'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

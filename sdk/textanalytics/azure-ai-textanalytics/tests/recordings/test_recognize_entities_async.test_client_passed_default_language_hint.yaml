@@ -12,27 +12,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"id":"1","entities":[{"text":"I will go to the park","category":"Product","offset":0,"length":21,"confidenceScore":0.5}],"warnings":[]},{"id":"2","entities":[{"text":"hotel
-        we stayed at","category":"Location","offset":19,"length":18,"confidenceScore":0.69}],"warnings":[]},{"id":"3","entities":[{"text":"The
-        restaurant had really good food","category":"Organization","offset":0,"length":35,"confidenceScore":0.47}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+      string: '{"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.95}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.89}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","offset":4,"length":10,"confidenceScore":0.87}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
-      apim-request-id: 0f64cc23-89d9-44c6-987c-970c0747b28f
+      apim-request-id: 53dc8a7b-004e-41a3-9394-4314cce761c0
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 27 Jan 2021 02:23:11 GMT
+      date: Tue, 23 Feb 2021 17:09:12 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '68'
+      x-envoy-upstream-service-time: '31'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -46,25 +44,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+      string: '{"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.95}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.89}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.87}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
-      apim-request-id: e3b713db-64ca-4a9d-8d50-ba4d59d8c5aa
+      apim-request-id: 160243c8-f8fd-4592-831f-c998a8fa4000
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 27 Jan 2021 02:23:11 GMT
+      date: Tue, 23 Feb 2021 17:09:13 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '65'
+      x-envoy-upstream-service-time: '31'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -78,25 +76,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"id":"1","entities":[{"text":"I will go to the park","category":"Product","offset":0,"length":21,"confidenceScore":0.5}],"warnings":[]},{"id":"2","entities":[{"text":"hotel
-        we stayed at","category":"Location","offset":19,"length":18,"confidenceScore":0.69}],"warnings":[]},{"id":"3","entities":[{"text":"The
-        restaurant had really good food","category":"Organization","offset":0,"length":35,"confidenceScore":0.47}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+      string: '{"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.95}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.89}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","offset":4,"length":10,"confidenceScore":0.87}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
-      apim-request-id: 0784fecd-2186-4f2a-a201-a8fbe29c25f5
+      apim-request-id: 5526329e-5190-4e7e-97df-9222c5440162
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 27 Jan 2021 02:23:11 GMT
+      date: Tue, 23 Feb 2021 17:09:13 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '55'
+      x-envoy-upstream-service-time: '25'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

@@ -121,7 +121,7 @@ class InGuestPatchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     mode, automatic updates are disabled; the property WindowsConfiguration.enableAutomaticUpdates
     must be false:code:`<br />`:code:`<br />` **AutomaticByOS** - The virtual machine will
     automatically be updated by the OS. The property WindowsConfiguration.enableAutomaticUpdates
-    must be true. :code:`<br />`:code:`<br />` ** AutomaticByPlatform** - the virtual machine will
+    must be true. :code:`<br />`:code:`<br />` **AutomaticByPlatform** - the virtual machine will
     automatically updated by the platform. The properties provisionVMAgent and
     WindowsConfiguration.enableAutomaticUpdates must be true
     """

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ResourceLinksOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -95,9 +95,9 @@ class ResourceLinksOperations:
     async def create_or_update(
         self,
         link_id: str,
-        parameters: "models.ResourceLink",
+        parameters: "_models.ResourceLink",
         **kwargs
-    ) -> "models.ResourceLink":
+    ) -> "_models.ResourceLink":
         """Creates or updates a resource link between the specified resources.
 
         :param link_id: The fully qualified ID of the resource link. Use the format,
@@ -112,7 +112,7 @@ class ResourceLinksOperations:
         :rtype: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceLink"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceLink"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -164,7 +164,7 @@ class ResourceLinksOperations:
         self,
         link_id: str,
         **kwargs
-    ) -> "models.ResourceLink":
+    ) -> "_models.ResourceLink":
         """Gets a resource link with the specified ID.
 
         :param link_id: The fully qualified Id of the resource link. For example,
@@ -175,7 +175,7 @@ class ResourceLinksOperations:
         :rtype: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceLink"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceLink"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -218,7 +218,7 @@ class ResourceLinksOperations:
         self,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ResourceLinkResult"]:
+    ) -> AsyncIterable["_models.ResourceLinkResult"]:
         """Gets all the linked resources for the subscription.
 
         :param filter: The filter to apply on the list resource links operation. The supported filter
@@ -229,7 +229,7 @@ class ResourceLinksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceLinkResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceLinkResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -291,7 +291,7 @@ class ResourceLinksOperations:
         scope: str,
         filter: Optional[str] = "atScope()",
         **kwargs
-    ) -> AsyncIterable["models.ResourceLinkResult"]:
+    ) -> AsyncIterable["_models.ResourceLinkResult"]:
         """Gets a list of resource links at and below the specified source scope.
 
         :param scope: The fully qualified ID of the scope for getting the resource links. For example,
@@ -306,7 +306,7 @@ class ResourceLinksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceLinkResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceLinkResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
