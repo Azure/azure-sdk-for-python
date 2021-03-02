@@ -1634,7 +1634,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 expiry=datetime.utcnow() + timedelta(hours=1),
                 start=datetime.utcnow() - timedelta(minutes=1),
             )
-            print(token)
+
             # token = generate_table_sas(
             #     tables_storage_account_name,
             #     tables_primary_storage_account_key,
@@ -1896,7 +1896,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 start=datetime.utcnow() - timedelta(minutes=1),
             )
 
-            print(token)
             # token = generate_table_sas(
             #     tables_storage_account_name,
             #     tables_primary_storage_account_key,
