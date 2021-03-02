@@ -8,35 +8,36 @@ interactions:
       Content-Type:
       - image/png
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 71323505-bb82-4c88-a1d9-d0dd4aafa439
+      apim-request-id: f5da6f76-b183-4b33-97c0-b5c6d0ab01cc
       content-length: '0'
-      date: Mon, 16 Nov 2020 19:10:43 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyzeResults/71323505-bb82-4c88-a1d9-d0dd4aafa439
+      date: Mon, 01 Mar 2021 21:17:49 GMT
+      operation-location:
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/f5da6f76-b183-4b33-97c0-b5c6d0ab01cc
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '460'
+      x-envoy-upstream-service-time: '426'
     status:
       code: 202
       message: Accepted
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/prebuilt/receipt/analyze?includeTextDetails=false
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyze?includeTextDetails=false
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyzeResults/71323505-bb82-4c88-a1d9-d0dd4aafa439
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/f5da6f76-b183-4b33-97c0-b5c6d0ab01cc
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-11-16T19:10:44Z",
-        "lastUpdatedDateTime": "2020-11-16T19:10:47Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-01T21:17:50Z",
+        "lastUpdatedDateTime": "2021-03-01T21:17:52Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0.2511, "width": 1688, "height":
         3000, "unit": "pixel"}], "documentResults": [{"docType": "prebuilt:receipt",
         "pageRange": [1, 1], "fields": {"ReceiptType": {"type": "string", "valueString":
@@ -71,17 +72,17 @@ interactions:
         "$104.40", "boundingBox": [942.6, 2367.5, 1132, 2363.7, 1133.4, 2434.2, 944,
         2438], "page": 1, "confidence": 0.713}, "Total": {"type": "number", "valueNumber":
         1203.39, "text": "1203.39", "boundingBox": [955, 2594, 1123, 2611, 1115, 2678,
-        949, 2661], "page": 1, "confidence": 0.772}}}]}}'
+        949, 2661], "page": 1, "confidence": 0.774}}}]}}'
     headers:
-      apim-request-id: a2a1533c-530e-4a84-8d5d-17fdf3b74209
+      apim-request-id: 201f2dee-0689-4d7a-b660-56510ec063f5
       content-length: '2561'
       content-type: application/json; charset=utf-8
-      date: Mon, 16 Nov 2020 19:10:49 GMT
+      date: Mon, 01 Mar 2021 21:17:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '21'
+      x-envoy-upstream-service-time: '31'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyzeResults/71323505-bb82-4c88-a1d9-d0dd4aafa439
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/f5da6f76-b183-4b33-97c0-b5c6d0ab01cc
 version: 1

@@ -8,58 +8,59 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
-      apim-request-id: bf7f7fb6-d471-4722-8bed-8d3c6bad51fc
+      apim-request-id: d0898441-81a4-437c-b17f-16a4d1766ef0
       content-length: '0'
-      date: Fri, 30 Oct 2020 01:11:55 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/bf7f7fb6-d471-4722-8bed-8d3c6bad51fc
+      date: Mon, 01 Mar 2021 18:54:16 GMT
+      operation-location:
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/d0898441-81a4-437c-b17f-16a4d1766ef0
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '176'
+      x-envoy-upstream-service-time: '244'
     status:
       code: 202
       message: Accepted
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=false
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/bf7f7fb6-d471-4722-8bed-8d3c6bad51fc
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/d0898441-81a4-437c-b17f-16a4d1766ef0
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2020-10-30T01:11:55Z", "lastUpdatedDateTime":
-        "2020-10-30T01:11:55Z"}'
+      string: '{"status": "running", "createdDateTime": "2021-03-01T18:54:16Z", "lastUpdatedDateTime":
+        "2021-03-01T18:54:16Z"}'
     headers:
-      apim-request-id: fa307f98-d193-4573-8029-a4455f6297aa
+      apim-request-id: ad26f404-1343-4cd8-b803-8fcab08904fa
       content-length: '106'
       content-type: application/json; charset=utf-8
-      date: Fri, 30 Oct 2020 01:12:00 GMT
+      date: Mon, 01 Mar 2021 18:54:21 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '9'
+      x-envoy-upstream-service-time: '19'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/bf7f7fb6-d471-4722-8bed-8d3c6bad51fc
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/d0898441-81a4-437c-b17f-16a4d1766ef0
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/bf7f7fb6-d471-4722-8bed-8d3c6bad51fc
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/d0898441-81a4-437c-b17f-16a4d1766ef0
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-10-30T01:11:55Z",
-        "lastUpdatedDateTime": "2020-10-30T01:12:03Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-01T18:54:16Z",
+        "lastUpdatedDateTime": "2021-03-01T18:54:24Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch"}], "pageResults": [{"page": 1, "tables": [{"rows": 3, "columns":
         6, "cells": [{"rowIndex": 0, "columnIndex": 0, "text": "Invoice Number", "boundingBox":
@@ -81,43 +82,43 @@ interactions:
         3.311, 6.1079, 3.311, 6.1079, 3.8534, 4.7165, 3.8534]}, {"rowIndex": 1, "columnIndex":
         5, "text": "PT", "boundingBox": [6.1079, 3.311, 7.4922, 3.311, 7.4922, 3.6393,
         6.1079, 3.6393]}, {"rowIndex": 2, "columnIndex": 5, "boundingBox": [6.1079,
-        3.6393, 7.4922, 3.6393, 7.4922, 3.8534, 6.1079, 3.8534]}], "boundingBox":
+        3.6393, 7.4922, 3.6393, 7.4922, 3.8534, 6.1079, 3.8534], "text": ""}], "boundingBox":
         [0.4985, 2.7802, 7.4933, 2.7816, 7.4913, 3.8459, 0.4966, 3.8447]}]}], "documentResults":
-        [{"docType": "prebuilt:invoice", "pageRange": [1, 1], "fields": {"VendorName":
-        {"type": "string", "valueString": "Contoso", "text": "Contoso", "boundingBox":
-        [0.5384, 1.1583, 1.4466, 1.1583, 1.4466, 1.3534, 0.5384, 1.3534], "page":
-        1, "confidence": 0.948}, "CustomerAddressRecipient": {"type": "string", "valueString":
-        "Microsoft", "text": "Microsoft", "boundingBox": [5.2045, 1.5114, 5.8155,
-        1.5114, 5.8155, 1.6151, 5.2045, 1.6151], "page": 1, "confidence": 0.986},
-        "VendorAddress": {"type": "string", "valueString": "1 Redmond way Suite 6000
-        Redmond, WA 99243", "text": "1 Redmond way Suite 6000 Redmond, WA 99243",
-        "boundingBox": [0.8019, 1.7033, 2.1445, 1.7033, 2.1445, 2.1911, 0.8019, 2.1911],
-        "page": 1, "confidence": 0.908}, "CustomerAddress": {"type": "string", "valueString":
-        "1020 Enterprise Way Sunnayvale, CA 87659", "text": "1020 Enterprise Way Sunnayvale,
-        CA 87659", "boundingBox": [5.196, 1.716, 6.6526, 1.716, 6.6526, 2.0359, 5.196,
-        2.0359], "page": 1, "confidence": 0.991}, "InvoiceId": {"type": "string",
-        "valueString": "34278587", "text": "34278587", "boundingBox": [0.5397, 3.411,
-        1.1457, 3.411, 1.1457, 3.5144, 0.5397, 3.5144], "page": 1, "confidence": 0.879},
-        "InvoiceDate": {"type": "date", "valueDate": "2017-06-18", "text": "6/18/2017",
-        "boundingBox": [1.9455, 3.41, 2.551, 3.41, 2.551, 3.5144, 1.9455, 3.5144],
-        "page": 1, "confidence": 0.929}, "DueDate": {"type": "date", "valueDate":
-        "2017-06-24", "text": "6/24/2017", "boundingBox": [3.346, 3.41, 3.9514, 3.41,
-        3.9514, 3.5144, 3.346, 3.5144], "page": 1, "confidence": 0.992}, "InvoiceTotal":
-        {"type": "number", "valueNumber": 56651.49, "text": "$56,651.49", "boundingBox":
-        [5.3871, 3.4047, 6.0702, 3.4047, 6.0702, 3.5321, 5.3871, 3.5321], "page":
-        1, "confidence": 0.895}, "CustomerName": {"type": "string", "valueString":
-        "Microsoft", "text": "Microsoft", "boundingBox": [5.2045, 1.5114, 5.8155,
-        1.5114, 5.8155, 1.6151, 5.2045, 1.6151], "page": 1, "confidence": 0.986}}}]}}'
+        [{"docType": "prebuilt:invoice", "pageRange": [1, 1], "fields": {"CustomerAddress":
+        {"type": "string", "valueString": "1020 Enterprise Way Sunnayvale, CA 87659",
+        "text": "1020 Enterprise Way Sunnayvale, CA 87659", "boundingBox": [5.196,
+        1.716, 6.6526, 1.716, 6.6526, 2.0359, 5.196, 2.0359], "page": 1, "confidence":
+        0.992}, "CustomerAddressRecipient": {"type": "string", "valueString": "Microsoft",
+        "text": "Microsoft", "boundingBox": [5.2045, 1.5114, 5.8155, 1.5114, 5.8155,
+        1.6151, 5.2045, 1.6151], "page": 1, "confidence": 0.989}, "CustomerName":
+        {"type": "string", "valueString": "Microsoft", "text": "Microsoft", "boundingBox":
+        [5.2045, 1.5114, 5.8155, 1.5114, 5.8155, 1.6151, 5.2045, 1.6151], "page":
+        1, "confidence": 0.989}, "DueDate": {"type": "date", "valueDate": "2017-06-24",
+        "text": "6/24/2017", "boundingBox": [3.346, 3.41, 3.9514, 3.41, 3.9514, 3.5144,
+        3.346, 3.5144], "page": 1, "confidence": 0.989}, "InvoiceDate": {"type": "date",
+        "valueDate": "2017-06-18", "text": "6/18/2017", "boundingBox": [1.9455, 3.41,
+        2.551, 3.41, 2.551, 3.5144, 1.9455, 3.5144], "page": 1, "confidence": 0.936},
+        "InvoiceId": {"type": "string", "valueString": "34278587", "text": "34278587",
+        "boundingBox": [0.5397, 3.411, 1.1457, 3.411, 1.1457, 3.5144, 0.5397, 3.5144],
+        "page": 1, "confidence": 0.842}, "InvoiceTotal": {"type": "number", "valueNumber":
+        56651.49, "text": "$56,651.49", "boundingBox": [5.3871, 3.4047, 6.0702, 3.4047,
+        6.0702, 3.5321, 5.3871, 3.5321], "page": 1, "confidence": 0.576}, "VendorAddress":
+        {"type": "string", "valueString": "1 Redmond way Suite 6000 Redmond, WA 99243",
+        "text": "1 Redmond way Suite 6000 Redmond, WA 99243", "boundingBox": [0.8019,
+        1.7033, 2.1445, 1.7033, 2.1445, 2.1911, 0.8019, 2.1911], "page": 1, "confidence":
+        0.953}, "VendorName": {"type": "string", "valueString": "Contoso", "text":
+        "Contoso", "boundingBox": [0.5384, 1.1583, 1.4466, 1.1583, 1.4466, 1.3534,
+        0.5384, 1.3534], "page": 1, "confidence": 0.979}}}]}}'
     headers:
-      apim-request-id: fd872e06-e1d7-42f5-a62a-dd46c99bcd4e
-      content-length: '3516'
+      apim-request-id: 8df6eddd-93a3-43e2-b0bf-c6039e02cc8b
+      content-length: '3526'
       content-type: application/json; charset=utf-8
-      date: Fri, 30 Oct 2020 01:12:05 GMT
+      date: Mon, 01 Mar 2021 18:54:25 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '18'
+      x-envoy-upstream-service-time: '46'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/bf7f7fb6-d471-4722-8bed-8d3c6bad51fc
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/d0898441-81a4-437c-b17f-16a4d1766ef0
 version: 1

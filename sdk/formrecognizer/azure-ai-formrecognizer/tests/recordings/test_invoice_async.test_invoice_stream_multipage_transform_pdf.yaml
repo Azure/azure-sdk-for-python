@@ -8,58 +8,59 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 27660112-b5c7-4493-ae12-aaa9a13d11d4
+      apim-request-id: f80c6b82-35d1-4195-95a7-3bdd3c18a791
       content-length: '0'
-      date: Wed, 04 Nov 2020 20:40:12 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/27660112-b5c7-4493-ae12-aaa9a13d11d4
+      date: Mon, 01 Mar 2021 18:54:38 GMT
+      operation-location:
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/f80c6b82-35d1-4195-95a7-3bdd3c18a791
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '317'
+      x-envoy-upstream-service-time: '297'
     status:
       code: 202
       message: Accepted
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=true
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=true
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/27660112-b5c7-4493-ae12-aaa9a13d11d4
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/f80c6b82-35d1-4195-95a7-3bdd3c18a791
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2020-11-04T20:40:13Z", "lastUpdatedDateTime":
-        "2020-11-04T20:40:13Z"}'
+      string: '{"status": "running", "createdDateTime": "2021-03-01T18:54:38Z", "lastUpdatedDateTime":
+        "2021-03-01T18:54:38Z"}'
     headers:
-      apim-request-id: f5f0ae33-e3a2-4842-9769-e42cc47edaba
+      apim-request-id: 1f6bc182-1eac-4556-b806-3f16a3063bec
       content-length: '106'
       content-type: application/json; charset=utf-8
-      date: Wed, 04 Nov 2020 20:40:17 GMT
+      date: Mon, 01 Mar 2021 18:54:42 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '15'
+      x-envoy-upstream-service-time: '24'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/27660112-b5c7-4493-ae12-aaa9a13d11d4
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/f80c6b82-35d1-4195-95a7-3bdd3c18a791
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/27660112-b5c7-4493-ae12-aaa9a13d11d4
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/f80c6b82-35d1-4195-95a7-3bdd3c18a791
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-11-04T20:40:13Z",
-        "lastUpdatedDateTime": "2020-11-04T20:40:21Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-01T18:54:38Z",
+        "lastUpdatedDateTime": "2021-03-01T18:54:47Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "lines": [{"text": "Vendor #:121", "boundingBox": [6.1276,
         1.0667, 7.4833, 1.0667, 7.4833, 1.2403, 6.1276, 1.2403], "words": [{"text":
@@ -565,29 +566,29 @@ interactions:
         8.9011, 5.7489, 8.9011], "elements": ["#/readResults/0/lines/53/words/0"]}],
         "boundingBox": [0.994, 4.6469, 7.4953, 4.6454, 7.4964, 8.9061, 0.9936, 8.9066]}]},
         {"page": 2}], "documentResults": [{"docType": "prebuilt:invoice", "pageRange":
-        [1, 2], "fields": {"VendorName": {"type": "string", "valueString": "Southridge
-        Video", "text": "Southridge Video", "boundingBox": [2.1925, 2.7686, 3.3477,
-        2.7686, 3.3477, 2.9128, 2.1925, 2.9128], "page": 2, "confidence": 0.969, "elements":
-        ["#/readResults/1/lines/2/words/2", "#/readResults/1/lines/2/words/3"]}, "RemittanceAddressRecipient":
+        [1, 2], "fields": {"RemittanceAddress": {"type": "string", "valueString":
+        "2345 Dogwood Lane Birch, Kansas 98123", "text": "2345 Dogwood Lane Birch,
+        Kansas 98123", "boundingBox": [1.0093, 3.7939, 2.3768, 3.7939, 2.3768, 4.1518,
+        1.0093, 4.1518], "page": 1, "confidence": 0.892, "elements": ["#/readResults/0/lines/7/words/0",
+        "#/readResults/0/lines/7/words/1", "#/readResults/0/lines/7/words/2", "#/readResults/0/lines/8/words/0",
+        "#/readResults/0/lines/8/words/1", "#/readResults/0/lines/8/words/2"]}, "RemittanceAddressRecipient":
         {"type": "string", "valueString": "Contoso Ltd.", "text": "Contoso Ltd.",
         "boundingBox": [1.0078, 3.5739, 1.843, 3.5739, 1.843, 3.6897, 1.0078, 3.6897],
-        "page": 1, "confidence": 0.954, "elements": ["#/readResults/0/lines/6/words/0",
-        "#/readResults/0/lines/6/words/1"]}, "RemittanceAddress": {"type": "string",
-        "valueString": "2345 Dogwood Lane Birch, Kansas 98123", "text": "2345 Dogwood
-        Lane Birch, Kansas 98123", "boundingBox": [1.0093, 3.7939, 2.3768, 3.7939,
-        2.3768, 4.1518, 1.0093, 4.1518], "page": 1, "confidence": 0.952, "elements":
-        ["#/readResults/0/lines/7/words/0", "#/readResults/0/lines/7/words/1", "#/readResults/0/lines/7/words/2",
-        "#/readResults/0/lines/8/words/0", "#/readResults/0/lines/8/words/1", "#/readResults/0/lines/8/words/2"]}}}]}}'
+        "page": 1, "confidence": 0.915, "elements": ["#/readResults/0/lines/6/words/0",
+        "#/readResults/0/lines/6/words/1"]}, "VendorName": {"type": "string", "valueString":
+        "Southridge Video", "text": "Southridge Video", "boundingBox": [2.1925, 2.7686,
+        3.3477, 2.7686, 3.3477, 2.9128, 2.1925, 2.9128], "page": 2, "confidence":
+        0.962, "elements": ["#/readResults/1/lines/2/words/2", "#/readResults/1/lines/2/words/3"]}}}]}}'
     headers:
-      apim-request-id: bf20e52e-2e27-40cf-8f3f-5c2934df7317
+      apim-request-id: efb7e488-39d7-4ea0-8afc-12796a2e88ea
       content-length: '37206'
       content-type: application/json; charset=utf-8
-      date: Wed, 04 Nov 2020 20:40:23 GMT
+      date: Mon, 01 Mar 2021 18:54:47 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '33'
+      x-envoy-upstream-service-time: '48'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/27660112-b5c7-4493-ae12-aaa9a13d11d4
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/f80c6b82-35d1-4195-95a7-3bdd3c18a791
 version: 1

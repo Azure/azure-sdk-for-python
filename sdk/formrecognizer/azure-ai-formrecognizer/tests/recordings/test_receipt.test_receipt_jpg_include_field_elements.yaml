@@ -22,19 +22,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 341e9f53-a7b1-4bac-b6eb-53d8e0af8abb
+      - da6a4eac-6767-4d90-a1f8-74c7843e639f
       content-length:
       - '0'
       date:
-      - Fri, 19 Feb 2021 16:36:38 GMT
+      - Mon, 01 Mar 2021 21:21:05 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/341e9f53-a7b1-4bac-b6eb-53d8e0af8abb
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/da6a4eac-6767-4d90-a1f8-74c7843e639f
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '193'
+      - '203'
     status:
       code: 202
       message: Accepted
@@ -50,11 +50,11 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/341e9f53-a7b1-4bac-b6eb-53d8e0af8abb
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/da6a4eac-6767-4d90-a1f8-74c7843e639f
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-02-19T16:36:39Z",
-        "lastUpdatedDateTime": "2021-02-19T16:36:41Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-01T21:21:05Z",
+        "lastUpdatedDateTime": "2021-03-01T21:21:07Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0.6893, "width": 1688, "height":
         3000, "unit": "pixel", "lines": [{"text": "Contoso", "boundingBox": [635,
         510, 1086, 461, 1098, 558, 643, 604], "words": [{"text": "Contoso", "boundingBox":
@@ -177,13 +177,13 @@ interactions:
         0.985, "elements": ["#/readResults/0/lines/19/words/0"]}}}]}}'
     headers:
       apim-request-id:
-      - fd18749f-d5c8-4abd-9aa0-e64de24dd6e6
+      - db64023d-f3de-4d69-8e44-2556edeb5ae7
       content-length:
       - '8501'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 19 Feb 2021 16:36:44 GMT
+      - Mon, 01 Mar 2021 21:21:10 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
