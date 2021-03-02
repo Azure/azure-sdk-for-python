@@ -350,18 +350,19 @@ class AzureTestCase(ReplayableTest):
             time.sleep(seconds)
 
     def generate_sas(self, *args, **kwargs):
-
-        # sv=2019-02-02&si=testid&tn=uttable979d1213&sig=eHR0wL2cLfRNDE1joarE6OWloix%2BniHHga88FX63EmI%3D
-
         sas_func = args[0]
         sas_func_pos_args = args[1:]
 
-        fake_value = kwargs.pop('fake_value', "fake_token_value")
+        fake_value = kwargs.pop("fake_value", "fake_token_value")
         token = sas_func(*sas_func_pos_args, **kwargs)
 
         fake_token = self._create_fake_token(token, fake_value)
 
         self.scrubber.register_name_pair(token, fake_token)
+
+        # print()
+        # print(token)
+        # print(fake_token)
 
         if self.is_live:
             return token
@@ -369,9 +370,20 @@ class AzureTestCase(ReplayableTest):
         return fake_token
 
     def _create_fake_token(self, token, fake_value):
-        split = token.split("&")
-        key = split[-1].split("=")
-        key[1] = fake_value
-        key = "=".join(key)
-        split[-1] = key
-        return "&".join(split)
+        parts = token.split("&")
+
+        for idx, part in enumerate(parts):
+            if part.startswith("sig"):
+                key = part.split("=")
+                key[1] = fake_value
+                parts[idx] = "=".join(key)
+            elif part.startswith("st"):
+                key = part.split("=")
+                key[1] = "start"
+                parts[idx] = "=".join(key)
+            elif part.startswith("se"):
+                key = part.split("=")
+                key[1] = "end"
+                parts[idx] = "=".join(key)
+
+        return "&".join(parts)
