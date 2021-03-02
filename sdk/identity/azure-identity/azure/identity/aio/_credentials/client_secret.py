@@ -43,13 +43,11 @@ class ClientSecretCredential(AsyncContextManager):
             )
         validate_tenant_id(tenant_id)
 
-        cache = kwargs.pop("_cache", None)
-        if not cache:
-            options = kwargs.pop("cache_persistence_options", None)
-            if options:
-                cache = _load_persistent_cache(options)
-            else:
-                cache = msal.TokenCache()
+        cache_options = kwargs.pop("cache_persistence_options", None)
+        if cache_options:
+            cache = _load_persistent_cache(cache_options)
+        else:
+            cache = msal.TokenCache()
 
         self._client = AadClient(tenant_id, client_id, cache=cache, **kwargs)
         self._client_id = client_id

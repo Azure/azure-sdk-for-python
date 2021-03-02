@@ -144,8 +144,25 @@ def test_cache_multiple_clients():
     )
 
     cache = TokenCache()
-    credential_a = ClientSecretCredential("tenant", "client-a", "secret", transport=transport_a, _cache=cache)
-    credential_b = ClientSecretCredential("tenant", "client-b", "secret", transport=transport_b, _cache=cache)
+    with patch("azure.identity._internal.msal_credentials._load_persistent_cache") as mock_cache_loader:
+        mock_cache_loader.return_value = Mock(wraps=cache)
+        credential_a = ClientSecretCredential(
+            "tenant",
+            "client-a",
+            "secret",
+            transport=transport_a,
+            cache_persistence_options=TokenCachePersistenceOptions(),
+        )
+        assert mock_cache_loader.call_count == 1, "credential should load the persistent cache"
+
+        credential_b = ClientSecretCredential(
+            "tenant",
+            "client-b",
+            "secret",
+            transport=transport_b,
+            cache_persistence_options=TokenCachePersistenceOptions(),
+        )
+        assert mock_cache_loader.call_count == 2, "credential should load the persistent cache"
 
     # A caches a token
     scope = "scope"

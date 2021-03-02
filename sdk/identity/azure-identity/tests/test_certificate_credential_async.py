@@ -222,12 +222,27 @@ async def test_cache_multiple_clients(cert_path, cert_password):
     )
 
     cache = TokenCache()
-    credential_a = CertificateCredential(
-        "tenant", "client-a", cert_path, password=cert_password, transport=transport_a, _cache=cache
-    )
-    credential_b = CertificateCredential(
-        "tenant", "client-b", cert_path, password=cert_password, transport=transport_b, _cache=cache
-    )
+    with patch(CertificateCredential.__module__ + "._load_persistent_cache") as mock_cache_loader:
+        mock_cache_loader.return_value = Mock(wraps=cache)
+        credential_a = CertificateCredential(
+            "tenant",
+            "client-a",
+            cert_path,
+            password=cert_password,
+            transport=transport_a,
+            cache_persistence_options=TokenCachePersistenceOptions(),
+        )
+        assert mock_cache_loader.call_count == 1, "credential should load the persistent cache"
+
+        credential_b = CertificateCredential(
+            "tenant",
+            "client-b",
+            cert_path,
+            password=cert_password,
+            transport=transport_b,
+            cache_persistence_options=TokenCachePersistenceOptions(),
+        )
+        assert mock_cache_loader.call_count == 2, "credential should load the persistent cache"
 
     # A caches a token
     scope = "scope"
