@@ -62,7 +62,7 @@ jobs:
 
         test_result=""
         if [ -f "$output_path/live_test_fail.txt" ]; then
-          test_result="Live test failed, detailed info is in pipeline log(search keyword \"FAILED \")!!!\n"
+          test_result="Live test failed, detailed info is in pipeline log(search keyword FAILED)!!!\n"
         fi
 
         # create PR
