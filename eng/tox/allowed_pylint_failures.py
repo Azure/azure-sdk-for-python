@@ -50,5 +50,5 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-synapse-nspkg",
     "azure-ai-anomalydetector",
     "azure-security-attestation",
-    "azure-iot-deviceupdate"
+    "azure-iot-deviceupdate",
 ]
