@@ -11,7 +11,7 @@ from ._generated.models import (
 )
 
 from ._generated.v3_0 import models as _v3_0_models
-from ._generated.v3_1_preview_3 import models as _v3_1_preview_3_models
+from ._generated.v3_1_preview_4 import models as _latest_models
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
@@ -1226,6 +1226,7 @@ class AnalyzeBatchActionsType(str, Enum):
     RECOGNIZE_ENTITIES = "recognize_entities"  #: Entities Recognition action.
     RECOGNIZE_PII_ENTITIES = "recognize_pii_entities"  #: PII Entities Recognition action.
     EXTRACT_KEY_PHRASES = "extract_key_phrases"  #: Key Phrase Extraction action.
+    RECOGNIZE_LINKED_ENTITIES = "recognize_linked_entities" #: Linked Entities Recognition action.
 
 
 class AnalyzeBatchActionsResult(DictMixin):
@@ -1311,8 +1312,8 @@ class RecognizeEntitiesAction(DictMixin):
             .format(self.model_version, self.string_index_type)[:1024]
 
     def to_generated(self):
-        return _v3_1_preview_3_models.EntitiesTask(
-            parameters=_v3_1_preview_3_models.EntitiesTaskParameters(
+        return _latest_models.EntitiesTask(
+            parameters=_latest_models.EntitiesTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type
             )
@@ -1353,8 +1354,8 @@ class RecognizePiiEntitiesAction(DictMixin):
             .format(self.model_version, self.domain_filter, self.string_index_type)[:1024]
 
     def to_generated(self):
-        return _v3_1_preview_3_models.PiiTask(
-            parameters=_v3_1_preview_3_models.PiiTaskParameters(
+        return _latest_models.PiiTask(
+            parameters=_latest_models.PiiTaskParameters(
                 model_version=self.model_version,
                 domain=self.domain_filter,
                 string_index_type=self.string_index_type
@@ -1382,11 +1383,48 @@ class ExtractKeyPhrasesAction(DictMixin):
             .format(self.model_version)[:1024]
 
     def to_generated(self):
-        return _v3_1_preview_3_models.KeyPhrasesTask(
-            parameters=_v3_1_preview_3_models.KeyPhrasesTaskParameters(
+        return _latest_models.KeyPhrasesTask(
+            parameters=_latest_models.KeyPhrasesTaskParameters(
                 model_version=self.model_version
             )
         )
+
+
+class RecognizeLinkedEntitiesAction(DictMixin):
+    """RecognizeEntitiesAction encapsulates the parameters for starting a long-running Linked Entities
+    Recognition operation.
+
+    If you just want to recognize linked entities in a list of documents, and not perform a batch
+    of long running actions on the input of documents, call method `recognize_linked_entities` instead
+    of interfacing with this model.
+
+    :keyword str model_version: The model version to use for the analysis.
+    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    """
+
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", "latest")
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+
+    def __repr__(self, **kwargs):
+        return "RecognizeLinkedEntitiesAction(model_version={}, string_index_type={})" \
+            .format(self.model_version, self.string_index_type)[:1024]
+
+    def to_generated(self):
+        return _latest_models.EntityLinkingTask(
+            parameters=_latest_models.EntityLinkingTaskParameters(
+                model_version=self.model_version
+            )
+        )
+
 
 class RequestStatistics(DictMixin):
     def __init__(self, **kwargs):

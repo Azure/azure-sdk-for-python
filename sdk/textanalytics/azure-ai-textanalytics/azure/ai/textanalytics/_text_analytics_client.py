@@ -749,7 +749,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             The outputted action results will be in the same order you inputted your actions.
             Duplicate actions in list not supported.
         :type actions:
-            list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction]
+            list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
+            RecognizeLinkedEntitiesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -804,6 +805,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 key_phrase_extraction_tasks=[
                     t.to_generated() for t in
                     [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
+                ],
+                entity_linking_tasks=[
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES]
                 ]
             )
             analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
