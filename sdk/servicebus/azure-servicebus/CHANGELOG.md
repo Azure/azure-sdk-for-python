@@ -2,6 +2,12 @@
 
 ## 7.0.2 (Unreleased)
 
+**New Features**
+
+* Updated the following so that they accept lists and single instances of dict representations for corresponding strongly-typed object arguments:
+  - `update_queue`, `update_topic`, `update_subscription`, and `update_rule` on `ServiceBusAdministrationClient` accept dict representations of `QueueProperties`, `TopicProperties`, `SubscriptionProperties`, and `RuleProperties`, respectively.
+  - `send_messages` and `schedule_messages` on both sync and async versions of `ServiceBusSender` accept a list of or single instance of dict representations of `ServiceBusMessage`.
+  - `add_message` on `ServiceBusMessageBatch` now accepts a dict representation of `ServiceBusMessage`.
 
 ## 7.0.1 (2021-01-12)
 
