@@ -61,8 +61,7 @@ class RecognizeCustomForms(PerfStressTest):
             self.custom_form_jpg, 
             content_type=FormContentType.IMAGE_JPEG)
         result = poller.result()
-        if result is not None:
-            pass
+        assert result
 
     async def run_async(self):
         """The asynchronous perf test."""
@@ -71,5 +70,4 @@ class RecognizeCustomForms(PerfStressTest):
             self.custom_form_jpg,
             content_type=FormContentType.IMAGE_JPEG)
         result = await poller.result()
-        if result is not None:
-            pass
+        assert result
