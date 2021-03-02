@@ -157,8 +157,8 @@ class PhoneNumbersClient(object):
     async def begin_update_phone_number_capabilities(
             self,
             phone_number, # type: str
-            sms, # type: str
-            calling, # type: str
+            sms = None, # type: str
+            calling = None, # type: str
             **kwargs # type: Any
     ):
         # type: (...) -> AsyncLROPoller["_models.AcquiredPhoneNumber"]
