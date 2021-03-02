@@ -360,7 +360,6 @@ class AzureTestCase(ReplayableTest):
         token = sas_func(*sas_func_pos_args, **kwargs)
 
         fake_token = self._create_fake_token(token, fake_value)
-        print(fake_token)
 
         self.scrubber.register_name_pair(token, fake_token)
 

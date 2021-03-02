@@ -1634,6 +1634,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 expiry=datetime.utcnow() + timedelta(hours=1),
                 start=datetime.utcnow() - timedelta(minutes=1),
             )
+            print(token)
             # token = generate_table_sas(
             #     tables_storage_account_name,
             #     tables_primary_storage_account_key,
@@ -1889,10 +1890,10 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 generate_table_sas,
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
-                self.table_name,
-                policy_id='testid',
-                expiry=datetime(2025, 10, 12),
-                start=datetime(2011, 10, 11)
+                self.table_name.upper(),
+                permission=TableSasPermissions(read=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start=datetime.utcnow() - timedelta(minutes=1),
             )
 
             print(token)
@@ -1912,7 +1913,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
+                filter="PartitionKey eq '{}'".format(entity.PartitionKey)))
 
             # Assert
             assert len(entities) ==  1
@@ -1920,6 +1921,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
+    @pytest.mark.live_test_only
     @TablesPreparer()
     def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1937,8 +1939,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             self.table.set_table_access_policy(identifiers)
 
-            token = self.generate_sas(
-                generate_table_sas,
+            token = generate_table_sas(
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,

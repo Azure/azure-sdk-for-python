@@ -1904,47 +1904,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Cosmos Tables does not yet support sas")
-    @pytest.mark.live_test_only
-    @CosmosPreparer()
-    def test_sas_signed_identifier(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from cosmos key, so this test runs live only
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            # Arrange
-            entity, _ = self._insert_random_entity()
-
-            access_policy = AccessPolicy()
-            access_policy.start = datetime(2011, 10, 11)
-            access_policy.expiry = datetime(2020, 10, 12)
-            access_policy.permission = TableSasPermissions(read=True)
-            identifiers = {'testid': access_policy}
-
-            self.table.set_table_access_policy(identifiers)
-
-            token = generate_table_sas(
-                tables_cosmos_account_name,
-                tables_primary_cosmos_account_key,
-                self.table_name,
-                policy_id='testid',
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=token,
-            )
-            table = service.get_table_client(self.table_name)
-            entities = list(table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity.PartitionKey)))
-
-            # Assert
-            assert len(entities) ==  1
-            self._assert_default_entity(entities[0])
-        finally:
-            self._tear_down()
-            self.sleep(SLEEP_DELAY)
-
     @CosmosPreparer()
     def test_datetime_milliseconds(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
