@@ -1,0 +1,30 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-deviceupdate/2020-09-01-preview Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprod.api.prod.adu.microsoft.com/deviceupdate/blue/v2/updates/providers/Contoso/names/Virtual-Machine/versions/2020.1111.1124.8/files
+  response:
+    body:
+      string: '{"value":["00000"]}'
+    headers:
+      content-length:
+      - '19'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 11 Nov 2020 19:30:43 GMT
+      traceparent:
+      - 00-ccb4e5c7347dae4abe0e048b0d37eccf-65dc2a0c81f96e4d-00
+    status:
+      code: 200
+      message: OK
+version: 1

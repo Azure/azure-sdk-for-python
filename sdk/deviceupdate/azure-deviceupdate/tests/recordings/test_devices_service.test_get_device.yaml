@@ -1,0 +1,30 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-deviceupdate/2020-09-01-preview Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprod.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/devices/dpokluda-test
+  response:
+    body:
+      string: '{"deviceId":"dpokluda-test","deviceClassId":"b83e3c87fbf98063c20c3269f1c9e58d255906dd","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"2020.1111.1124.8"},"installedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"2020.1111.1124.8"},"onLatestUpdate":true,"deploymentStatus":"Succeeded","groupId":"dpokluda-test","lastDeploymentId":"dpokluda-test.2020-1111-1124-8"}'
+    headers:
+      content-length:
+      - '467'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 11 Nov 2020 19:31:09 GMT
+      traceparent:
+      - 00-f5cc225b48433f46a5d2e0dec52f492b-f51510e6d3c0c545-00
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-deviceupdate/2020-09-01-preview Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprod.api.prod.adu.microsoft.com/deviceupdate/blue/v2/updates/providers/foo/names/bar/versions/0.0.0.1/files
+  response:
+    body:
+      string: '{"type":"https://tools.ietf.org/html/rfc7231#section-6.5.4","title":"Not
+        Found","status":404,"traceId":"00-7211d4a0bdd1244d97682b0ad175a120-61cb9539cc01c040-00"}'
+    headers:
+      content-length:
+      - '161'
+      content-type:
+      - application/problem+json; charset=utf-8
+      date:
+      - Wed, 11 Nov 2020 19:30:45 GMT
+      traceparent:
+      - 00-7211d4a0bdd1244d97682b0ad175a120-aa170c78e13c1645-00
+    status:
+      code: 404
+      message: Not Found
+version: 1

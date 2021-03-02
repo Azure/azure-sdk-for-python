@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-deviceupdate/2020-09-01-preview Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprod.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/devices
+  response:
+    body:
+      string: '{"value":[{"deviceId":"functionaltests-device1","deviceClassId":"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3","manufacturer":"Microsoft-Corporation","model":"Virtual-Machine","lastAttemptedUpdateId":null,"installedUpdateId":null,"onLatestUpdate":true,"deploymentStatus":"InProgress","groupId":"functionaltests-groupname1","lastDeploymentId":"24975a81-aa92-4e70-a4de-9ae074a51d8b"},{"deviceId":"adu-raspi-e2etest-raps-prod","deviceClassId":"e27bc5237d50fee933b11146d6804f3acdd605dd","manufacturer":"Contoso","model":"ADU-Raspberry-Pi-Example","lastAttemptedUpdateId":{"provider":"contoso","name":"adu-raspberry-pi-example","version":"1.0.1355.1"},"installedUpdateId":{"provider":"contoso","name":"adu-raspberry-pi-example","version":"1.0.1355.1"},"onLatestUpdate":false,"deploymentStatus":"Succeeded","groupId":null,"lastDeploymentId":"[ManagementE2ETest]
+        45446ff1-4c19-4c0a-ab56-ea95eeb37321"},{"deviceId":"dpokluda-test","deviceClassId":"b83e3c87fbf98063c20c3269f1c9e58d255906dd","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"2020.1111.1124.8"},"installedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"2020.1111.1124.8"},"onLatestUpdate":true,"deploymentStatus":"Succeeded","groupId":"dpokluda-test","lastDeploymentId":"dpokluda-test.2020-1111-1124-8"},{"deviceId":"chejiang-test-1007","deviceClassId":"b83e3c87fbf98063c20c3269f1c9e58d255906dd","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":{"provider":"contoso","name":"virtual-machine","version":"2020.924.549.13"},"installedUpdateId":null,"onLatestUpdate":false,"deploymentStatus":"Failed","groupId":null,"lastDeploymentId":"chejiang-test-1007-2"},{"deviceId":"chejiang-test-1008","deviceClassId":"b83e3c87fbf98063c20c3269f1c9e58d255906dd","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":{"provider":"contoso","name":"virtual-machine","version":"2020.924.549.13"},"installedUpdateId":null,"onLatestUpdate":false,"deploymentStatus":"Failed","groupId":null,"lastDeploymentId":"chejiang-test-1008"},{"deviceId":"chejiang-test-1008-2","deviceClassId":"b83e3c87fbf98063c20c3269f1c9e58d255906dd","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":{"provider":"contoso","name":"virtual-machine","version":"2020.924.1748.13"},"installedUpdateId":null,"onLatestUpdate":false,"deploymentStatus":"Failed","groupId":null,"lastDeploymentId":"chejiang-test-1008-2"},{"deviceId":"chejiang-test-1008-3","deviceClassId":"b83e3c87fbf98063c20c3269f1c9e58d255906dd","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":{"provider":"contoso","name":"virtual-machine","version":"2020.929.302.46"},"installedUpdateId":null,"onLatestUpdate":false,"deploymentStatus":"Failed","groupId":null,"lastDeploymentId":"chejiang-test-1008-8"},{"deviceId":"aysancagtest","deviceClassId":"b83e3c87fbf98063c20c3269f1c9e58d255906dd","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":null,"installedUpdateId":null,"onLatestUpdate":false,"deploymentStatus":"NotStarted","groupId":"aysancag-test","lastDeploymentId":null},{"deviceId":"chejiang-1021","deviceClassId":"b83e3c87fbf98063c20c3269f1c9e58d255906dd","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"2020.1017.1734.49"},"installedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"2020.1017.1734.49"},"onLatestUpdate":false,"deploymentStatus":"Failed","groupId":"chejiang-test-group","lastDeploymentId":"chejiang-1021-2"},{"deviceId":"bshurn-05oct2020-legacy-1","deviceClassId":"b83e3c87fbf98063c20c3269f1c9e58d255906dd","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"3.0"},"installedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"3.0"},"onLatestUpdate":false,"deploymentStatus":"Failed","groupId":"barron-legacy","lastDeploymentId":"825e016a-c261-4d55-b4cd-d41cb851bcc6"},{"deviceId":"bshurn-legacy-09oct2020-1","deviceClassId":"b83e3c87fbf98063c20c3269f1c9e58d255906dd","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":null,"installedUpdateId":null,"onLatestUpdate":false,"deploymentStatus":"NotStarted","groupId":null,"lastDeploymentId":null}]}'
+    headers:
+      content-length:
+      - '4384'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 11 Nov 2020 19:31:06 GMT
+      traceparent:
+      - 00-057a507166214944847081545bc6871f-c8f8ff62f8bfcd4d-00
+    status:
+      code: 200
+      message: OK
+version: 1

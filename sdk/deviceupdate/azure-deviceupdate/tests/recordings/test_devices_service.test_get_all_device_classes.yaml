@@ -1,0 +1,38 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-deviceupdate/2020-09-01-preview Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprod.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deviceclasses
+  response:
+    body:
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"manufacturer\": \"Microsoft-Corporation\",\r\n      \"model\": \"Virtual-Machine\"\r\n
+        \   },\r\n    {\r\n      \"deviceClassId\": \"e27bc5237d50fee933b11146d6804f3acdd605dd\",\r\n
+        \     \"manufacturer\": \"Contoso\",\r\n      \"model\": \"ADU-Raspberry-Pi-Example\"\r\n
+        \   },\r\n    {\r\n      \"deviceClassId\": \"b83e3c87fbf98063c20c3269f1c9e58d255906dd\",\r\n
+        \     \"manufacturer\": \"Contoso\",\r\n      \"model\": \"Virtual-Machine\",\r\n
+        \     \"bestCompatibleUpdateId\": {\r\n        \"provider\": \"Contoso\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"2020.1111.1124.8\"\r\n
+        \     }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-length:
+      - '650'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 11 Nov 2020 19:31:00 GMT
+      traceparent:
+      - 00-3355f71b653d364dbaa97236a5072a42-006b9f882c222442-00
+    status:
+      code: 200
+      message: OK
+version: 1

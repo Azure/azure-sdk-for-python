@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-deviceupdate/2020-09-01-preview Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprod.api.prod.adu.microsoft.com/deviceupdate/blue/v2/updates/providers/Contoso/names/Virtual-Machine/versions/2020.1111.1124.8/files/00000
+  response:
+    body:
+      string: '{"fileId":"00000","fileName":"setup.exe","sizeInBytes":77,"hashes":{"Sha256":"A3A8d1pgdrP35fXAxzcR/tHALb8Tq1FayQ7vvhtrPf0="},"etag":"\"6d63a777-e7e2-4afa-bd18-0fe43de3cc35\""}'
+    headers:
+      cache-control:
+      - max-age=60, private
+      content-length:
+      - '175'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 11 Nov 2020 19:30:42 GMT
+      etag:
+      - '"6d63a777-e7e2-4afa-bd18-0fe43de3cc35"'
+      traceparent:
+      - 00-edf74dfa0887d144a1a36e836c388694-2ec889d997878f48-00
+    status:
+      code: 200
+      message: OK
+version: 1

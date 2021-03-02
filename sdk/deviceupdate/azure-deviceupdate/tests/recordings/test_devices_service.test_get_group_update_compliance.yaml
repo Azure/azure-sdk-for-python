@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-deviceupdate/2020-09-01-preview Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprod.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/groups/dpokluda-test/updateCompliance
+  response:
+    body:
+      string: "{\r\n  \"totalDeviceCount\": 1,\r\n  \"onLatestUpdateDeviceCount\":
+        0,\r\n  \"newUpdatesAvailableDeviceCount\": 1,\r\n  \"updatesInProgressDeviceCount\":
+        0\r\n}"
+    headers:
+      content-length:
+      - '142'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 11 Nov 2020 19:31:24 GMT
+      traceparent:
+      - 00-01cefe2dea284349817709861a2c4180-fe7d6a5553c68c4e-00
+    status:
+      code: 200
+      message: OK
+version: 1

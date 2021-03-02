@@ -1,0 +1,30 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-deviceupdate/2020-09-01-preview Python/3.8.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprod.api.prod.adu.microsoft.com/deviceupdate/blue/v2/updates/providers/Contoso/names
+  response:
+    body:
+      string: '{"value":["ADU-Raspberry-Pi-Example","Virtual-Machine"]}'
+    headers:
+      content-length:
+      - '56'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 11 Nov 2020 19:30:45 GMT
+      traceparent:
+      - 00-84ce9e93ce951040b429fc46d0fd1027-a0d598795cafee44-00
+    status:
+      code: 200
+      message: OK
+version: 1

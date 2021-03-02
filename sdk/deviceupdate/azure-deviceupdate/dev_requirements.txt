@@ -1,0 +1,4 @@
+../../core/azure-core
+../../identity/azure-identity
+../../storage/azure-storage-blob
+-e ../../../tools/azure-sdk-tools
