@@ -13,8 +13,9 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-advisor/4.0.0 Azure-SDK-For-Python
+      - python/3.8.7 (Linux-5.4.0-1039-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-advisor/4.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -30,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 18:34:41 GMT
+      - Tue, 02 Mar 2021 09:12:18 GMT
       expires:
       - '-1'
       pragma:
@@ -46,7 +47,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '193'
+      - '199'
     status:
       code: 200
       message: OK
@@ -60,15 +61,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-advisor/4.0.0 Azure-SDK-For-Python
+      - python/3.8.7 (Linux-5.4.0-1039-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-advisor/4.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations?api-version=2020-01-01
   response:
     body:
-      string: '{"value":[{"properties":{"exclude":false,"lowCpuThreshold":"20"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/default","type":"Microsoft.Advisor/Configurations","name":"default"},{"properties":{"exclude":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_advisor7or5mt5zyma2ac6zzn3zmbq2nyqzx252g44r5avscbhajaelqq6exelr655/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-cli_test_advisor7or5mt5zyma2ac6zzn3zmbq2nyqzx252g44r5avscbhajaelqq6exelr655","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-cli_test_advisor7or5mt5zyma2ac6zzn3zmbq2nyqzx252g44r5avscbhajaelqq6exelr655"},{"properties":{"exclude":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/default","type":"Microsoft.Advisor/Configurations","name":"default"}]}'
+      string: '{"value":[{"properties":{"exclude":false,"lowCpuThreshold":"20"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/default","type":"Microsoft.Advisor/Configurations","name":"default"},{"properties":{"exclude":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/default","type":"Microsoft.Advisor/Configurations","name":"default"},{"properties":{"exclude":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_advisor56cx3rm5rqxul6rjok2uuk7t3gbagh6b6gyhjqpwojclnvxeo6x6dzbjf22/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-cli_test_advisor56cx3rm5rqxul6rjok2uuk7t3gbagh6b6gyhjqpwojclnvxeo6x6dzbjf22","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-cli_test_advisor56cx3rm5rqxul6rjok2uuk7t3gbagh6b6gyhjqpwojclnvxeo6x6dzbjf22"}]}'
     headers:
       cache-control:
       - no-cache
@@ -77,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 18:34:41 GMT
+      - Tue, 02 Mar 2021 09:12:18 GMT
       expires:
       - '-1'
       pragma:
@@ -93,7 +95,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '593'
+      - '599'
     status:
       code: 200
       message: OK
@@ -111,8 +113,9 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-advisor/4.0.0 Azure-SDK-For-Python
+      - python/3.8.7 (Linux-5.4.0-1039-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-advisor/4.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -128,7 +131,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 18:34:42 GMT
+      - Tue, 02 Mar 2021 09:12:18 GMT
       expires:
       - '-1'
       pragma:
@@ -144,7 +147,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '192'
+      - '198'
     status:
       code: 200
       message: OK
@@ -158,15 +161,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-advisor/4.0.0 Azure-SDK-For-Python
+      - python/3.8.7 (Linux-5.4.0-1039-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-advisor/4.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations?api-version=2020-01-01
   response:
     body:
-      string: '{"value":[{"properties":{"exclude":false,"lowCpuThreshold":"5"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/default","type":"Microsoft.Advisor/Configurations","name":"default"},{"properties":{"exclude":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_advisor7or5mt5zyma2ac6zzn3zmbq2nyqzx252g44r5avscbhajaelqq6exelr655/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-cli_test_advisor7or5mt5zyma2ac6zzn3zmbq2nyqzx252g44r5avscbhajaelqq6exelr655","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-cli_test_advisor7or5mt5zyma2ac6zzn3zmbq2nyqzx252g44r5avscbhajaelqq6exelr655"},{"properties":{"exclude":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/default","type":"Microsoft.Advisor/Configurations","name":"default"}]}'
+      string: '{"value":[{"properties":{"exclude":false,"lowCpuThreshold":"5"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/default","type":"Microsoft.Advisor/Configurations","name":"default"},{"properties":{"exclude":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/default","type":"Microsoft.Advisor/Configurations","name":"default"},{"properties":{"exclude":false},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_advisor56cx3rm5rqxul6rjok2uuk7t3gbagh6b6gyhjqpwojclnvxeo6x6dzbjf22/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-cli_test_advisor56cx3rm5rqxul6rjok2uuk7t3gbagh6b6gyhjqpwojclnvxeo6x6dzbjf22","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-cli_test_advisor56cx3rm5rqxul6rjok2uuk7t3gbagh6b6gyhjqpwojclnvxeo6x6dzbjf22"}]}'
     headers:
       cache-control:
       - no-cache
@@ -175,7 +179,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Mar 2020 18:34:42 GMT
+      - Tue, 02 Mar 2021 09:12:18 GMT
       expires:
       - '-1'
       pragma:
@@ -191,7 +195,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '592'
+      - '598'
     status:
       code: 200
       message: OK
