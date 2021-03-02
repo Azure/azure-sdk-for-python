@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0 (2021-03-02)
+## 1.0.0b3
 
 **Features**
 
