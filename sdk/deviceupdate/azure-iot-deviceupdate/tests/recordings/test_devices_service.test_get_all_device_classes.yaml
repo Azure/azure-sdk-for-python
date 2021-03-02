@@ -1,0 +1,42 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deviceclasses
+  response:
+    body:
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"deviceClassId\": \"c97c9c774a1c541ecc88e8c65b6431fd8b7eafc3\",\r\n
+        \     \"manufacturer\": \"Microsoft-Corporation\",\r\n      \"model\": \"Virtual-Machine\",\r\n
+        \     \"bestCompatibleUpdateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"111.0\"\r\n
+        \     }\r\n    },\r\n    {\r\n      \"deviceClassId\": \"86705631a06a6d4745a516778f7e2e261a72c5b8\",\r\n
+        \     \"manufacturer\": \"ADUTeam\",\r\n      \"model\": \"RefDevice\"\r\n
+        \   },\r\n    {\r\n      \"deviceClassId\": \"634a0b52a6e1fb54fe6b98e5b55534bb4800b77b\",\r\n
+        \     \"manufacturer\": \"ADUTeam\",\r\n      \"model\": \"E2ETestDevice\"\r\n
+        \   },\r\n    {\r\n      \"deviceClassId\": \"b83e3c87fbf98063c20c3269f1c9e58d255906dd\",\r\n
+        \     \"manufacturer\": \"Contoso\",\r\n      \"model\": \"Virtual-Machine\",\r\n
+        \     \"bestCompatibleUpdateId\": {\r\n        \"provider\": \"Contoso\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"2021.302.1307.58\"\r\n
+        \     }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-length:
+      - '939'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Mar 2021 21:10:45 GMT
+      traceparent:
+      - 00-7c53509b0a6e90439b6a7dc95434f80d-a2fd4ed83d6cbe42-00
+    status:
+      code: 200
+      message: OK
+version: 1

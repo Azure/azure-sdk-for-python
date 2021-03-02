@@ -1,0 +1,30 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/updates/providers/Contoso/names
+  response:
+    body:
+      string: '{"value":["Virtual-Machine"]}'
+    headers:
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Mar 2021 21:10:35 GMT
+      traceparent:
+      - 00-cbd9eefa3166bf49bae624034c5c2986-5b2d3a6da32c4844-00
+    status:
+      code: 200
+      message: OK
+version: 1

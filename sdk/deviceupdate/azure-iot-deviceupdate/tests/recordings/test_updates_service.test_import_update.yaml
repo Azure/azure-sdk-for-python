@@ -1,0 +1,38 @@
+interactions:
+- request:
+    body: '{"importManifest": {"url": "https://adutest.blob.core.windows.net/test/Ak1xigPLmur511bYfCvzeC?sv=2019-02-02&sr=b&sig=L9RZxCUwduStz0m1cj4YnXt6OJCvWSe9SPseum3cclE%3D&se=2020-05-08T20%3A52%3A51Z&sp=r",
+      "sizeInBytes": 453, "hashes": {"SHA256": "Ak1xigPLmur511bYfCvzeCwF6r/QxiBKeEDHOvHPzr4="}},
+      "files": [{"filename": "setup.exe", "url": "https://adutest.blob.core.windows.net/test/zVknnlx1tyYSMHY28LZVzk?sv=2019-02-02&sr=b&sig=QtS6bAOcHon18wLwIt9uvHIM%2B4M27EoVPNP4RWpMjyw%3D&se=2020-05-08T20%3A52%3A51Z&sp=r"}]}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '508'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/updates?action=import
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 02 Mar 2021 21:10:41 GMT
+      location:
+      - /deviceupdate/blue/updates/operations/85e8009b-81e9-43f9-9e37-89843e98caa8?api-version=2
+      operation-location:
+      - /deviceupdate/blue/updates/operations/85e8009b-81e9-43f9-9e37-89843e98caa8?api-version=2
+      traceparent:
+      - 00-343e8aacc37d554f863cff98900f9940-701c73febf19b541-00
+    status:
+      code: 202
+      message: Accepted
+version: 1

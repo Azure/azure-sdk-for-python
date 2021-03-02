@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/updates/operations/foo
+  response:
+    body:
+      string: '{"type":"https://tools.ietf.org/html/rfc7231#section-6.5.4","title":"Not
+        Found","status":404,"traceId":"00-12ba65590e04864bb85bb4dc977f3a98-ae3c9ab60539e049-00"}'
+    headers:
+      content-length:
+      - '161'
+      content-type:
+      - application/problem+json; charset=utf-8
+      date:
+      - Tue, 02 Mar 2021 21:10:37 GMT
+      traceparent:
+      - 00-12ba65590e04864bb85bb4dc977f3a98-e5e79d14ace3754f-00
+    status:
+      code: 404
+      message: Not Found
+version: 1

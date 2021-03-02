@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/updates/operations/e3a75d1b-e359-4bbd-a84c-68fbfa8b7b9f%3Fapi-version%3D2
+  response:
+    body:
+      string: '{"operationId":"e3a75d1b-e359-4bbd-a84c-68fbfa8b7b9f","status":"Succeeded","updateId":{"provider":"Contoso","name":"Virtual-Machine","version":"2021.302.1202.48"},"resourceLocation":"/deviceupdate/blue/updates/providers/Contoso/names/Virtual-Machine/versions/2021.302.1202.48?api-version=2","traceId":"c72d7514826f124fb37678796aa477ae","lastActionDateTime":"2021-03-02T20:04:47.9517198Z","createdDateTime":"2021-03-02T20:02:50.6192614Z","etag":"\"a1874484-e4be-4643-b992-c5d43ed6947c\""}'
+    headers:
+      content-length:
+      - '487'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Mar 2021 21:10:36 GMT
+      etag:
+      - '"a1874484-e4be-4643-b992-c5d43ed6947c"'
+      traceparent:
+      - 00-0f81035be58d1646889fbdfe5dba0219-b0c1c2be8a695341-00
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/groups/dpokluda-test/updateCompliance
+  response:
+    body:
+      string: "{\r\n  \"totalDeviceCount\": 1,\r\n  \"onLatestUpdateDeviceCount\":
+        0,\r\n  \"newUpdatesAvailableDeviceCount\": 1,\r\n  \"updatesInProgressDeviceCount\":
+        0\r\n}"
+    headers:
+      content-length:
+      - '142'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Mar 2021 21:10:53 GMT
+      traceparent:
+      - 00-40de896fc3e61e4fa0000aa54ad50a22-df19e2036d27f542-00
+    status:
+      code: 200
+      message: OK
+version: 1

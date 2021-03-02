@@ -1,0 +1,33 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/updates/providers/Contoso/names/Virtual-Machine/versions/2021.302.1202.48/files/foobar
+  response:
+    body:
+      string: '{"type":"https://tools.ietf.org/html/rfc7231#section-6.5.4","title":"Not
+        Found","status":404,"traceId":"00-edce482e5a5d2b46816edcf667e42e1f-54d41d7a6a39b54e-00"}'
+    headers:
+      cache-control:
+      - max-age=60, private
+      content-length:
+      - '161'
+      content-type:
+      - application/problem+json; charset=utf-8
+      date:
+      - Tue, 02 Mar 2021 21:10:34 GMT
+      traceparent:
+      - 00-edce482e5a5d2b46816edcf667e42e1f-847cf61124eab841-00
+    status:
+      code: 404
+      message: Not Found
+version: 1

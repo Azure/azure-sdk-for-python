@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deployments/dpokluda-test-2021-302-1202-48/devicestates
+  response:
+    body:
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"deviceId\": \"dpokluda-test\",\r\n
+        \     \"deviceState\": \"Succeeded\",\r\n      \"retryCount\": 0,\r\n      \"movedOnToNewDeployment\":
+        true\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-length:
+      - '170'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Mar 2021 21:11:01 GMT
+      traceparent:
+      - 00-6162af40ab6a874688d797734db663b6-0c57a9e98d97fa4a-00
+    status:
+      code: 200
+      message: OK
+version: 1

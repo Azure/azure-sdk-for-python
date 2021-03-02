@@ -1,0 +1,36 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deployments/dpokluda-test-2021-302-1202-48
+  response:
+    body:
+      string: "{\r\n  \"deploymentId\": \"dpokluda-test-2021-302-1202-48\",\r\n  \"deploymentType\":
+        \"Complete\",\r\n  \"startDateTime\": \"2021-03-02T20:04:52.8525661+00:00\",\r\n
+        \ \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n  \"deviceGroupDefinition\":
+        [\r\n    \"dpokluda-test\"\r\n  ],\r\n  \"updateId\": {\r\n    \"provider\":
+        \"Contoso\",\r\n    \"name\": \"Virtual-Machine\",\r\n    \"version\": \"2021.302.1202.48\"\r\n
+        \ },\r\n  \"isCanceled\": false,\r\n  \"isCompleted\": false,\r\n  \"isRetry\":
+        false\r\n}"
+    headers:
+      content-length:
+      - '439'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Mar 2021 21:11:01 GMT
+      traceparent:
+      - 00-2370dc9a6e5e2a4abe816553f87a3e8d-3933ed106ad16a4b-00
+    status:
+      code: 200
+      message: OK
+version: 1

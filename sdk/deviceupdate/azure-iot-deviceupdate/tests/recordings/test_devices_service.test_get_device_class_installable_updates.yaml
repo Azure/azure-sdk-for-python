@@ -1,0 +1,48 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deviceclasses/b83e3c87fbf98063c20c3269f1c9e58d255906dd/installableupdates
+  response:
+    body:
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"provider\": \"contoso\",\r\n
+        \     \"name\": \"virtual-machine\",\r\n      \"version\": \"2021.209.1457.25\"\r\n
+        \   },\r\n    {\r\n      \"provider\": \"contoso\",\r\n      \"name\": \"virtual-machine\",\r\n
+        \     \"version\": \"2021.209.1525.54\"\r\n    },\r\n    {\r\n      \"provider\":
+        \"contoso\",\r\n      \"name\": \"virtual-machine\",\r\n      \"version\":
+        \"2021.214.1700.20\"\r\n    },\r\n    {\r\n      \"provider\": \"contoso\",\r\n
+        \     \"name\": \"virtual-machine\",\r\n      \"version\": \"2021.214.1709.51\"\r\n
+        \   },\r\n    {\r\n      \"provider\": \"contoso\",\r\n      \"name\": \"virtual-machine\",\r\n
+        \     \"version\": \"2021.301.1926.8\"\r\n    },\r\n    {\r\n      \"provider\":
+        \"contoso\",\r\n      \"name\": \"virtual-machine\",\r\n      \"version\":
+        \"2021.302.914.51\"\r\n    },\r\n    {\r\n      \"provider\": \"contoso\",\r\n
+        \     \"name\": \"virtual-machine\",\r\n      \"version\": \"2021.302.1045.44\"\r\n
+        \   },\r\n    {\r\n      \"provider\": \"contoso\",\r\n      \"name\": \"virtual-machine\",\r\n
+        \     \"version\": \"2021.302.1048.57\"\r\n    },\r\n    {\r\n      \"provider\":
+        \"Contoso\",\r\n      \"name\": \"Virtual-Machine\",\r\n      \"version\":
+        \"2021.302.1202.48\"\r\n    },\r\n    {\r\n      \"provider\": \"Contoso\",\r\n
+        \     \"name\": \"Virtual-Machine\",\r\n      \"version\": \"2021.302.1304.12\"\r\n
+        \   },\r\n    {\r\n      \"provider\": \"Contoso\",\r\n      \"name\": \"Virtual-Machine\",\r\n
+        \     \"version\": \"2021.302.1307.58\"\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-length:
+      - '1296'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Mar 2021 21:10:49 GMT
+      traceparent:
+      - 00-c8950c25db78b54ab6bd8f24f607678f-015ae437be65c641-00
+    status:
+      code: 200
+      message: OK
+version: 1

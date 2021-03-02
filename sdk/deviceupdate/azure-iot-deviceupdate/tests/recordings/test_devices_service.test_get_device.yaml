@@ -1,0 +1,30 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/devices/dpokluda-test
+  response:
+    body:
+      string: '{"deviceId":"dpokluda-test","moduleId":null,"deviceClassId":"b83e3c87fbf98063c20c3269f1c9e58d255906dd","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"2021.302.1304.12"},"installedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"2021.302.1304.12"},"onLatestUpdate":false,"deploymentStatus":"Succeeded","groupId":"dpokluda-test","lastDeploymentId":"dpokluda-test.2021-302-1304-12"}'
+    headers:
+      content-length:
+      - '484'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 02 Mar 2021 21:10:47 GMT
+      traceparent:
+      - 00-0cdb6324e1903349993a639f83fb80b1-a4ecd7a763e55740-00
+    status:
+      code: 200
+      message: OK
+version: 1
