@@ -71,7 +71,7 @@ jobs:
         curl \
           --user "anything:$(USR_TOKEN)" \
           -d "{\
-                  \"title\":\"[AutoRelease] $new_branch\",\
+                  \"title\":\"[AutoRelease] $new_branch(Do not merge)\",\
                   \"body\":\"$test_result Please Add the link issue \",\
                   \"head\":\"$(USR_NAME):$new_branch\",\
                   \"base\":\"$target_branch\"\

@@ -180,7 +180,7 @@ def edit_first_release():
     data_format = '{}-{:02d}-{:02d}'.format(date.tm_year, date.tm_mon, date.tm_mday)
     for i in range(0, len(content)):
         content[i] = content[i].replace('data_format', data_format)
-    with open(f'{path}/CHANGELOG.md', 'w') as file_out:
+    with open(f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}/CHANGELOG.md', 'w') as file_out:
         file_out.writelines(content)
 
 
