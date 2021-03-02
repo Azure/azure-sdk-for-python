@@ -8,6 +8,8 @@
   - `update_queue`, `update_topic`, `update_subscription`, and `update_rule` on `ServiceBusAdministrationClient` accept dict representations of `QueueProperties`, `TopicProperties`, `SubscriptionProperties`, and `RuleProperties`, respectively.
   - `send_messages` and `schedule_messages` on both sync and async versions of `ServiceBusSender` accept a list of or single instance of dict representations of `ServiceBusMessage`.
   - `add_message` on `ServiceBusMessageBatch` now accepts a dict representation of `ServiceBusMessage`.
+  - Note: This is ongoing work and is the first step in supporting the above as respresentation of type `typing.Mapping`.
+  - Note: Thanks to bradleydamato for their large contribution to this.
 
 **BugFixes**
 

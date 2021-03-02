@@ -335,5 +335,5 @@ def create_properties_from_dict_if_needed(properties, sb_resource_type):
     :param type sb_resource_type: The type of properties object.
     :rtype: DictPropertiesReturnType
     """
-    return_properties = sb_resource_type(**properties) if isinstance(properties, Mapping) else properties
+    return_properties = sb_resource_type(**properties) if isinstance(properties, dict) else properties
     return return_properties

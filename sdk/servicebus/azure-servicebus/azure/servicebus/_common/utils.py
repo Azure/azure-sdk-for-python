@@ -232,9 +232,9 @@ def create_messages_from_dicts_if_needed(messages, message_type):
     :rtype: DictMessageReturnType
     """
     if isinstance(messages, list):
-        return [(message_type(**message) if isinstance(message, Mapping) else message) for message in messages]
+        return [(message_type(**message) if isinstance(message, dict) else message) for message in messages]
 
-    return_messages = message_type(**messages) if isinstance(messages, Mapping) else messages
+    return_messages = message_type(**messages) if isinstance(messages, dict) else messages
     return return_messages
 
 def strip_protocol_from_uri(uri):

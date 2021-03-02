@@ -9,7 +9,7 @@ import datetime
 import uuid
 import logging
 import copy
-from typing import Optional, Mapping, List, Union, Iterable, TYPE_CHECKING, Any
+from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any
 
 import six
 
@@ -538,7 +538,7 @@ class ServiceBusMessageBatch(object):
     def _from_list(self, messages, parent_span=None):
         # type: (Iterable[ServiceBusMessage], AbstractSpan) -> None
         for each in messages:
-            if not isinstance(each, (ServiceBusMessage, Mapping)):
+            if not isinstance(each, (ServiceBusMessage, dict)):
                 raise TypeError(
                     "Only ServiceBusMessage or an iterable object containing ServiceBusMessage "
                     "objects are accepted. Received instead: {}".format(
