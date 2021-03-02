@@ -234,8 +234,6 @@ def test_env_init():
     ENV_CLIENT_SECRET = os.environ['CLIENT_SECRET']
     ENV_SUBSCRIPTION_ID = os.environ['SUBSCRIPTION_ID']
 
-    my_print(f'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx={ENV_TENANT_ID}, {ENV_CLIENT_ID}, {ENV_CLIENT_SECRET}, {ENV_SUBSCRIPTION_ID}')
-
     for i in range(0, len(list_in)):
         list_in[i] = list_in[i].replace('ENV_TENANT_ID', ENV_TENANT_ID)
         list_in[i] = list_in[i].replace('ENV_CLIENT_ID', ENV_CLIENT_ID)
