@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: advisor
     Artifacts:
-    - name: azure_mgmt_advisor
+    - name: azure-mgmt-advisor
       safeName: azuremgmtadvisor

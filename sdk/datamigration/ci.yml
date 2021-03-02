@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: datamigration
     Artifacts:
-    - name: azure_mgmt_datamigration
+    - name: azure-mgmt-datamigration
       safeName: azuremgmtdatamigration

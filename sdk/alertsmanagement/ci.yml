@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: alertsmanagement
     Artifacts:
-    - name: azure_mgmt_alertsmanagement
+    - name: azure-mgmt-alertsmanagement
       safeName: azuremgmtalertsmanagement

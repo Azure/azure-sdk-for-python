@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: billing
     Artifacts:
-    - name: azure_mgmt_billing
+    - name: azure-mgmt-billing
       safeName: azuremgmtbilling

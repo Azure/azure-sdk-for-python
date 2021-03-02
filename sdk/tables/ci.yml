@@ -37,9 +37,9 @@ extends:
   parameters:
     ServiceDirectory: tables
     Artifacts:
-    - name: azure_data_tables
+    - name: azure-data-tables
       safeName: azuredatatables
-    - name: azure_data_nspkg
+    - name: azure-data-nspkg
       safeName: azuredatanspkg
       skipVerifyChangeLog: true
 

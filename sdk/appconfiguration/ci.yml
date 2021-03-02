@@ -36,7 +36,7 @@ extends:
   parameters:
     ServiceDirectory: appconfiguration
     Artifacts:
-    - name: azure_appconfiguration
+    - name: azure-appconfiguration
       safeName: azureappconfiguration
-    - name: azure_mgmt_appconfiguration
+    - name: azure-mgmt-appconfiguration
       safeName: azuremgmtappconfiguration

@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: timeseriesinsights
     Artifacts:
-    - name: azure_mgmt_timeseriesinsights
+    - name: azure-mgmt-timeseriesinsights
       safeName: azuremgmttimeseriesinsights

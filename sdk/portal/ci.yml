@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: portal
     Artifacts:
-    - name: azure_mgmt_portal
+    - name: azure-mgmt-portal
       safeName: azuremgmtportal

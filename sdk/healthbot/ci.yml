@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: healthbot
     Artifacts:
-    - name: azure_mgmt_healthbot
+    - name: azure-mgmt-healthbot
       safeName: azuremgmthealthbot

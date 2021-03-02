@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: rdbms
     Artifacts:
-    - name: azure_mgmt_rdbms
+    - name: azure-mgmt-rdbms
       safeName: azuremgmtrdbms

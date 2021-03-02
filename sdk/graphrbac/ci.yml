@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: graphrbac
     Artifacts:
-    - name: azure_graphrbac
+    - name: azure-graphrbac
       safeName: azuregraphrbac

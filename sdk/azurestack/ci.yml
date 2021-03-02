@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: azurestack
     Artifacts:
-    - name: azure_mgmt_azurestack
+    - name: azure-mgmt-azurestack
       safeName: azuremgmtazurestack

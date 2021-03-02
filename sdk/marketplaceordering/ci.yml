@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: marketplaceordering
     Artifacts:
-    - name: azure_mgmt_marketplaceordering
+    - name: azure-mgmt-marketplaceordering
       safeName: azuremgmtmarketplaceordering
