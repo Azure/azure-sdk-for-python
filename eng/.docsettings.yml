@@ -132,7 +132,7 @@ known_content_issues:
   - ['sdk/storage/azure-storage-file-share/samples/README.md', 'nspkg and common']
   - ['sdk/storage/azure-storage-queue/samples/README.md', 'nspkg and common']
   - ['sdk/textanalytics/azure-ai-nspkg/README.md', 'nspkg and common']
-  - - ['sdk/textanalytics/azure-iot-nspkg/README.md', 'nspkg and common']
+  - ['sdk/iothub/azure-iot-nspkg/README.md', 'nspkg and common']
   - ['sdk/eventhub/azure-eventhub/samples/README.md', 'nspkg and common']
   - ['sdk/tables/azure-data-nspkg/README.md', 'nspkg and common']
   - ['sdk/cosmos/README.md', 'nspkg and common']
