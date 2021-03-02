@@ -11,12 +11,12 @@ from azure.core._utils import _convert_to_isoformat, TZ_UTC
 from azure.core.serialization import NULL
 
 try:
-    from typing import TYPE_CHECKING, cast, Union, Dict
+    from typing import TYPE_CHECKING, cast, Union
 except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Optional, Dict
 
 
 __all__ = ["CloudEvent"]
@@ -82,31 +82,35 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         # type: (str, str, **Any) -> None
         self.source = source  # type: str
         self.type = type  # type: str
-        self.specversion = kwargs.pop("specversion", "1.0")  # type: str
-        self.id = kwargs.pop("id", str(uuid.uuid4()))  # type: str
-        self.time = kwargs.pop("time", datetime.now(TZ_UTC))  # type: datetime
+        self.specversion = kwargs.pop("specversion", "1.0")  # type: Optional[str]
+        self.id = kwargs.pop("id", str(uuid.uuid4()))  # type: Optional[str]
+        self.time = kwargs.pop("time", datetime.now(TZ_UTC))  # type: Optional[datetime]
 
-        _optional_attributes = ["datacontenttype", "dataschema", "subject", "data"]
-
-        for attr in _optional_attributes:
-            val = None if attr not in kwargs else kwargs.pop(attr)
-            setattr(self, attr, val)
+        self.datacontenttype = kwargs.pop(
+            "datacontenttype", None
+        )  # type: Optional[str]
+        self.dataschema = kwargs.pop("dataschema", None)  # type: Optional[str]
+        self.subject = kwargs.pop("subject", None)  # type: Optional[str]
+        self.data = kwargs.pop("data", None)  # type: Optional[object]
 
         try:
-            self.extensions = kwargs.pop("extensions") # type: Dict
-            for key in self.extensions.keys():
+            self.extensions = kwargs.pop("extensions")  # type: Optional[Dict]
+            for (
+                key
+            ) in self.extensions.keys():  # type:ignore # extensions won't be None here
                 if not key.islower() or not key.isalnum():
                     raise ValueError(
                         "Extension attributes should be lower cased and alphanumeric."
                     )
         except KeyError:
-            self.extensions = cast(Dict, None)
+            self.extensions = None
 
         if kwargs:
             remaining = ", ".join(kwargs.keys())
             raise ValueError(
-                "Unexpected keyword arguments {}. Any extension attributes must be passed explicitly using extensions."
-                .format(remaining)
+                "Unexpected keyword arguments {}. Any extension attributes must be passed explicitly using extensions.".format(
+                    remaining
+                )
             )
 
     def __repr__(self):
@@ -123,7 +127,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         :type event: dict
         :rtype: CloudEvent
         """
-        kwargs = {} # type: Dict[Any, Any]
+        kwargs = {}  # type: Dict[Any, Any]
         reserved_attr = [
             "data",
             "data_base64",
@@ -141,16 +145,18 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
             raise ValueError(
                 "Invalid input. Only one of data and data_base64 must be present."
             )
-        if 'data' not in event and 'data_base64' not in event:
+        if "data" not in event and "data_base64" not in event:
             kwargs.setdefault("data", None)
         elif "data" in event:
             data = event.get("data")
             if data is not None:
-                kwargs.setdefault("data", data)
+                kwargs["data"] = data
             else:
-                kwargs.setdefault("data", NULL)
+                kwargs["data"] = NULL
         elif "data_base64" in event:
-            kwargs.setdefault("data", b64decode(cast(Union[str, bytes], event.get("data_base64"))))
+            kwargs["data"] = b64decode(
+                cast(Union[str, bytes], event.get("data_base64"))
+            )
 
         for item in ["datacontenttype", "dataschema", "subject"]:
             if item in event:
@@ -163,7 +169,6 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         extensions = {k: v for k, v in event.items() if k not in reserved_attr}
         if extensions:
             kwargs.setdefault("extensions", extensions)
-
 
         return cls(
             id=event.get("id", None),
