@@ -25,8 +25,8 @@ FORMRECOGNIZER_TRAINING_DATA_CONTAINER_SAS_URL=<SAS url for container with train
 When `azure-devtools` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
 
 ```cmd
-(env) ~/azure-ai-formrecognizer> cd tests
-(env) ~/azure-ai-formrecognizer/tests> perfstress
+(env) ~/azure-ai-formrecognizer> cd tests/perfstress_tests/
+(env) ~/azure-ai-formrecognizer/tests/perfstress_tests> perfstress
 ```
 Using the `perfstress` command alone will list the available perf tests found. 
 
