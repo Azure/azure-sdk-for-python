@@ -48,7 +48,7 @@ class AuthenticationSample(object):
         form_recognizer_client = FormRecognizerClient(endpoint, AzureKeyCredential(key))
         # [END create_fr_client_with_key]
         poller = form_recognizer_client.begin_recognize_content_from_url(self.url)
-        receipt = poller.result()
+        result = poller.result()
 
     def authentication_with_azure_active_directory_form_recognizer_client(self):
         # [START create_fr_client_with_aad]
@@ -64,7 +64,7 @@ class AuthenticationSample(object):
         form_recognizer_client = FormRecognizerClient(endpoint, credential)
         # [END create_fr_client_with_aad]
         poller = form_recognizer_client.begin_recognize_content_from_url(self.url)
-        receipt = poller.result()
+        result = poller.result()
 
     def authentication_with_api_key_credential_form_training_client(self):
         # [START create_ft_client_with_key]
