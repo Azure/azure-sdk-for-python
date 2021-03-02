@@ -1,4 +1,5 @@
-../../core/azure-core
-../../identity/azure-identity
-../../storage/azure-storage-blob
 -e ../../../tools/azure-sdk-tools
+-e ../../../tools/azure-devtools
+../../core/azure-core
+-e ../../identity/azure-identity
+../../storage/azure-storage-blob
