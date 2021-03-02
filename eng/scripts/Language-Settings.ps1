@@ -18,8 +18,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectoryName)
   try
   {
     pip install packaging==20.4 -q -I
-    $allSetupProps = (python -c "import sys; import os; sys.path.append(os.path.join('eng', 'scripts')); \
-    import get_package_properties; get_package_properties.get_all_package_properties('$searchPath')")
+    $allSetupProps = python "eng\scripts\get_package_properties.py" -s $searchPath
   }
   catch
   {
@@ -30,11 +29,15 @@ function Get-AllPackageInfoFromRepo ($serviceDirectoryName)
 
   foreach ($line in $allSetupProps)
   {
-    $setupInfo = $line -Split ","
-    $packageName = $setupInfo[0].Trim("(' ")
+    $setupInfo = ($line -Split ",").Trim("()")
+    if ($setupInfo.Count < 3)
+    {
+      continue
+    }
+    $packageName = $setupInfo[0].Trim("' ")
     $packageVersion = $setupInfo[1].Trim("' ")
     $isNewSdk = $setupInfo[2].Trim()
-    $setupPyDir = $setupInfo[3].Trim(")' ")
+    $setupPyDir = $setupInfo[3].Trim("' ")
     $pkgDirectoryPath = Resolve-Path (Join-Path -Path $RepoRoot $setupPyDir)
     $serviceDirectoryName = Split-Path (Split-Path -Path $pkgDirectoryPath -Parent) -Leaf
     if ($packageName -match "mgmt")
