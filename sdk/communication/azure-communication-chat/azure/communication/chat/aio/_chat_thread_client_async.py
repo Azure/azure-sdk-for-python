@@ -127,8 +127,7 @@ class ChatThreadClient(object):
         :param topic: Thread topic. If topic is not specified, the update will succeeded but
          chat thread properties will not be changed.
         :type topic: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -158,8 +157,7 @@ class ChatThreadClient(object):
 
         :param message_id: Required. Id of the latest message read by current user.
         :type message_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -220,8 +218,7 @@ class ChatThreadClient(object):
     ) -> None:
         """Posts a typing event to a thread, on behalf of a user.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -251,8 +248,7 @@ class ChatThreadClient(object):
         :type chat_message_type: str or ~azure.communication.chat.models.ChatMessageType
         :keyword str sender_display_name: The display name of the message sender. This property is used to
           populate sender name for push notifications.
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: str, or the result of cls(response)
+        :return: str
         :rtype: str
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -306,8 +302,7 @@ class ChatThreadClient(object):
 
         :param message_id: Required. The message id.
         :type message_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ChatMessage, or the result of cls(response)
+        :return: ChatMessage
         :rtype: ~azure.communication.chat.ChatMessage
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -335,7 +330,6 @@ class ChatThreadClient(object):
 
         :keyword int results_per_page: The maximum number of messages to be returned per page.
         :keyword ~datetime.datetime start_time: The start time where the range query.
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of ChatMessage
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatMessage]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -372,8 +366,7 @@ class ChatThreadClient(object):
         :type message_id: str
         :param content: Chat message content.
         :type content: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -407,8 +400,7 @@ class ChatThreadClient(object):
 
         :param message_id: Required. The message id.
         :type message_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -438,7 +430,6 @@ class ChatThreadClient(object):
 
         :keyword int results_per_page: The maximum number of participants to be returned per page.
         :keyword int skip: Skips participants up to a specified position in response.
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of ChatThreadParticipant
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatThreadParticipant]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -476,7 +467,6 @@ class ChatThreadClient(object):
 
         :param thread_participant: Required. Single thread participant to be added to the thread.
         :type thread_participant: ~azure.communication.chat.ChatThreadParticipant
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError, RuntimeError
@@ -575,8 +565,7 @@ class ChatThreadClient(object):
 
         :param user: Required. User identity of the thread participant to remove from the thread.
         :type user: ~azure.communication.chat.CommunicationUserIdentifier
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
