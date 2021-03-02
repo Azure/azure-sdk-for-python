@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import six
 
-from .utilities import is_text_payload, is_json_payload
+from .utilities import is_text_payload, is_json_payload, is_batch_payload
 
 
 class RecordingProcessor(object):
@@ -195,6 +195,10 @@ class GeneralNameReplacer(RecordingProcessor):
                 if old in body:
                     request.body = body.replace(old, new)
 
+            if request.body and request.uri and is_batch_payload(request):
+                body = six.ensure_str(request.body)
+                if old in body:
+                    request.body = body.replace(old, new)
         return request
 
     def process_response(self, response):
