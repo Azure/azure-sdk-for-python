@@ -93,11 +93,11 @@ jobs:
           --user "anything:$(USR_TOKEN)" \
           -d "{\
                   \"title\":\"[AutoRelease_Python] $new_branch\",\
-                  \"body\":\"Please Add the link issue\n \",\
+                  \"body\":\"Please Add the link issue\n $test_result \",\
                   \"head\":\"$(USR_NAME):$new_branch\",\
                   \"base\":\"$target_branch\"\
               }" \
-              $(REPO)/pulls
+              https://api.github.com/repos/Azure/azure-sdk-for-python/pulls
 
         echo "\'[AutoRelease_Python] $new_branch \' has been created!!!"
 
