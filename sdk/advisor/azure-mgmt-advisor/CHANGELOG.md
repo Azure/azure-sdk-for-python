@@ -1,5 +1,21 @@
 # Release History
 
+## 4.1.0 (2021-03-02)
+
+**Features**
+
+  - Model ResourceRecommendationBase has a new parameter label
+  - Model ResourceRecommendationBase has a new parameter remediation
+  - Model ResourceRecommendationBase has a new parameter learn_more_link
+  - Model ResourceRecommendationBase has a new parameter description
+  - Model ResourceRecommendationBase has a new parameter actions
+  - Model ResourceRecommendationBase has a new parameter potential_benefits
+  - Model ResourceRecommendationBase has a new parameter exposed_metadata_properties
+  - Model ResourceMetadata has a new parameter singular
+  - Model ResourceMetadata has a new parameter action
+  - Model ResourceMetadata has a new parameter plural
+  - Model SuppressionContract has a new parameter expiration_time_stamp
+
 ## 4.0.0 (2020-03-14)
 
 **Features**
