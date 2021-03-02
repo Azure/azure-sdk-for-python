@@ -7,6 +7,9 @@
 - Renamed properties `aspect` and `opinions` to `target` and `assessments` respectively in class `MinedOpinion`.
 - Renamed classes `AspectSentiment` and `OpinionSentiment` to `TargetSentiment` and `AssessmentSentiment` respectively.
 
+**New Features**
+- Added `RecognizeLinkedEntitiesAction` as a supported action type for `begin_analyze_batch_actions`.
+
 ## 5.1.0b5 (2021-02-10)
 
 **Breaking Changes**

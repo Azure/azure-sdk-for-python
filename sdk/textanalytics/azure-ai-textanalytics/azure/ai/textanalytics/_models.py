@@ -1421,7 +1421,8 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     def to_generated(self):
         return _latest_models.EntityLinkingTask(
             parameters=_latest_models.EntityLinkingTaskParameters(
-                model_version=self.model_version
+                model_version=self.model_version,
+                string_index_type=self.string_index_type
             )
         )
 
