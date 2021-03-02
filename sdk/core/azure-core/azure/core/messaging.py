@@ -145,14 +145,10 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
             raise ValueError(
                 "Invalid input. Only one of data and data_base64 must be present."
             )
-        if "data" not in event and "data_base64" not in event:
-            kwargs.setdefault("data", None)
-        elif "data" in event:
+
+        if "data" in event:
             data = event.get("data")
-            if data is not None:
-                kwargs["data"] = data
-            else:
-                kwargs["data"] = NULL
+            kwargs["data"] = data if data is not None else NULL
         elif "data_base64" in event:
             kwargs["data"] = b64decode(
                 cast(Union[str, bytes], event.get("data_base64"))
