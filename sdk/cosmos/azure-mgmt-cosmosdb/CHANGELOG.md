@@ -1,5 +1,26 @@
 # Release History
 
+## 6.0.1 (2021-03-02)
+
+**Features**
+
+  - Model DatabaseAccountGetResults has a new parameter network_acl_bypass
+  - Model DatabaseAccountGetResults has a new parameter backup_policy
+  - Model DatabaseAccountGetResults has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter network_acl_bypass_resource_ids
+  - Model PrivateEndpointConnection has a new parameter group_id
+  - Model PrivateEndpointConnection has a new parameter provisioning_state
+  - Model ContainerPartitionKey has a new parameter system_key
+  - Model DatabaseAccountUpdateParameters has a new parameter network_acl_bypass
+  - Model DatabaseAccountUpdateParameters has a new parameter backup_policy
+  - Model DatabaseAccountUpdateParameters has a new parameter identity
+  - Model DatabaseAccountUpdateParameters has a new parameter network_acl_bypass_resource_ids
+  - Model PrivateLinkServiceConnectionStateProperty has a new parameter description
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter network_acl_bypass
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter backup_policy
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter network_acl_bypass_resource_ids
+
 ## 0.8.0 (2021-02-23)
 
 **Features**

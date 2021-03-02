@@ -1217,9 +1217,9 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault.
     :type key_vault_key_uri: str
-    :ivar public_network_access: Whether requests from Public Network are allowed. Possible values
+    :param public_network_access: Whether requests from Public Network are allowed. Possible values
      include: "Enabled", "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
+    :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :param enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :type enable_free_tier: bool
     :param api_properties: API specific properties. Currently, supported only for MongoDB API.
@@ -1244,7 +1244,6 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'type': {'readonly': True},
         'locations': {'required': True},
         'database_account_offer_type': {'required': True, 'constant': True},
-        'public_network_access': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1299,7 +1298,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.connector_offer = kwargs.get('connector_offer', None)
         self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
         self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
-        self.public_network_access = None
+        self.public_network_access = kwargs.get('public_network_access', None)
         self.enable_free_tier = kwargs.get('enable_free_tier', None)
         self.api_properties = kwargs.get('api_properties', None)
         self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
@@ -1390,9 +1389,9 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault.
     :type key_vault_key_uri: str
-    :ivar public_network_access: Whether requests from Public Network are allowed. Possible values
+    :param public_network_access: Whether requests from Public Network are allowed. Possible values
      include: "Enabled", "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
+    :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :param enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :type enable_free_tier: bool
     :param api_properties: API specific properties.
@@ -1423,7 +1422,6 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'locations': {'readonly': True},
         'failover_policies': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
-        'public_network_access': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1491,7 +1489,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.connector_offer = kwargs.get('connector_offer', None)
         self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
         self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
-        self.public_network_access = None
+        self.public_network_access = kwargs.get('public_network_access', None)
         self.enable_free_tier = kwargs.get('enable_free_tier', None)
         self.api_properties = kwargs.get('api_properties', None)
         self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
@@ -1643,8 +1641,6 @@ class DatabaseAccountsListResult(msrest.serialization.Model):
 class DatabaseAccountUpdateParameters(msrest.serialization.Model):
     """Parameters for patching Azure Cosmos DB database account properties.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
      These tags can be used in viewing and grouping this resource (across resource groups). A
      maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
@@ -1688,9 +1684,9 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault.
     :type key_vault_key_uri: str
-    :ivar public_network_access: Whether requests from Public Network are allowed. Possible values
+    :param public_network_access: Whether requests from Public Network are allowed. Possible values
      include: "Enabled", "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
+    :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :param enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :type enable_free_tier: bool
     :param api_properties: API specific properties. Currently, supported only for MongoDB API.
@@ -1708,10 +1704,6 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
      Bypass for the Cosmos DB account.
     :type network_acl_bypass_resource_ids: list[str]
     """
-
-    _validation = {
-        'public_network_access': {'readonly': True},
-    }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -1759,7 +1751,7 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         self.connector_offer = kwargs.get('connector_offer', None)
         self.disable_key_based_metadata_write_access = kwargs.get('disable_key_based_metadata_write_access', None)
         self.key_vault_key_uri = kwargs.get('key_vault_key_uri', None)
-        self.public_network_access = None
+        self.public_network_access = kwargs.get('public_network_access', None)
         self.enable_free_tier = kwargs.get('enable_free_tier', None)
         self.api_properties = kwargs.get('api_properties', None)
         self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
