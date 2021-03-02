@@ -11,7 +11,7 @@ from unittest import mock
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyVaultKey
+from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyOperation, KeyVaultKey
 from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys.crypto.aio import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
@@ -521,34 +521,34 @@ async def test_local_only_mode_no_service_calls():
 
     mock_client = mock.Mock()
     jwk = mock.Mock(spec=JsonWebKey)
-    client = CryptographyClient.from_jkw(key_id="https://localhost/fake/key/version", jwk=jwk)
+    client = CryptographyClient.from_jwk(jwk=jwk)
     client._client = mock_client
 
     supports_nothing = mock.Mock(supports=mock.Mock(return_value=False))
     with mock.patch(CryptographyClient.__module__ + ".get_local_cryptography_provider", lambda *_: supports_nothing):
-        await client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...")
+        with pytest.raises(NotImplementedError):
+            await client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...")
     assert mock_client.decrypt.call_count == 0
-    assert supports_nothing.decrypt.call_count == 1
 
-    await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...")
+    with pytest.raises(NotImplementedError):
+        await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...")
     assert mock_client.encrypt.call_count == 0
-    assert supports_nothing.encrypt.call_count == 1
 
-    await client.sign(SignatureAlgorithm.rs256, b"...")
+    with pytest.raises(NotImplementedError):
+        await client.sign(SignatureAlgorithm.rs256, b"...")
     assert mock_client.sign.call_count == 0
-    assert supports_nothing.sign.call_count == 1
 
-    await client.verify(SignatureAlgorithm.rs256, b"...", b"...")
+    with pytest.raises(NotImplementedError):
+        await client.verify(SignatureAlgorithm.rs256, b"...", b"...")
     assert mock_client.verify.call_count == 0
-    assert supports_nothing.verify.call_count == 1
 
-    await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
+    with pytest.raises(NotImplementedError):
+        await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
     assert mock_client.unwrap_key.call_count == 0
-    assert supports_nothing.unwrap_key.call_count == 1
 
-    await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
+    with pytest.raises(NotImplementedError):
+        await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
     assert mock_client.wrap_key.call_count == 0
-    assert supports_nothing.wrap_key.call_count == 1
 
 
 @pytest.mark.asyncio
@@ -556,26 +556,41 @@ async def test_local_only_mode_raise():
     """A local-only CryptographyClient should raise an exception if an operation can't be performed locally"""
 
     jwk = {"kty":"RSA", "key_ops":["decrypt", "verify", "unwrapKey"], "n":b"10011", "e":b"10001"}
-    client = CryptographyClient.from_jkw(key_id="https://localhost/fake/key/version", jwk=jwk)
+    client = CryptographyClient.from_jwk(jwk=jwk)
 
     # Algorithm not supported locally
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError) as ex:
         await client.decrypt(EncryptionAlgorithm.a256_gcm, b"...")
+    assert EncryptionAlgorithm.a256_gcm in str(ex.value)
+    assert KeyOperation.decrypt in str(ex.value)
+
     # Operation not included in JWK permissions
-    with pytest.raises(AzureError):
+    with pytest.raises(AzureError) as ex:
         await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...")
+    assert KeyOperation.encrypt in str(ex.value)
+
     # Algorithm not supported locally
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError) as ex:
         await client.verify(SignatureAlgorithm.es256, b"...", b"...")
+    assert SignatureAlgorithm.es256 in str(ex.value)
+    assert KeyOperation.verify in str(ex.value)
+
     # Algorithm not supported locally, and operation not included in JWK permissions
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError) as ex:
         await client.sign(SignatureAlgorithm.rs256, b"...")
+    assert SignatureAlgorithm.rs256 in str(ex.value)
+    assert KeyOperation.sign in str(ex.value)
+
     # Algorithm not supported locally
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError) as ex:
         await client.unwrap_key(KeyWrapAlgorithm.aes_256, b"...")
+    assert KeyWrapAlgorithm.aes_256 in str(ex.value)
+    assert KeyOperation.unwrap_key in str(ex.value)
+
     # Operation not included in JWK permissions
-    with pytest.raises(AzureError):
+    with pytest.raises(AzureError) as ex:
         await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
+    assert KeyOperation.wrap_key in str(ex.value)
 
 
 @pytest.mark.asyncio
