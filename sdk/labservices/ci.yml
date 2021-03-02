@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: labservices
     Artifacts:
-    - name: azure_mgmt_labservices
+    - name: azure-mgmt-labservices
       safeName: azuremgmtlabservices

@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: costmanagement
     Artifacts:
-    - name: azure_mgmt_costmanagement
+    - name: azure-mgmt-costmanagement
       safeName: azuremgmtcostmanagement

@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: kusto
     Artifacts:
-    - name: azure_mgmt_kusto
+    - name: azure-mgmt-kusto
       safeName: azuremgmtkusto

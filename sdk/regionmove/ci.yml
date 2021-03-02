@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: regionmove
     Artifacts:
-    - name: azure_mgmt_regionmove
+    - name: azure-mgmt-regionmove
       safeName: azuremgmtregionmove

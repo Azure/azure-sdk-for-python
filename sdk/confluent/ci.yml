@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: confluent
     Artifacts:
-    - name: azure_mgmt_confluent
+    - name: azure-mgmt-confluent
       safeName: azuremgmtconfluent

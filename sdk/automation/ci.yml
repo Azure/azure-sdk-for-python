@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: automation
     Artifacts:
-    - name: azure_mgmt_automation
+    - name: azure-mgmt-automation
       safeName: azuremgmtautomation

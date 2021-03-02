@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: databoxedge
     Artifacts:
-    - name: azure_mgmt_databoxedge
+    - name: azure-mgmt-databoxedge
       safeName: azuremgmtdataboxedge

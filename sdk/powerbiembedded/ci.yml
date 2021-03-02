@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: powerbiembedded
     Artifacts:
-    - name: azure_mgmt_powerbiembedded
+    - name: azure-mgmt-powerbiembedded
       safeName: azuremgmtpowerbiembedded
