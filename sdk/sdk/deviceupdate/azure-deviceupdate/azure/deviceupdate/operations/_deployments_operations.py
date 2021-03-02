@@ -1,0 +1,520 @@
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+#
+# --------------------------------------------------------------------------
+
+from msrest.pipeline import ClientRawResponse
+from msrest.exceptions import HttpOperationError
+
+from .. import models
+
+
+class DeploymentsOperations(object):
+    """DeploymentsOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
+    :param client: Client for service requests.
+    :param config: Configuration of service client.
+    :param serializer: An object model serializer.
+    :param deserializer: An object model deserializer.
+    """
+
+    models = models
+
+    def __init__(self, client, config, serializer, deserializer):
+
+        self._client = client
+        self._serialize = serializer
+        self._deserialize = deserializer
+
+        self.config = config
+
+    def get_all_deployments(
+            self, account_options, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of deployments.
+
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param filter: Restricts the set of deployments returned. You can
+         filter on update Provider, Name and Version property.
+        :type filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PageableListOfDeployments or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.PageableListOfDeployments or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        # Construct URL
+        url = self.get_all_deployments.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PageableListOfDeployments', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_all_deployments.metadata = {'url': '/deviceupdate/{instanceId}/v2/management/deployments'}
+
+    def get_deployment(
+            self, deployment_id, account_options, custom_headers=None, raw=False, **operation_config):
+        """Gets the properties of a deployment.
+
+        :param deployment_id: Deployment identifier.
+        :type deployment_id: str
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Deployment or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.Deployment or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        # Construct URL
+        url = self.get_deployment.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'deploymentId': self._serialize.url("deployment_id", deployment_id, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 404]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Deployment', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_deployment.metadata = {'url': '/deviceupdate/{instanceId}/v2/management/deployments/{deploymentId}'}
+
+    def create_or_update_deployment(
+            self, deployment_id, deployment, account_options, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a deployment.
+
+        :param deployment_id: Deployment identifier.
+        :type deployment_id: str
+        :param deployment: The deployment properties.
+        :type deployment: ~azure.deviceupdate.models.Deployment
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Deployment or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.Deployment or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        # Construct URL
+        url = self.create_or_update_deployment.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'deploymentId': self._serialize.url("deployment_id", deployment_id, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(deployment, 'Deployment')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 404]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Deployment', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create_or_update_deployment.metadata = {'url': '/deviceupdate/{instanceId}/v2/management/deployments/{deploymentId}'}
+
+    def delete_deployment(
+            self, deployment_id, account_options, custom_headers=None, raw=False, **operation_config):
+        """Deletes a deployment.
+
+        :param deployment_id: Deployment identifier.
+        :type deployment_id: str
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        # Construct URL
+        url = self.delete_deployment.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'deploymentId': self._serialize.url("deployment_id", deployment_id, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 404]:
+            raise HttpOperationError(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_deployment.metadata = {'url': '/deviceupdate/{instanceId}/v2/management/deployments/{deploymentId}'}
+
+    def get_deployment_status(
+            self, deployment_id, account_options, custom_headers=None, raw=False, **operation_config):
+        """Gets the status of a deployment including a breakdown of how many
+        devices in the deployment are in progress, completed, or failed.
+
+        :param deployment_id: Deployment identifier.
+        :type deployment_id: str
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DeploymentStatus or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.DeploymentStatus or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        # Construct URL
+        url = self.get_deployment_status.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'deploymentId': self._serialize.url("deployment_id", deployment_id, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 404]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeploymentStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_deployment_status.metadata = {'url': '/deviceupdate/{instanceId}/v2/management/deployments/{deploymentId}/status'}
+
+    def get_deployment_devices(
+            self, deployment_id, account_options, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of devices in a deployment along with their state. Useful
+        for getting a list of failed devices.
+
+        :param deployment_id: Deployment identifier.
+        :type deployment_id: str
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param filter: Restricts the set of deployment device states returned.
+         You can filter on deviceId and/or deviceState.
+        :type filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PageableListOfDeploymentDeviceStates or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.deviceupdate.models.PageableListOfDeploymentDeviceStates or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        # Construct URL
+        url = self.get_deployment_devices.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'deploymentId': self._serialize.url("deployment_id", deployment_id, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 404]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PageableListOfDeploymentDeviceStates', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_deployment_devices.metadata = {'url': '/deviceupdate/{instanceId}/v2/management/deployments/{deploymentId}/devicestates'}
+
+    def cancel_deployment(
+            self, deployment_id, account_options, custom_headers=None, raw=False, **operation_config):
+        """Cancels a deployment.
+
+        :param deployment_id: Deployment identifier.
+        :type deployment_id: str
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Deployment or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.Deployment or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        action = "cancel"
+
+        # Construct URL
+        url = self.cancel_deployment.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'deploymentId': self._serialize.url("deployment_id", deployment_id, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['action'] = self._serialize.query("action", action, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 404]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Deployment', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    cancel_deployment.metadata = {'url': '/deviceupdate/{instanceId}/v2/management/deployments/{deploymentId}'}
+
+    def retry_deployment(
+            self, deployment_id, account_options, custom_headers=None, raw=False, **operation_config):
+        """Retries a deployment with failed devices.
+
+        :param deployment_id: Deployment identifier.
+        :type deployment_id: str
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Deployment or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.Deployment or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        action = "retry"
+
+        # Construct URL
+        url = self.retry_deployment.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'deploymentId': self._serialize.url("deployment_id", deployment_id, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['action'] = self._serialize.query("action", action, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 404]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Deployment', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    retry_deployment.metadata = {'url': '/deviceupdate/{instanceId}/v2/management/deployments/{deploymentId}'}

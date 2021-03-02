@@ -1,0 +1,687 @@
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+#
+# --------------------------------------------------------------------------
+
+from msrest.pipeline import ClientRawResponse
+from msrest.exceptions import HttpOperationError
+
+from .. import models
+
+
+class UpdatesOperations(object):
+    """UpdatesOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
+    :param client: Client for service requests.
+    :param config: Configuration of service client.
+    :param serializer: An object model serializer.
+    :param deserializer: An object model deserializer.
+    :ivar action: Import update action. Constant value: "import".
+    """
+
+    models = models
+
+    def __init__(self, client, config, serializer, deserializer):
+
+        self._client = client
+        self._serialize = serializer
+        self._deserialize = deserializer
+
+        self.config = config
+        self.action = "import"
+
+    def import_update(
+            self, update_to_import, account_options, custom_headers=None, raw=False, **operation_config):
+        """Import new update version.
+
+        :param update_to_import: The update to be imported.
+        :type update_to_import: ~azure.deviceupdate.models.ImportUpdateInput
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        # Construct URL
+        url = self.import_update.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['action'] = self._serialize.query("self.action", self.action, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(update_to_import, 'ImportUpdateInput')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response.add_headers({
+                'Location': 'str',
+                'Operation-Location': 'str',
+            })
+            return client_raw_response
+    import_update.metadata = {'url': '/deviceupdate/{instanceId}/v2/updates'}
+
+    def get_update(
+            self, provider, name, version, account_options, access_condition=None, custom_headers=None, raw=False, **operation_config):
+        """Get a specific update version.
+
+        :param provider: Update provider.
+        :type provider: str
+        :param name: Update name.
+        :type name: str
+        :param version: Update version.
+        :type version: str
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param access_condition: Additional parameters for the operation
+        :type access_condition: ~azure.deviceupdate.models.AccessCondition
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Update or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.Update or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+        if_none_match = None
+        if access_condition is not None:
+            if_none_match = access_condition.if_none_match
+
+        # Construct URL
+        url = self.get_update.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'provider': self._serialize.url("provider", provider, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'version': self._serialize.url("version", version, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 304, 404, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Update', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_update.metadata = {'url': '/deviceupdate/{instanceId}/v2/updates/providers/{provider}/names/{name}/versions/{version}'}
+
+    def delete_update(
+            self, provider, name, version, account_options, custom_headers=None, raw=False, **operation_config):
+        """Delete a specific update version.
+
+        :param provider: Update provider.
+        :type provider: str
+        :param name: Update name.
+        :type name: str
+        :param version: Update version.
+        :type version: str
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        # Construct URL
+        url = self.delete_update.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'provider': self._serialize.url("provider", provider, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'version': self._serialize.url("version", version, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response.add_headers({
+                'Location': 'str',
+                'Operation-Location': 'str',
+            })
+            return client_raw_response
+    delete_update.metadata = {'url': '/deviceupdate/{instanceId}/v2/updates/providers/{provider}/names/{name}/versions/{version}'}
+
+    def get_providers(
+            self, account_options, custom_headers=None, raw=False, **operation_config):
+        """Get a list of all update providers that have been imported to Device
+        Update for IoT Hub.
+
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PageableListOfStrings or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.PageableListOfStrings or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        # Construct URL
+        url = self.get_providers.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PageableListOfStrings', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_providers.metadata = {'url': '/deviceupdate/{instanceId}/v2/updates/providers'}
+
+    def get_names(
+            self, provider, account_options, custom_headers=None, raw=False, **operation_config):
+        """Get a list of all update names that match the specified provider.
+
+        :param provider: Update provider.
+        :type provider: str
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PageableListOfStrings or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.PageableListOfStrings or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        # Construct URL
+        url = self.get_names.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'provider': self._serialize.url("provider", provider, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 404, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PageableListOfStrings', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_names.metadata = {'url': '/deviceupdate/{instanceId}/v2/updates/providers/{provider}/names'}
+
+    def get_versions(
+            self, provider, name, account_options, custom_headers=None, raw=False, **operation_config):
+        """Get a list of all update versions that match the specified provider and
+        name.
+
+        :param provider: Update provider.
+        :type provider: str
+        :param name: Update name.
+        :type name: str
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PageableListOfStrings or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.PageableListOfStrings or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        # Construct URL
+        url = self.get_versions.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'provider': self._serialize.url("provider", provider, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 404, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PageableListOfStrings', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_versions.metadata = {'url': '/deviceupdate/{instanceId}/v2/updates/providers/{provider}/names/{name}/versions'}
+
+    def get_files(
+            self, provider, name, version, account_options, custom_headers=None, raw=False, **operation_config):
+        """Get a list of all update file identifiers for the specified version.
+
+        :param provider: Update provider.
+        :type provider: str
+        :param name: Update name.
+        :type name: str
+        :param version: Update version.
+        :type version: str
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PageableListOfStrings or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.PageableListOfStrings or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        # Construct URL
+        url = self.get_files.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'provider': self._serialize.url("provider", provider, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'version': self._serialize.url("version", version, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 404, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PageableListOfStrings', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_files.metadata = {'url': '/deviceupdate/{instanceId}/v2/updates/providers/{provider}/names/{name}/versions/{version}/files'}
+
+    def get_file(
+            self, provider, name, version, file_id, account_options, access_condition=None, custom_headers=None, raw=False, **operation_config):
+        """Get a specific update file from the version.
+
+        :param provider: Update provider.
+        :type provider: str
+        :param name: Update name.
+        :type name: str
+        :param version: Update version.
+        :type version: str
+        :param file_id: File identifier.
+        :type file_id: str
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param access_condition: Additional parameters for the operation
+        :type access_condition: ~azure.deviceupdate.models.AccessCondition
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: File or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.File or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+        if_none_match = None
+        if access_condition is not None:
+            if_none_match = access_condition.if_none_match
+
+        # Construct URL
+        url = self.get_file.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'provider': self._serialize.url("provider", provider, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'version': self._serialize.url("version", version, 'str'),
+            'fileId': self._serialize.url("file_id", file_id, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 304, 404, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('File', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_file.metadata = {'url': '/deviceupdate/{instanceId}/v2/updates/providers/{provider}/names/{name}/versions/{version}/files/{fileId}'}
+
+    def get_operations(
+            self, account_options, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
+        """Get a list of all import update operations. Completed operations are
+        kept for 7 days before auto-deleted. Delete operations are not returned
+        by this API version.
+
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param filter: Restricts the set of operations returned. Only one
+         specific filter is supported: "status eq 'NotStarted' or status eq
+         'Running'"
+        :type filter: str
+        :param top: Specifies a non-negative integer n that limits the number
+         of items returned from a collection. The service returns the number of
+         available items up to but not greater than the specified value n.
+        :type top: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PageableListOfOperations or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.PageableListOfOperations or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+
+        # Construct URL
+        url = self.get_operations.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+        if top is not None:
+            query_parameters['$top'] = self._serialize.query("top", top, 'int')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PageableListOfOperations', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_operations.metadata = {'url': '/deviceupdate/{instanceId}/v2/updates/operations'}
+
+    def get_operation(
+            self, operation_id, account_options, access_condition=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieve operation status.
+
+        :param operation_id: Operation identifier.
+        :type operation_id: str
+        :param account_options: Additional parameters for the operation
+        :type account_options: ~azure.deviceupdate.models.AccountOptions
+        :param access_condition: Additional parameters for the operation
+        :type access_condition: ~azure.deviceupdate.models.AccessCondition
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Operation or ClientRawResponse if raw=true
+        :rtype: ~azure.deviceupdate.models.Operation or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        self.config.selfconfiginstance_id = None
+        if account_options is not None:
+            self.config.selfconfiginstance_id = account_options.instance_id
+        if_none_match = None
+        if access_condition is not None:
+            if_none_match = access_condition.if_none_match
+
+        # Construct URL
+        url = self.get_operation.metadata['url']
+        path_format_arguments = {
+            'accountEndpoint': self._serialize.url("self.config.account_endpoint", self.config.account_endpoint, 'str', skip_quote=True),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str'),
+            'instanceId': self._serialize.url("self.config.selfconfiginstance_id", self.config.selfconfiginstance_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 304, 404, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        header_dict = {}
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Operation', response)
+            header_dict = {
+                'Retry-After': 'str',
+            }
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
+            return client_raw_response
+
+        return deserialized
+    get_operation.metadata = {'url': '/deviceupdate/{instanceId}/v2/updates/operations/{operationId}'}
