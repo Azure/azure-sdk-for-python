@@ -64,3 +64,16 @@ class PolicySetDefinitionPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PolicySetDefinitionPaged, self).__init__(*args, **kwargs)
+class PolicyExemptionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PolicyExemption <azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PolicyExemption]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PolicyExemptionPaged, self).__init__(*args, **kwargs)

@@ -72,3 +72,17 @@ class ParameterType(str, Enum):
     integer = "Integer"
     float_enum = "Float"
     date_time_enum = "DateTime"
+
+
+class ExemptionCategory(str, Enum):
+
+    waiver = "Waiver"  #: This category of exemptions usually means the scope is not applicable for the policy.
+    mitigated = "Mitigated"  #: This category of exemptions usually means the mitigation actions have been applied to the scope.
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"

@@ -19,7 +19,7 @@ from ._configuration import PolicyClientConfiguration
 
 
 class PolicyClient(MultiApiClientMixin, SDKClient):
-    """To manage and control access to your resources, you can define customized policies and assign them at a scope.
+    """PolicyClient
 
     This ready contains multiple API versions, to help you deal with all Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
@@ -204,6 +204,19 @@ class PolicyClient(MultiApiClientMixin, SDKClient):
             from .v2019_09_01.operations import PolicyDefinitionsOperations as OperationClass
         elif api_version == '2020-09-01':
             from .v2020_09_01.operations import PolicyDefinitionsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def policy_exemptions(self):
+        """Instance depends on the API version:
+
+           * 2020-09-01: :class:`PolicyExemptionsOperations<azure.mgmt.resource.policy.v2020_09_01.operations.PolicyExemptionsOperations>`
+        """
+        api_version = self._get_api_version('policy_exemptions')
+        if api_version == '2020-09-01':
+            from .v2020_09_01.operations import PolicyExemptionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

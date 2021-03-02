@@ -156,8 +156,7 @@ class SystemData(Model):
      'ManagedIdentity', 'Key'
     :type last_modified_by_type: str or
      ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.CreatedByType
-    :param last_modified_at: The type of identity that last modified the
-     resource.
+    :param last_modified_at: The timestamp of resource last modification (UTC)
     :type last_modified_at: datetime
     """
 

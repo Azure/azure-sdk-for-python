@@ -14,12 +14,11 @@ try:
     from ._models_py3 import AliasPath
     from ._models_py3 import AliasPathMetadata
     from ._models_py3 import AliasPattern
-    from ._models_py3 import CloudError, CloudErrorException
     from ._models_py3 import DataEffect
     from ._models_py3 import DataManifestCustomResourceFunctionDefinition
     from ._models_py3 import DataPolicyManifest
     from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import Identity
     from ._models_py3 import NonComplianceMessage
     from ._models_py3 import ParameterDefinitionsValue
@@ -29,19 +28,20 @@ try:
     from ._models_py3 import PolicyDefinition
     from ._models_py3 import PolicyDefinitionGroup
     from ._models_py3 import PolicyDefinitionReference
+    from ._models_py3 import PolicyExemption
     from ._models_py3 import PolicySetDefinition
     from ._models_py3 import ResourceTypeAliases
+    from ._models_py3 import SystemData
 except (SyntaxError, ImportError):
     from ._models import Alias
     from ._models import AliasPath
     from ._models import AliasPathMetadata
     from ._models import AliasPattern
-    from ._models import CloudError, CloudErrorException
     from ._models import DataEffect
     from ._models import DataManifestCustomResourceFunctionDefinition
     from ._models import DataPolicyManifest
     from ._models import ErrorAdditionalInfo
-    from ._models import ErrorDetail
+    from ._models import ErrorResponse
     from ._models import Identity
     from ._models import NonComplianceMessage
     from ._models import ParameterDefinitionsValue
@@ -51,11 +51,14 @@ except (SyntaxError, ImportError):
     from ._models import PolicyDefinition
     from ._models import PolicyDefinitionGroup
     from ._models import PolicyDefinitionReference
+    from ._models import PolicyExemption
     from ._models import PolicySetDefinition
     from ._models import ResourceTypeAliases
+    from ._models import SystemData
 from ._paged_models import DataPolicyManifestPaged
 from ._paged_models import PolicyAssignmentPaged
 from ._paged_models import PolicyDefinitionPaged
+from ._paged_models import PolicyExemptionPaged
 from ._paged_models import PolicySetDefinitionPaged
 from ._policy_client_enums import (
     AliasPatternType,
@@ -66,6 +69,8 @@ from ._policy_client_enums import (
     ResourceIdentityType,
     PolicyType,
     ParameterType,
+    ExemptionCategory,
+    CreatedByType,
 )
 
 __all__ = [
@@ -73,12 +78,11 @@ __all__ = [
     'AliasPath',
     'AliasPathMetadata',
     'AliasPattern',
-    'CloudError', 'CloudErrorException',
     'DataEffect',
     'DataManifestCustomResourceFunctionDefinition',
     'DataPolicyManifest',
     'ErrorAdditionalInfo',
-    'ErrorDetail',
+    'ErrorResponse',
     'Identity',
     'NonComplianceMessage',
     'ParameterDefinitionsValue',
@@ -88,12 +92,15 @@ __all__ = [
     'PolicyDefinition',
     'PolicyDefinitionGroup',
     'PolicyDefinitionReference',
+    'PolicyExemption',
     'PolicySetDefinition',
     'ResourceTypeAliases',
+    'SystemData',
     'DataPolicyManifestPaged',
     'PolicyAssignmentPaged',
     'PolicyDefinitionPaged',
     'PolicySetDefinitionPaged',
+    'PolicyExemptionPaged',
     'AliasPatternType',
     'AliasPathTokenType',
     'AliasPathAttributes',
@@ -102,4 +109,6 @@ __all__ = [
     'ResourceIdentityType',
     'PolicyType',
     'ParameterType',
+    'ExemptionCategory',
+    'CreatedByType',
 ]

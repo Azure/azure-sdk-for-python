@@ -13,10 +13,12 @@ from ._data_policy_manifests_operations import DataPolicyManifestsOperations
 from ._policy_assignments_operations import PolicyAssignmentsOperations
 from ._policy_definitions_operations import PolicyDefinitionsOperations
 from ._policy_set_definitions_operations import PolicySetDefinitionsOperations
+from ._policy_exemptions_operations import PolicyExemptionsOperations
 
 __all__ = [
     'DataPolicyManifestsOperations',
     'PolicyAssignmentsOperations',
     'PolicyDefinitionsOperations',
     'PolicySetDefinitionsOperations',
+    'PolicyExemptionsOperations',
 ]

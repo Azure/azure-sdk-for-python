@@ -159,18 +159,14 @@ class AliasPattern(Model):
 
 
 class CloudError(Model):
-    """Error response.
+    """An error response from a policy operation.
 
-    Common error response for all Azure Resource Manager APIs to return error
-    details for failed operations. (This also follows the OData error response
-    format.).
-
-    :param error: The error object.
-    :type error: ~azure.mgmt.resource.policy.v2020_09_01.models.ErrorDetail
+    :param error:
+    :type error: ~azure.mgmt.resource.policy.v2020_09_01.models.ErrorResponse
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
     }
 
     def __init__(self, *, error=None, **kwargs) -> None:
@@ -346,8 +342,12 @@ class ErrorAdditionalInfo(Model):
         self.info = None
 
 
-class ErrorDetail(Model):
-    """The error detail.
+class ErrorResponse(Model):
+    """Error Response.
+
+    Common error response for all Azure Resource Manager APIs to return error
+    details for failed operations. (This also follows the OData error response
+    format.).
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -360,7 +360,7 @@ class ErrorDetail(Model):
     :vartype target: str
     :ivar details: The error details.
     :vartype details:
-     list[~azure.mgmt.resource.policy.v2020_09_01.models.ErrorDetail]
+     list[~azure.mgmt.resource.policy.v2020_09_01.models.ErrorResponse]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
      list[~azure.mgmt.resource.policy.v2020_09_01.models.ErrorAdditionalInfo]
@@ -378,12 +378,12 @@ class ErrorDetail(Model):
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'details': {'key': 'details', 'type': '[ErrorResponse]'},
         'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ErrorDetail, self).__init__(**kwargs)
+        super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -783,6 +783,87 @@ class PolicyDefinitionReference(Model):
         self.group_names = group_names
 
 
+class PolicyExemption(Model):
+    """The policy exemption.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param policy_assignment_id: Required. The ID of the policy assignment
+     that is being exempted.
+    :type policy_assignment_id: str
+    :param policy_definition_reference_ids: The policy definition reference ID
+     list when the associated policy assignment is an assignment of a policy
+     set definition.
+    :type policy_definition_reference_ids: list[str]
+    :param exemption_category: Required. The policy exemption category.
+     Possible values are Waiver and Mitigated. Possible values include:
+     'Waiver', 'Mitigated'
+    :type exemption_category: str or
+     ~azure.mgmt.resource.policy.v2020_09_01.models.ExemptionCategory
+    :param expires_on: The expiration date and time (in UTC ISO 8601 format
+     yyyy-MM-ddTHH:mm:ssZ) of the policy exemption.
+    :type expires_on: datetime
+    :param display_name: The display name of the policy exemption.
+    :type display_name: str
+    :param description: The description of the policy exemption.
+    :type description: str
+    :param metadata: The policy exemption metadata. Metadata is an open ended
+     object and is typically a collection of key value pairs.
+    :type metadata: object
+    :ivar system_data: Azure Resource Manager metadata containing createdBy
+     and modifiedBy information.
+    :vartype system_data:
+     ~azure.mgmt.resource.policy.v2020_09_01.models.SystemData
+    :ivar id: The ID of the policy exemption.
+    :vartype id: str
+    :ivar name: The name of the policy exemption.
+    :vartype name: str
+    :ivar type: The type of the resource
+     (Microsoft.Authorization/policyExemptions).
+    :vartype type: str
+    """
+
+    _validation = {
+        'policy_assignment_id': {'required': True},
+        'exemption_category': {'required': True},
+        'system_data': {'readonly': True},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'policy_assignment_id': {'key': 'properties.policyAssignmentId', 'type': 'str'},
+        'policy_definition_reference_ids': {'key': 'properties.policyDefinitionReferenceIds', 'type': '[str]'},
+        'exemption_category': {'key': 'properties.exemptionCategory', 'type': 'str'},
+        'expires_on': {'key': 'properties.expiresOn', 'type': 'iso-8601'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'metadata': {'key': 'properties.metadata', 'type': 'object'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, *, policy_assignment_id: str, exemption_category, policy_definition_reference_ids=None, expires_on=None, display_name: str=None, description: str=None, metadata=None, **kwargs) -> None:
+        super(PolicyExemption, self).__init__(**kwargs)
+        self.policy_assignment_id = policy_assignment_id
+        self.policy_definition_reference_ids = policy_definition_reference_ids
+        self.exemption_category = exemption_category
+        self.expires_on = expires_on
+        self.display_name = display_name
+        self.description = description
+        self.metadata = metadata
+        self.system_data = None
+        self.id = None
+        self.name = None
+        self.type = None
+
+
 class PolicySetDefinition(Model):
     """The policy set definition.
 
@@ -876,3 +957,44 @@ class ResourceTypeAliases(Model):
         super(ResourceTypeAliases, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.aliases = aliases
+
+
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or
+     ~azure.mgmt.resource.policy.v2020_09_01.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.resource.policy.v2020_09_01.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC)
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, *, created_by: str=None, created_by_type=None, created_at=None, last_modified_by: str=None, last_modified_by_type=None, last_modified_at=None, **kwargs) -> None:
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
