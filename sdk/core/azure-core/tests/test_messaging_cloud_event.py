@@ -167,7 +167,7 @@ def test_cloud_custom_dict_no_data():
     }
     event = CloudEvent.from_dict(cloud_custom_dict_with_missing_data)
     assert event.__class__ == CloudEvent
-    assert event.data == None
+    assert event.data is None
 
 def test_cloud_custom_dict_null_data():
     cloud_custom_dict_with_none_data = {
@@ -181,8 +181,8 @@ def test_cloud_custom_dict_null_data():
     }
     event = CloudEvent.from_dict(cloud_custom_dict_with_none_data)
     assert event.__class__ == CloudEvent
-    assert event.data is NULL
-    assert event.dataschema == NULL
+    assert event.data == NULL
+    assert event.dataschema is NULL
 
 def test_cloud_custom_dict_valid_optional_attrs():
     cloud_custom_dict_with_none_data = {
