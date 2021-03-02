@@ -74,7 +74,7 @@ class PiiEntityDomainType(str, Enum):
     PROTECTED_HEALTH_INFORMATION = "phi"  # See https://aka.ms/tanerpii for more information.
 
 class HealthcareEntityRelationRoleType(str, Enum):
-    """Type of roles entities can have in relations. There may be roles not covered in this enum"""
+    """Type of roles entities can have in `entity_relations`. There may be roles not covered in this enum"""
     ABBREVIATED_TERM = "AbbreviatedTerm"
     FULL_TERM = "FullTerm"
     DIRECTION = "Direction"
@@ -218,10 +218,10 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
         from the document.
     :vartype entities:
         list[~azure.ai.textanalytics.HealthcareEntity]
-    :ivar relations: Identified Healthcare relations between entities. For example, in the
+    :ivar entity_relations: Identified Healthcare relations between entities. For example, in the
         document "The subject took 100mg of ibuprofen", we would identify the relationship
         between the dosage of 100mg and the medication ibuprofen.
-    :vartype relations: list[~azure.ai.textanalytics.HealthcareRelation]
+    :vartype entity_relations: list[~azure.ai.textanalytics.HealthcareRelation]
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -236,7 +236,7 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
-        self.relations = kwargs.get("relations", None)
+        self.entity_relations = kwargs.get("entity_relations", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
@@ -250,18 +250,18 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
         return cls(
             id=healthcare_result.id,
             entities=entities,
-            relations=relations,
+            entity_relations=relations,
             warnings=healthcare_result.warnings,
             statistics=healthcare_result.statistics,
         )
 
     def __repr__(self):
-        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, relations={}, warnings={}, statistics={}, "\
+        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, entity_relations={}, warnings={}, statistics={}, "\
         "is_error={})".format(
             self.id,
-            self.entities,
-            self.relations,
-            self.warnings,
+            repr(self.entities),
+            repr(self.entity_relations),
+            repr(self.warnings),
             repr(self.statistics),
             self.is_error
         )[:1024]

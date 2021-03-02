@@ -78,7 +78,7 @@ class AnalyzeHealthcareEntitiesSampleAsync(object):
                     for data_source in entity.data_sources:
                         print("......Entity ID: {}".format(data_source.entity_id))
                         print("......Name: {}".format(data_source.name))
-            for relation in doc.relations:
+            for relation in doc.entity_relations:
                 print("Relation of type: {} has the following roles".format(relation.relation_type))
                 for role in relation.roles:
                     print("...Role '{}' with entity '{}'".format(role.name, role.entity.text))

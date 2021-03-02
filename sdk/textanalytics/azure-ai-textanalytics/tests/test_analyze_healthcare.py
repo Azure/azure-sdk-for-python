@@ -358,9 +358,9 @@ class TestHealth(TextAnalyticsTest):
         result = result[0]
 
         assert len(result.entities) == 2
-        assert len(result.relations) == 1
+        assert len(result.entity_relations) == 1
 
-        relation = result.relations[0]
+        relation = result.entity_relations[0]
         assert relation.relation_type == HealthcareEntityRelationType.ABBREVIATION
         assert len(relation.roles) == 2
 

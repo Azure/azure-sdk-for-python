@@ -4,7 +4,7 @@
 
 **Breaking Changes**
 
-- Removed property `related_entities` on `HealthcareEntity` and added `relations` onto the document response level for healthcare
+- Removed property `related_entities` on `HealthcareEntity` and added `entity_relations` onto the document response level for healthcare
 - Renamed properties `aspect` and `opinions` to `target` and `assessments` respectively in class `MinedOpinion`.
 - Renamed classes `AspectSentiment` and `OpinionSentiment` to `TargetSentiment` and `AssessmentSentiment` respectively.
 
