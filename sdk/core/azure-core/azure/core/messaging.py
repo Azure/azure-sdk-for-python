@@ -108,9 +108,8 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         if kwargs:
             remaining = ", ".join(kwargs.keys())
             raise ValueError(
-                "Unexpected keyword arguments {}. Any extension attributes must be passed explicitly using extensions.".format(
-                    remaining
-                )
+                "Unexpected keyword arguments {}. Any extension attributes must be passed explicitly using extensions."
+                .format(remaining)
             )
 
     def __repr__(self):
