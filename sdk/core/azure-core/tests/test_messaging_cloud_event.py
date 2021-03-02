@@ -181,8 +181,23 @@ def test_cloud_custom_dict_null_data():
     }
     event = CloudEvent.from_dict(cloud_custom_dict_with_none_data)
     assert event.__class__ == CloudEvent
-    assert event.data == NULL
+    assert event.data is NULL
     assert event.dataschema == NULL
+
+def test_cloud_custom_dict_valid_optional_attrs():
+    cloud_custom_dict_with_none_data = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "source":"https://egtest.dev/cloudcustomevent",
+        "type":"Azure.Sdk.Sample",
+        "data":None,
+        "dataschema":"exists",
+        "time":"2021-02-18T20:18:10+00:00",
+        "specversion":"1.0",
+    }
+    event = CloudEvent.from_dict(cloud_custom_dict_with_none_data)
+    assert event.__class__ == CloudEvent
+    assert event.data is NULL
+    assert event.dataschema == "exists"
 
 def test_cloud_custom_dict_both_data_and_base64():
     cloud_custom_dict_with_data_and_base64 = {
