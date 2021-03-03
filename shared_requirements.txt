@@ -169,7 +169,6 @@ opentelemetry-sdk==0.17b0
 #override azure-servicebus msrest>=0.6.17,<2.0.0
 #override azure-servicebus azure-core<2.0.0,>=1.6.0
 #override azure-search-documents msrest>=0.6.10
-#override azure-eventgrid azure-core<2.0.0,>=1.7.0
 #override azure-synapse-accesscontrol azure-core>=1.6.0,<2.0.0
 #override azure-synapse-spark azure-core>=1.6.0,<2.0.0
 #override azure-synapse-artifacts azure-core>=1.6.0,<2.0.0
@@ -178,7 +177,7 @@ opentelemetry-sdk==0.17b0
 #override azure-data-tables msrest>=0.6.10
 #override azure-ai-anomalydetector azure-core>=1.6.0,<2.0.0
 #override azure-eventgrid msrest>=0.6.19
-#override azure-eventgrid azure-core<2.0.0,>=1.10.0
+#override azure-eventgrid azure-core<2.0.0,>=1.12.0
 #override azure-communication-chat msrest>=0.6.0
 #override azure-communication-sms msrest>=0.6.0
 #override azure-communication-phonenumbers msrest>=0.6.0
