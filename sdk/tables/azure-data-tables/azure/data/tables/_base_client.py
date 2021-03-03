@@ -17,6 +17,7 @@ except ImportError:
     from urlparse import parse_qs  # type: ignore
     from urllib2 import quote  # type: ignore
 
+from azure.core import parse_connection_string_to_dict
 from azure.core.configuration import Configuration
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from azure.core.pipeline import Pipeline
@@ -402,11 +403,7 @@ def format_shared_key_credential(account, credential):
 
 
 def parse_connection_str(conn_str, credential, service, keyword_args):
-    conn_str = conn_str.rstrip(";")
-    conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
-    if any(len(tup) != 2 for tup in conn_settings):
-        raise ValueError("Connection string is either blank or malformed.")
-    conn_settings = dict(conn_settings)
+    conn_settings = parse_connection_string_to_dict(conn_str)
     endpoints = _SERVICE_PARAMS[service]
     primary = None
     secondary = None
