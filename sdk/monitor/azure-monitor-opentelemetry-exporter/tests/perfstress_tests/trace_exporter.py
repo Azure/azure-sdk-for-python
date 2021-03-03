@@ -39,8 +39,9 @@ class MonitorExporterPerfTest(PerfStressTest):
         Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
         """
-        with tracer.start_as_current_span("hello"):
-            print("Hello, World!")
+        for _ in range(self.args.num_traces):
+            with tracer.start_as_current_span("hello"):
+                print("Hello, World!")
 
     @staticmethod
     def add_arguments(parser):
