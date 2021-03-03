@@ -1926,14 +1926,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: 5ad214fd-440b-465b-8b08-ce116ef93b51
+      apim-request-id: ee32869e-144e-4bbe-b7c4-1ef5c8b45c68
       content-length: '0'
-      date: Mon, 01 Mar 2021 21:18:31 GMT
-      operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/5ad214fd-440b-465b-8b08-ce116ef93b51
+      date: Wed, 03 Mar 2021 19:21:00 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/ee32869e-144e-4bbe-b7c4-1ef5c8b45c68
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '100'
+      x-envoy-upstream-service-time: '90'
     status:
       code: 202
       message: Accepted
@@ -1944,11 +1943,34 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/5ad214fd-440b-465b-8b08-ce116ef93b51
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/ee32869e-144e-4bbe-b7c4-1ef5c8b45c68
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-01T21:18:31Z",
-        "lastUpdatedDateTime": "2021-03-01T21:18:35Z", "analyzeResult": {"version":
+      string: '{"status": "running", "createdDateTime": "2021-03-03T19:21:00Z", "lastUpdatedDateTime":
+        "2021-03-03T19:21:01Z"}'
+    headers:
+      apim-request-id: 7013a0a2-84d3-4933-ba13-7845141ad3ba
+      content-length: '106'
+      content-type: application/json; charset=utf-8
+      date: Wed, 03 Mar 2021 19:21:04 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '10'
+    status:
+      code: 200
+      message: OK
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/ee32869e-144e-4bbe-b7c4-1ef5c8b45c68
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/ee32869e-144e-4bbe-b7c4-1ef5c8b45c68
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-03T19:21:00Z",
+        "lastUpdatedDateTime": "2021-03-03T19:21:05Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "lines": [{"text": "Company A Invoice", "boundingBox": [0.8861,
         1.1217, 2.3783, 1.1217, 2.3783, 1.2812, 0.8861, 1.2812], "words": [{"text":
@@ -2307,15 +2329,15 @@ interactions:
         [5.811, 5.3445, 6.3422, 5.3445, 6.3422, 5.4533, 5.811, 5.4533], "page": 3,
         "confidence": 0.985, "elements": ["#/readResults/2/lines/36/words/1"]}}}]}}'
     headers:
-      apim-request-id: 6ce0415e-f443-42f4-9f08-99a3cd414ced
+      apim-request-id: a9bda4e4-2f02-4530-a37d-8fb5d4c152af
       content-length: '25475'
       content-type: application/json; charset=utf-8
-      date: Mon, 01 Mar 2021 21:18:36 GMT
+      date: Wed, 03 Mar 2021 19:21:10 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '32'
+      x-envoy-upstream-service-time: '21'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/5ad214fd-440b-465b-8b08-ce116ef93b51
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/ee32869e-144e-4bbe-b7c4-1ef5c8b45c68
 version: 1

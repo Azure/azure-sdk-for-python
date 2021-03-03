@@ -465,14 +465,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: 871f9834-8185-4abb-8183-e66743db20cd
+      apim-request-id: a6abc8cd-41ff-433f-b4cc-f279be91de8d
       content-length: '0'
-      date: Mon, 01 Mar 2021 21:17:42 GMT
-      operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/871f9834-8185-4abb-8183-e66743db20cd
+      date: Wed, 03 Mar 2021 19:20:10 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/a6abc8cd-41ff-433f-b4cc-f279be91de8d
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '139'
+      x-envoy-upstream-service-time: '37'
     status:
       code: 202
       message: Accepted
@@ -483,24 +482,24 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/871f9834-8185-4abb-8183-e66743db20cd
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/a6abc8cd-41ff-433f-b4cc-f279be91de8d
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-01T21:17:42Z",
-        "lastUpdatedDateTime": "2021-03-01T21:17:46Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-03T19:20:11Z",
+        "lastUpdatedDateTime": "2021-03-03T19:20:16Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch"}], "documentResults": [{"docType": "prebuilt:receipt", "pageRange":
         [1, 1], "fields": {}}]}}'
     headers:
-      apim-request-id: ef8a16a4-8c39-4132-8ac8-2120599ec2d9
+      apim-request-id: 87eae462-b53a-4ec9-b24b-6a702793e99b
       content-length: '300'
       content-type: application/json; charset=utf-8
-      date: Mon, 01 Mar 2021 21:17:48 GMT
+      date: Wed, 03 Mar 2021 19:20:16 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '41'
+      x-envoy-upstream-service-time: '20'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/871f9834-8185-4abb-8183-e66743db20cd
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyzeResults/a6abc8cd-41ff-433f-b4cc-f279be91de8d
 version: 1

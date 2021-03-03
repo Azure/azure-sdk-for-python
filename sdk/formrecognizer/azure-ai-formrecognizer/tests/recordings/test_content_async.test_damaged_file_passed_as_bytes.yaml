@@ -17,13 +17,13 @@ interactions:
         is not supported ( Supported formats include JPEG, PNG, BMP, PDF and TIFF),
         the file is corrupted or password protected."}}'
     headers:
-      apim-request-id: 2e422dbf-927b-44fd-99fe-b25dc89afabd
+      apim-request-id: d238ab3a-40b5-45d8-9299-0899f9e5ef91
       content-length: '270'
       content-type: application/json; charset=utf-8
-      date: Mon, 01 Mar 2021 18:25:40 GMT
+      date: Wed, 03 Mar 2021 19:29:33 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '7'
+      x-envoy-upstream-service-time: '2'
     status:
       code: 400
       message: Bad Request

@@ -16,14 +16,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: a3a9a8d1-898a-4097-8b7e-bedf3905d79d
+      apim-request-id: 94008e34-4534-4ebc-a18c-afcba66eaede
       content-length: '0'
-      date: Mon, 01 Mar 2021 18:37:39 GMT
-      operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/a3a9a8d1-898a-4097-8b7e-bedf3905d79d
+      date: Wed, 03 Mar 2021 19:31:46 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/94008e34-4534-4ebc-a18c-afcba66eaede
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '719'
+      x-envoy-upstream-service-time: '304'
     status:
       code: 202
       message: Accepted
@@ -34,11 +33,11 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/a3a9a8d1-898a-4097-8b7e-bedf3905d79d
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/94008e34-4534-4ebc-a18c-afcba66eaede
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-01T18:37:39Z",
-        "lastUpdatedDateTime": "2021-03-01T18:37:43Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-03T19:31:47Z",
+        "lastUpdatedDateTime": "2021-03-03T19:31:51Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 1700, "height":
         2200, "unit": "pixel", "language": "de", "lines": [{"boundingBox": [136, 139,
         351, 138, 351, 166, 136, 166], "text": "Purchase Order", "appearance": {"style":
@@ -392,15 +391,15 @@ interactions:
         1663, 1543, 1663, 1543, 1708, 1308, 1707], "elements": ["#/readResults/0/lines/47/words/0"]}],
         "boundingBox": [1058, 1563, 1555, 1563, 1555, 1707, 1058, 1707]}]}]}}'
     headers:
-      apim-request-id: 728d8bcc-a71d-4e27-8045-67ab8ee8ce46
+      apim-request-id: 7b123bfd-3c4f-44b7-9ed8-752b3b4df625
       content-length: '24449'
       content-type: application/json; charset=utf-8
-      date: Mon, 01 Mar 2021 18:37:44 GMT
+      date: Wed, 03 Mar 2021 19:31:51 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '17'
+      x-envoy-upstream-service-time: '15'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/a3a9a8d1-898a-4097-8b7e-bedf3905d79d
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyzeResults/94008e34-4534-4ebc-a18c-afcba66eaede
 version: 1

@@ -12,13 +12,13 @@ interactions:
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "f14f4499-7b1d-46d1-ad20-005ff824fb86"},
+      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "21c53273-df15-4905-b947-d6d0556f0da9"},
         "message": "Bad or unrecognizable request JSON or binary file."}}'
     headers:
-      apim-request-id: f14f4499-7b1d-46d1-ad20-005ff824fb86
+      apim-request-id: 21c53273-df15-4905-b947-d6d0556f0da9
       content-length: '161'
       content-type: application/json; charset=utf-8
-      date: Mon, 01 Mar 2021 18:53:36 GMT
+      date: Wed, 03 Mar 2021 19:36:42 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
       x-envoy-upstream-service-time: '3'

@@ -17,16 +17,16 @@ interactions:
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "InvalidImage", "innerError": {"requestId": "a2811f37-ac90-44e5-9ddf-224f9a457ffc"},
+      string: '{"error": {"code": "InvalidImage", "innerError": {"requestId": "cebce630-9959-437d-8187-f7e166b9cbea"},
         "message": "The input data is not a valid image or password protected."}}'
     headers:
-      apim-request-id: a2811f37-ac90-44e5-9ddf-224f9a457ffc
+      apim-request-id: cebce630-9959-437d-8187-f7e166b9cbea
       content-length: '170'
       content-type: application/json; charset=utf-8
-      date: Mon, 01 Mar 2021 21:17:48 GMT
+      date: Wed, 03 Mar 2021 19:20:17 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3'
+      x-envoy-upstream-service-time: '7'
     status:
       code: 400
       message: Bad Request

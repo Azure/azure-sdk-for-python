@@ -17,13 +17,13 @@ interactions:
       string: '{"error": {"code": "FailedToDownloadImage", "message": "Failed to download
         image from input URL."}}'
     headers:
-      apim-request-id: 76d06fbe-4c05-4af3-8b17-2a37f1140c30
+      apim-request-id: 7c455ff7-a6f7-49fb-91b0-cfe67c40f150
       content-length: '95'
       content-type: application/json; charset=utf-8
-      date: Mon, 01 Mar 2021 18:36:34 GMT
+      date: Wed, 03 Mar 2021 19:30:51 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '106'
+      x-envoy-upstream-service-time: '135'
     status:
       code: 400
       message: Bad Request

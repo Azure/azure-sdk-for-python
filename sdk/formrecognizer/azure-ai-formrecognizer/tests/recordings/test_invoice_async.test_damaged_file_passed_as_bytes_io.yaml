@@ -17,13 +17,13 @@ interactions:
     uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "InvalidImage", "innerError": {"requestId": "98e0f6e4-b466-4304-97c2-ebe83cb25858"},
+      string: '{"error": {"code": "InvalidImage", "innerError": {"requestId": "170fc92d-7dea-4c81-ba2b-26d690fe974d"},
         "message": "The input data is not a valid image or password protected."}}'
     headers:
-      apim-request-id: 98e0f6e4-b466-4304-97c2-ebe83cb25858
+      apim-request-id: 170fc92d-7dea-4c81-ba2b-26d690fe974d
       content-length: '170'
       content-type: application/json; charset=utf-8
-      date: Mon, 01 Mar 2021 18:53:37 GMT
+      date: Wed, 03 Mar 2021 19:36:43 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
       x-envoy-upstream-service-time: '3'
