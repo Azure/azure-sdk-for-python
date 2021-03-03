@@ -41,7 +41,7 @@ function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
       {
         $pkgProp.SdkType = "client"
       }
-      $pkgProp.IsNewSdk = $setupProps[2]
+      $pkgProp.IsNewSdk = ($setupProps[2] -eq "True")
       $pkgProp.ArtifactName = $pkgName
       return $pkgProp
     }
