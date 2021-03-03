@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import pytest
 from azure.core.exceptions import ResourceNotFoundError
 from azure.iot.deviceupdate import DeviceUpdateClient
 from azure.iot.deviceupdate.models import *
@@ -52,6 +52,7 @@ class DeploymentsClientTestCase(DeviceUpdateTest):
         except ResourceNotFoundError as e:
             self.assertEqual(404, e.status_code)
 
+    @pytest.mark.live_test_only
     @DeviceUpdatePowerShellPreparer()
     def test_create_cancel_and_delete_deployment(
         self,
@@ -64,8 +65,6 @@ class DeploymentsClientTestCase(DeviceUpdateTest):
     ):
         client = self.create_client(account_endpoint=deviceupdate_account_endpoint, instance_id=deviceupdate_instance_id)
         # The following test works *ONLY* when run LIVE -> not recorded
-        if self.is_live is not True:
-            return
 
         deployment_id = uuid.uuid4().hex
         response = client.deployments.create_or_update_deployment(
