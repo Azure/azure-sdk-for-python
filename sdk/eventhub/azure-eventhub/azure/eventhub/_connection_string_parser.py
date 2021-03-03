@@ -8,6 +8,7 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
 
 from ._common import DictMixin
+from azure.core import parse_connection_string_to_dict
 
 
 class EventHubConnectionStringProperties(DictMixin):
@@ -70,10 +71,7 @@ def parse_connection_string(conn_str):
     :type conn_str: str
     :rtype: ~azure.eventhub.EventHubConnectionStringProperties
     """
-    conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
-    if any(len(tup) != 2 for tup in conn_settings):
-        raise ValueError("Connection string is either blank or malformed.")
-    conn_settings = dict(conn_settings)
+    conn_settings = parse_connection_string_to_dict(conn_str)
     shared_access_signature = None
     for key, value in conn_settings.items():
         if key.lower() == "sharedaccesssignature":

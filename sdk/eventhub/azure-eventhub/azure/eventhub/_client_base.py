@@ -20,6 +20,7 @@ except ImportError:
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
 import six
+from azure.core import parse_connection_string_to_dict
 from azure.core.credentials import AccessToken
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
@@ -52,8 +53,8 @@ def _parse_conn_str(conn_str, kwargs):
     shared_access_signature = None  # type: Optional[str]
     shared_access_signature_expiry = None # type: Optional[int]
     eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
-    for element in conn_str.split(";"):
-        key, _, value = element.partition("=")
+    conn_settings = parse_connection_string_to_dict(conn_str)
+    for key, value in conn_settings.items():
         if key.lower() == "endpoint":
             endpoint = value.rstrip("/")
         elif key.lower() == "hostname":
