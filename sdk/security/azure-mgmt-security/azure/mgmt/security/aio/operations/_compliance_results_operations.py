@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ComplianceResultsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class ComplianceResultsOperations:
         self,
         scope: str,
         **kwargs
-    ) -> AsyncIterable["models.ComplianceResultList"]:
+    ) -> AsyncIterable["_models.ComplianceResultList"]:
         """Security compliance results in the subscription.
 
         :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
@@ -57,7 +57,7 @@ class ComplianceResultsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.ComplianceResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ComplianceResultList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ComplianceResultList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -117,7 +117,7 @@ class ComplianceResultsOperations:
         resource_id: str,
         compliance_result_name: str,
         **kwargs
-    ) -> "models.ComplianceResult":
+    ) -> "_models.ComplianceResult":
         """Security Compliance Result.
 
         :param resource_id: The identifier of the resource.
@@ -129,7 +129,7 @@ class ComplianceResultsOperations:
         :rtype: ~azure.mgmt.security.models.ComplianceResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ComplianceResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ComplianceResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class AutomationAccountOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,9 +45,9 @@ class AutomationAccountOperations:
         self,
         resource_group_name: str,
         automation_account_name: str,
-        parameters: "models.AutomationAccountUpdateParameters",
+        parameters: "_models.AutomationAccountUpdateParameters",
         **kwargs
-    ) -> "models.AutomationAccount":
+    ) -> "_models.AutomationAccount":
         """Update an automation account.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -61,7 +61,7 @@ class AutomationAccountOperations:
         :rtype: ~azure.mgmt.automation.models.AutomationAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutomationAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutomationAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -97,7 +97,7 @@ class AutomationAccountOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AutomationAccount', pipeline_response)
@@ -112,9 +112,9 @@ class AutomationAccountOperations:
         self,
         resource_group_name: str,
         automation_account_name: str,
-        parameters: "models.AutomationAccountCreateOrUpdateParameters",
+        parameters: "_models.AutomationAccountCreateOrUpdateParameters",
         **kwargs
-    ) -> "models.AutomationAccount":
+    ) -> "_models.AutomationAccount":
         """Create or update automation account.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -128,7 +128,7 @@ class AutomationAccountOperations:
         :rtype: ~azure.mgmt.automation.models.AutomationAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutomationAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutomationAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -164,7 +164,7 @@ class AutomationAccountOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -227,7 +227,7 @@ class AutomationAccountOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -240,7 +240,7 @@ class AutomationAccountOperations:
         resource_group_name: str,
         automation_account_name: str,
         **kwargs
-    ) -> "models.AutomationAccount":
+    ) -> "_models.AutomationAccount":
         """Get information about an Automation Account.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -252,7 +252,7 @@ class AutomationAccountOperations:
         :rtype: ~azure.mgmt.automation.models.AutomationAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutomationAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutomationAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -283,7 +283,7 @@ class AutomationAccountOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AutomationAccount', pipeline_response)
@@ -298,7 +298,7 @@ class AutomationAccountOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AutomationAccountListResult"]:
+    ) -> AsyncIterable["_models.AutomationAccountListResult"]:
         """Retrieve a list of accounts within a given resource group.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -308,7 +308,7 @@ class AutomationAccountOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.automation.models.AutomationAccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutomationAccountListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutomationAccountListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -354,7 +354,7 @@ class AutomationAccountOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -368,7 +368,7 @@ class AutomationAccountOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.AutomationAccountListResult"]:
+    ) -> AsyncIterable["_models.AutomationAccountListResult"]:
         """Lists the Automation Accounts within an Azure subscription.
 
         Retrieve a list of accounts within a given subscription.
@@ -378,7 +378,7 @@ class AutomationAccountOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.automation.models.AutomationAccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutomationAccountListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutomationAccountListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -423,7 +423,7 @@ class AutomationAccountOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

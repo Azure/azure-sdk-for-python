@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class LinkedServicesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class LinkedServicesOperations:
         resource_group_name: str,
         factory_name: str,
         **kwargs
-    ) -> AsyncIterable["models.LinkedServiceListResponse"]:
+    ) -> AsyncIterable["_models.LinkedServiceListResponse"]:
         """Lists linked services.
 
         :param resource_group_name: The resource group name.
@@ -58,7 +58,7 @@ class LinkedServicesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datafactory.models.LinkedServiceListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LinkedServiceListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LinkedServiceListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -120,10 +120,10 @@ class LinkedServicesOperations:
         resource_group_name: str,
         factory_name: str,
         linked_service_name: str,
-        linked_service: "models.LinkedServiceResource",
+        linked_service: "_models.LinkedServiceResource",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.LinkedServiceResource":
+    ) -> "_models.LinkedServiceResource":
         """Creates or updates a linked service.
 
         :param resource_group_name: The resource group name.
@@ -142,7 +142,7 @@ class LinkedServicesOperations:
         :rtype: ~azure.mgmt.datafactory.models.LinkedServiceResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LinkedServiceResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LinkedServiceResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -198,7 +198,7 @@ class LinkedServicesOperations:
         linked_service_name: str,
         if_none_match: Optional[str] = None,
         **kwargs
-    ) -> Optional["models.LinkedServiceResource"]:
+    ) -> Optional["_models.LinkedServiceResource"]:
         """Gets a linked service.
 
         :param resource_group_name: The resource group name.
@@ -216,7 +216,7 @@ class LinkedServicesOperations:
         :rtype: ~azure.mgmt.datafactory.models.LinkedServiceResource or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LinkedServiceResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LinkedServiceResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

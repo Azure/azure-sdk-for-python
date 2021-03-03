@@ -176,7 +176,7 @@ class EventData(object):
         # type: () -> Optional[int]
         """The sequence number of the event.
 
-        :rtype: int or long
+        :rtype: int
         """
         return self.message.annotations.get(PROP_SEQ_NUMBER, None)
 
@@ -338,6 +338,10 @@ class EventDataBatch(object):
     **Please use the create_batch method of EventHubProducerClient
     to create an EventDataBatch object instead of instantiating an EventDataBatch object directly.**
 
+    **WARNING: Updating the value of the instance variable max_size_in_bytes on an instantiated EventDataBatch object
+    is HIGHLY DISCOURAGED. The updated max_size_in_bytes value may conflict with the maximum size of events allowed
+    by the Event Hubs service and result in a sending failure.**
+
     :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
     :param str partition_id: The specific partition ID to send to.
     :param str partition_key: With the given partition_key, event data will be sent to a particular partition of the
@@ -437,3 +441,69 @@ class EventDataBatch(object):
         self.message._body_gen.append(event_data)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1
+
+class DictMixin(object):
+    def __setitem__(self, key, item):
+        # type: (Any, Any) -> None
+        self.__dict__[key] = item
+
+    def __getitem__(self, key):
+        # type: (Any) -> Any
+        return self.__dict__[key]
+
+    def __contains__(self, key):
+        return key in self.__dict__
+
+    def __repr__(self):
+        # type: () -> str
+        return str(self)
+
+    def __len__(self):
+        # type: () -> int
+        return len(self.keys())
+
+    def __delitem__(self, key):
+        # type: (Any) -> None
+        self.__dict__[key] = None
+
+    def __eq__(self, other):
+        # type: (Any) -> bool
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other):
+        # type: (Any) -> bool
+        """Compare objects by comparing all attributes."""
+        return not self.__eq__(other)
+
+    def __str__(self):
+        # type: () -> str
+        return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
+
+    def has_key(self, k):
+        # type: (Any) -> bool
+        return k in self.__dict__
+
+    def update(self, *args, **kwargs):
+        # type: (Any, Any) -> None
+        return self.__dict__.update(*args, **kwargs)
+
+    def keys(self):
+        # type: () -> list
+        return [k for k in self.__dict__ if not k.startswith("_")]
+
+    def values(self):
+        # type: () -> list
+        return [v for k, v in self.__dict__.items() if not k.startswith("_")]
+
+    def items(self):
+        # type: () -> list
+        return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
+
+    def get(self, key, default=None):
+        # type: (Any, Optional[Any]) -> Any
+        if key in self.__dict__:
+            return self.__dict__[key]
+        return default

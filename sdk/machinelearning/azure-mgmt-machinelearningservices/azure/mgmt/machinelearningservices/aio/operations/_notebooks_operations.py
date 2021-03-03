@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class NotebooksOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,8 +47,8 @@ class NotebooksOperations:
         resource_group_name: str,
         workspace_name: str,
         **kwargs
-    ) -> Optional["models.NotebookResourceInfo"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.NotebookResourceInfo"]]
+    ) -> Optional["_models.NotebookResourceInfo"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.NotebookResourceInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -79,7 +79,7 @@ class NotebooksOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.MachineLearningServiceError, response)
+            error = self._deserialize(_models.MachineLearningServiceError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -97,7 +97,7 @@ class NotebooksOperations:
         resource_group_name: str,
         workspace_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.NotebookResourceInfo"]:
+    ) -> AsyncLROPoller["_models.NotebookResourceInfo"]:
         """prepare.
 
         :param resource_group_name: Name of the resource group in which workspace is located.
@@ -115,7 +115,7 @@ class NotebooksOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotebookResourceInfo"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookResourceInfo"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -139,7 +139,13 @@ class NotebooksOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

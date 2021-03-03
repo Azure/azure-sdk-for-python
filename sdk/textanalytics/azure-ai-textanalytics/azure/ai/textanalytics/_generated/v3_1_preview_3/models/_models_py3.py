@@ -105,6 +105,108 @@ class AnalyzeBatchInput(JobDescriptor, JobManifest):
         self.analysis_input = analysis_input
 
 
+class JobMetadata(msrest.serialization.Model):
+    """JobMetadata.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param created_date_time: Required.
+    :type created_date_time: ~datetime.datetime
+    :param expiration_date_time:
+    :type expiration_date_time: ~datetime.datetime
+    :param job_id: Required.
+    :type job_id: str
+    :param last_update_date_time: Required.
+    :type last_update_date_time: ~datetime.datetime
+    :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
+     "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
+    """
+
+    _validation = {
+        'created_date_time': {'required': True},
+        'job_id': {'required': True},
+        'last_update_date_time': {'required': True},
+        'status': {'required': True},
+    }
+
+    _attribute_map = {
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'expiration_date_time': {'key': 'expirationDateTime', 'type': 'iso-8601'},
+        'job_id': {'key': 'jobId', 'type': 'str'},
+        'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_date_time: datetime.datetime,
+        job_id: str,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "State"],
+        expiration_date_time: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        super(JobMetadata, self).__init__(**kwargs)
+        self.created_date_time = created_date_time
+        self.expiration_date_time = expiration_date_time
+        self.job_id = job_id
+        self.last_update_date_time = last_update_date_time
+        self.status = status
+
+
+class AnalyzeJobMetadata(JobMetadata):
+    """AnalyzeJobMetadata.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param created_date_time: Required.
+    :type created_date_time: ~datetime.datetime
+    :param expiration_date_time:
+    :type expiration_date_time: ~datetime.datetime
+    :param job_id: Required.
+    :type job_id: str
+    :param last_update_date_time: Required.
+    :type last_update_date_time: ~datetime.datetime
+    :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
+     "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
+    :param display_name:
+    :type display_name: str
+    """
+
+    _validation = {
+        'created_date_time': {'required': True},
+        'job_id': {'required': True},
+        'last_update_date_time': {'required': True},
+        'status': {'required': True},
+    }
+
+    _attribute_map = {
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'expiration_date_time': {'key': 'expirationDateTime', 'type': 'iso-8601'},
+        'job_id': {'key': 'jobId', 'type': 'str'},
+        'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
+        'status': {'key': 'status', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_date_time: datetime.datetime,
+        job_id: str,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "State"],
+        expiration_date_time: Optional[datetime.datetime] = None,
+        display_name: Optional[str] = None,
+        **kwargs
+    ):
+        super(AnalyzeJobMetadata, self).__init__(created_date_time=created_date_time, expiration_date_time=expiration_date_time, job_id=job_id, last_update_date_time=last_update_date_time, status=status, **kwargs)
+        self.display_name = display_name
+
+
 class Pagination(msrest.serialization.Model):
     """Pagination.
 
@@ -153,63 +255,7 @@ class TasksState(msrest.serialization.Model):
         self.tasks = tasks
 
 
-class JobMetadata(msrest.serialization.Model):
-    """JobMetadata.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param created_date_time: Required.
-    :type created_date_time: ~datetime.datetime
-    :param display_name:
-    :type display_name: str
-    :param expiration_date_time:
-    :type expiration_date_time: ~datetime.datetime
-    :param job_id: Required.
-    :type job_id: str
-    :param last_update_date_time: Required.
-    :type last_update_date_time: ~datetime.datetime
-    :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
-     "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
-    """
-
-    _validation = {
-        'created_date_time': {'required': True},
-        'job_id': {'required': True},
-        'last_update_date_time': {'required': True},
-        'status': {'required': True},
-    }
-
-    _attribute_map = {
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'expiration_date_time': {'key': 'expirationDateTime', 'type': 'iso-8601'},
-        'job_id': {'key': 'jobId', 'type': 'str'},
-        'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        job_id: str,
-        last_update_date_time: datetime.datetime,
-        status: Union[str, "State"],
-        display_name: Optional[str] = None,
-        expiration_date_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        super(JobMetadata, self).__init__(**kwargs)
-        self.created_date_time = created_date_time
-        self.display_name = display_name
-        self.expiration_date_time = expiration_date_time
-        self.job_id = job_id
-        self.last_update_date_time = last_update_date_time
-        self.status = status
-
-
-class AnalyzeJobState(JobMetadata, TasksState, Pagination):
+class AnalyzeJobState(AnalyzeJobMetadata, TasksState, Pagination):
     """AnalyzeJobState.
 
     All required parameters must be populated in order to send to Azure.
@@ -220,8 +266,6 @@ class AnalyzeJobState(JobMetadata, TasksState, Pagination):
     :type tasks: ~azure.ai.textanalytics.v3_1_preview_3.models.TasksStateTasks
     :param created_date_time: Required.
     :type created_date_time: ~datetime.datetime
-    :param display_name:
-    :type display_name: str
     :param expiration_date_time:
     :type expiration_date_time: ~datetime.datetime
     :param job_id: Required.
@@ -231,6 +275,8 @@ class AnalyzeJobState(JobMetadata, TasksState, Pagination):
     :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
      "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
+    :param display_name:
+    :type display_name: str
     :param errors:
     :type errors: list[~azure.ai.textanalytics.v3_1_preview_3.models.TextAnalyticsError]
     :param statistics: if showStats=true was specified in the request this field will contain
@@ -250,11 +296,11 @@ class AnalyzeJobState(JobMetadata, TasksState, Pagination):
         'next_link': {'key': '@nextLink', 'type': 'str'},
         'tasks': {'key': 'tasks', 'type': 'TasksStateTasks'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
         'expiration_date_time': {'key': 'expirationDateTime', 'type': 'iso-8601'},
         'job_id': {'key': 'jobId', 'type': 'str'},
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
         'errors': {'key': 'errors', 'type': '[TextAnalyticsError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
     }
@@ -268,33 +314,33 @@ class AnalyzeJobState(JobMetadata, TasksState, Pagination):
         last_update_date_time: datetime.datetime,
         status: Union[str, "State"],
         next_link: Optional[str] = None,
-        display_name: Optional[str] = None,
         expiration_date_time: Optional[datetime.datetime] = None,
+        display_name: Optional[str] = None,
         errors: Optional[List["TextAnalyticsError"]] = None,
         statistics: Optional["RequestStatistics"] = None,
         **kwargs
     ):
-        super(AnalyzeJobState, self).__init__(created_date_time=created_date_time, display_name=display_name, expiration_date_time=expiration_date_time, job_id=job_id, last_update_date_time=last_update_date_time, status=status, tasks=tasks, next_link=next_link, **kwargs)
+        super(AnalyzeJobState, self).__init__(created_date_time=created_date_time, expiration_date_time=expiration_date_time, job_id=job_id, last_update_date_time=last_update_date_time, status=status, display_name=display_name, tasks=tasks, next_link=next_link, **kwargs)
         self.next_link = next_link
         self.tasks = tasks
         self.errors = errors
         self.statistics = statistics
         self.next_link = next_link
         self.created_date_time = created_date_time
-        self.display_name = display_name
         self.expiration_date_time = expiration_date_time
         self.job_id = job_id
         self.last_update_date_time = last_update_date_time
         self.status = status
+        self.display_name = display_name
         self.errors = errors
         self.statistics = statistics
         self.tasks = tasks
         self.created_date_time = created_date_time
-        self.display_name = display_name
         self.expiration_date_time = expiration_date_time
         self.job_id = job_id
         self.last_update_date_time = last_update_date_time
         self.status = status
+        self.display_name = display_name
         self.errors = errors
         self.statistics = statistics
 
@@ -1175,8 +1221,6 @@ class HealthcareJobState(JobMetadata, Pagination):
     :type next_link: str
     :param created_date_time: Required.
     :type created_date_time: ~datetime.datetime
-    :param display_name:
-    :type display_name: str
     :param expiration_date_time:
     :type expiration_date_time: ~datetime.datetime
     :param job_id: Required.
@@ -1202,7 +1246,6 @@ class HealthcareJobState(JobMetadata, Pagination):
     _attribute_map = {
         'next_link': {'key': '@nextLink', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
         'expiration_date_time': {'key': 'expirationDateTime', 'type': 'iso-8601'},
         'job_id': {'key': 'jobId', 'type': 'str'},
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
@@ -1219,18 +1262,16 @@ class HealthcareJobState(JobMetadata, Pagination):
         last_update_date_time: datetime.datetime,
         status: Union[str, "State"],
         next_link: Optional[str] = None,
-        display_name: Optional[str] = None,
         expiration_date_time: Optional[datetime.datetime] = None,
         results: Optional["HealthcareResult"] = None,
         errors: Optional[List["TextAnalyticsError"]] = None,
         **kwargs
     ):
-        super(HealthcareJobState, self).__init__(created_date_time=created_date_time, display_name=display_name, expiration_date_time=expiration_date_time, job_id=job_id, last_update_date_time=last_update_date_time, status=status, next_link=next_link, **kwargs)
+        super(HealthcareJobState, self).__init__(created_date_time=created_date_time, expiration_date_time=expiration_date_time, job_id=job_id, last_update_date_time=last_update_date_time, status=status, next_link=next_link, **kwargs)
         self.next_link = next_link
         self.results = results
         self.errors = errors
         self.created_date_time = created_date_time
-        self.display_name = display_name
         self.expiration_date_time = expiration_date_time
         self.job_id = job_id
         self.last_update_date_time = last_update_date_time
@@ -2259,7 +2300,7 @@ class TasksStateTasks(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param details:
-    :type details: ~azure.ai.textanalytics.v3_1_preview_3.models.TaskState
+    :type details: ~azure.ai.textanalytics.v3_1_preview_3.models.TasksStateTasksDetails
     :param completed: Required.
     :type completed: int
     :param failed: Required.
@@ -2287,7 +2328,7 @@ class TasksStateTasks(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': 'TaskState'},
+        'details': {'key': 'details', 'type': 'TasksStateTasksDetails'},
         'completed': {'key': 'completed', 'type': 'int'},
         'failed': {'key': 'failed', 'type': 'int'},
         'in_progress': {'key': 'inProgress', 'type': 'int'},
@@ -2304,7 +2345,7 @@ class TasksStateTasks(msrest.serialization.Model):
         failed: int,
         in_progress: int,
         total: int,
-        details: Optional["TaskState"] = None,
+        details: Optional["TasksStateTasksDetails"] = None,
         entity_recognition_tasks: Optional[List["TasksStateTasksEntityRecognitionTasksItem"]] = None,
         entity_recognition_pii_tasks: Optional[List["TasksStateTasksEntityRecognitionPiiTasksItem"]] = None,
         key_phrase_extraction_tasks: Optional[List["TasksStateTasksKeyPhraseExtractionTasksItem"]] = None,

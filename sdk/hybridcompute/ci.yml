@@ -5,6 +5,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -16,6 +17,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -29,5 +31,5 @@ extends:
   parameters:
     ServiceDirectory: hybridcompute
     Artifacts:
-    - name: azure_mgmt_hybridcompute
+    - name: azure-mgmt-hybridcompute
       safeName: azuremgmthybridcompute

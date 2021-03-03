@@ -24,6 +24,7 @@ from .operations import PolicyEventsOperations
 from .operations import PolicyStatesOperations
 from .operations import Operations
 from .operations import PolicyMetadataOperations
+from .operations import PolicyRestrictionsOperations
 from . import models
 
 
@@ -42,6 +43,8 @@ class PolicyInsightsClient(object):
     :vartype operations: azure.mgmt.policyinsights.operations.Operations
     :ivar policy_metadata: PolicyMetadataOperations operations
     :vartype policy_metadata: azure.mgmt.policyinsights.operations.PolicyMetadataOperations
+    :ivar policy_restrictions: PolicyRestrictionsOperations operations
+    :vartype policy_restrictions: azure.mgmt.policyinsights.operations.PolicyRestrictionsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Microsoft Azure subscription ID.
@@ -79,6 +82,8 @@ class PolicyInsightsClient(object):
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
         self.policy_metadata = PolicyMetadataOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.policy_restrictions = PolicyRestrictionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):

@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,5 +30,7 @@ extends:
   parameters:
     ServiceDirectory: attestation
     Artifacts:
-    - name: azure_mgmt_attestation
+    - name: azure-mgmt-attestation
       safeName: azuremgmtattestation
+    - name: azure-security-attestation
+      safeName: azuresecurityattestation

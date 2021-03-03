@@ -1790,7 +1790,7 @@ class GalleryApplicationVersion(Resource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param publishing_profile: The publishing profile of a gallery Image Version.
+    :param publishing_profile: The publishing profile of a gallery image version.
     :type publishing_profile:
      ~azure.mgmt.compute.v2019_03_01.models.GalleryApplicationVersionPublishingProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
@@ -1913,7 +1913,7 @@ class GalleryArtifactPublishingProfileBase(msrest.serialization.Model):
 
 
 class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
-    """The publishing profile of a gallery Image Version.
+    """The publishing profile of a gallery image version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1939,9 +1939,8 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
     :type storage_account_type: str or ~azure.mgmt.compute.v2019_03_01.models.StorageAccountType
     :param source: Required. The source image from which the Image Version is going to be created.
     :type source: ~azure.mgmt.compute.v2019_03_01.models.UserArtifactSource
-    :param content_type: Optional. May be used to help process this file. The type of file
-     contained in the source, e.g. zip, json, etc.
-    :type content_type: str
+    :param manage_actions:
+    :type manage_actions: ~azure.mgmt.compute.v2019_03_01.models.UserArtifactManage
     :param enable_health_check: Optional. Whether or not this application reports health.
     :type enable_health_check: bool
     """
@@ -1959,7 +1958,7 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
         'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
         'source': {'key': 'source', 'type': 'UserArtifactSource'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
+        'manage_actions': {'key': 'manageActions', 'type': 'UserArtifactManage'},
         'enable_health_check': {'key': 'enableHealthCheck', 'type': 'bool'},
     }
 
@@ -1969,7 +1968,7 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
     ):
         super(GalleryApplicationVersionPublishingProfile, self).__init__(**kwargs)
         self.source = kwargs['source']
-        self.content_type = kwargs.get('content_type', None)
+        self.manage_actions = kwargs.get('manage_actions', None)
         self.enable_health_check = kwargs.get('enable_health_check', None)
 
 
@@ -5278,26 +5277,64 @@ class UsageName(msrest.serialization.Model):
         self.localized_value = kwargs.get('localized_value', None)
 
 
+class UserArtifactManage(msrest.serialization.Model):
+    """UserArtifactManage.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param install: Required. Required. The path and arguments to install the gallery application.
+     This is limited to 4096 characters.
+    :type install: str
+    :param remove: Required. Required. The path and arguments to remove the gallery application.
+     This is limited to 4096 characters.
+    :type remove: str
+    :param update: Optional. The path and arguments to update the gallery application. If not
+     present, then update operation will invoke remove command on the previous version and install
+     command on the current version of the gallery application. This is limited to 4096 characters.
+    :type update: str
+    """
+
+    _validation = {
+        'install': {'required': True},
+        'remove': {'required': True},
+    }
+
+    _attribute_map = {
+        'install': {'key': 'install', 'type': 'str'},
+        'remove': {'key': 'remove', 'type': 'str'},
+        'update': {'key': 'update', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UserArtifactManage, self).__init__(**kwargs)
+        self.install = kwargs['install']
+        self.remove = kwargs['remove']
+        self.update = kwargs.get('update', None)
+
+
 class UserArtifactSource(msrest.serialization.Model):
     """The source image from which the Image Version is going to be created.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param file_name: Required. Required. The fileName of the artifact.
-    :type file_name: str
     :param media_link: Required. Required. The mediaLink of the artifact, must be a readable
-     storage blob.
+     storage page blob.
     :type media_link: str
+    :param default_configuration_link: Optional. The defaultConfigurationLink of the artifact, must
+     be a readable storage page blob.
+    :type default_configuration_link: str
     """
 
     _validation = {
-        'file_name': {'required': True},
         'media_link': {'required': True},
     }
 
     _attribute_map = {
-        'file_name': {'key': 'fileName', 'type': 'str'},
         'media_link': {'key': 'mediaLink', 'type': 'str'},
+        'default_configuration_link': {'key': 'defaultConfigurationLink', 'type': 'str'},
     }
 
     def __init__(
@@ -5305,8 +5342,8 @@ class UserArtifactSource(msrest.serialization.Model):
         **kwargs
     ):
         super(UserArtifactSource, self).__init__(**kwargs)
-        self.file_name = kwargs['file_name']
         self.media_link = kwargs['media_link']
+        self.default_configuration_link = kwargs.get('default_configuration_link', None)
 
 
 class UserAssignedIdentitiesValue(msrest.serialization.Model):

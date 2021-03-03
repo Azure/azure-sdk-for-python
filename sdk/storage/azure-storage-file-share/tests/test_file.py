@@ -14,6 +14,7 @@ import requests
 import pytest
 import uuid
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -1878,6 +1879,43 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertTrue(response.ok)
         self.assertEqual(self.short_byte_data, response.content)
+
+    @GlobalStorageAccountPreparer()
+    def test_account_sas_credential(self, resource_group, location, storage_account, storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if not self.is_live:
+            return
+
+        self._setup(storage_account, storage_account_key)
+        file_client = self._create_file()
+        token = generate_account_sas(
+            self.fsc.account_name,
+            self.fsc.credential.account_key,
+            ResourceTypes(object=True),
+            AccountSasPermissions(read=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        file_client = ShareFileClient(
+            self.account_url(storage_account, "file"),
+            share_name=self.share_name,
+            file_path=file_client.file_name,
+            credential=AzureSasCredential(token))
+
+        properties = file_client.get_file_properties()
+
+        # Assert
+        self.assertIsNotNone(properties)
+
+    @GlobalStorageAccountPreparer()
+    def test_account_sas_raises_if_sas_already_in_uri(self, resource_group, location, storage_account, storage_account_key):
+        with self.assertRaises(ValueError):
+            ShareFileClient(
+                self.account_url(storage_account, "file") + "?sig=foo",
+                share_name="foo",
+                file_path="foo",
+                credential=AzureSasCredential("?foo=bar"))
 
     @GlobalStorageAccountPreparer()
     def test_shared_read_access_file(self, resource_group, location, storage_account, storage_account_key):

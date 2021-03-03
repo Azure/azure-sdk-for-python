@@ -15,6 +15,7 @@ import re
 import logging
 from packaging.version import parse
 
+from datetime import date
 from setup_parser import parse_setup
 
 root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
@@ -130,21 +131,26 @@ def set_dev_classifier(setup_py_location, version):
 
         setup_py_file.write(replaced_setup_contents)
 
-def update_change_log(setup_py_location, version, is_unreleased, replace_version):
-    script = os.path.join(root_dir, "eng", "common", "Update-Change-Log.ps1")
+def update_change_log(setup_py_location, version, service, package, is_unreleased, replace_latest_entry_title, release_date=None):
+    script = os.path.join(root_dir, "eng", "common", "scripts", "Update-ChangeLog.ps1")
     pkg_root = os.path.abspath(os.path.join(setup_py_location, ".."))
+
     commands = [
         "pwsh",
         script,
         "--Version",
         version,
-        "--ChangeLogPath",
-        pkg_root,
-        "--Unreleased",
-        str(is_unreleased),
-        "--ReplaceVersion",
-        str(replace_version)
+        "--ServiceDirectory",
+        service,
+        "--PackageName",
+        package,
+        "--Unreleased:${}".format(is_unreleased),
+        "--ReplaceLatestEntryTitle:${}".format(replace_latest_entry_title),
     ]
+    if release_date is not None:
+        commands.append("--ReleaseDate")
+        commands.append(release_date)
+
     # Run script to update change log
     run_check_call(commands, pkg_root)
 

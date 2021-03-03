@@ -18,7 +18,7 @@ Notes:
 # What are the constraints?
 
 We want to build sdist and wheels in order to follow the following constraints:
-- Solution should work with *decent* versions of pip and setuptools (not the very latest only, but not archaeology either)
+- Solution should work with *recent* versions of pip and setuptools (not the very latest only, but not archaeology either)
 - Wheels must work with Python 2.7 and 3.4+
 - easy-install scenario is a plus, but cannot be considered critical anymore
 - mixed dev installation and PyPI installation should be explicitly addressed
@@ -39,8 +39,10 @@ Your MANIFEST.in must include the following line `include azure/__init__.py`.
 
 Example:
 ```shell
-include *.rst
+include *.md
 include azure/__init__.py
+recursive-include tests *.py
+recursive-include samples *.py *.md
 ```
 In your setup.py:
 
@@ -53,11 +55,12 @@ The "packages" section MUST EXCLUDE the "azure" package. Example:
     ]),
 ```
 
-The "extras_requires" section MUST include a conditional dependency on "azure-nspkg" for Python 2. Example:
+The "extras_requires" section MUST include a conditional dependency on "azure-nspkg" for Python 2. There is also a conditional dependency on "typing" for Python 3.5 because of the type-hinting for Python 3.5 and above. Example:
 
 ```python
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
+        ":python_version<'3.5'": ['typing'],
     }
 ```
 
@@ -108,15 +111,16 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -132,6 +136,7 @@ setup(
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
+        ":python_version<'3.5'": ['typing'],
     }
 )
 ```

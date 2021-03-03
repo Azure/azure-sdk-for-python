@@ -6,23 +6,28 @@ from time import sleep
 
 import pytest
 
-from devtools_testutils import CachedResourceGroupPreparer
-from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError, HttpResponseError
-from _shared.asynctestcase import AsyncTableTestCase
-from _shared.testcase import RERUNS_DELAY, SLEEP_DELAY
-from _shared.cosmos_testcase import CachedCosmosAccountPreparer
+from devtools_testutils import AzureTestCase
 
-from azure.data.tables import AccessPolicy, TableSasPermissions, ResourceTypes, AccountSasPermissions
+from azure.core.credentials import AzureSasCredential
+from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError, HttpResponseError
+from azure.data.tables import (
+    AccessPolicy,
+    TableSasPermissions,
+    ResourceTypes,
+    AccountSasPermissions,
+    generate_account_sas
+)
 from azure.data.tables.aio import TableServiceClient
-from azure.data.tables._generated.models import QueryOptions
-from azure.data.tables._table_shared_access_signature import generate_account_sas
+
+from _shared.asynctestcase import AsyncTableTestCase
+from _shared.testcase import SLEEP_DELAY
+from preparers import CosmosPreparer
 
 TEST_TABLE_PREFIX = 'pytableasync'
 
-
 # ------------------------------------------------------------------------------
 
-class TableTestAsync(AsyncTableTestCase):
+class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     # --Helpers-----------------------------------------------------------------
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
         table_name = self.get_resource_name(prefix)
@@ -47,12 +52,10 @@ class TableTestAsync(AsyncTableTestCase):
             pass
 
     # --Test cases for tables --------------------------------------------------
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_create_table(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    async def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
 
         # Act
@@ -66,11 +69,10 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_create_table_fail_on_exist(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    async def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
 
         # Act
@@ -85,13 +87,12 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_query_tables_per_page(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    async def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        # account_url = self.account_url(cosmos_account, "table")
-        # ts = self.create_client_from_credential(TableServiceClient, cosmos_account_key, account_url=account_url)
-        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        # account_url = self.account_url(tables_cosmos_account_name, "table")
+        # ts = self.create_client_from_credential(TableServiceClient, tables_primary_cosmos_account_key, account_url=account_url)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
 
         table_name = "myasynctable"
 
@@ -119,43 +120,10 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_create_table_invalid_name(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    async def test_list_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
-        invalid_table_name = "my_table"
-
-        with pytest.raises(ValueError) as excinfo:
-            await ts.create_table(table_name=invalid_table_name)
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
-            excinfo)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_delete_table_invalid_name(self, resource_group, location, cosmos_account, cosmos_account_key):
-        # Arrange
-        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
-        invalid_table_name = "my_table"
-
-        with pytest.raises(ValueError) as excinfo:
-            await ts.create_table(invalid_table_name)
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
-            excinfo)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_list_tables(self, resource_group, location, cosmos_account, cosmos_account_key):
-        # Arrange
-        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
 
         # Act
@@ -171,11 +139,10 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_query_tables_with_filter(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    async def test_query_tables_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
 
         # Act
@@ -193,12 +160,11 @@ class TableTestAsync(AsyncTableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("small page and large page issues, 6 != 3")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_list_tables_with_num_results(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    async def test_list_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         prefix = 'listtable'
-        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table_list = []
         for i in range(0, 4):
             await self._create_table(ts, prefix + str(i), table_list)
@@ -218,11 +184,10 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_list_tables_with_marker(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    async def test_list_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         prefix = 'listtable'
         table_names = []
         for i in range(0, 4):
@@ -254,12 +219,11 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_delete_table_with_existing_table(self, resource_group, location, cosmos_account,
-                                                    cosmos_account_key):
+    @CosmosPreparer()
+    async def test_delete_table_with_existing_table(self, tables_cosmos_account_name,
+                                                    tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
 
         # Act
@@ -272,12 +236,11 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_delete_table_with_non_existing_table_fail_not_exist(self, resource_group, location, cosmos_account,
-                                                                       cosmos_account_key):
+    @CosmosPreparer()
+    async def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_cosmos_account_name,
+                                                                       tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
 
         # Act
@@ -287,31 +250,12 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_unicode_create_table_unicode_name(self, resource_group, location, cosmos_account,
-                                                     cosmos_account_key):
-        # Arrange
-        url = self.account_url(cosmos_account, "cosmos")
-        ts = TableServiceClient(url, cosmos_account_key)
-        table_name = u'啊齄丂狛狜'
-
-        with pytest.raises(ValueError) as excinfo:
-            await ts.create_table(table_name=table_name)
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
-            excinfo)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @pytest.mark.skip("Cosmos does not support table access policy")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_get_table_acl(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    async def test_get_table_acl(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(cosmos_account, "cosmos")
-        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
         try:
             # Act
@@ -327,13 +271,12 @@ class TableTestAsync(AsyncTableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos does not support table access policy")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, cosmos_account,
-                                                               cosmos_account_key):
+    @CosmosPreparer()
+    async def test_set_table_acl_with_empty_signed_identifiers(self, tables_cosmos_account_name,
+                                                               tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(cosmos_account, "cosmos")
-        ts = TableServiceClient(url, cosmos_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        ts = TableServiceClient(url, tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
         try:
             # Act
@@ -350,13 +293,12 @@ class TableTestAsync(AsyncTableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos does not support table access policy")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, cosmos_account,
-                                                              cosmos_account_key):
+    @CosmosPreparer()
+    async def test_set_table_acl_with_empty_signed_identifier(self, tables_cosmos_account_name,
+                                                              tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(cosmos_account, "cosmos")
-        ts = TableServiceClient(url, cosmos_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        ts = TableServiceClient(url, tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
         try:
             # Act
@@ -376,13 +318,12 @@ class TableTestAsync(AsyncTableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos does not support table access policy")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_set_table_acl_with_signed_identifiers(self, resource_group, location, cosmos_account,
-                                                         cosmos_account_key):
+    @CosmosPreparer()
+    async def test_set_table_acl_with_signed_identifiers(self, tables_cosmos_account_name,
+                                                         tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(cosmos_account, "cosmos")
-        ts = TableServiceClient(url, cosmos_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        ts = TableServiceClient(url, tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
         client = ts.get_table_client(table_name=table.table_name)
 
@@ -406,12 +347,11 @@ class TableTestAsync(AsyncTableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos does not support table access policy")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_set_table_acl_too_many_ids(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    async def test_set_table_acl_too_many_ids(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(cosmos_account, "cosmos")
-        ts = TableServiceClient(url, cosmos_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        ts = TableServiceClient(url, tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
         try:
             # Act
@@ -430,14 +370,13 @@ class TableTestAsync(AsyncTableTestCase):
 
     @pytest.mark.skip("Cosmos does not support table access policy")
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_account_sas(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    async def test_account_sas(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
         # Arrange
-        url = self.account_url(cosmos_account, "cosmos")
-        tsc = TableServiceClient(url, cosmos_account_key)
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
         table = await self._create_table(tsc)
         try:
             entity = {
@@ -451,8 +390,8 @@ class TableTestAsync(AsyncTableTestCase):
             await table.upsert_insert_merge_entity(table_entity_properties=entity)
 
             token = generate_account_sas(
-                cosmos_account.name,
-                cosmos_account_key,
+                tables_cosmos_account_name,
+                tables_primary_cosmos_account_key,
                 resource_types=ResourceTypes(container=True),
                 permission=AccountSasPermissions(list=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -461,7 +400,7 @@ class TableTestAsync(AsyncTableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(cosmos_account, "cosmos"),
+                self.account_url(tables_cosmos_account_name, "cosmos"),
                 credential=token,
             )
             entities = []
@@ -477,11 +416,10 @@ class TableTestAsync(AsyncTableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Test fails on Linux and in Python2. Throws a locale.Error: unsupported locale setting")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    async def test_locale(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPreparer()
+    async def test_locale(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table = (self._get_table_reference())
         init_locale = locale.getlocale()
         if os.name == "nt":
@@ -509,3 +447,45 @@ class TableTestAsync(AsyncTableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
+
+
+class TestTableUnitTest(AsyncTableTestCase):
+    tables_cosmos_account_name = "fake_storage_account"
+    tables_primary_cosmos_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
+
+    @pytest.mark.asyncio
+    async def test_unicode_create_table_unicode_name(self):
+        # Arrange
+        url = self.account_url(self.tables_cosmos_account_name, "cosmos")
+        ts = TableServiceClient(url, self.tables_primary_cosmos_account_key)
+        table_name = u'啊齄丂狛狜'
+
+        with pytest.raises(ValueError) as excinfo:
+            await ts.create_table(table_name=table_name)
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            excinfo)
+
+    @pytest.mark.asyncio
+    async def test_create_table_invalid_name(self):
+        # Arrange
+        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), self.tables_primary_cosmos_account_key)
+        invalid_table_name = "my_table"
+
+        with pytest.raises(ValueError) as excinfo:
+            await ts.create_table(table_name=invalid_table_name)
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            excinfo)
+
+    @pytest.mark.asyncio
+    async def test_delete_table_invalid_name(self):
+        # Arrange
+        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), self.tables_primary_cosmos_account_key)
+        invalid_table_name = "my_table"
+
+        with pytest.raises(ValueError) as excinfo:
+            await ts.create_table(invalid_table_name)
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            excinfo)

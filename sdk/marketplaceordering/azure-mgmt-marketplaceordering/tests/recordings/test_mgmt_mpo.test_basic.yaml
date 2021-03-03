@@ -9,21 +9,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-marketplaceordering/1.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-marketplaceordering/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.MarketplaceOrdering/offerTypes/virtualmachine/publishers/intel-bigdl/offers/bigdl_vm/plans/bigdl_vm_0p4/agreements/current?api-version=2015-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.MarketplaceOrdering/offerTypes/VirtualMachine/publishers/intel-bigdl/offers/bigdl_vm/plans/bigdl_vm_0p4/agreements/current","name":"bigdl_vm_0p4","type":"Microsoft.MarketplaceOrdering/offertypes","properties":{"publisher":"intel-bigdl","product":"bigdl_vm","plan":"bigdl_vm_0p4","licenseTextLink":"https://storelegalterms.blob.core.windows.net/legalterms/3E5ED_legalterms_INTEL%253a2DBIGDL%253a24BIGDL%253a5FVM%253a24BIGDL%253a5FVM%253a5F0P4%253a24LPVML5SNN52KTQK2VUTTKOQB2GF5VLGDDHYIMTNCI5TVT54RPWAEFUUJFPSGA2SZ7YGQ4EEOVRA6UCUVLHC7JNZNNCNFUJT63EQ2XVI.txt","privacyPolicyLink":"https://www.intel.com/content/www/us/en/privacy/intel-privacy-notice.html","retrieveDatetime":"2020-11-04T06:52:24.38356Z","signature":"GBDZ4RJG5MJJCL7FX35NJGRD5DPF52UX4NGWUJXXVCEPYZID7UNIG43VVEZZB5LUEMXU3ELXGUMBNLOEHSMU3HWVVZNUCNVIKEQ5DXA","accepted":false}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.MarketplaceOrdering/offerTypes/VirtualMachine/publishers/intel-bigdl/offers/bigdl_vm/plans/bigdl_vm_0p4/agreements/current","name":"bigdl_vm_0p4","type":"Microsoft.MarketplaceOrdering/offertypes","properties":{"publisher":"intel-bigdl","product":"bigdl_vm","plan":"bigdl_vm_0p4","licenseTextLink":"https://storelegalterms.blob.core.windows.net/legalterms/3E5ED_legalterms_INTEL%253a2DBIGDL%253a24BIGDL%253a5FVM%253a24BIGDL%253a5FVM%253a5F0P4%253a24LPVML5SNN52KTQK2VUTTKOQB2GF5VLGDDHYIMTNCI5TVT54RPWAEFUUJFPSGA2SZ7YGQ4EEOVRA6UCUVLHC7JNZNNCNFUJT63EQ2XVI.txt","privacyPolicyLink":"https://www.intel.com/content/www/us/en/privacy/intel-privacy-notice.html","retrieveDatetime":"2020-12-22T02:41:46.0762899Z","signature":"FLURUCNDIV3RPK7SCT3QV55MYSR3OESCMYXQ7KQOWYYK4ZSQK574ZRWKZOQIY4VUDYKNZV3KCZMHEQI3PTU4PBIZ7PZZSNRKRUAPQUI","accepted":false}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '916'
+      - '918'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 04 Nov 2020 06:52:23 GMT
+      - Tue, 22 Dec 2020 02:41:45 GMT
       expires:
       - '-1'
       pragma:
@@ -31,8 +31,8 @@ interactions:
       server:
       - Microsoft-IIS/10.0
       set-cookie:
-      - ARRAffinity=e198afec6581a1603d516688b9e05d55e216a7a6a28fad970baf7d024a095305;Path=/;HttpOnly;Secure;Domain=storeapi.azure.com
-      - ARRAffinitySameSite=e198afec6581a1603d516688b9e05d55e216a7a6a28fad970baf7d024a095305;Path=/;HttpOnly;SameSite=None;Secure;Domain=storeapi.azure.com
+      - ARRAffinity=a703f806325944e1ff92f5b6964fbc06b4fdf5647d48c76a29966c392ea989b9;Path=/;HttpOnly;Secure;Domain=storeapi.azure.com
+      - ARRAffinitySameSite=a703f806325944e1ff92f5b6964fbc06b4fdf5647d48c76a29966c392ea989b9;Path=/;HttpOnly;SameSite=None;Secure;Domain=storeapi.azure.com
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:

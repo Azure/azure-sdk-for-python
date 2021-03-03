@@ -1,5 +1,14 @@
 # Release History
 
+## 1.0.0 (2020-12-21)
+
+**Breaking changes**
+
+  - Operation MachineLearningComputeOperations.begin_update has a new signature
+  - Operation PrivateEndpointConnectionsOperations.put has a new signature
+  - Operation QuotasOperations.update has a new signature
+  - Operation PrivateEndpointConnectionsOperations.put has a new signature
+
 ## 1.0.0b1 (2020-10-31)
 
 This is beta preview version.

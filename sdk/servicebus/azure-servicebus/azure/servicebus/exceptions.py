@@ -22,7 +22,7 @@ from ._common.constants import (
     ERROR_CODE_OUT_OF_RANGE,
     ERROR_CODE_ENTITY_DISABLED,
     ERROR_CODE_ENTITY_ALREADY_EXISTS,
-    ERROR_CODE_PRECONDITION_FAILED
+    ERROR_CODE_PRECONDITION_FAILED,
 )
 
 
@@ -51,7 +51,7 @@ _NO_RETRY_CONDITION_ERROR_CODES = (
     ERROR_CODE_MESSAGE_LOCK_LOST,
     ERROR_CODE_OUT_OF_RANGE,
     ERROR_CODE_ARGUMENT_ERROR,
-    ERROR_CODE_PRECONDITION_FAILED
+    ERROR_CODE_PRECONDITION_FAILED,
 )
 
 
@@ -67,11 +67,11 @@ def _error_handler(error):
     :type error: Exception
     :rtype: ~uamqp.errors.ErrorAction
     """
-    if error.condition == b'com.microsoft:server-busy':
+    if error.condition == b"com.microsoft:server-busy":
         return AMQPErrors.ErrorAction(retry=True, backoff=4)
-    if error.condition == b'com.microsoft:timeout':
+    if error.condition == b"com.microsoft:timeout":
         return AMQPErrors.ErrorAction(retry=True, backoff=2)
-    if error.condition == b'com.microsoft:operation-cancelled':
+    if error.condition == b"com.microsoft:operation-cancelled":
         return AMQPErrors.ErrorAction(retry=True)
     if error.condition == b"com.microsoft:container-close":
         return AMQPErrors.ErrorAction(retry=True, backoff=4)
@@ -81,27 +81,38 @@ def _error_handler(error):
 
 
 def _handle_amqp_exception_with_condition(
-    logger,
-    condition,
-    description,
-    exception=None,
-    status_code=None
+    logger, condition, description, exception=None, status_code=None
 ):
     #
     # handling AMQP Errors that have the condition field or the mgmt handler
-    logger.info("AMQP error occurred: (%r), condition: (%r), description: (%r).", exception, condition, description)
+    logger.info(
+        "AMQP error occurred: (%r), condition: (%r), description: (%r).",
+        exception,
+        condition,
+        description,
+    )
     if condition == AMQPErrorCodes.NotFound:
         # handle NotFound error code
-        error_cls = ServiceBusCommunicationError \
-            if isinstance(exception, AMQPErrors.AMQPConnectionError) else MessagingEntityNotFoundError
-    elif condition == AMQPErrorCodes.ClientError and 'timed out' in str(exception):
+        error_cls = (
+            ServiceBusCommunicationError
+            if isinstance(exception, AMQPErrors.AMQPConnectionError)
+            else MessagingEntityNotFoundError
+        )
+    elif condition == AMQPErrorCodes.ClientError and "timed out" in str(exception):
         # handle send timeout
         error_cls = OperationTimeoutError
+    elif condition == AMQPErrorCodes.UnknownError and isinstance(exception, AMQPErrors.AMQPConnectionError):
+        error_cls = ServiceBusConnectionError
     else:
         # handle other error codes
         error_cls = _ERROR_CODE_TO_ERROR_MAPPING.get(condition, ServiceBusError)
 
-    error = error_cls(message=description, error=exception, condition=condition, status_code=status_code)
+    error = error_cls(
+        message=description,
+        error=exception,
+        condition=condition,
+        status_code=status_code,
+    )
     if condition in _NO_RETRY_CONDITION_ERROR_CODES:
         error._retryable = False  # pylint: disable=protected-access
 
@@ -123,13 +134,17 @@ def _handle_amqp_exception_without_condition(logger, exception):
         elif isinstance(exception, AMQPErrors.MessageContentTooLarge):
             error_cls = MessageSizeExceededError
     else:
-        logger.info("Unexpected AMQP error occurred (%r). Handler shutting down.", exception)
+        logger.info(
+            "Unexpected AMQP error occurred (%r). Handler shutting down.", exception
+        )
 
     error = error_cls(message=str(exception), error=exception)
     return error
 
 
-def _handle_amqp_mgmt_error(logger, error_description, condition=None, description=None, status_code=None):
+def _handle_amqp_mgmt_error(
+    logger, error_description, condition=None, description=None, status_code=None
+):
     if description:
         error_description += " {}.".format(description)
 
@@ -138,7 +153,7 @@ def _handle_amqp_mgmt_error(logger, error_description, condition=None, descripti
         condition,
         description=error_description,
         exception=None,
-        status_code=status_code
+        status_code=status_code,
     )
 
 
@@ -148,22 +163,29 @@ def _create_servicebus_exception(logger, exception):
             # handling AMQP Errors that have the condition field
             condition = exception.condition
             description = exception.description
-            exception = _handle_amqp_exception_with_condition(logger, condition, description, exception=exception)
+            exception = _handle_amqp_exception_with_condition(
+                logger, condition, description, exception=exception
+            )
         except AttributeError:
             # handling AMQP Errors that don't have the condition field
             exception = _handle_amqp_exception_without_condition(logger, exception)
     elif not isinstance(exception, ServiceBusError):
-        logger.exception("Unexpected error occurred (%r). Handler shutting down.", exception)
-        exception = ServiceBusError(message="Handler failed: {}.".format(exception), error=exception)
+        logger.exception(
+            "Unexpected error occurred (%r). Handler shutting down.", exception
+        )
+        exception = ServiceBusError(
+            message="Handler failed: {}.".format(exception), error=exception
+        )
 
     return exception
 
 
 class _ServiceBusErrorPolicy(AMQPErrors.ErrorPolicy):
-
     def __init__(self, max_retries=3, is_session=False):
         self._is_session = is_session
-        super(_ServiceBusErrorPolicy, self).__init__(max_retries=max_retries, on_error=_error_handler)
+        super(_ServiceBusErrorPolicy, self).__init__(
+            max_retries=max_retries, on_error=_error_handler
+        )
 
     def on_unrecognized_error(self, error):
         if self._is_session:
@@ -193,13 +215,14 @@ class ServiceBusError(AzureError):
     :ivar exc_msg: A string formatting of message parameter, exc_type and exc_value
     :ivar str message: A stringified version of the message parameter
     """
+
     def __init__(self, message, *args, **kwargs):
         self._retryable = kwargs.pop("retryable", False)
         self._shutdown_handler = kwargs.pop("shutdown_handler", True)
         self._condition = kwargs.pop("condition", None)
         self._status_code = kwargs.pop("status_code", None)
         try:
-            message = message.decode('UTF-8')
+            message = message.decode("UTF-8")
         except AttributeError:
             pass
 
@@ -207,7 +230,7 @@ class ServiceBusError(AzureError):
 
         if self._condition:
             try:
-                self._condition = self._condition.decode('UTF-8')
+                self._condition = self._condition.decode("UTF-8")
             except AttributeError:
                 pass
             message = message + " Error condition: {}.".format(str(self._condition))
@@ -218,61 +241,57 @@ class ServiceBusError(AzureError):
 
 class ServiceBusConnectionError(ServiceBusError):
     """An error occurred in the connection."""
+
     def __init__(self, **kwargs):
         message = kwargs.pop("message", "An error occurred in the connection.")
         super(ServiceBusConnectionError, self).__init__(
-            message,
-            retryable=True,
-            shutdown_handler=True,
-            **kwargs
+            message, retryable=True, shutdown_handler=True, **kwargs
         )
 
 
 class ServiceBusAuthenticationError(ServiceBusError):
     """An error occurred when authenticate the connection."""
+
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", "An error occurred when authenticating the connection.")
+        message = kwargs.pop(
+            "message", "An error occurred when authenticating the connection."
+        )
         super(ServiceBusAuthenticationError, self).__init__(
-            message,
-            retryable=True,
-            shutdown_handler=True,
-            **kwargs
+            message, retryable=True, shutdown_handler=True, **kwargs
         )
 
 
 class ServiceBusAuthorizationError(ServiceBusError):
     """An error occurred when authorizing the connection."""
+
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", "An error occurred when authorizing the connection.")
+        message = kwargs.pop(
+            "message", "An error occurred when authorizing the connection."
+        )
         super(ServiceBusAuthorizationError, self).__init__(
-            message,
-            retryable=True,
-            shutdown_handler=True,
-            **kwargs
+            message, retryable=True, shutdown_handler=True, **kwargs
         )
 
 
 class OperationTimeoutError(ServiceBusError):
     """Operation timed out."""
+
     def __init__(self, **kwargs):
         message = kwargs.pop("message", "Operation timed out.")
         super(OperationTimeoutError, self).__init__(
-            message,
-            retryable=True,
-            shutdown_handler=False,
-            **kwargs
+            message, retryable=True, shutdown_handler=False, **kwargs
         )
 
 
 class MessageSizeExceededError(ServiceBusError, ValueError):
     """Message content is larger than the service bus frame size."""
+
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", "Message content is larger than the service bus frame size.")
+        message = kwargs.pop(
+            "message", "Message content is larger than the service bus frame size."
+        )
         super(MessageSizeExceededError, self).__init__(
-            message=message,
-            retryable=False,
-            shutdown_handler=False,
-            **kwargs
+            message=message, retryable=False, shutdown_handler=False, **kwargs
         )
 
 
@@ -296,23 +315,18 @@ class MessageAlreadySettled(ValueError):
 
 
 class MessageLockLostError(ServiceBusError):
-    """The lock on the message is lost. Callers should call attempt to receive and process the message again.
-
-    """
+    """The lock on the message is lost. Callers should call attempt to receive and process the message again."""
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
         message = kwargs.pop(
             "message",
-            "The lock on the message lock has expired. Callers should " +
-            "call attempt to receive and process the message again."
+            "The lock on the message lock has expired. Callers should "
+            + "call attempt to receive and process the message again.",
         )
 
         super(MessageLockLostError, self).__init__(
-            message=message,
-            retryable=False,
-            shutdown_handler=False,
-            **kwargs
+            message=message, retryable=False, shutdown_handler=False, **kwargs
         )
 
 
@@ -326,14 +340,11 @@ class SessionLockLostError(ServiceBusError):
         # type: (Any) -> None
         message = kwargs.pop(
             "message",
-            "The lock on the session has expired. Callers should request the session again."
+            "The lock on the session has expired. Callers should request the session again.",
         )
 
         super(SessionLockLostError, self).__init__(
-            message,
-            retryable=False,
-            shutdown_handler=True,
-            **kwargs
+            message, retryable=False, shutdown_handler=True, **kwargs
         )
 
 
@@ -344,13 +355,11 @@ class MessageNotFoundError(ServiceBusError):
     Make sure the message hasn't been received already.
     Check the deadletter queue to see if the message has been deadlettered.
     """
+
     def __init__(self, **kwargs):
         message = kwargs.pop("message", "The requested message was not found.")
         super(MessageNotFoundError, self).__init__(
-            message,
-            retryable=False,
-            shutdown_handler=False,
-            **kwargs
+            message, retryable=False, shutdown_handler=False, **kwargs
         )
 
 
@@ -360,38 +369,40 @@ class MessagingEntityNotFoundError(ServiceBusError):
     Entity associated with the operation doesn't exist or it has been deleted.
     Please make sure the entity exists.
     """
+
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", "A Service Bus resource cannot be found by the Service Bus service.")
+        message = kwargs.pop(
+            "message",
+            "A Service Bus resource cannot be found by the Service Bus service.",
+        )
         super(MessagingEntityNotFoundError, self).__init__(
-            message,
-            retryable=False,
-            shutdown_handler=True,
-            **kwargs
+            message, retryable=False, shutdown_handler=True, **kwargs
         )
 
 
 class MessagingEntityDisabledError(ServiceBusError):
     """The Messaging Entity is disabled. Enable the entity again using Portal."""
+
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", "The Messaging Entity is disabled. Enable the entity again using Portal.")
+        message = kwargs.pop(
+            "message",
+            "The Messaging Entity is disabled. Enable the entity again using Portal.",
+        )
 
         super(MessagingEntityDisabledError, self).__init__(
-            message,
-            retryable=True,
-            shutdown_handler=True,
-            **kwargs
+            message, retryable=True, shutdown_handler=True, **kwargs
         )
 
 
 class MessagingEntityAlreadyExistsError(ServiceBusError):
     """An entity with the same name exists under the same namespace."""
+
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", "An entity with the same name exists under the same namespace.")
+        message = kwargs.pop(
+            "message", "An entity with the same name exists under the same namespace."
+        )
         super(MessagingEntityAlreadyExistsError, self).__init__(
-            message,
-            retryable=False,
-            shutdown_handler=False,
-            **kwargs
+            message, retryable=False, shutdown_handler=False, **kwargs
         )
 
 
@@ -402,18 +413,16 @@ class ServiceBusQuotaExceededError(ServiceBusError):
     The messaging entity has reached its maximum allowable size, or the maximum number of connections to a namespace
     has been exceeded. Create space in the entity by receiving messages from the entity or its subqueues.
     """
+
     def __init__(self, **kwargs):
         message = kwargs.pop(
             "message",
-            "The quota applied to a Service Bus resource has been exceeded while " +
-            "interacting with the Azure Service Bus service."
+            "The quota applied to a Service Bus resource has been exceeded while "
+            + "interacting with the Azure Service Bus service.",
         )
 
         super(ServiceBusQuotaExceededError, self).__init__(
-            message,
-            retryable=False,
-            shutdown_handler=False,
-            **kwargs
+            message, retryable=False, shutdown_handler=False, **kwargs
         )
 
 
@@ -424,17 +433,15 @@ class ServiceBusServerBusyError(ServiceBusError):
     Service isn't able to process the request at this time. Client can wait for a period of time,
     then retry the operation.
     """
+
     def __init__(self, **kwargs):
         message = kwargs.pop(
             "message",
-            "The Azure Service Bus service reports that it is busy in response to a " +
-            "client request to perform an operation."
+            "The Azure Service Bus service reports that it is busy in response to a "
+            + "client request to perform an operation.",
         )
         super(ServiceBusServerBusyError, self).__init__(
-            message,
-            retryable=True,
-            shutdown_handler=False,
-            **kwargs
+            message, retryable=True, shutdown_handler=False, **kwargs
         )
 
 
@@ -446,17 +453,15 @@ class ServiceBusCommunicationError(ServiceBusError):
     If your code runs in an environment with a firewall/proxy, ensure that the traffic to
     the Service Bus domain/IP address and ports isn't blocked.
     """
+
     def __init__(self, **kwargs):
         message = kwargs.pop(
             "message",
-            "There was a general communications error encountered when interacting " +
-            "with the Azure Service Bus service."
+            "There was a general communications error encountered when interacting "
+            + "with the Azure Service Bus service.",
         )
         super(ServiceBusCommunicationError, self).__init__(
-            message,
-            retryable=True,
-            shutdown_handler=True,
-            **kwargs
+            message, retryable=True, shutdown_handler=True, **kwargs
         )
 
 
@@ -466,13 +471,11 @@ class SessionCannotBeLockedError(ServiceBusError):
     Attempt to connect to a session with a specific session ID, but the session is currently locked by another client.
     Make sure the session is unlocked by other clients.
     """
+
     def __init__(self, **kwargs):
         message = kwargs.pop("message", "The requested session cannot be locked.")
         super(SessionCannotBeLockedError, self).__init__(
-            message,
-            retryable=True,
-            shutdown_handler=True,
-            **kwargs
+            message, retryable=True, shutdown_handler=True, **kwargs
         )
 
 
@@ -490,6 +493,7 @@ _ERROR_CODE_TO_ERROR_MAPPING = {
     AMQPErrorCodes.UnauthorizedAccess: ServiceBusAuthorizationError,
     AMQPErrorCodes.NotImplemented: ServiceBusError,
     AMQPErrorCodes.NotAllowed: ServiceBusError,
+    AMQPErrorCodes.LinkDetachForced: ServiceBusConnectionError,
     ERROR_CODE_MESSAGE_LOCK_LOST: MessageLockLostError,
     ERROR_CODE_MESSAGE_NOT_FOUND: MessageNotFoundError,
     ERROR_CODE_AUTH_FAILED: ServiceBusAuthorizationError,
@@ -500,5 +504,5 @@ _ERROR_CODE_TO_ERROR_MAPPING = {
     ERROR_CODE_SESSION_LOCK_LOST: SessionLockLostError,
     ERROR_CODE_ARGUMENT_ERROR: ServiceBusError,
     ERROR_CODE_OUT_OF_RANGE: ServiceBusError,
-    ERROR_CODE_TIMEOUT: OperationTimeoutError
+    ERROR_CODE_TIMEOUT: OperationTimeoutError,
 }

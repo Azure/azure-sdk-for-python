@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class WorkflowsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class WorkflowsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WorkflowListResult"]
+        # type: (...) -> Iterable["_models.WorkflowListResult"]
         """Gets a list of workflows by subscription.
 
         :param top: The number of items to be included in the result.
@@ -66,7 +66,7 @@ class WorkflowsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.logic.models.WorkflowListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkflowListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkflowListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -115,7 +115,7 @@ class WorkflowsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -133,7 +133,7 @@ class WorkflowsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.WorkflowListResult"]
+        # type: (...) -> Iterable["_models.WorkflowListResult"]
         """Gets a list of workflows by resource group.
 
         :param resource_group_name: The resource group name.
@@ -148,7 +148,7 @@ class WorkflowsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.logic.models.WorkflowListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkflowListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkflowListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -198,7 +198,7 @@ class WorkflowsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -215,7 +215,7 @@ class WorkflowsOperations(object):
         workflow_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Workflow"
+        # type: (...) -> "_models.Workflow"
         """Gets a workflow.
 
         :param resource_group_name: The resource group name.
@@ -227,7 +227,7 @@ class WorkflowsOperations(object):
         :rtype: ~azure.mgmt.logic.models.Workflow
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Workflow"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workflow"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -258,7 +258,7 @@ class WorkflowsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Workflow', pipeline_response)
@@ -273,10 +273,10 @@ class WorkflowsOperations(object):
         self,
         resource_group_name,  # type: str
         workflow_name,  # type: str
-        workflow,  # type: "models.Workflow"
+        workflow,  # type: "_models.Workflow"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Workflow"
+        # type: (...) -> "_models.Workflow"
         """Creates or updates a workflow.
 
         :param resource_group_name: The resource group name.
@@ -290,7 +290,7 @@ class WorkflowsOperations(object):
         :rtype: ~azure.mgmt.logic.models.Workflow
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Workflow"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workflow"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -326,7 +326,7 @@ class WorkflowsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -347,7 +347,7 @@ class WorkflowsOperations(object):
         workflow_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Workflow"
+        # type: (...) -> "_models.Workflow"
         """Updates a workflow.
 
         :param resource_group_name: The resource group name.
@@ -359,7 +359,7 @@ class WorkflowsOperations(object):
         :rtype: ~azure.mgmt.logic.models.Workflow
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Workflow"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workflow"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -390,7 +390,7 @@ class WorkflowsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Workflow', pipeline_response)
@@ -450,7 +450,7 @@ class WorkflowsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -507,7 +507,7 @@ class WorkflowsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -564,7 +564,7 @@ class WorkflowsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -576,7 +576,7 @@ class WorkflowsOperations(object):
         self,
         resource_group_name,  # type: str
         workflow_name,  # type: str
-        parameters,  # type: "models.GenerateUpgradedDefinitionParameters"
+        parameters,  # type: "_models.GenerateUpgradedDefinitionParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> object
@@ -629,7 +629,7 @@ class WorkflowsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('object', pipeline_response)
@@ -644,10 +644,10 @@ class WorkflowsOperations(object):
         self,
         resource_group_name,  # type: str
         workflow_name,  # type: str
-        list_callback_url,  # type: "models.GetCallbackUrlParameters"
+        list_callback_url,  # type: "_models.GetCallbackUrlParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.WorkflowTriggerCallbackUrl"
+        # type: (...) -> "_models.WorkflowTriggerCallbackUrl"
         """Get the workflow callback Url.
 
         :param resource_group_name: The resource group name.
@@ -661,7 +661,7 @@ class WorkflowsOperations(object):
         :rtype: ~azure.mgmt.logic.models.WorkflowTriggerCallbackUrl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkflowTriggerCallbackUrl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkflowTriggerCallbackUrl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -697,7 +697,7 @@ class WorkflowsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkflowTriggerCallbackUrl', pipeline_response)
@@ -757,7 +757,7 @@ class WorkflowsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('object', pipeline_response)
@@ -772,7 +772,7 @@ class WorkflowsOperations(object):
         self,
         resource_group_name,  # type: str
         workflow_name,  # type: str
-        move,  # type: "models.WorkflowReference"
+        move,  # type: "_models.WorkflowReference"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -812,7 +812,7 @@ class WorkflowsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -824,7 +824,7 @@ class WorkflowsOperations(object):
         self,
         resource_group_name,  # type: str
         workflow_name,  # type: str
-        move,  # type: "models.WorkflowReference"
+        move,  # type: "_models.WorkflowReference"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -869,7 +869,13 @@ class WorkflowsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'workflowName': self._serialize.url("workflow_name", workflow_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -887,7 +893,7 @@ class WorkflowsOperations(object):
         self,
         resource_group_name,  # type: str
         workflow_name,  # type: str
-        key_type,  # type: "models.RegenerateActionParameter"
+        key_type,  # type: "_models.RegenerateActionParameter"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -940,7 +946,7 @@ class WorkflowsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -952,7 +958,7 @@ class WorkflowsOperations(object):
         self,
         resource_group_name,  # type: str
         workflow_name,  # type: str
-        validate,  # type: "models.Workflow"
+        validate,  # type: "_models.Workflow"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1005,7 +1011,7 @@ class WorkflowsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1018,7 +1024,7 @@ class WorkflowsOperations(object):
         resource_group_name,  # type: str
         location,  # type: str
         workflow_name,  # type: str
-        validate,  # type: "models.Workflow"
+        validate,  # type: "_models.Workflow"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1074,7 +1080,7 @@ class WorkflowsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

@@ -7,11 +7,11 @@
 from azure.core.paging import ItemPaged
 
 
-class AnalyzeHealthcareResult(ItemPaged):
+class AnalyzeHealthcareEntitiesResult(ItemPaged):
     def __init__(self, *args, **kwargs):
         self.model_version = kwargs.pop('model_version')
         self.statistics = kwargs.pop('statistics')
-        super(AnalyzeHealthcareResult, self).__init__(*args, **kwargs)
+        super(AnalyzeHealthcareEntitiesResult, self).__init__(*args, **kwargs)
 
 
 class AnalyzeResult(ItemPaged):

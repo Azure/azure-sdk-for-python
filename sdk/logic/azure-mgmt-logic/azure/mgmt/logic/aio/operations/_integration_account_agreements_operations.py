@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class IntegrationAccountAgreementsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class IntegrationAccountAgreementsOperations:
         top: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.IntegrationAccountAgreementListResult"]:
+    ) -> AsyncIterable["_models.IntegrationAccountAgreementListResult"]:
         """Gets a list of integration account agreements.
 
         :param resource_group_name: The resource group name.
@@ -65,7 +65,7 @@ class IntegrationAccountAgreementsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.logic.models.IntegrationAccountAgreementListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccountAgreementListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccountAgreementListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -116,7 +116,7 @@ class IntegrationAccountAgreementsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -133,7 +133,7 @@ class IntegrationAccountAgreementsOperations:
         integration_account_name: str,
         agreement_name: str,
         **kwargs
-    ) -> "models.IntegrationAccountAgreement":
+    ) -> "_models.IntegrationAccountAgreement":
         """Gets an integration account agreement.
 
         :param resource_group_name: The resource group name.
@@ -147,7 +147,7 @@ class IntegrationAccountAgreementsOperations:
         :rtype: ~azure.mgmt.logic.models.IntegrationAccountAgreement
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccountAgreement"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccountAgreement"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -179,7 +179,7 @@ class IntegrationAccountAgreementsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IntegrationAccountAgreement', pipeline_response)
@@ -195,9 +195,9 @@ class IntegrationAccountAgreementsOperations:
         resource_group_name: str,
         integration_account_name: str,
         agreement_name: str,
-        agreement: "models.IntegrationAccountAgreement",
+        agreement: "_models.IntegrationAccountAgreement",
         **kwargs
-    ) -> "models.IntegrationAccountAgreement":
+    ) -> "_models.IntegrationAccountAgreement":
         """Creates or updates an integration account agreement.
 
         :param resource_group_name: The resource group name.
@@ -213,7 +213,7 @@ class IntegrationAccountAgreementsOperations:
         :rtype: ~azure.mgmt.logic.models.IntegrationAccountAgreement
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccountAgreement"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccountAgreement"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -250,7 +250,7 @@ class IntegrationAccountAgreementsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -317,7 +317,7 @@ class IntegrationAccountAgreementsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -330,9 +330,9 @@ class IntegrationAccountAgreementsOperations:
         resource_group_name: str,
         integration_account_name: str,
         agreement_name: str,
-        list_content_callback_url: "models.GetCallbackUrlParameters",
+        list_content_callback_url: "_models.GetCallbackUrlParameters",
         **kwargs
-    ) -> "models.WorkflowTriggerCallbackUrl":
+    ) -> "_models.WorkflowTriggerCallbackUrl":
         """Get the content callback url.
 
         :param resource_group_name: The resource group name.
@@ -348,7 +348,7 @@ class IntegrationAccountAgreementsOperations:
         :rtype: ~azure.mgmt.logic.models.WorkflowTriggerCallbackUrl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WorkflowTriggerCallbackUrl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkflowTriggerCallbackUrl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -385,7 +385,7 @@ class IntegrationAccountAgreementsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkflowTriggerCallbackUrl', pipeline_response)

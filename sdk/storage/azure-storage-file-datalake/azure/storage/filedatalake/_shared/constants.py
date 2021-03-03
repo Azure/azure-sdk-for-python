@@ -5,10 +5,11 @@
 # --------------------------------------------------------------------------
 
 import sys
-from .._generated.version import VERSION
+
+from .._generated import AzureDataLakeStorageRESTAPI
 
 
-X_MS_VERSION = VERSION
+X_MS_VERSION = AzureDataLakeStorageRESTAPI(url="get_api_version")._config.version  # pylint: disable=protected-access
 
 # Socket timeout in seconds
 CONNECTION_TIMEOUT = 20

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class NotificationChannelsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -50,7 +50,7 @@ class NotificationChannelsOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.NotificationChannelList"]:
+    ) -> AsyncIterable["_models.NotificationChannelList"]:
         """List notification channels in a given lab.
 
         :param resource_group_name: The name of the resource group.
@@ -71,7 +71,7 @@ class NotificationChannelsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devtestlabs.models.NotificationChannelList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationChannelList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationChannelList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -143,7 +143,7 @@ class NotificationChannelsOperations:
         name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.NotificationChannel":
+    ) -> "_models.NotificationChannel":
         """Get notification channel.
 
         :param resource_group_name: The name of the resource group.
@@ -159,7 +159,7 @@ class NotificationChannelsOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.NotificationChannel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationChannel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationChannel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -208,9 +208,9 @@ class NotificationChannelsOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        notification_channel: "models.NotificationChannel",
+        notification_channel: "_models.NotificationChannel",
         **kwargs
-    ) -> "models.NotificationChannel":
+    ) -> "_models.NotificationChannel":
         """Create or replace an existing notification channel.
 
         :param resource_group_name: The name of the resource group.
@@ -226,7 +226,7 @@ class NotificationChannelsOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.NotificationChannel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationChannel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationChannel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -341,9 +341,9 @@ class NotificationChannelsOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        notification_channel: "models.NotificationChannelFragment",
+        notification_channel: "_models.NotificationChannelFragment",
         **kwargs
-    ) -> "models.NotificationChannel":
+    ) -> "_models.NotificationChannel":
         """Allows modifying tags of notification channels. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -359,7 +359,7 @@ class NotificationChannelsOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.NotificationChannel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NotificationChannel"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotificationChannel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -411,7 +411,7 @@ class NotificationChannelsOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        event_name: Optional[Union[str, "models.NotificationChannelEventType"]] = None,
+        event_name: Optional[Union[str, "_models.NotificationChannelEventType"]] = None,
         json_payload: Optional[str] = None,
         **kwargs
     ) -> None:
@@ -438,7 +438,7 @@ class NotificationChannelsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _notify_parameters = models.NotifyParameters(event_name=event_name, json_payload=json_payload)
+        _notify_parameters = _models.NotifyParameters(event_name=event_name, json_payload=json_payload)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"

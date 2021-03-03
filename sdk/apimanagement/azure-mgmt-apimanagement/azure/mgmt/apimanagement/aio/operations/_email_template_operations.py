@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class EmailTemplateOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,7 +49,7 @@ class EmailTemplateOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.EmailTemplateCollection"]:
+    ) -> AsyncIterable["_models.EmailTemplateCollection"]:
         """Gets all email templates.
 
         :param resource_group_name: The name of the resource group.
@@ -69,7 +69,7 @@ class EmailTemplateOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.EmailTemplateCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EmailTemplateCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EmailTemplateCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -122,7 +122,7 @@ class EmailTemplateOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -137,7 +137,7 @@ class EmailTemplateOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        template_name: Union[str, "models.TemplateName"],
+        template_name: Union[str, "_models.TemplateName"],
         **kwargs
     ) -> bool:
         """Gets the entity state (Etag) version of the email template specified by its identifier.
@@ -185,7 +185,7 @@ class EmailTemplateOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -201,9 +201,9 @@ class EmailTemplateOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        template_name: Union[str, "models.TemplateName"],
+        template_name: Union[str, "_models.TemplateName"],
         **kwargs
-    ) -> "models.EmailTemplateContract":
+    ) -> "_models.EmailTemplateContract":
         """Gets the details of the email template specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -217,7 +217,7 @@ class EmailTemplateOperations:
         :rtype: ~azure.mgmt.apimanagement.models.EmailTemplateContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EmailTemplateContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EmailTemplateContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -249,7 +249,7 @@ class EmailTemplateOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -266,11 +266,11 @@ class EmailTemplateOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        template_name: Union[str, "models.TemplateName"],
-        parameters: "models.EmailTemplateUpdateParameters",
+        template_name: Union[str, "_models.TemplateName"],
+        parameters: "_models.EmailTemplateUpdateParameters",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.EmailTemplateContract":
+    ) -> "_models.EmailTemplateContract":
         """Updates an Email Template.
 
         :param resource_group_name: The name of the resource group.
@@ -289,7 +289,7 @@ class EmailTemplateOperations:
         :rtype: ~azure.mgmt.apimanagement.models.EmailTemplateContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EmailTemplateContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EmailTemplateContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -328,7 +328,7 @@ class EmailTemplateOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -347,11 +347,11 @@ class EmailTemplateOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        template_name: Union[str, "models.TemplateName"],
+        template_name: Union[str, "_models.TemplateName"],
         if_match: str,
-        parameters: "models.EmailTemplateUpdateParameters",
+        parameters: "_models.EmailTemplateUpdateParameters",
         **kwargs
-    ) -> "models.EmailTemplateContract":
+    ) -> "_models.EmailTemplateContract":
         """Updates API Management email template.
 
         :param resource_group_name: The name of the resource group.
@@ -370,7 +370,7 @@ class EmailTemplateOperations:
         :rtype: ~azure.mgmt.apimanagement.models.EmailTemplateContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EmailTemplateContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EmailTemplateContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -408,7 +408,7 @@ class EmailTemplateOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -425,7 +425,7 @@ class EmailTemplateOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        template_name: Union[str, "models.TemplateName"],
+        template_name: Union[str, "_models.TemplateName"],
         if_match: str,
         **kwargs
     ) -> None:
@@ -478,7 +478,7 @@ class EmailTemplateOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

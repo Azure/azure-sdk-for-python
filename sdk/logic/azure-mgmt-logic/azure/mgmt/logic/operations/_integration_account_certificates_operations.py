@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class IntegrationAccountCertificatesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class IntegrationAccountCertificatesOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IntegrationAccountCertificateListResult"]
+        # type: (...) -> Iterable["_models.IntegrationAccountCertificateListResult"]
         """Gets a list of integration account certificates.
 
         :param resource_group_name: The resource group name.
@@ -66,7 +66,7 @@ class IntegrationAccountCertificatesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.logic.models.IntegrationAccountCertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccountCertificateListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccountCertificateListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -115,7 +115,7 @@ class IntegrationAccountCertificatesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -133,7 +133,7 @@ class IntegrationAccountCertificatesOperations(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationAccountCertificate"
+        # type: (...) -> "_models.IntegrationAccountCertificate"
         """Gets an integration account certificate.
 
         :param resource_group_name: The resource group name.
@@ -147,7 +147,7 @@ class IntegrationAccountCertificatesOperations(object):
         :rtype: ~azure.mgmt.logic.models.IntegrationAccountCertificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccountCertificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccountCertificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -179,7 +179,7 @@ class IntegrationAccountCertificatesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IntegrationAccountCertificate', pipeline_response)
@@ -195,10 +195,10 @@ class IntegrationAccountCertificatesOperations(object):
         resource_group_name,  # type: str
         integration_account_name,  # type: str
         certificate_name,  # type: str
-        certificate,  # type: "models.IntegrationAccountCertificate"
+        certificate,  # type: "_models.IntegrationAccountCertificate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IntegrationAccountCertificate"
+        # type: (...) -> "_models.IntegrationAccountCertificate"
         """Creates or updates an integration account certificate.
 
         :param resource_group_name: The resource group name.
@@ -214,7 +214,7 @@ class IntegrationAccountCertificatesOperations(object):
         :rtype: ~azure.mgmt.logic.models.IntegrationAccountCertificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IntegrationAccountCertificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IntegrationAccountCertificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -251,7 +251,7 @@ class IntegrationAccountCertificatesOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -319,7 +319,7 @@ class IntegrationAccountCertificatesOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

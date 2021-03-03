@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class PoliciesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -51,7 +51,7 @@ class PoliciesOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.PolicyList"]:
+    ) -> AsyncIterable["_models.PolicyList"]:
         """List policies in a given policy set.
 
         :param resource_group_name: The name of the resource group.
@@ -74,7 +74,7 @@ class PoliciesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devtestlabs.models.PolicyList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -148,7 +148,7 @@ class PoliciesOperations:
         name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.Policy":
+    ) -> "_models.Policy":
         """Get policy.
 
         :param resource_group_name: The name of the resource group.
@@ -166,7 +166,7 @@ class PoliciesOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.Policy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Policy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Policy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -217,9 +217,9 @@ class PoliciesOperations:
         lab_name: str,
         policy_set_name: str,
         name: str,
-        policy: "models.Policy",
+        policy: "_models.Policy",
         **kwargs
-    ) -> "models.Policy":
+    ) -> "_models.Policy":
         """Create or replace an existing policy.
 
         :param resource_group_name: The name of the resource group.
@@ -237,7 +237,7 @@ class PoliciesOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.Policy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Policy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Policy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -358,9 +358,9 @@ class PoliciesOperations:
         lab_name: str,
         policy_set_name: str,
         name: str,
-        policy: "models.PolicyFragment",
+        policy: "_models.PolicyFragment",
         **kwargs
-    ) -> "models.Policy":
+    ) -> "_models.Policy":
         """Allows modifying tags of policies. All other properties will be ignored.
 
         :param resource_group_name: The name of the resource group.
@@ -378,7 +378,7 @@ class PoliciesOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.Policy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Policy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Policy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class LocationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class LocationsOperations(object):
         location,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.CapabilityInformation"]
+        # type: (...) -> Optional["_models.CapabilityInformation"]
         """Gets subscription-level properties and limits for Data Lake Store specified by resource
         location.
 
@@ -61,7 +61,7 @@ class LocationsOperations(object):
         :rtype: ~azure.mgmt.datalake.store.models.CapabilityInformation or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.CapabilityInformation"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CapabilityInformation"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -108,7 +108,7 @@ class LocationsOperations(object):
         location,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.UsageListResult"]
+        # type: (...) -> Iterable["_models.UsageListResult"]
         """Gets the current usage count and the limit for the resources of the location under the
         subscription.
 
@@ -119,7 +119,7 @@ class LocationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datalake.store.models.UsageListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.UsageListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsageListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

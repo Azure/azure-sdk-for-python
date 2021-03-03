@@ -1,7 +1,26 @@
 # Release History
 
-## 2.0.0b5 (Unreleased)
+## 2.0.0b6 (Unreleased)
 
+  **Breaking Changes**
+  - All the `SystemEventNames` related to Azure Communication Service starting with `ACS****` are renamed to `Acs***` to honor pascal case.
+
+  **Features**
+  - Added support for two new `SystemEvents` - `ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventData` and `ServiceBusActiveMessagesAvailablePeriodicNotificationsEventData`
+
+## 2.0.0b5 (2021-02-10)
+
+  **Breaking Changes**
+  - `EventGridSharedAccessSignatureCredential` is deprecated in favor of `AzureSasCredential`.
+  - `azure.eventgrid.models` namespace along with all the models in it are now removed. `azure.eventgrid.SystemEventNames` can be used to get the event model type mapping.
+  - `topic_hostname` is renamed to `endpoint` in the `EventGridPublisherClient`.
+  - `azure.eventgrid.generate_shared_access_signature` method is now renamed to `generate_sas`.
+  - `EventGridConsumer`is now removed. Please see the samples to see how events can be deserialized.
+  - `CustomEvent` model is removed. Dictionaries must be used to send a custom schema.
+  
+  **Bug Fixes**
+  - `EventGridEvent` has two additional required positional parameters namely, `data` and `data_version`.
+  - `EventGridPublisherClient` now appropriately throws a `ValueError` if an invalid credential is passed during initialization.
 
 ## 2.0.0b4 (2020-11-11)
 

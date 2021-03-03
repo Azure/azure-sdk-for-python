@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class ExposureControlOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,9 +43,9 @@ class ExposureControlOperations:
     async def get_feature_value(
         self,
         location_id: str,
-        exposure_control_request: "models.ExposureControlRequest",
+        exposure_control_request: "_models.ExposureControlRequest",
         **kwargs
-    ) -> "models.ExposureControlResponse":
+    ) -> "_models.ExposureControlResponse":
         """Get exposure control feature for specific location.
 
         :param location_id: The location identifier.
@@ -57,7 +57,7 @@ class ExposureControlOperations:
         :rtype: ~azure.mgmt.datafactory.models.ExposureControlResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExposureControlResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExposureControlResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -106,9 +106,9 @@ class ExposureControlOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        exposure_control_request: "models.ExposureControlRequest",
+        exposure_control_request: "_models.ExposureControlRequest",
         **kwargs
-    ) -> "models.ExposureControlResponse":
+    ) -> "_models.ExposureControlResponse":
         """Get exposure control feature for specific factory.
 
         :param resource_group_name: The resource group name.
@@ -122,7 +122,7 @@ class ExposureControlOperations:
         :rtype: ~azure.mgmt.datafactory.models.ExposureControlResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExposureControlResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExposureControlResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -172,9 +172,9 @@ class ExposureControlOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        exposure_control_batch_request: "models.ExposureControlBatchRequest",
+        exposure_control_batch_request: "_models.ExposureControlBatchRequest",
         **kwargs
-    ) -> "models.ExposureControlBatchResponse":
+    ) -> "_models.ExposureControlBatchResponse":
         """Get list of exposure control features for specific factory.
 
         :param resource_group_name: The resource group name.
@@ -188,7 +188,7 @@ class ExposureControlOperations:
         :rtype: ~azure.mgmt.datafactory.models.ExposureControlBatchResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExposureControlBatchResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExposureControlBatchResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

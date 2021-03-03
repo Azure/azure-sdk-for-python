@@ -28,7 +28,7 @@ class PrivateEndpointConnectionsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~maria_db_management_client.models
+    :type models: ~azure.mgmt.rdbms.mariadb.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -60,7 +60,7 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection, or the result of cls(response)
-        :rtype: ~maria_db_management_client.models.PrivateEndpointConnection
+        :rtype: ~azure.mgmt.rdbms.mariadb.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
@@ -179,7 +179,7 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name:
         :type private_endpoint_connection_name: str
         :param parameters:
-        :type parameters: ~maria_db_management_client.models.PrivateEndpointConnection
+        :type parameters: ~azure.mgmt.rdbms.mariadb.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -187,7 +187,7 @@ class PrivateEndpointConnectionsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~maria_db_management_client.models.PrivateEndpointConnection]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.rdbms.mariadb.models.PrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -428,7 +428,7 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :param parameters: Parameters supplied to the Update private endpoint connection Tags
          operation.
-        :type parameters: ~maria_db_management_client.models.TagsObject
+        :type parameters: ~azure.mgmt.rdbms.mariadb.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -436,7 +436,7 @@ class PrivateEndpointConnectionsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~maria_db_management_client.models.PrivateEndpointConnection]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.rdbms.mariadb.models.PrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -501,7 +501,7 @@ class PrivateEndpointConnectionsOperations:
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PrivateEndpointConnectionListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~maria_db_management_client.models.PrivateEndpointConnectionListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mariadb.models.PrivateEndpointConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]

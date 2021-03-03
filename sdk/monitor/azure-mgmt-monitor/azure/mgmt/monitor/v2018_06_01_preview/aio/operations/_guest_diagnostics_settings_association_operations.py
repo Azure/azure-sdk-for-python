@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,9 +45,9 @@ class GuestDiagnosticsSettingsAssociationOperations:
         self,
         resource_uri: str,
         association_name: str,
-        diagnostic_settings_association: "models.GuestDiagnosticSettingsAssociationResource",
+        diagnostic_settings_association: "_models.GuestDiagnosticSettingsAssociationResource",
         **kwargs
-    ) -> "models.GuestDiagnosticSettingsAssociationResource":
+    ) -> "_models.GuestDiagnosticSettingsAssociationResource":
         """Creates or updates guest diagnostics settings association.
 
         :param resource_uri: The fully qualified ID of the resource, including the resource name and
@@ -63,7 +63,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
         :rtype: ~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsAssociationResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GuestDiagnosticSettingsAssociationResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GuestDiagnosticSettingsAssociationResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -98,7 +98,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -118,7 +118,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
         resource_uri: str,
         association_name: str,
         **kwargs
-    ) -> "models.GuestDiagnosticSettingsAssociationResource":
+    ) -> "_models.GuestDiagnosticSettingsAssociationResource":
         """Gets guest diagnostics association settings.
 
         :param resource_uri: The fully qualified ID of the resource, including the resource name and
@@ -131,7 +131,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
         :rtype: ~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsAssociationResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GuestDiagnosticSettingsAssociationResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GuestDiagnosticSettingsAssociationResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -161,7 +161,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('GuestDiagnosticSettingsAssociationResource', pipeline_response)
@@ -220,7 +220,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -232,9 +232,9 @@ class GuestDiagnosticsSettingsAssociationOperations:
         self,
         resource_uri: str,
         association_name: str,
-        parameters: "models.GuestDiagnosticSettingsAssociationResourcePatch",
+        parameters: "_models.GuestDiagnosticSettingsAssociationResourcePatch",
         **kwargs
-    ) -> "models.GuestDiagnosticSettingsAssociationResource":
+    ) -> "_models.GuestDiagnosticSettingsAssociationResource":
         """Updates an existing guestDiagnosticsSettingsAssociation Resource. To update other fields use
         the CreateOrUpdate method.
 
@@ -250,7 +250,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
         :rtype: ~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsAssociationResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GuestDiagnosticSettingsAssociationResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GuestDiagnosticSettingsAssociationResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -285,7 +285,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('GuestDiagnosticSettingsAssociationResource', pipeline_response)
@@ -299,7 +299,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.GuestDiagnosticSettingsAssociationList"]:
+    ) -> AsyncIterable["_models.GuestDiagnosticSettingsAssociationList"]:
         """Get a list of all guest diagnostic settings association in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -307,7 +307,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsAssociationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GuestDiagnosticSettingsAssociationList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GuestDiagnosticSettingsAssociationList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -352,7 +352,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -367,7 +367,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.GuestDiagnosticSettingsAssociationList"]:
+    ) -> AsyncIterable["_models.GuestDiagnosticSettingsAssociationList"]:
         """Get a list of all guest diagnostic settings association in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -377,7 +377,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsAssociationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GuestDiagnosticSettingsAssociationList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GuestDiagnosticSettingsAssociationList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -423,7 +423,7 @@ class GuestDiagnosticsSettingsAssociationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

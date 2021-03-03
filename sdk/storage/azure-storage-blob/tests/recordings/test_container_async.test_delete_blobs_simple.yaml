@@ -2,12 +2,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.8.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 22:15:53 GMT
+      - Wed, 03 Mar 2021 01:09:02 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     method: PUT
     uri: https://storagename.blob.core.windows.net/acontaineraa4e127a?restype=container
   response:
@@ -15,25 +17,20 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 25 Oct 2019 22:15:53 GMT
-      etag: '"0x8D75998E6D388CC"'
-      last-modified: Fri, 25 Oct 2019 22:15:53 GMT
+      date: Wed, 03 Mar 2021 01:09:02 GMT
+      etag: '"0x8D8DDE0EEEEACA1"'
+      last-modified: Wed, 03 Mar 2021 01:09:02 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2020-06-12'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage4sgtv3vzwdp2.blob.core.windows.net
-        - /acontaineraa4e127a
-        - restype=container
-        - ''
+    url: https://emilydevtest.blob.core.windows.net/acontaineraa4e127a?restype=container
 - request:
     body: hello world
     headers:
+      Accept:
+      - application/xml
       Content-Length:
       - '11'
       Content-Type:
@@ -41,13 +38,15 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.8.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 25 Oct 2019 22:15:54 GMT
+      - Wed, 03 Mar 2021 01:09:03 GMT
+      x-ms-encryption-algorithm:
+      - AES256
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     method: PUT
     uri: https://storagename.blob.core.windows.net/acontaineraa4e127a/blob1
   response:
@@ -56,27 +55,22 @@ interactions:
     headers:
       content-length: '0'
       content-md5: XrY7u+Ae7tCTyyK7j1rNww==
-      date: Fri, 25 Oct 2019 22:15:53 GMT
-      etag: '"0x8D75998E6DBD664"'
-      last-modified: Fri, 25 Oct 2019 22:15:53 GMT
+      date: Wed, 03 Mar 2021 01:09:02 GMT
+      etag: '"0x8D8DDE0EEF183C1"'
+      last-modified: Wed, 03 Mar 2021 01:09:02 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: vo7q9sPVKY0=
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2020-06-12'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage4sgtv3vzwdp2.blob.core.windows.net
-        - /acontaineraa4e127a/blob1
-        - ''
-        - ''
+    url: https://emilydevtest.blob.core.windows.net/acontaineraa4e127a/blob1
 - request:
     body: hello world
     headers:
+      Accept:
+      - application/xml
       Content-Length:
       - '11'
       Content-Type:
@@ -84,13 +78,15 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.8.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 25 Oct 2019 22:15:54 GMT
+      - Wed, 03 Mar 2021 01:09:03 GMT
+      x-ms-encryption-algorithm:
+      - AES256
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     method: PUT
     uri: https://storagename.blob.core.windows.net/acontaineraa4e127a/blob2
   response:
@@ -99,27 +95,22 @@ interactions:
     headers:
       content-length: '0'
       content-md5: XrY7u+Ae7tCTyyK7j1rNww==
-      date: Fri, 25 Oct 2019 22:15:53 GMT
-      etag: '"0x8D75998E6E48B0C"'
-      last-modified: Fri, 25 Oct 2019 22:15:53 GMT
+      date: Wed, 03 Mar 2021 01:09:02 GMT
+      etag: '"0x8D8DDE0EEF4438D"'
+      last-modified: Wed, 03 Mar 2021 01:09:02 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: vo7q9sPVKY0=
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2020-06-12'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage4sgtv3vzwdp2.blob.core.windows.net
-        - /acontaineraa4e127a/blob2
-        - ''
-        - ''
+    url: https://emilydevtest.blob.core.windows.net/acontaineraa4e127a/blob2
 - request:
     body: hello world
     headers:
+      Accept:
+      - application/xml
       Content-Length:
       - '11'
       Content-Type:
@@ -127,13 +118,15 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.8.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 25 Oct 2019 22:15:54 GMT
+      - Wed, 03 Mar 2021 01:09:03 GMT
+      x-ms-encryption-algorithm:
+      - AES256
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     method: PUT
     uri: https://storagename.blob.core.windows.net/acontaineraa4e127a/blob3
   response:
@@ -142,33 +135,30 @@ interactions:
     headers:
       content-length: '0'
       content-md5: XrY7u+Ae7tCTyyK7j1rNww==
-      date: Fri, 25 Oct 2019 22:15:53 GMT
-      etag: '"0x8D75998E6EE0344"'
-      last-modified: Fri, 25 Oct 2019 22:15:54 GMT
+      date: Wed, 03 Mar 2021 01:09:02 GMT
+      etag: '"0x8D8DDE0EEF72A72"'
+      last-modified: Wed, 03 Mar 2021 01:09:02 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: vo7q9sPVKY0=
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2020-06-12'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage4sgtv3vzwdp2.blob.core.windows.net
-        - /acontaineraa4e127a/blob3
-        - ''
-        - ''
+    url: https://emilydevtest.blob.core.windows.net/acontaineraa4e127a/blob3
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.8.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 22:15:54 GMT
+      - Wed, 03 Mar 2021 01:09:03 GMT
+      x-ms-encryption-algorithm:
+      - AES256
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     method: HEAD
     uri: https://storagename.blob.core.windows.net/acontaineraa4e127a/blob1
   response:
@@ -179,85 +169,72 @@ interactions:
       content-length: '11'
       content-md5: XrY7u+Ae7tCTyyK7j1rNww==
       content-type: application/octet-stream
-      date: Fri, 25 Oct 2019 22:15:53 GMT
-      etag: '"0x8D75998E6DBD664"'
-      last-modified: Fri, 25 Oct 2019 22:15:53 GMT
+      date: Wed, 03 Mar 2021 01:09:02 GMT
+      etag: '"0x8D8DDE0EEF183C1"'
+      last-modified: Wed, 03 Mar 2021 01:09:02 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
       x-ms-access-tier: Hot
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Fri, 25 Oct 2019 22:15:53 GMT
+      x-ms-creation-time: Wed, 03 Mar 2021 01:09:02 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2020-06-12'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage4sgtv3vzwdp2.blob.core.windows.net
-        - /acontaineraa4e127a/blob1
-        - ''
-        - ''
+    url: https://emilydevtest.blob.core.windows.net/acontaineraa4e127a/blob1
 - request:
-    body: "--===============6170161617894497815==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
-      binary\r\nContent-ID: 0\r\n\r\nDELETE /acontaineraa4e127a/blob1? HTTP/1.1\r\nx-ms-date:
-      Fri, 25 Oct 2019 22:15:54 GMT\r\nx-ms-client-request-id: 02fee52e-f775-11e9-a6ff-1831bf6ae40e\r\nAuthorization:
-      SharedKey pyacrstorage4sgtv3vzwdp2:LPAA6OfbZXu0xOmFRuflohbciwRWkiD6rxMA76X4J1g=\r\n\r\n\r\n--===============6170161617894497815==\r\nContent-Type:
+    body: "--===============1054211227==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
+      binary\r\nContent-ID: 0\r\n\r\nDELETE /acontaineraa4e127a/blob1? HTTP/1.1\r\nIf-Match:
+      \"0x8D8DDE0EEF183C1\"\r\nx-ms-date: Wed, 03 Mar 2021 01:09:03 GMT\r\nx-ms-client-request-id:
+      0b285409-7bbd-11eb-9df0-c8348e5fffbf\r\nAuthorization: SharedKey storagename:fake_shared_key=\r\n\r\n\r\n--===============1054211227==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nDELETE
-      /acontaineraa4e127a/blob2? HTTP/1.1\r\nx-ms-date: Fri, 25 Oct 2019 22:15:54
-      GMT\r\nx-ms-client-request-id: 02fee52f-f775-11e9-a880-1831bf6ae40e\r\nAuthorization:
-      SharedKey pyacrstorage4sgtv3vzwdp2:MkC6c3eaxcfC9uBWcQA9/MtZxXUfWnE6YZHA0BK2wkc=\r\n\r\n\r\n--===============6170161617894497815==\r\nContent-Type:
+      /acontaineraa4e127a/blob2? HTTP/1.1\r\nx-ms-date: Wed, 03 Mar 2021 01:09:03
+      GMT\r\nx-ms-client-request-id: 0b28540a-7bbd-11eb-9ac0-c8348e5fffbf\r\nAuthorization:
+      SharedKey storagename:fake_shared_key=\r\n\r\n\r\n--===============1054211227==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nDELETE
-      /acontaineraa4e127a/blob3? HTTP/1.1\r\nx-ms-date: Fri, 25 Oct 2019 22:15:54
-      GMT\r\nx-ms-client-request-id: 02fee530-f775-11e9-9745-1831bf6ae40e\r\nAuthorization:
-      SharedKey pyacrstorage4sgtv3vzwdp2:jrNe4H5wCi5f3vokyfIUq14szo+wz6pLRgVMOcj+6kE=\r\n\r\n\r\n--===============6170161617894497815==--\r\n"
+      /acontaineraa4e127a/blob3? HTTP/1.1\r\nx-ms-date: Wed, 03 Mar 2021 01:09:03
+      GMT\r\nx-ms-client-request-id: 0b287b27-7bbd-11eb-aabe-c8348e5fffbf\r\nAuthorization:
+      SharedKey storagename:fake_shared_key=\r\n\r\n\r\n--===============1054211227==--\r\n"
     headers:
       Content-Length:
-      - '1158'
+      - '1117'
       Content-Type:
-      - multipart/mixed; boundary================6170161617894497815==
+      - multipart/mixed; boundary================1054211227==
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.8.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 22:15:54 GMT
+      - Wed, 03 Mar 2021 01:09:03 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     method: POST
-    uri: https://storagename.blob.core.windows.net/?comp=batch
+    uri: https://storagename.blob.core.windows.net/acontaineraa4e127a?restype=container&comp=batch
   response:
     body:
-      string: "--batchresponse_755dc235-68a4-4445-ba54-ecaf31cd058f\r\nContent-Type:
+      string: "--batchresponse_fcbd3c88-3936-4670-b692-1b0818b90a35\r\nContent-Type:
         application/http\r\nContent-ID: 0\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: cf8f4041-801e-0101-4a81-8b77de1e9c9e\r\nx-ms-version:
-        2019-02-02\r\nx-ms-client-request-id: 02fee52e-f775-11e9-a6ff-1831bf6ae40e\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_755dc235-68a4-4445-ba54-ecaf31cd058f\r\nContent-Type:
+        true\r\nx-ms-request-id: c21196ce-d01e-0056-4cc9-0fa21b1e5892\r\nx-ms-version:
+        2020-06-12\r\nx-ms-client-request-id: 0b285409-7bbd-11eb-9df0-c8348e5fffbf\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_fcbd3c88-3936-4670-b692-1b0818b90a35\r\nContent-Type:
         application/http\r\nContent-ID: 1\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: cf8f4041-801e-0101-4a81-8b77de1e9ca1\r\nx-ms-version:
-        2019-02-02\r\nx-ms-client-request-id: 02fee52f-f775-11e9-a880-1831bf6ae40e\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_755dc235-68a4-4445-ba54-ecaf31cd058f\r\nContent-Type:
+        true\r\nx-ms-request-id: c21196ce-d01e-0056-4cc9-0fa21b1e5894\r\nx-ms-version:
+        2020-06-12\r\nx-ms-client-request-id: 0b28540a-7bbd-11eb-9ac0-c8348e5fffbf\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_fcbd3c88-3936-4670-b692-1b0818b90a35\r\nContent-Type:
         application/http\r\nContent-ID: 2\r\n\r\nHTTP/1.1 202 Accepted\r\nx-ms-delete-type-permanent:
-        true\r\nx-ms-request-id: cf8f4041-801e-0101-4a81-8b77de1e9ca2\r\nx-ms-version:
-        2019-02-02\r\nx-ms-client-request-id: 02fee530-f775-11e9-9745-1831bf6ae40e\r\nServer:
-        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_755dc235-68a4-4445-ba54-ecaf31cd058f--"
+        true\r\nx-ms-request-id: c21196ce-d01e-0056-4cc9-0fa21b1e5895\r\nx-ms-version:
+        2020-06-12\r\nx-ms-client-request-id: 0b287b27-7bbd-11eb-aabe-c8348e5fffbf\r\nServer:
+        Windows-Azure-Blob/1.0\r\n\r\n--batchresponse_fcbd3c88-3936-4670-b692-1b0818b90a35--"
     headers:
-      content-type: multipart/mixed; boundary=batchresponse_755dc235-68a4-4445-ba54-ecaf31cd058f
-      date: Fri, 25 Oct 2019 22:15:54 GMT
+      content-type: multipart/mixed; boundary=batchresponse_fcbd3c88-3936-4670-b692-1b0818b90a35
+      date: Wed, 03 Mar 2021 01:09:02 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2020-06-12'
     status:
       code: 202
       message: Accepted
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage4sgtv3vzwdp2.blob.core.windows.net
-        - /
-        - comp=batch
-        - ''
+    url: https://emilydevtest.blob.core.windows.net/acontaineraa4e127a?restype=container&comp=batch
 version: 1

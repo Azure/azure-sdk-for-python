@@ -36,9 +36,9 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
             assert len(tolist) > 0
 
     @AzureTestCase.await_prepared_test
-    async def test_list_dimension_values(self):
+    async def test_list_anomaly_dimension_values(self):
         async with self.client:
-            results = self.client.list_dimension_values(
+            results = self.client.list_anomaly_dimension_values(
                 detection_configuration_id=self.anomaly_detection_configuration_id,
                 dimension_name=self.dimension_name,
                 start_time=datetime.datetime(2020, 1, 1),

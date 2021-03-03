@@ -5,41 +5,42 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-import unittest
-
 import pytest
 
-import uuid
 from base64 import b64encode
 from datetime import datetime, timedelta
-
-from azure.data.tables import generate_table_sas
-from azure.data.tables._generated.models import QueryOptions
-from azure.data.tables.aio import TableServiceClient
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
+import uuid
+
+from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
-    ResourceExistsError)
+    ResourceExistsError,
+)
 
-from azure.data.tables._entity import TableEntity, EntityProperty, EdmType
-from azure.data.tables import TableSasPermissions, AccessPolicy, UpdateMode
-from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
-from _shared.testcase import TableTestCase, LogCaptured
+from azure.data.tables import (
+    TableSasPermissions,
+    AccessPolicy,
+    UpdateMode,
+    generate_table_sas,
+    TableEntity,
+    EntityProperty,
+    EdmType
+)
+from azure.data.tables.aio import TableServiceClient
 
-# ------------------------------------------------------------------------------
-# TODO: change to `with table_client as client:` to close sessions
-# ------------------------------------------------------------------------------
+from _shared.asynctestcase import AsyncTableTestCase
+from preparers import TablesPreparer
 
-class StorageTableEntityTest(TableTestCase):
+class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
-    async def _set_up(self, storage_account, storage_account_key):
-        account_url = self.account_url(storage_account, "table")
-        self.ts = TableServiceClient(account_url, storage_account_key)
+    async def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key):
+        account_url = self.account_url(tables_storage_account_name, "table")
+        self.ts = TableServiceClient(account_url, tables_primary_storage_account_key)
         self.table_name = self.get_resource_name('uttable')
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
@@ -62,9 +63,9 @@ class StorageTableEntityTest(TableTestCase):
                     await self.ts.delete_table(table_name)
                 except:
                     pass
+        await self.ts.close()
 
     # --Helpers-----------------------------------------------------------------
-
     async def _create_query_table(self, entity_count):
         """
         Creates a table with the specified name and adds entities with the
@@ -95,6 +96,41 @@ class StorageTableEntityTest(TableTestCase):
             'PartitionKey': partition,
             'RowKey': row,
         }
+
+    def _create_pk_rk(self, pk, rk):
+        try:
+            pk = pk if pk is not None else self.get_resource_name('pk').decode('utf-8')
+            rk = rk if rk is not None else self.get_resource_name('rk').decode('utf-8')
+        except AttributeError:
+            pk = pk if pk is not None else self.get_resource_name('pk')
+            rk = rk if rk is not None else self.get_resource_name('rk')
+        return pk, rk
+
+    async def _insert_two_opposite_entities(self, pk=None, rk=None):
+        entity1 = self._create_random_entity_dict()
+        resp = await self.table.create_entity(entity1)
+
+        partition, row = self._create_pk_rk(pk, rk)
+        properties = {
+            'PartitionKey': partition + u'1',
+            'RowKey': row + u'1',
+            'age': 49,
+            'sex': u'female',
+            'married': False,
+            'deceased': True,
+            'optional': None,
+            'ratio': 5.2,
+            'evenratio': 6.0,
+            'large': 39999011,
+            'Birthday': datetime(1993, 4, 1, tzinfo=tzutc()),
+            'birthday': datetime(1990, 4, 1, tzinfo=tzutc()),
+            'binary': b'binary-binary',
+            'other': EntityProperty(value=40, type=EdmType.INT32),
+            'clsid': uuid.UUID('c8da6455-213e-42d9-9b79-3f9149a57833')
+        }
+        entity = TableEntity(**properties)
+        await self.table.create_entity(entity)
+        return entity1, resp
 
     def _create_random_entity_dict(self, pk=None, rk=None):
         """
@@ -247,11 +283,46 @@ class StorageTableEntityTest(TableTestCase):
         assert len(keys) ==  3
 
     # --Test cases for entities ------------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_dictionary(self, resource_group, location, storage_account, storage_account_key):
+
+    @TablesPreparer()
+    async def test_url_encoding_at_symbol(self, tables_storage_account_name, tables_primary_storage_account_key):
+
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity = {
+                u"PartitionKey": u"PK",
+                u"RowKey": u"table@storage.com",
+                u"Value": 100
+            }
+
+            await self.table.create_entity(entity)
+
+            f = u"RowKey eq '{}'".format(entity["RowKey"])
+            entities = self.table.query_entities(filter=f)
+
+            count = 0
+            async for e in entities:
+                assert e.PartitionKey == entity[u"PartitionKey"]
+                assert e.RowKey == entity[u"RowKey"]
+                assert e.Value == entity[u"Value"]
+                await self.table.delete_entity(e.PartitionKey, e.RowKey)
+                count += 1
+
+            assert count == 1
+
+            entities = self.table.query_entities(filter=f)
+            count = 0
+            async for e in entities:
+                count += 1
+            assert count == 0
+
+        finally:
+            await self._tear_down()
+
+    @TablesPreparer()
+    async def test_insert_entity_dictionary(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
 
@@ -263,11 +334,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_with_hook(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_insert_entity_with_hook(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
 
@@ -283,11 +353,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_with_no_metadata(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_insert_entity_with_no_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
             headers = {'Accept': 'application/json;odata=nometadata'}
@@ -309,12 +378,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_with_full_metadata(self, resource_group, location, storage_account,
-                                                    storage_account_key):
+    @TablesPreparer()
+    async def test_insert_entity_with_full_metadata(self, tables_storage_account_name,
+                                                    tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
             headers = {'Accept': 'application/json;odata=fullmetadata'}
@@ -337,11 +405,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_conflict(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_insert_entity_conflict(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -354,12 +421,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_with_large_int32_value_throws(self, resource_group, location, storage_account,
-                                                               storage_account_key):
+    @TablesPreparer()
+    async def test_insert_entity_with_large_int32_value_throws(self, tables_storage_account_name,
+                                                               tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             dict32 = self._create_random_base_entity_dict()
@@ -375,13 +441,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_with_large_int64_value_throws(self, resource_group, location, storage_account,
-                                                               storage_account_key):
+    @TablesPreparer()
+    async def test_insert_entity_with_large_int64_value_throws(self, tables_storage_account_name,
+                                                               tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             dict64 = self._create_random_base_entity_dict()
@@ -397,12 +461,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_with_large_int_success(self, resource_group, location, storage_account,
-                                                         storage_account_key):
+    @TablesPreparer()
+    async def test_insert_entity_with_large_int_success(self, tables_storage_account_name,
+                                                         tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Act
             dict64 = self._create_random_base_entity_dict()
@@ -424,11 +487,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_missing_pk(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_insert_entity_missing_pk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = {'RowKey': 'rk'}
 
@@ -438,12 +500,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_empty_string_pk(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_insert_entity_empty_string_pk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = {'RowKey': 'rk', 'PartitionKey': ''}
 
@@ -453,12 +513,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_missing_rk(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_insert_entity_missing_rk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = {'PartitionKey': 'pk'}
 
@@ -470,12 +528,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_empty_string_rk(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_insert_entity_empty_string_rk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = {'PartitionKey': 'pk', 'RowKey': ''}
 
@@ -486,13 +542,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_too_many_properties(self, resource_group, location, storage_account,
-                                                     storage_account_key):
+    @TablesPreparer()
+    async def test_insert_entity_too_many_properties(self, tables_storage_account_name,
+                                                     tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             for i in range(255):
@@ -505,12 +559,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_entity_property_name_too_long(self, resource_group, location, storage_account,
-                                                        storage_account_key):
+    @TablesPreparer()
+    async def test_insert_entity_property_name_too_long(self, tables_storage_account_name,
+                                                        tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             entity['a' * 256] = 'badval'
@@ -523,12 +576,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_get_entity(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_get_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -543,12 +594,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_get_entity_with_hook(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_get_entity_with_hook(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -567,12 +616,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_get_entity_if_match(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_get_entity_if_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, etag = await self._insert_random_entity()
 
@@ -593,12 +640,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_get_entity_full_metadata(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_get_entity_full_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -615,12 +660,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_get_entity_no_metadata(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_get_entity_no_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -637,12 +680,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_get_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_get_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_entity_dict()
 
@@ -655,13 +696,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_get_entity_with_special_doubles(self, resource_group, location, storage_account,
-                                                   storage_account_key):
+    @TablesPreparer()
+    async def test_get_entity_with_special_doubles(self, tables_storage_account_name,
+                                                   tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({
@@ -682,12 +721,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_update_entity(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_update_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -708,12 +745,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_update_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_update_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -726,12 +761,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_update_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_update_entity_with_if_matches(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, etag = await self._insert_random_entity()
 
@@ -750,13 +783,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_update_entity_with_if_doesnt_match(self, resource_group, location, storage_account,
-                                                      storage_account_key):
+    @TablesPreparer()
+    async def test_update_entity_with_if_doesnt_match(self, tables_storage_account_name,
+                                                      tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -773,13 +804,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_or_merge_entity_with_existing_entity(self, resource_group, location, storage_account,
-                                                               storage_account_key):
+    @TablesPreparer()
+    async def test_insert_or_merge_entity_with_existing_entity(self, tables_storage_account_name,
+                                                               tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -795,13 +824,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_or_merge_entity_with_non_existing_entity(self, resource_group, location, storage_account,
-                                                                   storage_account_key):
+    @TablesPreparer()
+    async def test_insert_or_merge_entity_with_non_existing_entity(self, tables_storage_account_name,
+                                                                   tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -817,13 +844,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_or_replace_entity_with_existing_entity(self, resource_group, location, storage_account,
-                                                                 storage_account_key):
+    @TablesPreparer()
+    async def test_insert_or_replace_entity_with_existing_entity(self, tables_storage_account_name,
+                                                                 tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -839,13 +864,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_insert_or_replace_entity_with_non_existing_entity(self, resource_group, location, storage_account,
-                                                                     storage_account_key):
+    @TablesPreparer()
+    async def test_insert_or_replace_entity_with_non_existing_entity(self, tables_storage_account_name,
+                                                                     tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -861,12 +884,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_merge_entity(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_merge_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -882,12 +903,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_merge_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_merge_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -900,12 +919,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_merge_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_merge_entity_with_if_matches(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, etag = await self._insert_random_entity()
 
@@ -923,13 +940,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_merge_entity_with_if_doesnt_match(self, resource_group, location, storage_account,
-                                                     storage_account_key):
+    @TablesPreparer()
+    async def test_merge_entity_with_if_doesnt_match(self, tables_storage_account_name,
+                                                     tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -945,12 +960,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_delete_entity(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_delete_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -964,12 +977,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_delete_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_delete_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
 
@@ -981,12 +992,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_delete_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_delete_entity_with_if_matches(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, etag = await self._insert_random_entity()
 
@@ -1001,13 +1010,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_delete_entity_with_if_doesnt_match(self, resource_group, location, storage_account,
-                                                      storage_account_key):
+    @TablesPreparer()
+    async def test_delete_entity_with_if_doesnt_match(self, tables_storage_account_name,
+                                                      tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
 
@@ -1022,13 +1029,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_unicode_property_value(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_unicode_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         ''' regression test for github issue #57'''
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             entity1 = entity.copy()
@@ -1051,12 +1056,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_unicode_property_name(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_unicode_property_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             entity1 = entity.copy()
@@ -1080,15 +1083,13 @@ class StorageTableEntityTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skip("Header authorization error")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_operations_on_entity_with_partition_key_having_single_quote(self, resource_group, location,
-                                                                               storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_operations_on_entity_with_partition_key_having_single_quote(self, tables_storage_account_name, tables_primary_storage_account_key):
 
         # Arrange
         partition_key_with_single_quote = u"a''''b"
         row_key_with_single_quote = u"a''''b"
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity(pk=partition_key_with_single_quote,
                                                          rk=row_key_with_single_quote)
@@ -1122,13 +1123,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_empty_and_spaces_property_value(self, resource_group, location, storage_account,
-                                                   storage_account_key):
+    @TablesPreparer()
+    async def test_empty_and_spaces_property_value(self, tables_storage_account_name,
+                                                   tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({
@@ -1163,12 +1162,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_none_property_value(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_none_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({'NoneValue': None})
@@ -1183,12 +1180,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_binary_property_value(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_binary_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             binary_data = b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'
             entity = self._create_random_base_entity_dict()
@@ -1205,11 +1200,10 @@ class StorageTableEntityTest(TableTestCase):
             await self._tear_down()
 
     @pytest.mark.skip("response time is three hours before the given one")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_timezone(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_timezone(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             local_tz = tzoffset('BRST', -10800)
             local_date = datetime(2003, 9, 27, 9, 52, 43, tzinfo=local_tz)
@@ -1228,12 +1222,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_query_entities(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_query_entities(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = await self._create_query_table(2)
 
@@ -1249,11 +1241,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_query_entities_each_page(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_query_entities_each_page(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             base_entity = {
                 "PartitionKey": u"pk",
@@ -1265,7 +1256,10 @@ class StorageTableEntityTest(TableTestCase):
                     base_entity['PartitionKey'] += str(i)
                 base_entity['RowKey'] += str(i)
                 base_entity['value'] = i
-                await self.table.create_entity(base_entity)
+                try:
+                    await self.table.create_entity(base_entity)
+                except ResourceExistsError:
+                    pass
 
             query_filter = u"PartitionKey eq 'pk'"
 
@@ -1287,11 +1281,146 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_query_zero_entities(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_query_user_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity = await self._insert_two_opposite_entities()
+
+            # Act
+            entities = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': True})
+
+            assert entities is not None
+            length = 0
+            async for e in entities:
+                self._assert_default_entity(e)
+                length += 1
+
+            assert length == 1
+        finally:
+            await self._tear_down()
+
+    @TablesPreparer()
+    async def test_query_user_filter_multiple_params(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = await self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': True,
+                'rk': entity['RowKey']
+            }
+            entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            async for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+            assert length == 1
+
+        finally:
+            await self._tear_down()
+
+    @TablesPreparer()
+    async def test_query_user_filter_integers(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = await self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': 40,
+            }
+            entities = self.table.query_entities(filter="age lt @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            async for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            await self._tear_down()
+
+    @TablesPreparer()
+    async def test_query_user_filter_floats(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = await self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['ratio'] + 1,
+            }
+            entities = self.table.query_entities(filter="ratio lt @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            async for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            await self._tear_down()
+
+    @TablesPreparer()
+    async def test_query_user_filter_datetimes(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = await self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['birthday'],
+            }
+            entities = self.table.query_entities(filter="birthday eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            async for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            await self._tear_down()
+
+    @TablesPreparer()
+    async def test_query_user_filter_guids(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = await self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['clsid']
+            }
+            entities = self.table.query_entities(filter="clsid eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            async for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            await self._tear_down()
+
+    @TablesPreparer()
+    async def test_query_zero_entities(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = await self._create_query_table(0)
 
@@ -1305,12 +1434,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_query_entities_full_metadata(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_query_entities_full_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = await self._create_query_table(2)
 
@@ -1326,12 +1453,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_query_entities_no_metadata(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_query_entities_no_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = await self._create_query_table(2)
 
@@ -1347,11 +1472,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_query_entities_with_filter(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_query_entities_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = await self._insert_random_entity()
             entity2, _ = await self._insert_random_entity(pk="foo" + entity.PartitionKey)
@@ -1370,11 +1494,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_query_invalid_filter(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_query_invalid_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             base_entity = {
                 u"PartitionKey": u"pk",
@@ -1393,12 +1516,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_query_entities_with_select(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_query_entities_with_select(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = await self._create_query_table(2)
 
@@ -1417,12 +1538,10 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_query_entities_with_top(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_query_entities_with_top(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = await self._create_query_table(3)
             # circular dependencies made this return a list not an item paged - problem when calling by page
@@ -1436,12 +1555,11 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_query_entities_with_top_and_next(self, resource_group, location, storage_account,
-                                                    storage_account_key):
+    @TablesPreparer()
+    async def test_query_entities_with_top_and_next(self, tables_storage_account_name,
+                                                    tables_primary_storage_account_key):
         # Arrange
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             table = await self._create_query_table(5)
 
@@ -1473,21 +1591,19 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_sas_query(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_sas_query(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
+        url = self.account_url(tables_storage_account_name, "table")
 
-        await self._set_up(storage_account, storage_account_key)
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             entity, _ = await self._insert_random_entity()
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(read=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1496,7 +1612,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
@@ -1511,19 +1627,17 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_sas_add(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_sas_add(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        await self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1532,7 +1646,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
@@ -1547,19 +1661,17 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_sas_add_inside_range(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_sas_add_inside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        await self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1569,7 +1681,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
@@ -1582,19 +1694,17 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_sas_add_outside_range(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_sas_add_outside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        await self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1604,7 +1714,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
@@ -1616,20 +1726,18 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_sas_update(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_sas_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        await self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             entity, _ = await self._insert_random_entity()
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(update=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1637,7 +1745,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
@@ -1653,20 +1761,18 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_sas_delete(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_sas_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        await self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             entity, _ = await self._insert_random_entity()
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(delete=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1674,7 +1780,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
@@ -1686,22 +1792,20 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_sas_upper_case_table_name(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_sas_upper_case_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        await self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             entity, _ = await self._insert_random_entity()
 
             # Table names are case insensitive, so simply upper case our existing table name to test
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name.upper(),
                 permission=TableSasPermissions(read=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1710,7 +1814,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
@@ -1725,37 +1829,34 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
-    @pytest.mark.skip("Header authorization is malformed")
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
+    @TablesPreparer()
+    async def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(storage_account, "table")
-        await self._set_up(storage_account, storage_account_key)
+        url = self.account_url(tables_storage_account_name, "table")
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             # Arrange
             entity, _ = await self._insert_random_entity()
 
             access_policy = AccessPolicy()
             access_policy.start = datetime(2011, 10, 11)
-            access_policy.expiry = datetime(2020, 10, 12)
+            access_policy.expiry = datetime(2025, 10, 12)
             access_policy.permission = TableSasPermissions(read=True)
             identifiers = {'testid': access_policy}
 
             await self.table.set_table_access_policy(identifiers)
 
             token = generate_table_sas(
-                storage_account.name,
-                storage_account_key,
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
                 self.table_name,
                 policy_id='testid',
             )
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "table"),
+                self.account_url(tables_storage_account_name, "table"),
                 credential=token,
             )
             table = service.get_table_client(table_name=self.table_name)
@@ -1770,7 +1871,24 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
+    @TablesPreparer()
+    async def test_datetime_milliseconds(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+        url = self.account_url(tables_storage_account_name, "table")
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity = self._create_random_entity_dict()
 
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()
+            entity['milliseconds'] = datetime(2011, 11, 4, 0, 5, 23, 283000, tzinfo=tzutc())
+
+            await self.table.create_entity(entity)
+
+            received_entity = await self.table.get_entity(
+                partition_key=entity['PartitionKey'],
+                row_key=entity['RowKey']
+            )
+
+            assert entity['milliseconds'] == received_entity['milliseconds']
+
+        finally:
+            await self._tear_down()

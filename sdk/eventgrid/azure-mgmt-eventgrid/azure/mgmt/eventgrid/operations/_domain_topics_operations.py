@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class DomainTopicsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -54,7 +54,7 @@ class DomainTopicsOperations(object):
         domain_topic_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DomainTopic"
+        # type: (...) -> "_models.DomainTopic"
         """Get a domain topic.
 
         Get properties of a domain topic.
@@ -70,7 +70,7 @@ class DomainTopicsOperations(object):
         :rtype: ~azure.mgmt.eventgrid.models.DomainTopic
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainTopic"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainTopic"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -119,8 +119,8 @@ class DomainTopicsOperations(object):
         domain_topic_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DomainTopic"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainTopic"]
+        # type: (...) -> "_models.DomainTopic"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainTopic"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -169,7 +169,7 @@ class DomainTopicsOperations(object):
         domain_topic_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.DomainTopic"]
+        # type: (...) -> LROPoller["_models.DomainTopic"]
         """Create or update a domain topic.
 
         Asynchronously creates or updates a new domain topic with the specified parameters.
@@ -191,7 +191,7 @@ class DomainTopicsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainTopic"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainTopic"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -216,7 +216,14 @@ class DomainTopicsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+            'domainTopicName': self._serialize.url("domain_topic_name", domain_topic_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -326,7 +333,14 @@ class DomainTopicsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+            'domainTopicName': self._serialize.url("domain_topic_name", domain_topic_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -348,7 +362,7 @@ class DomainTopicsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DomainTopicsListResult"]
+        # type: (...) -> Iterable["_models.DomainTopicsListResult"]
         """List domain topics.
 
         List all the topics in a domain.
@@ -373,7 +387,7 @@ class DomainTopicsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventgrid.models.DomainTopicsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainTopicsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainTopicsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

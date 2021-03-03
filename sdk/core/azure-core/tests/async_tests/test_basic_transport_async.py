@@ -14,6 +14,7 @@ except ImportError:
 from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse, AsyncHttpTransport, AioHttpTransport
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import AsyncPipeline
+from azure.core.exceptions import HttpResponseError
 
 import pytest
 
@@ -705,6 +706,17 @@ async def test_multipart_receive_with_combination_changeset_first():
     assert parts[0].status_code == 200
     assert parts[1].status_code == 202
     assert parts[2].status_code == 404
+
+def test_raise_for_status_bad_response():
+    response = MockResponse(request=None, body=None, content_type=None)
+    response.status_code = 400
+    with pytest.raises(HttpResponseError):
+        response.raise_for_status()
+
+def test_raise_for_status_good_response():
+    response = MockResponse(request=None, body=None, content_type=None)
+    response.status_code = 200
+    response.raise_for_status()
 
 
 @pytest.mark.asyncio

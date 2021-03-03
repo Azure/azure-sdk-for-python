@@ -403,6 +403,8 @@ class CognitiveServicesAccountProperties(msrest.serialization.Model):
     :param api_properties: The api properties for special APIs.
     :type api_properties:
      ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountApiProperties
+    :ivar date_created: Gets the date of cognitive services account creation.
+    :vartype date_created: str
     """
 
     _validation = {
@@ -410,6 +412,7 @@ class CognitiveServicesAccountProperties(msrest.serialization.Model):
         'endpoint': {'readonly': True},
         'internal_id': {'readonly': True},
         'capabilities': {'readonly': True},
+        'date_created': {'readonly': True},
     }
 
     _attribute_map = {
@@ -424,6 +427,7 @@ class CognitiveServicesAccountProperties(msrest.serialization.Model):
         'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
         'api_properties': {'key': 'apiProperties', 'type': 'CognitiveServicesAccountApiProperties'},
+        'date_created': {'key': 'dateCreated', 'type': 'str'},
     }
 
     def __init__(
@@ -442,6 +446,7 @@ class CognitiveServicesAccountProperties(msrest.serialization.Model):
         self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
         self.public_network_access = kwargs.get('public_network_access', None)
         self.api_properties = kwargs.get('api_properties', None)
+        self.date_created = None
 
 
 class CognitiveServicesResourceAndSku(msrest.serialization.Model):
@@ -806,17 +811,17 @@ class PrivateEndpoint(msrest.serialization.Model):
 
 
 class Resource(msrest.serialization.Model):
-    """Resource.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
@@ -847,13 +852,13 @@ class PrivateEndpointConnection(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param properties: Resource properties.
     :type properties: ~azure.mgmt.cognitiveservices.models.PrivateEndpointConnectionProperties
@@ -939,13 +944,13 @@ class PrivateLinkResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param properties: Resource properties.
     :type properties: ~azure.mgmt.cognitiveservices.models.PrivateLinkResourceProperties
@@ -1250,7 +1255,7 @@ class Sku(msrest.serialization.Model):
      update.
     :type name: str
     :ivar tier: Gets the sku tier. This is based on the SKU name. Possible values include: "Free",
-     "Standard", "Premium".
+     "Standard", "Premium", "Enterprise".
     :vartype tier: str or ~azure.mgmt.cognitiveservices.models.SkuTier
     """
 

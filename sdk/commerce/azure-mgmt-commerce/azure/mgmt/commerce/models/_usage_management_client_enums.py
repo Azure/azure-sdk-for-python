@@ -31,7 +31,7 @@ class AggregationGranularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     DAILY = "Daily"
     HOURLY = "Hourly"
 
-class OfferTermInfoName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OfferTermInfoEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Name of the offer term
     """
 

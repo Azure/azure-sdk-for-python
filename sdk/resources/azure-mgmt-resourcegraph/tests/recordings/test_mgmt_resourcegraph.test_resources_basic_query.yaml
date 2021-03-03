@@ -14,22 +14,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-resourcegraph/unknown Python/3.6.9 (Linux-4.19.128-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resourcegraph/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2020-04-01-preview
   response:
     body:
-      string: '{"totalRecords":2,"count":2,"data":{"columns":[{"name":"id","type":"string"},{"name":"tags","type":"object"},{"name":"properties","type":"object"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojxu/providers/Microsoft.Compute/galleries/xiaojxug1/images/d1/versions/1.0.0",{},{"provisioningState":"Failed","storageProfile":{},"publishingProfile":{"storageAccountType":"Standard_LRS","source":{"managedImage":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.Compute/images/img1"}},"replicaCount":1,"excludeFromLatest":false,"targetRegions":[{"name":"West
-        US 2","storageAccountType":"Standard_LRS","regionalReplicaCount":1}],"publishedDate":"2020-10-19T07:29:37.4350000Z"}}],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/acctestRG-ibt-10193/providers/Microsoft.ManagedIdentity/userAssignedIdentities/acctestIBT10193Identity",{},{"tenantId":"00000000-0000-0000-0000-000000000000","clientId":"c56b3537-934b-4c90-976d-235dd4f737b9","principalId":"751db488-4340-4c73-b5fc-18fff1947927"}]]},"facets":[],"resultTruncated":"false"}'
+      string: '{"totalRecords":2,"count":2,"data":{"columns":[{"name":"id","type":"string"},{"name":"tags","type":"object"},{"name":"properties","type":"object"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/move_resource_name/providers/Microsoft.Migrate/moveCollections/move-collection-test6",{},{"provisioningState":"Succeeded","targetRegion":"eastus","sourceRegion":"eastus2","errors":null}],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/networkInterfaces/anf-sdknettestqa2vnet464-nic-2JBDNX",null,{"provisioningState":"Succeeded","primary":true,"resourceGuid":"94219f98-9158-4ef7-ad73-93bc7df3acad","enableAcceleratedNetworking":false,"ipConfigurations":[{"properties":{"provisioningState":"Succeeded","privateIPAddressVersion":"IPv4","privateIPAllocationMethod":"Dynamic","privateIPAddress":"10.1.0.4","subnet":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/virtualNetworks/sdknettestqa2vnet464/subnets/default"},"primary":true},"type":"Microsoft.Network/networkInterfaces/ipConfigurations","name":"ipconfig1","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/networkInterfaces/anf-sdknettestqa2vnet464-nic-2JBDNX/ipConfigurations/ipconfig1","etag":"W/\"5a0cb003-a7fe-4d87-bcf4-cded6e155953\""}],"enableIPForwarding":false,"tapConfigurations":[],"hostedWorkloads":["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1/capacityPools/sdk-py-tests-pool-1/volumes/sdk-py-tests-vol-1"],"dnsSettings":{"internalDomainNameSuffix":"m0jm1iggslrejebzfdjidfxjxe.bx.internal.cloudapp.net","appliedDnsServers":[],"dnsServers":[]},"macAddress":"","nicType":"Standard","linkedResourceType":"Microsoft.Netapp/volumes"}]]},"facets":[],"resultTruncated":"false"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1131'
+      - '1967'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 19 Oct 2020 07:38:43 GMT
+      - Tue, 15 Dec 2020 09:46:53 GMT
       expires:
       - '-1'
       pragma:

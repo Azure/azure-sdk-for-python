@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class IotSecuritySolutionsAnalyticsRecommendationOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class IotSecuritySolutionsAnalyticsRecommendationOperations(object):
         aggregated_recommendation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IoTSecurityAggregatedRecommendation"
+        # type: (...) -> "_models.IoTSecurityAggregatedRecommendation"
         """Use this method to get the aggregated security analytics recommendation of yours IoT Security
         solution. This aggregation is performed by recommendation name.
 
@@ -68,7 +68,7 @@ class IotSecuritySolutionsAnalyticsRecommendationOperations(object):
         :rtype: ~azure.mgmt.security.models.IoTSecurityAggregatedRecommendation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecurityAggregatedRecommendation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecurityAggregatedRecommendation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -117,7 +117,7 @@ class IotSecuritySolutionsAnalyticsRecommendationOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IoTSecurityAggregatedRecommendationList"]
+        # type: (...) -> Iterable["_models.IoTSecurityAggregatedRecommendationList"]
         """Use this method to get the list of aggregated security analytics recommendations of yours IoT
         Security solution.
 
@@ -133,7 +133,7 @@ class IotSecuritySolutionsAnalyticsRecommendationOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.IoTSecurityAggregatedRecommendationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IoTSecurityAggregatedRecommendationList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IoTSecurityAggregatedRecommendationList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

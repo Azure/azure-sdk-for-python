@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class CostsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class CostsOperations:
         name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.LabCost":
+    ) -> "_models.LabCost":
         """Get cost.
 
         :param resource_group_name: The name of the resource group.
@@ -63,7 +63,7 @@ class CostsOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.LabCost
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LabCost"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LabCost"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -112,9 +112,9 @@ class CostsOperations:
         resource_group_name: str,
         lab_name: str,
         name: str,
-        lab_cost: "models.LabCost",
+        lab_cost: "_models.LabCost",
         **kwargs
-    ) -> "models.LabCost":
+    ) -> "_models.LabCost":
         """Create or replace an existing cost.
 
         :param resource_group_name: The name of the resource group.
@@ -130,7 +130,7 @@ class CostsOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.LabCost
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LabCost"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LabCost"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

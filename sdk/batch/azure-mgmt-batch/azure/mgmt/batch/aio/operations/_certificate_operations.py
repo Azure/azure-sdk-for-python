@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class CertificateOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -51,7 +51,7 @@ class CertificateOperations:
         select: Optional[str] = None,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ListCertificatesResult"]:
+    ) -> AsyncIterable["_models.ListCertificatesResult"]:
         """Lists all of the certificates in the specified account.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -72,12 +72,12 @@ class CertificateOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.batch.models.ListCertificatesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListCertificatesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListCertificatesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -135,27 +135,51 @@ class CertificateOperations:
         )
     list_by_batch_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates'}  # type: ignore
 
-    async def _create_initial(
+    async def create(
         self,
         resource_group_name: str,
         account_name: str,
         certificate_name: str,
-        parameters: "models.CertificateCreateOrUpdateParameters",
+        parameters: "_models.CertificateCreateOrUpdateParameters",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         **kwargs
-    ) -> "models.Certificate":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Certificate"]
+    ) -> "_models.Certificate":
+        """Creates a new certificate inside the specified account.
+
+        :param resource_group_name: The name of the resource group that contains the Batch account.
+        :type resource_group_name: str
+        :param account_name: The name of the Batch account.
+        :type account_name: str
+        :param certificate_name: The identifier for the certificate. This must be made up of algorithm
+         and thumbprint separated by a dash, and must match the certificate data in the request. For
+         example SHA1-a3d1c5.
+        :type certificate_name: str
+        :param parameters: Additional parameters for certificate creation.
+        :type parameters: ~azure.mgmt.batch.models.CertificateCreateOrUpdateParameters
+        :param if_match: The entity state (ETag) version of the certificate to update. A value of "*"
+         can be used to apply the operation only if the certificate already exists. If omitted, this
+         operation will always be applied.
+        :type if_match: str
+        :param if_none_match: Set to '*' to allow a new certificate to be created, but to prevent
+         updating an existing certificate. Other values will be ignored.
+        :type if_none_match: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Certificate, or the result of cls(response)
+        :rtype: ~azure.mgmt.batch.models.Certificate
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self._create_initial.metadata['url']  # type: ignore
+        url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
@@ -196,102 +220,17 @@ class CertificateOperations:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}'}  # type: ignore
-
-    async def begin_create(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        certificate_name: str,
-        parameters: "models.CertificateCreateOrUpdateParameters",
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        **kwargs
-    ) -> AsyncLROPoller["models.Certificate"]:
-        """Creates a new certificate inside the specified account.
-
-        :param resource_group_name: The name of the resource group that contains the Batch account.
-        :type resource_group_name: str
-        :param account_name: The name of the Batch account.
-        :type account_name: str
-        :param certificate_name: The identifier for the certificate. This must be made up of algorithm
-         and thumbprint separated by a dash, and must match the certificate data in the request. For
-         example SHA1-a3d1c5.
-        :type certificate_name: str
-        :param parameters: Additional parameters for certificate creation.
-        :type parameters: ~azure.mgmt.batch.models.CertificateCreateOrUpdateParameters
-        :param if_match: The entity state (ETag) version of the certificate to update. A value of "*"
-         can be used to apply the operation only if the certificate already exists. If omitted, this
-         operation will always be applied.
-        :type if_match: str
-        :param if_none_match: Set to '*' to allow a new certificate to be created, but to prevent
-         updating an existing certificate. Other values will be ignored.
-        :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Certificate or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.batch.models.Certificate]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Certificate"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._create_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                certificate_name=certificate_name,
-                parameters=parameters,
-                if_match=if_match,
-                if_none_match=if_none_match,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-        kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-            deserialized = self._deserialize('Certificate', pipeline_response)
-
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)
-            return deserialized
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}'}  # type: ignore
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}'}  # type: ignore
 
     async def update(
         self,
         resource_group_name: str,
         account_name: str,
         certificate_name: str,
-        parameters: "models.CertificateCreateOrUpdateParameters",
+        parameters: "_models.CertificateCreateOrUpdateParameters",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.Certificate":
+    ) -> "_models.Certificate":
         """Updates the properties of an existing certificate.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -312,12 +251,12 @@ class CertificateOperations:
         :rtype: ~azure.mgmt.batch.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Certificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -375,7 +314,7 @@ class CertificateOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -464,7 +403,14 @@ class CertificateOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[a-zA-Z0-9]+$'),
+            'certificateName': self._serialize.url("certificate_name", certificate_name, 'str', max_length=45, min_length=5, pattern=r'^[\w]+-[\w]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -484,7 +430,7 @@ class CertificateOperations:
         account_name: str,
         certificate_name: str,
         **kwargs
-    ) -> "models.Certificate":
+    ) -> "_models.Certificate":
         """Gets information about the specified certificate.
 
         :param resource_group_name: The name of the resource group that contains the Batch account.
@@ -500,12 +446,12 @@ class CertificateOperations:
         :rtype: ~azure.mgmt.batch.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Certificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -550,7 +496,7 @@ class CertificateOperations:
         account_name: str,
         certificate_name: str,
         **kwargs
-    ) -> "models.Certificate":
+    ) -> "_models.Certificate":
         """Cancels a failed deletion of a certificate from the specified account.
 
         If you try to delete a certificate that is being used by a pool or compute node, the status of
@@ -573,12 +519,12 @@ class CertificateOperations:
         :rtype: ~azure.mgmt.batch.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Certificate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Certificate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL

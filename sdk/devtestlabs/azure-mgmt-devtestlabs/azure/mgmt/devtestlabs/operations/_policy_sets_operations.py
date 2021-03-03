@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class PolicySetsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class PolicySetsOperations(object):
         resource_group_name,  # type: str
         lab_name,  # type: str
         name,  # type: str
-        policies=None,  # type: Optional[List["models.EvaluatePoliciesProperties"]]
+        policies=None,  # type: Optional[List["_models.EvaluatePoliciesProperties"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EvaluatePoliciesResponse"
+        # type: (...) -> "_models.EvaluatePoliciesResponse"
         """Evaluates lab policy.
 
         :param resource_group_name: The name of the resource group.
@@ -68,13 +68,13 @@ class PolicySetsOperations(object):
         :rtype: ~azure.mgmt.devtestlabs.models.EvaluatePoliciesResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EvaluatePoliciesResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EvaluatePoliciesResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _evaluate_policies_request = models.EvaluatePoliciesRequest(policies=policies)
+        _evaluate_policies_request = _models.EvaluatePoliciesRequest(policies=policies)
         api_version = "2018-09-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"

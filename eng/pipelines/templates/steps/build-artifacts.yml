@@ -1,9 +1,19 @@
 parameters:
-  BeforePublishSteps: []
-  TestPipeline: false
-  BuildTargetingString: 'azure-*'
-  ServiceDirectory: ''
-  BuildDocs: true
+  - name: BeforePublishSteps
+    type: object
+    default: []
+  - name: TestPipeline
+    type: boolean
+    default: false
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: BuildDocs
+    type: boolean
+    default: true
 
 steps:
   - ${{if eq(parameters.TestPipeline, 'true')}}:
@@ -57,7 +67,8 @@ steps:
       arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --devbuild="$(SetDevVersion)"'
 
   - script: |
-      twine check $(Build.ArtifactStagingDirectory)/*
+      twine check $(Build.ArtifactStagingDirectory)/**/*.whl
+      twine check $(Build.ArtifactStagingDirectory)/**/*.zip
     displayName: 'Verify Readme'
 
   - task: PythonScript@0
@@ -72,17 +83,9 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - task: PublishPipelineArtifact@0
-    inputs:
-      artifactName: 'artifacts' 
-      targetPath: $(Build.ArtifactStagingDirectory)
-
-  # Duplicating  the task above to introduce a packages artifact for consistency
-  # with the other pipelines. Also using the newer YAML shortcut. Once we get
-  # past release successfully with unified pipelines we'll look at getting rid
-  # of the duplicated "artifacts" artifact.
   - publish: $(Build.ArtifactStagingDirectory)
     artifact: packages 
+    condition: succeededOrFailed()
 
   - task: PublishBuildArtifacts@1
     condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})

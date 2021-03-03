@@ -26,14 +26,14 @@ Install the Azure Form Recognizer client library for Python with [pip][pip]:
 pip install azure-ai-formrecognizer --pre
 ```
 
-> Note: This version of the client library defaults to the v2.1-preview version of the service
+> Note: This version of the client library defaults to the v2.1-preview.2 version of the service
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
 |SDK version|Supported API version of service
 |-|-
 |3.0.0 - Latest GA release (can be installed by removing the `--pre` flag)| 2.0
-|3.1.0b1 - Latest release (beta)| 2.0, 2.1-preview
+|3.1.0b3 - Latest release (beta)| 2.0, 2.1-preview.2
 
 
 #### Create a Form Recognizer resource
@@ -236,23 +236,25 @@ with open("<path to your form>", "rb") as fd:
     form = fd.read()
 
 poller = form_recognizer_client.begin_recognize_content(form)
-page = poller.result()
+form_pages = poller.result()
 
-table = page[0].tables[0] # page 1, table 1
-print("Table found on page {}:".format(table.page_number))
-print("Table location {}:".format(table.bounding_box))
-for cell in table.cells:
-    print("Cell text: {}".format(cell.text))
-    print("Location: {}".format(cell.bounding_box))
-    print("Confidence score: {}\n".format(cell.confidence))
+for content in form_pages:
+    for table in content.tables:
+        print("Table found on page {}:".format(table.page_number))
+        print("Table location {}:".format(table.bounding_box))
+        for cell in table.cells:
+            print("Cell text: {}".format(cell.text))
+            print("Location: {}".format(cell.bounding_box))
+            print("Confidence score: {}\n".format(cell.confidence))
 
-print("Selection marks found on page {}:".format(page[0].page_number))
-for selection_mark in page[0].selection_marks:
-    print("Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
-        selection_mark.state,
-        selection_mark.bounding_box,
-        selection_mark.confidence
-    ))
+    if content.selection_marks:
+        print("Selection marks found on page {}:".format(content.page_number))
+        for selection_mark in content.selection_marks:
+            print("Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                selection_mark.state,
+                selection_mark.bounding_box,
+                selection_mark.confidence
+            ))
 ```
 
 ### Recognize Receipts

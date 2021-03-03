@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class AdvancedThreatProtectionOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class AdvancedThreatProtectionOperations(object):
         resource_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AdvancedThreatProtectionSetting"
+        # type: (...) -> "_models.AdvancedThreatProtectionSetting"
         """Gets the Advanced Threat Protection settings for the specified resource.
 
         :param resource_id: The identifier of the resource.
@@ -59,7 +59,7 @@ class AdvancedThreatProtectionOperations(object):
         :rtype: ~azure.mgmt.security.models.AdvancedThreatProtectionSetting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AdvancedThreatProtectionSetting"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AdvancedThreatProtectionSetting"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -103,10 +103,10 @@ class AdvancedThreatProtectionOperations(object):
     def create(
         self,
         resource_id,  # type: str
-        advanced_threat_protection_setting,  # type: "models.AdvancedThreatProtectionSetting"
+        advanced_threat_protection_setting,  # type: "_models.AdvancedThreatProtectionSetting"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AdvancedThreatProtectionSetting"
+        # type: (...) -> "_models.AdvancedThreatProtectionSetting"
         """Creates or updates the Advanced Threat Protection settings on a specified resource.
 
         :param resource_id: The identifier of the resource.
@@ -118,7 +118,7 @@ class AdvancedThreatProtectionOperations(object):
         :rtype: ~azure.mgmt.security.models.AdvancedThreatProtectionSetting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AdvancedThreatProtectionSetting"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AdvancedThreatProtectionSetting"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class DataFlowDebugSessionOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,11 +51,11 @@ class DataFlowDebugSessionOperations(object):
         self,
         resource_group_name,  # type: str
         factory_name,  # type: str
-        request,  # type: "models.CreateDataFlowDebugSessionRequest"
+        request,  # type: "_models.CreateDataFlowDebugSessionRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.CreateDataFlowDebugSessionResponse"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.CreateDataFlowDebugSessionResponse"]]
+        # type: (...) -> Optional["_models.CreateDataFlowDebugSessionResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CreateDataFlowDebugSessionResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,10 +111,10 @@ class DataFlowDebugSessionOperations(object):
         self,
         resource_group_name,  # type: str
         factory_name,  # type: str
-        request,  # type: "models.CreateDataFlowDebugSessionRequest"
+        request,  # type: "_models.CreateDataFlowDebugSessionRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.CreateDataFlowDebugSessionResponse"]
+        # type: (...) -> LROPoller["_models.CreateDataFlowDebugSessionResponse"]
         """Creates a data flow debug session.
 
         :param resource_group_name: The resource group name.
@@ -134,7 +134,7 @@ class DataFlowDebugSessionOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CreateDataFlowDebugSessionResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CreateDataFlowDebugSessionResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -185,7 +185,7 @@ class DataFlowDebugSessionOperations(object):
         factory_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.QueryDataFlowDebugSessionsResponse"]
+        # type: (...) -> Iterable["_models.QueryDataFlowDebugSessionsResponse"]
         """Query all active data flow debug sessions.
 
         :param resource_group_name: The resource group name.
@@ -197,7 +197,7 @@ class DataFlowDebugSessionOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datafactory.models.QueryDataFlowDebugSessionsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.QueryDataFlowDebugSessionsResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueryDataFlowDebugSessionsResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -258,10 +258,10 @@ class DataFlowDebugSessionOperations(object):
         self,
         resource_group_name,  # type: str
         factory_name,  # type: str
-        request,  # type: "models.DataFlowDebugPackage"
+        request,  # type: "_models.DataFlowDebugPackage"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AddDataFlowToDebugSessionResponse"
+        # type: (...) -> "_models.AddDataFlowToDebugSessionResponse"
         """Add a data flow into debug session.
 
         :param resource_group_name: The resource group name.
@@ -275,7 +275,7 @@ class DataFlowDebugSessionOperations(object):
         :rtype: ~azure.mgmt.datafactory.models.AddDataFlowToDebugSessionResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AddDataFlowToDebugSessionResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AddDataFlowToDebugSessionResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -325,7 +325,7 @@ class DataFlowDebugSessionOperations(object):
         self,
         resource_group_name,  # type: str
         factory_name,  # type: str
-        request,  # type: "models.DeleteDataFlowDebugSessionRequest"
+        request,  # type: "_models.DeleteDataFlowDebugSessionRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -389,11 +389,11 @@ class DataFlowDebugSessionOperations(object):
         self,
         resource_group_name,  # type: str
         factory_name,  # type: str
-        request,  # type: "models.DataFlowDebugCommandRequest"
+        request,  # type: "_models.DataFlowDebugCommandRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.DataFlowDebugCommandResponse"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.DataFlowDebugCommandResponse"]]
+        # type: (...) -> Optional["_models.DataFlowDebugCommandResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DataFlowDebugCommandResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -449,10 +449,10 @@ class DataFlowDebugSessionOperations(object):
         self,
         resource_group_name,  # type: str
         factory_name,  # type: str
-        request,  # type: "models.DataFlowDebugCommandRequest"
+        request,  # type: "_models.DataFlowDebugCommandRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.DataFlowDebugCommandResponse"]
+        # type: (...) -> LROPoller["_models.DataFlowDebugCommandResponse"]
         """Execute a data flow debug command.
 
         :param resource_group_name: The resource group name.
@@ -472,7 +472,7 @@ class DataFlowDebugSessionOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DataFlowDebugCommandResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFlowDebugCommandResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval

@@ -10,8 +10,8 @@ urlFragment: servicebus-samples
 
 # Azure Service Bus client library for Python Samples
 
-> **NOTE**: This document outlines the samples for the **preview** of the next version of the `azure-servicebus` package
-> which has different APIs than the current version (0.50). Please visit [this link](https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/samples) for samples of the existing library.
+> **NOTE**: This document outlines the samples for the latest version of the `azure-servicebus` package
+> which has different APIs than the older version (0.50). Please visit [this link](https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/samples) for samples of version 0.50 of this library.
 
 These are code samples that show common scenario operations with the Azure Service Bus client library.
 Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples) and [async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples) of samples are provided, async samples require Python 3.5 or later.
@@ -95,7 +95,11 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 
 1. Install the Azure Service Bus client library for Python with [pip](https://pypi.org/project/pip/):
 ```bash
-pip install --pre azure-servicebus
+pip install azure-servicebus
+```
+To run samples that utilize the Azure Active Directory for authentication, please install the `azure-identity` library:
+```bash
+pip install azure-identity
 ```
 2. Clone or download this sample repository.
 3. Open the sample folder in Visual Studio Code or your IDE of choice.

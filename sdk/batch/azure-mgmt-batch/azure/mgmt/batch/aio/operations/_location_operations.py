@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class LocationOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,7 +44,7 @@ class LocationOperations:
         self,
         location_name: str,
         **kwargs
-    ) -> "models.BatchLocationQuota":
+    ) -> "_models.BatchLocationQuota":
         """Gets the Batch service quotas for the specified subscription at the given location.
 
         :param location_name: The region for which to retrieve Batch service quotas.
@@ -54,12 +54,12 @@ class LocationOperations:
         :rtype: ~azure.mgmt.batch.models.BatchLocationQuota
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BatchLocationQuota"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchLocationQuota"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -97,9 +97,9 @@ class LocationOperations:
     async def check_name_availability(
         self,
         location_name: str,
-        parameters: "models.CheckNameAvailabilityParameters",
+        parameters: "_models.CheckNameAvailabilityParameters",
         **kwargs
-    ) -> "models.CheckNameAvailabilityResult":
+    ) -> "_models.CheckNameAvailabilityResult":
         """Checks whether the Batch account name is available in the specified region.
 
         :param location_name: The desired region for the name check.
@@ -111,12 +111,12 @@ class LocationOperations:
         :rtype: ~azure.mgmt.batch.models.CheckNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-09-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

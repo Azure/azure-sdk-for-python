@@ -19,7 +19,7 @@ import ast
 import textwrap
 import io
 import re
-import pdb
+import fnmatch
 
 # Assumes the presence of setuptools
 from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
@@ -32,6 +32,7 @@ from packaging.version import parse
 
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
+NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -42,6 +43,7 @@ OMITTED_CI_PACKAGES = [
     "azure",
     "azure-mgmt",
     "azure-storage",
+    "azure-mgmt-regionmove"
 ]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
@@ -312,6 +314,7 @@ def create_code_coverage_params(parsed_args, package_name):
     else:
         current_package_name = package_name.replace("-", ".")
         coverage_args.append("--cov={}".format(current_package_name))
+        coverage_args.append("--cov-append")
         logging.info(
             "Code coverage is enabled for package {0}, pytest arguements: {1}".format(
                 current_package_name, coverage_args
@@ -353,9 +356,15 @@ def find_whl(package_name, version, whl_directory):
     parsed_version = parse(version)
 
     logging.info("Searching whl for package {0}-{1}".format(package_name, parsed_version.base_version))
-    whl_name = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
-    paths = glob.glob(os.path.join(whl_directory, whl_name))
-    if not paths:
+    whl_name_format = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
+    whls = []
+    for root, dirnames, filenames in os.walk(whl_directory):
+        for filename in fnmatch.filter(filenames, whl_name_format):
+            whls.append(os.path.join(root, filename))
+
+    whls = [os.path.relpath(w, whl_directory) for w in whls]
+
+    if not whls:
         logging.error(
             "whl is not found in whl directory {0} for package {1}-{2}".format(
                 whl_directory, package_name, parsed_version.base_version
@@ -363,7 +372,7 @@ def find_whl(package_name, version, whl_directory):
         )
         exit(1)
 
-    return paths[0]
+    return whls[0]
 
 # This method installs package from a pre-built whl
 def install_package_from_whl(
@@ -458,6 +467,12 @@ def get_installed_packages(paths = None):
     # WorkingSet returns installed packages in given path
     # working_set returns installed packages in default path
     # if paths is set then find installed packages from given paths
-    ws = WorkingSet(paths) if paths else working_set  
+    ws = WorkingSet(paths) if paths else working_set
     return ["{0}=={1}".format(p.project_name, p.version) for p in ws]
 
+def get_package_properties(setup_py_path):
+    """Parse setup.py and return package details like package name, version, whether it's new SDK
+    """
+    pkgName, version, _, requires = parse_setup(setup_py_path)
+    is_new_sdk = pkgName in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
+    return pkgName, version, is_new_sdk, setup_py_path

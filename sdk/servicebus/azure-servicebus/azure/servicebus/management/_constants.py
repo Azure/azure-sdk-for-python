@@ -28,10 +28,18 @@ RULE_VALUE_TYPE = "type"
 RULE_VALUE_TYPE_XML_PREFIX = "d6p1"
 RULE_SQL_COMPATIBILITY_LEVEL = "20"
 RULE_DESCRIPTION_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}RuleDescription"
-RULE_FILTER_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Filter"
-RULE_FILTER_COR_PROPERTIES_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Properties"
-RULE_PARAMETERS_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Parameters"
-RULE_ACTION_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Action"
+RULE_FILTER_TAG = (
+    "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Filter"
+)
+RULE_FILTER_COR_PROPERTIES_TAG = (
+    "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Properties"
+)
+RULE_PARAMETERS_TAG = (
+    "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Parameters"
+)
+RULE_ACTION_TAG = (
+    "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Action"
+)
 RULE_KEY_VALUE_TAG = "{{{}}}{}".format(SB_XML_NAMESPACE, RULE_KEY_VALUE)
 RULE_KEY_TAG = "{{{}}}{}".format(SB_XML_NAMESPACE, RULE_KEY)
 RULE_VALUE_TAG = "{{{}}}{}".format(SB_XML_NAMESPACE, RULE_VALUE)

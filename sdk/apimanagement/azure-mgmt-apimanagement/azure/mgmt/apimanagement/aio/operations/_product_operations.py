@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ProductOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -51,7 +51,7 @@ class ProductOperations:
         expand_groups: Optional[bool] = None,
         tags: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ProductCollection"]:
+    ) -> AsyncIterable["_models.ProductCollection"]:
         """Lists a collection of products in the specified service instance.
 
         :param resource_group_name: The name of the resource group.
@@ -80,7 +80,7 @@ class ProductOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.ProductCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProductCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProductCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -137,7 +137,7 @@ class ProductOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -201,7 +201,7 @@ class ProductOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -219,7 +219,7 @@ class ProductOperations:
         service_name: str,
         product_id: str,
         **kwargs
-    ) -> "models.ProductContract":
+    ) -> "_models.ProductContract":
         """Gets the details of the product specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -234,7 +234,7 @@ class ProductOperations:
         :rtype: ~azure.mgmt.apimanagement.models.ProductContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProductContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProductContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -266,7 +266,7 @@ class ProductOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -284,10 +284,10 @@ class ProductOperations:
         resource_group_name: str,
         service_name: str,
         product_id: str,
-        parameters: "models.ProductContract",
+        parameters: "_models.ProductContract",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.ProductContract":
+    ) -> "_models.ProductContract":
         """Creates or Updates a product.
 
         :param resource_group_name: The name of the resource group.
@@ -307,7 +307,7 @@ class ProductOperations:
         :rtype: ~azure.mgmt.apimanagement.models.ProductContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProductContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProductContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -346,7 +346,7 @@ class ProductOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -370,9 +370,9 @@ class ProductOperations:
         service_name: str,
         product_id: str,
         if_match: str,
-        parameters: "models.ProductUpdateParameters",
+        parameters: "_models.ProductUpdateParameters",
         **kwargs
-    ) -> "models.ProductContract":
+    ) -> "_models.ProductContract":
         """Update existing product details.
 
         :param resource_group_name: The name of the resource group.
@@ -392,7 +392,7 @@ class ProductOperations:
         :rtype: ~azure.mgmt.apimanagement.models.ProductContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProductContract"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProductContract"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -430,7 +430,7 @@ class ProductOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -506,7 +506,7 @@ class ProductOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -523,7 +523,7 @@ class ProductOperations:
         skip: Optional[int] = None,
         include_not_tagged_products: Optional[bool] = None,
         **kwargs
-    ) -> AsyncIterable["models.TagResourceCollection"]:
+    ) -> AsyncIterable["_models.TagResourceCollection"]:
         """Lists a collection of products associated with tags.
 
         :param resource_group_name: The name of the resource group.
@@ -549,7 +549,7 @@ class ProductOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.apimanagement.models.TagResourceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagResourceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagResourceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -604,7 +604,7 @@ class ProductOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

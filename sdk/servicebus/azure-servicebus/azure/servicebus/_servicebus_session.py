@@ -21,7 +21,9 @@ from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
     from ._servicebus_receiver import ServiceBusReceiver
-    from .aio._servicebus_receiver_async import ServiceBusReceiver as ServiceBusReceiverAsync
+    from .aio._servicebus_receiver_async import (
+        ServiceBusReceiver as ServiceBusReceiverAsync,
+    )
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -114,7 +116,7 @@ class ServiceBusSession(BaseSession):
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._session_id},
             mgmt_handlers.default,
-            timeout=timeout
+            timeout=timeout,
         )
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)  # type: ignore
         return session_state
@@ -142,12 +144,17 @@ class ServiceBusSession(BaseSession):
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
+        state = (
+            state.encode(self._encoding) if isinstance(state, six.text_type) else state
+        )
         return self._receiver._mgmt_request_response_with_retry(  # type: ignore
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self._session_id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
+            {
+                MGMT_REQUEST_SESSION_ID: self._session_id,
+                MGMT_REQUEST_SESSION_STATE: bytearray(state),
+            },
             mgmt_handlers.default,
-            timeout=timeout
+            timeout=timeout,
         )
 
     def renew_lock(self, **kwargs):
@@ -185,9 +192,11 @@ class ServiceBusSession(BaseSession):
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._session_id},
             mgmt_handlers.session_lock_renew_op,
-            timeout=timeout
+            timeout=timeout,
         )
-        expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0  # type: ignore
-        self._locked_until_utc = utc_from_timestamp(expiry_timestamp)  # type: datetime.datetime
+        expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION] / 1000.0  # type: ignore
+        self._locked_until_utc = utc_from_timestamp(
+            expiry_timestamp
+        )  # type: datetime.datetime
 
         return self._locked_until_utc

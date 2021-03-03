@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class IotSensorsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class IotSensorsOperations(object):
         scope,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IotSensorsList"
+        # type: (...) -> "_models.IotSensorsList"
         """List IoT sensors.
 
         :param scope: Scope of the query (IoT Hub, /providers/Microsoft.Devices/iotHubs/myHub).
@@ -59,7 +59,7 @@ class IotSensorsOperations(object):
         :rtype: ~azure.mgmt.security.models.IotSensorsList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotSensorsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotSensorsList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -104,7 +104,7 @@ class IotSensorsOperations(object):
         iot_sensor_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IotSensor"
+        # type: (...) -> "_models.IotSensorsModel"
         """Get IoT sensor.
 
         :param scope: Scope of the query (IoT Hub, /providers/Microsoft.Devices/iotHubs/myHub).
@@ -112,11 +112,11 @@ class IotSensorsOperations(object):
         :param iot_sensor_name: Name of the IoT sensor.
         :type iot_sensor_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: IotSensor, or the result of cls(response)
-        :rtype: ~azure.mgmt.security.models.IotSensor
+        :return: IotSensorsModel, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IotSensorsModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotSensor"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotSensorsModel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -148,7 +148,7 @@ class IotSensorsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('IotSensor', pipeline_response)
+        deserialized = self._deserialize('IotSensorsModel', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -160,26 +160,30 @@ class IotSensorsOperations(object):
         self,
         scope,  # type: str
         iot_sensor_name,  # type: str
+        iot_sensors_model,  # type: "_models.IotSensorsModel"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IotSensor"
+        # type: (...) -> "_models.IotSensorsModel"
         """Create or update IoT sensor.
 
         :param scope: Scope of the query (IoT Hub, /providers/Microsoft.Devices/iotHubs/myHub).
         :type scope: str
         :param iot_sensor_name: Name of the IoT sensor.
         :type iot_sensor_name: str
+        :param iot_sensors_model: The IoT sensor model.
+        :type iot_sensors_model: ~azure.mgmt.security.models.IotSensorsModel
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: IotSensor, or the result of cls(response)
-        :rtype: ~azure.mgmt.security.models.IotSensor
+        :return: IotSensorsModel, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IotSensorsModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IotSensor"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IotSensorsModel"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-08-06-preview"
+        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
@@ -196,9 +200,13 @@ class IotSensorsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        request = self._client.put(url, query_parameters, header_parameters)
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(iot_sensors_model, 'IotSensorsModel')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -207,10 +215,10 @@ class IotSensorsOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('IotSensor', pipeline_response)
+            deserialized = self._deserialize('IotSensorsModel', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('IotSensor', pipeline_response)
+            deserialized = self._deserialize('IotSensorsModel', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -330,3 +338,124 @@ class IotSensorsOperations(object):
 
         return deserialized
     download_activation.metadata = {'url': '/{scope}/providers/Microsoft.Security/iotSensors/{iotSensorName}/downloadActivation'}  # type: ignore
+
+    def download_reset_password(
+        self,
+        scope,  # type: str
+        iot_sensor_name,  # type: str
+        body,  # type: "_models.ResetPasswordInput"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> IO
+        """Download file for reset password of the sensor.
+
+        :param scope: Scope of the query (IoT Hub, /providers/Microsoft.Devices/iotHubs/myHub).
+        :type scope: str
+        :param iot_sensor_name: Name of the IoT sensor.
+        :type iot_sensor_name: str
+        :param body: The reset password input.
+        :type body: ~azure.mgmt.security.models.ResetPasswordInput
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IO, or the result of cls(response)
+        :rtype: IO
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-08-06-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/zip"
+
+        # Construct URL
+        url = self.download_reset_password.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'iotSensorName': self._serialize.url("iot_sensor_name", iot_sensor_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(body, 'ResetPasswordInput')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = response.stream_download(self._client._pipeline)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    download_reset_password.metadata = {'url': '/{scope}/providers/Microsoft.Security/iotSensors/{iotSensorName}/downloadResetPassword'}  # type: ignore
+
+    def trigger_ti_package_update(
+        self,
+        scope,  # type: str
+        iot_sensor_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Trigger threat intelligence package update.
+
+        :param scope: Scope of the query (IoT Hub, /providers/Microsoft.Devices/iotHubs/myHub).
+        :type scope: str
+        :param iot_sensor_name: Name of the IoT sensor.
+        :type iot_sensor_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-08-06-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.trigger_ti_package_update.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'iotSensorName': self._serialize.url("iot_sensor_name", iot_sensor_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    trigger_ti_package_update.metadata = {'url': '/{scope}/providers/Microsoft.Security/iotSensors/{iotSensorName}/triggerTiPackageUpdate'}  # type: ignore

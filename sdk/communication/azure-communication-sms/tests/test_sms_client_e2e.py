@@ -6,9 +6,7 @@
 
 import os
 import pytest
-from azure.communication.sms import (
-    PhoneNumber, SendSmsOptions, SmsClient
-)
+from azure.communication.sms import SmsClient
 from _shared.testcase import (
     CommunicationTestCase,
     BodyReplacerProcessor,
@@ -34,13 +32,76 @@ class SMSClientTest(CommunicationTestCase):
         self.sms_client = SmsClient.from_connection_string(self.connection_str)
 
     @pytest.mark.live_test_only
-    def test_send_sms(self):
+    def test_send_sms_single(self):
 
         # calling send() with sms values
-        sms_response = self.sms_client.send(
-            from_phone_number=PhoneNumber(self.phone_number),
-            to_phone_numbers=[PhoneNumber(self.phone_number)],
+        sms_responses = self.sms_client.send(
+            from_=self.phone_number,
+            to=self.phone_number,
             message="Hello World via SMS",
-            send_sms_options=SendSmsOptions(enable_delivery_report=True))  # optional property
+            enable_delivery_report=True,  # optional property
+            tag="custom-tag")  # optional property
+        
+        assert len(sms_responses) is 1
 
+        for sms_response in sms_responses:
+            self.verify_sms_response(sms_response)
+    
+    @pytest.mark.live_test_only
+    def test_send_sms_multiple(self):
+
+        # calling send() with sms values
+        sms_responses = self.sms_client.send(
+            from_=self.phone_number,
+            to=[self.phone_number, self.phone_number],
+            message="Hello World via SMS",
+            enable_delivery_report=True,  # optional property
+            tag="custom-tag")  # optional property
+        
+        assert len(sms_responses) is 2
+
+        for sms_response in sms_responses:
+            self.verify_sms_response(sms_response)
+    
+    @pytest.mark.live_test_only
+    def test_send_sms_invalid_to_phone_number(self):
+
+        # calling send() with sms values
+        sms_responses = self.sms_client.send(
+            from_=self.phone_number,
+            to=["+1234567891011"],
+            message="Hello World via SMS",
+            enable_delivery_report=True,  # optional property
+            tag="custom-tag")  # optional property
+        
+        assert len(sms_responses) is 1
+
+        for sms_response in sms_responses:
+            assert sms_response.http_status_code == 400
+            assert not sms_response.successful
+    
+    @pytest.mark.live_test_only
+    def test_send_sms_unique_message_ids(self):
+
+        # calling send() with sms values
+        sms_responses_1 = self.sms_client.send(
+            from_=self.phone_number,
+            to=[self.phone_number],
+            message="Hello World via SMS")
+        
+        # calling send() again with the same sms values
+        sms_responses_2 = self.sms_client.send(
+            from_=self.phone_number,
+            to=[self.phone_number],
+            message="Hello World via SMS")
+        
+        # message ids should be unique due to having a different idempotency key
+        assert sms_responses_1[0].message_id != sms_responses_2[0].message_id
+
+    def verify_sms_response(self, sms_response):
+        assert sms_response.to == self.phone_number
         assert sms_response.message_id is not None
+        assert sms_response.http_status_code == 202
+        assert sms_response.error_message is None
+        assert sms_response.successful
+        

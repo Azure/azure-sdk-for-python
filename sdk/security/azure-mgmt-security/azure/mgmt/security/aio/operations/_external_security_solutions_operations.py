@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ExternalSecuritySolutionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,7 +44,7 @@ class ExternalSecuritySolutionsOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.ExternalSecuritySolutionList"]:
+    ) -> AsyncIterable["_models.ExternalSecuritySolutionList"]:
         """Gets a list of external security solutions for the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -52,7 +52,7 @@ class ExternalSecuritySolutionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.ExternalSecuritySolutionList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExternalSecuritySolutionList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExternalSecuritySolutionList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -110,7 +110,7 @@ class ExternalSecuritySolutionsOperations:
     def list_by_home_region(
         self,
         **kwargs
-    ) -> AsyncIterable["models.ExternalSecuritySolutionList"]:
+    ) -> AsyncIterable["_models.ExternalSecuritySolutionList"]:
         """Gets a list of external Security Solutions for the subscription and location.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -118,7 +118,7 @@ class ExternalSecuritySolutionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.ExternalSecuritySolutionList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExternalSecuritySolutionList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExternalSecuritySolutionList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -179,7 +179,7 @@ class ExternalSecuritySolutionsOperations:
         resource_group_name: str,
         external_security_solutions_name: str,
         **kwargs
-    ) -> "models.ExternalSecuritySolution":
+    ) -> "_models.ExternalSecuritySolution":
         """Gets a specific external Security Solution.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -192,7 +192,7 @@ class ExternalSecuritySolutionsOperations:
         :rtype: ~azure.mgmt.security.models.ExternalSecuritySolution
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExternalSecuritySolution"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExternalSecuritySolution"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

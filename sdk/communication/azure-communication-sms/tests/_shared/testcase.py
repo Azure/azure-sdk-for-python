@@ -52,12 +52,21 @@ class BodyReplacerProcessor(RecordingProcessor):
         return response
 
     def _replace_keys(self, body):
+        def _replace_recursively(obj):
+            if isinstance(obj, dict):
+                for key in obj:
+                    if key in self._keys:
+                        obj[key] = self._replacement
+                    else:
+                        _replace_recursively(obj[key])
+            elif isinstance(obj, list):
+                for i in obj:
+                    _replace_recursively(i)
+
         import json
         try:
             body = json.loads(body)
-            for key in self._keys:
-                if key in body:
-                    body[key] = self._replacement
+            _replace_recursively(body)
 
         except (KeyError, ValueError):
             return body

@@ -46,7 +46,7 @@ try:
     _libsecret.secret_password_lookup_sync.restype = ct.c_char_p
     _libsecret.secret_password_free.argtypes = [ct.c_char_p]
 except OSError:
-    _libsecret = None
+    _libsecret = None  # type: ignore
 
 
 def _get_user_settings_path():

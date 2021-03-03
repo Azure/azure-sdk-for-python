@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -16,6 +17,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -31,12 +33,14 @@ extends:
     ServiceDirectory: identity
     AdditionalTestMatrix:
       Linux_Python35_msal:
+        Pool: Azure Pipelines
         OSVmImage: 'ubuntu-18.04'
         PythonVersion: '3.5'
         CoverageArg: ''
         RunForPR: false
         InjectedPackages: 'git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev'
-          
+
+
     Artifacts:
-    - name: azure_identity
+    - name: azure-identity
       safeName: azureidentity

@@ -11,23 +11,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:23:23 GMT
+      - Fri, 18 Dec 2020 17:51:32 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:23:23 GMT
+      - Fri, 18 Dec 2020 17:51:32 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable4cf41027"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable4cf41027"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Sat, 07 Nov 2020 01:23:24 GMT
-      location: https://tablesteststorname.table.core.windows.net/Tables('uttable4cf41027')
+      date: Fri, 18 Dec 2020 17:51:33 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('uttable4cf41027')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -35,12 +35,12 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/Tables
+    url: https://seankaneprim.table.core.windows.net/Tables
 - request:
-    body: '{"test5@odata.type": "Edm.DateTime", "test5": "2020-11-07T01:23:24Z", "test3":
-      3, "PartitionKey": "001", "test": true, "RowKey": "batch_delete", "test4": 1234567890,
-      "RowKey@odata.type": "Edm.String", "test2@odata.type": "Edm.String", "test2":
-      "value", "PartitionKey@odata.type": "Edm.String"}'
+    body: '{"PartitionKey": "001", "PartitionKey@odata.type": "Edm.String", "RowKey":
+      "batch_delete", "RowKey@odata.type": "Edm.String", "test": true, "test2": "value",
+      "test2@odata.type": "Edm.String", "test3": 3, "test4": 1234567890, "test5":
+      "2020-12-18T17:51:33Z", "test5@odata.type": "Edm.DateTime"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -51,24 +51,24 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:23:24 GMT
+      - Fri, 18 Dec 2020 17:51:33 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:23:24 GMT
+      - Fri, 18 Dec 2020 17:51:33 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttable4cf41027
+    uri: https://fake_table_account.table.core.windows.net/uttable4cf41027
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttable4cf41027/@Element","odata.etag":"W/\"datetime''2020-11-07T01%3A23%3A25.0029842Z''\"","PartitionKey":"001","RowKey":"batch_delete","Timestamp":"2020-11-07T01:23:25.0029842Z","test5@odata.type":"Edm.DateTime","test5":"2020-11-07T01:23:24Z","test3":3,"test":true,"test4":1234567890,"test2":"value"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable4cf41027/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A51%3A33.7934658Z''\"","PartitionKey":"001","RowKey":"batch_delete","Timestamp":"2020-12-18T17:51:33.7934658Z","test":true,"test2":"value","test3":3,"test4":1234567890,"test5@odata.type":"Edm.DateTime","test5":"2020-12-18T17:51:33Z"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Sat, 07 Nov 2020 01:23:24 GMT
-      etag: W/"datetime'2020-11-07T01%3A23%3A25.0029842Z'"
-      location: https://tablesteststorname.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
+      date: Fri, 18 Dec 2020 17:51:33 GMT
+      etag: W/"datetime'2020-12-18T17%3A51%3A33.7934658Z'"
+      location: https://fake_table_account.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -76,7 +76,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/uttable4cf41027
+    url: https://seankaneprim.table.core.windows.net/uttable4cf41027
 - request:
     body: null
     headers:
@@ -85,23 +85,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:23:24 GMT
+      - Fri, 18 Dec 2020 17:51:33 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:23:24 GMT
+      - Fri, 18 Dec 2020 17:51:33 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://tablesteststorname.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
+    uri: https://fake_table_account.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttable4cf41027/@Element","odata.etag":"W/\"datetime''2020-11-07T01%3A23%3A25.0029842Z''\"","PartitionKey":"001","RowKey":"batch_delete","Timestamp":"2020-11-07T01:23:25.0029842Z","test5@odata.type":"Edm.DateTime","test5":"2020-11-07T01:23:24Z","test3":3,"test":true,"test4":1234567890,"test2":"value"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable4cf41027/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A51%3A33.7934658Z''\"","PartitionKey":"001","RowKey":"batch_delete","Timestamp":"2020-12-18T17:51:33.7934658Z","test":true,"test2":"value","test3":3,"test4":1234567890,"test5@odata.type":"Edm.DateTime","test5":"2020-12-18T17:51:33Z"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Sat, 07 Nov 2020 01:23:24 GMT
-      etag: W/"datetime'2020-11-07T01%3A23%3A25.0029842Z'"
+      date: Fri, 18 Dec 2020 17:51:33 GMT
+      etag: W/"datetime'2020-12-18T17%3A51%3A33.7934658Z'"
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -109,45 +109,49 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
+    url: https://seankaneprim.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
 - request:
-    body: "--batch_d4e56a4c-bfc6-46a2-b1fd-dbccfa7f09f1\r\nContent-Type: multipart/mixed;
-      boundary=changeset_985f4f95-756c-4244-acd2-719a1a1fadea\r\n\r\n--changeset_985f4f95-756c-4244-acd2-719a1a1fadea\r\nContent-Type:
-      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 0\r\n\r\nDELETE
-      https://tablestestxjz4vq7ewcdgud.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
-      HTTP/1.1\r\nIf-Match: *\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nAccept:
-      application/json;odata=minimalmetadata\r\nx-ms-date: Sat, 07 Nov 2020 01:23:24
-      GMT\r\nDate: Sat, 07 Nov 2020 01:23:24 GMT\r\nx-ms-client-request-id: d484dd3e-2097-11eb-9d63-58961df361d1\r\n\r\n\r\n--changeset_985f4f95-756c-4244-acd2-719a1a1fadea--\r\n\r\n--batch_d4e56a4c-bfc6-46a2-b1fd-dbccfa7f09f1--\r\n"
+    body: "--batch_8bb6dec3-30d8-48f8-8f76-5bc76cccce0c\r\nContent-Type: multipart/mixed;\
+      \ boundary=changeset_7f9216ca-3aac-472d-85ab-66effdc9c4f2\r\n\r\n--changeset_7f9216ca-3aac-472d-85ab-66effdc9c4f2\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 0\r\n\r\nDELETE https://seankaneprim.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nIf-Match:\
+      \ *\r\nAccept: application/json;odata=minimalmetadata\r\nx-ms-date: Fri, 18\
+      \ Dec 2020 17:51:33 GMT\r\nDate: Fri, 18 Dec 2020 17:51:33 GMT\r\nx-ms-client-request-id:\
+      \ aaa8e432-4159-11eb-8415-58961df361d1\r\n\r\n\r\n--changeset_7f9216ca-3aac-472d-85ab-66effdc9c4f2--\r\
+      \n\r\n--batch_8bb6dec3-30d8-48f8-8f76-5bc76cccce0c--\r\n"
     headers:
       Content-Length:
-      - '760'
+      - '748'
       Content-Type:
-      - multipart/mixed; boundary=batch_d4e56a4c-bfc6-46a2-b1fd-dbccfa7f09f1
+      - multipart/mixed; boundary=batch_8bb6dec3-30d8-48f8-8f76-5bc76cccce0c
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:23:24 GMT
+      - Fri, 18 Dec 2020 17:51:33 GMT
       MaxDataServiceVersion:
       - 3.0;NetFx
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:23:24 GMT
+      - Fri, 18 Dec 2020 17:51:33 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/$batch
+    uri: https://fake_table_account.table.core.windows.net/$batch
   response:
     body:
-      string: "--batchresponse_9d204cd9-b25b-4201-8789-3e145042a2b7\r\nContent-Type:
-        multipart/mixed; boundary=changesetresponse_713c3915-7ef8-4972-9e38-b216ba2c1527\r\n\r\n--changesetresponse_713c3915-7ef8-4972-9e38-b216ba2c1527\r\nContent-Type:
-        application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204
-        No Content\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-cache\r\nDataServiceVersion:
-        1.0;\r\n\r\n\r\n--changesetresponse_713c3915-7ef8-4972-9e38-b216ba2c1527--\r\n--batchresponse_9d204cd9-b25b-4201-8789-3e145042a2b7--\r\n"
+      string: "--batchresponse_6aea3b64-e570-43ec-871d-de29881c0073\r\nContent-Type:\
+        \ multipart/mixed; boundary=changesetresponse_bf52f0b5-cd86-40c9-9b25-556e052aebad\r\
+        \n\r\n--changesetresponse_bf52f0b5-cd86-40c9-9b25-556e052aebad\r\nContent-Type:\
+        \ application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204\
+        \ No Content\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-cache\r\
+        \nDataServiceVersion: 1.0;\r\n\r\n\r\n--changesetresponse_bf52f0b5-cd86-40c9-9b25-556e052aebad--\r\
+        \n--batchresponse_6aea3b64-e570-43ec-871d-de29881c0073--\r\n"
     headers:
       cache-control: no-cache
-      content-type: multipart/mixed; boundary=batchresponse_9d204cd9-b25b-4201-8789-3e145042a2b7
-      date: Sat, 07 Nov 2020 01:23:24 GMT
+      content-type: multipart/mixed; boundary=batchresponse_6aea3b64-e570-43ec-871d-de29881c0073
+      date: Fri, 18 Dec 2020 17:51:33 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -155,7 +159,7 @@ interactions:
     status:
       code: 202
       message: Accepted
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/$batch
+    url: https://seankaneprim.table.core.windows.net/$batch
 - request:
     body: null
     headers:
@@ -164,23 +168,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:23:24 GMT
+      - Fri, 18 Dec 2020 17:51:33 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:23:24 GMT
+      - Fri, 18 Dec 2020 17:51:33 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://tablesteststorname.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
+    uri: https://fake_table_account.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
   response:
     body:
       string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:664183ad-f002-0039-7aa4-b4b10b000000\nTime:2020-11-07T01:23:25.1630972Z"}}}'
+        specified resource does not exist.\nRequestId:885f1277-9002-006c-3266-d5488e000000\nTime:2020-12-18T17:51:34.1927482Z"}}}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Sat, 07 Nov 2020 01:23:24 GMT
+      date: Fri, 18 Dec 2020 17:51:34 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -188,34 +192,34 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
+    url: https://seankaneprim.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
 - request:
     body: null
     headers:
       Accept:
       - application/json
       Date:
-      - Sat, 07 Nov 2020 01:23:24 GMT
+      - Fri, 18 Dec 2020 17:51:33 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:23:24 GMT
+      - Fri, 18 Dec 2020 17:51:33 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablesteststorname.table.core.windows.net/Tables('uttable4cf41027')
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttable4cf41027')
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Sat, 07 Nov 2020 01:23:24 GMT
+      date: Fri, 18 Dec 2020 17:51:34 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/Tables('uttable4cf41027')
+    url: https://seankaneprim.table.core.windows.net/Tables('uttable4cf41027')
 version: 1
