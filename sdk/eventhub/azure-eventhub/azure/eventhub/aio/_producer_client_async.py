@@ -277,6 +277,12 @@ class EventHubProducerClient(ClientBaseAsync):
         """
         partition_id = kwargs.get("partition_id")
         partition_key = kwargs.get("partition_key")
+
+        if partition_key and not isinstance(partition_key, str):
+            _LOGGER.info("WARNING: Please DO NOT pass a partition_key of non-string type to the send_batch method."
+                         "The Event Hub service ignores partition_key of non-string type, "
+                         "in which case events will be assigned to all partitions using round-robin.")
+
         if isinstance(event_data_batch, EventDataBatch):
             if partition_id or partition_key:
                 raise TypeError("partition_id and partition_key should be None when sending an EventDataBatch "
@@ -336,6 +342,11 @@ class EventHubProducerClient(ClientBaseAsync):
         """
         if not self._max_message_size_on_link:
             await self._get_max_mesage_size()
+
+        if partition_key and not isinstance(partition_key, str):
+            _LOGGER.info("WARNING: Please DO NOT pass a partition_key of non-string type to the create_batch method."
+                         "The Event Hub service ignores partition_key of non-string type, "
+                         "in which case events will be assigned to all partitions using round-robin.")
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError(
