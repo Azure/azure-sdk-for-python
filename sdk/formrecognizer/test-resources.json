@@ -56,7 +56,7 @@
         },
         "blobResourceId": {
             "type": "string",
-            "defaultValue": "[resourceId(subscription().subscriptionId, 'TrainingData', 'Microsoft.Storage/storageAccounts', parameters('blobStorageAccount'))]"
+            "defaultValue": "[resourceId('TrainingData', 'Microsoft.Storage/storageAccounts', parameters('blobStorageAccount'))]"
         },
         "trainingDataSasProperties": {
             "type": "object",
