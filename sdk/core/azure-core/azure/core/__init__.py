@@ -30,12 +30,14 @@ __version__ = VERSION
 from ._pipeline_client import PipelineClient
 from ._match_conditions import MatchConditions
 from ._enum_meta import CaseInsensitiveEnumMeta
+from ._connection_string_parser import parse_connection_string_to_dict
 
 
 __all__ = [
     "PipelineClient",
     "MatchConditions",
-    "CaseInsensitiveEnumMeta"
+    "CaseInsensitiveEnumMeta",
+    "parse_connection_string_to_dict"
 ]
 
 try:
