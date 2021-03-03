@@ -12,28 +12,28 @@ class SystemEventNames(str, Enum):
     visit https://docs.microsoft.com/azure/event-grid/system-topics.
     """
 
-    ACSChatMemberAddedToThreadWithUserEventName = (
+    AcsChatMemberAddedToThreadWithUserEventName = (
         "Microsoft.Communication.ChatMemberAddedToThreadWithUser"
     )
-    ACSChatMemberRemovedFromThreadWithUserEventName = (
+    AcsChatMemberRemovedFromThreadWithUserEventName = (
         "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser"
     )
-    ACSChatMessageDeletedEventName = "Microsoft.Communication.ChatMessageDeleted"
-    ACSChatMessageEditedEventName = "Microsoft.Communication.ChatMessageEdited"
-    ACSChatMessageReceivedEventName = "Microsoft.Communication.ChatMessageReceived"
-    ACSChatThreadCreatedWithUserEventName = (
+    AcsChatMessageDeletedEventName = "Microsoft.Communication.ChatMessageDeleted"
+    AcsChatMessageEditedEventName = "Microsoft.Communication.ChatMessageEdited"
+    AcsChatMessageReceivedEventName = "Microsoft.Communication.ChatMessageReceived"
+    AcsChatThreadCreatedWithUserEventName = (
         "Microsoft.Communication.ChatThreadCreatedWithUser"
     )
-    ACSChatThreadPropertiesUpdatedPerUserEventName = (
+    AcsChatThreadPropertiesUpdatedPerUserEventName = (
         "Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser"
     )
-    ACSChatThreadWithUserDeletedEventName = (
+    AcsChatThreadWithUserDeletedEventName = (
         "Microsoft.Communication.ChatThreadWithUserDeleted"
     )
-    ACSSMSDeliveryReportReceivedEventName = (
+    AcsSmsDeliveryReportReceivedEventName = (
         "Microsoft.Communication.SMSDeliveryReportReceived"
     )
-    ACSSMSReceivedEventName = "Microsoft.Communication.SMSReceived"
+    AcsSmsReceivedEventName = "Microsoft.Communication.SMSReceived"
     AppConfigurationKeyValueDeletedEventName = (
         "Microsoft.AppConfiguration.KeyValueDeleted"
     )
@@ -142,6 +142,12 @@ class SystemEventNames(str, Enum):
     )
     ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = (
         "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener"
+    )
+    ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventName = (
+        "Microsoft.ServiceBus.DeadletterMessagesAvailablePeriodicNotifications"
+    )
+    ServiceBusActiveMessagesAvailablePeriodicNotificationsEventName = (
+        "Microsoft.ServiceBus.ActiveMessagesAvailablePeriodicNotifications"
     )
     StorageBlobCreatedEventName = "Microsoft.Storage.BlobCreated"
     StorageBlobDeletedEventName = "Microsoft.Storage.BlobDeleted"
