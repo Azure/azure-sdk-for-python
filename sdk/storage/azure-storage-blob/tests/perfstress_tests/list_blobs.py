@@ -12,7 +12,7 @@ class ListBlobsTest(_ContainerTest):
 
     async def global_setup(self):
         await super().global_setup()
-        pending = (asyncio.ensure_future(self.async_container_client.upload_blob("listtest" + str(i), data=b"")) for i in range(self.args.num_blobs))
+        pending = (asyncio.ensure_future(self.async_container_client.upload_blob("listtest" + str(i), data=b"")) for i in range(self.args.count))
         running = list(itertools.islice(pending, 16))
         while True:
             # Wait for some upload to finish before adding a new one
@@ -36,4 +36,4 @@ class ListBlobsTest(_ContainerTest):
     @staticmethod
     def add_arguments(parser):
         super(ListBlobsTest, ListBlobsTest).add_arguments(parser)
-        parser.add_argument('--num-blobs', nargs='?', type=int, help='Number of blobs to list. Defaults to 100', default=100)
+        parser.add_argument('-c', '--count', nargs='?', type=int, help='Number of blobs to list. Defaults to 100', default=100)
