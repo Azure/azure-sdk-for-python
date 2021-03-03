@@ -15,7 +15,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 03 Mar 2021 22:45:51 GMT
+      - Wed, 03 Mar 2021 22:45:46 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -23,24 +23,21 @@ interactions:
     method: POST
     uri: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
   response:
-    body: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
-      202, "repeatabilityResult": "accepted", "successful": true}]}'
+    body: '{"From": ["Invalid From phone number format"]}'
     headers:
-      api-supported-versions:
-      - 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 22:45:50 GMT
+      - Wed, 03 Mar 2021 22:45:46 GMT
       ms-cv:
-      - sJjXitM16U+HE7i0wYjAfg.0
+      - zIk5gQLY/EGvLDrK8fi37g.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 647ms
+      - 27ms
     status:
-      code: 202
-      message: Accepted
+      code: 400
+      message: Bad Request
 version: 1

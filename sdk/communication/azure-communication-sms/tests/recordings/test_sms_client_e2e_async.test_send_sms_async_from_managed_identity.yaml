@@ -1,13 +1,13 @@
 interactions:
 - request:
-    body: '{"from": "sanitized", "smsRecipients": [{"to": "sanitized"}], "message":
-      "Hello World via SMS", "smsSendOptions": {"enableDeliveryReport": true, "tag":
-      "custom-tag"}}'
+    body: '{"from": "sanitized", "smsRecipients": [{"to": "sanitized", "repeatabilityRequestId":
+      "sanitized", "repeatabilityFirstSent": "sanitized"}], "message": "Hello World
+      via SMS", "smsSendOptions": {"enableDeliveryReport": false}}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '172'
+      - '274'
       Content-Type:
       - application/json
       User-Agent:
@@ -16,16 +16,15 @@ interactions:
     uri: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
   response:
     body: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
-      202, "errorMessage": null, "repeatabilityResult": "accepted", "successful":
-      true}]}'
+      202, "repeatabilityResult": "accepted", "successful": true}]}'
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Fri, 19 Feb 2021 23:53:34 GMT
-      ms-cv: YVbyy8ilhUCYHPz1CtyXCg.0
+      date: Wed, 03 Mar 2021 22:46:04 GMT
+      ms-cv: gMxMLuAaM0uviVwMfssCHA.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 984ms
+      x-processing-time: 618ms
     status:
       code: 202
       message: Accepted
