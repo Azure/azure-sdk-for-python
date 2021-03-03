@@ -5,13 +5,13 @@ $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
 
-function Get-AllPackageInfoFromRepo ($serviceDirectoryName)
+function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
   $allPackageProps = @()
   $searchPath = "sdk/*/*/setup.py"
-  if ($serviceDirectoryName)
+  if ($serviceDirectory)
   {
-    $searchPath = "sdk/${serviceDirectoryName}/*/setup.py"
+    $searchPath = "sdk/${serviceDirectory}/*/setup.py"
   }
   Push-Location $RepoRoot
   $allSetupProps = $null
@@ -30,7 +30,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectoryName)
   foreach ($line in $allSetupProps)
   {
     $setupInfo = ($line -Split ",").Trim("()")
-    if ($setupInfo.Count < 3)
+    if ($setupInfo.Count -gt 4)
     {
       continue
     }
