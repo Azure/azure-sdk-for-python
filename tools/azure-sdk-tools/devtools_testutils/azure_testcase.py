@@ -360,21 +360,21 @@ class AzureTestCase(ReplayableTest):
 
         fake_value = kwargs.pop("fake_value", "fake_token_value")
         token = sas_func(*sas_func_pos_args, **kwargs)
-        url_safe_token = token.replace("/", u"%2F")
 
         fake_token = self._create_fake_token(token, fake_value)
 
-        self.scrubber.register_name_pair(url_safe_token, fake_token)
-        self.scrubber.register_name_pair(token, fake_token)
-
-        print()
-        print(url_safe_token)
-        print(fake_token)
+        self._register_encodings(token, fake_token)
 
         if self.is_live:
             return token
-
         return fake_token
+
+    def _register_encodings(self, token, fake_token):
+        self.scrubber.register_name_pair(token, fake_token)
+        url_safe_token = token.replace("/", u"%2F")
+        self.scrubber.register_name_pair(url_safe_token, fake_token)
+        async_token = token.replace(u"%3A", ":")
+        self.scrubber.register_name_pair(async_token, fake_token)
 
     def _create_fake_token(self, token, fake_value):
         parts = token.split("&")
