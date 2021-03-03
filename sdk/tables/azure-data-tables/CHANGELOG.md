@@ -2,6 +2,7 @@
 
 ## 12.0.0b5 (Unreleased)
 * Adds SAS credential as an authentication option
+* Bumps minimum requirement of `azure-core` to 1.10.0
 * Bumped minimum requirement of msrest from `0.6.10` to `0.6.19`.
 * Added support for datetime entities with milliseconds
 
