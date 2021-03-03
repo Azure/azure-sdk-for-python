@@ -1,4 +1,5 @@
 import os
+import sys
 from samples.runner import SampleRunner
 
 tenant_id = os.getenv("AZURE_TENANT_ID")
@@ -13,7 +14,7 @@ device_id = os.getenv("AZURE_DEVICE_ID")
 device_tag = device_id
 
 
-def sample_device_update():
+def sample_device_update(delete):
     print("Device Update for IoT Hub client library for Python sample")
     print()
 
@@ -27,11 +28,11 @@ def sample_device_update():
         storage_key,
         device_id,
         device_tag,
-        delete=False)
+        delete=delete)
     runner.run()
 
     print("Finished.")
 
 
 if __name__ == '__main__':
-    sample_device_update()
+    sample_device_update(sys.argv[1])
