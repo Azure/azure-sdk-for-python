@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 
 from datetime import datetime
-from azure.core import MatchConditions
+from azure.core import MatchConditions, parse_connection_string_to_dict
 
 def quote_etag(etag):
     if not etag or etag == "*":
@@ -41,21 +41,20 @@ def get_endpoint_from_connection_string(connection_string):
 
 def parse_connection_string(connection_string):
     # connection_string looks like Endpoint=https://xxxxx;Id=xxxxx;Secret=xxxx
-    segments = connection_string.split(";")
+    segments = parse_connection_string_to_dict(connection_string)
     if len(segments) != 3:
         raise ValueError("Invalid connection string.")
 
     endpoint = ""
     id_ = ""
     secret = ""
-    for segment in segments:
-        segment = segment.strip()
-        if segment.startswith("Endpoint"):
-            endpoint = str(segment[17:])
-        elif segment.startswith("Id"):
-            id_ = str(segment[3:])
-        elif segment.startswith("Secret"):
-            secret = str(segment[7:])
+    for key, value in segments.items():
+        if key == "Endpoint":
+            endpoint = value[8:]
+        elif key == "Id":
+            id_ = value
+        elif key == "Secret":
+            secret = value
         else:
             raise ValueError("Invalid connection string.")
 
