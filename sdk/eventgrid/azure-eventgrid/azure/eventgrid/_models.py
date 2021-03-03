@@ -6,8 +6,6 @@
 from typing import Any
 import datetime as dt
 import uuid
-import json
-import six
 from msrest.serialization import UTC
 from ._generated.models import (
     EventGridEvent as InternalEventGridEvent,
