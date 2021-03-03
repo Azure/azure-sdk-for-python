@@ -40,5 +40,5 @@ These options are available for all perf tests:
 
 ## Example command
 ```cmd
-(env) ~/azure-ai-textanalytics/tests/perfstress_tests> perfstress DetectLanguagePerfStressTest
+(env) ~/azure-ai-textanalytics/tests/perfstress_tests> perfstress DetectLanguagePerfStressTest --parallel=50 --warmup=1
 ```

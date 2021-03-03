@@ -26,6 +26,7 @@ class DetectLanguagePerfStressTest(PerfStressTest):
             endpoint=endpoint,
             credential=AzureKeyCredential(key),
         )
+        self.input = ["Detta är ett dokument skrivet på engelska."] * 1000
 
     async def close(self):
         """This is run after cleanup."""
@@ -35,8 +36,8 @@ class DetectLanguagePerfStressTest(PerfStressTest):
 
     def run_sync(self):
         """The synchronous perf test."""
-        self.service_client.detect_language(["This is in English"])
+        self.service_client.detect_language(self.input)
 
     async def run_async(self):
         """The asynchronous perf test."""
-        await self.async_service_client.detect_language(["This is in English"])
+        await self.async_service_client.detect_language(self.input)
