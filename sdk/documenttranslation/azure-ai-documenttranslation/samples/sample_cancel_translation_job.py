@@ -5,7 +5,7 @@
 # ------------------------------------
 
 
-def sample_cancel_job():
+def sample_cancel_translation_job():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
@@ -47,4 +47,4 @@ def sample_cancel_job():
 
 
 if __name__ == '__main__':
-    sample_cancel_job()
+    sample_cancel_translation_job()

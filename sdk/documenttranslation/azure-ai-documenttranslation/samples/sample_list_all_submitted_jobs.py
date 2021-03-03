@@ -5,7 +5,7 @@
 # ------------------------------------
 
 
-def sample_list_all_jobs():
+def sample_list_all_submitted_jobs():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
@@ -38,4 +38,4 @@ def sample_list_all_jobs():
 
 
 if __name__ == '__main__':
-    sample_list_all_jobs()
+    sample_list_all_submitted_jobs()
