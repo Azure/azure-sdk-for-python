@@ -1,3 +1,10 @@
+# coding: utf-8
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from azure.core.exceptions import ResourceNotFoundError
 from azure.iot.deviceupdate import DeviceUpdateClient
 from azure.iot.deviceupdate.models import *

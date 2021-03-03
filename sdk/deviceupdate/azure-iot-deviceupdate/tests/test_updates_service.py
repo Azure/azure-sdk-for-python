@@ -1,3 +1,11 @@
+# coding: utf-8
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+import pytest
 from azure.core.exceptions import ResourceNotFoundError
 from azure.iot.deviceupdate import DeviceUpdateClient
 from azure.iot.deviceupdate.models import *
@@ -186,6 +194,7 @@ class UpdatesClientTestCase(DeviceUpdateTest):
         except ResourceNotFoundError as e:
             self.assertEqual(404, e.status_code)
 
+    @pytest.mark.live_test_only
     @DeviceUpdatePowerShellPreparer()
     def test_get_operation(
         self,
