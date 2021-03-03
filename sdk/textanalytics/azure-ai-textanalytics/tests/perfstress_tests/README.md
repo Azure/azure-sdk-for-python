@@ -8,8 +8,8 @@ Start by creating a new virtual environment for your perf tests. This will need 
 The following environment variable will need to be set for the tests to access the live resources:
 
 ```
-TEXTANALYTICS_TEST_ENDPOINT=<text analytics service endpoint>
-TEXTANALYTICS_TEST_API_KEY=<text analytics API Key>
+AZURE_TEXT_ANALYTICS_ENDPOINT=<text analytics service endpoint>
+AZURE_TEXT_ANALYTICS_KEY=<text analytics API Key>
 ```
 
 ### Setup for perf test runs
