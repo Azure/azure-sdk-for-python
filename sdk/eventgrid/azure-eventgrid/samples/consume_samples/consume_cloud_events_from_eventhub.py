@@ -14,7 +14,7 @@ USAGE:
     3) EVENTHUB_NAME: The name of the eventhub account
 """
 import os
-
+import json
 from azure.core.messaging import CloudEvent
 from azure.eventhub import EventHubConsumerClient
 
@@ -23,10 +23,8 @@ EVENTHUB_NAME = os.environ["EVENTHUB_NAME"]
 
 
 def on_event(partition_context, event):
-
-    dict_event = event.body_as_json()[0]
-
-    dict_event = CloudEvent.from_dict(dict_event)
+ 
+    dict_event = CloudEvent.from_dict(json.loads(event)[0])
     print("data: {}\n".format(deserialized_event.data))
 
 consumer_client = EventHubConsumerClient.from_connection_string(
