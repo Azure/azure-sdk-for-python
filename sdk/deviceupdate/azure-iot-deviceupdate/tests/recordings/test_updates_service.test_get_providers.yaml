@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/updates/providers
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/updates/providers
   response:
     body:
       string: '{"value":["Contoso","Microsoft-Corporation","Test-Content"]}'
@@ -21,9 +21,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:10:38 GMT
+      - Wed, 03 Mar 2021 01:11:59 GMT
       traceparent:
-      - 00-091c087656a5264b81955da7564b36cf-d043a1bf2ee25d40-00
+      - 00-93c48f78b812004ebf4b2b7156895f96-5e9fd7c9a998fb4e-00
     status:
       code: 200
       message: OK

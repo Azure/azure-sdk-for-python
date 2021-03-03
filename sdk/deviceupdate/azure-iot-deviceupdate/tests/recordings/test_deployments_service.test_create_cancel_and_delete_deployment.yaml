@@ -1,9 +1,9 @@
 interactions:
 - request:
-    body: '{"deploymentId": "57a187b1fa104d0f98ad13e3812b53b5", "deploymentType":
+    body: '{"deploymentId": "4a98d39a066a47009de35e63f24d3223", "deploymentType":
       "Complete", "startDateTime": "2020-01-01T00:00:00.000Z", "deviceGroupType":
-      "DeviceGroupDefinitions", "deviceGroupDefinition": ["dpokluda-test"], "updateId":
-      {"provider": "Contoso", "name": "Virtual-Machine", "version": "2021.302.1202.48"}}'
+      "DeviceGroupDefinitions", "deviceGroupDefinition": ["fakeDeviceId"], "updateId":
+      {"provider": "Contoso", "name": "Virtual-Machine", "version": "fakeVersion"}}'
     headers:
       Accept:
       - application/json
@@ -16,16 +16,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: PUT
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deployments/57a187b1fa104d0f98ad13e3812b53b5
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/4a98d39a066a47009de35e63f24d3223
   response:
     body:
-      string: "{\r\n  \"deploymentId\": \"57a187b1fa104d0f98ad13e3812b53b5\",\r\n
+      string: "{\r\n  \"deploymentId\": \"4a98d39a066a47009de35e63f24d3223\",\r\n
         \ \"deploymentType\": \"Complete\",\r\n  \"startDateTime\": \"2020-01-01T00:00:00+00:00\",\r\n
         \ \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n  \"deviceGroupDefinition\":
-        [\r\n    \"dpokluda-test\"\r\n  ],\r\n  \"updateId\": {\r\n    \"provider\":
-        \"Contoso\",\r\n    \"name\": \"Virtual-Machine\",\r\n    \"version\": \"2021.302.1202.48\"\r\n
+        [\r\n    \"fakeDeviceId\"\r\n  ],\r\n  \"updateId\": {\r\n    \"provider\":
+        \"Contoso\",\r\n    \"name\": \"Virtual-Machine\",\r\n    \"version\": \"fakeVersion\"\r\n
         \ },\r\n  \"isCanceled\": false,\r\n  \"isCompleted\": false,\r\n  \"isRetry\":
         false\r\n}"
     headers:
@@ -34,9 +34,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:10:59 GMT
+      - Wed, 03 Mar 2021 01:11:27 GMT
       traceparent:
-      - 00-60002418c6ef7244be70722a77d83e66-b50c01821235da46-00
+      - 00-361a3984e142214cb1bf1bcaf90adf97-80df93b813262f44-00
     status:
       code: 200
       message: OK
@@ -50,16 +50,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deployments/57a187b1fa104d0f98ad13e3812b53b5
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/4a98d39a066a47009de35e63f24d3223
   response:
     body:
-      string: "{\r\n  \"deploymentId\": \"57a187b1fa104d0f98ad13e3812b53b5\",\r\n
+      string: "{\r\n  \"deploymentId\": \"4a98d39a066a47009de35e63f24d3223\",\r\n
         \ \"deploymentType\": \"Complete\",\r\n  \"startDateTime\": \"2020-01-01T00:00:00+00:00\",\r\n
         \ \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n  \"deviceGroupDefinition\":
-        [\r\n    \"dpokluda-test\"\r\n  ],\r\n  \"updateId\": {\r\n    \"provider\":
-        \"Contoso\",\r\n    \"name\": \"Virtual-Machine\",\r\n    \"version\": \"2021.302.1202.48\"\r\n
+        [\r\n    \"fakeDeviceId\"\r\n  ],\r\n  \"updateId\": {\r\n    \"provider\":
+        \"Contoso\",\r\n    \"name\": \"Virtual-Machine\",\r\n    \"version\": \"fakeVersion\"\r\n
         \ },\r\n  \"isCanceled\": false,\r\n  \"isCompleted\": false,\r\n  \"isRetry\":
         false\r\n}"
     headers:
@@ -68,9 +68,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:10:59 GMT
+      - Wed, 03 Mar 2021 01:11:27 GMT
       traceparent:
-      - 00-1ef68633acdfba4f8ed008a77e7a9c69-6c973aa3257d7646-00
+      - 00-9cfddd2c0abd994b9e193fc9b5802b15-d0e9528ce80a1a46-00
     status:
       code: 200
       message: OK
@@ -84,9 +84,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deployments/57a187b1fa104d0f98ad13e3812b53b5/status
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/4a98d39a066a47009de35e63f24d3223/status
   response:
     body:
       string: "{\r\n  \"deploymentState\": \"Active\",\r\n  \"totalDevices\": 0,\r\n
@@ -100,9 +100,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:10:59 GMT
+      - Wed, 03 Mar 2021 01:11:27 GMT
       traceparent:
-      - 00-d10e61ec583e86438fee41d736131ab4-e3a4ee7429d0fb49-00
+      - 00-f8655e61b8a688459a79567fd2abeb3a-f7d78ec69e9f684e-00
     status:
       code: 200
       message: OK
@@ -118,16 +118,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deployments/57a187b1fa104d0f98ad13e3812b53b5?action=cancel
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/4a98d39a066a47009de35e63f24d3223?action=cancel
   response:
     body:
-      string: "{\r\n  \"deploymentId\": \"57a187b1fa104d0f98ad13e3812b53b5\",\r\n
+      string: "{\r\n  \"deploymentId\": \"4a98d39a066a47009de35e63f24d3223\",\r\n
         \ \"deploymentType\": \"Complete\",\r\n  \"startDateTime\": \"2020-01-01T00:00:00+00:00\",\r\n
         \ \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n  \"deviceGroupDefinition\":
-        [\r\n    \"dpokluda-test\"\r\n  ],\r\n  \"updateId\": {\r\n    \"provider\":
-        \"Contoso\",\r\n    \"name\": \"Virtual-Machine\",\r\n    \"version\": \"2021.302.1202.48\"\r\n
+        [\r\n    \"fakeDeviceId\"\r\n  ],\r\n  \"updateId\": {\r\n    \"provider\":
+        \"Contoso\",\r\n    \"name\": \"Virtual-Machine\",\r\n    \"version\": \"fakeVersion\"\r\n
         \ },\r\n  \"isCanceled\": true,\r\n  \"isCompleted\": false,\r\n  \"isRetry\":
         false\r\n}"
     headers:
@@ -136,9 +136,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:10:59 GMT
+      - Wed, 03 Mar 2021 01:11:27 GMT
       traceparent:
-      - 00-a4b6a61c936bd3409d557b4dbab46dc5-1e03bfb50d69dd46-00
+      - 00-4ec5798071adc446b8455bafed92659f-fd73a42ae3a80040-00
     status:
       code: 200
       message: OK
@@ -154,9 +154,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: DELETE
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deployments/57a187b1fa104d0f98ad13e3812b53b5
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/4a98d39a066a47009de35e63f24d3223
   response:
     body:
       string: ''
@@ -164,9 +164,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 02 Mar 2021 21:11:00 GMT
+      - Wed, 03 Mar 2021 01:11:28 GMT
       traceparent:
-      - 00-011e04647f066a45a91733f026cb7c56-fcd123072a542840-00
+      - 00-b4e55e0b7fd04d42b46925106f7f6573-4ff4ba0463297f4e-00
     status:
       code: 200
       message: OK
@@ -180,22 +180,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deployments/57a187b1fa104d0f98ad13e3812b53b5
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/4a98d39a066a47009de35e63f24d3223
   response:
     body:
       string: "{\r\n  \"type\": \"https://tools.ietf.org/html/rfc7231#section-6.5.4\",\r\n
-        \ \"title\": \"Not Found\",\r\n  \"status\": 404,\r\n  \"traceId\": \"00-c99c4bd523cc4349a99e71b83a351c8b-ac38253fcdb2e447-00\"\r\n}"
+        \ \"title\": \"Not Found\",\r\n  \"status\": 404,\r\n  \"traceId\": \"00-56a614682cf15749a2787be1082e35ed-38e1f87b35a37544-00\"\r\n}"
     headers:
       content-length:
       - '183'
       content-type:
       - application/problem+json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:11:00 GMT
+      - Wed, 03 Mar 2021 01:11:28 GMT
       traceparent:
-      - 00-c99c4bd523cc4349a99e71b83a351c8b-235885e33eefff40-00
+      - 00-56a614682cf15749a2787be1082e35ed-213bb8e775d77544-00
     status:
       code: 404
       message: Not Found

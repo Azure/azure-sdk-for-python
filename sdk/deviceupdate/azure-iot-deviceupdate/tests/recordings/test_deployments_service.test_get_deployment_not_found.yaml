@@ -9,22 +9,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deployments/foo
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/foo
   response:
     body:
       string: "{\r\n  \"type\": \"https://tools.ietf.org/html/rfc7231#section-6.5.4\",\r\n
-        \ \"title\": \"Not Found\",\r\n  \"status\": 404,\r\n  \"traceId\": \"00-71cb58a788459e4f835347e4594de3a4-261c8c89814fe444-00\"\r\n}"
+        \ \"title\": \"Not Found\",\r\n  \"status\": 404,\r\n  \"traceId\": \"00-0761d2e4b08a73409861fdd5633ffe4f-2817708819695844-00\"\r\n}"
     headers:
       content-length:
       - '183'
       content-type:
       - application/problem+json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:11:02 GMT
+      - Wed, 03 Mar 2021 01:11:33 GMT
       traceparent:
-      - 00-71cb58a788459e4f835347e4594de3a4-33f4e38177d0284e-00
+      - 00-0761d2e4b08a73409861fdd5633ffe4f-f510cb1a6422f945-00
     status:
       code: 404
       message: Not Found

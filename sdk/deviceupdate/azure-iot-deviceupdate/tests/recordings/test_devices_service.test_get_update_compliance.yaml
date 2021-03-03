@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/updatecompliance
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/updatecompliance
   response:
     body:
       string: "{\r\n  \"totalDeviceCount\": 4,\r\n  \"onLatestUpdateDeviceCount\":
@@ -23,9 +23,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:10:54 GMT
+      - Wed, 03 Mar 2021 01:11:52 GMT
       traceparent:
-      - 00-8eae2daa4ea9c345b868e1887f7ea4b2-c74f69957f822240-00
+      - 00-77400076334f7043907b204aa55fad12-8f8b4b6a5f53c246-00
     status:
       code: 200
       message: OK

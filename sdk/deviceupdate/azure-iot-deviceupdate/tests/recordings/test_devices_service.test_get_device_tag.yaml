@@ -9,21 +9,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/devicetags/dpokluda-test
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/devicetags/fakeDeviceId
   response:
     body:
-      string: '{"tagName":"dpokluda-test","deviceCount":1}'
+      string: '{"tagName":"fakeDeviceId","deviceCount":1}'
     headers:
       content-length:
       - '43'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:10:51 GMT
+      - Wed, 03 Mar 2021 01:11:46 GMT
       traceparent:
-      - 00-1f0fe9154fa7f74fb00b22d9b9f7245e-d32384d3d3d2404a-00
+      - 00-0fbefb658ad3d74b86f9780199ab31c4-4b548fb155adcc4b-00
     status:
       code: 200
       message: OK

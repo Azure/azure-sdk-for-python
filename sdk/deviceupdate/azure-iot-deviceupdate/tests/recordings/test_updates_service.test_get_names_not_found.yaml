@@ -9,22 +9,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/updates/providers/foo/names
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/updates/providers/foo/names
   response:
     body:
       string: '{"type":"https://tools.ietf.org/html/rfc7231#section-6.5.4","title":"Not
-        Found","status":404,"traceId":"00-e5779deb4cadaa4ba67e77816c630181-20daf2c615511942-00"}'
+        Found","status":404,"traceId":"00-5da7f9be444ba0459a47a6bb3f63f1de-956ff8319bbcf144-00"}'
     headers:
       content-length:
       - '161'
       content-type:
       - application/problem+json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:10:36 GMT
+      - Wed, 03 Mar 2021 01:11:57 GMT
       traceparent:
-      - 00-e5779deb4cadaa4ba67e77816c630181-5a552182756c3141-00
+      - 00-5da7f9be444ba0459a47a6bb3f63f1de-49c8d23bfbde7e44-00
     status:
       code: 404
       message: Not Found

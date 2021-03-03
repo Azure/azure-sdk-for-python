@@ -9,24 +9,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deviceclasses/b83e3c87fbf98063c20c3269f1c9e58d255906dd
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deviceclasses/fakeDeviceClassId
   response:
     body:
-      string: "{\r\n  \"deviceClassId\": \"b83e3c87fbf98063c20c3269f1c9e58d255906dd\",\r\n
-        \ \"manufacturer\": \"Contoso\",\r\n  \"model\": \"Virtual-Machine\",\r\n
-        \ \"bestCompatibleUpdateId\": {\r\n    \"provider\": \"Contoso\",\r\n    \"name\":
-        \"Virtual-Machine\",\r\n    \"version\": \"2021.302.1307.58\"\r\n  }\r\n}"
+      string: "{\r\n  \"deviceClassId\": \"fakeDeviceClassId\",\r\n  \"manufacturer\":
+        \"Contoso\",\r\n  \"model\": \"Virtual-Machine\",\r\n  \"bestCompatibleUpdateId\":
+        {\r\n    \"provider\": \"Contoso\",\r\n    \"name\": \"Virtual-Machine\",\r\n
+        \   \"version\": \"2021.302.1323.55\"\r\n  }\r\n}"
     headers:
       content-length:
       - '260'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:10:49 GMT
+      - Wed, 03 Mar 2021 01:11:40 GMT
       traceparent:
-      - 00-7d3c86de4bbc5c4bb54956be42078f11-40869e097f7e074d-00
+      - 00-21c7ecc69f96e74296f8267cf69c55f2-c1308c49b8baf14c-00
     status:
       code: 200
       message: OK

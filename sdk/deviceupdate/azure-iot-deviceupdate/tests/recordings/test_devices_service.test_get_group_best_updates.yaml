@@ -9,14 +9,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/groups/dpokluda-test/bestUpdates
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/groups/fakeDeviceId/bestUpdates
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"updateId\": {\r\n        \"provider\":
         \"Contoso\",\r\n        \"name\": \"Virtual-Machine\",\r\n        \"version\":
-        \"2021.302.1304.12\"\r\n      },\r\n      \"deviceCount\": 1\r\n    }\r\n
+        \"2021.302.1323.55\"\r\n      },\r\n      \"deviceCount\": 1\r\n    }\r\n
         \ ]\r\n}"
     headers:
       content-length:
@@ -24,9 +24,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:10:52 GMT
+      - Wed, 03 Mar 2021 01:11:48 GMT
       traceparent:
-      - 00-a9bdc4329b3d9d489cc385c1922d479e-ff9a0bd90a41f845-00
+      - 00-640c41855b9b4e4090c5659d21f1912f-94975bf222088449-00
     status:
       code: 200
       message: OK

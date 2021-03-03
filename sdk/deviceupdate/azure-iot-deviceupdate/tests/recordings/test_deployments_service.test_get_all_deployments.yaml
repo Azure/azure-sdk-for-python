@@ -9,15 +9,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deployments
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments
   response:
     body:
-      string: "{\r\n  \"value\": [\r\n    {\r\n      \"deploymentId\": \"dpokluda-test-2021-209-1525-54\",\r\n
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"deploymentId\": \"fakeDeviceId-2021-209-1525-54\",\r\n
         \     \"deploymentType\": \"Complete\",\r\n      \"startDateTime\": \"2021-02-09T23:28:38.8516717+00:00\",\r\n
         \     \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\":
-        [\r\n        \"dpokluda-test\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
+        [\r\n        \"fakeDeviceId\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
         \"Contoso\",\r\n        \"name\": \"Virtual-Machine\",\r\n        \"version\":
         \"2021.209.1525.54\"\r\n      },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\":
         false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\":
@@ -415,7 +415,7 @@ interactions:
         \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
         \       \"name\": \"RefDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
         \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
-        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"dpokluda-test-3-2021-214-1709-51\",\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"fakeDeviceId-3-2021-214-1709-51\",\r\n
         \     \"deploymentType\": \"Complete\",\r\n      \"startDateTime\": \"2021-02-15T01:11:55.2804612+00:00\",\r\n
         \     \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\":
         [\r\n        \"my-test\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
@@ -718,16 +718,16 @@ interactions:
         \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Microsoft-Corporation\",\r\n
         \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"12508.46001\"\r\n
         \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
-        \     \"isRetry\": false\r\n    }\r\n  ],\r\n  \"nextLink\": \"/deviceupdate/blue/v2/management/deployments?$top=100&$skipToken=%5B%7B%22token%22%3A%22%2BRID%3A%7EBYwRANEj9L55AAAAAAAAAA%3D%3D%23RT%3A1%23TRC%3A100%23ISV%3A2%23IEO%3A65567%23QCF%3A3%23FPC%3AAgEAAAAUAHkAAO73fff37v%2F%2Ff3f%2FvXf%2FHwEA%22%2C%22range%22%3A%7B%22min%22%3A%22%22%2C%22max%22%3A%22FF%22%7D%7D%5D\"\r\n}"
+        \     \"isRetry\": false\r\n    }\r\n  ],\r\n  \"nextLink\": \"/deviceupdate/blue/v2/management/deployments?$top=100&$skipToken=%5B%7B%22token%22%3A%22%2BRID%3A%7EBYwRANEj9L55AAAAAAAAAA%3D%3D%23RT%3A1%23TRC%3A100%23ISV%3A2%23IEO%3A65567%23QCF%3A3%23FPC%3AAgEAAAAUAHkAAO73fff37v%2F%2Ff3f%2FvXf%2FHwkA%22%2C%22range%22%3A%7B%22min%22%3A%22%22%2C%22max%22%3A%22FF%22%7D%7D%5D\"\r\n}"
     headers:
       content-length:
       - '62575'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:11:00 GMT
+      - Wed, 03 Mar 2021 01:11:29 GMT
       traceparent:
-      - 00-81ef2cff8b8109499d6812021805067a-4aa998ebb6660a44-00
+      - 00-303885cb0600cf488d65ddf0a05bf816-d37de9ba0fc62243-00
     status:
       code: 200
       message: OK
@@ -741,9 +741,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deployments?$top=100&$skipToken=%5B%7B%22token%22%3A%22%2BRID%3A~BYwRANEj9L55AAAAAAAAAA%3D%3D%23RT%3A1%23TRC%3A100%23ISV%3A2%23IEO%3A65567%23QCF%3A3%23FPC%3AAgEAAAAUAHkAAO73fff37v%2F%2Ff3f%2FvXf%2FHwEA%22%2C%22range%22%3A%7B%22min%22%3A%22%22%2C%22max%22%3A%22FF%22%7D%7D%5D
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments?$top=100&$skipToken=%5B%7B%22token%22%3A%22%2BRID%3A~BYwRANEj9L55AAAAAAAAAA%3D%3D%23RT%3A1%23TRC%3A100%23ISV%3A2%23IEO%3A65567%23QCF%3A3%23FPC%3AAgEAAAAUAHkAAO73fff37v%2F%2Ff3f%2FvXf%2FHwkA%22%2C%22range%22%3A%7B%22min%22%3A%22%22%2C%22max%22%3A%22FF%22%7D%7D%5D
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"deploymentId\": \"[ManagementE2ETest]
@@ -1178,10 +1178,10 @@ interactions:
         \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
         \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3779.1\"\r\n
         \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
-        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"dpokluda-test-2021-301-1926-8\",\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"fakeDeviceId-2021-301-1926-8\",\r\n
         \     \"deploymentType\": \"Complete\",\r\n      \"startDateTime\": \"2021-03-02T03:28:49.3990566+00:00\",\r\n
         \     \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\":
-        [\r\n        \"dpokluda-test\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
+        [\r\n        \"fakeDeviceId\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
         \"Contoso\",\r\n        \"name\": \"Virtual-Machine\",\r\n        \"version\":
         \"2021.301.1926.8\"\r\n      },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\":
         false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\":
@@ -1438,42 +1438,42 @@ interactions:
         \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"ADUTeam\",\r\n
         \       \"name\": \"E2ETestDevice\",\r\n        \"version\": \"1.0.3750.1\"\r\n
         \     },\r\n      \"isCanceled\": true,\r\n      \"isCompleted\": false,\r\n
-        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"dpokluda-test-2021-302-914-51\",\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"fakeDeviceId-2021-302-914-51\",\r\n
         \     \"deploymentType\": \"Complete\",\r\n      \"startDateTime\": \"2021-03-02T17:17:30.1735411+00:00\",\r\n
         \     \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\":
         [\r\n        \"my-test\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
         \"Contoso\",\r\n        \"name\": \"Virtual-Machine\",\r\n        \"version\":
         \"2021.302.914.51\"\r\n      },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\":
         false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\":
-        \"dpokluda-test2-2021-302-1045-44\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \"fakeDeviceId2-2021-302-1045-44\",\r\n      \"deploymentType\": \"Complete\",\r\n
         \     \"startDateTime\": \"2021-03-02T18:48:23.2921109+00:00\",\r\n      \"deviceGroupType\":
         \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\": [\r\n        \"my-test\"\r\n
         \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Contoso\",\r\n
         \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"2021.302.1045.44\"\r\n
         \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
-        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"dpokluda-test2-2021-302-1048-57\",\r\n
+        \     \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\": \"fakeDeviceId2-2021-302-1048-57\",\r\n
         \     \"deploymentType\": \"Complete\",\r\n      \"startDateTime\": \"2021-03-02T18:51:35.4129264+00:00\",\r\n
         \     \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\":
         [\r\n        \"my-test\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
         \"Contoso\",\r\n        \"name\": \"Virtual-Machine\",\r\n        \"version\":
         \"2021.302.1048.57\"\r\n      },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\":
         false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\":
-        \"dpokluda-test-2021-302-1202-48\",\r\n      \"deploymentType\": \"Complete\",\r\n
-        \     \"startDateTime\": \"2021-03-02T20:04:52.8525661+00:00\",\r\n      \"deviceGroupType\":
-        \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\": [\r\n        \"dpokluda-test\"\r\n
-        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Contoso\",\r\n
-        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"2021.302.1202.48\"\r\n
-        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
-        \     \"isRetry\": false\r\n    }\r\n  ],\r\n  \"nextLink\": \"/deviceupdate/blue/v2/management/deployments?$top=100&$skipToken=%5B%7B%22token%22%3A%22%2BRID%3A%7EBYwRANEj9L7sAAAAAAAAAA%3D%3D%23RT%3A2%23TRC%3A200%23ISV%3A2%23IEO%3A65567%23QCF%3A3%23FPC%3AAgEAAAAEAOyAAIA%3D%22%2C%22range%22%3A%7B%22min%22%3A%22%22%2C%22max%22%3A%22FF%22%7D%7D%5D\"\r\n}"
+        \"fakeDeploymentId\",\r\n      \"deploymentType\": \"Complete\",\r\n      \"startDateTime\":
+        \"2021-03-02T20:04:52.8525661+00:00\",\r\n      \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n
+        \     \"deviceGroupDefinition\": [\r\n        \"fakeDeviceId\"\r\n      ],\r\n
+        \     \"updateId\": {\r\n        \"provider\": \"Contoso\",\r\n        \"name\":
+        \"Virtual-Machine\",\r\n        \"version\": \"fakeVersion\"\r\n      },\r\n
+        \     \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n      \"isRetry\":
+        false\r\n    }\r\n  ],\r\n  \"nextLink\": \"/deviceupdate/blue/v2/management/deployments?$top=100&$skipToken=%5B%7B%22token%22%3A%22%2BRID%3A%7EBYwRANEj9L7sAAAAAAAAAA%3D%3D%23RT%3A2%23TRC%3A200%23ISV%3A2%23IEO%3A65567%23QCF%3A3%23FPC%3AAgEAAAAGAOyAAcAJAA%3D%3D%22%2C%22range%22%3A%7B%22min%22%3A%22%22%2C%22max%22%3A%22FF%22%7D%7D%5D\"\r\n}"
     headers:
       content-length:
-      - '61729'
+      - '61735'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:11:00 GMT
+      - Wed, 03 Mar 2021 01:11:29 GMT
       traceparent:
-      - 00-532ddbfa941b1a4ea38dbdc47e25c9fa-d8e0ff843c7c7f4c-00
+      - 00-470db66adbfbbf459f19382ed60e284f-cceaa2a10521a44d-00
     status:
       code: 200
       message: OK
@@ -1487,27 +1487,34 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/deployments?$top=100&$skipToken=%5B%7B%22token%22%3A%22%2BRID%3A~BYwRANEj9L7sAAAAAAAAAA%3D%3D%23RT%3A2%23TRC%3A200%23ISV%3A2%23IEO%3A65567%23QCF%3A3%23FPC%3AAgEAAAAEAOyAAIA%3D%22%2C%22range%22%3A%7B%22min%22%3A%22%22%2C%22max%22%3A%22FF%22%7D%7D%5D
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments?$top=100&$skipToken=%5B%7B%22token%22%3A%22%2BRID%3A~BYwRANEj9L7sAAAAAAAAAA%3D%3D%23RT%3A2%23TRC%3A200%23ISV%3A2%23IEO%3A65567%23QCF%3A3%23FPC%3AAgEAAAAGAOyAAcAJAA%3D%3D%22%2C%22range%22%3A%7B%22min%22%3A%22%22%2C%22max%22%3A%22FF%22%7D%7D%5D
   response:
     body:
-      string: "{\r\n  \"value\": [\r\n    {\r\n      \"deploymentId\": \"dpokluda-test.2021-302-1304-12\",\r\n
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"deploymentId\": \"fakeDeviceId.2021-302-1304-12\",\r\n
         \     \"deploymentType\": \"Complete\",\r\n      \"startDateTime\": \"2021-03-02T21:06:15.224255+00:00\",\r\n
         \     \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\":
-        [\r\n        \"dpokluda-test\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
+        [\r\n        \"fakeDeviceId\"\r\n      ],\r\n      \"updateId\": {\r\n        \"provider\":
         \"Contoso\",\r\n        \"name\": \"Virtual-Machine\",\r\n        \"version\":
         \"2021.302.1304.12\"\r\n      },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\":
-        false,\r\n      \"isRetry\": false\r\n    }\r\n  ]\r\n}"
+        false,\r\n      \"isRetry\": false\r\n    },\r\n    {\r\n      \"deploymentId\":
+        \"fakeDeviceId-2021-302-1323-55\",\r\n      \"deploymentType\": \"Complete\",\r\n
+        \     \"startDateTime\": \"2021-03-02T21:25:58.9268903+00:00\",\r\n      \"deviceGroupType\":
+        \"DeviceGroupDefinitions\",\r\n      \"deviceGroupDefinition\": [\r\n        \"fakeDeviceId\"\r\n
+        \     ],\r\n      \"updateId\": {\r\n        \"provider\": \"Contoso\",\r\n
+        \       \"name\": \"Virtual-Machine\",\r\n        \"version\": \"2021.302.1323.55\"\r\n
+        \     },\r\n      \"isCanceled\": false,\r\n      \"isCompleted\": false,\r\n
+        \     \"isRetry\": false\r\n    }\r\n  ]\r\n}"
     headers:
       content-length:
-      - '531'
+      - '1041'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:11:00 GMT
+      - Wed, 03 Mar 2021 01:11:29 GMT
       traceparent:
-      - 00-259d95163dbdef4cbfa0c77d0c806473-6090c67ff754fa4d-00
+      - 00-477042e10123d64f99ae82583c9115ce-2b7e1d18a3e1ec47-00
     status:
       code: 200
       message: OK

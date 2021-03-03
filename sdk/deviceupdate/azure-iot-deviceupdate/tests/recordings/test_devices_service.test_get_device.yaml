@@ -9,21 +9,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/management/devices/dpokluda-test
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/devices/fakeDeviceId
   response:
     body:
-      string: '{"deviceId":"dpokluda-test","moduleId":null,"deviceClassId":"b83e3c87fbf98063c20c3269f1c9e58d255906dd","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"2021.302.1304.12"},"installedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"2021.302.1304.12"},"onLatestUpdate":false,"deploymentStatus":"Succeeded","groupId":"dpokluda-test","lastDeploymentId":"dpokluda-test.2021-302-1304-12"}'
+      string: '{"deviceId":"fakeDeviceId","moduleId":null,"deviceClassId":"fakeDeviceClassId","manufacturer":"Contoso","model":"Virtual-Machine","lastAttemptedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"fakeVersion"},"installedUpdateId":{"provider":"Contoso","name":"Virtual-Machine","version":"2021.302.1304.12"},"onLatestUpdate":false,"deploymentStatus":"InProgress","groupId":"fakeDeviceId","lastDeploymentId":"202fb59607c346cdb6bff3143668d86b"}'
     headers:
       content-length:
-      - '484'
+      - '487'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 21:10:47 GMT
+      - Wed, 03 Mar 2021 01:11:39 GMT
       traceparent:
-      - 00-0cdb6324e1903349993a639f83fb80b1-a4ecd7a763e55740-00
+      - 00-1e4e9a5a5c73e042b3e9b68360f81e3e-84a4fd88599a8541-00
     status:
       code: 200
       message: OK

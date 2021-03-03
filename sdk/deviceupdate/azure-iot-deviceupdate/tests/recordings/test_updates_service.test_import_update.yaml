@@ -15,9 +15,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://contosoprodwus2.api.prod.adu.microsoft.com/deviceupdate/blue/v2/updates?action=import
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/updates?action=import
   response:
     body:
       string: ''
@@ -25,13 +25,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 02 Mar 2021 21:10:41 GMT
+      - Wed, 03 Mar 2021 01:12:04 GMT
       location:
-      - /deviceupdate/blue/updates/operations/85e8009b-81e9-43f9-9e37-89843e98caa8?api-version=2
+      - /deviceupdate/blue/updates/operations/e852b3bd-6eb5-447c-a693-dff8cba930a6?api-version=2
       operation-location:
-      - /deviceupdate/blue/updates/operations/85e8009b-81e9-43f9-9e37-89843e98caa8?api-version=2
+      - /deviceupdate/blue/updates/operations/e852b3bd-6eb5-447c-a693-dff8cba930a6?api-version=2
       traceparent:
-      - 00-343e8aacc37d554f863cff98900f9940-701c73febf19b541-00
+      - 00-1de4bdf8f5d4b44c91931d615a6ace15-8c65c8ac0218a940-00
     status:
       code: 202
       message: Accepted
