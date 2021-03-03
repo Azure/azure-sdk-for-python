@@ -25,6 +25,7 @@
 from typing import Any, Dict, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
 
 import six
+from azure.core import parse_connection_string_to_dict
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
@@ -39,10 +40,7 @@ __all__ = ("CosmosClient",)
 
 def _parse_connection_str(conn_str, credential):
     # type: (str, Optional[Any]) -> Dict[str, str]
-    conn_str = conn_str.rstrip(";")
-    conn_settings = dict(  # type: ignore  # pylint: disable=consider-using-dict-comprehension
-        s.split("=", 1) for s in conn_str.split(";")
-    )
+    conn_settings = parse_connection_string_to_dict(conn_str)
     if 'AccountEndpoint' not in conn_settings:
         raise ValueError("Connection string missing setting 'AccountEndpoint'.")
     if not credential and 'AccountKey' not in conn_settings:
