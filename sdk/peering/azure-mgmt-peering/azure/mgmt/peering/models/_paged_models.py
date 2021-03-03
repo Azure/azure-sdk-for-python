@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class CdnPeeringPrefixPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`CdnPeeringPrefix <azure.mgmt.peering.models.CdnPeeringPrefix>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[CdnPeeringPrefix]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(CdnPeeringPrefixPaged, self).__init__(*args, **kwargs)
 class PeeringPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Peering <azure.mgmt.peering.models.Peering>` object
@@ -90,6 +103,19 @@ class PeeringRegisteredPrefixPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PeeringRegisteredPrefixPaged, self).__init__(*args, **kwargs)
+class PeeringReceivedRoutePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PeeringReceivedRoute <azure.mgmt.peering.models.PeeringReceivedRoute>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PeeringReceivedRoute]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PeeringReceivedRoutePaged, self).__init__(*args, **kwargs)
 class PeeringServiceCountryPaged(Paged):
     """
     A paging container for iterating over a list of :class:`PeeringServiceCountry <azure.mgmt.peering.models.PeeringServiceCountry>` object

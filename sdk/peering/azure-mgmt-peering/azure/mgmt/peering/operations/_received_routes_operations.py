@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class LegacyPeeringsOperations(object):
-    """LegacyPeeringsOperations operations.
+class ReceivedRoutesOperations(object):
+    """ReceivedRoutesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -38,44 +38,64 @@ class LegacyPeeringsOperations(object):
 
         self.config = config
 
-    def list(
-            self, peering_location, kind, asn=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the legacy peerings under the given subscription matching
-        the specified kind and location.
+    def list_by_peering(
+            self, resource_group_name, peering_name, prefix=None, as_path=None, origin_as_validation_state=None, rpki_validation_state=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the prefixes received over the specified peering under the given
+        subscription and resource group.
 
-        :param peering_location: The location of the peering.
-        :type peering_location: str
-        :param kind: The kind of the peering. Possible values include:
-         'Direct', 'Exchange'
-        :type kind: str
-        :param asn: The ASN number associated with a legacy peering.
-        :type asn: int
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param peering_name: The name of the peering.
+        :type peering_name: str
+        :param prefix: The optional prefix that can be used to filter the
+         routes.
+        :type prefix: str
+        :param as_path: The optional AS path that can be used to filter the
+         routes.
+        :type as_path: str
+        :param origin_as_validation_state: The optional origin AS validation
+         state that can be used to filter the routes.
+        :type origin_as_validation_state: str
+        :param rpki_validation_state: The optional RPKI validation state that
+         can be used to filter the routes.
+        :type rpki_validation_state: str
+        :param skip_token: The optional page continuation token that is used
+         in the event of paginated result.
+        :type skip_token: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Peering
+        :return: An iterator like instance of PeeringReceivedRoute
         :rtype:
-         ~azure.mgmt.peering.models.PeeringPaged[~azure.mgmt.peering.models.Peering]
+         ~azure.mgmt.peering.models.PeeringReceivedRoutePaged[~azure.mgmt.peering.models.PeeringReceivedRoute]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_peering.metadata['url']
                 path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['peeringLocation'] = self._serialize.query("peering_location", peering_location, 'str')
-                query_parameters['kind'] = self._serialize.query("kind", kind, 'str')
-                if asn is not None:
-                    query_parameters['asn'] = self._serialize.query("asn", asn, 'int')
+                if prefix is not None:
+                    query_parameters['prefix'] = self._serialize.query("prefix", prefix, 'str')
+                if as_path is not None:
+                    query_parameters['asPath'] = self._serialize.query("as_path", as_path, 'str')
+                if origin_as_validation_state is not None:
+                    query_parameters['originAsValidationState'] = self._serialize.query("origin_as_validation_state", origin_as_validation_state, 'str')
+                if rpki_validation_state is not None:
+                    query_parameters['rpkiValidationState'] = self._serialize.query("rpki_validation_state", rpki_validation_state, 'str')
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -110,7 +130,7 @@ class LegacyPeeringsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.PeeringPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.PeeringReceivedRoutePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Peering/legacyPeerings'}
+    list_by_peering.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}/receivedRoutes'}
