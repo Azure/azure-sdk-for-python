@@ -176,15 +176,15 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = "cloudevent",
                 type="Sample.Cloud.Event",
                 extensions={
-                    'reasonCode':204,
+                    'reasoncode':204,
                     'extension':'hello'
                     }
                 )
         await client.send([cloud_event])
         internal = cloud_event._to_generated().serialize()
-        assert 'reasonCode' in internal
+        assert 'reasoncode' in internal
         assert 'extension' in internal
-        assert internal['reasonCode'] == 204
+        assert internal['reasoncode'] == 204
 
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
