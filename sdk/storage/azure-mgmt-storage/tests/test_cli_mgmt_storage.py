@@ -390,7 +390,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result = self.mgmt_client.management_policies.create_or_update(resource_group.name, STORAGE_ACCOUNT_NAME, "default", BODY)
 
         # PutShares[put]
-        result = self.mgmt_client.file_shares.create(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME, {})
+        # result = self.mgmt_client.file_shares.create(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME, {})
 
         # StorageAccountGetProperties[get]
         storageaccount = self.mgmt_client.storage_accounts.get_properties(resource_group.name, STORAGE_ACCOUNT_NAME)
@@ -451,7 +451,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result = self.mgmt_client.private_endpoint_connections.get(resource_group.name, STORAGE_ACCOUNT_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
 
         # GetShares[get]
-        result = self.mgmt_client.file_shares.get(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
+        # result = self.mgmt_client.file_shares.get(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
 
         # StorageAccountGetManagementPolicies[get]
         result = self.mgmt_client.management_policies.get(resource_group.name, STORAGE_ACCOUNT_NAME, "default")
@@ -463,7 +463,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result = self.mgmt_client.encryption_scopes.get(resource_group.name, STORAGE_ACCOUNT_NAME, ENCRYPTION_SCOPE_NAME)
 
         # ListShares[get]
-        result = self.mgmt_client.file_shares.list(resource_group.name, STORAGE_ACCOUNT_NAME)
+        # result = self.mgmt_client.file_shares.list(resource_group.name, STORAGE_ACCOUNT_NAME)
 
         # GetBlobServices[get]
         result = self.mgmt_client.blob_services.get_service_properties(resource_group.name, STORAGE_ACCOUNT_NAME)
@@ -558,7 +558,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
             }
           }
         }
-        result = self.mgmt_client.file_shares.update(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME, BODY)
+        # result = self.mgmt_client.file_shares.update(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME, BODY)
 
         # StorageAccountPatchEncryptionScope[patch]
         # BODY = {
@@ -714,7 +714,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result = self.mgmt_client.private_endpoint_connections.delete(resource_group.name, STORAGE_ACCOUNT_NAME, PRIVATE_ENDPOINT_CONNECTION_NAME)
 
         # DeleteShares[delete]
-        result = self.mgmt_client.file_shares.delete(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
+        # result = self.mgmt_client.file_shares.delete(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
 
         # StorageAccountDeleteManagementPolicies[delete]
         result = self.mgmt_client.management_policies.delete(resource_group.name, STORAGE_ACCOUNT_NAME, "default")

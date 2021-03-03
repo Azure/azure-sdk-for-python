@@ -1,10 +1,12 @@
 # Release History
 
-## 1.11.1 (Unreleased)
+## 1.12.0 (Unreleased)
 
 ### Bug Fixes
 
 - Raise exception rather than swallowing it if there is something wrong in retry stream downloading  #16723
+- Added `azure.core.messaging.CloudEvent` model that follows the cloud event spec.
+- Added `azure.core.serialization.NULL` sentinel value 
 
 ## 1.11.0 (2021-02-08)
 

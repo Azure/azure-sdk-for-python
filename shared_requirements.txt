@@ -84,6 +84,7 @@ azure-mgmt-storage~=2.0
 azure-mgmt-subscription~=0.2.0
 azure-mgmt-trafficmanager~=0.50.0
 azure-mgmt-web~=0.35.0
+azure-mixedreality-nspkg
 azure-nspkg
 azure-keyvault-nspkg
 azure-media-nspkg
@@ -123,7 +124,7 @@ avro<2.0.0,>=1.10.0
 #override azure-core-tracing-opencensus azure-core<2.0.0,>=1.0.0
 #override azure-core-tracing-opentelemetry azure-core<2.0.0,>=1.0.0
 #override azure-cosmos azure-core<2.0.0,>=1.0.0
-#override azure-data-tables azure-core<2.0.0,>=1.6.0
+#override azure-data-tables azure-core<2.0.0,>=1.10.0
 #override azure-eventhub azure-core<2.0.0,>=1.5.0
 #override azure-identity azure-core<2.0.0,>=1.0.0
 #override azure-keyvault-administration msrest>=0.6.21
@@ -190,7 +191,8 @@ opentelemetry-sdk==0.17b0
 #override azure-ai-metricsadvisor msrest>=0.6.12
 #override azure-monitor-opentelemetry-exporter azure-core<2.0.0,>=1.6.0
 #override azure-monitor-opentelemetry-exporter msrest>=0.6.10
+#override azure-monitor-opentelemetry-exporter opentelemetry-api==1.0.0rc1
+#override azure-monitor-opentelemetry-exporter opentelemetry-sdk==1.0.0rc1
 #override azure-core-tracing-opentelemetry opentelemetry-api==0.17b0
 #override azure-identity six>=1.12.0
-#override azure-ai-formrecognizer
-#override azure-ai-metricsadvisor
+#override azure-mixedreality-authentication azure-core<2.0.0,>=1.4.0

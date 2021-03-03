@@ -17,6 +17,7 @@ from datetime import (
 
 from devtools_testutils import AzureTestCase
 
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -301,8 +302,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
-
-
 
     @pytest.mark.skip("Cosmos does not support table access policy")
     @CosmosPreparer()

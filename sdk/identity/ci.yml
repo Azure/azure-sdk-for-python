@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -16,6 +17,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -40,5 +42,5 @@ extends:
 
 
     Artifacts:
-    - name: azure_identity
+    - name: azure-identity
       safeName: azureidentity

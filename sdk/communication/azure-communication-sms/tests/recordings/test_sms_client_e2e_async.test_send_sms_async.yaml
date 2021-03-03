@@ -1,33 +1,37 @@
 interactions:
 - request:
-    body: '{"from": "sanitized", "to": "sanitized", "message": "Hello World via SMS",
-      "sendSmsOptions": {"enableDeliveryReport": true}}'
+    body: '{"from": "sanitized", "smsRecipients": [{"to": "sanitized"}], "message":
+      "Hello World via SMS", "smsSendOptions": {"enableDeliveryReport": true, "tag":
+      "custom-tag"}}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '132'
+      - '172'
       Content-Type:
       - application/json
       Date:
-      - Wed, 20 Jan 2021 18:11:24 GMT
+      - Fri, 19 Feb 2021 23:53:33 GMT
       User-Agent:
-      - azsdk-python-communication-sms/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/sms?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
   response:
-    body: '{"messageId": "sanitized"}'
+    body: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
+      202, "errorMessage": null, "repeatabilityResult": "accepted", "successful":
+      true}]}'
     headers:
+      api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Wed, 20 Jan 2021 18:11:24 GMT
-      ms-cv: x7uY4q7a+EmmyTMUW8my+A.0
+      date: Fri, 19 Feb 2021 23:53:32 GMT
+      ms-cv: aukatTugoECOYdRfE0uZrA.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 468ms
+      x-processing-time: 559ms
     status:
-      code: 200
-      message: OK
-    url: https://sanitized.communication.azure.com/sms?api-version=2020-07-20-preview1
+      code: 202
+      message: Accepted
+    url: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
 version: 1

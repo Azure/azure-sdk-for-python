@@ -1,7 +1,6 @@
 interactions:
 - request:
-    body: '{"documents": [{"id": "0", "text": "Bill Gates is the CEO of Microsoft.",
-      "language": "en"}]}'
+    body: '{"documents": [{"id": "0", "text": "Hello world", "language": "en"}]}'
     headers:
       Accept:
       - application/json, text/json
@@ -10,26 +9,26 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '93'
+      - '69'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.7.5 (Linux-4.4.0-19041-Microsoft-x86_64-with-debian-stretch-sid)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/sentiment?showStats=false&stringIndexType=TextElements_v8
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/sentiment?showStats=false&stringIndexType=TextElements_v8
   response:
     body:
-      string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"offset":0,"length":35,"text":"Bill
-        Gates is the CEO of Microsoft."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+      string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.02,"neutral":0.97,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.02,"neutral":0.97,"negative":0.01},"offset":0,"length":11,"text":"Hello
+        world"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - b33e218c-dafa-4bab-b87a-85bde56f7cd1
+      - 1cb28b56-4b1b-420c-91f4-fd8c24298a99
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 29 Jan 2021 20:32:05 GMT
+      - Tue, 23 Feb 2021 17:16:56 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '93'
+      - '100'
     status:
       code: 200
       message: OK

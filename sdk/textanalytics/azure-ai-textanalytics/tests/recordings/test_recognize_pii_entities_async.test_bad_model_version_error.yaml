@@ -10,17 +10,17 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/recognition/pii?model-version=bad&showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/recognition/pii?model-version=bad&showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innererror":{"code":"ModelVersionIncorrect","message":"Invalid
-        model version. Possible values are: latest,2019-10-01,2020-02-01,2020-04-01,2020-07-01"}}}'
+        model version. Possible values are: latest,2019-10-01,2020-02-01,2020-04-01,2020-07-01,2021-01-15"}}}'
     headers:
-      apim-request-id: 11bae2c0-84e1-40e8-88f0-e2f736237f85
+      apim-request-id: de2434c7-dced-4d5b-8cec-6901516a82e8
       content-type: application/json; charset=utf-8
-      date: Wed, 27 Jan 2021 02:24:03 GMT
+      date: Tue, 23 Feb 2021 17:10:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -28,5 +28,5 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/recognition/pii?model-version=bad&showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/entities/recognition/pii?model-version=bad&showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

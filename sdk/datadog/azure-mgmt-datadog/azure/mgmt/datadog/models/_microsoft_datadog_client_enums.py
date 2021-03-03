@@ -43,8 +43,10 @@ class MarketplaceSubscriptionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str
     time, the resource will go in Suspended state.
     """
 
+    PROVISIONING = "Provisioning"
     ACTIVE = "Active"
     SUSPENDED = "Suspended"
+    UNSUBSCRIBED = "Unsubscribed"
 
 class MonitoringStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Flag specifying if the resource monitoring is enabled or disabled.
