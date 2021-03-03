@@ -1331,10 +1331,10 @@ class RecognizePiiEntitiesAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
-    :keyword pii_entity_categories: A list of specific PII categories to return.  If the value of `domain_filter`
-        is also set, the result will contain entities in the intersection of `domain_filter` and the list of 
-        `pii_entity_categories`.
-    :paramtype pii_entity_categories: list[~azure.ai.textanalytics.PiiEntityCategory]
+    :keyword categories_filter: A list of specific PII entity categories to return.  If the value of `domain_filter`
+        is also set, the result will contain entities in the intersection of `domain_filter` and the items in
+        `categories_filter`.
+    :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
@@ -1345,7 +1345,7 @@ class RecognizePiiEntitiesAction(DictMixin):
     :ivar pii_entity_categories: A list of specific PII categories to return.  If the value of `domain_filter`
         is also set, the result will contain entities in the intersection of `domain_filter` and the list of 
         `pii_entity_categories`.
-    :vartype pii_entity_categories: list[~azure.ai.textanalytics.PiiEntityCategory]
+    :vartype pii_entity_categories: list[~azure.ai.textanalytics.PiiEntityCategoryType]
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information

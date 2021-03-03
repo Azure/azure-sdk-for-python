@@ -301,10 +301,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
-        :keyword pii_entity_categories: A list of specific PII categories to return.  If the value of `domain_filter`
-            is also set, the result will contain entities in the intersection of `domain_filter` and the list of
-            `pii_entity_categories`.
-        :paramtype pii_entity_categories: list[~azure.ai.textanalytics.PiiEntityCategory]
+        :keyword categories_filter: A list of specific PII entity categories to return.  If the value of `domain_filter`
+            is also set, the result will contain entities in the intersection of `domain_filter` and the items in
+            `categories_filter`.
+        :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodePoint` or `TextElements_v8`. For additional information
