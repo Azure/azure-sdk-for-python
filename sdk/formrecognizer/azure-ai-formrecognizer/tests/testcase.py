@@ -181,15 +181,15 @@ class FormRecognizerTest(AzureTestCase):
         return blob_sas_url
 
     def get_oauth_endpoint(self):
-        return self.get_settings_value("FORM_RECOGNIZER_AAD_ENDPOINT")
+        return os.getenv("FORM_RECOGNIZER_AAD_ENDPOINT")
 
     def generate_oauth_token(self):
         if self.is_live:
             from azure.identity import ClientSecretCredential
             return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
+                os.getenv("FORMRECOGNIZER_TENANT_ID"),
+                os.getenv("FORMRECOGNIZER_CLIENT_ID"),
+                os.getenv("FORMRECOGNIZER_CLIENT_SECRET"),
             )
         return self.generate_fake_token()
 

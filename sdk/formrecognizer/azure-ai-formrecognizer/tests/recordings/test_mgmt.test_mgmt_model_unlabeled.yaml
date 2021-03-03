@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: 'b''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
+    body: 'b''{"source": "container_sas_url", "sourceFilter": {"prefix": "", "includeSubFolders":
       false}, "useLabelFile": false}'''
     headers:
       Accept:
@@ -10,31 +10,31 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '288'
+      - '284'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 60935252-9772-4772-b189-7fb243121da3
+      - 867abad9-4086-43f0-922e-57e208bcfaaa
       content-length:
       - '0'
       date:
-      - Fri, 30 Oct 2020 01:19:18 GMT
+      - Wed, 03 Mar 2021 23:18:09 GMT
       location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/04735689-16fa-4515-a2fa-5b1fd3ff244c
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/8fe0ebae-2829-407c-8361-bfdb264ec42d
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '38'
+      - '214'
     status:
       code: 201
       message: Created
@@ -48,25 +48,61 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/04735689-16fa-4515-a2fa-5b1fd3ff244c?includeKeys=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/8fe0ebae-2829-407c-8361-bfdb264ec42d?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "04735689-16fa-4515-a2fa-5b1fd3ff244c", "status":
-        "creating", "createdDateTime": "2020-10-30T01:19:19Z", "lastUpdatedDateTime":
-        "2020-10-30T01:19:19Z"}}'
+      string: '{"modelInfo": {"modelId": "8fe0ebae-2829-407c-8361-bfdb264ec42d", "status":
+        "creating", "createdDateTime": "2021-03-03T23:18:09Z", "lastUpdatedDateTime":
+        "2021-03-03T23:18:09Z"}}'
     headers:
       apim-request-id:
-      - eef0c4ee-300c-4e10-a775-df394c68e09d
+      - 402368a5-b5ad-4be0-a484-d945c4bd91d8
+      content-length:
+      - '170'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 30 Oct 2020 01:19:23 GMT
+      - Wed, 03 Mar 2021 23:18:14 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/8fe0ebae-2829-407c-8361-bfdb264ec42d?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo": {"modelId": "8fe0ebae-2829-407c-8361-bfdb264ec42d", "status":
+        "creating", "createdDateTime": "2021-03-03T23:18:09Z", "lastUpdatedDateTime":
+        "2021-03-03T23:18:09Z"}}'
+    headers:
+      apim-request-id:
+      - e25a1a2d-61f1-4feb-81fd-d6015a480322
+      content-length:
+      - '170'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 23:18:19 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
@@ -84,29 +120,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/04735689-16fa-4515-a2fa-5b1fd3ff244c?includeKeys=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/8fe0ebae-2829-407c-8361-bfdb264ec42d?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "04735689-16fa-4515-a2fa-5b1fd3ff244c", "status":
-        "creating", "createdDateTime": "2020-10-30T01:19:19Z", "lastUpdatedDateTime":
-        "2020-10-30T01:19:19Z"}}'
+      string: '{"modelInfo": {"modelId": "8fe0ebae-2829-407c-8361-bfdb264ec42d", "status":
+        "creating", "createdDateTime": "2021-03-03T23:18:09Z", "lastUpdatedDateTime":
+        "2021-03-03T23:18:09Z"}}'
     headers:
       apim-request-id:
-      - a3d1a1fe-5867-4913-80dc-388adc0c27fb
+      - db39bd10-7c3c-425a-a5de-b995e8b9f369
+      content-length:
+      - '170'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 30 Oct 2020 01:19:28 GMT
+      - Wed, 03 Mar 2021 23:18:25 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '18'
+      - '34'
     status:
       code: 200
       message: OK
@@ -120,39 +156,39 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/04735689-16fa-4515-a2fa-5b1fd3ff244c?includeKeys=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/8fe0ebae-2829-407c-8361-bfdb264ec42d?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "04735689-16fa-4515-a2fa-5b1fd3ff244c", "status":
-        "ready", "createdDateTime": "2020-10-30T01:19:19Z", "lastUpdatedDateTime":
-        "2020-10-30T01:19:33Z"}, "keys": {"clusters": {"0": ["Additional Notes:",
+      string: '{"modelInfo": {"modelId": "8fe0ebae-2829-407c-8361-bfdb264ec42d", "status":
+        "ready", "createdDateTime": "2021-03-03T23:18:09Z", "lastUpdatedDateTime":
+        "2021-03-03T23:18:25Z"}, "keys": {"clusters": {"0": ["Additional Notes:",
         "Address:", "Company Name:", "Company Phone:", "Dated As:", "Details", "Email:",
-        "Ft Lauderdale, FL Phone:", "Hero Limited", "Name:", "Phone:", "Purchase Order",
-        "Purchase Order #:", "Quantity", "SUBTOTAL", "Seattle, WA 93849 Phone:", "Shipped
-        From", "Shipped To", "TAX", "TOTAL", "Total", "Unit Price", "Vendor Name:",
-        "Website:"]}}, "trainResult": {"trainingDocuments": [{"documentName": "Form_1.jpg",
-        "pages": 1, "errors": [], "status": "succeeded"}, {"documentName": "Form_2.jpg",
-        "pages": 1, "errors": [], "status": "succeeded"}, {"documentName": "Form_3.jpg",
-        "pages": 1, "errors": [], "status": "succeeded"}, {"documentName": "Form_4.jpg",
-        "pages": 1, "errors": [], "status": "succeeded"}, {"documentName": "Form_5.jpg",
-        "pages": 1, "errors": [], "status": "succeeded"}], "errors": []}}'
+        "Hero Limited", "Name:", "Phone:", "Purchase Order", "Purchase Order #:",
+        "Quantity", "SUBTOTAL", "Seattle, WA 93849 Phone:", "Shipped From", "Shipped
+        To", "TAX", "TOTAL", "Total", "Unit Price", "Vendor Name:", "Website:"]}},
+        "trainResult": {"trainingDocuments": [{"documentName": "Form_1.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}, {"documentName": "Form_2.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}, {"documentName": "Form_3.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}, {"documentName": "Form_4.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}, {"documentName": "Form_5.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}], "errors": []}}'
     headers:
       apim-request-id:
-      - 39dc86b3-2011-4454-86ff-792f4ec66558
+      - 66b79f13-1838-4f50-8173-7624d017e4b4
+      content-length:
+      - '912'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 30 Oct 2020 01:19:34 GMT
+      - Wed, 03 Mar 2021 23:18:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '17'
+      - '14'
     status:
       code: 200
       message: OK
@@ -166,39 +202,39 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models/04735689-16fa-4515-a2fa-5b1fd3ff244c?includeKeys=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/8fe0ebae-2829-407c-8361-bfdb264ec42d?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "04735689-16fa-4515-a2fa-5b1fd3ff244c", "status":
-        "ready", "createdDateTime": "2020-10-30T01:19:19Z", "lastUpdatedDateTime":
-        "2020-10-30T01:19:33Z"}, "keys": {"clusters": {"0": ["Additional Notes:",
+      string: '{"modelInfo": {"modelId": "8fe0ebae-2829-407c-8361-bfdb264ec42d", "status":
+        "ready", "createdDateTime": "2021-03-03T23:18:09Z", "lastUpdatedDateTime":
+        "2021-03-03T23:18:25Z"}, "keys": {"clusters": {"0": ["Additional Notes:",
         "Address:", "Company Name:", "Company Phone:", "Dated As:", "Details", "Email:",
-        "Ft Lauderdale, FL Phone:", "Hero Limited", "Name:", "Phone:", "Purchase Order",
-        "Purchase Order #:", "Quantity", "SUBTOTAL", "Seattle, WA 93849 Phone:", "Shipped
-        From", "Shipped To", "TAX", "TOTAL", "Total", "Unit Price", "Vendor Name:",
-        "Website:"]}}, "trainResult": {"trainingDocuments": [{"documentName": "Form_1.jpg",
-        "pages": 1, "errors": [], "status": "succeeded"}, {"documentName": "Form_2.jpg",
-        "pages": 1, "errors": [], "status": "succeeded"}, {"documentName": "Form_3.jpg",
-        "pages": 1, "errors": [], "status": "succeeded"}, {"documentName": "Form_4.jpg",
-        "pages": 1, "errors": [], "status": "succeeded"}, {"documentName": "Form_5.jpg",
-        "pages": 1, "errors": [], "status": "succeeded"}], "errors": []}}'
+        "Hero Limited", "Name:", "Phone:", "Purchase Order", "Purchase Order #:",
+        "Quantity", "SUBTOTAL", "Seattle, WA 93849 Phone:", "Shipped From", "Shipped
+        To", "TAX", "TOTAL", "Total", "Unit Price", "Vendor Name:", "Website:"]}},
+        "trainResult": {"trainingDocuments": [{"documentName": "Form_1.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}, {"documentName": "Form_2.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}, {"documentName": "Form_3.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}, {"documentName": "Form_4.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}, {"documentName": "Form_5.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}], "errors": []}}'
     headers:
       apim-request-id:
-      - 4c1f3bd9-3948-4826-9894-7ee31a0be618
+      - 23ad5802-8471-48da-9faf-e0e77d181856
+      content-length:
+      - '912'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 30 Oct 2020 01:19:34 GMT
+      - Wed, 03 Mar 2021 23:18:30 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '18'
+      - '34'
     status:
       code: 200
       message: OK
@@ -212,29 +248,1497 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models?op=full
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?op=full
   response:
     body:
-      string: '{"modelList": [{"modelId": "04735689-16fa-4515-a2fa-5b1fd3ff244c",
-        "status": "ready", "createdDateTime": "2020-10-30T01:19:19Z", "lastUpdatedDateTime":
-        "2020-10-30T01:19:33Z"}], "nextLink": ""}'
+      string: '{"modelList": [{"modelId": "027cae79-768f-4ecd-8376-cfdcfe86b6dc",
+        "status": "invalid", "createdDateTime": "2021-03-03T22:17:25Z", "lastUpdatedDateTime":
+        "2021-03-03T22:17:25Z"}, {"modelId": "0349ec84-1570-43cf-be3c-ce753fdfb98f",
+        "attributes": {"isComposed": false}, "status": "ready", "createdDateTime":
+        "2020-11-20T17:56:47Z", "lastUpdatedDateTime": "2020-11-20T17:56:50Z"}, {"modelId":
+        "03608263-829e-41b3-a080-f471c165809b", "status": "ready", "createdDateTime":
+        "2020-04-02T01:35:33Z", "lastUpdatedDateTime": "2020-04-02T01:37:36Z"}, {"modelId":
+        "046720f8-2956-4b31-9153-915048e815e5", "modelName": "model1", "status": "invalid",
+        "createdDateTime": "2021-02-19T19:06:57Z", "lastUpdatedDateTime": "2021-02-19T19:06:58Z"},
+        {"modelId": "05cfe98b-5315-4de8-bbf0-cbc97aa05857", "attributes": {"isComposed":
+        false}, "status": "ready", "createdDateTime": "2021-02-19T19:05:57Z", "lastUpdatedDateTime":
+        "2021-02-19T19:06:00Z"}, {"modelId": "05d8dd77-177c-4f27-ab8e-53d5f6856d4c",
+        "modelName": "labeled", "status": "invalid", "createdDateTime": "2021-02-25T15:54:54Z",
+        "lastUpdatedDateTime": "2021-02-25T15:54:57Z"}, {"modelId": "06250af1-6a8f-4f6d-8432-4964338e0033",
+        "modelName": "mymodel", "status": "ready", "createdDateTime": "2020-11-19T18:08:35Z",
+        "lastUpdatedDateTime": "2020-11-19T18:08:51Z"}, {"modelId": "06829eaa-56f7-42c2-8c48-0060e58a7c47",
+        "status": "ready", "createdDateTime": "2020-04-02T17:48:45Z", "lastUpdatedDateTime":
+        "2020-04-02T17:50:46Z"}, {"modelId": "07a9d365-0629-4b5c-b913-6dd3e1f2e617",
+        "status": "invalid", "createdDateTime": "2020-04-09T18:19:12Z", "lastUpdatedDateTime":
+        "2020-04-09T18:19:12Z"}, {"modelId": "08d21ef4-e9c4-425b-a22e-e5070ecd04b8",
+        "status": "ready", "createdDateTime": "2020-04-20T19:50:17Z", "lastUpdatedDateTime":
+        "2020-04-20T19:50:24Z"}, {"modelId": "09a6923d-425d-49f6-a967-6cb78a718b10",
+        "status": "ready", "createdDateTime": "2020-04-02T19:06:24Z", "lastUpdatedDateTime":
+        "2020-04-02T19:08:26Z"}, {"modelId": "0a0a321b-5a0a-40c7-8178-88d478aa8bc8",
+        "status": "ready", "createdDateTime": "2020-03-12T22:35:52Z", "lastUpdatedDateTime":
+        "2020-03-12T22:36:04Z"}, {"modelId": "0a9f53c0-6a42-43a9-aec1-8f897d23a2e0",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T19:36:47Z", "lastUpdatedDateTime":
+        "2020-08-11T19:36:47Z"}, {"modelId": "0af45f1a-2639-4cce-aaa8-d522088af823",
+        "status": "invalid", "createdDateTime": "2021-03-03T22:51:37Z", "lastUpdatedDateTime":
+        "2021-03-03T22:51:37Z"}, {"modelId": "0b4e3b6f-e257-4bea-8fbe-f1a36cbb9c34",
+        "status": "ready", "createdDateTime": "2020-11-19T17:16:30Z", "lastUpdatedDateTime":
+        "2020-11-19T17:16:46Z"}, {"modelId": "0bbb06e5-027d-4852-ba03-34c210a8b37d",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:06:23Z", "lastUpdatedDateTime":
+        "2021-02-19T19:06:24Z"}, {"modelId": "0c23fe9c-8c37-496d-a730-b4345d98efa1",
+        "status": "invalid", "createdDateTime": "2020-04-01T01:39:24Z", "lastUpdatedDateTime":
+        "2020-04-01T01:39:25Z"}, {"modelId": "0c253e30-4d5d-4eb3-a511-9954117b2ad6",
+        "status": "ready", "createdDateTime": "2020-04-06T21:51:35Z", "lastUpdatedDateTime":
+        "2020-04-06T21:51:37Z"}, {"modelId": "0c262f88-6b96-463a-b117-c8c05b1f283a",
+        "status": "ready", "createdDateTime": "2020-04-13T16:51:25Z", "lastUpdatedDateTime":
+        "2020-04-13T16:51:28Z"}, {"modelId": "0c751614-bf54-485d-a7e3-bdeae944cacf",
+        "modelName": "mymodel", "status": "invalid", "createdDateTime": "2021-02-19T19:07:03Z",
+        "lastUpdatedDateTime": "2021-02-19T19:07:03Z"}, {"modelId": "0cd58150-a8ab-4dc6-b6c4-c38fb3cb4a72",
+        "status": "creating", "createdDateTime": "2020-05-29T16:04:30Z", "lastUpdatedDateTime":
+        "2020-05-29T16:04:30Z"}, {"modelId": "0d90db32-948c-48b6-a0b6-d55aceea3f1b",
+        "status": "invalid", "createdDateTime": "2020-04-02T22:12:27Z", "lastUpdatedDateTime":
+        "2020-04-02T22:12:28Z"}, {"modelId": "0d983956-58a2-4eb9-88cd-b21babb53b81",
+        "status": "ready", "createdDateTime": "2020-04-02T01:43:12Z", "lastUpdatedDateTime":
+        "2020-04-02T01:45:12Z"}, {"modelId": "0fa1a763-9fca-4b2c-a836-2c735bfc04e1",
+        "status": "ready", "createdDateTime": "2020-11-19T21:19:07Z", "lastUpdatedDateTime":
+        "2020-11-19T21:19:23Z"}, {"modelId": "1032c1fb-d21e-4a62-b243-81b566d14cd4",
+        "status": "ready", "createdDateTime": "2021-02-19T19:05:58Z", "lastUpdatedDateTime":
+        "2021-02-19T19:06:27Z"}, {"modelId": "103f3d33-52a4-44f9-ace9-f02af6d9ba05",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T19:15:44Z", "lastUpdatedDateTime":
+        "2020-08-11T19:15:49Z"}, {"modelId": "11035dc7-1d65-4854-8448-6b398400ad76",
+        "modelName": "unlabeled", "status": "invalid", "createdDateTime": "2021-02-26T20:14:56Z",
+        "lastUpdatedDateTime": "2021-02-26T20:14:56Z"}, {"modelId": "11e430a0-6d91-415d-9d55-0a5e85caeb03",
+        "status": "ready", "createdDateTime": "2020-04-21T05:31:24Z", "lastUpdatedDateTime":
+        "2020-04-21T05:31:32Z"}, {"modelId": "11fbb12b-08ba-4366-81a6-201e2ad5e7b2",
+        "status": "ready", "createdDateTime": "2021-02-19T18:56:02Z", "lastUpdatedDateTime":
+        "2021-02-19T18:56:29Z"}, {"modelId": "121189b0-b26b-4993-8043-1c5edb12bea9",
+        "status": "invalid", "createdDateTime": "2021-03-03T20:09:55Z", "lastUpdatedDateTime":
+        "2021-03-03T20:09:55Z"}, {"modelId": "128f86f1-8257-42c2-acf0-151eca2f42ec",
+        "status": "ready", "createdDateTime": "2020-04-13T17:42:23Z", "lastUpdatedDateTime":
+        "2020-04-13T17:42:31Z"}, {"modelId": "13bac5a8-dc61-4ab2-b523-14afcdaff04b",
+        "status": "invalid", "createdDateTime": "2021-03-03T22:26:07Z", "lastUpdatedDateTime":
+        "2021-03-03T22:26:07Z"}], "nextLink": "https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!212!MDAwMTEzIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzEzYmFjNWE4LWRjNjEtNGFiMi1iNTIzLTE0YWZjZGFmZjA0Yi92ZXJzaW9uLXYyLjEtcHJldmlldy4zITAwMDAyOCE5OTk5LTEyLTMxVDIzOjU5OjU5Ljk5OTk5OTlaIQ--"}'
     headers:
       apim-request-id:
-      - dc9644bd-2d83-4537-939d-1fe3f9596b19
+      - 3c175c75-ad04-41eb-b863-41d7f697330f
+      content-length:
+      - '5642'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 30 Oct 2020 01:19:34 GMT
+      - Wed, 03 Mar 2021 23:18:30 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '20'
+      - '224'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!212!MDAwMTEzIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzEzYmFjNWE4LWRjNjEtNGFiMi1iNTIzLTE0YWZjZGFmZjA0Yi92ZXJzaW9uLXYyLjEtcHJldmlldy4zITAwMDAyOCE5OTk5LTEyLTMxVDIzOjU5OjU5Ljk5OTk5OTlaIQ--
+  response:
+    body:
+      string: '{"modelList": [{"modelId": "13bac5a8-dc61-4ab2-b523-14afcdaff04b",
+        "status": "invalid", "createdDateTime": "2021-03-03T22:26:07Z", "lastUpdatedDateTime":
+        "2021-03-03T22:26:07Z"}, {"modelId": "1407631e-cce1-49fc-8868-2bc95932c157",
+        "status": "ready", "createdDateTime": "2020-03-27T20:11:07Z", "lastUpdatedDateTime":
+        "2020-03-27T20:11:15Z"}, {"modelId": "15f25afa-b250-4d26-b375-f05aa70e3278",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T21:55:29Z", "lastUpdatedDateTime":
+        "2020-08-11T21:55:29Z"}, {"modelId": "16e581dd-4947-439c-9b19-411ef7734700",
+        "status": "ready", "createdDateTime": "2020-04-10T20:45:47Z", "lastUpdatedDateTime":
+        "2020-04-10T20:45:56Z"}, {"modelId": "178c93a0-c522-4862-a8c8-57ef873c6168",
+        "status": "ready", "createdDateTime": "2020-03-05T18:25:03Z", "lastUpdatedDateTime":
+        "2020-03-05T18:25:05Z"}, {"modelId": "18066853-86a6-410a-991d-4ce0312df101",
+        "status": "invalid", "createdDateTime": "2020-04-10T18:09:23Z", "lastUpdatedDateTime":
+        "2020-04-10T18:09:24Z"}, {"modelId": "180a64b8-d1da-4b03-8822-6f1bbf10682c",
+        "status": "ready", "createdDateTime": "2020-03-30T21:16:27Z", "lastUpdatedDateTime":
+        "2020-03-30T21:18:28Z"}, {"modelId": "1925120a-534b-4978-9fa7-79e9d0968200",
+        "status": "invalid", "createdDateTime": "2020-04-02T19:59:19Z", "lastUpdatedDateTime":
+        "2020-04-02T19:59:19Z"}, {"modelId": "1b18185c-90f8-4416-b9a4-de734b8a3cbd",
+        "status": "creating", "createdDateTime": "2020-07-02T19:29:54Z", "lastUpdatedDateTime":
+        "2020-07-02T19:29:54Z"}, {"modelId": "1b9f130b-e3c1-4b11-8c38-e6b42f0cceaf",
+        "status": "invalid", "createdDateTime": "2021-03-03T20:09:49Z", "lastUpdatedDateTime":
+        "2021-03-03T20:09:50Z"}, {"modelId": "1be78ab6-f6b1-40d1-a92e-c248b6fd8beb",
+        "status": "invalid", "createdDateTime": "2021-03-03T21:50:30Z", "lastUpdatedDateTime":
+        "2021-03-03T21:50:30Z"}, {"modelId": "1d9dcd3e-d60d-4e77-8982-14a34c43aed8",
+        "status": "ready", "createdDateTime": "2020-04-10T16:56:22Z", "lastUpdatedDateTime":
+        "2020-04-10T16:56:31Z"}, {"modelId": "1e44c0b5-7549-4344-8f09-7cee4e2fb7f2",
+        "status": "ready", "createdDateTime": "2020-04-02T19:11:08Z", "lastUpdatedDateTime":
+        "2020-04-02T19:13:12Z"}, {"modelId": "1e48d82a-91d9-4b03-84cb-e980475bec0c",
+        "status": "invalid", "createdDateTime": "2020-04-01T17:38:00Z", "lastUpdatedDateTime":
+        "2020-04-01T17:38:01Z"}, {"modelId": "1ea71d96-9a89-48a5-bd1f-9c08c7bef5b4",
+        "status": "invalid", "createdDateTime": "2021-03-01T21:15:25Z", "lastUpdatedDateTime":
+        "2021-03-01T21:15:25Z"}, {"modelId": "1f12f046-941f-4a1c-9c55-df6070c2a0a3",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T19:46:07Z", "lastUpdatedDateTime":
+        "2020-08-11T19:46:07Z"}, {"modelId": "20229c83-bb46-4e83-8175-cd6814e564b5",
+        "status": "invalid", "createdDateTime": "2020-04-02T19:41:06Z", "lastUpdatedDateTime":
+        "2020-04-02T19:42:07Z"}, {"modelId": "20741f36-3cbc-43e3-9198-973bcf810e38",
+        "status": "ready", "createdDateTime": "2020-04-02T19:09:18Z", "lastUpdatedDateTime":
+        "2020-04-02T19:11:22Z"}, {"modelId": "217ac7d5-09a9-428c-9e71-c2936c3758cc",
+        "status": "invalid", "createdDateTime": "2021-03-03T22:17:31Z", "lastUpdatedDateTime":
+        "2021-03-03T22:17:31Z"}, {"modelId": "21a7199f-527b-44a5-9e53-40df23e817b8",
+        "status": "invalid", "createdDateTime": "2021-03-03T21:43:09Z", "lastUpdatedDateTime":
+        "2021-03-03T21:43:10Z"}, {"modelId": "229dc8b9-574f-4fb3-9130-47c6ba79966e",
+        "status": "ready", "createdDateTime": "2020-04-01T23:25:34Z", "lastUpdatedDateTime":
+        "2020-04-01T23:27:36Z"}, {"modelId": "2374f501-67ac-450b-be23-4d12b300940a",
+        "modelName": "labeled", "status": "invalid", "createdDateTime": "2021-03-01T16:04:55Z",
+        "lastUpdatedDateTime": "2021-03-01T16:04:56Z"}, {"modelId": "24bd010b-0f58-4808-854f-ae18d69a097e",
+        "status": "invalid", "createdDateTime": "2021-02-19T18:56:01Z", "lastUpdatedDateTime":
+        "2021-02-19T18:56:02Z"}, {"modelId": "252f2c01-3305-4ef1-a625-2eed6f43d08a",
+        "status": "ready", "createdDateTime": "2020-04-01T23:01:25Z", "lastUpdatedDateTime":
+        "2020-04-01T23:03:25Z"}, {"modelId": "2598bc24-2d79-475e-a44a-351251d544c7",
+        "status": "ready", "createdDateTime": "2020-05-29T15:57:35Z", "lastUpdatedDateTime":
+        "2020-05-29T15:59:16Z"}, {"modelId": "25d83018-a1d1-42ea-aaab-db80101e72f0",
+        "status": "invalid", "createdDateTime": "2021-03-01T21:12:29Z", "lastUpdatedDateTime":
+        "2021-03-01T21:12:30Z"}, {"modelId": "27533222-4f99-41e2-bd54-b3598918639e",
+        "status": "ready", "createdDateTime": "2020-11-19T21:37:41Z", "lastUpdatedDateTime":
+        "2020-11-19T21:38:18Z"}, {"modelId": "293a38ba-6fb2-424f-8290-4b0bbe73e820",
+        "modelName": "unlabeled", "status": "ready", "createdDateTime": "2021-02-26T18:54:00Z",
+        "lastUpdatedDateTime": "2021-02-26T18:54:51Z"}, {"modelId": "297766a7-8028-4548-83bd-c4af696fa9c4",
+        "status": "ready", "createdDateTime": "2020-03-19T22:15:58Z", "lastUpdatedDateTime":
+        "2020-03-19T22:16:15Z"}, {"modelId": "2b84f4f2-a0d2-4e31-8c4b-4c102f521e59",
+        "status": "ready", "createdDateTime": "2020-04-05T22:26:42Z", "lastUpdatedDateTime":
+        "2020-04-05T22:26:49Z"}, {"modelId": "2c1aee9f-c495-4412-aa51-b7e9dad2681c",
+        "status": "invalid", "createdDateTime": "2021-03-03T21:21:07Z", "lastUpdatedDateTime":
+        "2021-03-03T21:21:08Z"}, {"modelId": "2c2d9b81-1166-4dfc-b2c6-f5f40523887c",
+        "status": "invalid", "createdDateTime": "2020-03-16T19:18:56Z", "lastUpdatedDateTime":
+        "2020-03-16T19:18:57Z"}, {"modelId": "2c47ef69-7c97-4291-86f0-158d9eb82e3b",
+        "modelName": "mymodel", "status": "invalid", "createdDateTime": "2021-02-19T19:07:09Z",
+        "lastUpdatedDateTime": "2021-02-19T19:07:09Z"}, {"modelId": "2c8d5479-1486-4557-a41c-10aac7e30cad",
+        "status": "ready", "createdDateTime": "2020-05-29T15:57:35Z", "lastUpdatedDateTime":
+        "2020-05-29T15:59:16Z"}, {"modelId": "2de6a454-2901-4b2b-82cf-ae7dcf9f8231",
+        "status": "invalid", "createdDateTime": "2020-03-05T18:05:36Z", "lastUpdatedDateTime":
+        "2020-03-05T18:05:39Z"}], "nextLink": "https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!236!MDAwMTMyIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzJlMzJiYWNjLWRhZWMtNGVlMS04OTZlLTUyMWJiODBiMzg3Yy8yZTMyYmFjYy1kYWVjLTRlZTEtODk2ZS01MjFiYjgwYjM4N2MuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-"}'
+    headers:
+      apim-request-id:
+      - 4ebb72ff-d742-4398-b551-2dd22c7154ed
+      content-length:
+      - '6027'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 23:18:30 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '268'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!236!MDAwMTMyIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzJlMzJiYWNjLWRhZWMtNGVlMS04OTZlLTUyMWJiODBiMzg3Yy8yZTMyYmFjYy1kYWVjLTRlZTEtODk2ZS01MjFiYjgwYjM4N2MuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-
+  response:
+    body:
+      string: '{"modelList": [{"modelId": "2e32bacc-daec-4ee1-896e-521bb80b387c",
+        "status": "creating", "createdDateTime": "2020-05-20T00:03:01Z", "lastUpdatedDateTime":
+        "2020-05-20T00:03:01Z"}, {"modelId": "2fb69599-fb4b-4e48-81f5-80fec8cbd40e",
+        "status": "invalid", "createdDateTime": "2021-03-03T22:19:03Z", "lastUpdatedDateTime":
+        "2021-03-03T22:19:04Z"}, {"modelId": "30e01d7e-fc14-4894-b325-ff9c2c299dee",
+        "status": "ready", "createdDateTime": "2020-11-19T18:06:01Z", "lastUpdatedDateTime":
+        "2020-11-19T18:06:18Z"}, {"modelId": "319704f8-f5e0-4b80-a94a-4a37c7bd45c1",
+        "status": "ready", "createdDateTime": "2020-05-29T15:57:35Z", "lastUpdatedDateTime":
+        "2020-05-29T15:59:16Z"}, {"modelId": "31c62d2e-aaea-4ce2-b63f-e7ca4ca219df",
+        "status": "invalid", "createdDateTime": "2021-02-22T16:20:02Z", "lastUpdatedDateTime":
+        "2021-02-22T16:20:19Z"}, {"modelId": "31f7c2b6-6e4f-45db-ae54-7be3492141ee",
+        "status": "invalid", "createdDateTime": "2021-02-22T16:20:03Z", "lastUpdatedDateTime":
+        "2021-02-22T16:20:03Z"}, {"modelId": "325b479e-a871-48dc-a027-03000a3c5d83",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:05:56Z", "lastUpdatedDateTime":
+        "2021-02-19T19:05:57Z"}, {"modelId": "33486c04-5819-4fdf-931a-d4f8100c8293",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:01:11Z", "lastUpdatedDateTime":
+        "2021-02-19T19:01:12Z"}, {"modelId": "3392a433-a09d-4d92-ae6b-e563c1384542",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T19:46:29Z", "lastUpdatedDateTime":
+        "2020-08-11T19:46:29Z"}, {"modelId": "33c8e981-f08a-42b5-a43f-f81806c4a2b5",
+        "status": "ready", "createdDateTime": "2020-04-10T21:08:38Z", "lastUpdatedDateTime":
+        "2020-04-10T21:08:47Z"}, {"modelId": "33f9b89e-ef67-4c0f-b726-1cd9d19cbcb6",
+        "status": "ready", "createdDateTime": "2020-04-02T19:15:32Z", "lastUpdatedDateTime":
+        "2020-04-02T19:17:28Z"}, {"modelId": "34688789-9891-4bba-b91d-37dd357661f7",
+        "status": "invalid", "createdDateTime": "2020-03-05T18:22:55Z", "lastUpdatedDateTime":
+        "2020-03-05T18:22:55Z"}, {"modelId": "356fc9f8-1bd3-4427-b6fa-4ca46a12812a",
+        "status": "ready", "createdDateTime": "2020-04-02T00:28:44Z", "lastUpdatedDateTime":
+        "2020-04-02T00:30:45Z"}, {"modelId": "3725e29d-308c-49be-9904-1ce5e085b87b",
+        "status": "ready", "createdDateTime": "2020-04-09T17:36:08Z", "lastUpdatedDateTime":
+        "2020-04-09T17:36:17Z"}, {"modelId": "373ab10b-ea40-4689-9dd7-5fb4d028ccde",
+        "status": "ready", "createdDateTime": "2020-11-20T17:37:25Z", "lastUpdatedDateTime":
+        "2020-11-20T17:37:41Z"}, {"modelId": "374e5862-9360-4429-a5c2-55c5cc3a66ac",
+        "status": "ready", "createdDateTime": "2020-03-27T23:00:23Z", "lastUpdatedDateTime":
+        "2020-03-27T23:00:32Z"}, {"modelId": "380a10fb-85b3-42ec-81ee-f4a7a8ef5f1e",
+        "status": "ready", "createdDateTime": "2020-04-02T00:07:12Z", "lastUpdatedDateTime":
+        "2020-04-02T00:09:15Z"}, {"modelId": "3851b84e-5b43-49d1-b98a-00c636f780c1",
+        "status": "ready", "createdDateTime": "2020-11-19T21:34:53Z", "lastUpdatedDateTime":
+        "2020-11-19T21:35:09Z"}, {"modelId": "3b71c908-f4b0-4245-9f2c-fcab3320d6c0",
+        "status": "invalid", "createdDateTime": "2020-03-13T21:38:42Z", "lastUpdatedDateTime":
+        "2020-03-13T21:38:43Z"}, {"modelId": "3c4089a9-afc3-4080-aa41-c0efedf9029a",
+        "status": "ready", "createdDateTime": "2020-04-02T16:57:36Z", "lastUpdatedDateTime":
+        "2020-04-02T16:59:42Z"}, {"modelId": "3c436ebc-7a07-4748-8f0d-0a9ea53dc624",
+        "status": "invalid", "createdDateTime": "2020-04-01T01:53:34Z", "lastUpdatedDateTime":
+        "2020-04-01T01:53:35Z"}, {"modelId": "3c70b5cf-2e6f-4eff-ba98-370c5178f9e6",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:06:00Z", "lastUpdatedDateTime":
+        "2021-02-19T19:06:00Z"}, {"modelId": "3d9d94bc-ae95-46df-821d-613a58adbe92",
+        "attributes": {"isComposed": false}, "status": "ready", "createdDateTime":
+        "2021-02-19T18:56:08Z", "lastUpdatedDateTime": "2021-02-19T18:56:11Z"}, {"modelId":
+        "3e4fce16-793c-442a-8c35-84fc716734a2", "status": "invalid", "createdDateTime":
+        "2020-04-13T19:42:52Z", "lastUpdatedDateTime": "2020-04-13T19:45:52Z"}, {"modelId":
+        "3e931bc9-94bb-4c05-bd28-f3af1023a78f", "status": "ready", "createdDateTime":
+        "2020-11-20T16:49:47Z", "lastUpdatedDateTime": "2020-11-20T16:50:04Z"}, {"modelId":
+        "3ec666a5-0267-4caf-9c09-ef8bfdf234da", "status": "ready", "createdDateTime":
+        "2020-04-02T17:30:06Z", "lastUpdatedDateTime": "2020-04-02T17:32:03Z"}, {"modelId":
+        "3f005482-fff7-4003-8e01-bcfe625f7648", "modelName": "mycomposedmodel", "attributes":
+        {"isComposed": true}, "status": "ready", "createdDateTime": "2020-09-15T00:28:40Z",
+        "lastUpdatedDateTime": "2020-09-15T00:28:41Z"}, {"modelId": "3f20291f-8372-4db1-a46c-2a69bbe493cf",
+        "status": "ready", "createdDateTime": "2020-03-16T16:28:19Z", "lastUpdatedDateTime":
+        "2020-03-16T16:30:23Z"}, {"modelId": "41a711cd-9c4e-48f7-be80-b166ac0c9a91",
+        "status": "ready", "createdDateTime": "2020-03-24T20:41:33Z", "lastUpdatedDateTime":
+        "2020-03-24T20:41:53Z"}, {"modelId": "4211beb5-40f4-4433-a41f-f710da174195",
+        "status": "invalid", "createdDateTime": "2020-04-02T17:17:14Z", "lastUpdatedDateTime":
+        "2020-04-02T17:18:12Z"}, {"modelId": "428b2349-e0a2-4d1e-87d0-20f9f43326a8",
+        "status": "ready", "createdDateTime": "2020-04-21T05:39:12Z", "lastUpdatedDateTime":
+        "2020-04-21T05:39:20Z"}, {"modelId": "4294bb2d-e168-4edf-970a-efd2c689b9b5",
+        "status": "ready", "createdDateTime": "2021-02-19T18:56:08Z", "lastUpdatedDateTime":
+        "2021-02-19T18:56:38Z"}, {"modelId": "42e285f7-fd3d-4440-bd44-6b9af13b259b",
+        "status": "invalid", "createdDateTime": "2020-04-13T19:44:25Z", "lastUpdatedDateTime":
+        "2020-04-13T19:44:25Z"}], "nextLink": "https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!232!MDAwMTMwIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzQzMTY0YTE3LWYyOTItNGNmYy05NDk2LTkyYTJmNmI5MDIyMi80MzE2NGExNy1mMjkyLTRjZmMtOTQ5Ni05MmEyZjZiOTAyMjIuZ3ohMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVoh"}'
+    headers:
+      apim-request-id:
+      - ba047099-ab3b-4791-8b6e-17db84022a05
+      content-length:
+      - '5667'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 23:18:30 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '150'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!232!MDAwMTMwIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzQzMTY0YTE3LWYyOTItNGNmYy05NDk2LTkyYTJmNmI5MDIyMi80MzE2NGExNy1mMjkyLTRjZmMtOTQ5Ni05MmEyZjZiOTAyMjIuZ3ohMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVoh
+  response:
+    body:
+      string: '{"modelList": [{"modelId": "43164a17-f292-4cfc-9496-92a2f6b90222",
+        "status": "ready", "createdDateTime": "2020-03-27T22:59:36Z", "lastUpdatedDateTime":
+        "2020-03-27T22:59:45Z"}, {"modelId": "4351b6b3-3d21-4055-b138-1d280ef7b04b",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T20:34:49Z", "lastUpdatedDateTime":
+        "2020-08-11T20:34:54Z"}, {"modelId": "436a33e3-9c49-448e-94f8-3cf50dfca85f",
+        "status": "ready", "createdDateTime": "2020-03-12T19:20:27Z", "lastUpdatedDateTime":
+        "2020-03-12T19:20:28Z"}, {"modelId": "44dc9184-14ed-4474-ba62-93372ade56ec",
+        "status": "ready", "createdDateTime": "2020-03-24T01:45:18Z", "lastUpdatedDateTime":
+        "2020-03-24T01:45:25Z"}, {"modelId": "4503978d-f8c0-46e7-a5b1-6ddb28408c55",
+        "status": "invalid", "createdDateTime": "2020-04-09T18:19:55Z", "lastUpdatedDateTime":
+        "2020-04-09T18:19:56Z"}, {"modelId": "46e71ccc-c18c-4a9b-9e40-d36aa2752344",
+        "status": "creating", "createdDateTime": "2021-03-01T22:00:11Z", "lastUpdatedDateTime":
+        "2021-03-01T22:00:11Z"}, {"modelId": "47452604-2359-4d23-b952-ffa76f81f862",
+        "status": "ready", "createdDateTime": "2020-04-02T16:41:13Z", "lastUpdatedDateTime":
+        "2020-04-02T16:43:16Z"}, {"modelId": "475be9d7-a574-4c89-987d-e94a2193c9d8",
+        "status": "ready", "createdDateTime": "2020-04-01T02:02:01Z", "lastUpdatedDateTime":
+        "2020-04-01T02:02:10Z"}, {"modelId": "487b1b31-df87-40a7-9e93-5e21cad3b3f4",
+        "modelName": "labeled", "attributes": {"isComposed": false}, "status": "ready",
+        "createdDateTime": "2021-03-01T16:05:58Z", "lastUpdatedDateTime": "2021-03-01T16:06:02Z"},
+        {"modelId": "493729ed-9bc9-4c18-8171-5b33fed6682e", "status": "ready", "createdDateTime":
+        "2020-04-11T19:41:14Z", "lastUpdatedDateTime": "2020-04-11T19:41:23Z"}, {"modelId":
+        "49d702f7-d4fd-48e6-b74f-2fad73494ae6", "status": "ready", "createdDateTime":
+        "2020-03-15T19:49:07Z", "lastUpdatedDateTime": "2020-03-15T19:51:02Z"}, {"modelId":
+        "49f3015b-0745-44b2-8a2a-180eed885c16", "modelName": "unlabeled", "status":
+        "ready", "createdDateTime": "2021-02-25T22:42:12Z", "lastUpdatedDateTime":
+        "2021-02-25T22:43:05Z"}, {"modelId": "4a85d6aa-84e9-4235-82a0-fd9698ef79c9",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T19:38:21Z", "lastUpdatedDateTime":
+        "2020-08-11T19:38:21Z"}, {"modelId": "4a93478e-9dd8-4fa2-afcb-260445275a40",
+        "status": "invalid", "createdDateTime": "2021-03-03T22:46:22Z", "lastUpdatedDateTime":
+        "2021-03-03T22:46:23Z"}, {"modelId": "4b8c7140-933f-4554-9d70-9b9ef6894501",
+        "modelName": "mymodel", "status": "ready", "createdDateTime": "2020-11-19T17:18:56Z",
+        "lastUpdatedDateTime": "2020-11-19T17:19:14Z"}, {"modelId": "4bfe2202-aa36-4b59-a816-45e9ad2d1e2d",
+        "status": "ready", "createdDateTime": "2020-04-02T16:46:46Z", "lastUpdatedDateTime":
+        "2020-04-02T16:48:50Z"}, {"modelId": "4c7ce365-3e78-4379-8b3c-b7e01b2731cf",
+        "attributes": {"isComposed": false}, "status": "ready", "createdDateTime":
+        "2020-11-20T17:56:31Z", "lastUpdatedDateTime": "2020-11-20T17:56:33Z"}, {"modelId":
+        "4cba7332-5ea7-4453-996f-52d550d3341d", "modelName": "labeled", "attributes":
+        {"isComposed": false}, "status": "ready", "createdDateTime": "2021-03-01T16:10:38Z",
+        "lastUpdatedDateTime": "2021-03-01T16:10:41Z"}, {"modelId": "4d14b6f2-f630-43a0-81b9-c7d4601eb582",
+        "status": "ready", "createdDateTime": "2021-01-21T23:40:43Z", "lastUpdatedDateTime":
+        "2021-01-21T23:41:08Z"}, {"modelId": "4d68c598-b03a-48f0-a1e1-2bf6fd9e1628",
+        "status": "invalid", "createdDateTime": "2020-04-01T23:51:37Z", "lastUpdatedDateTime":
+        "2020-04-01T23:52:33Z"}, {"modelId": "4daafb45-08e5-4369-bebd-2436cd531e11",
+        "status": "ready", "createdDateTime": "2020-04-02T02:19:17Z", "lastUpdatedDateTime":
+        "2020-04-02T02:21:18Z"}, {"modelId": "4dd5ded6-e44f-4ff4-9b6f-be48bd8420d1",
+        "status": "ready", "createdDateTime": "2020-03-13T16:53:03Z", "lastUpdatedDateTime":
+        "2020-03-13T16:55:06Z"}, {"modelId": "4e4f8e5a-0a31-4905-be65-8ba880d51815",
+        "status": "ready", "createdDateTime": "2020-04-01T23:03:58Z", "lastUpdatedDateTime":
+        "2020-04-01T23:06:01Z"}, {"modelId": "4e90eff6-eafb-4fd9-97cd-3c91a5073293",
+        "status": "invalid", "createdDateTime": "2021-03-03T21:54:11Z", "lastUpdatedDateTime":
+        "2021-03-03T21:54:11Z"}, {"modelId": "4eabb2b8-1186-437c-a365-adb55cbc11f2",
+        "status": "invalid", "createdDateTime": "2020-03-13T21:39:42Z", "lastUpdatedDateTime":
+        "2020-03-13T21:39:43Z"}, {"modelId": "4fd29344-db36-42ab-88fd-45928a922837",
+        "modelName": "labeled", "attributes": {"isComposed": false}, "status": "ready",
+        "createdDateTime": "2021-03-01T16:08:48Z", "lastUpdatedDateTime": "2021-03-01T16:08:50Z"},
+        {"modelId": "5069bfd7-047c-4b60-bb9e-b2fe42be4eb8", "status": "ready", "createdDateTime":
+        "2020-04-02T19:14:24Z", "lastUpdatedDateTime": "2020-04-02T19:16:27Z"}, {"modelId":
+        "5153fca1-691c-4d29-9155-6cd0680e29c5", "status": "ready", "createdDateTime":
+        "2020-08-13T23:09:30Z", "lastUpdatedDateTime": "2020-08-13T23:09:43Z"}, {"modelId":
+        "536444c1-d804-4b6f-9f19-9ba41b697c75", "status": "invalid", "createdDateTime":
+        "2020-03-30T21:51:08Z", "lastUpdatedDateTime": "2020-03-30T21:51:08Z"}, {"modelId":
+        "53cc3e0b-eec1-467e-a261-9c26a9fa6244", "status": "ready", "createdDateTime":
+        "2020-05-29T15:57:35Z", "lastUpdatedDateTime": "2020-05-29T15:59:16Z"}, {"modelId":
+        "54cf155c-db2d-443b-83c3-ca31190fa6e8", "modelName": "unlabeled", "status":
+        "ready", "createdDateTime": "2021-02-25T22:43:51Z", "lastUpdatedDateTime":
+        "2021-02-25T22:44:49Z"}, {"modelId": "5516a93e-4cd8-4906-9ea9-26eb1bc855dd",
+        "status": "ready", "createdDateTime": "2020-04-10T20:41:35Z", "lastUpdatedDateTime":
+        "2020-04-10T20:41:43Z"}], "nextLink": "https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!236!MDAwMTMyIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzU1MTZhOTNlLTRjZDgtNDkwNi05ZWE5LTI2ZWIxYmM4NTVkZC81NTE2YTkzZS00Y2Q4LTQ5MDYtOWVhOS0yNmViMWJjODU1ZGQuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-"}'
+    headers:
+      apim-request-id:
+      - fc321615-81c6-415e-ad01-2a5922ea9c50
+      content-length:
+      - '5747'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 23:18:31 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '233'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!236!MDAwMTMyIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzU1MTZhOTNlLTRjZDgtNDkwNi05ZWE5LTI2ZWIxYmM4NTVkZC81NTE2YTkzZS00Y2Q4LTQ5MDYtOWVhOS0yNmViMWJjODU1ZGQuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-
+  response:
+    body:
+      string: '{"modelList": [{"modelId": "5516a93e-4cd8-4906-9ea9-26eb1bc855dd",
+        "status": "ready", "createdDateTime": "2020-04-10T20:41:35Z", "lastUpdatedDateTime":
+        "2020-04-10T20:41:43Z"}, {"modelId": "553c1c17-bd46-416e-96d5-4b8b15c2ab02",
+        "status": "invalid", "createdDateTime": "2021-03-01T21:11:20Z", "lastUpdatedDateTime":
+        "2021-03-01T21:11:20Z"}, {"modelId": "555aa4d1-0824-40f3-a693-e33ee522669c",
+        "status": "ready", "createdDateTime": "2020-04-10T20:30:47Z", "lastUpdatedDateTime":
+        "2020-04-10T20:30:57Z"}, {"modelId": "5650adb1-1387-41b3-a5dd-6e9833d2b33b",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:05:59Z", "lastUpdatedDateTime":
+        "2021-02-19T19:06:00Z"}, {"modelId": "5654bd4b-e85c-41ed-b8f6-c77780d06551",
+        "modelName": "labeled", "attributes": {"isComposed": false}, "status": "ready",
+        "createdDateTime": "2021-03-01T16:07:47Z", "lastUpdatedDateTime": "2021-03-01T16:07:51Z"},
+        {"modelId": "572b5e8c-125b-4f63-b9bc-a9de922abbd4", "status": "ready", "createdDateTime":
+        "2020-04-02T16:46:04Z", "lastUpdatedDateTime": "2020-04-02T16:48:04Z"}, {"modelId":
+        "57a8b733-80db-446e-92c9-110148ded1b7", "status": "ready", "createdDateTime":
+        "2020-03-30T21:14:25Z", "lastUpdatedDateTime": "2020-03-30T21:14:34Z"}, {"modelId":
+        "5821a84d-d13d-462c-b40c-6b90793b6565", "status": "ready", "createdDateTime":
+        "2020-04-20T19:46:37Z", "lastUpdatedDateTime": "2020-04-20T19:46:45Z"}, {"modelId":
+        "5924f18d-a26f-4653-b610-223b9594ca9b", "status": "ready", "createdDateTime":
+        "2020-03-15T19:34:12Z", "lastUpdatedDateTime": "2020-03-15T19:36:07Z"}, {"modelId":
+        "597701b0-5e5a-4594-bfbc-48ce5e31965f", "attributes": {"isComposed": false},
+        "status": "ready", "createdDateTime": "2021-02-19T19:05:59Z", "lastUpdatedDateTime":
+        "2021-02-19T19:06:05Z"}, {"modelId": "5b19288d-9048-4f40-a0e9-f4ef3c65795c",
+        "status": "ready", "createdDateTime": "2020-03-15T20:18:39Z", "lastUpdatedDateTime":
+        "2020-03-15T20:20:34Z"}, {"modelId": "5b973420-f850-4020-a2bc-6e9a14f6bbd0",
+        "status": "ready", "createdDateTime": "2020-04-01T23:27:46Z", "lastUpdatedDateTime":
+        "2020-04-01T23:29:46Z"}, {"modelId": "5c74c941-32d0-47cb-b65e-c5f7fb8ecac7",
+        "modelName": "unlabeled", "status": "ready", "createdDateTime": "2021-02-25T22:41:10Z",
+        "lastUpdatedDateTime": "2021-02-25T22:42:09Z"}, {"modelId": "5d90e99d-da95-4125-8c0c-a349e35a33d7",
+        "status": "invalid", "createdDateTime": "2021-03-03T22:24:07Z", "lastUpdatedDateTime":
+        "2021-03-03T22:24:08Z"}, {"modelId": "5ef66b5d-0ead-4031-a7d3-d46ba9673207",
+        "status": "ready", "createdDateTime": "2020-05-29T15:57:35Z", "lastUpdatedDateTime":
+        "2020-05-29T15:59:16Z"}, {"modelId": "5f5eacbf-e45c-494d-96b1-38c785f19cc7",
+        "status": "ready", "createdDateTime": "2020-03-15T19:37:44Z", "lastUpdatedDateTime":
+        "2020-03-15T19:39:44Z"}, {"modelId": "5fd9558b-82e1-4443-b201-09486ce65d11",
+        "status": "ready", "createdDateTime": "2020-03-12T18:47:21Z", "lastUpdatedDateTime":
+        "2020-03-12T18:47:29Z"}, {"modelId": "61fcb11f-3bab-4edd-8264-b2ffbcc35869",
+        "modelName": "labeled", "attributes": {"isComposed": false}, "status": "ready",
+        "createdDateTime": "2021-01-25T19:54:26Z", "lastUpdatedDateTime": "2021-01-25T19:54:28Z"},
+        {"modelId": "6271a9e4-90b5-45c2-ae09-85726535cf98", "status": "ready", "createdDateTime":
+        "2020-04-02T17:37:21Z", "lastUpdatedDateTime": "2020-04-02T17:37:37Z"}, {"modelId":
+        "62c71745-fd52-4f87-ba68-a66660e5398a", "status": "invalid", "createdDateTime":
+        "2020-03-15T19:29:14Z", "lastUpdatedDateTime": "2020-03-15T19:29:15Z"}, {"modelId":
+        "62f23b41-b5b0-4f15-b2da-a7fa33d83db7", "status": "ready", "createdDateTime":
+        "2020-04-09T01:41:38Z", "lastUpdatedDateTime": "2020-04-09T01:41:41Z"}, {"modelId":
+        "633eb385-0688-487d-98ec-23a981bda670", "status": "ready", "createdDateTime":
+        "2020-04-13T16:46:55Z", "lastUpdatedDateTime": "2020-04-13T16:47:04Z"}, {"modelId":
+        "634d2ef4-04c0-49ef-b10b-2356e68f7c8b", "status": "ready", "createdDateTime":
+        "2020-04-05T21:52:01Z", "lastUpdatedDateTime": "2020-04-05T21:52:02Z"}, {"modelId":
+        "63dd7c31-d7d2-4f72-84aa-9413b7cf04f7", "modelName": "labeled", "status":
+        "invalid", "createdDateTime": "2021-02-26T19:10:27Z", "lastUpdatedDateTime":
+        "2021-02-26T19:10:30Z"}, {"modelId": "6408aa30-a1ab-4172-921e-dc71c26c028b",
+        "status": "invalid", "createdDateTime": "2021-03-01T21:13:25Z", "lastUpdatedDateTime":
+        "2021-03-01T21:13:26Z"}, {"modelId": "64d41333-9489-412e-af02-6664bb297e55",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:01:12Z", "lastUpdatedDateTime":
+        "2021-02-19T19:01:12Z"}, {"modelId": "65844abd-fb99-4b3c-b5c7-34e3b7c4db6c",
+        "modelName": "labeled", "status": "invalid", "createdDateTime": "2021-02-19T19:05:56Z",
+        "lastUpdatedDateTime": "2021-02-19T19:05:56Z"}, {"modelId": "663b5cc9-97a3-472b-8c35-49728633ccd9",
+        "status": "ready", "createdDateTime": "2021-02-19T18:56:04Z", "lastUpdatedDateTime":
+        "2021-02-19T18:56:34Z"}, {"modelId": "67951586-1a2b-4957-bfef-8a963ef0e07d",
+        "status": "ready", "createdDateTime": "2020-04-02T17:00:05Z", "lastUpdatedDateTime":
+        "2020-04-02T17:02:03Z"}, {"modelId": "67d1e903-cc92-4294-9b03-8547eeb9d988",
+        "status": "ready", "createdDateTime": "2020-04-02T19:37:34Z", "lastUpdatedDateTime":
+        "2020-04-02T19:39:29Z"}, {"modelId": "68cb2ba6-e7d6-4e79-a50d-ee4c248d4156",
+        "status": "invalid", "createdDateTime": "2020-04-10T19:48:43Z", "lastUpdatedDateTime":
+        "2020-04-10T19:49:43Z"}, {"modelId": "6933b09c-30f1-46ed-bd25-5bc81c4e04df",
+        "status": "ready", "createdDateTime": "2020-04-13T17:41:16Z", "lastUpdatedDateTime":
+        "2020-04-13T17:41:24Z"}, {"modelId": "699fd879-f7d2-4e94-bc6a-88ed9fa47af4",
+        "status": "ready", "createdDateTime": "2020-04-02T17:35:47Z", "lastUpdatedDateTime":
+        "2020-04-02T17:35:58Z"}], "nextLink": "https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzY5OWZkODc5LWY3ZDItNGU5NC1iYzZhLTg4ZWQ5ZmE0N2FmNC91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-"}'
+    headers:
+      apim-request-id:
+      - 5d9550f8-01e5-4451-8cee-0e174a109bd6
+      content-length:
+      - '5680'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 23:18:31 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '172'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzY5OWZkODc5LWY3ZDItNGU5NC1iYzZhLTg4ZWQ5ZmE0N2FmNC91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-
+  response:
+    body:
+      string: '{"modelList": [{"modelId": "699fd879-f7d2-4e94-bc6a-88ed9fa47af4",
+        "status": "ready", "createdDateTime": "2020-04-02T17:35:47Z", "lastUpdatedDateTime":
+        "2020-04-02T17:35:58Z"}, {"modelId": "69ee41be-3916-4d54-b28b-a579ebaa98dc",
+        "status": "invalid", "createdDateTime": "2020-04-10T20:15:51Z", "lastUpdatedDateTime":
+        "2020-04-10T20:16:51Z"}, {"modelId": "6a1d79a7-2c75-4257-959a-f89c420fbf66",
+        "status": "ready", "createdDateTime": "2020-04-10T21:01:19Z", "lastUpdatedDateTime":
+        "2020-04-10T21:01:28Z"}, {"modelId": "6b0e5399-dffc-4b8c-a8aa-bdc29109913d",
+        "status": "ready", "createdDateTime": "2020-04-13T16:42:19Z", "lastUpdatedDateTime":
+        "2020-04-13T16:42:22Z"}, {"modelId": "6c9ffc45-7f53-441b-afa7-7342edde4cd4",
+        "modelName": "labeled", "attributes": {"isComposed": false}, "status": "ready",
+        "createdDateTime": "2021-03-01T16:09:40Z", "lastUpdatedDateTime": "2021-03-01T16:09:43Z"},
+        {"modelId": "6cf013cd-208a-4c83-844c-72a86945cf69", "modelName": "labeled",
+        "status": "invalid", "createdDateTime": "2021-02-26T20:11:41Z", "lastUpdatedDateTime":
+        "2021-02-26T20:11:42Z"}, {"modelId": "6d2866db-3e68-4cbf-8f95-6d8505354bc7",
+        "status": "invalid", "createdDateTime": "2020-04-01T02:12:18Z", "lastUpdatedDateTime":
+        "2020-04-01T02:12:18Z"}, {"modelId": "6e4bedbb-6246-4553-b31e-4959d1ef8f73",
+        "status": "invalid", "createdDateTime": "2020-04-01T02:15:10Z", "lastUpdatedDateTime":
+        "2020-04-01T02:15:11Z"}, {"modelId": "6eb745a3-07bc-4d18-8c48-9a0324cfe663",
+        "status": "ready", "createdDateTime": "2020-03-24T20:39:08Z", "lastUpdatedDateTime":
+        "2020-03-24T20:39:27Z"}, {"modelId": "6f8cfb3d-c933-4e95-b94d-7c6600d228cb",
+        "modelName": "labeled", "attributes": {"isComposed": false}, "status": "ready",
+        "createdDateTime": "2021-02-26T21:38:04Z", "lastUpdatedDateTime": "2021-02-26T21:38:08Z"},
+        {"modelId": "6fd13b54-f34e-421f-a500-4255a000c96a", "attributes": {"isComposed":
+        false}, "status": "ready", "createdDateTime": "2020-11-20T17:58:30Z", "lastUpdatedDateTime":
+        "2020-11-20T17:59:32Z"}, {"modelId": "700bf4db-d96f-417c-a512-37a10d4362a2",
+        "status": "ready", "createdDateTime": "2020-03-30T21:54:06Z", "lastUpdatedDateTime":
+        "2020-03-30T21:54:14Z"}, {"modelId": "70ccd26d-5041-4407-a630-acdec9271538",
+        "status": "ready", "createdDateTime": "2020-04-01T23:38:56Z", "lastUpdatedDateTime":
+        "2020-04-01T23:40:50Z"}, {"modelId": "70e1ec58-43e4-4729-9d7b-587644d86743",
+        "modelName": "mymodel", "status": "ready", "createdDateTime": "2020-11-20T16:47:52Z",
+        "lastUpdatedDateTime": "2020-11-20T16:48:09Z"}, {"modelId": "717cba6c-81a0-4113-911c-6ee14ecc1c64",
+        "status": "ready", "createdDateTime": "2020-04-13T16:35:46Z", "lastUpdatedDateTime":
+        "2020-04-13T16:35:49Z"}, {"modelId": "718e3eab-6f8f-422b-8e54-7932c7fa9ef2",
+        "status": "ready", "createdDateTime": "2020-04-22T03:13:32Z", "lastUpdatedDateTime":
+        "2020-04-22T03:13:40Z"}, {"modelId": "729b12ca-fd8d-4a9d-9b76-9554643ec37b",
+        "status": "ready", "createdDateTime": "2020-03-13T21:34:56Z", "lastUpdatedDateTime":
+        "2020-03-13T21:36:56Z"}, {"modelId": "731d62de-1b53-4ce6-92ae-48c5459bb1e1",
+        "status": "ready", "createdDateTime": "2020-04-10T20:29:01Z", "lastUpdatedDateTime":
+        "2020-04-10T20:29:10Z"}, {"modelId": "733fbb4c-bc74-440f-9809-c7a15c528bcc",
+        "status": "invalid", "createdDateTime": "2021-03-03T21:36:32Z", "lastUpdatedDateTime":
+        "2021-03-03T21:36:33Z"}, {"modelId": "73a6647a-c6f6-46fd-9ca7-990cffa615e0",
+        "status": "invalid", "createdDateTime": "2021-03-03T22:48:38Z", "lastUpdatedDateTime":
+        "2021-03-03T22:48:40Z"}, {"modelId": "74e60334-9958-4861-a975-96cf443b9425",
+        "status": "ready", "createdDateTime": "2020-04-13T16:35:39Z", "lastUpdatedDateTime":
+        "2020-04-13T16:35:49Z"}, {"modelId": "753f87ab-7de3-484a-88ab-989bfee65f48",
+        "attributes": {"isComposed": false}, "status": "ready", "createdDateTime":
+        "2021-02-19T19:05:58Z", "lastUpdatedDateTime": "2021-02-19T19:06:02Z"}, {"modelId":
+        "75ba63fd-348c-407f-ad77-99b67095786e", "status": "ready", "createdDateTime":
+        "2020-04-21T05:32:20Z", "lastUpdatedDateTime": "2020-04-21T05:32:29Z"}, {"modelId":
+        "75c89f8d-0f3e-4b5f-bc25-d44caf5f983b", "status": "ready", "createdDateTime":
+        "2020-04-02T21:09:43Z", "lastUpdatedDateTime": "2020-04-02T21:11:43Z"}, {"modelId":
+        "760bf229-1a1f-4aee-b4a1-d29ddad42907", "status": "ready", "createdDateTime":
+        "2020-04-02T17:42:19Z", "lastUpdatedDateTime": "2020-04-02T17:44:18Z"}, {"modelId":
+        "765218a9-bd57-4c76-85f2-bb01517e8af5", "status": "invalid", "createdDateTime":
+        "2021-03-03T21:21:01Z", "lastUpdatedDateTime": "2021-03-03T21:21:02Z"}, {"modelId":
+        "7713df98-539e-46c5-979c-60b29571495f", "status": "invalid", "createdDateTime":
+        "2021-02-19T19:05:54Z", "lastUpdatedDateTime": "2021-02-19T19:05:55Z"}, {"modelId":
+        "7771c362-af0d-43c5-ad7d-a228a75f28c0", "modelName": "unlabeled", "status":
+        "ready", "createdDateTime": "2021-02-25T22:44:52Z", "lastUpdatedDateTime":
+        "2021-02-25T22:45:45Z"}, {"modelId": "77ee725d-ab04-4522-b577-3e7a29326fd0",
+        "status": "ready", "createdDateTime": "2020-04-13T17:40:06Z", "lastUpdatedDateTime":
+        "2020-04-13T17:40:15Z"}, {"modelId": "785671f9-d058-4542-8d5a-6f08f1715e2a",
+        "status": "ready", "createdDateTime": "2020-04-06T21:54:09Z", "lastUpdatedDateTime":
+        "2020-04-06T21:54:18Z"}, {"modelId": "7a28024d-6e36-444f-ae51-3985fa8205f4",
+        "status": "invalid", "createdDateTime": "2020-04-10T18:17:16Z", "lastUpdatedDateTime":
+        "2020-04-10T18:17:17Z"}, {"modelId": "7aa01eff-7641-4332-917d-9566484ea249",
+        "status": "invalid", "createdDateTime": "2020-04-01T01:43:39Z", "lastUpdatedDateTime":
+        "2020-04-01T01:43:39Z"}, {"modelId": "7aeb48b3-6977-4091-9d69-a681675af360",
+        "status": "ready", "createdDateTime": "2020-05-29T15:57:35Z", "lastUpdatedDateTime":
+        "2020-05-29T15:59:16Z"}, {"modelId": "7bb77385-094c-4a9b-be95-3ce02d472c58",
+        "status": "ready", "createdDateTime": "2020-04-10T21:04:12Z", "lastUpdatedDateTime":
+        "2020-04-10T21:04:26Z"}], "nextLink": "https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzdiYjc3Mzg1LTA5NGMtNGE5Yi1iZTk1LTNjZTAyZDQ3MmM1OC91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-"}'
+    headers:
+      apim-request-id:
+      - 90eab6fa-46d0-429f-a270-0fd49a39f1a3
+      content-length:
+      - '5870'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 23:18:31 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '204'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzdiYjc3Mzg1LTA5NGMtNGE5Yi1iZTk1LTNjZTAyZDQ3MmM1OC91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-
+  response:
+    body:
+      string: '{"error": {"code": "429", "message": "Requests to the Custom Form Model
+        Management - List Custom Models Operation under Form Recognizer API (v2.1-preview.3)
+        have exceeded rate limit of your current FormRecognizer S0 pricing tier. Please
+        retry after 23 seconds. Please contact Azure support service if you would
+        like to further increase the default rate limit."}}'
+    headers:
+      apim-request-id:
+      - 2d1eb6d7-58b6-4b0b-91f0-b1dca5cdc523
+      content-length:
+      - '359'
+      content-type:
+      - application/json
+      date:
+      - Wed, 03 Mar 2021 23:18:31 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 429
+      message: Too Many Requests
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzdiYjc3Mzg1LTA5NGMtNGE5Yi1iZTk1LTNjZTAyZDQ3MmM1OC91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-
+  response:
+    body:
+      string: '{"modelList": [{"modelId": "7bb77385-094c-4a9b-be95-3ce02d472c58",
+        "status": "ready", "createdDateTime": "2020-04-10T21:04:12Z", "lastUpdatedDateTime":
+        "2020-04-10T21:04:26Z"}, {"modelId": "7bc722a1-fffc-4c41-9031-c7bda567bdfa",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T20:45:27Z", "lastUpdatedDateTime":
+        "2020-08-11T20:45:27Z"}, {"modelId": "7d061a34-c20b-4794-9c64-1bc6ee918329",
+        "status": "ready", "createdDateTime": "2020-04-02T02:45:16Z", "lastUpdatedDateTime":
+        "2020-04-02T02:47:18Z"}, {"modelId": "7e3e36ee-cdf6-406c-869b-3ef3f1d9aad9",
+        "status": "ready", "createdDateTime": "2020-03-11T03:02:02Z", "lastUpdatedDateTime":
+        "2020-03-11T03:02:11Z"}, {"modelId": "7e508843-5dd2-48d3-abd1-f542bc9c3c07",
+        "status": "ready", "createdDateTime": "2020-03-15T20:05:31Z", "lastUpdatedDateTime":
+        "2020-03-15T20:07:33Z"}, {"modelId": "7e5194c7-390c-4cee-9a0f-96d670e45b5a",
+        "status": "invalid", "createdDateTime": "2021-03-03T21:50:24Z", "lastUpdatedDateTime":
+        "2021-03-03T21:50:25Z"}, {"modelId": "7fd94e51-a18f-44f9-bcd0-ce8b84fb4d39",
+        "status": "ready", "createdDateTime": "2020-03-15T20:04:01Z", "lastUpdatedDateTime":
+        "2020-03-15T20:06:01Z"}, {"modelId": "80fee662-fd5a-41bf-b4f5-893e0eca4bb2",
+        "status": "ready", "createdDateTime": "2020-03-15T19:31:28Z", "lastUpdatedDateTime":
+        "2020-03-15T19:33:30Z"}, {"modelId": "8223dd41-2932-4301-b621-ccf75d6a3c0a",
+        "status": "ready", "createdDateTime": "2020-05-20T17:49:40Z", "lastUpdatedDateTime":
+        "2020-05-20T17:49:50Z"}, {"modelId": "824e9f66-031f-4908-9034-8e78e3202caa",
+        "attributes": {"isComposed": false}, "status": "ready", "createdDateTime":
+        "2021-02-19T19:06:00Z", "lastUpdatedDateTime": "2021-02-19T19:06:07Z"}, {"modelId":
+        "8254411d-a680-4941-ace4-a9524fc9a407", "modelName": "secondcomposedmodel",
+        "attributes": {"isComposed": true}, "status": "ready", "createdDateTime":
+        "2020-08-11T19:47:10Z", "lastUpdatedDateTime": "2020-08-11T19:47:10Z"}, {"modelId":
+        "82e6af94-0235-4f64-8106-cadfb5779124", "attributes": {"isComposed": false},
+        "status": "ready", "createdDateTime": "2021-01-21T23:43:43Z", "lastUpdatedDateTime":
+        "2021-01-21T23:43:46Z"}, {"modelId": "83163519-6d6c-4ba7-b6fe-cfb3a14d7cff",
+        "status": "ready", "createdDateTime": "2020-03-16T22:13:17Z", "lastUpdatedDateTime":
+        "2020-03-16T22:15:14Z"}, {"modelId": "83d2fbaa-8629-43f1-8e48-9891ae1858af",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T19:59:29Z", "lastUpdatedDateTime":
+        "2020-08-11T19:59:29Z"}, {"modelId": "86119a4f-e48a-4c15-9348-2d300aee1066",
+        "status": "ready", "createdDateTime": "2020-03-19T01:48:13Z", "lastUpdatedDateTime":
+        "2020-03-19T01:50:06Z"}, {"modelId": "8615384b-bd35-46c1-a15f-ce29b4687988",
+        "modelName": "mymodel", "attributes": {"isComposed": false}, "status": "ready",
+        "createdDateTime": "2020-11-19T18:14:30Z", "lastUpdatedDateTime": "2020-11-19T18:14:32Z"},
+        {"modelId": "863c1ede-91fd-4d79-88f2-b17b5ab745a7", "modelName": "labeled",
+        "attributes": {"isComposed": false}, "status": "ready", "createdDateTime":
+        "2021-01-25T20:17:52Z", "lastUpdatedDateTime": "2021-01-25T20:17:55Z"}, {"modelId":
+        "86761c26-b665-4611-8068-0641be2f5b88", "status": "ready", "createdDateTime":
+        "2020-04-02T17:11:01Z", "lastUpdatedDateTime": "2020-04-02T17:12:56Z"}, {"modelId":
+        "8757ab80-77cb-47f5-bf0b-cc12c11f1e3e", "status": "ready", "createdDateTime":
+        "2021-02-19T19:06:01Z", "lastUpdatedDateTime": "2021-02-19T19:06:33Z"}, {"modelId":
+        "87f94c1f-a345-4ecd-b440-df1ffffbe4cd", "status": "ready", "createdDateTime":
+        "2020-04-02T01:52:24Z", "lastUpdatedDateTime": "2020-04-02T01:54:26Z"}, {"modelId":
+        "8a255b7a-3fcb-4665-8219-c410c34d7d05", "status": "ready", "createdDateTime":
+        "2020-03-15T20:34:45Z", "lastUpdatedDateTime": "2020-03-15T20:35:00Z"}, {"modelId":
+        "8a3b905d-d28a-4ab1-bdc1-5919ea8b0699", "attributes": {"isComposed": false},
+        "status": "ready", "createdDateTime": "2021-02-25T19:43:43Z", "lastUpdatedDateTime":
+        "2021-02-25T19:43:46Z"}, {"modelId": "8aa909fc-b44c-4f00-97ce-fdb1cbcc0be4",
+        "status": "invalid", "createdDateTime": "2020-03-16T19:21:55Z", "lastUpdatedDateTime":
+        "2020-03-16T19:21:56Z"}, {"modelId": "8ac25719-613f-4e80-97ed-a3aca7cc4e68",
+        "modelName": "my unlabeled model", "status": "ready", "createdDateTime": "2021-01-21T18:49:12Z",
+        "lastUpdatedDateTime": "2021-01-21T18:49:27Z"}, {"modelId": "8b2d0d9c-cb8d-4eea-84b2-713d3fb2ad34",
+        "status": "ready", "createdDateTime": "2020-04-21T05:34:01Z", "lastUpdatedDateTime":
+        "2020-04-21T05:34:11Z"}, {"modelId": "8b56c5f8-50ea-4fdd-bfcc-c7ba69153deb",
+        "status": "invalid", "createdDateTime": "2021-02-22T16:20:03Z", "lastUpdatedDateTime":
+        "2021-02-22T16:20:03Z"}, {"modelId": "8bcb64c2-1907-441b-9001-2c438efcf44f",
+        "status": "ready", "createdDateTime": "2020-04-13T17:45:55Z", "lastUpdatedDateTime":
+        "2020-04-13T17:46:05Z"}, {"modelId": "8df72857-f05e-4576-82cd-1513f972954f",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:01:11Z", "lastUpdatedDateTime":
+        "2021-02-19T19:01:11Z"}, {"modelId": "8fe0ebae-2829-407c-8361-bfdb264ec42d",
+        "status": "ready", "createdDateTime": "2021-03-03T23:18:09Z", "lastUpdatedDateTime":
+        "2021-03-03T23:18:25Z"}, {"modelId": "900b10e6-34ee-4e3b-8838-a6fcfb18859c",
+        "status": "invalid", "createdDateTime": "2020-04-01T02:14:08Z", "lastUpdatedDateTime":
+        "2020-04-01T02:14:09Z"}, {"modelId": "90333c99-9878-47e5-9b75-f886e45947cc",
+        "status": "invalid", "createdDateTime": "2020-04-01T01:56:53Z", "lastUpdatedDateTime":
+        "2020-04-01T01:56:53Z"}, {"modelId": "906ca3e2-e6c7-42a6-9ef7-f2132d3f998f",
+        "status": "invalid", "createdDateTime": "2021-02-19T18:56:09Z", "lastUpdatedDateTime":
+        "2021-02-19T18:56:11Z"}], "nextLink": "https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzkwNmNhM2UyLWU2YzctNDJhNi05ZWY3LWYyMTMyZDNmOTk4Zi91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-"}'
+    headers:
+      apim-request-id:
+      - aa4081be-234a-482c-b481-7abb8019ba11
+      content-length:
+      - '5756'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 23:18:55 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '156'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzkwNmNhM2UyLWU2YzctNDJhNi05ZWY3LWYyMTMyZDNmOTk4Zi91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-
+  response:
+    body:
+      string: '{"error": {"code": "429", "message": "Requests to the Custom Form Model
+        Management - List Custom Models Operation under Form Recognizer API (v2.1-preview.3)
+        have exceeded rate limit of your current FormRecognizer S0 pricing tier. Please
+        retry after 1 second. Please contact Azure support service if you would like
+        to further increase the default rate limit."}}'
+    headers:
+      apim-request-id:
+      - 5eed37c8-f4ed-4c41-ae07-73f5f5ce2432
+      content-length:
+      - '357'
+      content-type:
+      - application/json
+      date:
+      - Wed, 03 Mar 2021 23:18:55 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 429
+      message: Too Many Requests
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzLzkwNmNhM2UyLWU2YzctNDJhNi05ZWY3LWYyMTMyZDNmOTk4Zi91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-
+  response:
+    body:
+      string: '{"modelList": [{"modelId": "906ca3e2-e6c7-42a6-9ef7-f2132d3f998f",
+        "status": "invalid", "createdDateTime": "2021-02-19T18:56:09Z", "lastUpdatedDateTime":
+        "2021-02-19T18:56:11Z"}, {"modelId": "90cf67f6-4bbe-434e-b8e1-8982f392ecd0",
+        "status": "ready", "createdDateTime": "2020-03-12T20:33:08Z", "lastUpdatedDateTime":
+        "2020-03-12T20:33:10Z"}, {"modelId": "91024bf0-9316-450e-90a5-9f7b7b4d7c01",
+        "status": "ready", "createdDateTime": "2020-04-02T02:27:30Z", "lastUpdatedDateTime":
+        "2020-04-02T02:29:30Z"}, {"modelId": "9228cf03-efdd-4d8e-ba47-d605addc2a17",
+        "status": "ready", "createdDateTime": "2020-04-02T02:02:40Z", "lastUpdatedDateTime":
+        "2020-04-02T02:04:34Z"}, {"modelId": "92f6eb1d-c460-426d-9ed7-62c8a8dfacec",
+        "status": "ready", "createdDateTime": "2020-04-02T17:09:36Z", "lastUpdatedDateTime":
+        "2020-04-02T17:11:32Z"}, {"modelId": "934e24cc-fe50-4f24-99d0-b0d9f024d78f",
+        "status": "ready", "createdDateTime": "2020-03-04T17:11:12Z", "lastUpdatedDateTime":
+        "2020-03-04T17:11:12Z"}, {"modelId": "9383595f-c646-4505-a7c4-d2d2174b0b91",
+        "status": "ready", "createdDateTime": "2020-04-01T23:18:01Z", "lastUpdatedDateTime":
+        "2020-04-01T23:20:01Z"}, {"modelId": "94f67d0c-fdc8-46f7-b144-7f763b6181e2",
+        "status": "invalid", "createdDateTime": "2021-03-03T21:17:25Z", "lastUpdatedDateTime":
+        "2021-03-03T21:17:26Z"}, {"modelId": "965c2ab6-82a7-4667-a9d0-a7c589c932f9",
+        "status": "ready", "createdDateTime": "2020-04-01T23:33:59Z", "lastUpdatedDateTime":
+        "2020-04-01T23:36:01Z"}, {"modelId": "97feeac7-768d-4b10-ac0d-b9a204dc4174",
+        "status": "ready", "createdDateTime": "2020-03-27T20:10:06Z", "lastUpdatedDateTime":
+        "2020-03-27T20:10:14Z"}, {"modelId": "986de900-7089-4ba0-9be6-998b9ddcd0e9",
+        "status": "ready", "createdDateTime": "2020-04-10T20:29:23Z", "lastUpdatedDateTime":
+        "2020-04-10T20:29:31Z"}, {"modelId": "997750cb-bf7c-45ff-82cc-537060472254",
+        "status": "ready", "createdDateTime": "2020-11-20T17:54:39Z", "lastUpdatedDateTime":
+        "2020-11-20T17:54:56Z"}, {"modelId": "99cd7d37-341a-4a91-b6ac-dc70da72e192",
+        "status": "invalid", "createdDateTime": "2020-04-09T18:20:12Z", "lastUpdatedDateTime":
+        "2020-04-09T18:20:12Z"}, {"modelId": "9a42543a-2bca-457f-ad05-292488b2fb66",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:06:52Z", "lastUpdatedDateTime":
+        "2021-02-19T19:06:52Z"}, {"modelId": "9a79a3af-b996-4cb1-8ea7-7e2895d5a549",
+        "status": "ready", "createdDateTime": "2020-03-15T19:54:05Z", "lastUpdatedDateTime":
+        "2020-03-15T19:56:07Z"}, {"modelId": "9ad19f07-4aa0-4a9c-a773-40909d52df0c",
+        "status": "creating", "createdDateTime": "2020-05-20T00:01:58Z", "lastUpdatedDateTime":
+        "2020-05-20T00:01:58Z"}, {"modelId": "9adcd72f-4b80-4769-a761-e2e0aa0b7890",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T20:40:42Z", "lastUpdatedDateTime":
+        "2020-08-11T20:40:43Z"}, {"modelId": "9b083f54-3cd1-4ddf-b037-53611a9e01c1",
+        "status": "invalid", "createdDateTime": "2021-03-03T21:54:05Z", "lastUpdatedDateTime":
+        "2021-03-03T21:54:06Z"}, {"modelId": "9b5132cf-02c1-4ea9-a652-999780507aac",
+        "attributes": {"isComposed": false}, "status": "ready", "createdDateTime":
+        "2020-11-20T17:56:13Z", "lastUpdatedDateTime": "2020-11-20T17:56:15Z"}, {"modelId":
+        "9c18b4fc-78a0-457a-b975-b18361d9f453", "status": "ready", "createdDateTime":
+        "2020-03-12T18:47:53Z", "lastUpdatedDateTime": "2020-03-12T18:48:00Z"}, {"modelId":
+        "9c267194-a0dd-4d6c-ab50-4664795b8afc", "status": "invalid", "createdDateTime":
+        "2020-04-01T01:41:00Z", "lastUpdatedDateTime": "2020-04-01T01:41:00Z"}, {"modelId":
+        "9c401b5d-1271-4082-ba51-e50e11616efa", "modelName": "labeled", "attributes":
+        {"isComposed": false}, "status": "ready", "createdDateTime": "2021-02-26T21:38:20Z",
+        "lastUpdatedDateTime": "2021-02-26T21:38:23Z"}, {"modelId": "9cf82dde-3cad-4fcf-a9a4-0ee76337293c",
+        "status": "invalid", "createdDateTime": "2020-04-09T17:34:09Z", "lastUpdatedDateTime":
+        "2020-04-09T17:34:10Z"}, {"modelId": "9d7a4d71-0c59-40ed-be9b-d0630df63b87",
+        "status": "ready", "createdDateTime": "2020-04-10T20:26:54Z", "lastUpdatedDateTime":
+        "2020-04-10T20:27:04Z"}, {"modelId": "9eabe36b-a3f8-4bb9-bab7-099cd043caef",
+        "status": "ready", "createdDateTime": "2020-05-20T21:08:39Z", "lastUpdatedDateTime":
+        "2020-05-20T21:10:22Z"}, {"modelId": "9f5b094c-879b-49e6-8d1e-35328b916007",
+        "status": "ready", "createdDateTime": "2020-04-02T16:47:59Z", "lastUpdatedDateTime":
+        "2020-04-02T16:49:59Z"}, {"modelId": "9fc0ceab-56bb-4715-b484-b81633e7a175",
+        "status": "ready", "createdDateTime": "2020-04-02T16:24:21Z", "lastUpdatedDateTime":
+        "2020-04-02T16:26:26Z"}, {"modelId": "a12c98fe-3149-4c79-8aff-c48344d13f9f",
+        "status": "creating", "createdDateTime": "2020-10-14T19:15:19Z", "lastUpdatedDateTime":
+        "2020-10-14T19:15:19Z"}, {"modelId": "a18a94fe-436c-4abd-b072-dfacd19e1ec9",
+        "status": "ready", "createdDateTime": "2020-04-02T19:33:56Z", "lastUpdatedDateTime":
+        "2020-04-02T19:35:51Z"}, {"modelId": "a193f69c-fe8b-47ce-b04c-4ce0056dae8f",
+        "status": "ready", "createdDateTime": "2020-04-02T19:55:59Z", "lastUpdatedDateTime":
+        "2020-04-02T19:56:11Z"}, {"modelId": "a1bb1a0f-2207-4d49-b3f3-fdb1831af610",
+        "status": "invalid", "createdDateTime": "2020-04-02T19:57:02Z", "lastUpdatedDateTime":
+        "2020-04-02T20:04:17Z"}, {"modelId": "a1c879cc-5de6-421f-b31f-e43977216ebf",
+        "status": "ready", "createdDateTime": "2020-04-13T17:43:31Z", "lastUpdatedDateTime":
+        "2020-04-13T17:43:40Z"}, {"modelId": "a264fe3e-8f7c-4948-82e2-4118642999e5",
+        "modelName": "unlabeled", "status": "ready", "createdDateTime": "2021-02-25T15:57:08Z",
+        "lastUpdatedDateTime": "2021-02-25T15:57:59Z"}, {"modelId": "a4d48fd6-fd5d-42ff-902f-b7d8102edbd5",
+        "status": "ready", "createdDateTime": "2020-04-10T21:02:43Z", "lastUpdatedDateTime":
+        "2020-04-10T21:02:53Z"}], "nextLink": "https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!232!MDAwMTMwIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzL2E1YjlmMGFlLWVlNmUtNGI0NC04ZmVjLTg0N2YyYzczMDFhZC9hNWI5ZjBhZS1lZTZlLTRiNDQtOGZlYy04NDdmMmM3MzAxYWQuZ3ohMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVoh"}'
+    headers:
+      apim-request-id:
+      - 81c78f5f-ec52-4b72-a634-069c0a863edb
+      content-length:
+      - '5833'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 23:18:56 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '161'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!232!MDAwMTMwIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzL2E1YjlmMGFlLWVlNmUtNGI0NC04ZmVjLTg0N2YyYzczMDFhZC9hNWI5ZjBhZS1lZTZlLTRiNDQtOGZlYy04NDdmMmM3MzAxYWQuZ3ohMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVoh
+  response:
+    body:
+      string: '{"error": {"code": "429", "message": "Requests to the Custom Form Model
+        Management - List Custom Models Operation under Form Recognizer API (v2.1-preview.3)
+        have exceeded rate limit of your current FormRecognizer S0 pricing tier. Please
+        retry after 6 seconds. Please contact Azure support service if you would like
+        to further increase the default rate limit."}}'
+    headers:
+      apim-request-id:
+      - c74059b6-9af8-4574-a326-b0aa3e0b941b
+      content-length:
+      - '358'
+      content-type:
+      - application/json
+      date:
+      - Wed, 03 Mar 2021 23:18:56 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 429
+      message: Too Many Requests
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!232!MDAwMTMwIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzL2E1YjlmMGFlLWVlNmUtNGI0NC04ZmVjLTg0N2YyYzczMDFhZC9hNWI5ZjBhZS1lZTZlLTRiNDQtOGZlYy04NDdmMmM3MzAxYWQuZ3ohMDAwMDI4ITk5OTktMTItMzFUMjM6NTk6NTkuOTk5OTk5OVoh
+  response:
+    body:
+      string: '{"modelList": [{"modelId": "a5b9f0ae-ee6e-4b44-8fec-847f2c7301ad",
+        "status": "ready", "createdDateTime": "2020-03-13T00:25:09Z", "lastUpdatedDateTime":
+        "2020-03-13T00:25:16Z"}, {"modelId": "a71e2892-980d-413a-8857-91bf1e1c8a08",
+        "status": "ready", "createdDateTime": "2020-03-15T19:33:11Z", "lastUpdatedDateTime":
+        "2020-03-15T19:35:14Z"}, {"modelId": "a72386be-2f3c-4316-a11c-00851511c5fe",
+        "status": "ready", "createdDateTime": "2020-04-13T17:40:56Z", "lastUpdatedDateTime":
+        "2020-04-13T17:40:59Z"}, {"modelId": "a8572bea-756f-48dd-befb-66091c9dff2d",
+        "status": "ready", "createdDateTime": "2020-11-20T18:01:56Z", "lastUpdatedDateTime":
+        "2020-11-20T18:02:11Z"}, {"modelId": "a98ae300-93f0-4856-8344-518bdacb26dc",
+        "status": "ready", "createdDateTime": "2020-04-07T00:31:54Z", "lastUpdatedDateTime":
+        "2020-04-07T00:32:03Z"}, {"modelId": "a9c4d509-7a07-4132-b162-375ded6c7bba",
+        "status": "creating", "createdDateTime": "2020-06-08T21:55:31Z", "lastUpdatedDateTime":
+        "2020-06-08T21:55:31Z"}, {"modelId": "aae2ed54-5e8f-4591-9cb0-37468e902391",
+        "attributes": {"isComposed": false}, "status": "ready", "createdDateTime":
+        "2021-02-19T18:56:04Z", "lastUpdatedDateTime": "2021-02-19T18:56:08Z"}, {"modelId":
+        "aaf63919-78de-4a88-baea-015034f911b8", "status": "invalid", "createdDateTime":
+        "2020-03-16T19:20:53Z", "lastUpdatedDateTime": "2020-03-16T19:20:58Z"}, {"modelId":
+        "ab503fa1-c015-4d0a-bec6-ec00f72b2482", "status": "ready", "createdDateTime":
+        "2020-04-02T16:28:09Z", "lastUpdatedDateTime": "2020-04-02T16:30:06Z"}, {"modelId":
+        "aba0e1d3-13d9-4bcd-8cb5-b68ccbffa285", "modelName": "labeled", "status":
+        "invalid", "createdDateTime": "2021-02-26T20:12:58Z", "lastUpdatedDateTime":
+        "2021-02-26T20:12:59Z"}, {"modelId": "ad315d9e-93f2-411c-83da-2ab5bfb3e725",
+        "status": "ready", "createdDateTime": "2020-03-12T18:46:22Z", "lastUpdatedDateTime":
+        "2020-03-12T18:46:31Z"}, {"modelId": "ad5453c7-54d6-4749-bd15-320dd95d7198",
+        "status": "ready", "createdDateTime": "2020-04-02T02:43:29Z", "lastUpdatedDateTime":
+        "2020-04-02T02:45:34Z"}, {"modelId": "ae76c104-9e8f-4a9b-8a57-cbd1ee2b6823",
+        "status": "creating", "createdDateTime": "2020-10-14T19:12:56Z", "lastUpdatedDateTime":
+        "2020-10-14T19:12:56Z"}, {"modelId": "aec57ff3-111f-449d-b1ef-f9af2d333d0a",
+        "status": "invalid", "createdDateTime": "2021-02-19T18:56:05Z", "lastUpdatedDateTime":
+        "2021-02-19T18:56:06Z"}, {"modelId": "af5236b2-bf8b-4e65-b69f-17bf712fb6c0",
+        "status": "ready", "createdDateTime": "2020-03-15T19:50:02Z", "lastUpdatedDateTime":
+        "2020-03-15T19:52:08Z"}, {"modelId": "af9fa4cf-afb9-4530-b926-a1703addd10f",
+        "modelName": "secondcomposedmodelf", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-12T00:08:44Z", "lastUpdatedDateTime":
+        "2020-08-12T00:08:44Z"}, {"modelId": "b0b5c95b-3551-4405-bd06-b53b02784bda",
+        "status": "invalid", "createdDateTime": "2020-03-19T22:15:03Z", "lastUpdatedDateTime":
+        "2020-03-19T22:15:03Z"}, {"modelId": "b28abd58-a6d9-4210-88f3-d9f06821d5c1",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T20:43:42Z", "lastUpdatedDateTime":
+        "2020-08-11T20:43:42Z"}, {"modelId": "b2b410a6-5d9f-40eb-9f8f-e813c890c297",
+        "status": "ready", "createdDateTime": "2020-03-16T22:13:58Z", "lastUpdatedDateTime":
+        "2020-03-16T22:15:56Z"}, {"modelId": "b4489523-d1bb-4138-8cbf-c8a865eb0e95",
+        "status": "ready", "createdDateTime": "2020-04-02T20:04:25Z", "lastUpdatedDateTime":
+        "2020-04-02T20:06:23Z"}, {"modelId": "b44f86cc-bd71-43e9-80d8-e5b3733d1d63",
+        "status": "creating", "createdDateTime": "2020-10-14T19:15:01Z", "lastUpdatedDateTime":
+        "2020-10-14T19:15:01Z"}, {"modelId": "b45b98c0-bdc4-4963-bc22-383d7830d17a",
+        "modelName": "unlabeled", "status": "ready", "createdDateTime": "2021-02-25T15:58:00Z",
+        "lastUpdatedDateTime": "2021-02-25T15:58:58Z"}, {"modelId": "b4bef7cf-4cd4-41e3-868d-24a7d282f404",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:06:29Z", "lastUpdatedDateTime":
+        "2021-02-19T19:06:30Z"}, {"modelId": "b4f44495-ee8c-4921-ac20-da3aaf632799",
+        "status": "ready", "createdDateTime": "2020-04-10T21:11:10Z", "lastUpdatedDateTime":
+        "2020-04-10T21:11:19Z"}, {"modelId": "b58d03b4-8c7c-4fba-b2fb-0165b153f82c",
+        "status": "invalid", "createdDateTime": "2021-03-03T21:36:26Z", "lastUpdatedDateTime":
+        "2021-03-03T21:36:27Z"}, {"modelId": "b5cc2beb-8d51-4a4a-b539-66c3e8fac56b",
+        "status": "ready", "createdDateTime": "2020-11-20T17:59:49Z", "lastUpdatedDateTime":
+        "2020-11-20T18:00:11Z"}, {"modelId": "b63905cd-8304-454b-b841-4c64f224bdc6",
+        "status": "ready", "createdDateTime": "2020-03-24T20:31:59Z", "lastUpdatedDateTime":
+        "2020-03-24T20:32:11Z"}, {"modelId": "b6717d58-1f70-474a-b392-2c79a93107cc",
+        "status": "ready", "createdDateTime": "2020-04-02T16:43:13Z", "lastUpdatedDateTime":
+        "2020-04-02T16:45:16Z"}, {"modelId": "b7660db7-135c-4c95-ad8f-1aef264b5d48",
+        "status": "ready", "createdDateTime": "2020-03-15T20:10:10Z", "lastUpdatedDateTime":
+        "2020-03-15T20:12:10Z"}, {"modelId": "b7e2e66d-2f22-41ca-a6bb-57de0162a989",
+        "status": "ready", "createdDateTime": "2020-03-24T20:42:34Z", "lastUpdatedDateTime":
+        "2020-03-24T20:42:49Z"}, {"modelId": "b89d02b6-25de-45c5-b1b4-a9e0875dc74b",
+        "status": "ready", "createdDateTime": "2020-03-24T20:49:11Z", "lastUpdatedDateTime":
+        "2020-03-24T20:49:19Z"}, {"modelId": "b8ef57a5-bb47-45f9-a1b0-9c2a7f5d82b5",
+        "status": "ready", "createdDateTime": "2020-05-01T20:36:34Z", "lastUpdatedDateTime":
+        "2020-05-01T20:36:43Z"}, {"modelId": "ba866790-da14-4df5-b9c9-20bd8aa99a0a",
+        "status": "ready", "createdDateTime": "2020-03-19T01:46:22Z", "lastUpdatedDateTime":
+        "2020-03-19T01:48:21Z"}, {"modelId": "bab3feee-4a43-486d-952b-cc899f18f948",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:06:02Z", "lastUpdatedDateTime":
+        "2021-02-19T19:06:03Z"}], "nextLink": "https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzL2JhYjNmZWVlLTRhNDMtNDg2ZC05NTJiLWNjODk5ZjE4Zjk0OC91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-"}'
+    headers:
+      apim-request-id:
+      - e46bb489-1131-4bb7-9d5e-e59409dc11a5
+      content-length:
+      - '5840'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 23:19:03 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '194'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzL2JhYjNmZWVlLTRhNDMtNDg2ZC05NTJiLWNjODk5ZjE4Zjk0OC91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-
+  response:
+    body:
+      string: '{"error": {"code": "429", "message": "Requests to the Custom Form Model
+        Management - List Custom Models Operation under Form Recognizer API (v2.1-preview.3)
+        have exceeded rate limit of your current FormRecognizer S0 pricing tier. Please
+        retry after 6 seconds. Please contact Azure support service if you would like
+        to further increase the default rate limit."}}'
+    headers:
+      apim-request-id:
+      - 7eac2163-41b9-4fa2-90dd-dba5125138be
+      content-length:
+      - '358'
+      content-type:
+      - application/json
+      date:
+      - Wed, 03 Mar 2021 23:19:03 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 429
+      message: Too Many Requests
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzL2JhYjNmZWVlLTRhNDMtNDg2ZC05NTJiLWNjODk5ZjE4Zjk0OC91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-
+  response:
+    body:
+      string: '{"modelList": [{"modelId": "bab3feee-4a43-486d-952b-cc899f18f948",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:06:02Z", "lastUpdatedDateTime":
+        "2021-02-19T19:06:03Z"}, {"modelId": "bab98a94-a8cc-42f9-8bae-fc961f765dce",
+        "status": "ready", "createdDateTime": "2020-04-09T18:24:06Z", "lastUpdatedDateTime":
+        "2020-04-09T18:24:16Z"}, {"modelId": "bb94db6a-107f-4d9b-adba-d1f137008bf7",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T20:44:11Z", "lastUpdatedDateTime":
+        "2020-08-11T20:44:21Z"}, {"modelId": "bc5f61cd-dc85-402e-98fc-92ce4e5bdb30",
+        "status": "invalid", "createdDateTime": "2020-03-15T19:24:02Z", "lastUpdatedDateTime":
+        "2020-03-15T19:24:03Z"}, {"modelId": "bd0e3e04-fded-400b-997b-22fd7d344904",
+        "status": "ready", "createdDateTime": "2020-03-27T22:52:51Z", "lastUpdatedDateTime":
+        "2020-03-27T22:52:58Z"}, {"modelId": "bd8e3b06-7a61-4029-a0e3-c4f58a363acc",
+        "status": "invalid", "createdDateTime": "2020-04-02T19:51:28Z", "lastUpdatedDateTime":
+        "2020-04-02T19:59:00Z"}, {"modelId": "bddfc2d3-1859-4ac6-be96-c015836bc990",
+        "status": "ready", "createdDateTime": "2020-08-20T20:40:47Z", "lastUpdatedDateTime":
+        "2020-08-20T20:40:56Z"}, {"modelId": "be5ecf2a-b609-4dd4-9f03-a0561d483732",
+        "status": "invalid", "createdDateTime": "2020-04-14T01:44:03Z", "lastUpdatedDateTime":
+        "2020-04-14T01:44:08Z"}, {"modelId": "bf01fd51-9fdd-4289-a9ed-e077dc5e1f7e",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T20:33:22Z", "lastUpdatedDateTime":
+        "2020-08-11T20:33:22Z"}, {"modelId": "bf50a011-2c92-4c97-8b76-957ea44195e1",
+        "status": "ready", "createdDateTime": "2020-11-20T17:55:12Z", "lastUpdatedDateTime":
+        "2020-11-20T17:55:28Z"}, {"modelId": "c2a8aee6-ae32-41a1-8237-95798af855d8",
+        "status": "ready", "createdDateTime": "2020-03-24T20:47:04Z", "lastUpdatedDateTime":
+        "2020-03-24T20:47:11Z"}, {"modelId": "c2b82463-0baf-4508-bc50-e65963c43d23",
+        "status": "ready", "createdDateTime": "2021-01-21T22:46:50Z", "lastUpdatedDateTime":
+        "2021-01-21T22:47:14Z"}, {"modelId": "c2fe85bf-a2c1-4348-9b95-c689a5b273f5",
+        "status": "ready", "createdDateTime": "2020-04-13T16:41:11Z", "lastUpdatedDateTime":
+        "2020-04-13T16:41:14Z"}, {"modelId": "c38e7455-34a5-4f9b-a22f-12899ccf5d09",
+        "status": "ready", "createdDateTime": "2020-04-21T00:11:48Z", "lastUpdatedDateTime":
+        "2020-04-21T00:11:51Z"}, {"modelId": "c454bdc0-0cbe-4db0-88c3-30693e1123f5",
+        "attributes": {"isComposed": false}, "status": "ready", "createdDateTime":
+        "2020-08-20T20:41:01Z", "lastUpdatedDateTime": "2020-08-20T20:41:04Z"}, {"modelId":
+        "c473728b-c3ca-4b7e-93af-662a8e17947d", "attributes": {"isComposed": false},
+        "status": "ready", "createdDateTime": "2021-02-19T18:56:03Z", "lastUpdatedDateTime":
+        "2021-02-19T18:56:06Z"}, {"modelId": "c4a20ce8-6e06-4c30-b47c-33b474c373ac",
+        "modelName": "labeled", "attributes": {"isComposed": false}, "status": "ready",
+        "createdDateTime": "2021-01-25T20:20:02Z", "lastUpdatedDateTime": "2021-01-25T20:20:04Z"},
+        {"modelId": "c661f6da-23ef-4f24-a5ef-e91a14ef4a41", "status": "ready", "createdDateTime":
+        "2020-08-11T23:19:18Z", "lastUpdatedDateTime": "2020-08-11T23:19:36Z"}, {"modelId":
+        "c770d56d-79c6-4ccb-b89a-4552ec24056d", "status": "ready", "createdDateTime":
+        "2020-08-20T21:13:16Z", "lastUpdatedDateTime": "2020-08-20T21:13:25Z"}, {"modelId":
+        "c8bbf64a-9423-40a1-aac7-72922a6e4801", "status": "invalid", "createdDateTime":
+        "2020-04-09T18:35:14Z", "lastUpdatedDateTime": "2020-04-09T18:35:15Z"}, {"modelId":
+        "c9d22995-6965-4b36-8844-00c61879010a", "modelName": "labeled", "status":
+        "invalid", "createdDateTime": "2021-02-26T19:15:03Z", "lastUpdatedDateTime":
+        "2021-02-26T19:15:03Z"}, {"modelId": "caac4b3b-23f1-4e53-a3e8-e3c234c79710",
+        "modelName": "labeled", "attributes": {"isComposed": false}, "status": "ready",
+        "createdDateTime": "2021-02-26T21:37:34Z", "lastUpdatedDateTime": "2021-02-26T21:37:38Z"},
+        {"modelId": "cb325498-7a1d-4e2b-a80c-c98478231abc", "status": "ready", "createdDateTime":
+        "2020-04-02T16:20:38Z", "lastUpdatedDateTime": "2020-04-02T16:22:34Z"}, {"modelId":
+        "cbb86966-cad1-495e-911c-263e477615d1", "status": "ready", "createdDateTime":
+        "2020-04-10T18:01:12Z", "lastUpdatedDateTime": "2020-04-10T18:01:28Z"}, {"modelId":
+        "cbc91473-3054-4637-8ca8-967e11bab29a", "status": "invalid", "createdDateTime":
+        "2020-03-15T19:30:13Z", "lastUpdatedDateTime": "2020-03-15T19:30:14Z"}, {"modelId":
+        "ccbb04ae-bd77-4e74-9c97-3c39d754dc5d", "status": "ready", "createdDateTime":
+        "2021-01-21T18:09:35Z", "lastUpdatedDateTime": "2021-01-21T18:10:00Z"}, {"modelId":
+        "cd33f3fb-88e0-4180-9ce0-7710635d0050", "status": "ready", "createdDateTime":
+        "2020-04-02T19:46:59Z", "lastUpdatedDateTime": "2020-04-02T19:47:14Z"}, {"modelId":
+        "ce4cc78e-b084-4af3-b73d-944ec6592da4", "status": "ready", "createdDateTime":
+        "2020-11-20T18:01:24Z", "lastUpdatedDateTime": "2020-11-20T18:01:39Z"}, {"modelId":
+        "ce620645-036d-4c69-9601-87d80dd2e56f", "attributes": {"isComposed": false},
+        "status": "ready", "createdDateTime": "2020-11-20T17:55:57Z", "lastUpdatedDateTime":
+        "2020-11-20T17:55:59Z"}, {"modelId": "ce8a802c-1e9c-431d-af78-4bb9d368636b",
+        "attributes": {"isComposed": false}, "status": "ready", "createdDateTime":
+        "2021-01-21T18:14:22Z", "lastUpdatedDateTime": "2021-01-21T18:14:25Z"}, {"modelId":
+        "ce9a0d9d-1cc2-4c8d-84a0-adfea2a4b00c", "status": "invalid", "createdDateTime":
+        "2021-02-19T19:05:55Z", "lastUpdatedDateTime": "2021-02-19T19:05:55Z"}], "nextLink":
+        "https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzL2NlOWEwZDlkLTFjYzItNGM4ZC04NGEwLWFkZmVhMmE0YjAwYy91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-"}'
+    headers:
+      apim-request-id:
+      - 5933c7cc-fb4e-4ce5-8c69-26d8477542d8
+      content-length:
+      - '5560'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 23:19:09 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '147'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzL2NlOWEwZDlkLTFjYzItNGM4ZC04NGEwLWFkZmVhMmE0YjAwYy91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-
+  response:
+    body:
+      string: '{"modelList": [{"modelId": "ce9a0d9d-1cc2-4c8d-84a0-adfea2a4b00c",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:05:55Z", "lastUpdatedDateTime":
+        "2021-02-19T19:05:55Z"}, {"modelId": "cec2a4b0-2b5b-4058-bea7-7162870767fb",
+        "attributes": {"isComposed": false}, "status": "ready", "createdDateTime":
+        "2020-11-20T18:00:33Z", "lastUpdatedDateTime": "2020-11-20T18:00:35Z"}, {"modelId":
+        "cfdd8245-24b8-4b48-a1de-75731da6a869", "status": "ready", "createdDateTime":
+        "2020-11-20T17:57:04Z", "lastUpdatedDateTime": "2020-11-20T17:57:28Z"}, {"modelId":
+        "d02368e2-776b-4e8c-a252-4ffb09a3a2d6", "status": "ready", "createdDateTime":
+        "2020-04-05T22:13:49Z", "lastUpdatedDateTime": "2020-04-05T22:13:57Z"}, {"modelId":
+        "d0d94e15-dd9b-471c-8f5f-f5666728022c", "modelName": "my unlabeled model",
+        "status": "ready", "createdDateTime": "2021-01-22T02:10:08Z", "lastUpdatedDateTime":
+        "2021-01-22T02:10:23Z"}, {"modelId": "d132b434-376a-42c6-aa03-053bb112327f",
+        "status": "invalid", "createdDateTime": "2020-04-10T18:14:46Z", "lastUpdatedDateTime":
+        "2020-04-10T18:14:51Z"}, {"modelId": "d26a76b9-7ff5-4876-a421-433a5514d547",
+        "status": "ready", "createdDateTime": "2020-03-27T20:14:00Z", "lastUpdatedDateTime":
+        "2020-03-27T20:14:08Z"}, {"modelId": "d4357872-dce9-4fd3-841a-cee4b0daa3f6",
+        "modelName": "labeled", "status": "invalid", "createdDateTime": "2021-02-19T18:56:00Z",
+        "lastUpdatedDateTime": "2021-02-19T18:56:00Z"}, {"modelId": "d5b6bb35-1af5-4a3c-9df1-afbe01325b37",
+        "status": "creating", "createdDateTime": "2020-05-29T16:22:52Z", "lastUpdatedDateTime":
+        "2020-05-29T16:22:52Z"}, {"modelId": "d719afdc-0ed9-453b-9249-9f5496c1f18b",
+        "status": "invalid", "createdDateTime": "2021-03-03T22:42:15Z", "lastUpdatedDateTime":
+        "2021-03-03T22:42:16Z"}, {"modelId": "d7baf796-3374-4102-808f-549e7b2bede3",
+        "status": "ready", "createdDateTime": "2020-03-16T22:36:18Z", "lastUpdatedDateTime":
+        "2020-03-16T22:38:16Z"}, {"modelId": "d7fa5a14-3b26-4d60-8a99-d4f2346c1fa2",
+        "status": "ready", "createdDateTime": "2021-02-19T19:05:57Z", "lastUpdatedDateTime":
+        "2021-02-19T19:06:27Z"}, {"modelId": "da242fae-bff0-4df3-a573-fb987c28680b",
+        "status": "ready", "createdDateTime": "2020-03-13T21:36:05Z", "lastUpdatedDateTime":
+        "2020-03-13T21:38:04Z"}, {"modelId": "dbed6e5d-b638-48dd-b70c-9495fa0b449f",
+        "status": "ready", "createdDateTime": "2020-03-16T22:51:48Z", "lastUpdatedDateTime":
+        "2020-03-16T22:52:06Z"}, {"modelId": "dbf56674-d90b-4a6c-8ec0-4e6fcebd282b",
+        "status": "ready", "createdDateTime": "2020-03-27T23:09:03Z", "lastUpdatedDateTime":
+        "2020-03-27T23:09:10Z"}, {"modelId": "dc8d5735-3f5a-4cdf-b02d-25af4466780f",
+        "status": "ready", "createdDateTime": "2020-04-02T00:23:48Z", "lastUpdatedDateTime":
+        "2020-04-02T00:25:50Z"}, {"modelId": "dd1e53c7-4dd3-4bc0-b17e-598b5b5bd2b5",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:01:09Z", "lastUpdatedDateTime":
+        "2021-02-19T19:01:10Z"}, {"modelId": "ddc69cde-4730-40c2-9426-51df12945713",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:06:02Z", "lastUpdatedDateTime":
+        "2021-02-19T19:06:07Z"}, {"modelId": "ddeddf4b-f082-44ad-8b42-b11d83e76113",
+        "status": "invalid", "createdDateTime": "2020-04-01T02:34:54Z", "lastUpdatedDateTime":
+        "2020-04-01T02:34:54Z"}, {"modelId": "ddf74a7a-9873-414c-bc88-f878022fa022",
+        "status": "invalid", "createdDateTime": "2021-02-22T16:20:01Z", "lastUpdatedDateTime":
+        "2021-02-22T16:20:02Z"}, {"modelId": "de01a167-278d-4505-a49f-c79a8e1b3a36",
+        "status": "ready", "createdDateTime": "2020-03-16T22:26:23Z", "lastUpdatedDateTime":
+        "2020-03-16T22:28:23Z"}, {"modelId": "de49407c-685a-46aa-afad-5553f2ae05d9",
+        "status": "ready", "createdDateTime": "2020-04-02T00:26:05Z", "lastUpdatedDateTime":
+        "2020-04-02T00:28:05Z"}, {"modelId": "de58c08e-5f14-4db0-afd9-75615bbff0d2",
+        "status": "ready", "createdDateTime": "2020-04-02T16:51:56Z", "lastUpdatedDateTime":
+        "2020-04-02T16:53:52Z"}, {"modelId": "de92a78c-35bb-4aea-a9b1-62ec8f98fe03",
+        "status": "ready", "createdDateTime": "2020-03-27T20:17:58Z", "lastUpdatedDateTime":
+        "2020-03-27T20:18:05Z"}, {"modelId": "de92aa7f-7353-4e2b-a19b-bb37de3b3e8f",
+        "attributes": {"isComposed": false}, "status": "ready", "createdDateTime":
+        "2020-10-15T20:31:54Z", "lastUpdatedDateTime": "2020-10-15T20:31:57Z"}, {"modelId":
+        "dea616c5-7cce-4359-ae2a-7ef793cf77d8", "status": "ready", "createdDateTime":
+        "2020-04-13T16:40:33Z", "lastUpdatedDateTime": "2020-04-13T16:40:42Z"}, {"modelId":
+        "df5e4ab4-08cd-4e21-8a4f-ba0962023327", "status": "ready", "createdDateTime":
+        "2020-11-20T17:02:50Z", "lastUpdatedDateTime": "2020-11-20T17:03:05Z"}, {"modelId":
+        "dfd1e091-2bf5-48ba-9f57-a5b22786b622", "status": "ready", "createdDateTime":
+        "2020-04-01T23:22:11Z", "lastUpdatedDateTime": "2020-04-01T23:24:06Z"}, {"modelId":
+        "e072e2d3-04ce-44ce-9fbb-4d5ed06ca85f", "status": "invalid", "createdDateTime":
+        "2021-02-19T18:56:10Z", "lastUpdatedDateTime": "2021-02-19T18:56:11Z"}, {"modelId":
+        "e09252cb-4a52-4e90-b448-3f50077b8e38", "status": "creating", "createdDateTime":
+        "2021-02-19T19:06:23Z", "lastUpdatedDateTime": "2021-02-19T19:06:23Z"}, {"modelId":
+        "e167387b-a667-4784-9f41-b3f63dc378ed", "status": "ready", "createdDateTime":
+        "2020-03-20T00:22:58Z", "lastUpdatedDateTime": "2020-03-20T00:23:05Z"}, {"modelId":
+        "e2a0113e-0f8e-48d0-b67a-dcde86a914cd", "status": "ready", "createdDateTime":
+        "2020-11-20T17:57:47Z", "lastUpdatedDateTime": "2020-11-20T17:58:09Z"}, {"modelId":
+        "e2c172e6-2850-4df2-b2a6-07aba8a5ea91", "status": "ready", "createdDateTime":
+        "2020-04-13T16:49:51Z", "lastUpdatedDateTime": "2020-04-13T16:49:59Z"}], "nextLink":
+        "https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzL2UyYzE3MmU2LTI4NTAtNGRmMi1iMmE2LTA3YWJhOGE1ZWE5MS91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-"}'
+    headers:
+      apim-request-id:
+      - 17c9ec60-d5e5-4535-b7cc-cf32133b637a
+      content-length:
+      - '5595'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 23:19:09 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '175'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!204!MDAwMTA4IXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzL2UyYzE3MmU2LTI4NTAtNGRmMi1iMmE2LTA3YWJhOGE1ZWE5MS91c2VMYWJlbEZpbGUuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-
+  response:
+    body:
+      string: '{"modelList": [{"modelId": "e2c172e6-2850-4df2-b2a6-07aba8a5ea91",
+        "status": "ready", "createdDateTime": "2020-04-13T16:49:51Z", "lastUpdatedDateTime":
+        "2020-04-13T16:49:59Z"}, {"modelId": "e388d036-13f7-4374-af72-7aa7380108e7",
+        "status": "invalid", "createdDateTime": "2020-04-13T19:46:38Z", "lastUpdatedDateTime":
+        "2020-04-13T19:48:38Z"}, {"modelId": "e3eb7756-2c2b-4296-a9a0-a563b35d7ccb",
+        "status": "invalid", "createdDateTime": "2020-04-10T18:08:31Z", "lastUpdatedDateTime":
+        "2020-04-10T18:08:32Z"}, {"modelId": "e422873e-43c2-4f14-b557-0d775a5b037b",
+        "status": "invalid", "createdDateTime": "2021-02-19T18:55:57Z", "lastUpdatedDateTime":
+        "2021-02-19T18:55:58Z"}, {"modelId": "e461875d-77ca-421e-aa2b-8a787f5735ff",
+        "status": "ready", "createdDateTime": "2020-04-05T21:53:21Z", "lastUpdatedDateTime":
+        "2020-04-05T21:53:28Z"}, {"modelId": "e519f7e6-96e8-476b-b7a6-557f6f48bfaa",
+        "status": "invalid", "createdDateTime": "2020-04-09T18:17:31Z", "lastUpdatedDateTime":
+        "2020-04-09T18:17:31Z"}, {"modelId": "e5a2a123-af7a-4234-936a-d2ca9cd641c1",
+        "status": "ready", "createdDateTime": "2020-04-13T16:51:05Z", "lastUpdatedDateTime":
+        "2020-04-13T16:51:13Z"}, {"modelId": "e6417003-61c9-4de0-a889-3e0483a012fb",
+        "status": "invalid", "createdDateTime": "2021-03-03T21:17:31Z", "lastUpdatedDateTime":
+        "2021-03-03T21:17:32Z"}, {"modelId": "e6518ac6-6645-4cfd-9dd4-12df31de1eb4",
+        "status": "ready", "createdDateTime": "2020-03-19T22:16:55Z", "lastUpdatedDateTime":
+        "2020-03-19T22:18:55Z"}, {"modelId": "e6e06c93-42d4-49df-a506-d32ea982cd53",
+        "status": "invalid", "createdDateTime": "2021-02-19T19:06:46Z", "lastUpdatedDateTime":
+        "2021-02-19T19:06:46Z"}, {"modelId": "e8c09d1b-d5b6-4a7e-a28e-9466f5679160",
+        "status": "ready", "createdDateTime": "2020-03-05T18:08:04Z", "lastUpdatedDateTime":
+        "2020-03-05T18:08:12Z"}, {"modelId": "e90ecd74-081f-4887-95c0-7002cefd4bdf",
+        "status": "invalid", "createdDateTime": "2020-03-19T22:08:57Z", "lastUpdatedDateTime":
+        "2020-03-19T22:08:58Z"}, {"modelId": "e95cef9a-c99b-411c-b39a-8af574dc5111",
+        "status": "ready", "createdDateTime": "2020-04-13T16:33:31Z", "lastUpdatedDateTime":
+        "2020-04-13T16:33:40Z"}, {"modelId": "e9d7df21-3ea9-4028-b13f-373c6a248aee",
+        "modelName": "firstcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T17:51:58Z", "lastUpdatedDateTime":
+        "2020-08-11T17:51:59Z"}, {"modelId": "ea24ba4a-8565-47cf-a5b6-752d717230bb",
+        "modelName": "my unlabeled model", "status": "ready", "createdDateTime": "2020-11-19T17:33:51Z",
+        "lastUpdatedDateTime": "2020-11-19T17:34:08Z"}, {"modelId": "eaaab65d-21f2-46c1-83b7-19b90415ecee",
+        "status": "ready", "createdDateTime": "2020-04-02T19:31:36Z", "lastUpdatedDateTime":
+        "2020-04-02T19:33:33Z"}, {"modelId": "eb5ff00f-b1d8-49c2-9958-fa1f4da9b629",
+        "status": "invalid", "createdDateTime": "2020-04-13T19:41:32Z", "lastUpdatedDateTime":
+        "2020-04-13T19:44:32Z"}, {"modelId": "ebc527e6-3243-4467-a72e-fe6892eb5216",
+        "status": "ready", "createdDateTime": "2020-03-15T19:31:47Z", "lastUpdatedDateTime":
+        "2020-03-15T19:33:47Z"}, {"modelId": "ebfde9f8-1278-4b81-ae76-14b96100d08d",
+        "status": "ready", "createdDateTime": "2020-04-13T16:41:08Z", "lastUpdatedDateTime":
+        "2020-04-13T16:41:22Z"}, {"modelId": "ec7345b4-6545-4b37-898a-56564505f6aa",
+        "status": "ready", "createdDateTime": "2020-03-16T22:25:28Z", "lastUpdatedDateTime":
+        "2020-03-16T22:27:25Z"}, {"modelId": "ed06d91f-96f8-4229-8896-644aa2ec76d9",
+        "status": "ready", "createdDateTime": "2020-03-19T22:21:33Z", "lastUpdatedDateTime":
+        "2020-03-19T22:21:40Z"}, {"modelId": "eed4b417-f6a5-4327-8707-20bdc4d82ffe",
+        "modelName": "labeled", "attributes": {"isComposed": false}, "status": "ready",
+        "createdDateTime": "2020-11-20T17:55:39Z", "lastUpdatedDateTime": "2020-11-20T17:55:42Z"},
+        {"modelId": "eef0cf2f-0b15-46c1-8149-256cc57bdf71", "status": "ready", "createdDateTime":
+        "2020-03-20T00:22:11Z", "lastUpdatedDateTime": "2020-03-20T00:22:18Z"}, {"modelId":
+        "efd796a2-3362-41a2-849e-31609f91efcc", "status": "ready", "createdDateTime":
+        "2020-04-02T00:23:22Z", "lastUpdatedDateTime": "2020-04-02T00:25:24Z"}, {"modelId":
+        "f0f1400c-7fe3-42bb-8494-7a2c46716af5", "status": "invalid", "createdDateTime":
+        "2021-02-19T19:06:40Z", "lastUpdatedDateTime": "2021-02-19T19:06:41Z"}, {"modelId":
+        "f20de4fc-5ee9-4512-b124-d4d7556329c7", "status": "invalid", "createdDateTime":
+        "2021-02-19T19:06:35Z", "lastUpdatedDateTime": "2021-02-19T19:06:35Z"}, {"modelId":
+        "f296a007-a7bd-4206-bbbb-c5b88dd59c7d", "status": "invalid", "createdDateTime":
+        "2021-02-19T18:56:07Z", "lastUpdatedDateTime": "2021-02-19T18:56:07Z"}, {"modelId":
+        "f2e4f2ec-3571-4aef-836b-89ba255f50eb", "status": "invalid", "createdDateTime":
+        "2020-04-09T18:23:11Z", "lastUpdatedDateTime": "2020-04-09T18:23:11Z"}, {"modelId":
+        "f3023093-98d2-4e32-b496-b1470249649d", "status": "ready", "createdDateTime":
+        "2020-11-20T18:00:50Z", "lastUpdatedDateTime": "2020-11-20T18:01:08Z"}, {"modelId":
+        "f3691c75-c53b-4d1c-8618-1223d071ee9a", "status": "invalid", "createdDateTime":
+        "2021-02-25T19:41:51Z", "lastUpdatedDateTime": "2021-02-25T19:41:51Z"}, {"modelId":
+        "f3890bc0-50b9-4344-857a-f3defa8dafc1", "status": "ready", "createdDateTime":
+        "2020-04-01T23:29:45Z", "lastUpdatedDateTime": "2020-04-01T23:31:48Z"}, {"modelId":
+        "f39f66b2-69d9-4e38-bf5f-ba08450bbc01", "status": "ready", "createdDateTime":
+        "2020-04-13T16:42:32Z", "lastUpdatedDateTime": "2020-04-13T16:42:40Z"}, {"modelId":
+        "f3db1202-a69b-4ddb-84e5-80c9b5077197", "status": "invalid", "createdDateTime":
+        "2020-04-09T18:22:00Z", "lastUpdatedDateTime": "2020-04-09T18:22:01Z"}, {"modelId":
+        "f3dbfe5d-94e4-4953-b7fc-f185b606aee2", "status": "ready", "createdDateTime":
+        "2020-03-13T16:40:28Z", "lastUpdatedDateTime": "2020-03-13T16:40:45Z"}, {"modelId":
+        "f40282a5-c2b8-4383-86c1-7d64d498cc60", "status": "ready", "createdDateTime":
+        "2020-04-02T19:28:59Z", "lastUpdatedDateTime": "2020-04-02T19:30:59Z"}], "nextLink":
+        "https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!236!MDAwMTMyIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzL2Y0MDlkNjUxLTZmZTQtNGZiOS1hOTk5LWMzNWNkMjllZWFjMi9mNDA5ZDY1MS02ZmU0LTRmYjktYTk5OS1jMzVjZDI5ZWVhYzIuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-"}'
+    headers:
+      apim-request-id:
+      - fe8158e6-8050-4a2f-b042-81499c421199
+      content-length:
+      - '5971'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 23:19:09 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '186'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!236!MDAwMTMyIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzL2Y0MDlkNjUxLTZmZTQtNGZiOS1hOTk5LWMzNWNkMjllZWFjMi9mNDA5ZDY1MS02ZmU0LTRmYjktYTk5OS1jMzVjZDI5ZWVhYzIuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-
+  response:
+    body:
+      string: '{"error": {"code": "429", "message": "Requests to the Custom Form Model
+        Management - List Custom Models Operation under Form Recognizer API (v2.1-preview.3)
+        have exceeded rate limit of your current FormRecognizer S0 pricing tier. Please
+        retry after 21 seconds. Please contact Azure support service if you would
+        like to further increase the default rate limit."}}'
+    headers:
+      apim-request-id:
+      - 66996118-39de-49c9-b9de-2603e315b2fa
+      content-length:
+      - '359'
+      content-type:
+      - application/json
+      date:
+      - Wed, 03 Mar 2021 23:19:09 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 429
+      message: Too Many Requests
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?nextLink=2!236!MDAwMTMyIXN1YnNjcmlwdGlvbnMvYzUwM2I4ODFkNmM2NGY1OGFmYjM3MmMxOTI0YmMyMzQvbW9kZWxzL2Y0MDlkNjUxLTZmZTQtNGZiOS1hOTk5LWMzNWNkMjllZWFjMi9mNDA5ZDY1MS02ZmU0LTRmYjktYTk5OS1jMzVjZDI5ZWVhYzIuanNvbiEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-
+  response:
+    body:
+      string: '{"modelList": [{"modelId": "f409d651-6fe4-4fb9-a999-c35cd29eeac2",
+        "status": "invalid", "createdDateTime": "2021-03-03T22:30:05Z", "lastUpdatedDateTime":
+        "2021-03-03T22:30:06Z"}, {"modelId": "f47bb380-72a1-46ea-9a18-ab2449b18764",
+        "status": "invalid", "createdDateTime": "2021-02-19T18:55:59Z", "lastUpdatedDateTime":
+        "2021-02-19T18:55:59Z"}, {"modelId": "f5900931-ba09-4f92-904a-57666b5ca8cd",
+        "status": "invalid", "createdDateTime": "2020-04-01T02:30:51Z", "lastUpdatedDateTime":
+        "2020-04-01T02:30:53Z"}, {"modelId": "f5a2180b-341b-4410-889c-ae96b8a0d262",
+        "status": "ready", "createdDateTime": "2020-04-13T16:50:37Z", "lastUpdatedDateTime":
+        "2020-04-13T16:50:44Z"}, {"modelId": "f5d30229-3961-4553-a085-dab82f5c30c8",
+        "modelName": "secondcomposedmodel", "attributes": {"isComposed": true}, "status":
+        "ready", "createdDateTime": "2020-08-11T19:41:07Z", "lastUpdatedDateTime":
+        "2020-08-11T19:41:07Z"}, {"modelId": "f6124582-9fe1-46ab-a0b3-a9c84ebf5ec1",
+        "status": "ready", "createdDateTime": "2020-04-10T20:36:10Z", "lastUpdatedDateTime":
+        "2020-04-10T20:36:25Z"}, {"modelId": "f69db1c5-0480-4689-b393-f100f30efaac",
+        "status": "ready", "createdDateTime": "2020-04-02T20:47:54Z", "lastUpdatedDateTime":
+        "2020-04-02T20:49:48Z"}, {"modelId": "f6b91b15-e67b-4624-b585-c31c4671c33d",
+        "status": "ready", "createdDateTime": "2020-04-10T21:06:19Z", "lastUpdatedDateTime":
+        "2020-04-10T21:06:28Z"}, {"modelId": "f75b67df-e8ca-4406-815d-097046f8a4b7",
+        "status": "invalid", "createdDateTime": "2020-03-16T19:18:06Z", "lastUpdatedDateTime":
+        "2020-03-16T19:18:07Z"}, {"modelId": "f797ccfe-cbdd-4528-ab8c-b37924f72967",
+        "status": "invalid", "createdDateTime": "2020-03-05T18:22:08Z", "lastUpdatedDateTime":
+        "2020-03-05T18:22:08Z"}, {"modelId": "f83a8716-dfc4-4df5-be8b-2e7df43b7272",
+        "status": "invalid", "createdDateTime": "2020-04-09T18:28:33Z", "lastUpdatedDateTime":
+        "2020-04-09T18:28:35Z"}, {"modelId": "f8c3a2da-7d51-47f6-a6e0-3d8bbd823cc2",
+        "status": "ready", "createdDateTime": "2020-03-24T20:38:07Z", "lastUpdatedDateTime":
+        "2020-03-24T20:38:18Z"}, {"modelId": "f9afe989-cc62-4f3c-b9e0-b6a2923d4578",
+        "status": "ready", "createdDateTime": "2020-03-15T20:26:57Z", "lastUpdatedDateTime":
+        "2020-03-15T20:29:00Z"}, {"modelId": "fb3eeb7f-adef-4622-a137-dd17599f0f6b",
+        "status": "ready", "createdDateTime": "2020-04-02T17:27:49Z", "lastUpdatedDateTime":
+        "2020-04-02T17:29:45Z"}, {"modelId": "fbcdd5e6-475c-4361-a3fc-d3b43bb75de1",
+        "status": "invalid", "createdDateTime": "2021-03-03T22:24:53Z", "lastUpdatedDateTime":
+        "2021-03-03T22:24:54Z"}, {"modelId": "fc4fdcb2-0f84-49cb-b860-5e22cd17c44f",
+        "status": "ready", "createdDateTime": "2020-04-02T17:52:07Z", "lastUpdatedDateTime":
+        "2020-04-02T17:54:10Z"}, {"modelId": "fd3ba569-e24a-4342-a508-d9d58054a0e7",
+        "status": "invalid", "createdDateTime": "2021-03-01T21:11:26Z", "lastUpdatedDateTime":
+        "2021-03-01T21:11:26Z"}, {"modelId": "fd662a46-ee95-42b9-8fa2-bed6d1b29592",
+        "status": "ready", "createdDateTime": "2020-04-21T05:35:20Z", "lastUpdatedDateTime":
+        "2020-04-21T05:35:23Z"}, {"modelId": "fd744fab-3f7b-4ba5-a108-9a9b59ecc73b",
+        "attributes": {"isComposed": false}, "status": "ready", "createdDateTime":
+        "2021-02-19T18:56:01Z", "lastUpdatedDateTime": "2021-02-19T18:56:04Z"}, {"modelId":
+        "fddc5f4d-06da-4bac-b368-15522b733c73", "status": "ready", "createdDateTime":
+        "2020-03-05T18:10:41Z", "lastUpdatedDateTime": "2020-03-05T18:10:49Z"}, {"modelId":
+        "fe3b2759-5703-4bef-8300-e0cdd3fe45a2", "status": "ready", "createdDateTime":
+        "2020-04-10T20:39:48Z", "lastUpdatedDateTime": "2020-04-10T20:39:56Z"}, {"modelId":
+        "fe4858ef-b3f1-4ba0-ad54-8aa644564b75", "status": "ready", "createdDateTime":
+        "2020-11-19T18:02:49Z", "lastUpdatedDateTime": "2020-11-19T18:03:05Z"}, {"modelId":
+        "fe811743-1b2d-468e-898b-09234da8b3bc", "status": "ready", "createdDateTime":
+        "2020-03-16T16:00:29Z", "lastUpdatedDateTime": "2020-03-16T16:02:34Z"}], "nextLink":
+        ""}'
+    headers:
+      apim-request-id:
+      - 21a2207f-3526-4027-a5de-3a262476fec0
+      content-length:
+      - '3688'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 23:19:31 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '185'
     status:
       code: 200
       message: OK
@@ -250,19 +1754,19 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models/04735689-16fa-4515-a2fa-5b1fd3ff244c
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/8fe0ebae-2829-407c-8361-bfdb264ec42d
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - f863fe8a-5d9f-4b29-9d67-64fc9230235f
+      - dc96ab0f-a561-4963-a8d8-15550e90f394
       content-length:
       - '0'
       date:
-      - Fri, 30 Oct 2020 01:19:34 GMT
+      - Wed, 03 Mar 2021 23:19:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
@@ -282,28 +1786,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models/04735689-16fa-4515-a2fa-5b1fd3ff244c?includeKeys=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/8fe0ebae-2829-407c-8361-bfdb264ec42d?includeKeys=true
   response:
     body:
-      string: '{"error": {"code": "1022", "message": "Model with ''id=04735689-16fa-4515-a2fa-5b1fd3ff244c''
+      string: '{"error": {"code": "1022", "message": "Model with ''id=8fe0ebae-2829-407c-8361-bfdb264ec42d''
         not found."}}'
     headers:
       apim-request-id:
-      - dfd5ecd5-9ea6-477a-a6cd-6d14a8a83f91
+      - fa101c95-1167-4699-8ed3-a1db0ff581b9
+      content-length:
+      - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 30 Oct 2020 01:19:34 GMT
+      - Wed, 03 Mar 2021 23:19:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '16'
+      - '13'
     status:
       code: 404
       message: Not Found
