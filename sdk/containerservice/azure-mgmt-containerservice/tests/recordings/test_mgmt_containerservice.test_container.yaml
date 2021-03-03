@@ -14,8 +14,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -23,27 +23,26 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"vnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet\"\
-        ,\r\n  \"etag\": \"W/\\\"02a00703-0601-4ccc-be9a-acd9e414fbd4\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"2be576d6-5375-4be9-822e-7b7706ba7fbd\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"979233b9-965a-4d7c-8493-bde0c23a8094\",\r\n    \"\
+        \   \"resourceGuid\": \"3164b4c0-3891-4687-9be8-0fb85e52c2d3\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/8\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
-        : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
-        : false\r\n  }\r\n}"
+        : [],\r\n    \"enableDdosProtection\": false\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/186c3795-29fd-40c9-81a8-d9a40c11684a?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/879e0f28-9b2b-4700-b829-f688edc0f7d0?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
-      - '668'
+      - '634'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Nov 2020 06:55:36 GMT
+      - Wed, 03 Mar 2021 03:09:02 GMT
       expires:
       - '-1'
       pragma:
@@ -56,7 +55,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 786a6056-61d9-4547-b315-ed8f1a0972bf
+      - b5b7ce78-4c08-4550-bb52-f90c8c0cb29b
       x-ms-ratelimit-remaining-subscription-writes:
       - '1199'
     status:
@@ -72,10 +71,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/186c3795-29fd-40c9-81a8-d9a40c11684a?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/879e0f28-9b2b-4700-b829-f688edc0f7d0?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -87,7 +86,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Nov 2020 06:55:40 GMT
+      - Wed, 03 Mar 2021 03:09:05 GMT
       expires:
       - '-1'
       pragma:
@@ -104,7 +103,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 1d4de864-72ba-452a-bbb5-e065cd03be86
+      - 421d44c0-ed8c-4001-98f3-59b3baf58e35
     status:
       code: 200
       message: OK
@@ -118,32 +117,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"name\": \"vnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet\"\
-        ,\r\n  \"etag\": \"W/\\\"a09e2a05-732b-4d9d-bdea-14b498ffe4bd\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"0649ed3b-4eda-4168-a173-ca3104aac0c5\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"979233b9-965a-4d7c-8493-bde0c23a8094\",\r\n    \"\
+        \    \"resourceGuid\": \"3164b4c0-3891-4687-9be8-0fb85e52c2d3\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/8\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
-        : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
-        : false\r\n  }\r\n}"
+        : [],\r\n    \"enableDdosProtection\": false\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '669'
+      - '635'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Nov 2020 06:55:40 GMT
+      - Wed, 03 Mar 2021 03:09:05 GMT
       etag:
-      - W/"a09e2a05-732b-4d9d-bdea-14b498ffe4bd"
+      - W/"0649ed3b-4eda-4168-a173-ca3104aac0c5"
       expires:
       - '-1'
       pragma:
@@ -160,7 +158,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - b848a27a-7e9b-404d-9d10-49de2b0ed5f3
+      - 2ebc5184-57cf-47f2-ac0f-2e29249d73a0
     status:
       code: 200
       message: OK
@@ -178,8 +176,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -187,14 +185,14 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"v-subnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\r\n  \"etag\": \"W/\\\"fed235b0-68ba-4426-8206-9743bb12a640\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"895288c3-c5ee-4eba-9bc6-10fac221e59a\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/8\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
         \n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ec0162c0-7986-4c1f-9e05-d5ae438eec8d?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0e925003-b5c4-4735-98d0-5c41f393e2af?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
@@ -202,7 +200,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Nov 2020 06:55:41 GMT
+      - Wed, 03 Mar 2021 03:09:07 GMT
       expires:
       - '-1'
       pragma:
@@ -215,7 +213,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 50f189bd-852a-453b-921d-17640960545d
+      - db5480dd-cc84-4ceb-818b-9dd598a5ed92
       x-ms-ratelimit-remaining-subscription-writes:
       - '1198'
     status:
@@ -231,10 +229,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ec0162c0-7986-4c1f-9e05-d5ae438eec8d?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0e925003-b5c4-4735-98d0-5c41f393e2af?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -246,7 +244,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Nov 2020 06:55:45 GMT
+      - Wed, 03 Mar 2021 03:09:10 GMT
       expires:
       - '-1'
       pragma:
@@ -263,7 +261,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 47d739dc-391e-44af-a5dd-aa7f73cd36b3
+      - 29e6278f-7539-4886-adc1-5bc053976f07
     status:
       code: 200
       message: OK
@@ -277,14 +275,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"name\": \"v-subnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\r\n  \"etag\": \"W/\\\"2ab67b45-8462-407b-96c7-d6c3eb280455\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"a8e3db82-2a54-4a32-9d1d-ea5997371d86\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/8\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
@@ -297,9 +295,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 17 Nov 2020 06:55:46 GMT
+      - Wed, 03 Mar 2021 03:09:11 GMT
       etag:
-      - W/"2ab67b45-8462-407b-96c7-d6c3eb280455"
+      - W/"a8e3db82-2a54-4a32-9d1d-ea5997371d86"
       expires:
       - '-1'
       pragma:
@@ -316,7 +314,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 18280ff0-a264-430b-a48e-2d164c7632f2
+      - 004fd81f-8b8c-47b4-b35f-5fd9225f5bac
     status:
       code: 200
       message: OK
@@ -341,41 +339,29 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerservice/11.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-07-01
   response:
     body:
-      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8\"\
-        ,\n  \"location\": \"eastus\",\n  \"name\": \"pycontainer665810f8\",\n  \"\
-        type\": \"Microsoft.ContainerService/ContainerServices\",\n  \"properties\"\
-        : {\n   \"provisioningState\": \"Creating\",\n   \"orchestratorProfile\":\
-        \ {\n    \"orchestratorType\": \"Swarm\"\n   },\n   \"masterProfile\": {\n\
-        \    \"count\": 1,\n    \"dnsPrefix\": \"masterPrefixTest\",\n    \"vmSize\"\
-        : \"Standard_D2_v2\",\n    \"vnetSubnetID\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\n    \"firstConsecutiveStaticIP\": \"10.240.255.5\",\n    \"storageProfile\"\
-        : \"ManagedDisks\"\n   },\n   \"agentPoolProfiles\": [\n    {\n     \"name\"\
-        : \"agentpool0\",\n     \"count\": 3,\n     \"vmSize\": \"Standard_A2_v2\"\
-        ,\n     \"dnsPrefix\": \"\",\n     \"fqdn\": \"\",\n     \"storageProfile\"\
-        : \"ManagedDisks\",\n     \"vnetSubnetID\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\n     \"osType\": \"Linux\"\n    }\n   ],\n   \"linuxProfile\": {\n    \"\
-        adminUsername\": \"acslinuxadmin\",\n    \"ssh\": {\n     \"publicKeys\":\
-        \ [\n      {\n       \"keyData\": \"ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ==\
-        \ azureuser@linuxvm\"\n      }\n     ]\n    }\n   }\n  }\n }"
+      string: "{\n  \"code\": \"InternalOperationError\",\n  \"message\": \"We are\
+        \ unable to serve this request due to an internal error, Correlation ID: 59a444cb-0285-4f22-90c1-b33a382a8d3d,\
+        \ Operation ID: f5405b82-b9ca-4872-adbd-2201bf2ca173, Timestamp: 2021-03-03T03:09:18Z.\"\
+        \n }"
     headers:
-      azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/10c10006-36be-413c-a12a-4ee4e6d75143?api-version=2016-03-30
       cache-control:
       - no-cache
+      connection:
+      - close
       content-length:
-      - '1825'
+      - '256'
       content-type:
       - application/json
       date:
-      - Tue, 17 Nov 2020 06:55:56 GMT
+      - Wed, 03 Mar 2021 03:09:18 GMT
       expires:
       - '-1'
       pragma:
@@ -386,566 +372,22 @@ interactions:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
+      x-ms-failure-cause:
+      - service
       x-ms-ratelimit-remaining-subscription-writes:
       - '1199'
     status:
-      code: 201
-      message: Created
+      code: 500
+      message: Internal Server Error
 - request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/10c10006-36be-413c-a12a-4ee4e6d75143?api-version=2016-03-30
-  response:
-    body:
-      string: "{\n  \"name\": \"0600c110-be36-3c41-a12a-4ee4e6d75143\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-17T06:55:54.6827766Z\"\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '126'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 06:56:27 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/10c10006-36be-413c-a12a-4ee4e6d75143?api-version=2016-03-30
-  response:
-    body:
-      string: "{\n  \"name\": \"0600c110-be36-3c41-a12a-4ee4e6d75143\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-17T06:55:54.6827766Z\"\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '126'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 06:56:58 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/10c10006-36be-413c-a12a-4ee4e6d75143?api-version=2016-03-30
-  response:
-    body:
-      string: "{\n  \"name\": \"0600c110-be36-3c41-a12a-4ee4e6d75143\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-17T06:55:54.6827766Z\"\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '126'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 06:57:29 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/10c10006-36be-413c-a12a-4ee4e6d75143?api-version=2016-03-30
-  response:
-    body:
-      string: "{\n  \"name\": \"0600c110-be36-3c41-a12a-4ee4e6d75143\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-17T06:55:54.6827766Z\"\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '126'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 06:57:59 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/10c10006-36be-413c-a12a-4ee4e6d75143?api-version=2016-03-30
-  response:
-    body:
-      string: "{\n  \"name\": \"0600c110-be36-3c41-a12a-4ee4e6d75143\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-17T06:55:54.6827766Z\"\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '126'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 06:58:29 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/10c10006-36be-413c-a12a-4ee4e6d75143?api-version=2016-03-30
-  response:
-    body:
-      string: "{\n  \"name\": \"0600c110-be36-3c41-a12a-4ee4e6d75143\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-17T06:55:54.6827766Z\"\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '126'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 06:58:59 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/10c10006-36be-413c-a12a-4ee4e6d75143?api-version=2016-03-30
-  response:
-    body:
-      string: "{\n  \"name\": \"0600c110-be36-3c41-a12a-4ee4e6d75143\",\n  \"status\"\
-        : \"Succeeded\",\n  \"startTime\": \"2020-11-17T06:55:54.6827766Z\",\n  \"\
-        endTime\": \"2020-11-17T06:59:02.1073468Z\"\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '170'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 06:59:30 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-07-01
-  response:
-    body:
-      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8\"\
-        ,\n  \"location\": \"eastus\",\n  \"name\": \"pycontainer665810f8\",\n  \"\
-        type\": \"Microsoft.ContainerService/ContainerServices\",\n  \"properties\"\
-        : {\n   \"provisioningState\": \"Succeeded\",\n   \"orchestratorProfile\"\
-        : {\n    \"orchestratorType\": \"Swarm\"\n   },\n   \"masterProfile\": {\n\
-        \    \"count\": 1,\n    \"dnsPrefix\": \"masterPrefixTest\",\n    \"vmSize\"\
-        : \"Standard_D2_v2\",\n    \"vnetSubnetID\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\n    \"firstConsecutiveStaticIP\": \"10.240.255.5\",\n    \"storageProfile\"\
-        : \"ManagedDisks\",\n    \"fqdn\": \"masterprefixtest.eastus.cloudapp.azure.com\"\
-        \n   },\n   \"agentPoolProfiles\": [\n    {\n     \"name\": \"agentpool0\"\
-        ,\n     \"count\": 3,\n     \"vmSize\": \"Standard_A2_v2\",\n     \"dnsPrefix\"\
-        : \"\",\n     \"fqdn\": \"\",\n     \"storageProfile\": \"ManagedDisks\",\n\
-        \     \"vnetSubnetID\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\n     \"osType\": \"Linux\"\n    }\n   ],\n   \"linuxProfile\": {\n    \"\
-        adminUsername\": \"acslinuxadmin\",\n    \"ssh\": {\n     \"publicKeys\":\
-        \ [\n      {\n       \"keyData\": \"ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ==\
-        \ azureuser@linuxvm\"\n      }\n     ]\n    }\n   }\n  }\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '1884'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 06:59:30 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-07-01
-  response:
-    body:
-      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8\"\
-        ,\n  \"location\": \"eastus\",\n  \"name\": \"pycontainer665810f8\",\n  \"\
-        type\": \"Microsoft.ContainerService/ContainerServices\",\n  \"properties\"\
-        : {\n   \"provisioningState\": \"Succeeded\",\n   \"orchestratorProfile\"\
-        : {\n    \"orchestratorType\": \"Swarm\"\n   },\n   \"masterProfile\": {\n\
-        \    \"count\": 1,\n    \"dnsPrefix\": \"masterPrefixTest\",\n    \"vmSize\"\
-        : \"Standard_D2_v2\",\n    \"vnetSubnetID\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\n    \"firstConsecutiveStaticIP\": \"10.240.255.5\",\n    \"storageProfile\"\
-        : \"ManagedDisks\",\n    \"fqdn\": \"masterprefixtest.eastus.cloudapp.azure.com\"\
-        \n   },\n   \"agentPoolProfiles\": [\n    {\n     \"name\": \"agentpool0\"\
-        ,\n     \"count\": 3,\n     \"vmSize\": \"Standard_A2_v2\",\n     \"dnsPrefix\"\
-        : \"\",\n     \"fqdn\": \"\",\n     \"storageProfile\": \"ManagedDisks\",\n\
-        \     \"vnetSubnetID\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\n     \"osType\": \"Linux\"\n    }\n   ],\n   \"linuxProfile\": {\n    \"\
-        adminUsername\": \"acslinuxadmin\",\n    \"ssh\": {\n     \"publicKeys\":\
-        \ [\n      {\n       \"keyData\": \"ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ==\
-        \ azureuser@linuxvm\"\n      }\n     ]\n    }\n   }\n  }\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '1884'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 06:59:31 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices?api-version=2017-07-01
-  response:
-    body:
-      string: "{\n  \"value\": [\n   {\n    \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8\"\
-        ,\n    \"location\": \"eastus\",\n    \"name\": \"pycontainer665810f8\",\n\
-        \    \"type\": \"Microsoft.ContainerService/ContainerServices\",\n    \"properties\"\
-        : {\n     \"provisioningState\": \"Succeeded\",\n     \"orchestratorProfile\"\
-        : {\n      \"orchestratorType\": \"Swarm\"\n     },\n     \"masterProfile\"\
-        : {\n      \"count\": 1,\n      \"dnsPrefix\": \"masterPrefixTest\",\n   \
-        \   \"vmSize\": \"Standard_D2_v2\",\n      \"vnetSubnetID\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\n      \"firstConsecutiveStaticIP\": \"10.240.255.5\",\n      \"storageProfile\"\
-        : \"ManagedDisks\",\n      \"fqdn\": \"masterprefixtest.eastus.cloudapp.azure.com\"\
-        \n     },\n     \"agentPoolProfiles\": [\n      {\n       \"name\": \"agentpool0\"\
-        ,\n       \"count\": 3,\n       \"vmSize\": \"Standard_A2_v2\",\n       \"\
-        dnsPrefix\": \"\",\n       \"fqdn\": \"\",\n       \"storageProfile\": \"\
-        ManagedDisks\",\n       \"vnetSubnetID\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\n       \"osType\": \"Linux\"\n      }\n     ],\n     \"linuxProfile\":\
-        \ {\n      \"adminUsername\": \"acslinuxadmin\",\n      \"ssh\": {\n     \
-        \  \"publicKeys\": [\n        {\n         \"keyData\": \"ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ==\
-        \ azureuser@linuxvm\"\n        }\n       ]\n      }\n     }\n    }\n   }\n\
-        \  ]\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '1993'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 06:59:31 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/containerServices?api-version=2017-07-01
-  response:
-    body:
-      string: "{\n  \"value\": [\n   {\n    \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8\"\
-        ,\n    \"location\": \"eastus\",\n    \"name\": \"pycontainer665810f8\",\n\
-        \    \"type\": \"Microsoft.ContainerService/ContainerServices\",\n    \"properties\"\
-        : {\n     \"provisioningState\": \"Succeeded\",\n     \"orchestratorProfile\"\
-        : {\n      \"orchestratorType\": \"Swarm\"\n     },\n     \"masterProfile\"\
-        : {\n      \"count\": 1,\n      \"dnsPrefix\": \"masterPrefixTest\",\n   \
-        \   \"vmSize\": \"Standard_D2_v2\",\n      \"vnetSubnetID\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\n      \"firstConsecutiveStaticIP\": \"10.240.255.5\",\n      \"storageProfile\"\
-        : \"ManagedDisks\",\n      \"fqdn\": \"masterprefixtest.eastus.cloudapp.azure.com\"\
-        \n     },\n     \"agentPoolProfiles\": [\n      {\n       \"name\": \"agentpool0\"\
-        ,\n       \"count\": 3,\n       \"vmSize\": \"Standard_A2_v2\",\n       \"\
-        dnsPrefix\": \"\",\n       \"fqdn\": \"\",\n       \"storageProfile\": \"\
-        ManagedDisks\",\n       \"vnetSubnetID\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\n       \"osType\": \"Linux\"\n      }\n     ],\n     \"linuxProfile\":\
-        \ {\n      \"adminUsername\": \"acslinuxadmin\",\n      \"ssh\": {\n     \
-        \  \"publicKeys\": [\n        {\n         \"keyData\": \"ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ==\
-        \ azureuser@linuxvm\"\n        }\n       ]\n      }\n     }\n    }\n   }\n\
-        \  ]\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '1993'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 06:59:31 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
+    body: 'b''{"location": "eastus", "properties": {"orchestratorProfile": {"orchestratorType":
+      "Swarm"}, "masterProfile": {"count": 1, "dnsPrefix": "masterPrefixTest", "vmSize":
+      "Standard_D2_v2", "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet"},
+      "agentPoolProfiles": [{"name": "agentpool0", "count": 3, "vmSize": "Standard_A2_v2",
+      "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet"}],
+      "linuxProfile": {"adminUsername": "acslinuxadmin", "ssh": {"publicKeys": [{"keyData":
+      "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ==
+      azureuser@linuxvm"}]}}}}'''
     headers:
       Accept:
       - application/json
@@ -954,48 +396,35 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '0'
+      - '1167'
+      Content-Type:
+      - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerservice/11.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
-    method: DELETE
+    method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-07-01
   response:
     body:
-      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8\"\
-        ,\n  \"location\": \"eastus\",\n  \"name\": \"pycontainer665810f8\",\n  \"\
-        type\": \"Microsoft.ContainerService/ContainerServices\",\n  \"properties\"\
-        : {\n   \"provisioningState\": \"Deleting\",\n   \"orchestratorProfile\":\
-        \ {\n    \"orchestratorType\": \"Swarm\"\n   },\n   \"masterProfile\": {\n\
-        \    \"count\": 1,\n    \"dnsPrefix\": \"masterPrefixTest\",\n    \"vmSize\"\
-        : \"Standard_D2_v2\",\n    \"vnetSubnetID\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\n    \"firstConsecutiveStaticIP\": \"10.240.255.5\",\n    \"storageProfile\"\
-        : \"ManagedDisks\",\n    \"fqdn\": \"masterprefixtest.eastus.cloudapp.azure.com\"\
-        \n   },\n   \"agentPoolProfiles\": [\n    {\n     \"name\": \"agentpool0\"\
-        ,\n     \"count\": 3,\n     \"vmSize\": \"Standard_A2_v2\",\n     \"dnsPrefix\"\
-        : \"\",\n     \"fqdn\": \"\",\n     \"storageProfile\": \"ManagedDisks\",\n\
-        \     \"vnetSubnetID\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\n     \"osType\": \"Linux\"\n    }\n   ],\n   \"linuxProfile\": {\n    \"\
-        adminUsername\": \"acslinuxadmin\",\n    \"ssh\": {\n     \"publicKeys\":\
-        \ [\n      {\n       \"keyData\": \"ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ==\
-        \ azureuser@linuxvm\"\n      }\n     ]\n    }\n   }\n  }\n }"
+      string: "{\n  \"code\": \"InternalOperationError\",\n  \"message\": \"We are\
+        \ unable to serve this request due to an internal error, Correlation ID: efbfb156-01ba-4a6b-89f1-0693e118becc,\
+        \ Operation ID: 43372331-25d4-404d-b65d-924070da5d2a, Timestamp: 2021-03-03T03:09:22Z.\"\
+        \n }"
     headers:
-      azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/74827709-6271-4618-9f14-1fcec5589348?api-version=2016-03-30
       cache-control:
       - no-cache
+      connection:
+      - close
       content-length:
-      - '1883'
+      - '256'
       content-type:
       - application/json
       date:
-      - Tue, 17 Nov 2020 06:59:32 GMT
+      - Wed, 03 Mar 2021 03:09:21 GMT
       expires:
       - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operationresults/74827709-6271-4618-9f14-1fcec5589348?api-version=2016-03-30
       pragma:
       - no-cache
       server:
@@ -1004,13 +433,22 @@ interactions:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
-      x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      x-ms-failure-cause:
+      - service
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
     status:
-      code: 202
-      message: Accepted
+      code: 500
+      message: Internal Server Error
 - request:
-    body: null
+    body: 'b''{"location": "eastus", "properties": {"orchestratorProfile": {"orchestratorType":
+      "Swarm"}, "masterProfile": {"count": 1, "dnsPrefix": "masterPrefixTest", "vmSize":
+      "Standard_D2_v2", "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet"},
+      "agentPoolProfiles": [{"name": "agentpool0", "count": 3, "vmSize": "Standard_A2_v2",
+      "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet"}],
+      "linuxProfile": {"adminUsername": "acslinuxadmin", "ssh": {"publicKeys": [{"keyData":
+      "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ==
+      azureuser@linuxvm"}]}}}}'''
     headers:
       Accept:
       - application/json
@@ -1018,24 +456,34 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '1167'
+      Content-Type:
+      - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/74827709-6271-4618-9f14-1fcec5589348?api-version=2016-03-30
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerservice/11.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-07-01
   response:
     body:
-      string: "{\n  \"name\": \"09778274-7162-1846-9f14-1fcec5589348\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-17T06:59:33.4866434Z\"\n }"
+      string: "{\n  \"code\": \"InternalOperationError\",\n  \"message\": \"We are\
+        \ unable to serve this request due to an internal error, Correlation ID: a1662d1a-a1ca-4f29-863a-d49b539da29a,\
+        \ Operation ID: da9fba10-38cb-4e49-8129-caf3328c1d25, Timestamp: 2021-03-03T03:09:26Z.\"\
+        \n }"
     headers:
       cache-control:
       - no-cache
+      connection:
+      - close
       content-length:
-      - '126'
+      - '256'
       content-type:
       - application/json
       date:
-      - Tue, 17 Nov 2020 07:00:04 GMT
+      - Wed, 03 Mar 2021 03:09:26 GMT
       expires:
       - '-1'
       pragma:
@@ -1044,17 +492,24 @@ interactions:
       - nginx
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
       x-content-type-options:
       - nosniff
+      x-ms-failure-cause:
+      - service
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
     status:
-      code: 200
-      message: OK
+      code: 500
+      message: Internal Server Error
 - request:
-    body: null
+    body: 'b''{"location": "eastus", "properties": {"orchestratorProfile": {"orchestratorType":
+      "Swarm"}, "masterProfile": {"count": 1, "dnsPrefix": "masterPrefixTest", "vmSize":
+      "Standard_D2_v2", "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet"},
+      "agentPoolProfiles": [{"name": "agentpool0", "count": 3, "vmSize": "Standard_A2_v2",
+      "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet"}],
+      "linuxProfile": {"adminUsername": "acslinuxadmin", "ssh": {"publicKeys": [{"keyData":
+      "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ==
+      azureuser@linuxvm"}]}}}}'''
     headers:
       Accept:
       - application/json
@@ -1062,24 +517,34 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '1167'
+      Content-Type:
+      - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/74827709-6271-4618-9f14-1fcec5589348?api-version=2016-03-30
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerservice/11.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-07-01
   response:
     body:
-      string: "{\n  \"name\": \"09778274-7162-1846-9f14-1fcec5589348\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-17T06:59:33.4866434Z\"\n }"
+      string: "{\n  \"code\": \"InternalOperationError\",\n  \"message\": \"We are\
+        \ unable to serve this request due to an internal error, Correlation ID: 1e80b98f-7fc4-469a-ba95-bdc6290413d3,\
+        \ Operation ID: 4f35799d-9548-4c5b-a905-3d3662122af6, Timestamp: 2021-03-03T03:09:33Z.\"\
+        \n }"
     headers:
       cache-control:
       - no-cache
+      connection:
+      - close
       content-length:
-      - '126'
+      - '256'
       content-type:
       - application/json
       date:
-      - Tue, 17 Nov 2020 07:00:35 GMT
+      - Wed, 03 Mar 2021 03:09:33 GMT
       expires:
       - '-1'
       pragma:
@@ -1088,17 +553,24 @@ interactions:
       - nginx
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
       x-content-type-options:
       - nosniff
+      x-ms-failure-cause:
+      - service
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
     status:
-      code: 200
-      message: OK
+      code: 500
+      message: Internal Server Error
 - request:
-    body: null
+    body: 'b''{"location": "eastus", "properties": {"orchestratorProfile": {"orchestratorType":
+      "Swarm"}, "masterProfile": {"count": 1, "dnsPrefix": "masterPrefixTest", "vmSize":
+      "Standard_D2_v2", "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet"},
+      "agentPoolProfiles": [{"name": "agentpool0", "count": 3, "vmSize": "Standard_A2_v2",
+      "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet"}],
+      "linuxProfile": {"adminUsername": "acslinuxadmin", "ssh": {"publicKeys": [{"keyData":
+      "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ==
+      azureuser@linuxvm"}]}}}}'''
     headers:
       Accept:
       - application/json
@@ -1106,24 +578,34 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '1167'
+      Content-Type:
+      - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/74827709-6271-4618-9f14-1fcec5589348?api-version=2016-03-30
+      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerservice/11.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-07-01
   response:
     body:
-      string: "{\n  \"name\": \"09778274-7162-1846-9f14-1fcec5589348\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-17T06:59:33.4866434Z\"\n }"
+      string: "{\n  \"code\": \"InternalOperationError\",\n  \"message\": \"We are\
+        \ unable to serve this request due to an internal error, Correlation ID: 9df082a6-e06c-4b18-b43b-ad13a20ec846,\
+        \ Operation ID: 33d0c9fb-5310-4587-8cc4-a4cc9d40dc9f, Timestamp: 2021-03-03T03:09:42Z.\"\
+        \n }"
     headers:
       cache-control:
       - no-cache
+      connection:
+      - close
       content-length:
-      - '126'
+      - '256'
       content-type:
       - application/json
       date:
-      - Tue, 17 Nov 2020 07:01:05 GMT
+      - Wed, 03 Mar 2021 03:09:41 GMT
       expires:
       - '-1'
       pragma:
@@ -1132,146 +614,13 @@ interactions:
       - nginx
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
       x-content-type-options:
       - nosniff
+      x-ms-failure-cause:
+      - service
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
     status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/74827709-6271-4618-9f14-1fcec5589348?api-version=2016-03-30
-  response:
-    body:
-      string: "{\n  \"name\": \"09778274-7162-1846-9f14-1fcec5589348\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-17T06:59:33.4866434Z\"\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '126'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 07:01:35 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/74827709-6271-4618-9f14-1fcec5589348?api-version=2016-03-30
-  response:
-    body:
-      string: "{\n  \"name\": \"09778274-7162-1846-9f14-1fcec5589348\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-11-17T06:59:33.4866434Z\"\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '126'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 07:02:06 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/10.1.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/74827709-6271-4618-9f14-1fcec5589348?api-version=2016-03-30
-  response:
-    body:
-      string: "{\n  \"name\": \"09778274-7162-1846-9f14-1fcec5589348\",\n  \"status\"\
-        : \"Succeeded\",\n  \"startTime\": \"2020-11-17T06:59:33.4866434Z\",\n  \"\
-        endTime\": \"2020-11-17T07:02:20.8542438Z\"\n }"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '170'
-      content-type:
-      - application/json
-      date:
-      - Tue, 17 Nov 2020 07:02:36 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
+      code: 500
+      message: Internal Server Error
 version: 1

@@ -1,5 +1,16 @@
 # Release History
 
+## 11.1.0 (2021-03-03)
+
+**Features**
+
+  - Model AgentPool has a new parameter node_public_ip_prefix_id
+  - Model ManagedClusterAgentPoolProfile has a new parameter node_public_ip_prefix_id
+  - Model ManagedClusterPodIdentityProfile has a new parameter allow_network_plugin_kubenet
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter node_public_ip_prefix_id
+  - Model ManagedCluster has a new parameter azure_portal_fqdn
+  - Model ManagedCluster has a new parameter fqdn_subdomain
+
 ## 11.0.0 (2020-12-30)
 
 **Features**
