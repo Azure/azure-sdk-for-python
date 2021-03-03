@@ -21,6 +21,7 @@ from azure.core.messaging import CloudEvent
 from azure.core.serialization import NULL
 from azure.eventgrid import EventGridEvent, generate_sas
 from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid._helpers import _cloud_event_to_generated
 
 from eventgrid_preparer import (
     CachedEventGridTopicPreparer
@@ -181,7 +182,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     }
                 )
         await client.send([cloud_event])
-        internal = cloud_event._to_generated().serialize()
+        internal = _cloud_event_to_generated(cloud_event).serialize()
         assert 'reasoncode' in internal
         assert 'extension' in internal
         assert internal['reasoncode'] == 204
