@@ -146,7 +146,12 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = NULL,
                 type="Sample.Cloud.Event"
                 )
-        client.send(cloud_event)
+        
+        def callback(request):
+            req = json.loads(request.http_request.body)
+            assert req[0].get("data") is None
+
+        client.send(cloud_event, raw_request_hook=callback)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')

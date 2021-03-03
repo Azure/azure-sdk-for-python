@@ -8,6 +8,7 @@ import logging
 import asyncio
 import sys
 import os
+import json
 import pytest
 from datetime import timedelta
 from msrest.serialization import UTC
@@ -228,7 +229,11 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = NULL,
                 type="Sample.Cloud.Event"
                 )
-        await client.send(cloud_event)
+        def callback(request):
+            req = json.loads(request.http_request.body)
+            assert req[0].get("data") is None
+
+        await client.send(cloud_event, raw_request_hook=callback)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
