@@ -13,6 +13,7 @@ except ImportError:
     import mock
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import JsonWebKey, KeyClient, KeyCurveName, KeyType, KeyVaultKey
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from azure.keyvault.keys.crypto._key_validity import _UTC
@@ -382,7 +383,7 @@ class CryptoClientTests(KeyVaultTestCase):
 
 
 def test_custom_hook_policy():
-    class CustomHookPolicy(object):
+    class CustomHookPolicy(SansIOHTTPPolicy):
         pass
 
     client = CryptographyClient("https://localhost/fake/key/version", object(), custom_hook_policy=CustomHookPolicy())

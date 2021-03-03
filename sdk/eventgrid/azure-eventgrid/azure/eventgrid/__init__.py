@@ -10,7 +10,11 @@ from ._helpers import generate_sas
 from ._models import CloudEvent, EventGridEvent
 from ._version import VERSION
 
-__all__ = ['EventGridPublisherClient', 'CloudEvent',
-            'EventGridEvent', 'generate_sas', 'SystemEventNames'
-            ]
+__all__ = [
+    "EventGridPublisherClient",
+    "CloudEvent",
+    "EventGridEvent",
+    "generate_sas",
+    "SystemEventNames",
+]
 __version__ = VERSION

@@ -8,7 +8,7 @@
 import pytest
 import datetime
 from azure.ai.textanalytics import _models
-from azure.ai.textanalytics._generated.v3_1_preview_3 import models as _generated_models
+from azure.ai.textanalytics._generated.v3_1_preview_4 import models as _generated_models
 
 # All features return a tuple of the object and the repr of the obejct
 
@@ -144,7 +144,7 @@ def sentiment_confidence_scores():
     return model, model_repr
 
 @pytest.fixture
-def aspect_opinion_confidence_score():
+def target_assessment_confidence_score():
     model = _models.SentimentConfidenceScores(
         positive=0.5,
         negative=0.5
@@ -154,43 +154,43 @@ def aspect_opinion_confidence_score():
     return model, model_repr
 
 @pytest.fixture
-def aspect_sentiment(aspect_opinion_confidence_score):
-    model = _models.AspectSentiment(
+def target_sentiment(target_assessment_confidence_score):
+    model = _models.TargetSentiment(
         text="aspect",
         sentiment="positive",
-        confidence_scores=aspect_opinion_confidence_score[0],
+        confidence_scores=target_assessment_confidence_score[0],
         length=6,
         offset=10,
     )
-    model_repr = "AspectSentiment(text=aspect, sentiment=positive, confidence_scores={}, length=6, offset=10)".format(
-        aspect_opinion_confidence_score[1]
+    model_repr = "TargetSentiment(text=aspect, sentiment=positive, confidence_scores={}, length=6, offset=10)".format(
+        target_assessment_confidence_score[1]
     )
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
-def opinion_sentiment(aspect_opinion_confidence_score):
-    model = _models.OpinionSentiment(
+def assessment_sentiment(target_assessment_confidence_score):
+    model = _models.AssessmentSentiment(
         text="opinion",
         sentiment="positive",
-        confidence_scores=aspect_opinion_confidence_score[0],
+        confidence_scores=target_assessment_confidence_score[0],
         length=7,
         offset=3,
         is_negated=False
     )
-    model_repr = "OpinionSentiment(text=opinion, sentiment=positive, confidence_scores={}, length=7, offset=3, is_negated=False)".format(
-        aspect_opinion_confidence_score[1]
+    model_repr = "AssessmentSentiment(text=opinion, sentiment=positive, confidence_scores={}, length=7, offset=3, is_negated=False)".format(
+        target_assessment_confidence_score[1]
     )
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
-def mined_opinion(aspect_sentiment, opinion_sentiment):
+def mined_opinion(target_sentiment, assessment_sentiment):
     model = _models.MinedOpinion(
-        aspect=aspect_sentiment[0],
-        opinions=[opinion_sentiment[0]]
+        target=target_sentiment[0],
+        assessments=[assessment_sentiment[0]]
     )
-    model_repr = "MinedOpinion(aspect={}, opinions=[{}])".format(aspect_sentiment[1], opinion_sentiment[1])
+    model_repr = "MinedOpinion(target={}, assessments=[{}])".format(target_sentiment[1], assessment_sentiment[1])
     assert repr(model) == model_repr
     return model, model_repr
 

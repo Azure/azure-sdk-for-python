@@ -6,19 +6,34 @@ $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/r
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
 
 function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
-{
-  pip install packaging==20.4 -q -I
-  $pkgName = $pkgName.Replace('_', '-')
+{  
+  $packageName = $pkgName.Replace('_', '-')
+  $pkgDirName = Split-Path $pkgPath -Leaf
+  if ($pkgDirName -ne $packageName)
+  {
+    # Common code triggers this function against each directory but we can skip if it doesn't match package name
+    return $null
+  }
+
   if (Test-Path (Join-Path $pkgPath "setup.py"))
   {
     $setupLocation = $pkgPath.Replace('\','/')
     pushd $RepoRoot
-    $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import get_package_properties; obj=get_package_properties('$setupLocation'); print('{0},{1},{2}'.format(obj[0], obj[1], obj[2]));") -split ","
+    $setupProps = $null
+    try{
+      pip install packaging==20.4 -q -I
+      $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import get_package_properties; obj=get_package_properties('$setupLocation'); print('{0},{1},{2},{3}'.format(obj[0], obj[1], obj[2], obj[3]));") -split ","
+    }
+    catch
+    {
+      # This is soft error and failure is expected for python metapackages
+      Write-Host "Failed to parse package properties for " $packageName
+    }
     popd
-    if (($setupProps -ne $null) -and ($setupProps[0] -eq $pkgName))
+    if (($setupProps -ne $null) -and ($setupProps[0] -eq $packageName))
     {
       $pkgProp = [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceDirectory)
-      if ($pkgName -match "mgmt")
+      if ($packageName -match "mgmt")
       {
         $pkgProp.SdkType = "mgmt"
       }
@@ -26,7 +41,8 @@ function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
       {
         $pkgProp.SdkType = "client"
       }
-      $pkgProp.IsNewSdk = $setupProps[3]
+      $pkgProp.IsNewSdk = $setupProps[2]
+      $pkgProp.ArtifactName = $pkgName
       return $pkgProp
     }
   }
@@ -209,17 +225,18 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
     return $null
   }
 
-  $packageName = $artifactName + "-"
-  Write-Host "Searching for $($packageName) wheel in artifact path $($artifactDir)"
-  $files = Get-ChildItem "${artifactDir}" | Where-Object -FilterScript {$_.Name.StartsWith($packageName) -and $_.Name.EndsWith(".whl")}
+  $whlDirectory = (Join-Path -Path $artifactDir -ChildPath $artifactName.Replace("_","-"))
+
+  Write-Host "Searching for $($artifactName) wheel in artifact path $($whlDirectory)"
+  $files = Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")}
   if (!$files)
   {
-    Write-Host "$($artifactDir) does not have wheel package for $($packageName)"
+    Write-Host "$whlDirectory does not have wheel package for $($artifactName)"
     return $null
   }
   elseif($files.Count -ne 1)
   {
-    Write-Host "$($artifactDir) should contain only one published wheel package for $($packageName)"
+    Write-Host "$whlDirectory should contain only one published wheel package for $($artifactName)"
     Write-Host "No of Packages $($files.Count)"
     return $null
   }

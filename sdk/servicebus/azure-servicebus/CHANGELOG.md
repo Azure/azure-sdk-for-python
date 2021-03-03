@@ -2,6 +2,10 @@
 
 ## 7.0.2 (Unreleased)
 
+**BugFixes**
+
+* Operations failing due to `uamqp.errors.LinkForceDetach` caused by no activity on the connection for 10 minutes will now be retried internally except for the session receiver case.
+* `uamqp.errors.AMQPConnectionError` errors with condition code `amqp:unknown-error` are now categorized into `ServiceBusConnectionError` instead of the general `ServiceBusError`.
 
 ## 7.0.1 (2021-01-12)
 

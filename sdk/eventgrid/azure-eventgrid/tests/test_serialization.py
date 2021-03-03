@@ -112,7 +112,7 @@ class EventGridSerializationTests(AzureMgmtTestCase):
                     )
 
     def test_import_from_sytem_events(self):
-        var = SystemEventNames.ACSChatMemberAddedToThreadWithUserEventName 
+        var = SystemEventNames.AcsChatMemberAddedToThreadWithUserEventName 
         assert var == "Microsoft.Communication.ChatMemberAddedToThreadWithUser"
         assert SystemEventNames.KeyVaultKeyNearExpiryEventName == "Microsoft.KeyVault.KeyNearExpiry"
         var = SystemEventNames.ServiceBusActiveMessagesAvailableWithNoListenersEventName

@@ -12,9 +12,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -27,9 +27,9 @@ interactions:
         size to: 5120 text elements. For additional details on the data limitations
         see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: 58a6d7c5-75c5-4aa5-8e38-a8f53addb50a
+      apim-request-id: a0e293cb-a0c0-457e-8bff-55701c44bfd2
       content-type: application/json; charset=utf-8
-      date: Wed, 27 Jan 2021 02:22:39 GMT
+      date: Tue, 23 Feb 2021 17:08:42 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -37,5 +37,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/keyPhrases?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/keyPhrases?showStats=false
 version: 1

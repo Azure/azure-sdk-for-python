@@ -84,6 +84,7 @@ azure-mgmt-storage~=2.0
 azure-mgmt-subscription~=0.2.0
 azure-mgmt-trafficmanager~=0.50.0
 azure-mgmt-web~=0.35.0
+azure-mixedreality-nspkg
 azure-nspkg
 azure-keyvault-nspkg
 azure-media-nspkg
@@ -148,7 +149,7 @@ avro<2.0.0,>=1.10.0
 #override azure-storage-file-share azure-core<2.0.0,>=1.10.0
 #override azure-storage-file-datalake azure-core<2.0.0,>=1.10.0
 #override azure-storage-file-datalake msrest>=0.6.18
-#override azure-storage-file-datalake azure-storage-blob<13.0.0,>=12.7.0
+#override azure-storage-file-datalake azure-storage-blob<13.0.0,>=12.8.0b1
 #override azure-security-attestation msrest>=0.6.0
 #override azure-security-attestation azure-core<2.0.0,>=1.8.2
 #override azure-data-tables msrest>=0.6.19
@@ -157,8 +158,10 @@ opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
 opentelemetry-api==0.17b0
 opentelemetry-sdk==0.17b0
-#override azure-eventhub-checkpointstoreblob msrest>=0.6.10
-#override azure-eventhub-checkpointstoreblob-aio msrest>=0.6.10
+#override azure-eventhub-checkpointstoreblob msrest>=0.6.18
+#override azure-eventhub-checkpointstoreblob-aio msrest>=0.6.18
+#override azure-eventhub-checkpointstoreblob azure-core<2.0.0,>=1.10.0
+#override azure-eventhub-checkpointstoreblob-aio azure-core<2.0.0,>=1.10.0
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
 #override azure-eventhub uamqp>=1.2.14,<2.0.0
 #override azure-appconfiguration msrest>=0.6.10
@@ -188,7 +191,8 @@ opentelemetry-sdk==0.17b0
 #override azure-ai-metricsadvisor msrest>=0.6.12
 #override azure-monitor-opentelemetry-exporter azure-core<2.0.0,>=1.6.0
 #override azure-monitor-opentelemetry-exporter msrest>=0.6.10
+#override azure-monitor-opentelemetry-exporter opentelemetry-api==1.0.0rc1
+#override azure-monitor-opentelemetry-exporter opentelemetry-sdk==1.0.0rc1
 #override azure-core-tracing-opentelemetry opentelemetry-api==0.17b0
 #override azure-identity six>=1.12.0
-#override azure-ai-formrecognizer
-#override azure-ai-metricsadvisor
+#override azure-mixedreality-authentication azure-core<2.0.0,>=1.4.0

@@ -10,26 +10,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: "{\"documents\":[{\"redactedText\":\"\U0001F469 SSN: ***********\",\"\
-        id\":\"0\",\"entities\":[{\"text\":\"859-98-0987\",\"category\":\"U.S. Social\
-        \ Security Number (SSN)\",\"offset\":7,\"length\":11,\"confidenceScore\":0.65}],\"\
-        warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}"
+      string: "{\"documents\":[{\"redactedText\":\"\U0001F469 SSN: ***********\",\"id\":\"0\",\"entities\":[{\"text\":\"859-98-0987\",\"category\":\"USSocialSecurityNumber\",\"offset\":7,\"length\":11,\"confidenceScore\":0.65}],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2021-01-15\"}"
     headers:
-      apim-request-id: aaf5104b-b107-44e0-a8d0-ba17021c47e0
+      apim-request-id: 443f3a8a-9f98-4001-9c67-b8efc6f8d7eb
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Wed, 27 Jan 2021 02:22:15 GMT
+      date: Tue, 23 Feb 2021 17:08:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '62'
+      x-envoy-upstream-service-time: '23'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

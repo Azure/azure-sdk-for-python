@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from io import BytesIO
+from typing import Any
 
 try:
     from urllib.parse import quote, unquote
@@ -596,9 +597,19 @@ class DataLakeFileClient(PathClient):
         downloader = self._blob_client.download_blob(offset=offset, length=length, **kwargs)
         return StorageStreamDownloader(downloader)
 
-    def rename_file(self, new_name,  # type: str
-                    **kwargs):
-        # type: (**Any) -> DataLakeFileClient
+    def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a file exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return self._exists(**kwargs)
+
+    def rename_file(self, new_name, **kwargs):
+        # type: (str, **Any) -> DataLakeFileClient
         """
         Rename the source file.
 

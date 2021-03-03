@@ -198,15 +198,15 @@ interactions:
     body: "--===============1251307753==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
       binary\r\nContent-ID: 0\r\n\r\nDELETE /containera875126b/blob1? HTTP/1.1\r\nx-ms-if-tags:
       \"tag1\"='firsttag WRONG'\r\nx-ms-date: Wed, 20 Jan 2021 21:14:11 GMT\r\nx-ms-client-request-id:
-      70af588e-5b64-11eb-a244-c8348e5fffbc\r\nAuthorization: SharedKey emilydevtest:mOEvzGZJu42VuKyB1bYn8uiMJzgug4VSJnG8DcKbdS4=\r\n\r\n\r\n--===============1251307753==\r\nContent-Type:
+      70af588e-5b64-11eb-a244-c8348e5fffbc\r\nAuthorization: SharedKey storagename:fake_shared_key=\r\n\r\n\r\n--===============1251307753==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nDELETE
       /containera875126b/blob2? HTTP/1.1\r\nx-ms-if-tags: \"tag1\"='firsttag WRONG'\r\nx-ms-date:
       Wed, 20 Jan 2021 21:14:11 GMT\r\nx-ms-client-request-id: 70af7fbb-5b64-11eb-afe5-c8348e5fffbc\r\nAuthorization:
-      SharedKey emilydevtest:iP4VwZro+1xrvKbdqIRyA/aojJkki0xSErLwNVSyw5o=\r\n\r\n\r\n--===============1251307753==\r\nContent-Type:
+      SharedKey storagename:fake_shared_key=\r\n\r\n\r\n--===============1251307753==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nDELETE
       /containera875126b/blob3? HTTP/1.1\r\nx-ms-if-tags: \"tag1\"='firsttag WRONG'\r\nx-ms-date:
       Wed, 20 Jan 2021 21:14:11 GMT\r\nx-ms-client-request-id: 70af7fbc-5b64-11eb-abb4-c8348e5fffbc\r\nAuthorization:
-      SharedKey emilydevtest:Pq8A1UzXGkb6O+3rB0skzNfUZyKuXTDvxLjoHdP11fs=\r\n\r\n\r\n--===============1251307753==--\r\n"
+      SharedKey storagename:fake_shared_key=\r\n\r\n\r\n--===============1251307753==--\r\n"
     headers:
       Accept:
       - '*/*'
@@ -268,15 +268,15 @@ interactions:
     body: "--===============0227128804==\r\nContent-Type: application/http\r\nContent-Transfer-Encoding:
       binary\r\nContent-ID: 0\r\n\r\nDELETE /containera875126b/blob1? HTTP/1.1\r\nx-ms-if-tags:
       \"tag1\"='firsttag'\r\nx-ms-date: Wed, 20 Jan 2021 21:14:13 GMT\r\nx-ms-client-request-id:
-      71dde62c-5b64-11eb-8cfa-c8348e5fffbc\r\nAuthorization: SharedKey emilydevtest:n4ToE/loDwwFtlRcRrvRIrukX+Wexok0dLHNCWhLvdI=\r\n\r\n\r\n--===============0227128804==\r\nContent-Type:
+      71dde62c-5b64-11eb-8cfa-c8348e5fffbc\r\nAuthorization: SharedKey storagename:fake_shared_key=\r\n\r\n\r\n--===============0227128804==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 1\r\n\r\nDELETE
       /containera875126b/blob2? HTTP/1.1\r\nx-ms-if-tags: \"tag1\"='firsttag'\r\nx-ms-date:
       Wed, 20 Jan 2021 21:14:13 GMT\r\nx-ms-client-request-id: 71de0ea8-5b64-11eb-a85c-c8348e5fffbc\r\nAuthorization:
-      SharedKey emilydevtest:36Y0RHqNx8Aq27N2tv9+f39qow2FC8l1h8mOETlbWRI=\r\n\r\n\r\n--===============0227128804==\r\nContent-Type:
+      SharedKey storagename:fake_shared_key=\r\n\r\n\r\n--===============0227128804==\r\nContent-Type:
       application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 2\r\n\r\nDELETE
       /containera875126b/blob3? HTTP/1.1\r\nx-ms-if-tags: \"tag1\"='firsttag'\r\nx-ms-date:
       Wed, 20 Jan 2021 21:14:13 GMT\r\nx-ms-client-request-id: 71de0ea9-5b64-11eb-bc48-c8348e5fffbc\r\nAuthorization:
-      SharedKey emilydevtest:HFNslBZzI/G4gPztKkbN4m7QS0d/rTUPue2OJCuu5wo=\r\n\r\n\r\n--===============0227128804==--\r\n"
+      SharedKey storagename:fake_shared_key=\r\n\r\n\r\n--===============0227128804==--\r\n"
     headers:
       Accept:
       - '*/*'

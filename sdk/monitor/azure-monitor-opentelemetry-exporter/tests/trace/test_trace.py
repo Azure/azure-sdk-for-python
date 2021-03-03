@@ -18,7 +18,6 @@ from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
     AzureMonitorTraceExporter
 )
-from azure.monitor.opentelemetry.exporter._options import ExporterOptions
 
 
 def throw(exc_type, *args, **kwargs):
@@ -49,6 +48,16 @@ class TestAzureTraceExporter(unittest.TestCase):
         exporter = AzureMonitorTraceExporter(
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
         )
+        self.assertEqual(
+            exporter._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+
+    def test_from_connection_string(self):
+        exporter = AzureMonitorTraceExporter.from_connection_string(
+            "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab"
+        )
+        self.assertTrue(isinstance(exporter, AzureMonitorTraceExporter))
         self.assertEqual(
             exporter._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
@@ -171,7 +180,8 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(test_span)
 
         self.assertIsNotNone(envelope.tags)
-        self.assertIsNone(envelope.tags.get("ai.cloud.role"))
+        self.assertIsNotNone(envelope.tags.get("ai.cloud.role"))
+        self.assertEqual(envelope.tags.get("ai.cloud.role"), "unknown_service")
         self.assertIsNone(envelope.tags.get("ai.cloud.roleInstance"))
         self.assertIsNotNone(envelope.tags.get("ai.device.id"))
         self.assertIsNotNone(envelope.tags.get("ai.device.locale"))
@@ -179,7 +189,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertIsNotNone(envelope.tags.get("ai.device.type"))
         self.assertIsNotNone(envelope.tags.get("ai.internal.sdkVersion"))
 
-        test_span.resource = resources.Resource(
+        test_span._resource = resources.Resource(
             {"service.name": "testServiceName",
              "service.namespace": "testServiceNamespace",
              "service.instance.id": "testServiceInstanceId"})
@@ -226,7 +236,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        span.status = Status(status_code=StatusCode.OK)
+        span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.instrumentation_key,
                          "12345678-1234-5678-abcd-12345678abcd")
@@ -256,7 +266,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         self.assertEqual(envelope.data.base_data.result_code, "200")
 
-        span.attributes = {
+        span._attributes = {
             "component": "http",
             "http.method": "GET",
             "net.peer.port": 1234,
@@ -266,7 +276,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "testhost:1234")
 
-        span.attributes = {
+        span._attributes = {
             "component": "http",
             "http.method": "GET",
             "net.peer.port": 1234,
@@ -299,7 +309,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        span.status = Status(status_code=StatusCode.OK)
+        span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
         self.assertTrue(envelope.data.base_data.success)
         self.assertEqual(envelope.data.base_data.type, "sql")
@@ -328,7 +338,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        span.status = Status(status_code=StatusCode.OK)
+        span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
         self.assertTrue(envelope.data.base_data.success)
         self.assertEqual(envelope.data.base_data.type, "rpc.system")
@@ -357,7 +367,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        span.status = Status(status_code=StatusCode.OK)
+        span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
         self.assertTrue(envelope.data.base_data.success)
         self.assertEqual(envelope.data.base_data.type,
@@ -387,7 +397,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        span.status = Status(status_code=StatusCode.OK)
+        span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
         self.assertTrue(envelope.data.base_data.success)
         self.assertEqual(envelope.data.base_data.type, "InProc")
@@ -415,7 +425,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.SERVER,
         )
-        span.status = Status(status_code=StatusCode.OK)
+        span._status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
@@ -471,7 +481,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.SERVER,
         )
-        span.status = Status(status_code=StatusCode.OK)
+        span._status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
@@ -504,7 +514,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.CLIENT,
         )
-        span.status = Status(status_code=StatusCode.ERROR)
+        span._status = Status(status_code=StatusCode.ERROR)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
@@ -532,7 +542,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.CLIENT,
         )
-        span.status = Status(status_code=StatusCode.OK)
+        span._status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
@@ -570,7 +580,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             links=links,
             kind=SpanKind.CLIENT,
         )
-        span.status = Status(status_code=StatusCode.OK)
+        span._status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)

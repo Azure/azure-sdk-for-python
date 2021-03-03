@@ -12,20 +12,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
-      apim-request-id: d40dacb1-eb94-4414-b028-efb0110f1d85
-      date: Wed, 27 Jan 2021 02:23:09 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/afb7eb06-685e-4d8f-8417-fc29e521606d
+      apim-request-id: c4a6582e-9a5d-47c0-b750-fc1c50569c42
+      date: Tue, 23 Feb 2021 17:16:50 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/fc71be39-017b-4e5a-aa86-5d553b346f28
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '145'
+      x-envoy-upstream-service-time: '204'
     status:
       code: 202
       message: Accepted
@@ -34,12 +34,12 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/afb7eb06-685e-4d8f-8417-fc29e521606d
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/fc71be39-017b-4e5a-aa86-5d553b346f28
   response:
     body:
-      string: '{"jobId":"afb7eb06-685e-4d8f-8417-fc29e521606d","lastUpdateDateTime":"2021-01-27T02:23:10Z","createdDateTime":"2021-01-27T02:23:09Z","expirationDateTime":"2021-01-28T02:23:09Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"fc71be39-017b-4e5a-aa86-5d553b346f28","lastUpdateDateTime":"2021-02-23T17:16:51Z","createdDateTime":"2021-02-23T17:16:49Z","expirationDateTime":"2021-02-24T17:16:49Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}},{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
@@ -47,17 +47,17 @@ interactions:
         document in request.","innererror":{"code":"InvalidDocument","message":"A
         document within the request was too large to be processed. Limit document
         size to: 5120 text elements. For additional details on the data limitations
-        see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2020-09-03"}}'
+        see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2021-01-11"}}'
     headers:
-      apim-request-id: 07803c84-3cab-46a8-afc6-67062db840cf
+      apim-request-id: 5f2a86ec-a78d-4210-983f-519dc238ad09
       content-type: application/json; charset=utf-8
-      date: Wed, 27 Jan 2021 02:23:13 GMT
+      date: Tue, 23 Feb 2021 17:16:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '44'
+      x-envoy-upstream-service-time: '47'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/afb7eb06-685e-4d8f-8417-fc29e521606d
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/fc71be39-017b-4e5a-aa86-5d553b346f28
 version: 1

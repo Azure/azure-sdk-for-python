@@ -7,7 +7,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.2.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-keyvault-certificates/4.2.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://vaultname.vault.azure.net/certificates?api-version=2016-10-01
   response:
@@ -18,50 +18,48 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Mon, 17 Aug 2020 19:38:37 GMT
+      date: Wed, 17 Feb 2021 19:57:27 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
       www-authenticate: Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
         resource="https://vault.azure.net"
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.31.4
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus2
+      x-ms-keyvault-service-version: 1.2.164.2
       x-powered-by: ASP.NET
     status:
       code: 401
       message: Unauthorized
-    url: https://gyyvzoaguftghkx4oqftoyev.vault.azure.net/certificates?api-version=2016-10-01
+    url: https://mcpatinokv.vault.azure.net/certificates?api-version=2016-10-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.2.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-keyvault-certificates/4.2.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://vaultname.vault.azure.net/certificates?api-version=2016-10-01
   response:
     body:
-      string: '{"value":[],"nextLink":null}'
+      string: '{"value":[{"id":"https://vaultname.vault.azure.net/certificates/livekvtestcert052a3107a","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1613591839,"updated":1613591839},"subject":""},{"id":"https://vaultname.vault.azure.net/certificates/livekvtestcert152a3107a","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1613591839,"updated":1613591839},"subject":""},{"id":"https://vaultname.vault.azure.net/certificates/livekvtestcert252a3107a","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1613591840,"updated":1613591840},"subject":""},{"id":"https://vaultname.vault.azure.net/certificates/livekvtestcert352a3107a","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1613591840,"updated":1613591840},"subject":""},{"id":"https://vaultname.vault.azure.net/certificates/livekvtestcert452a3107a","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1613591841,"updated":1613591841},"subject":""},{"id":"https://vaultname.vault.azure.net/certificates/livekvtestcert552a3107a","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1613591841,"updated":1613591841},"subject":""},{"id":"https://vaultname.vault.azure.net/certificates/livekvtestcert652a3107a","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1613591842,"updated":1613591842},"subject":""},{"id":"https://vaultname.vault.azure.net/certificates/livekvtestcertcfa1497","x5t":"ZgYFPdRwvZv6a5g71C0uTHO63h0","attributes":{"enabled":true,"nbf":1613591053,"exp":1645127653,"created":1613591653,"updated":1613591653},"subject":""},{"id":"https://vaultname.vault.azure.net/certificates/livekvtestcertd7bc1845","x5t":"Syu-fXRuyFCT8nS2SMvemIKXFxo","attributes":{"enabled":true,"nbf":1613591215,"exp":1645127815,"created":1613591816,"updated":1613591816},"subject":""},{"id":"https://vaultname.vault.azure.net/certificates/livekvtestcertverb3f1934","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1613591847,"updated":1613591847},"subject":""},{"id":"https://vaultname.vault.azure.net/certificates/livekvtestimportNotPasswordEncodedCertificatee41c2319","x5t":"Yj07xp_eOJMn7HPlahwQbKs9Eg8","attributes":{"enabled":true,"nbf":1593090033,"exp":1624626633,"created":1613591837,"updated":1613591837},"subject":""},{"id":"https://vaultname.vault.azure.net/certificates/livekvtestimportPasswordEncodedCertificate59882169","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1613591838,"updated":1613591838},"subject":""},{"id":"https://vaultname.vault.azure.net/certificates/livekvtestunknownIssuerCert91f91eda","x5t":"si5gOvVpydMYPs8odb2OwZOxwQ4","attributes":{"enabled":true,"nbf":1613591234,"exp":1645127834,"created":1613591834,"updated":1613591834},"subject":""},{"id":"https://vaultname.vault.azure.net/certificates/sftest","x5t":"0EdMr8mX2APf8RQSJC4-r5J36jE","attributes":{"enabled":true,"nbf":1613082951,"exp":1644619551,"created":1613083552,"updated":1613083552},"subject":""}],"nextLink":null}'
     headers:
       cache-control: no-cache
-      content-length: '28'
+      content-length: '3381'
       content-type: application/json; charset=utf-8
-      date: Mon, 17 Aug 2020 19:38:38 GMT
+      date: Wed, 17 Feb 2021 19:57:28 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
-      x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
-      x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.31.4
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus2
+      x-ms-keyvault-service-version: 1.2.164.2
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://gyyvzoaguftghkx4oqftoyev.vault.azure.net/certificates?api-version=2016-10-01
+    url: https://mcpatinokv.vault.azure.net/certificates?api-version=2016-10-01
 version: 1

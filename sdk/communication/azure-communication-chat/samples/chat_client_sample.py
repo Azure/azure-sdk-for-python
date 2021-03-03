@@ -34,7 +34,7 @@ class ChatClientSamples(object):
 
     identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
     user = identity_client.create_user()
-    tokenresponse = identity_client.issue_token(user, scopes=["chat"])
+    tokenresponse = identity_client.get_token(user, scopes=["chat"])
     token = tokenresponse.token
 
     endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
@@ -45,7 +45,9 @@ class ChatClientSamples(object):
 
     def create_chat_client(self):
         # [START create_chat_client]
-        from azure.communication.chat import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        from azure.communication.chat import ChatClient
+        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
+        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
         refresh_options = CommunicationTokenRefreshOptions(self.token)
         chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
         # [END create_chat_client]
@@ -53,11 +55,13 @@ class ChatClientSamples(object):
     def create_thread(self):
         # [START create_thread]
         from datetime import datetime
+
+        from azure.communication.identity import CommunicationUserIdentifier
+        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
+        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
+
         from azure.communication.chat import(
             ChatClient,
-            CommunicationUserIdentifier,
-            CommunicationTokenCredential,
-            CommunicationTokenRefreshOptions
             ChatThreadParticipant
         )
 
@@ -72,21 +76,25 @@ class ChatClientSamples(object):
         )]
 
         # creates a new chat_thread everytime
-        chat_thread_client = chat_client.create_chat_thread(topic, participants)
+        create_chat_thread_result = chat_client.create_chat_thread(topic, thread_participants=participants)
 
         # creates a new chat_thread if not exists
         repeatability_request_id = 'b66d6031-fdcc-41df-8306-e524c9f226b8' # unique identifier
-        chat_thread_client_w_repeatability_id = chat_client.create_chat_thread(topic,
-                                                                               participants,
-                                                                               repeatability_request_id)
+        create_chat_thread_result_w_repeatability_id = chat_client.create_chat_thread(
+            topic,
+            thread_participants=participants,
+            repeatability_request_id=repeatability_request_id
+        )
         # [END create_thread]
 
-        self._thread_id = chat_thread_client.thread_id
+        self._thread_id = create_chat_thread_result.chat_thread.id
         print("thread created, id: " + self._thread_id)
 
     def get_chat_thread_client(self):
         # [START get_chat_thread_client]
-        from azure.communication.chat import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        from azure.communication.chat import ChatClient
+        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
+        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 
         refresh_options = CommunicationTokenRefreshOptions(self.token)
         chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
@@ -97,7 +105,9 @@ class ChatClientSamples(object):
 
     def get_thread(self):
         # [START get_thread]
-        from azure.communication.chat import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        from azure.communication.chat import ChatClient
+        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
+        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 
         refresh_options = CommunicationTokenRefreshOptions(self.token)
         chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))
@@ -108,7 +118,9 @@ class ChatClientSamples(object):
 
     def list_threads(self):
         # [START list_threads]
-        from azure.communication.chat import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        from azure.communication.chat import ChatClient
+        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
+        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
         from datetime import datetime, timedelta
         import pytz
 
@@ -119,13 +131,16 @@ class ChatClientSamples(object):
         chat_thread_infos = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
 
         print("list_threads succeeded with results_per_page is 5, and were created since 2 days ago.")
-        for info in chat_thread_infos:
-            print("thread id:", info.id)
+        for chat_thread_info_page in chat_thread_infos.by_page():
+            for chat_thread_info in chat_thread_info_page:
+                print("thread id:", chat_thread_info.id)
         # [END list_threads]
 
     def delete_thread(self):
         # [START delete_thread]
-        from azure.communication.chat import ChatClient, CommunicationTokenCredential, CommunicationTokenRefreshOptions
+        from azure.communication.chat import ChatClient
+        from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
+        from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 
         refresh_options = CommunicationTokenRefreshOptions(self.token)
         chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(refresh_options))

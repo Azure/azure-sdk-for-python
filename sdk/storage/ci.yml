@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -18,6 +19,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -34,21 +36,21 @@ extends:
   parameters:
     ServiceDirectory: storage
     Artifacts:
-    - name: azure_storage_blob
+    - name: azure-storage-blob
       safeName: azurestorageblob
-    - name: azure_storage_blob_changefeed
+    - name: azure-storage-blob-changefeed
       safeName: azurestorageblobchangefeed
-    - name: azure_storage_file_share
+    - name: azure-storage-file-share
       safeName: azurestoragefileshare
-    - name: azure_storage_file_datalake
+    - name: azure-storage-file-datalake
       safeName: azurestoragefiledatalake
-    - name: azure_storage_queue
+    - name: azure-storage-queue
       safeName: azurestoragequeue
-    - name: azure_mgmt_storage
+    - name: azure-mgmt-storage
       safeName: azuremgmtstorage
-    - name: azure_mgmt_storagecache
+    - name: azure-mgmt-storagecache
       safeName: azuremgmtstoragecache
-    - name: azure_mgmt_storagesync
+    - name: azure-mgmt-storagesync
       safeName: azuremgmtstoragesync
-    - name: azure_mgmt_storageimportexport
+    - name: azure-mgmt-storageimportexport
       safeName: azuremgmtstorageimportexport

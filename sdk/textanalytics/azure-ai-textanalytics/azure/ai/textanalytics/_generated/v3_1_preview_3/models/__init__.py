@@ -8,6 +8,7 @@
 
 try:
     from ._models_py3 import AnalyzeBatchInput
+    from ._models_py3 import AnalyzeJobMetadata
     from ._models_py3 import AnalyzeJobState
     from ._models_py3 import AspectConfidenceScoreLabel
     from ._models_py3 import AspectRelation
@@ -71,6 +72,7 @@ try:
     from ._models_py3 import TextAnalyticsWarning
 except (SyntaxError, ImportError):
     from ._models import AnalyzeBatchInput  # type: ignore
+    from ._models import AnalyzeJobMetadata  # type: ignore
     from ._models import AnalyzeJobState  # type: ignore
     from ._models import AspectConfidenceScoreLabel  # type: ignore
     from ._models import AspectRelation  # type: ignore
@@ -149,6 +151,7 @@ from ._text_analytics_client_enums import (
 
 __all__ = [
     'AnalyzeBatchInput',
+    'AnalyzeJobMetadata',
     'AnalyzeJobState',
     'AspectConfidenceScoreLabel',
     'AspectRelation',
