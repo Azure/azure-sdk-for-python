@@ -196,9 +196,12 @@ class GeneralNameReplacer(RecordingProcessor):
                     request.body = body.replace(old, new)
 
             if request.body and request.uri and is_batch_payload(request):
+                import re
                 body = six.ensure_str(request.body)
-                if old in body:
-                    request.body = body.replace(old, new)
+                matched_objects = set(re.findall(old, body))
+                for matched_object in matched_objects:
+                    request.body = body.replace(matched_object, new)
+                    body = body.replace(matched_object, new)
         return request
 
     def process_response(self, response):
