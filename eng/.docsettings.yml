@@ -105,6 +105,7 @@ known_content_issues:
   - ['sdk/monitor/azure-monitor-opentelemetry-exporter/swagger/README.md', '#4554']
   - ['sdk/monitor/azure-monitor-opentelemetry-exporter/README.md', '#4554']
   - ['sdk/digitaltwins/azure-digitaltwins-core/swagger/README.md', '#4554']
+  - ['sdk/textanalytics/azure-ai-textanalytics/swagger/README.md', '#4554']
   - ['sdk/media/azure-media-nspkg/README.md', '#4554']
 
   # nspckg and common.

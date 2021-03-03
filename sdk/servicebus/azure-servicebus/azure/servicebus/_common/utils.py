@@ -9,7 +9,18 @@ import datetime
 import logging
 import functools
 import platform
-from typing import Optional, Dict, Tuple, Iterable, Type, TYPE_CHECKING, Union, Iterator
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Mapping,
+    Optional,
+    Type,
+    TYPE_CHECKING,
+    Union
+)
 from contextlib import contextmanager
 from msrest.serialization import UTC
 
@@ -43,10 +54,25 @@ from .constants import (
 )
 
 if TYPE_CHECKING:
-    from .message import ServiceBusReceivedMessage, ServiceBusMessage
+    from .message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
     from azure.core.tracing import AbstractSpan
     from .receiver_mixins import ReceiverMixin
     from .._servicebus_session import BaseSession
+
+    # pylint: disable=unused-import, ungrouped-imports
+    DictMessageType = Union[
+        Mapping,
+        ServiceBusMessage,
+        List[Mapping[str, Any]],
+        List[ServiceBusMessage],
+        ServiceBusMessageBatch
+    ]
+
+    DictMessageReturnType = Union[
+        ServiceBusMessage,
+        List[ServiceBusMessage],
+        ServiceBusMessageBatch
+    ]
 
 _log = logging.getLogger(__name__)
 
@@ -196,6 +222,20 @@ def transform_messages_to_sendable_if_needed(messages):
         except AttributeError:
             return messages
 
+def create_messages_from_dicts_if_needed(messages, message_type):
+    # type: (DictMessageType, type) -> DictMessageReturnType
+    """
+    This method is used to convert dict representations
+    of messages to a list of ServiceBusMessage objects or ServiceBusBatchMessage.
+    :param DictMessageType messages: A list or single instance of messages of type ServiceBusMessages or
+        dict representations of type ServiceBusMessage. Also accepts ServiceBusBatchMessage.
+    :rtype: DictMessageReturnType
+    """
+    if isinstance(messages, list):
+        return [(message_type(**message) if isinstance(message, dict) else message) for message in messages]
+
+    return_messages = message_type(**messages) if isinstance(messages, dict) else messages
+    return return_messages
 
 def strip_protocol_from_uri(uri):
     # type: (str) -> str

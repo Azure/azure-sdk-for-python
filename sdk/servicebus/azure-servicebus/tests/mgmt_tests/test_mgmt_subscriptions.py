@@ -305,3 +305,76 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
     def test_subscription_properties_constructor(self):
         with pytest.raises(TypeError):
             SubscriptionProperties("randomname")
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_subscription_update_dict_success(self, servicebus_namespace_connection_string, servicebus_namespace, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
+        topic_name = "fjruid"
+        subscription_name = "eqkovcd"
+
+        try:
+            topic_description = mgmt_service.create_topic(topic_name)
+            subscription_description = mgmt_service.create_subscription(topic_description.name, subscription_name)
+            subscription_description_dict = dict(subscription_description)
+
+            # Try updating one setting.
+            subscription_description_dict["lock_duration"] = datetime.timedelta(minutes=2)
+            mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
+            subscription_description = mgmt_service.get_subscription(topic_name, subscription_name)
+            assert subscription_description.lock_duration == datetime.timedelta(minutes=2)
+
+            # Now try updating all settings.
+            subscription_description_dict = dict(subscription_description)
+            subscription_description_dict["auto_delete_on_idle"] = datetime.timedelta(minutes=10)
+            subscription_description_dict["dead_lettering_on_message_expiration"] = True
+            subscription_description_dict["default_message_time_to_live"] = datetime.timedelta(minutes=11)
+            subscription_description_dict["lock_duration"] = datetime.timedelta(seconds=12)
+            subscription_description_dict["max_delivery_count"] = 14
+            # topic_description.enable_partitioning = True # Cannot be changed after creation
+            # topic_description.requires_session = True # Cannot be changed after creation
+
+            mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
+            subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
+
+            assert subscription_description.auto_delete_on_idle == datetime.timedelta(minutes=10)
+            assert subscription_description.dead_lettering_on_message_expiration == True
+            assert subscription_description.default_message_time_to_live == datetime.timedelta(minutes=11)
+            assert subscription_description.max_delivery_count == 14
+            assert subscription_description.lock_duration == datetime.timedelta(seconds=12)
+            # assert topic_description.enable_partitioning == True
+            # assert topic_description.requires_session == True
+
+            # Finally, test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
+            subscription_description_dict = dict(subscription_description)
+            subscription_description_dict["forward_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, topic_name)
+            subscription_description_dict["forward_dead_lettered_messages_to"] = "sb://{}.servicebus.windows.net/{}".format(servicebus_namespace.name, topic_name)
+            mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
+            subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+
+        finally:
+            mgmt_service.delete_subscription(topic_name, subscription_name)
+            mgmt_service.delete_topic(topic_name)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_subscription_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
+        topic_name = "dfjdfj"
+        subscription_name = "kwqxd"
+
+        try:
+            topic_description = mgmt_service.create_topic(topic_name)
+            subscription_description = mgmt_service.create_subscription(topic_description.name, subscription_name)
+            # send in subscription dict without non-name keyword args
+            subscription_description_only_name = {"name": topic_name}
+            with pytest.raises(TypeError):
+                mgmt_service.update_subscription(topic_description.name, subscription_description_only_name)
+        finally:
+            mgmt_service.delete_subscription(topic_name, subscription_name)
+            mgmt_service.delete_topic(topic_name)
