@@ -1,8 +1,7 @@
 from azure.core.exceptions import ResourceNotFoundError
 from azure.iot.deviceupdate import DeviceUpdateClient
 from azure.iot.deviceupdate.models import *
-from tests.testcase import DeviceUpdateTest, DeviceUpdatePowerShellPreparer
-from tests.test_data import *
+from testcase import DeviceUpdateTest, DeviceUpdatePowerShellPreparer
 
 
 class DevicesClientTestCase(DeviceUpdateTest):
