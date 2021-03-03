@@ -5,11 +5,11 @@
 
 from io import BytesIO
 
-from .random_stream import get_random_bytes
+from .random_stream import get_random_bytes, _DEFAULT_LENGTH
 
 
 class AsyncRandomStream(BytesIO):
-    def __init__(self, length, initial_buffer_length=1024 * 1024):
+    def __init__(self, length, initial_buffer_length=_DEFAULT_LENGTH):
         super().__init__()
         self._base_data = get_random_bytes(initial_buffer_length)
         self._data_length = length
@@ -41,6 +41,17 @@ class AsyncRandomStream(BytesIO):
     
     def seek(self, index):
         self._position = index
+
+    def tell(self):
+        return self._position
+
+    def seek(self, index, whence=0):
+        if whence == 0:
+            self._position = index
+        elif whence == 1:
+            self._position = self._position + index
+        elif whence == 2:
+            self._position = self._length - 1 + index
 
     def tell(self):
         return self._position
