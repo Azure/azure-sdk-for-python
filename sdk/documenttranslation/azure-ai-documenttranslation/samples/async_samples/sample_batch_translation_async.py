@@ -22,7 +22,8 @@ class BatchTranslationSampleAsync(object):
         # get service secrets
         endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
         key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
-        source_container_url = os.environ["AZURE_SOURCE_CONTAINER_URL"]
+        source_container_url_en = os.environ["AZURE_SOURCE_CONTAINER_URL_EN"]
+        source_container_url_de = os.environ["AZURE_SOURCE_CONTAINER_URL_DE"]
         target_container_url_es = os.environ["AZURE_TARGET_CONTAINER_URL_ES"]
         target_container_url_fr = os.environ["AZURE_TARGET_CONTAINER_URL_FR"]
 
@@ -32,8 +33,7 @@ class BatchTranslationSampleAsync(object):
         # prepare translation job input
         batch = [
             BatchDocumentInput(
-                source_url=source_container_url,
-                source_language="en",
+                source_url=source_container_url_en,
                 targets=[
                     StorageTarget(
                         target_url=target_container_url_es,
@@ -43,8 +43,20 @@ class BatchTranslationSampleAsync(object):
                         target_url=target_container_url_fr,
                         language="fr"
                     )
-                ],
-                storage_type="file"
+                ]
+            ),
+            BatchDocumentInput(
+                source_url=source_container_url_de,
+                targets=[
+                    StorageTarget(
+                        target_url=target_container_url_es,
+                        language="es"
+                    ),
+                    StorageTarget(
+                        target_url=target_container_url_fr,
+                        language="fr"
+                    )
+                ]
             )
         ]
 
@@ -62,7 +74,7 @@ class BatchTranslationSampleAsync(object):
                 if job_result.documents_failed_count > 0:
                     await self.check_documents(client, job_result.id)
 
-            if job_result.status in ["Failed", "ValidationFailed"]:
+            elif job_result.status in ["Failed", "ValidationFailed"]:
                 if job_result.error:
                     print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
                 await self.check_documents(client, job_result.id)
@@ -75,7 +87,7 @@ class BatchTranslationSampleAsync(object):
         try:
             doc_statuses = client.list_documents_statuses(job_id)  # type: AsyncItemPaged[DocumentStatusDetail]
         except ResourceNotFoundError as err:
-            print("Failed to process any documents in source/target container.")
+            print("Failed to process any documents in source/target container due to insufficient permissions.")
             raise err
 
         docs_to_retry = []

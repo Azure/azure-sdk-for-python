@@ -8,9 +8,9 @@ import os
 import asyncio
 import time
 
-class CheckStatusesSampleAsync(object):
+class TranslationStatusChecksSampleAsync(object):
         
-    async def check_statuses_async(self):
+    async def translation_status_checks_async(self):
 
         # import libraries
         from azure.core.credentials import AzureKeyCredential
@@ -31,7 +31,6 @@ class CheckStatusesSampleAsync(object):
         batch = [
             BatchDocumentInput(
                 source_url=source_container_url,
-                source_language="en",
                 targets=[
                     StorageTarget(
                         target_url=target_container_url_es,
@@ -59,13 +58,13 @@ class CheckStatusesSampleAsync(object):
                     await asyncio.sleep(30)
                     continue
 
-                if job_detail.status in ["Failed", "ValidationFailed"]:
+                elif job_detail.status in ["Failed", "ValidationFailed"]:
                     if job_detail.error:
                         print("Translation job failed: {}: {}".format(job_detail.error.code, job_detail.error.message))
                     await self.check_documents(client, job_detail.id)
                     exit(1)
 
-                if job_detail.status == "Succeeded":
+                elif job_detail.status == "Succeeded":
                     print("We translated our documents!")
                     if job_detail.documents_failed_count > 0:
                         await self.check_documents(client, job_detail.id)
@@ -78,7 +77,7 @@ class CheckStatusesSampleAsync(object):
         try:
             doc_statuses = client.list_documents_statuses(job_id)  # type: AsyncItemPaged[DocumentStatusDetail]
         except ResourceNotFoundError as err:
-            print("Failed to process any documents in source/target container.")
+            print("Failed to process any documents in source/target container due to insufficient permissions.")
             raise err
 
         docs_to_retry = []
@@ -95,8 +94,8 @@ class CheckStatusesSampleAsync(object):
 
 
 async def main():
-    sample = CheckStatusesSampleAsync()
-    await sample.check_statuses_async()
+    sample = TranslationStatusChecksSampleAsync()
+    await sample.translation_status_checks_async()
 
 
 if __name__ == '__main__':

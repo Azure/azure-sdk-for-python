@@ -72,7 +72,6 @@ class BatchTranslationWithStorageSampleAsync(object):
         batch = [
             BatchDocumentInput(
                 source_url=source_container_url,
-                source_language="en",
                 targets=[
                     StorageTarget(
                         target_url=target_container_url,
@@ -94,7 +93,7 @@ class BatchTranslationWithStorageSampleAsync(object):
                 if job_result.documents_failed_count > 0:
                     await self.check_documents(translation_client, job_result.id)
 
-            if job_result.status in ["Failed", "ValidationFailed"]:
+            elif job_result.status in ["Failed", "ValidationFailed"]:
                 if job_result.error:
                     print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
                 await self.check_documents(translation_client, job_result.id)
@@ -118,7 +117,7 @@ class BatchTranslationWithStorageSampleAsync(object):
         try:
             doc_statuses = client.list_documents_statuses(job_id)  # type: AsyncItemPaged[DocumentStatusDetail]
         except ResourceNotFoundError as err:
-            print("Failed to process any documents in source/target container.")
+            print("Failed to process any documents in source/target container due to insufficient permissions.")
             raise err
 
         docs_to_retry = []

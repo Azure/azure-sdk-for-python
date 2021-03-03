@@ -22,14 +22,19 @@ class ListAllSubmittedJobsSampleAsync(object):
         client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
         # list submitted jobs
-        jobs = client.list_submitted_jobs()
+        jobs = client.list_submitted_jobs() # type: AsyncItemPaged[JobStatusDetail]
 
         async for job in jobs:
+            # wait for job to finish
+            if job.status in ["NotStarted", "Running"]:
+                job = client.wait_until_done(job.id)
+
             print("Job ID: {}".format(job.id))
             print("Job status: {}".format(job.status))
             print("Job created on: {}".format(job.created_on))
             print("Job last updated on: {}".format(job.last_updated_on))
             print("Total number of translations on documents: {}".format(job.documents_total_count))
+            print("Total number of characters charged: {}".format(job.total_characters_charged))
 
             print("Of total documents...")
             print("{} failed".format(job.documents_failed_count))

@@ -29,12 +29,12 @@ class CustomTranslationSampleAsync(object):
         batch = [
             BatchDocumentInput(
                 source_url=source_container_url,
-                source_language="en",
                 targets=[
                     StorageTarget(
                         target_url=target_container_url_fr,
                         language="fr",
-                        category_id=category_id
+                        category_id=category_id,
+                        glossaries=["https://exampleglossary"]
                     )
                 ],
                 prefix="document_2021"
@@ -57,11 +57,11 @@ class CustomTranslationSampleAsync(object):
                 if job_result.documents_failed_count > 0:
                     await self.check_documents(client, job_result.id)
 
-                if job_result.status in ["Failed", "ValidationFailed"]:
-                    if job_result.error:
-                        print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
-                    await self.check_documents(client, job_result.id)
-                    exit(1)
+            elif job_result.status in ["Failed", "ValidationFailed"]:
+                if job_result.error:
+                    print("Translation job failed: {}: {}".format(job_result.error.code, job_result.error.message))
+                await self.check_documents(client, job_result.id)
+                exit(1)
 
 
     async def check_documents(self, client, job_id):
@@ -70,7 +70,7 @@ class CustomTranslationSampleAsync(object):
         try:
             doc_statuses = client.list_documents_statuses(job_id)  # type: AsyncItemPaged[DocumentStatusDetail]
         except ResourceNotFoundError as err:
-            print("Failed to process any documents in source/target container.")
+            print("Failed to process any documents in source/target container due to insufficient permissions.")
             raise err
 
         docs_to_retry = []

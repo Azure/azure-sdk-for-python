@@ -5,7 +5,7 @@
 # ------------------------------------
 
 
-def batch_translation_with_storage():
+def sample_batch_translation_with_storage():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documenttranslation import (
@@ -102,7 +102,7 @@ def check_documents(client, job_id):
     try:
         doc_statuses = client.list_documents_statuses(job_id)  # type: ItemPaged[DocumentStatusDetail]
     except ResourceNotFoundError as err:
-        print("Failed to process any documents in source/target container.")
+        print("Failed to process any documents in source/target container due to insufficient permissions.")
         raise err
 
     docs_to_retry = []
@@ -119,4 +119,4 @@ def check_documents(client, job_id):
 
 
 if __name__ == '__main__':
-    batch_translation_with_storage()
+    sample_batch_translation_with_storage()
