@@ -233,6 +233,7 @@ class SearchClient(HeadersMixin):
         if isinstance(select, list):
             query.select(select)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        kwargs["api_version"] = self._api_version
         return AsyncSearchItemPaged(
             self._client, query, kwargs, page_iterator_class=AsyncSearchPageIterator
         )

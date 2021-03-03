@@ -260,6 +260,7 @@ class SearchClient(HeadersMixin):
             query.select(select)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        kwargs["api_version"] = self._api_version
         return SearchItemPaged(
             self._client, query, kwargs, page_iterator_class=SearchPageIterator
         )

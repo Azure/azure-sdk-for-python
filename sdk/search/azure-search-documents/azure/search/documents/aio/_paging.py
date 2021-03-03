@@ -89,6 +89,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         self._initial_query = initial_query
         self._kwargs = kwargs
         self._facets = None
+        self._api_version = kwargs.pop("api_version", "2020-06-30")
 
     async def _get_next_cb(self, continuation_token):
         if continuation_token is None:
@@ -103,7 +104,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         )
 
     async def _extract_data_cb(self, response):  # pylint:disable=no-self-use
-        continuation_token = pack_continuation_token(response)
+        continuation_token = pack_continuation_token(response, api_version=self._api_version)
         results = [convert_search_result(r) for r in response.results]
         return continuation_token, results
 

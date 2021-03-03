@@ -24,8 +24,7 @@ def convert_search_result(result):
     return ret
 
 
-def pack_continuation_token(response):
-    api_version = "2020-06-30"
+def pack_continuation_token(response, api_version="2020-06-30"):
     if response.next_page_parameters is not None:
         token = {
             "apiVersion": api_version,
@@ -111,6 +110,7 @@ class SearchPageIterator(PageIterator):
         self._initial_query = initial_query
         self._kwargs = kwargs
         self._facets = None
+        self._api_version = kwargs.pop("api_version", "2020-06-30")
 
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:
@@ -123,7 +123,7 @@ class SearchPageIterator(PageIterator):
         return self._client.documents.search_post(search_request=next_page_request, **self._kwargs)
 
     def _extract_data_cb(self, response):  # pylint:disable=no-self-use
-        continuation_token = pack_continuation_token(response)
+        continuation_token = pack_continuation_token(response, api_version=self._api_version)
         results = [convert_search_result(r) for r in response.results]
         return continuation_token, results
 
