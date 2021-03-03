@@ -86,18 +86,14 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         self.id = kwargs.pop("id", str(uuid.uuid4()))  # type: Optional[str]
         self.time = kwargs.pop("time", datetime.now(TZ_UTC))  # type: Optional[datetime]
 
-        self.datacontenttype = kwargs.pop(
-            "datacontenttype", None
-        )  # type: Optional[str]
+        self.datacontenttype = kwargs.pop("datacontenttype", None)  # type: Optional[str]
         self.dataschema = kwargs.pop("dataschema", None)  # type: Optional[str]
         self.subject = kwargs.pop("subject", None)  # type: Optional[str]
         self.data = kwargs.pop("data", None)  # type: Optional[object]
 
         try:
             self.extensions = kwargs.pop("extensions")  # type: Optional[Dict]
-            for (
-                key
-            ) in self.extensions.keys():  # type:ignore # extensions won't be None here
+            for key in self.extensions.keys():  # type:ignore # extensions won't be None here
                 if not key.islower() or not key.isalnum():
                     raise ValueError(
                         "Extension attributes should be lower cased and alphanumeric."
