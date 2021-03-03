@@ -467,6 +467,7 @@ print("Results of Healthcare Entities Analysis:")
 for idx, doc in enumerate(docs):
     for entity in doc.entities:
         print("Entity: {}".format(entity.text))
+        print("...Normalized Text: {}".format(entity.normalized_text))
         print("...Category: {}".format(entity.category))
         print("...Subcategory: {}".format(entity.subcategory))
         print("...Offset: {}".format(entity.offset))
