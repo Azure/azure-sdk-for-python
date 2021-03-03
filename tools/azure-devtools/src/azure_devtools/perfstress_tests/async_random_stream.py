@@ -38,12 +38,6 @@ class AsyncRandomStream(BytesIO):
         self._remaining = self._remaining - e
         self._position += e
         return self._base_data[:e]
-    
-    def seek(self, index):
-        self._position = index
-
-    def tell(self):
-        return self._position
 
     def seek(self, index, whence=0):
         if whence == 0:
@@ -51,7 +45,7 @@ class AsyncRandomStream(BytesIO):
         elif whence == 1:
             self._position = self._position + index
         elif whence == 2:
-            self._position = self._length - 1 + index
+            self._position = self._data_length - 1 + index
 
     def tell(self):
         return self._position
