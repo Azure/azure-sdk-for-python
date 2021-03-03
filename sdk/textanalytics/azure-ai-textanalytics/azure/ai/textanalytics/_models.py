@@ -256,8 +256,8 @@ class AnalyzeHealthcareEntitiesResultItem(DictMixin):
         )
 
     def __repr__(self):
-        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, entity_relations={}, warnings={}, statistics={}, "\
-        "is_error={})".format(
+        return "AnalyzeHealthcareEntitiesResultItem(id={}, entities={}, entity_relations={}, warnings={}, "\
+        "statistics={}, is_error={})".format(
             self.id,
             repr(self.entities),
             repr(self.entity_relations),
