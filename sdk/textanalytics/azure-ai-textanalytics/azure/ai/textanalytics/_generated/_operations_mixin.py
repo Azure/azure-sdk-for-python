@@ -272,7 +272,7 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         domain=None,  # type: Optional[str]
-        string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
         pii_categories=None,  # type: Optional[List[Union[str, "_models.PiiCategory"]]]
         **kwargs  # type: Any
     ):

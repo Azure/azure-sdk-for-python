@@ -21,14 +21,16 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     UserAgentPolicy,
 )
+from azure.core.messaging import CloudEvent
 
-from ._models import CloudEvent, EventGridEvent
+from ._models import EventGridEvent
 from ._helpers import (
     _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
     _is_eventgrid_event,
     _eventgrid_data_typecheck,
+    _cloud_event_to_generated,
 )
 from ._generated._event_grid_publisher_client import (
     EventGridPublisherClient as EventGridPublisherClientImpl,
@@ -179,7 +181,7 @@ class EventGridPublisherClient(object):
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
                 events = [
-                    cast(CloudEvent, e)._to_generated(**kwargs) for e in events # pylint: disable=protected-access
+                    _cloud_event_to_generated(e, **kwargs) for e in events # pylint: disable=protected-access
                 ]
             except AttributeError:
                 pass  # means it's a dictionary

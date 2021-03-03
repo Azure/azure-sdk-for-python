@@ -91,7 +91,7 @@ class CommunicationIdentityClient:
             **kwargs)
 
     @distributed_trace_async
-    async def create_user_with_token(
+    async def create_user_and_token(
             self,
             scopes, # type: List[Union[str, "_model.CommunicationTokenScope"]]
             **kwargs # type: Any

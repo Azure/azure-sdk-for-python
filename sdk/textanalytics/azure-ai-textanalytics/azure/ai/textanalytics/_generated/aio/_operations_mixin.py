@@ -268,7 +268,7 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         domain: Optional[str] = None,
-        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = "TextElements_v8",
         pii_categories: Optional[List[Union[str, "_models.PiiCategory"]]] = None,
         **kwargs
     ) -> "_models.PiiResult":

@@ -14,8 +14,8 @@ USAGE:
     3) EVENTHUB_NAME: The name of the eventhub account
 """
 import os
-
-from azure.eventgrid import CloudEvent, EventGridEvent
+import json
+from azure.core.messaging import CloudEvent
 from azure.eventhub import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
@@ -23,22 +23,10 @@ EVENTHUB_NAME = os.environ["EVENTHUB_NAME"]
 
 
 def on_event(partition_context, event):
+ 
+    dict_event = CloudEvent.from_dict(json.loads(event)[0])
+    print("data: {}\n".format(deserialized_event.data))
 
-    dict_event = event.body_as_json()[0]
-    deserialized_event = eg_consumer.deserialize_eventgrid_events(dict_event)
-    if deserialized_event.model.__class__ == CloudEvent:
-        dict_event = deserialized_event.to_json()
-        print("event.type: {}\n".format(dict_event["type"]))
-        print("event.to_json(): {}\n".format(dict_event))
-        print("model: {}\n".format(deserialized_event.model))
-        print("model.data: {}\n".format(deserialized_event.model.data))
-    else:
-        dict_event = deserialized_event.to_json()
-        print("event.to_json(): {}\n".format(dict_event))
-        print("model: {}\n".format(deserialized_event.model))
-        print("model.data: {}\n".format(deserialized_event.model.data))
-
-eg_consumer = EventGridDeserializer()
 consumer_client = EventHubConsumerClient.from_connection_string(
     conn_str=CONNECTION_STR,
     consumer_group='$Default',

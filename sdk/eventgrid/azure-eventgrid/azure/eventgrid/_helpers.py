@@ -18,6 +18,10 @@ from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
 
+from ._generated.models import (
+    CloudEvent as InternalCloudEvent,
+)
+
 if TYPE_CHECKING:
     from datetime import datetime
 
@@ -134,3 +138,25 @@ def _eventgrid_data_typecheck(event):
             "Data in EventGridEvent cannot be bytes. Please refer to"
             "https://docs.microsoft.com/en-us/azure/event-grid/event-schema"
         )
+
+def _cloud_event_to_generated(cloud_event, **kwargs):
+    if isinstance(cloud_event.data, six.binary_type):
+        data_base64 = cloud_event.data
+        data = None
+    else:
+        data = cloud_event.data
+        data_base64 = None
+    return InternalCloudEvent(
+        id=cloud_event.id,
+        source=cloud_event.source,
+        type=cloud_event.type,
+        specversion=cloud_event.specversion,
+        data=data,
+        data_base64=data_base64,
+        time=cloud_event.time,
+        dataschema=cloud_event.dataschema,
+        datacontenttype=cloud_event.datacontenttype,
+        subject=cloud_event.subject,
+        additional_properties=cloud_event.extensions,
+        **kwargs
+    )

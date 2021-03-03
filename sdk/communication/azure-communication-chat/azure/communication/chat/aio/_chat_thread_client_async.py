@@ -27,7 +27,8 @@ from .._generated.models import (
     UpdateChatMessageRequest,
     UpdateChatThreadRequest,
     SendChatMessageResult,
-    ChatMessageType
+    ChatMessageType,
+    CommunicationError
 )
 from .._models import (
     ChatThreadParticipant,
@@ -35,7 +36,11 @@ from .._models import (
     ChatMessageReadReceipt
 )
 from .._shared.models import CommunicationUserIdentifier
-from .._utils import _to_utc_datetime # pylint: disable=unused-import
+from .._utils import ( # pylint: disable=unused-import
+    _to_utc_datetime,
+    CommunicationUserIdentifierConverter,
+    CommunicationErrorResponseConverter
+)
 from .._version import SDK_MONIKER
 
 
@@ -114,7 +119,6 @@ class ChatThreadClient(object):
     @distributed_trace_async
     async def update_topic(
         self,
-        *,
         topic: str = None,
         **kwargs
     ) -> None:
@@ -123,8 +127,7 @@ class ChatThreadClient(object):
         :param topic: Thread topic. If topic is not specified, the update will succeeded but
          chat thread properties will not be changed.
         :type topic: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -154,8 +157,7 @@ class ChatThreadClient(object):
 
         :param message_id: Required. Id of the latest message read by current user.
         :type message_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -216,8 +218,7 @@ class ChatThreadClient(object):
     ) -> None:
         """Posts a typing event to a thread, on behalf of a user.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -247,8 +248,7 @@ class ChatThreadClient(object):
         :type chat_message_type: str or ~azure.communication.chat.models.ChatMessageType
         :keyword str sender_display_name: The display name of the message sender. This property is used to
           populate sender name for push notifications.
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: str, or the result of cls(response)
+        :return: str
         :rtype: str
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -302,8 +302,7 @@ class ChatThreadClient(object):
 
         :param message_id: Required. The message id.
         :type message_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ChatMessage, or the result of cls(response)
+        :return: ChatMessage
         :rtype: ~azure.communication.chat.ChatMessage
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -331,7 +330,6 @@ class ChatThreadClient(object):
 
         :keyword int results_per_page: The maximum number of messages to be returned per page.
         :keyword ~datetime.datetime start_time: The start time where the range query.
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of ChatMessage
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatMessage]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -359,7 +357,6 @@ class ChatThreadClient(object):
     async def update_message(
             self,
             message_id: str,
-            *,
             content: str = None,
             **kwargs
     ) -> None:
@@ -369,8 +366,7 @@ class ChatThreadClient(object):
         :type message_id: str
         :param content: Chat message content.
         :type content: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -386,7 +382,7 @@ class ChatThreadClient(object):
         if not message_id:
             raise ValueError("message_id cannot be None.")
 
-        update_message_request = UpdateChatMessageRequest(content=content, priority=None)
+        update_message_request = UpdateChatMessageRequest(content=content)
 
         return await self._client.chat_thread.update_chat_message(
             chat_thread_id=self._thread_id,
@@ -404,8 +400,7 @@ class ChatThreadClient(object):
 
         :param message_id: Required. The message id.
         :type message_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -435,7 +430,6 @@ class ChatThreadClient(object):
 
         :keyword int results_per_page: The maximum number of participants to be returned per page.
         :keyword int skip: Skips participants up to a specified position in response.
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of ChatThreadParticipant
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.ChatThreadParticipant]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -468,12 +462,14 @@ class ChatThreadClient(object):
     ) -> None:
         """Adds single thread participant to a thread. If participant already exist, no change occurs.
 
+        If participant is added successfully, a tuple of (None, None) is expected.
+        Failure to add participant to thread returns tuple of (thread_participant, communication_error).
+
         :param thread_participant: Required. Single thread participant to be added to the thread.
         :type thread_participant: ~azure.communication.chat.ChatThreadParticipant
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError, RuntimeError
 
         .. admonition:: Example:
 
@@ -490,25 +486,44 @@ class ChatThreadClient(object):
         participants = [thread_participant._to_generated()]  # pylint:disable=protected-access
         add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
 
-        return await self._client.chat_thread.add_chat_participants(
+        add_chat_participants_result = await self._client.chat_thread.add_chat_participants(
             chat_thread_id=self._thread_id,
             add_chat_participants_request=add_thread_participants_request,
             **kwargs)
+
+        response = []
+        if hasattr(add_chat_participants_result, 'errors') and \
+                add_chat_participants_result.errors is not None:
+            response = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
+                participants=[thread_participant],
+                communication_errors=add_chat_participants_result.errors.invalid_participants
+            )
+
+        if len(response) != 0:
+            failed_participant = response[0][0]
+            communication_error = response[0][1]
+            raise RuntimeError('Participant: ', failed_participant, ' failed to join thread due to: ',
+                               communication_error.message)
 
     @distributed_trace_async
     async def add_participants(
         self,
         thread_participants: List[ChatThreadParticipant],
         **kwargs
-    ) -> None:
+    ) -> list((ChatThreadParticipant, CommunicationError)):
+
+        # type: (...) -> list[(ChatThreadParticipant, CommunicationError)]
         """Adds thread participants to a thread. If participants already exist, no change occurs.
+
+        If all participants are added successfully, then an empty list is returned;
+        otherwise, a list of tuple(chat_thread_participant, communincation_error) is returned,
+        of failed participants and its respective error
 
         :param thread_participants: Required. Thread participants to be added to the thread.
         :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        :return: List[(ChatThreadParticipant, CommunicationError)]
+        :rtype: list((~azure.communication.chat.ChatThreadParticipant, ~azure.communication.chat.CommunicationError))
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError, RuntimeError
 
         .. admonition:: Example:
 
@@ -525,10 +540,20 @@ class ChatThreadClient(object):
         participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
         add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
 
-        return await self._client.chat_thread.add_chat_participants(
+        add_chat_participants_result = await self._client.chat_thread.add_chat_participants(
             chat_thread_id=self._thread_id,
             add_chat_participants_request=add_thread_participants_request,
             **kwargs)
+
+        response = []
+        if hasattr(add_chat_participants_result, 'errors') and \
+                add_chat_participants_result.errors is not None:
+            response = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
+                participants=thread_participants,
+                communication_errors=add_chat_participants_result.errors.invalid_participants
+            )
+
+        return response
 
     @distributed_trace_async
     async def remove_participant(
@@ -540,8 +565,7 @@ class ChatThreadClient(object):
 
         :param user: Required. User identity of the thread participant to remove from the thread.
         :type user: ~azure.communication.chat.CommunicationUserIdentifier
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -559,7 +583,7 @@ class ChatThreadClient(object):
 
         return await self._client.chat_thread.remove_chat_participant(
             chat_thread_id=self._thread_id,
-            chat_participant_id=user.identifier,
+            participant_communication_identifier=CommunicationUserIdentifierConverter.to_identifier_model(user),
             **kwargs)
 
     async def close(self) -> None:

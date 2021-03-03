@@ -4,14 +4,17 @@
 
 **Breaking Changes**
 
+- Removed property `related_entities` on `HealthcareEntity` and added `entity_relations` onto the document response level for healthcare
 - Renamed properties `aspect` and `opinions` to `target` and `assessments` respectively in class `MinedOpinion`.
 - Renamed classes `AspectSentiment` and `OpinionSentiment` to `TargetSentiment` and `AssessmentSentiment` respectively.
 
 **New Features**
 
-- Added parameter `pii_entity_categories` to the `recognize_pii_entities` client method.
-- Added parameter `pii_entity_categries` property to class `RecognizePiiEntitiesAction`.
-- Added enum `PiiEntityCategory`.
+- Added parameter `categories_filter` to the `recognize_pii_entities` client method.
+- Added `categries_filter` property to class `RecognizePiiEntitiesAction`.
+- Added enum `PiiEntityCategoryType`.
+- Add property `normalized_text` to `HealthcareEntity`. This property is a normalized version of the `text` property that already
+exists on the `HealthcareEntity`
 
 ## 5.1.0b5 (2021-02-10)
 
@@ -93,7 +96,7 @@ used in conjunction with the Bing Entity Search API to fetch additional relevant
 - Removed `grapheme_offset` and `grapheme_length` from `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`
 - `TextDocumentStatistics` attribute `grapheme_count` has been renamed to `character_count`
 
-## 1.0.0b5 
+## 1.0.0b5
 
 - This was a broken release
 
