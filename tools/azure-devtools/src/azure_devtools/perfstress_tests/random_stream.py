@@ -53,7 +53,7 @@ class RandomStream:
         elif whence == 1:
             self._position = self._position + index
         elif whence == 2:
-            self._position = self._length - 1 + index
+            self._position = self._data_length - 1 + index
 
     def remaining(self):
         return self._remaining
