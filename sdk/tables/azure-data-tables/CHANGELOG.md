@@ -1,7 +1,7 @@
 # Release History
 
 ## 12.0.0b5 (Unreleased)
-
+* Adds SAS credential as an authentication option
 * Bumped minimum requirement of msrest from `0.6.10` to `0.6.19`.
 * Added support for datetime entities with milliseconds
 
