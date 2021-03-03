@@ -14,7 +14,7 @@ USAGE:
     3) STORAGE_QUEUE_NAME: The name of the storage queue.
 """
 
-from azure.eventgrid import CloudEvent
+from azure.core.messaging import CloudEvent
 from azure.storage.queue import QueueServiceClient, BinaryBase64DecodePolicy
 import os
 import json
