@@ -22,7 +22,8 @@ from random import randint, sample
 import time
 
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient, CloudEvent
+from azure.core.messaging import CloudEvent
+from azure.eventgrid import EventGridPublisherClient
 
 domain_key = os.environ["DOMAIN_ACCESS_KEY"]
 domain_endpoint = os.environ["DOMAIN_TOPIC_HOSTNAME"]
