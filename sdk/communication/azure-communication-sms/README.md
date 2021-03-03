@@ -54,7 +54,7 @@ endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
 sms_client = SmsClient(endpoint, DefaultAzureCredential())
 ```
 
-### Sending SMS Messages
+### Send a 1:1 SMS Message
 
 Once the client is initialized, the `.send()` method can be invoked:
 
@@ -62,15 +62,36 @@ Once the client is initialized, the `.send()` method can be invoked:
 from azure.communication.sms import SendSmsOptions
 
 sms_responses = sms_client.send(
-    from_phone_number=PhoneNumberIdentifier("<leased-phone-number>"),
-    to_phone_numbers=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
+    from_="<leased-phone-number>",
+    to="<to-phone-number-1>",
     message="Hello World via SMS",
     enable_delivery_report=True, # optional property
     tag="custom-tag") # optional property
 ```
 
-- `from_phone_number`: An SMS enabled phone number associated with your communication service.
-- `to_phone_numbers`: The phone numbers you wish to send a message to.
+- `from_`: An SMS enabled phone number associated with your communication service.
+- `to`: The phone number you wish to send a message to.
+- `message`: The message that you want to send.
+- `enable_delivery_report`: An optional parameter that you can use to configure delivery reporting. This is useful for scenarios where you want to emit events when SMS messages are delivered.
+- `tag`: An optional parameter that you can use to configure custom tagging.
+
+### Send a 1:N SMS Message
+
+Once the client is initialized, the `.send()` method can be invoked:
+
+```Python
+from azure.communication.sms import SendSmsOptions
+
+sms_responses = sms_client.send(
+    from_="<leased-phone-number>",
+    to=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
+    message="Hello World via SMS",
+    enable_delivery_report=True, # optional property
+    tag="custom-tag") # optional property
+```
+
+- `from_`: An SMS enabled phone number associated with your communication service.
+- `to`: The phone numbers you wish to send a message to.
 - `message`: The message that you want to send.
 - `enable_delivery_report`: An optional parameter that you can use to configure delivery reporting. This is useful for scenarios where you want to emit events when SMS messages are delivered.
 - `tag`: An optional parameter that you can use to configure custom tagging.
