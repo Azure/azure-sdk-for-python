@@ -28,12 +28,14 @@ from ._index_documents_batch import IndexDocumentsBatch
 from ._search_documents_error import RequestEntityTooLargeError
 from ._search_client import SearchClient, SearchItemPaged
 from ._search_indexing_buffered_sender import SearchIndexingBufferedSender
+from ._api_versions import ApiVersion
 from ._version import VERSION
 
 __version__ = VERSION
 
 
 __all__ = (
+    "ApiVersion",
     "IndexDocumentsBatch",
     "SearchClient",
     "SearchItemPaged",
