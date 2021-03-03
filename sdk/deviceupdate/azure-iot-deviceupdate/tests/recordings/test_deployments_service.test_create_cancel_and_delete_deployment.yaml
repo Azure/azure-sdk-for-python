@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"deploymentId": "6d5e2c908aba4706b5fb982e1cbf03b5", "deploymentType":
+    body: '{"deploymentId": "ec89848596944660a1a5b3ddca55e5bf", "deploymentType":
       "Complete", "startDateTime": "2020-01-01T00:00:00.000Z", "deviceGroupType":
       "DeviceGroupDefinitions", "deviceGroupDefinition": ["fakeDeviceId"], "updateId":
       {"provider": "Contoso", "name": "Virtual-Machine", "version": "fakeVersion"}}'
@@ -18,10 +18,10 @@ interactions:
       User-Agent:
       - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: PUT
-    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/6d5e2c908aba4706b5fb982e1cbf03b5
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/ec89848596944660a1a5b3ddca55e5bf
   response:
     body:
-      string: "{\r\n  \"deploymentId\": \"6d5e2c908aba4706b5fb982e1cbf03b5\",\r\n
+      string: "{\r\n  \"deploymentId\": \"ec89848596944660a1a5b3ddca55e5bf\",\r\n
         \ \"deploymentType\": \"Complete\",\r\n  \"startDateTime\": \"2020-01-01T00:00:00+00:00\",\r\n
         \ \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n  \"deviceGroupDefinition\":
         [\r\n    \"fakeDeviceId\"\r\n  ],\r\n  \"updateId\": {\r\n    \"provider\":
@@ -34,9 +34,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 18:10:01 GMT
+      - Wed, 03 Mar 2021 18:58:45 GMT
       traceparent:
-      - 00-3e584d0017dc0041a5d9c959c8193a75-90d550bd06a8e943-00
+      - 00-7dd45f01bc2ae94c919c0915281522ba-2dc9dc9817afa644-00
     status:
       code: 200
       message: OK
@@ -52,10 +52,10 @@ interactions:
       User-Agent:
       - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/6d5e2c908aba4706b5fb982e1cbf03b5
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/ec89848596944660a1a5b3ddca55e5bf
   response:
     body:
-      string: "{\r\n  \"deploymentId\": \"6d5e2c908aba4706b5fb982e1cbf03b5\",\r\n
+      string: "{\r\n  \"deploymentId\": \"ec89848596944660a1a5b3ddca55e5bf\",\r\n
         \ \"deploymentType\": \"Complete\",\r\n  \"startDateTime\": \"2020-01-01T00:00:00+00:00\",\r\n
         \ \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n  \"deviceGroupDefinition\":
         [\r\n    \"fakeDeviceId\"\r\n  ],\r\n  \"updateId\": {\r\n    \"provider\":
@@ -68,9 +68,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 18:10:02 GMT
+      - Wed, 03 Mar 2021 18:58:45 GMT
       traceparent:
-      - 00-83519314f8a66643b1ef9caabca14f8e-d45e351edf510f45-00
+      - 00-50489f2cb6425345917c217f956875e6-d69691bc87007749-00
     status:
       code: 200
       message: OK
@@ -86,7 +86,7 @@ interactions:
       User-Agent:
       - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/6d5e2c908aba4706b5fb982e1cbf03b5/status
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/ec89848596944660a1a5b3ddca55e5bf/status
   response:
     body:
       string: "{\r\n  \"deploymentState\": \"Active\",\r\n  \"totalDevices\": 0,\r\n
@@ -100,9 +100,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 18:10:02 GMT
+      - Wed, 03 Mar 2021 18:58:45 GMT
       traceparent:
-      - 00-03d43110223506488c582d37bd9a1224-e9440dab80b4e846-00
+      - 00-e9ea6a03343c014898b13fd525c4febe-08a137edf5f41b4b-00
     status:
       code: 200
       message: OK
@@ -120,10 +120,10 @@ interactions:
       User-Agent:
       - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/6d5e2c908aba4706b5fb982e1cbf03b5?action=cancel
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/ec89848596944660a1a5b3ddca55e5bf?action=cancel
   response:
     body:
-      string: "{\r\n  \"deploymentId\": \"6d5e2c908aba4706b5fb982e1cbf03b5\",\r\n
+      string: "{\r\n  \"deploymentId\": \"ec89848596944660a1a5b3ddca55e5bf\",\r\n
         \ \"deploymentType\": \"Complete\",\r\n  \"startDateTime\": \"2020-01-01T00:00:00+00:00\",\r\n
         \ \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n  \"deviceGroupDefinition\":
         [\r\n    \"fakeDeviceId\"\r\n  ],\r\n  \"updateId\": {\r\n    \"provider\":
@@ -136,9 +136,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 18:10:02 GMT
+      - Wed, 03 Mar 2021 18:58:45 GMT
       traceparent:
-      - 00-d04bb7e5d0e7ac4d8c1f46c8dae61e9f-186a0e8c4bc3494f-00
+      - 00-0f2751d97e7543448bacfd89a3ba89ec-e4fd675ab4de254b-00
     status:
       code: 200
       message: OK
@@ -156,7 +156,7 @@ interactions:
       User-Agent:
       - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: DELETE
-    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/6d5e2c908aba4706b5fb982e1cbf03b5
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/ec89848596944660a1a5b3ddca55e5bf
   response:
     body:
       string: ''
@@ -164,9 +164,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 03 Mar 2021 18:10:02 GMT
+      - Wed, 03 Mar 2021 18:58:46 GMT
       traceparent:
-      - 00-0dd861cbb9cddd4d907b7632cf83ba53-6aaee027514e9e4c-00
+      - 00-b391929f73b15f4d87f8aba752c28ff4-3b8916bbb745d24e-00
     status:
       code: 200
       message: OK
@@ -182,20 +182,20 @@ interactions:
       User-Agent:
       - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/6d5e2c908aba4706b5fb982e1cbf03b5
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/ec89848596944660a1a5b3ddca55e5bf
   response:
     body:
       string: "{\r\n  \"type\": \"https://tools.ietf.org/html/rfc7231#section-6.5.4\",\r\n
-        \ \"title\": \"Not Found\",\r\n  \"status\": 404,\r\n  \"traceId\": \"00-0111e88a5b27584b8059d506d2fa5045-6776a4c173c2dc45-00\"\r\n}"
+        \ \"title\": \"Not Found\",\r\n  \"status\": 404,\r\n  \"traceId\": \"00-a3fa8337dd887d45beacf39d463036b2-1b2f65440f390149-00\"\r\n}"
     headers:
       content-length:
       - '183'
       content-type:
       - application/problem+json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 18:10:02 GMT
+      - Wed, 03 Mar 2021 18:58:46 GMT
       traceparent:
-      - 00-0111e88a5b27584b8059d506d2fa5045-663007c56461884c-00
+      - 00-a3fa8337dd887d45beacf39d463036b2-3be08289709c5740-00
     status:
       code: 404
       message: Not Found

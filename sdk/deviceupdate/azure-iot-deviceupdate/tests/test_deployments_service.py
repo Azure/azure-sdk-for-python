@@ -10,7 +10,7 @@ from azure.iot.deviceupdate import DeviceUpdateClient
 from azure.iot.deviceupdate.models import *
 from testcase import DeviceUpdateTest, DeviceUpdatePowerShellPreparer, callback
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 
 class DeploymentsClientTestCase(DeviceUpdateTest):
@@ -72,7 +72,7 @@ class DeploymentsClientTestCase(DeviceUpdateTest):
             deployment=Deployment(
                 deployment_id=deployment_id,
                 deployment_type=DeploymentType.complete,
-                start_date_time=datetime(2020, 1, 1, 0, 0, 0, 0, timezone.utc),
+                start_date_time=datetime(2020, 1, 1, 0, 0, 0, 0),
                 device_group_type=DeviceGroupType.DEVICE_GROUP_DEFINITIONS,
                 device_group_definition=[deviceupdate_device_id],
                 update_id=UpdateId(provider=deviceupdate_provider, name=deviceupdate_model, version=deviceupdate_version)))
