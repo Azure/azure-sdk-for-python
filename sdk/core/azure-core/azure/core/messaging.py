@@ -163,10 +163,10 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
             kwargs["extensions"] = extensions
 
         return cls(
-            id=event.get("id", None),
-            source=event.get("source", None),
-            type=event.get("type", None),
-            specversion=event.get("specversion", None),
-            time=_convert_to_isoformat(event.get("time", None)),
+            id=event.get("id"),
+            source=event.get("source"),
+            type=event.get("type"),
+            specversion=event.get("specversion"),
+            time=_convert_to_isoformat(event.get("time")),
             **kwargs
         )
