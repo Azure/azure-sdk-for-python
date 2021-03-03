@@ -492,7 +492,9 @@ class PiiEntity(DictMixin):
 class HealthcareEntity(DictMixin):
     """HealthcareEntity contains information about a Healthcare entity found in text.
 
-    :ivar str text: Entity text as appears in the request.
+    :ivar str text: Entity text as appears in the document.
+    :ivar str normalized_text: Optional. Normalized version of the raw `text` we extract
+        from the document. Not all `text`s have a normalized version.
     :ivar str category: Entity category, see the following link for health's named
         entity types: https://aka.ms/text-analytics-health-entities
     :ivar str subcategory: Entity subcategory.
@@ -510,6 +512,7 @@ class HealthcareEntity(DictMixin):
 
     def __init__(self, **kwargs):
         self.text = kwargs.get("text", None)
+        self.normalized_text = kwargs.get("normalized_text", None)
         self.category = kwargs.get("category", None)
         self.subcategory = kwargs.get("subcategory", None)
         self.length = kwargs.get("length", None)
@@ -521,6 +524,7 @@ class HealthcareEntity(DictMixin):
     def _from_generated(cls, healthcare_entity):
         return cls(
             text=healthcare_entity.text,
+            normalized_text=healthcare_entity.name,
             category=healthcare_entity.category,
             subcategory=healthcare_entity.subcategory,
             length=healthcare_entity.length,
@@ -535,9 +539,10 @@ class HealthcareEntity(DictMixin):
         return hash(repr(self))
 
     def __repr__(self):
-        return "HealthcareEntity(text={}, category={}, subcategory={}, length={}, offset={}, confidence_score={}, "\
-        "data_sources={})".format(
+        return "HealthcareEntity(text={}, normalized_text={}, category={}, subcategory={}, length={}, offset={}, "\
+        "confidence_score={}, data_sources={})".format(
             self.text,
+            self.normalized_text,
             self.category,
             self.subcategory,
             self.length,

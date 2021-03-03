@@ -373,3 +373,17 @@ class TestHealth(TextAnalyticsTest):
             else:
                 assert role.name == HealthcareEntityRelationRoleType.ABBREVIATED_TERM
                 self.assert_healthcare_entities_equal(role.entity, parkinsons_abbreviation_entity)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_normalized_text(self, client):
+        result = list(client.begin_analyze_healthcare_entities(
+            documents=["patients must have histologically confirmed NHL"]
+        ).result())
+
+        # currently just testing it has that attribute.
+        # have an issue to update https://github.com/Azure/azure-sdk-for-python/issues/17072
+
+        assert all([
+            e for e in result[0].entities if hasattr(e, "normalized_text")
+        ])
