@@ -25,13 +25,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 03 Mar 2021 01:12:04 GMT
+      - Wed, 03 Mar 2021 18:10:39 GMT
       location:
-      - /deviceupdate/blue/updates/operations/e852b3bd-6eb5-447c-a693-dff8cba930a6?api-version=2
+      - /deviceupdate/blue/updates/operations/53cbbb48-9a41-463b-969c-20b19f1e8b26?api-version=2
       operation-location:
-      - /deviceupdate/blue/updates/operations/e852b3bd-6eb5-447c-a693-dff8cba930a6?api-version=2
+      - /deviceupdate/blue/updates/operations/53cbbb48-9a41-463b-969c-20b19f1e8b26?api-version=2
       traceparent:
-      - 00-1de4bdf8f5d4b44c91931d615a6ace15-8c65c8ac0218a940-00
+      - 00-bdf2ad7a5884f54fb1cfcf42479aadb2-5e9d9e99d7defe45-00
     status:
       code: 202
       message: Accepted

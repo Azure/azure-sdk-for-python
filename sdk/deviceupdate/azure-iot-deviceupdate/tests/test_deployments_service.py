@@ -10,6 +10,7 @@ from azure.iot.deviceupdate import DeviceUpdateClient
 from azure.iot.deviceupdate.models import *
 from testcase import DeviceUpdateTest, DeviceUpdatePowerShellPreparer, callback
 import uuid
+from datetime import datetime, timezone
 
 
 class DeploymentsClientTestCase(DeviceUpdateTest):

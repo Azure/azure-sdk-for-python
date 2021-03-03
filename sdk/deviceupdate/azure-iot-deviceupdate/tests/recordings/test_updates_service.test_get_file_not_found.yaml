@@ -15,7 +15,7 @@ interactions:
   response:
     body:
       string: '{"type":"https://tools.ietf.org/html/rfc7231#section-6.5.4","title":"Not
-        Found","status":404,"traceId":"00-c12d7e94c2eaf54eb1a7cfd8aea59728-569be6de75a93746-00"}'
+        Found","status":404,"traceId":"00-2b22c097fb794d4db04f8a945cbf0295-407acfd6cd579c4b-00"}'
     headers:
       cache-control:
       - max-age=60, private
@@ -24,9 +24,9 @@ interactions:
       content-type:
       - application/problem+json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 01:11:54 GMT
+      - Wed, 03 Mar 2021 18:10:29 GMT
       traceparent:
-      - 00-c12d7e94c2eaf54eb1a7cfd8aea59728-b6b2e0f445265d44-00
+      - 00-2b22c097fb794d4db04f8a945cbf0295-4edb1503886b1b48-00
     status:
       code: 404
       message: Not Found

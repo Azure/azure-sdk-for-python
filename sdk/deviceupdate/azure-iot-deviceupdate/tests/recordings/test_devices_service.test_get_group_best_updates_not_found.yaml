@@ -15,16 +15,16 @@ interactions:
   response:
     body:
       string: "{\r\n  \"type\": \"https://tools.ietf.org/html/rfc7231#section-6.5.4\",\r\n
-        \ \"title\": \"Not Found\",\r\n  \"status\": 404,\r\n  \"traceId\": \"00-3e8ed0953d197a4594bdb5e825027abf-3eb00fed023e5249-00\"\r\n}"
+        \ \"title\": \"Not Found\",\r\n  \"status\": 404,\r\n  \"traceId\": \"00-6181fb2b41cff64484cb308fc45541b5-4fe05f86ed8a0a48-00\"\r\n}"
     headers:
       content-length:
       - '183'
       content-type:
       - application/problem+json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 01:11:50 GMT
+      - Wed, 03 Mar 2021 18:10:24 GMT
       traceparent:
-      - 00-3e8ed0953d197a4594bdb5e825027abf-b99a84a132094344-00
+      - 00-6181fb2b41cff64484cb308fc45541b5-4f7ebee99a752849-00
     status:
       code: 404
       message: Not Found

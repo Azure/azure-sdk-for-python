@@ -50,7 +50,7 @@ class DeviceUpdateClientConfiguration(Configuration):
         self.credential = credential
         self.account_endpoint = account_endpoint
         self.instance_id = instance_id
-        self.credential_scopes = kwargs.pop('credential_scopes', ['6ee392c4-d339-4083-b04d-6b7947c6cf78/.default'])
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://api.adu.microsoft.com/.default'])
         kwargs.setdefault('sdk_moniker', 'iot-deviceupdate/{}'.format(VERSION))
         self._configure(**kwargs)
 
