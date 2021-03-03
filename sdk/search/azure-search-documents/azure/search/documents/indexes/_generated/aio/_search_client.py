@@ -12,6 +12,7 @@
 from typing import Any, Optional
 
 from azure.core import AsyncPipelineClient
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from msrest import Deserializer, Serializer
@@ -45,7 +46,7 @@ class SearchClient(SearchClientOperationsMixin, MultiApiClientMixin, _SDKClient)
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2020-06-30'
+    DEFAULT_API_VERSION = '2020-06-30-Preview'
     _PROFILE_TAG = "azure.search.documents.SearchClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {

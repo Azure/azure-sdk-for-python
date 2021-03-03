@@ -7,7 +7,7 @@ from typing import cast, List, TYPE_CHECKING
 import six
 
 from azure.core.tracing.decorator import distributed_trace
-from ._api_versions import get_api_version
+from ._api_versions import DEFAULT_VERSION
 from ._generated import SearchClient as SearchIndexClient
 from ._generated.models import IndexingResult
 from ._search_documents_error import RequestEntityTooLargeError
@@ -77,7 +77,7 @@ class SearchClient(HeadersMixin):
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, AzureKeyCredential, **Any) -> None
 
-        self._api_version = get_api_version(kwargs)
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._credential = credential  # type: AzureKeyCredential

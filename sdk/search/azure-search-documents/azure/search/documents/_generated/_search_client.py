@@ -22,6 +22,8 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Optional
 
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
@@ -50,7 +52,7 @@ class SearchClient(MultiApiClientMixin, _SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2020-06-30'
+    DEFAULT_API_VERSION = '2020-06-30-Preview'
     _PROFILE_TAG = "azure.search.documents.SearchClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {

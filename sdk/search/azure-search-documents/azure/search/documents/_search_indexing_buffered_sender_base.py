@@ -6,7 +6,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 from typing import TYPE_CHECKING
 
-from ._api_versions import get_api_version
+from ._api_versions import DEFAULT_VERSION
 from ._headers_mixin import HeadersMixin
 
 if TYPE_CHECKING:
@@ -24,7 +24,7 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, AzureKeyCredential, **Any) -> None
 
-        self._api_version = get_api_version(kwargs)
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._auto_flush = kwargs.pop('auto_flush', True)
         self._batch_action_count = kwargs.pop('initial_batch_action_count', self._DEFAULT_INITIAL_BATCH_ACTION_COUNT)
         self._auto_flush_interval = kwargs.pop('auto_flush_interval', self._DEFAULT_AUTO_FLUSH_INTERVAL)

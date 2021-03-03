@@ -13,7 +13,7 @@ from .._generated.models import IndexingResult
 from .._search_documents_error import RequestEntityTooLargeError
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
-from .._api_versions import get_api_version
+from .._api_versions import DEFAULT_VERSION
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
@@ -49,7 +49,7 @@ class SearchClient(HeadersMixin):
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, AzureKeyCredential, **Any) -> None
 
-        self._api_version = get_api_version(kwargs)
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._index_documents_batch = IndexDocumentsBatch()
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str

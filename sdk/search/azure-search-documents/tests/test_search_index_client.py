@@ -11,7 +11,7 @@ except ImportError:
     import mock
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
+from azure.search.documents import SearchClient, ApiVersion
 from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 from azure.search.documents.indexes.models import SearchIndexerDataContainer, SearchIndexerDataSourceConnection
 from azure.search.documents.indexes._utils import pack_search_indexer_data_source
@@ -51,6 +51,16 @@ class TestSearchIndexClient(object):
     )
     def test_get_service_statistics(self, mock_get_stats):
         client = SearchIndexClient("endpoint", CREDENTIAL)
+        client.get_service_statistics()
+        assert mock_get_stats.called
+        assert mock_get_stats.call_args[0] == ()
+        assert mock_get_stats.call_args[1] == {"headers": client._headers}
+
+    @mock.patch(
+        "azure.search.documents.indexes._generated._operations_mixin.SearchClientOperationsMixin.get_service_statistics"
+    )
+    def test_get_service_statistics_v2020_06_30(self, mock_get_stats):
+        client = SearchIndexClient("endpoint", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
         client.get_service_statistics()
         assert mock_get_stats.called
         assert mock_get_stats.call_args[0] == ()

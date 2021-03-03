@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search914b171d.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search914b171d.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search914b171d.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D83F23D5EC904B\"","name":"test-syn-map","format":"solr","synonyms":"U\nS\nA\n,\n
@@ -28,7 +28,7 @@ interactions:
       elapsed-time: '40'
       etag: W/"0x8D83F23D5EC904B"
       expires: '-1'
-      location: https://search914b171d.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+      location: https://search914b171d.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -37,7 +37,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://search914b171d.search.windows.net/synonymmaps?api-version=2020-06-30
+    url: https://search914b171d.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
@@ -46,7 +46,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search914b171d.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search914b171d.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search914b171d.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D83F23D5EC904B\"","name":"test-syn-map","format":"solr","synonyms":"U\nS\nA\n,\n
@@ -70,7 +70,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search914b171d.search.windows.net/synonymmaps?api-version=2020-06-30
+    url: https://search914b171d.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
@@ -79,7 +79,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search914b171d.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+    uri: https://search914b171d.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search914b171d.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D83F23D5EC904B\"","name":"test-syn-map","format":"solr","synonyms":"U\nS\nA\n,\n
@@ -104,5 +104,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search914b171d.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+    url: https://search914b171d.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
 version: 1

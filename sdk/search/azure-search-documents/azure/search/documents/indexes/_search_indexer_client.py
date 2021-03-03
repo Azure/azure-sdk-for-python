@@ -16,7 +16,7 @@ from ._utils import (
     pack_search_indexer_data_source,
     unpack_search_indexer_data_source,
 )
-from .._api_versions import get_api_version
+from .._api_versions import DEFAULT_VERSION
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
@@ -43,7 +43,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
 
-        self._api_version = get_api_version(kwargs)
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential  # type: AzureKeyCredential
         self._client = _SearchServiceClient(

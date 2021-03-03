@@ -31,10 +31,10 @@ class SearchClientOperationsMixin(object):
         """Gets service level statistics for a search service.
 
         :param request_options: Parameter group.
-        :type request_options: ~azure.search.documents.indexes.v2020_06.models.RequestOptions
+        :type request_options: ~azure.search.documents.indexes.v2020_06_preview.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceStatistics, or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.v2020_06.models.ServiceStatistics
+        :rtype: ~azure.search.documents.indexes.v2020_06_preview.models.ServiceStatistics
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_service_statistics')
