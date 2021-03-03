@@ -5,7 +5,7 @@ Start by creating a new virtual environment for your perf tests. This will need 
 
 ### Setup for test resources
 
-The following environment variable will need to be set for the tests to access the live resources:
+The following environment variables will need to be set for the tests to access the live resources:
 
 ```
 FORMRECOGNIZER_TEST_ENDPOINT=<form recognizer service endpoint>
@@ -22,7 +22,7 @@ FORMRECOGNIZER_TRAINING_DATA_CONTAINER_SAS_URL=<SAS url for container with train
 
 ## Test commands
 
-When `azure-devtools` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
+Once `azure-devtools` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
 
 ```cmd
 (env) ~/azure-ai-formrecognizer> cd tests/perfstress_tests/
