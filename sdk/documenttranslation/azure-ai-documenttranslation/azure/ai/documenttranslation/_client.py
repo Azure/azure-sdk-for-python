@@ -55,11 +55,19 @@ class DocumentTranslationClient(object):
         :rtype: JobStatusDetail
         """
 
-        return self._client.document_translation.begin_submit_batch_request(
+        # submit translation job
+        response_headers = self._client.document_translation._submit_batch_request_initial(
             inputs=batch,
-            polling=True,
+            cls=lambda x,y,z: z,
             **kwargs
         )
+
+        # get job id from response header
+        job_id = response_headers['Operation-Location']
+
+        # call 
+        return self.get_job_status(job_id)
+
 
     @distributed_trace
     def get_job_status(self, job_id, **kwargs):
