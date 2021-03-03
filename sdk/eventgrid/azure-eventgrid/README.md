@@ -145,7 +145,8 @@ This example publishes a Cloud event.
 ```Python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient, CloudEvent
+from azure.core.messaging import CloudEvent
+from azure.eventgrid import EventGridPublisherClient
 
 key = os.environ["CLOUD_ACCESS_KEY"]
 endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
@@ -166,7 +167,7 @@ client.send(event)
 This example consumes a message received from storage queue and deserializes it to a CloudEvent object.
 
 ```Python
-from azure.eventgrid import CloudEvent
+from azure.core.messaging import CloudEvent
 from azure.storage.queue import QueueServiceClient, BinaryBase64DecodePolicy
 import os
 import json
@@ -244,7 +245,8 @@ Once the `tracer` and `exporter` are set, please follow the example below to sta
 
 ```python
 import os
-from azure.eventgrid import EventGridPublisherClient, CloudEvent
+from azure.eventgrid import EventGridPublisherClient
+from azure.core.messaging import CloudEvent
 from azure.core.credentials import AzureKeyCredential
 
 hostname = os.environ['CLOUD_TOPIC_HOSTNAME']
