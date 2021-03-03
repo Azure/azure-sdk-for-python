@@ -11,7 +11,8 @@ from ._generated.models import (
 )
 
 from ._generated.v3_0 import models as _v3_0_models
-from ._generated.v3_1_preview_3 import models as _v3_1_preview_3_models
+from ._generated.v3_1_preview_4 import models as _latest_preview_models
+
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
@@ -1311,8 +1312,8 @@ class RecognizeEntitiesAction(DictMixin):
             .format(self.model_version, self.string_index_type)[:1024]
 
     def to_generated(self):
-        return _v3_1_preview_3_models.EntitiesTask(
-            parameters=_v3_1_preview_3_models.EntitiesTaskParameters(
+        return _latest_preview_models.EntitiesTask(
+            parameters=_latest_preview_models.EntitiesTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type
             )
@@ -1330,6 +1331,10 @@ class RecognizePiiEntitiesAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
+    :keyword pii_entity_categories: A list of specific PII categories to return.  If the value of `domain_filter`
+        is also set, the result will contain entities in the intersection of `domain_filter` and the list of 
+        `pii_entity_categories`.
+    :paramtype pii_entity_categories: list[~azure.ai.textanalytics.PiiEntityCategory]
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
@@ -1337,6 +1342,10 @@ class RecognizePiiEntitiesAction(DictMixin):
     :ivar str model_version: The model version to use for the analysis.
     :ivar str domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
+    :ivar pii_entity_categories: A list of specific PII categories to return.  If the value of `domain_filter`
+        is also set, the result will contain entities in the intersection of `domain_filter` and the list of 
+        `pii_entity_categories`.
+    :vartype pii_entity_categories: list[~azure.ai.textanalytics.PiiEntityCategory]
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
@@ -1347,17 +1356,24 @@ class RecognizePiiEntitiesAction(DictMixin):
         self.model_version = kwargs.get("model_version", "latest")
         self.domain_filter = kwargs.get("domain_filter", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+        self.pii_entity_categories = kwargs.get("pii_entity_categories", None)
 
     def __repr__(self, **kwargs):
-        return "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, string_index_type={})" \
-            .format(self.model_version, self.domain_filter, self.string_index_type)[:1024]
+        return "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, string_index_type={}, " \
+        "pii_entity_categories={})".format(
+            self.model_version,
+            self.domain_filter,
+            self.string_index_type,
+            self.pii_entity_categories
+        )[:1024]
 
     def to_generated(self):
-        return _v3_1_preview_3_models.PiiTask(
-            parameters=_v3_1_preview_3_models.PiiTaskParameters(
+        return _latest_preview_models.PiiTask(
+            parameters=_latest_preview_models.PiiTaskParameters(
                 model_version=self.model_version,
                 domain=self.domain_filter,
-                string_index_type=self.string_index_type
+                string_index_type=self.string_index_type,
+                pii_entity_categories=self.pii_entity_categories
             )
         )
 
@@ -1382,8 +1398,8 @@ class ExtractKeyPhrasesAction(DictMixin):
             .format(self.model_version)[:1024]
 
     def to_generated(self):
-        return _v3_1_preview_3_models.KeyPhrasesTask(
-            parameters=_v3_1_preview_3_models.KeyPhrasesTaskParameters(
+        return _latest_preview_models.KeyPhrasesTask(
+            parameters=_latest_preview_models.KeyPhrasesTaskParameters(
                 model_version=self.model_version
             )
         )

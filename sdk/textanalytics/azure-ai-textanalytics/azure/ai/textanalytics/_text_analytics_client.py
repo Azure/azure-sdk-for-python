@@ -301,6 +301,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
+        :keyword pii_entity_categories: A list of specific PII categories to return.  If the value of `domain_filter`
+            is also set, the result will contain entities in the intersection of `domain_filter` and the list of
+            `pii_entity_categories`.
+        :paramtype pii_entity_categories: list[~azure.ai.textanalytics.PiiEntityCategory]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodePoint` or `TextElements_v8`. For additional information
@@ -327,6 +331,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         domain_filter = kwargs.pop("domain_filter", None)
+        pii_entity_categories = kwargs.pop("pii_entity_categories", None)
 
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
@@ -342,6 +347,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 domain=domain_filter,
+                pii_categories=pii_entity_categories,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
@@ -437,7 +443,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
         healthcare_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.3").HealthcareJobState,
+            self._client.models(api_version="v3.1-preview.4").HealthcareJobState,
             raw_response
         )
         return healthcare_paged_result(
@@ -534,7 +540,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
                     "'begin_analyze_healthcare_entities' method is only available for API version \
-                    v3.1-preview.3 and up."
+                    v3.1-preview.4 and up."
                 )
             raise error
 
@@ -714,7 +720,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
         analyze_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.3").AnalyzeJobState, # pylint: disable=protected-access
+            self._client.models(api_version="v3.1-preview.4").AnalyzeJobState, # pylint: disable=protected-access
             raw_response
         )
         return analyze_paged_result(
@@ -781,7 +787,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = self._client.models(api_version="v3.1-preview.3").MultiLanguageBatchInput(
+        docs = self._client.models(api_version="v3.1-preview.4").MultiLanguageBatchInput(
             documents=_validate_input(documents, "language", language)
         )
         show_stats = kwargs.pop("show_stats", False)
@@ -792,7 +798,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         task_order = [_determine_action_type(action) for action in actions]
 
         try:
-            analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
+            analyze_tasks = self._client.models(api_version='v3.1-preview.4').JobManifestTasks(
                 entity_recognition_tasks=[
                     t.to_generated() for t in
                     [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES]
@@ -806,7 +812,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
                 ]
             )
-            analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
+            analyze_body = self._client.models(api_version='v3.1-preview.4').AnalyzeBatchInput(
                 display_name=display_name,
                 tasks=analyze_tasks,
                 analysis_input=docs
@@ -829,7 +835,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
-                    "'begin_analyze_batch_actions' endpoint is only available for API version v3.1-preview.3"
+                    "'begin_analyze_batch_actions' endpoint is only available for API version v3.1-preview.4"
                 )
             raise error
 

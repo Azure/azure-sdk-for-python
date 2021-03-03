@@ -7,6 +7,12 @@
 - Renamed properties `aspect` and `opinions` to `target` and `assessments` respectively in class `MinedOpinion`.
 - Renamed classes `AspectSentiment` and `OpinionSentiment` to `TargetSentiment` and `AssessmentSentiment` respectively.
 
+**New Features**
+
+- Added parameter `pii_entity_categories` to the `recognize_pii_entities` client method.
+- Added parameter `pii_entity_categries` property to class `RecognizePiiEntitiesAction`.
+- Added enum `PiiEntityCategory`.
+
 ## 5.1.0b5 (2021-02-10)
 
 **Breaking Changes**

@@ -419,7 +419,7 @@ class TextAnalyticsClientOperationsMixin(object):
         self,
         documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
+        string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional["_models.HealthcareJobState"]
@@ -485,7 +485,7 @@ class TextAnalyticsClientOperationsMixin(object):
         self,
         documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
+        string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> AnalyzeHealthcareEntitiesLROPoller["_models.HealthcareJobState"]
@@ -562,7 +562,7 @@ class TextAnalyticsClientOperationsMixin(object):
         documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
+        string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.EntitiesResult"
@@ -650,7 +650,7 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         domain=None,  # type: Optional[str]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
+        string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
         pii_categories=None,  # type: Optional[List[Union[str, "_models.PiiCategory"]]]
         **kwargs  # type: Any
     ):
@@ -748,7 +748,7 @@ class TextAnalyticsClientOperationsMixin(object):
         documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
+        string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.EntityLinkingResult"
@@ -994,7 +994,7 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         opinion_mining=None,  # type: Optional[bool]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
+        string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.SentimentResponse"
