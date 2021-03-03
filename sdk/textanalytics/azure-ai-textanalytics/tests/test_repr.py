@@ -278,6 +278,7 @@ def data_source():
 def healthcare_entity(data_source):
     model = _models.HealthcareEntity(
         text="Bonjour",
+        normalized_text="Bonjour",
         category="MyCategory",
         subcategory="MySubcategory",
         length=7,
@@ -286,7 +287,7 @@ def healthcare_entity(data_source):
         data_sources=[data_source[0]],
     )
     model_repr = (
-        "HealthcareEntity(text=Bonjour, category=MyCategory, subcategory=MySubcategory, length=7, offset=12, " +
+        "HealthcareEntity(text=Bonjour, normalized_text=Bonjour, category=MyCategory, subcategory=MySubcategory, length=7, offset=12, " +
         "confidence_score=0.95, data_sources=[{}])".format(data_source[1])
     )
 

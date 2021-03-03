@@ -420,4 +420,22 @@ class TestHealth(AsyncTextAnalyticsTest):
                 assert role.name == "AbbreviatedTerm"
                 self.assert_healthcare_entities_equal(role.entity, parkinsons_abbreviation_entity)
 
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_normalized_text(self, client):
+        response = await (await client.begin_analyze_healthcare_entities(
+            documents=["patients must have histologically confirmed NHL"]
+        )).result()
+
+        result = []
+        async for r in response:
+            result.append(r)
+
+        # currently just testing it has that attribute.
+        # have an issue to update https://github.com/Azure/azure-sdk-for-python/issues/17072
+
+        assert all([
+            e for e in result[0].entities if hasattr(e, "normalized_text")
+        ])
+
 
