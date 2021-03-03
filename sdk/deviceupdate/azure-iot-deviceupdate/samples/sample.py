@@ -35,4 +35,4 @@ def sample_device_update(delete):
 
 
 if __name__ == '__main__':
-    sample_device_update(sys.argv[1])
+    sample_device_update(sys.argv[1].lower() == "true" if len(sys.argv) > 1 else False)
