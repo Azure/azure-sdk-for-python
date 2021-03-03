@@ -2,6 +2,9 @@
 
 ## 1.1.3 (Unreleased)
 
+**Bug fixes**
+- Updated vendor azure-storage-blob dependency to v12.7.1.
+  - Fixed storage blob authentication failure due to request date header too old (#16192).
 
 ## 1.1.2 (2021-01-11)
 

@@ -11,8 +11,14 @@ FILE: sample_analyze_healthcare_entities.py
 
 DESCRIPTION:
     This sample demonstrates how to detect healthcare entities in a batch of documents.
-    Each entity found in the document will have a link associated with it from a
-    data source.  Relations between entities will also be included in the response.
+
+    In this sample we will be a newly-hired engineer working in a pharmacy. We are going to
+    comb through all of the prescriptions our pharmacy has fulfilled so we can catalog how
+    much inventory we have.
+
+    As a usage note: healthcare is currently in gated preview. Your subscription needs to
+    be allow-listed before you can use this endpoint. More information about that here:
+    https://aka.ms/text-analytics-health-request-access
 
 USAGE:
     python sample_analyze_healthcare_entities.py
@@ -29,9 +35,21 @@ import os
 class AnalyzeHealthcareEntitiesSample(object):
 
     def analyze_healthcare_entities(self):
+
+        print(
+            "In this sample we will be combing through the prescriptions our pharmacy has fulfilled "
+            "so we can catalog how much inventory we have"
+        )
+        print(
+            "We start out with a list of prescription documents. "
+            "To simplify matters, we will assume all dosages are in units of mg."
+        )
+
         # [START analyze_healthcare_entities]
+        import re
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
+        from collections import defaultdict
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
@@ -42,34 +60,55 @@ class AnalyzeHealthcareEntitiesSample(object):
         )
 
         documents = [
-            "Subject is taking 100mg of ibuprofen twice daily"
+            """
+            Patient needs to take 100 mg of ibuprofen, and 3 mg of potassium. Also needs to take
+            10 mg of Zocor.
+            """,
+            """
+            Patient needs to take 50 mg of ibuprofen, and 2 mg of Coumadin.
+            """
         ]
 
-        poller = text_analytics_client.begin_analyze_healthcare_entities(documents, show_stats=True)
+        poller = text_analytics_client.begin_analyze_healthcare_entities(documents)
         result = poller.result()
 
         docs = [doc for doc in result if not doc.is_error]
 
-        print("Results of Healthcare Entities Analysis:")
-        for idx, doc in enumerate(docs):
-            for entity in doc.entities:
-                print("Entity: {}".format(entity.text))
-                print("...Category: {}".format(entity.category))
-                print("...Subcategory: {}".format(entity.subcategory))
-                print("...Offset: {}".format(entity.offset))
-                print("...Confidence score: {}".format(entity.confidence_score))
-                if entity.data_sources is not None:
-                    print("...Data Sources:")
-                    for data_source in entity.data_sources:
-                        print("......Entity ID: {}".format(data_source.entity_id))
-                        print("......Name: {}".format(data_source.name))
-                if len(entity.related_entities) > 0:
-                    print("...Related Entities:")
-                    for related_entity, relation_type in entity.related_entities.items():
-                        print("......Entity Text: {}".format(related_entity.text))
-                        print("......Relation Type: {}".format(relation_type))
-            print("------------------------------------------")
+        print(
+            "In order to find the total dosage for every mentioned medication, "
+            "let's create a dict, mapping medication name -> total dosage. "
+        )
 
+        medication_to_dosage = defaultdict(int)
+
+        print(
+            "We will start off by extracting all of the dosage entities."
+        )
+
+        dosage_entities = [
+            entity
+            for doc in docs
+            for entity in doc.entities
+            if entity.category == "Dosage"
+        ]
+
+        print(
+            "Now we traverse the related entities of each dosage entity. "
+            "We are looking for entities that are related by 'DosageOfMedication'. "
+            "After that, we're done!"
+        )
+        for dosage in dosage_entities:
+            dosage_value = int(re.findall(r"\d+", dosage.text)[0]) # we find the numbers in the dosage
+            for related_entity, relation_type in dosage.related_entities.items():
+                if relation_type == "DosageOfMedication":
+                    medication_to_dosage[related_entity.text] += dosage_value
+
+        [
+            print("We have fulfilled '{}' total mg of '{}'".format(
+                dosage, medication
+            ))
+            for medication, dosage in medication_to_dosage.items()
+        ]
         # [END analyze_healthcare_entities]
 
 if __name__ == "__main__":

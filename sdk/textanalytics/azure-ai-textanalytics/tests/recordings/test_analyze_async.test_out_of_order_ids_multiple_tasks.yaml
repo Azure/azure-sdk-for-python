@@ -1,8 +1,8 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "bad", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
-      [{"parameters": {"model-version": "latest", "stringIndexType": "TextElements_v8"}}],
+      "bad", "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "latest", "stringIndexType": "UnicodeCodePoint"}}],
       "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
       "analysisInput": {"documents": [{"id": "56", "text": ":)", "language": "en"},
       {"id": "0", "text": ":(", "language": "en"}, {"id": "19", "text": ":P", "language":
@@ -11,140 +11,68 @@ interactions:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '524'
+      - '526'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 7c910334-464b-4f92-ac7b-1acbdbb712d4
-      date: Tue, 02 Feb 2021 04:30:40 GMT
-      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+      apim-request-id: 5c538322-f0ab-4394-a7ee-497dae7d3824
+      date: Tue, 23 Feb 2021 17:08:44 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '43'
+      x-envoy-upstream-service-time: '30'
     status:
       code: 202
       message: Accepted
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/analyze
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/analyze
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: b3e456db-7b5d-46d6-8c48-6ed2579a4d27
+      apim-request-id: a3dba044-4400-4673-93a8-902b2bf6917d
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:30:46 GMT
+      date: Tue, 23 Feb 2021 17:08:50 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '750'
+      x-envoy-upstream-service-time: '140'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: e2d4f59a-f582-4967-87d9-3b257a3134a0
+      apim-request-id: 94d98534-91a1-45f5-ab5c-fd58ddde63d5
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:30:52 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '558'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-  response:
-    body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 641b2ed3-255c-4077-8aff-a7f7a78075c1
-      content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:30:57 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '124'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-  response:
-    body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 60944405-30df-4c64-8005-94ff02b03a94
-      content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:31:03 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '821'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-  response:
-    body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: c9298fb2-fad2-4ee4-81fb-21a767dcbc22
-      content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:31:08 GMT
+      date: Tue, 23 Feb 2021 17:08:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -152,311 +80,143 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: 88f7cce1-0dd2-4474-9e47-e97a2e701360
+      apim-request-id: 65d0c5df-f6cd-4df1-871e-30c6776cafe0
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:31:14 GMT
+      date: Tue, 23 Feb 2021 17:09:01 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '114'
+      x-envoy-upstream-service-time: '130'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: fc0814fe-dbb8-4401-b86b-475e46bc9009
+      apim-request-id: d2f1e68c-770e-42d8-946e-00d008a74d15
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:31:19 GMT
+      date: Tue, 23 Feb 2021 17:09:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '588'
+      x-envoy-upstream-service-time: '144'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: 8cc8efb0-4b9d-417d-8886-4f0c863f6910
+      apim-request-id: 043ec2ae-1ef9-4c33-88d6-9f281092674e
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:31:25 GMT
+      date: Tue, 23 Feb 2021 17:09:11 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '573'
+      x-envoy-upstream-service-time: '92'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: 16767507-e2f5-44a8-a6c2-154e1ac82d52
+      apim-request-id: c7460858-3a43-4e7e-96ed-218b4809f806
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:31:30 GMT
+      date: Tue, 23 Feb 2021 17:09:16 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '198'
+      x-envoy-upstream-service-time: '89'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: aea02e66-8091-4516-a44d-ee27c38bb5be
+      apim-request-id: 20742431-0fe5-4002-91cd-7a724c1ace90
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:31:35 GMT
+      date: Tue, 23 Feb 2021 17:09:22 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '143'
+      x-envoy-upstream-service-time: '250'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: dcdf8b18-4a01-4a0a-aaad-44eb4b1b5c33
+      apim-request-id: 3104789d-568d-43a8-8032-a54158a791f0
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:31:40 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '114'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-  response:
-    body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: f91cfe3c-9def-407f-9d14-a2e95d7e1591
-      content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:31:47 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '679'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-  response:
-    body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 65e79830-c667-4279-ab4f-37fb82641c09
-      content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:31:52 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '122'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-  response:
-    body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 5c754c43-1b60-44c2-8990-3361bd6e73a1
-      content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:31:58 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '178'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-  response:
-    body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 7b004dd5-ec8d-4a56-a07f-c57d193d875b
-      content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:32:03 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '125'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-  response:
-    body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 58c150fd-2838-4935-9bf3-5fbdf75aba52
-      content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:32:08 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '118'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-  response:
-    body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: 5181db87-9441-4f02-bdb3-baf5e6ac28f8
-      content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:32:13 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '147'
-    status:
-      code: 200
-      message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
-  response:
-    body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
-        task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
-    headers:
-      apim-request-id: f59a0fa3-c4ba-44bd-a488-33ca7e2cc21b
-      content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:32:19 GMT
+      date: Tue, 23 Feb 2021 17:09:27 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -464,95 +224,239 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: 0ba2ec14-4582-4cf8-a61d-db3b695d2531
+      apim-request-id: 42aa3a17-2a6e-40df-ac5a-c4aa6f1dd8e2
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:32:23 GMT
+      date: Tue, 23 Feb 2021 17:09:32 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '122'
+      x-envoy-upstream-service-time: '124'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: f5c0f05b-1daf-446e-a458-5592fd5c5c85
+      apim-request-id: 10661c21-9384-48b6-ba20-c5158deebd31
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:32:29 GMT
+      date: Tue, 23 Feb 2021 17:09:38 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '120'
+      x-envoy-upstream-service-time: '91'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: 630f83d2-fd11-43d9-bfb1-88994c3c37ee
+      apim-request-id: 7de1b598-0df1-4b54-a558-a32de583f921
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:32:34 GMT
+      date: Tue, 23 Feb 2021 17:09:42 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '114'
+      x-envoy-upstream-service-time: '117'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: 2ce1d1b0-276e-4366-be35-dd6b8b8c18f9
+      apim-request-id: a9888712-614c-4208-975a-af72a77a9203
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:32:39 GMT
+      date: Tue, 23 Feb 2021 17:09:48 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '103'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+  response:
+    body:
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: ad5e02b3-3fbf-463c-ac89-607624e4e871
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:09:52 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '117'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+  response:
+    body:
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 1653c37d-9b63-4341-b478-5febe49033ee
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:09:58 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '95'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+  response:
+    body:
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: b843311d-e219-41b3-b11c-b2eb03a10a88
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:03 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '121'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+  response:
+    body:
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 91b8c089-b79c-4d49-8d6d-ca23cbd2414d
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:09 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '160'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+  response:
+    body:
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: b3cc01f3-ae7f-47b2-bf85-ffe49dce8c21
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:14 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '110'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+  response:
+    body:
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: c96ac234-6078-4847-ad14-6b30e7dfdcb4
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:19 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -560,53 +464,149 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: 54561f2b-9eea-44d0-be44-8aaafeb05bd9
+      apim-request-id: d1e99c44-6212-4f5d-ac11-a247502ce5fe
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:32:44 GMT
+      date: Tue, 23 Feb 2021 17:10:25 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '123'
+      x-envoy-upstream-service-time: '183'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
   response:
     body:
-      string: '{"jobId":"77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000","lastUpdateDateTime":"2021-02-02T04:30:42Z","createdDateTime":"2021-02-02T04:30:41Z","expirationDateTime":"2021-02-03T04:30:41Z","status":"partiallySucceeded","errors":[{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-02T04:30:42Z"},"completed":2,"failed":1,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[],"errors":[],"modelVersion":""}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"redactedText":":)","id":"56","entities":[],"warnings":[]},{"redactedText":":(","id":"0","entities":[],"warnings":[]},{"redactedText":":P","id":"19","entities":[],"warnings":[]},{"redactedText":":D","id":"1","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-02T04:30:42.3785682Z","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
-      apim-request-id: d0dcf709-1d1e-4929-abc0-2ef434f12204
+      apim-request-id: 59181655-c1c1-4961-a745-4dc30b798431
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Feb 2021 04:32:49 GMT
+      date: Tue, 23 Feb 2021 17:10:30 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '155'
+      x-envoy-upstream-service-time: '265'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/77f3e9ca-02dd-40c6-b208-879ed98a6a25_637478208000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+  response:
+    body:
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 1ee56227-ba8c-499d-af0c-9c1cce10af8b
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:35 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '127'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+  response:
+    body:
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 279ab0c2-c2c7-44f7-af09-5bd927c092df
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:42 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '2149'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+  response:
+    body:
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"running","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: da6bbc71-2384-4699-b964-5c3d0153d142
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:47 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '92'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
+  response:
+    body:
+      string: '{"jobId":"b01784a6-3711-4e18-b743-16e07e1d9593","lastUpdateDateTime":"2021-02-23T17:08:46Z","createdDateTime":"2021-02-23T17:08:45Z","expirationDateTime":"2021-02-24T17:08:45Z","status":"partiallySucceeded","errors":[{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:08:46Z"},"completed":2,"failed":1,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"failed"}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"redactedText":":)","id":"56","entities":[],"warnings":[]},{"redactedText":":(","id":"0","entities":[],"warnings":[]},{"redactedText":":P","id":"19","entities":[],"warnings":[]},{"redactedText":":D","id":"1","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-02-23T17:08:46.3462787Z","state":"succeeded","results":{"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 01c31d2b-52c2-4445-b565-9edf2b703057
+      content-type: application/json; charset=utf-8
+      date: Tue, 23 Feb 2021 17:10:52 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '166'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/b01784a6-3711-4e18-b743-16e07e1d9593
 version: 1

@@ -96,6 +96,23 @@ class FileSystemTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_system_async())
 
+    async def _test_file_system_exists(self):
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+
+        # Act
+        file_system_client1 = self.dsc.get_file_system_client(file_system_name)
+        file_system_client2 = self.dsc.get_file_system_client("nonexistentfs")
+        await file_system_client1.create_file_system()
+
+        self.assertTrue(await file_system_client1.exists())
+        self.assertFalse(await file_system_client2.exists())
+
+    @record
+    def test_file_system_exists(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_file_system_exists())
+
     async def _test_create_file_system_with_metadata_async(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
@@ -244,7 +261,7 @@ class FileSystemTest(StorageTestCase):
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
                 restored_fs_client = await self.dsc.undelete_file_system(filesystem.name,
-                                                                         filesystem.version,
+                                                                         filesystem.deleted_version,
                                                                          new_name="restored" +
                                                                                   name + str(restored_version))
                 restored_version += 1
@@ -283,7 +300,7 @@ class FileSystemTest(StorageTestCase):
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
                 with self.assertRaises(HttpResponseError):
-                    await self.dsc.undelete_file_system(filesystem.name, filesystem.version,
+                    await self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
                                                         new_name=existing_filesystem_client.file_system_name)
     @record
     def test_restore_to_existing_file_system(self):
@@ -317,7 +334,7 @@ class FileSystemTest(StorageTestCase):
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                restored_fs_client = await dsc.undelete_file_system(filesystem.name, filesystem.version,
+                restored_fs_client = await dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
                                                                     new_name="restored" + name + str(restored_version))
                 restored_version += 1
 

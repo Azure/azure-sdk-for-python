@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,10 +30,10 @@ extends:
   parameters:
     ServiceDirectory: search
     Artifacts:
-    - name: azure_search_documents
+    - name: azure-search-documents
       safeName: azuresearchdocuments
-    - name: azure_search_nspkg
+    - name: azure-search-nspkg
       safeName: azuresearchnspkg
-    - name: azure_mgmt_search
+    - name: azure-mgmt-search
       safeName: azuremgmtsearch
 

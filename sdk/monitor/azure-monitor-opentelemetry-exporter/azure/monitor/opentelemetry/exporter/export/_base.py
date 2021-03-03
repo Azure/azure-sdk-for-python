@@ -15,13 +15,12 @@ from azure.monitor.opentelemetry.exporter._generated._configuration import Azure
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
-from azure.monitor.opentelemetry.exporter._options import ExporterOptions
 
 
 logger = logging.getLogger(__name__)
 
-TEMPDIR_PREFIX = "opentelemetry-python-"
-
+_TEMPDIR_PREFIX = "opentelemetry-python-"
+_SERVICE_API_LATEST = "2020-09-15_Preview"
 
 class ExportResult(Enum):
     SUCCESS = 0
@@ -31,30 +30,23 @@ class ExportResult(Enum):
 
 # pylint: disable=broad-except
 class BaseExporter:
-    """Azure Monitor base exporter for OpenTelemetry.
-
-    :param options: Exporter configuration options.
-    :type options: ~azure.monitor.opentelemetry.exporter.options.ExporterOptions
-    """
+    """Azure Monitor base exporter for OpenTelemetry."""
 
     def __init__(self, **kwargs: Any) -> None:
         """Azure Monitor base exporter for OpenTelemetry.
 
-        :param options: Exporter configuration options.
-        :type options: ~azure.monitor.opentelemetry.exporter.options.ExporterOptions
-        :keyword str connection_string: The connection string to be used for authentication
+        :keyword str api_version: The service API version used. Defaults to latest.
         :rtype: None
         """
-        options = ExporterOptions(**kwargs)
-        parsed_connection_string = ConnectionStringParser(
-            options.connection_string)
+        parsed_connection_string = ConnectionStringParser(kwargs.get('connection_string'))
 
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._timeout = 10.0  # networking timeout in seconds
+        self._api_version = kwargs.get('api_version') or _SERVICE_API_LATEST
 
         temp_suffix = self._instrumentation_key or ""
         default_storage_path = os.path.join(
-            tempfile.gettempdir(), TEMPDIR_PREFIX + temp_suffix
+            tempfile.gettempdir(), _TEMPDIR_PREFIX + temp_suffix
         )
         config = AzureMonitorClientConfiguration(
             parsed_connection_string.endpoint, **kwargs)

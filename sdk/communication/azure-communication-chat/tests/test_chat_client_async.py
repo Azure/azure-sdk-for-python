@@ -7,8 +7,9 @@ from azure.core.credentials import AccessToken
 from azure.communication.chat.aio import (
     ChatClient
 )
-from azure.communication.chat import (
-    ChatThreadParticipant,
+from azure.communication.chat import ChatThreadParticipant
+
+from azure.communication.chat._shared.models import(
     CommunicationUserIdentifier
 )
 from unittest_helpers import mock_response
@@ -49,8 +50,8 @@ async def test_create_chat_thread():
         display_name='name',
         share_history_time=datetime.utcnow()
     )]
-    chat_thread_client = await chat_client.create_chat_thread(topic, participants)
-    assert chat_thread_client.thread_id == thread_id
+    create_chat_thread_result = await chat_client.create_chat_thread(topic, thread_participants=participants)
+    assert create_chat_thread_result.chat_thread.id == thread_id
 
 @pytest.mark.asyncio
 async def test_create_chat_thread_w_repeatability_request_id():
@@ -75,10 +76,10 @@ async def test_create_chat_thread_w_repeatability_request_id():
         display_name='name',
         share_history_time=datetime.utcnow()
     )]
-    chat_thread_client = await chat_client.create_chat_thread(topic=topic,
+    create_chat_thread_result = await chat_client.create_chat_thread(topic=topic,
                                                               thread_participants=participants,
                                                               repeatability_request_id=repeatability_request_id)
-    assert chat_thread_client.thread_id == thread_id
+    assert create_chat_thread_result.chat_thread.id == thread_id
 
 @pytest.mark.asyncio
 async def test_create_chat_thread_raises_error():
@@ -127,8 +128,10 @@ async def test_get_chat_thread():
     async def mock_send(*_, **__):
         return mock_response(status_code=200, json_payload={
                 "id": thread_id,
-                "created_by": "8:acs:resource_user",
-                "participants": [{"id": "", "display_name": "name", "share_history_time": "1970-01-01T00:00:00Z"}]
+                "topic": "Lunch Chat thread",
+                "createdOn": "2020-10-30T10:50:50Z",
+                "deletedOn": "2020-10-30T10:50:50Z",
+                "createdByCommunicationIdentifier": {"rawId": "string", "communicationUser": {"id": "string"}}
                 })
     chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
 

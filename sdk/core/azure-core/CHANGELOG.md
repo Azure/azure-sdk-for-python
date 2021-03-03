@@ -6,6 +6,8 @@
 
 - Add a kwarg called `json` to the `HttpRequest` object. The `json` kwarg takes the body you want to send to the service as input
 and json serializes it for you. Use instead of the `data` parameter if you want this behavior. #16695
+- Added `azure.core.messaging.CloudEvent` model that follows the cloud event spec.
+- Added `azure.core.serialization.NULL` sentinel value
 
 ## 1.11.0 (2021-02-08)
 

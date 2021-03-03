@@ -26,6 +26,7 @@ except ImportError:
 import six
 
 from azure.core.configuration import Configuration
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport
@@ -36,6 +37,8 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
+    UserAgentPolicy,
+    AzureSasCredentialPolicy
 )
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
@@ -44,7 +47,6 @@ from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
 from .policies import (
     StorageHeadersPolicy,
-    StorageUserAgentPolicy,
     StorageContentValidation,
     StorageRequestHook,
     StorageResponseHook,
@@ -53,7 +55,7 @@ from .policies import (
     QueueMessagePolicy,
     ExponentialRetry,
 )
-from .._generated.models import StorageErrorException
+from .._version import VERSION
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 
@@ -62,7 +64,7 @@ _SERVICE_PARAMS = {
     "blob": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
     "queue": {"primary": "QueueEndpoint", "secondary": "QueueSecondaryEndpoint"},
     "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
-    "dfs": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
+    "dfs": {"primary": "BlobEndpoint", "secondary": "BlobEndpoint"},
 }
 
 
@@ -83,12 +85,17 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             raise ValueError("Invalid service: {}".format(service))
         service_name = service.split('-')[0]
         account = parsed_url.netloc.split(".{}.core.".format(service_name))
-        self.account_name = account[0] if len(account) > 1 else None
-        secondary_hostname = None
 
-        self.credential = format_shared_key_credential(account, credential)
+        self.account_name = account[0] if len(account) > 1 else None
+        if not self.account_name and parsed_url.netloc.startswith("localhost") \
+                or parsed_url.netloc.startswith("127.0.0.1"):
+            self.account_name = parsed_url.path.strip("/")
+
+        self.credential = _format_shared_key_credential(self.account_name, credential)
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
+
+        secondary_hostname = None
         if hasattr(self.credential, "account_name"):
             self.account_name = self.credential.account_name
             secondary_hostname = "{}-secondary.{}.{}".format(
@@ -203,6 +210,9 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             query_str += "snapshot={}&".format(self.snapshot)
         if share_snapshot:
             query_str += "sharesnapshot={}&".format(self.snapshot)
+        if sas_token and isinstance(credential, AzureSasCredential):
+            raise ValueError(
+                "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
         if sas_token and not credential:
             query_str += sas_token
         elif is_credential_sastoken(credential):
@@ -217,6 +227,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
+        elif isinstance(credential, AzureSasCredential):
+            self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -230,21 +242,23 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             config.transport = RequestsTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
-            config.headers_policy,
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
-            StorageRequestHook(**kwargs),
-            self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,
+            config.headers_policy,
+            StorageRequestHook(**kwargs),
+            self._credential_policy,
             config.logging_policy,
             StorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs)
         ]
+        if kwargs.get("_additional_pipeline_policies"):
+            policies = policies + kwargs.get("_additional_pipeline_policies")
         return config, Pipeline(config.transport, policies=policies)
 
     def _batch_send(
@@ -256,18 +270,25 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='https://{}/?comp=batch'.format(self.primary_hostname),
+            url='{}://{}/?comp=batch{}{}'.format(
+                self.scheme,
+                self.primary_hostname,
+                kwargs.pop('sas', ""),
+                kwargs.pop('timeout', "")
+            ),
             headers={
                 'x-ms-version': self.api_version
             }
         )
 
+        policies = [StorageHeadersPolicy()]
+        if self._credential_policy:
+            policies.append(self._credential_policy)
+
         request.set_multipart_mixed(
             *reqs,
-            policies=[
-                StorageHeadersPolicy(),
-                self._credential_policy
-            ]
+            policies=policies,
+            enforce_https=False
         )
 
         pipeline_response = self._pipeline.run(
@@ -289,7 +310,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                     raise error
                 return iter(parts)
             return parts
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
 class TransportWrapper(HttpTransport):
@@ -316,11 +337,11 @@ class TransportWrapper(HttpTransport):
         pass
 
 
-def format_shared_key_credential(account, credential):
+def _format_shared_key_credential(account_name, credential):
     if isinstance(credential, six.string_types):
-        if len(account) < 2:
+        if not account_name:
             raise ValueError("Unable to determine account name for shared key credential.")
-        credential = {"account_name": account[0], "account_key": credential}
+        credential = {"account_name": account_name, "account_key": credential}
     if isinstance(credential, dict):
         if "account_name" not in credential:
             raise ValueError("Shared key credential missing 'account_name")
@@ -378,7 +399,8 @@ def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
-    config.user_agent_policy = StorageUserAgentPolicy(**kwargs)
+    config.user_agent_policy = UserAgentPolicy(
+        sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
     config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)

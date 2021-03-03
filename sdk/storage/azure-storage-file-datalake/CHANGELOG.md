@@ -1,7 +1,25 @@
 # Release History
 
-## 12.2.3 (Unreleased)
+## 12.3.0 (2021-03-01)
+**Stable release of preview features**
+- Added support for `DatalakeServiceClient.undelete_filesystem()`
+- Added support for `DirectoryClient.exists()`, `FileClient.exists()` and `FileSystemClient.exists()`
 
+**Fixes**
+- Fixed `DatalakeServiceClient` context manager/session closure issue (#15358)
+- `PurePosixPath` is now handled correctly if passed as a path (#16159)
+
+## 12.3.0b1 (2021-02-10)
+**New Features**
+- Added support for `DatalakeServiceClient.undelete_filesystem()`
+
+**Fixes**
+- Fixed `DatalakeServiceClient` context manager/session closure issue (#15358)
+- `PurePosixPath` is now handled correctly if passed as a path (#16159)
+
+## 12.2.3 (2021-02-08)
+**Fixes**
+- Fixed paging issue (#16531)
 
 ## 12.2.2 (2021-01-20)
 **Fixes**

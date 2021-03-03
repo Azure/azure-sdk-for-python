@@ -14,31 +14,33 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"id":"0","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.81},{"text":"Bill
-        Gates","category":"Person","offset":25,"length":10,"confidenceScore":0.83},{"text":"Paul
-        Allen","category":"Person","offset":40,"length":10,"confidenceScore":0.87},{"text":"April
-        4, 1975","category":"DateTime","subcategory":"Date","offset":54,"length":13,"confidenceScore":0.8}],"warnings":[]},{"id":"1","entities":[{"text":"4","category":"Quantity","subcategory":"Number","offset":53,"length":1,"confidenceScore":0.8},{"text":"1975","category":"DateTime","subcategory":"DateRange","offset":67,"length":4,"confidenceScore":0.8}],"warnings":[]},{"id":"2","entities":[{"text":"4","category":"Quantity","subcategory":"Number","offset":19,"length":1,"confidenceScore":0.8},{"text":"April
-        1975","category":"DateTime","subcategory":"DateRange","offset":22,"length":10,"confidenceScore":0.8},{"text":"von
-        Bill Gates","category":"Person","offset":33,"length":14,"confidenceScore":0.59},{"text":"Paul
-        Allen","category":"Person","offset":52,"length":10,"confidenceScore":0.63}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"documents":[{"id":"0","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.96},{"text":"Bill
+        Gates","category":"Person","offset":25,"length":10,"confidenceScore":0.99},{"text":"Paul
+        Allen","category":"Person","offset":40,"length":10,"confidenceScore":0.99},{"text":"April
+        4, 1975","category":"DateTime","subcategory":"Date","offset":54,"length":13,"confidenceScore":0.8}],"warnings":[]},{"id":"1","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.97},{"text":"Bill
+        Gates","category":"Person","offset":26,"length":10,"confidenceScore":1.0},{"text":"Paul
+        Allen","category":"Person","offset":39,"length":10,"confidenceScore":0.99},{"text":"4","category":"Quantity","subcategory":"Number","offset":53,"length":1,"confidenceScore":0.8},{"text":"1975","category":"DateTime","subcategory":"DateRange","offset":67,"length":4,"confidenceScore":0.8}],"warnings":[]},{"id":"2","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.92},{"text":"4","category":"Quantity","subcategory":"Number","offset":19,"length":1,"confidenceScore":0.8},{"text":"April
+        1975","category":"DateTime","subcategory":"DateRange","offset":22,"length":10,"confidenceScore":0.8},{"text":"Bill
+        Gates","category":"Person","offset":37,"length":10,"confidenceScore":1.0},{"text":"Paul
+        Allen","category":"Person","offset":52,"length":10,"confidenceScore":0.99}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2020-04-01"}'
+        text is empty."}}}],"modelVersion":"2021-01-15"}'
     headers:
-      apim-request-id: 97e0a870-d9f6-4d1f-8b99-7c899921be0a
+      apim-request-id: 2e55ecac-6f82-468f-8a65-ab29f04a3ae3
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 27 Jan 2021 02:23:18 GMT
+      date: Tue, 23 Feb 2021 17:09:20 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '114'
+      x-envoy-upstream-service-time: '33'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

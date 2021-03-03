@@ -284,3 +284,10 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     type="Sample.Cloud.Event"
                     )
             await client.send(cloud_event)
+
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    @pytest.mark.asyncio
+    def test_send_NONE_credential_async(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        with pytest.raises(ValueError, match="Parameter 'self._credential' must not be None."):
+            client = EventGridPublisherClient(eventgrid_topic_endpoint, None)

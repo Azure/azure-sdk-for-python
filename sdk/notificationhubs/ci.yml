@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: notificationhubs
     Artifacts:
-    - name: azure_mgmt_notificationhubs
+    - name: azure-mgmt-notificationhubs
       safeName: azuremgmtnotificationhubs

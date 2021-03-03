@@ -81,7 +81,7 @@ This table shows the relationship between SDK versions and supported API version
 | SDK version                                                               | Supported API version of service  |
 | ------------------------------------------------------------------------- | --------------------------------- |
 | 5.0.0 - Latest GA release (can be installed by removing the `--pre` flag) | 3.0                               |
-| 5.1.0b5 - Latest release (beta)                                           | 3.0, 3.1-preview.2, 3.1-preview.3 |
+| 5.1.0b6 - Latest release (beta)                                           | 3.0, 3.1-preview.4 |
 
 ### Authenticate the client
 
@@ -458,7 +458,7 @@ text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = ["Subject is taking 100mg of ibuprofen twice daily"]
 
-poller = text_analytics_client.begin_analyze_healthcare_entities(documents, show_stats=True)
+poller = text_analytics_client.begin_analyze_healthcare_entities(documents)
 result = poller.result()
 
 docs = [doc for doc in result if not doc.is_error]
