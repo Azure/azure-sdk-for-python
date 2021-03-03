@@ -15,7 +15,7 @@ USAGE:
 """
 import os
 
-from azure.eventgrid import EventGridEvent
+from azure.core.messaging import CloudEvent
 from azure.eventhub import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
