@@ -134,14 +134,14 @@ class EventGridPublisherClient:
                 :start-after: [START publish_eg_event_dict_async]
                 :end-before: [END publish_eg_event_dict_async]
                 :language: python
-                :dedent: 0
+                :dedent: 4
                 :caption: Publishing an EventGridEvent using a dict-like representation.
 
             .. literalinclude:: ../samples/async_samples/sample_publish_cloud_event_using_dict_async.py
                 :start-after: [START publish_cloud_event_dict_async]
                 :end-before: [END publish_cloud_event_dict_async]
                 :language: python
-                :dedent: 0
+                :dedent: 4
                 :caption: Publishing a CloudEvent using a dict-like representation.
 
         When publishing a Custom Schema Event(s), dict-like representation is accepted.
@@ -153,7 +153,7 @@ class EventGridPublisherClient:
                 :start-after: [START publish_custom_schema_async]
                 :end-before: [END publish_custom_schema_async]
                 :language: python
-                :dedent: 0
+                :dedent: 4
                 :caption: Publishing a Custom Schema event.
 
         **WARNING**: To gain the best performance when sending multiple events at one time,
