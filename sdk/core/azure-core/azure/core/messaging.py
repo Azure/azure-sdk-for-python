@@ -160,8 +160,8 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
 
         return cls(
             id=event.get("id"),
-            source=event.get("source"),
-            type=event.get("type"),
+            source=cast(str, event.get("source")),
+            type=cast(str, event.get("type")),
             specversion=event.get("specversion"),
             time=_convert_to_isoformat(event.get("time")),
             **kwargs
