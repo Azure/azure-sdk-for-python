@@ -12,14 +12,15 @@ from typing import (  # pylint: disable=unused-import
 )
 from datetime import datetime
 from msrest.serialization import TZ_UTC
+from azure.core import parse_connection_string_to_dict
 from azure.core.credentials import AccessToken
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
     endpoint = None
     shared_access_key = None
-    for element in conn_str.split(";"):
-        key, _, value = element.partition("=")
+    conn_settings = parse_connection_string_to_dict(conn_str)
+    for key, value in conn_settings.items():
         if key.lower() == "endpoint":
             endpoint = value.rstrip("/")
         elif key.lower() == "accesskey":
