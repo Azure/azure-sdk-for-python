@@ -19,6 +19,7 @@ import uamqp
 from uamqp import utils, compat
 from uamqp.message import MessageProperties
 
+from azure.core import parse_connection_string_to_dict
 from azure.core.credentials import AccessToken
 
 from ._common._configuration import Configuration
@@ -59,11 +60,7 @@ def _parse_conn_str(conn_str, check_case=False):
     shared_access_signature_expiry = None  # type: Optional[int]
 
     # split connection string into properties
-    conn_properties = [s.split("=", 1) for s in conn_str.strip().rstrip(";").split(";")]
-    if any(len(tup) != 2 for tup in conn_properties):
-        raise ValueError("Connection string is either blank or malformed.")
-    conn_settings = dict(conn_properties)   # type: ignore
-
+    conn_settings = parse_connection_string_to_dict(conn_str)
     # case sensitive check when parsing for connection string properties
     if check_case:
         shared_access_key = conn_settings.get("SharedAccessKey")
