@@ -11,7 +11,7 @@ The library provides access to the Device Update for IoT Hub service that enable
 - Microsoft Azure Subscription: To call Microsoft Azure services, you need to create an [Azure subscription](https://azure.microsoft.com/free/)
 - Device Update for IoT Hub instance
 - Azure IoT Hub instance
-- Python 2.7, or 3.5 or later is required to use this package.
+- Python 2.7, or 3.6 or later is required to use this package.
 
 ### Install the package
 
