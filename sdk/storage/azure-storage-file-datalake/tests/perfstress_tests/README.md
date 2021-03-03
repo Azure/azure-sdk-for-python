@@ -4,6 +4,13 @@ In order to run the performance tests, the `azure-devtools` package must be inst
 Start be creating a new virtual environment for your perf tests. This will need to be a Python 3 environment, preferably >=3.7.
 Note that there are no T1 tests for this project.
 
+### Setup for test resources
+
+These tests will run against a pre-configured Storage account. The following environment variable will need to be set for the tests to access the live resources:
+```
+AZURE_STORAGE_CONNECTION_STRING=<live storage account connection string>
+```
+
 ### Setup for T2 perf test runs
 
 ```cmd
@@ -27,7 +34,7 @@ These options are available for all perf tests:
 - `--iterations=1` Number of test iterations to run. Default is 1.
 - `--parallel=1` Number of tests to run in parallel. Default is 1.
 - `--no-client-share` Whether each parallel test instance should share a single client, or use their own. Default is False (sharing).
-- `--warm-up=5` Number of seconds to spend warming up the connection before measuing begins. Default is 5.
+- `--warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
 - `--sync` Whether to run the tests in sync or async. Default is False (async).
 - `--no-cleanup` Whether to keep newly created resources after test run. Default is False (resources will be deleted).
 
