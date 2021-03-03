@@ -230,7 +230,7 @@ class HttpRequest(object):
     """
 
     def __init__(self, method, url, headers=None, files=None, data=None, **kwargs):
-        # type: (str, str, Mapping[str, str], Any, Any, Any) -> None
+        # type: (str, str, Mapping[str, str], Any, Any, **Any) -> None
         self.method = method
         self.url = url
         self.headers = _case_insensitive_dict(headers)
@@ -251,6 +251,10 @@ class HttpRequest(object):
         self.data = data or kwargs.pop("json", None)
         if json_kwarg:
             self.set_json_body(self.data)
+        if kwargs:
+            raise TypeError(
+                "Unknown kwarg value(s) passed in by user: {} to create an HttpRequest object".format(kwargs)
+            )
 
     def __repr__(self):
         return "<HttpRequest [%s]>" % (self.method)

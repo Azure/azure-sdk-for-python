@@ -362,6 +362,11 @@ class TestClientRequest(unittest.TestCase):
         # We want a direct string
         assert request.data == "foo"
 
+    def test_invalid_param_to_http_request(self):
+        with pytest.raises(TypeError) as ex:
+            HttpRequest("GET", "/", foo="bar")
+        assert "'foo': 'bar'" in str(ex.value)
+
 
 if __name__ == "__main__":
     unittest.main()
