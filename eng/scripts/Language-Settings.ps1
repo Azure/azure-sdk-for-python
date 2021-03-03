@@ -13,31 +13,31 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   {
     $searchPath = "sdk/${serviceDirectory}/*/setup.py"
   }
-  Push-Location $RepoRoot
-  $allSetupProps = $null
+
+  $allPkgPropLines = $null
   try
   {
+    Push-Location $RepoRoot
     pip install packaging==20.4 -q -I
-    $allSetupProps = python "eng\scripts\get_package_properties.py" -s $searchPath
+    $allPkgPropLines = python "eng\scripts\get_package_properties.py" -s $searchPath
   }
   catch
   {
     # This is soft error and failure is expected for python metapackages
     LogError "Failed to get all package properties"
   }
-  Pop-Location
-
-  foreach ($line in $allSetupProps)
+  finally
   {
-    $setupInfo = ($line -Split ",").Trim("()")
-    if ($setupInfo.Count -gt 4)
-    {
-      continue
-    }
-    $packageName = $setupInfo[0].Trim("' ")
-    $packageVersion = $setupInfo[1].Trim("' ")
-    $isNewSdk = $setupInfo[2].Trim()
-    $setupPyDir = $setupInfo[3].Trim("' ")
+    Pop-Location
+  }
+
+  foreach ($line in $allPkgPropLines)
+  {
+    $pkgInfo = ($line -Split ",").Trim("()' ")
+    $packageName = $pkgInfo[0]
+    $packageVersion = $pkgInfo[1]
+    $isNewSdk = $pkgInfo[2]
+    $setupPyDir = $pkgInfo[3]
     $pkgDirectoryPath = Resolve-Path (Join-Path -Path $RepoRoot $setupPyDir)
     $serviceDirectoryName = Split-Path (Split-Path -Path $pkgDirectoryPath -Parent) -Leaf
     if ($packageName -match "mgmt")
