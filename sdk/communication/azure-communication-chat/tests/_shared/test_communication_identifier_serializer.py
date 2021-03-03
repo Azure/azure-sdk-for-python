@@ -4,17 +4,19 @@
 # license information.
 # -------------------------------------------------------------------------
 import unittest
-from azure.communication.chat._shared.communication_identifier_serializer import CommunicationUserIdentifierSerializer
-from azure.communication.chat._shared.models import(
+from azure.communication.chat.communication_identifier_serializer import CommunicationUserIdentifierSerializer
+from azure.communication.chat._generated.models import(
     CommunicationIdentifierModel,
+    MicrosoftTeamsUserIdentifierModel,
+    CommunicationUserIdentifierModel,
+    PhoneNumberIdentifierModel
+)
+from azure.communication.chat._shared.models import(
     CommunicationUserIdentifier,
     CommunicationCloudEnvironment,
     UnknownIdentifier,
     PhoneNumberIdentifier,
-    MicrosoftTeamsUserIdentifier,
-    MicrosoftTeamsUserIdentifierModel,
-    CommunicationUserIdentifierModel,
-    PhoneNumberIdentifierModel
+    MicrosoftTeamsUserIdentifier
 )
 
 class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
@@ -92,7 +94,7 @@ class CommunicationUserIdentifierSerializerTest(unittest.TestCase):
         unknown_identifier_expected = UnknownIdentifier("an id")
 
         assert isinstance(unknown_identifier_actual, UnknownIdentifier)
-        assert unknown_identifier_actual.identifier == unknown_identifier_expected.identifier
+        assert unknown_identifier_actual.raw_id == unknown_identifier_expected.raw_id
 
     def test_serialize_phone_number(self):
         phone_number_identifier_model = CommunicationUserIdentifierSerializer.serialize(
