@@ -12,6 +12,9 @@ from samples.consts import MANUFACTURER, MODEL, BLOB_CONTAINER, DEFAULT_RETRY_AF
 class SampleRunner:
     def __init__(self, tenant_id, client_id, client_secret, account_endpoint, instance_id, storage_name, storage_key,
                  device_id, device_tag, **kwargs):
+        self._tenant_id = tenant_id
+        self._client_id = client_id
+        self._client_secret = client_secret
         self._storage_name = storage_name
         self._storage_key = storage_key
         self._device_id = device_id
@@ -245,14 +248,20 @@ class SampleRunner:
 
     def _output_test_data(self, version, job_id, deployment_id):
         print("Test data to use when running SDK unit tests:")
-        print(f'$env:AZURE_ACCOUNT_ID="{self._account_endpoint}"')
-        print(f'$env:AZURE_INSTANCE_ID="{self._instance_id}"')
-        print(f'$env:AZURE_UPDATE_VERSION="{version}"')
-        print(f'$env:AZURE_UPDATE_OPERATION="{job_id}"')
-        print(f'$env:AZURE_DEVICE_ID="{self._device_id}"')
-        print(f'$env:AZURE_DEPLOYMENT_ID="{deployment_id}"')
+        print(f'DEVICEUPDATE_TENANT_ID="{self._tenant_id}"')
+        print(f'DEVICEUPDATE_CLIENT_ID="{self._client_id}"')
+        print(f'DEVICEUPDATE_CLIENT_SECRET="{self._client_secret}"')
+        print(f'DEVICEUPDATE_ACCOUNT_ENDPOINT="{self._account_endpoint}"')
+        print(f'DEVICEUPDATE_INSTANCE_ID="{self._instance_id}"')
+        print(f'DEVICEUPDATE_VERSION="{version}"')
+        print(f'DEVICEUPDATE_OPERATION_ID="{job_id}"')
+        print(f'DEVICEUPDATE_DEVICE_ID="{self._device_id}"')
+        print(f'DEVICEUPDATE_DEPLOYMENT_ID="{deployment_id}"')
+        print(f'DEVICEUPDATE_PROVIDER="{MANUFACTURER}"')
+        print(f'DEVICEUPDATE_MODEL="{MODEL}"')
+        print(f'DEVICEUPDATE_DEVICE_CLASS_ID="b83e3c87fbf98063c20c3269f1c9e58d255906dd"')
         print()
-        print("Set these environment variables before opening and running SDK unit tests.")
+        print("Set these environment variables in your '.env' file before opening and running SDK unit tests.")
         pass
 
 
