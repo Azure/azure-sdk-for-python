@@ -104,6 +104,10 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
                 storage_account.name,
                 "storagename"
             )
+            self.test_class_instance.scrubber.register_name_pair(
+                ":.{43}=\r",
+                ":fake_shared_key=\r"
+            )
         else:
             name = "storagename"
             storage_account.name = name
