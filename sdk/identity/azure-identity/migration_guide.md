@@ -9,17 +9,19 @@ way as `azure-common`. `azure-common` provided factory methods like [`get_client
 In `azure-common` you could provide credentials in a JSON dictionary, or from a JSON file:
 ```python
 from azure.common.client_factory import get_client_from_json_dict, get_client_from_auth_file
-from azure.keyvault import KeyVaultClient
+from azure.mgmt.keyvault import KeyVaultManagementClient
 # Provide credentials in JSON:
 json_dict = {
     "clientId": "...",
     "clientSecret": "...",
+    "subscriptionId": "...",
     "tenantId": "...",
-    "activeDirectoryEndpointUrl": "https://login.microsoftonline.com"
+    "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
+    "resourceManagerEndpointUrl": "https://management.azure.com/"
 }
-client = get_client_from_json_dict(KeyVaultClient, json_dict)
+client = get_client_from_json_dict(KeyVaultManagementClient, json_dict)
 # Or, provide credentials from a JSON file:
-client = get_client_from_auth_file(KeyVaultClient, "credentials.json")
+client = get_client_from_auth_file(KeyVaultManagementClient, "credentials.json")
 ```
 
 If it's too difficult to migrate away from file-based authentication despite the security risks, you can still
@@ -28,7 +30,7 @@ authenticate a service principal with a [`ClientSecretCredential`][client_secret
 ```python
 import json
 from azure.identity import ClientSecretCredential
-from azure.keyvault.certificates import CertificateClient
+from azure.mgmt.keyvault import KeyVaultManagementClient
 
 with open("credentials.json") as json_file:
     json_dict = json.load(json_file)
@@ -39,7 +41,7 @@ credential = ClientSecretCredential(
     client_secret=json_dict["clientSecret"],
     authority=json_dict["activeDirectoryEndpointUrl"]
 )
-client = CertificateClient("https://{vault-name}.vault.azure.net", credential)
+client = KeyVaultManagementClient(credential, json_dict["subscriptionId"])
 ```
 
 If storing credentials in a file, be sure to protect access to this file. Make certain that it's excluded by version
