@@ -150,6 +150,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         self.downloaded = 0
         headers = response.internal_response.headers
         self.content_length = int(headers.get('Content-Length', 0))
+        transfer_header = headers.get('Transfer-Encoding', '')
         self._compressed = True if 'compress' in transfer_header \
                                    or 'deflate' in transfer_header or 'gzip' in transfer_header else False
         if "x-ms-range" in headers:
@@ -160,7 +161,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
             self.range = parse_range_header(headers["Range"])
         else:
             self.range_header = None
-        self.etag = response.headers['etag'] if 'etag' in headers else None
+        self.etag = headers.get('etag')
 
     def __len__(self):
         return self.content_length

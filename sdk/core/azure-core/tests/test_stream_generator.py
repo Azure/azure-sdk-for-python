@@ -49,6 +49,7 @@ def test_connection_error_response():
         def __init__(self, error=True):
             self._error = error
             self.status_code = 200
+            self.headers = {"etag":"etag"}
 
         def iter_content(self, block_size):
             return MockTransport(error=self._error)
@@ -60,7 +61,6 @@ def test_connection_error_response():
     pipeline = Pipeline(MockTransport())
     http_response = HttpResponse(http_request, None)
     http_response.internal_response = MockInternalResponse(error=True)
-    http_response.headers['etag'] = "etag"
     stream = StreamDownloadGenerator(pipeline, http_response)
     with mock.patch('time.sleep', return_value=None):
         with pytest.raises(StopIteration):
@@ -93,6 +93,9 @@ def test_connection_error_416():
                 raise requests.exceptions.ConnectionError
 
     class MockInternalResponse():
+        def __init__(self):
+            self.headers = {}
+
         def iter_content(self, block_size):
             return MockTransport()
 

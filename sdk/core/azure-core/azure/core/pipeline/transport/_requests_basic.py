@@ -121,7 +121,7 @@ class StreamDownloadGenerator(object):
             self.range = parse_range_header(headers["Range"])
         else:
             self.range_header = None
-        self.etag = response.headers['etag'] if 'etag' in headers else None
+        self.etag = headers.get('etag')
 
     def __len__(self):
         return self.content_length

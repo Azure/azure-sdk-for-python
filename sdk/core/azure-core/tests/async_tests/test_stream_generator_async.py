@@ -46,7 +46,7 @@ async def test_connection_error_response():
 
     class MockInternalResponse():
         def __init__(self, error=True):
-            self.headers = {}
+            self.headers = {"etag": "etag"}
             self._error = error
             self.content = MockContent(error=self._error)
             self.status_code = 200
@@ -62,7 +62,6 @@ async def test_connection_error_response():
     pipeline = AsyncPipeline(MockTransport())
     http_response = AsyncHttpResponse(http_request, None)
     http_response.internal_response = MockInternalResponse()
-    http_response.headers['etag'] = "etag"
     stream = AioHttpStreamDownloadGenerator(pipeline, http_response)
     with mock.patch('asyncio.sleep', new_callable=AsyncMock):
         with pytest.raises(StopAsyncIteration):
