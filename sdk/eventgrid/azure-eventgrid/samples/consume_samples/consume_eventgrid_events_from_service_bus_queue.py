@@ -25,7 +25,7 @@ queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 with ServiceBusClient.from_connection_string(connection_str) as sb_client:
     payload =  sb_client.get_queue_receiver(queue_name).receive_messages()
 
-    ## deserialize payload into a lost of typed Events
+    ## deserialize payload into a list of typed Events
     events = [EventGridEvent.from_dict(json.loads(next(msg.body).decode('utf-8'))) for msg in payload]
 
     for event in events:

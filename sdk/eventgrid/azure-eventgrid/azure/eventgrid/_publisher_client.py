@@ -19,39 +19,39 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
-    UserAgentPolicy
+    UserAgentPolicy,
 )
+from azure.core.messaging import CloudEvent
 
-from ._models import CloudEvent, EventGridEvent
+from ._models import EventGridEvent
 from ._helpers import (
     _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
     _is_eventgrid_event,
-    _eventgrid_data_typecheck
+    _eventgrid_data_typecheck,
+    _cloud_event_to_generated,
 )
-from ._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
+from ._generated._event_grid_publisher_client import (
+    EventGridPublisherClient as EventGridPublisherClientImpl,
+)
 from ._policies import CloudEventDistributedTracingPolicy
 from ._version import VERSION
-from ._generated.models import CloudEvent as InternalCloudEvent
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+
     SendType = Union[
         CloudEvent,
         EventGridEvent,
         Dict,
         List[CloudEvent],
         List[EventGridEvent],
-        List[Dict]
+        List[Dict],
     ]
 
-ListEventType = Union[
-    List[CloudEvent],
-    List[EventGridEvent],
-    List[Dict]
-]
+ListEventType = Union[List[CloudEvent], List[EventGridEvent], List[Dict]]
 
 
 class EventGridPublisherClient(object):
@@ -86,15 +86,14 @@ class EventGridPublisherClient(object):
 
         self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
-            policies=EventGridPublisherClient._policies(credential, **kwargs),
-            **kwargs
-            )
+            policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
+        )
 
     @staticmethod
     def _policies(credential, **kwargs):
         # type: (Union[AzureKeyCredential, AzureSasCredential], Any) -> List[Any]
         auth_policy = _get_authentication_policy(credential)
-        sdk_moniker = 'eventgrid/{}'.format(VERSION)
+        sdk_moniker = "eventgrid/{}".format(VERSION)
         policies = [
             RequestIdPolicy(**kwargs),
             HeadersPolicy(**kwargs),
@@ -108,7 +107,7 @@ class EventGridPublisherClient(object):
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             CloudEventDistributedTracingPolicy(),
-            HttpLoggingPolicy(**kwargs)
+            HttpLoggingPolicy(**kwargs),
         ]
         return policies
 
@@ -175,31 +174,31 @@ class EventGridPublisherClient(object):
          Has default value "application/json; charset=utf-8" for EventGridEvents,
          with "cloudevents-batch+json" for CloudEvents
         :rtype: None
-         """
+        """
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
 
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
-                events = [cast(CloudEvent, e)._to_generated(**kwargs) for e in events] # pylint: disable=protected-access
+                events = [
+                    _cloud_event_to_generated(e, **kwargs) for e in events # pylint: disable=protected-access
+                ]
             except AttributeError:
-                pass # means it's a dictionary
-            kwargs.setdefault("content_type", "application/cloudevents-batch+json; charset=utf-8")
-            return self._client.publish_cloud_event_events(
-                self._endpoint,
-                cast(List[InternalCloudEvent], events),
-                **kwargs
-                )
-        kwargs.setdefault("content_type", "application/json; charset=utf-8")
-        if isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
+                pass  # means it's a dictionary
+            kwargs.setdefault(
+                "content_type", "application/cloudevents-batch+json; charset=utf-8"
+            )
+        elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
+            kwargs.setdefault("content_type", "application/json; charset=utf-8")
             for event in events:
                 _eventgrid_data_typecheck(event)
-        return self._client.publish_custom_event_events(self._endpoint, cast(List, events), **kwargs)
+        return self._client.publish_custom_event_events(
+            self._endpoint, cast(List, events), **kwargs
+        )
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.eventgrid.EventGridPublisherClient` session.
-        """
+        """Close the :class:`~azure.eventgrid.EventGridPublisherClient` session."""
         return self._client.close()
 
     def __enter__(self):

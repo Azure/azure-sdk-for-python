@@ -4,8 +4,9 @@
 
 ### Features
 
+- Added `azure.core.messaging.CloudEvent` model that follows the cloud event spec.
+- Added `azure.core.serialization.NULL` sentinel value
 - Add kwarg `query` to `HttpRequest`, which accepts your query parameters and formats them into your inputted URL.  #16942
-
 
 ## 1.11.0 (2021-02-08)
 

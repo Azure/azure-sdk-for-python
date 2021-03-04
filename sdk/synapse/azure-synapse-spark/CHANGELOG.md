@@ -1,5 +1,10 @@
 # Release History
 
+## 0.5.0 (2021-03-09)
+
+* Internal bugfixes (re-generated with latest generator)
+* Stop Python 3.5 support
+
 ## 0.4.0 (2020-12-08)
 
 * Internal bugfixes (re-generated with latest generator)

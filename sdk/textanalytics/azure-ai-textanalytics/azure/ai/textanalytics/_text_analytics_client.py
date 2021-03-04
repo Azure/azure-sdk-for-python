@@ -348,7 +348,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'entities_recognition_pii'" in str(error):
                 raise ValueError(
-                    "'recognize_pii_entities' endpoint is only available for API version v3.1-preview and up"
+                    "'recognize_pii_entities' endpoint is only available for API version V3_1_PREVIEW and up"
                 )
             raise error
         except HttpResponseError as error:
@@ -437,7 +437,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
         healthcare_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.3").HealthcareJobState,
+            self._client.models(api_version="v3.1-preview.4").HealthcareJobState,
             raw_response
         )
         return healthcare_paged_result(
@@ -460,7 +460,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         Entities are associated with references that can be found in existing knowledge bases,
         such as UMLS, CHV, MSH, etc.
 
-        Relations are comprised of a pair of entities and a directional relationship.
+        We also extract the relations found between entities, for example in "The subject took 100 mg of ibuprofen",
+        we would extract the relationship between the "100 mg" dosage and the "ibuprofen" medication.
+
+        NOTE: this endpoint is currently in gated preview, meaning your subscription needs to be allow-listed
+        for you to use this endpoint. More information about that here:
+        https://aka.ms/text-analytics-health-request-access
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -530,7 +535,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
                     "'begin_analyze_healthcare_entities' method is only available for API version \
-                    v3.1-preview.3 and up."
+                    V3_1_PREVIEW and up."
                 )
             raise error
 
@@ -710,7 +715,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
         analyze_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.3").AnalyzeJobState, # pylint: disable=protected-access
+            self._client.models(api_version="v3.1-preview.4").AnalyzeJobState, # pylint: disable=protected-access
             raw_response
         )
         return analyze_paged_result(
@@ -777,7 +782,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = self._client.models(api_version="v3.1-preview.3").MultiLanguageBatchInput(
+        docs = self._client.models(api_version="v3.1-preview.4").MultiLanguageBatchInput(
             documents=_validate_input(documents, "language", language)
         )
         show_stats = kwargs.pop("show_stats", False)
@@ -788,7 +793,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         task_order = [_determine_action_type(action) for action in actions]
 
         try:
-            analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
+            analyze_tasks = self._client.models(api_version='v3.1-preview.4').JobManifestTasks(
                 entity_recognition_tasks=[
                     t.to_generated() for t in
                     [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES]
@@ -802,7 +807,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
                 ]
             )
-            analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
+            analyze_body = self._client.models(api_version='v3.1-preview.4').AnalyzeBatchInput(
                 display_name=display_name,
                 tasks=analyze_tasks,
                 analysis_input=docs
@@ -825,7 +830,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
-                    "'begin_analyze_batch_actions' endpoint is only available for API version v3.1-preview.3"
+                    "'begin_analyze_batch_actions' endpoint is only available for API version V3_1_PREVIEW and up"
                 )
             raise error
 

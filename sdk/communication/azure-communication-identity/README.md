@@ -57,11 +57,11 @@ user = identity_client.create_user()
 print("User created with id:" + user.identifier)
 ```
 
-Alternatively, use the `create_user_with_token` method to create a new user and issue a token for it.\
+Alternatively, use the `create_user_and_token` method to create a new user and issue a token for it.\
 For this option, a list of `CommunicationTokenScope` must be defined (see "Issuing an access token" for more information)
 
 ```python
-user, tokenresponse = identity_client.create_user_with_token(scopes=[CommunicationTokenScope.CHAT])
+user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
 print("User id:" + user.identifier)
 print("Token issued with value: " + tokenresponse.token)
 ```

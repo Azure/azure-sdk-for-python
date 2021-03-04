@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/groups/fakeDeviceId
+  response:
+    body:
+      string: "{\r\n  \"groupId\": \"fakeDeviceId\",\r\n  \"tags\": [\r\n    \"fakeDeviceId\"\r\n
+        \ ],\r\n  \"createdDateTime\": \"2021-02-09T23:28:03+00:00\",\r\n  \"groupType\":
+        \"IoTHubTag\",\r\n  \"deviceCount\": 1\r\n}"
+    headers:
+      content-length:
+      - '175'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 18:10:22 GMT
+      traceparent:
+      - 00-678e381993357e4dad257f6ec10a7685-b97a2e33bdeb3442-00
+    status:
+      code: 200
+      message: OK
+version: 1
