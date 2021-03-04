@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------------------------
 import asyncio
 import logging
-import six
 
 from typing import Any, Union, TYPE_CHECKING, List, Optional, Dict, cast
 from uamqp import constants

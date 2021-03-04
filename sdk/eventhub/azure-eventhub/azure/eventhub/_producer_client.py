@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
-import six
 
 from typing import Any, Union, TYPE_CHECKING, Dict, List, Optional, cast
 
