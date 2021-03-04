@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: aks
     Artifacts:
-    - name: azure_mgmt_devspaces
+    - name: azure-mgmt-devspaces
       safeName: azuremgmtdevspaces

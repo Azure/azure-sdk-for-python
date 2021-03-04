@@ -36,5 +36,5 @@ extends:
   parameters:
     ServiceDirectory: streamanalytics
     Artifacts:
-    - name: azure_mgmt_streamanalytics
+    - name: azure-mgmt-streamanalytics
       safeName: azuremgmtstreamanalytics

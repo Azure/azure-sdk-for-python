@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: healthcareapis
     Artifacts:
-    - name: azure_mgmt_healthcareapis
+    - name: azure-mgmt-healthcareapis
       safeName: azuremgmthealthcareapis

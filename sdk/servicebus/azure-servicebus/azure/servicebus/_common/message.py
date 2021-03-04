@@ -36,13 +36,14 @@ from .constants import (
     MESSAGE_PROPERTY_MAX_LENGTH,
 )
 
+from ..exceptions import MessageSizeExceededError
 from .utils import (
     utc_from_timestamp,
     utc_now,
     transform_messages_to_sendable_if_needed,
     trace_message,
+    create_messages_from_dicts_if_needed
 )
-from ..exceptions import MessageSizeExceededError
 
 if TYPE_CHECKING:
     from ..aio._servicebus_receiver_async import (
@@ -537,7 +538,7 @@ class ServiceBusMessageBatch(object):
     def _from_list(self, messages, parent_span=None):
         # type: (Iterable[ServiceBusMessage], AbstractSpan) -> None
         for each in messages:
-            if not isinstance(each, ServiceBusMessage):
+            if not isinstance(each, (ServiceBusMessage, dict)):
                 raise TypeError(
                     "Only ServiceBusMessage or an iterable object containing ServiceBusMessage "
                     "objects are accepted. Received instead: {}".format(
@@ -577,11 +578,14 @@ class ServiceBusMessageBatch(object):
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageSizeExceededError, when exceeding the size limit.
         """
+
         return self._add(message)
 
     def _add(self, message, parent_span=None):
         # type: (ServiceBusMessage, AbstractSpan) -> None
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
+
+        message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)  # type: ignore
         message = transform_messages_to_sendable_if_needed(message)
         trace_message(
             message, parent_span

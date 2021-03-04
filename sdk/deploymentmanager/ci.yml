@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: deploymentmanager
     Artifacts:
-    - name: azure_mgmt_deploymentmanager
+    - name: azure-mgmt-deploymentmanager
       safeName: azuremgmtdeploymentmanager

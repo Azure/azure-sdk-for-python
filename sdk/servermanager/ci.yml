@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: servermanager
     Artifacts:
-    - name: azure_mgmt_servermanager
+    - name: azure-mgmt-servermanager
       safeName: azuremgmtservermanager

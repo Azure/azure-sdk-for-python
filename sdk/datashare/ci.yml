@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: datashare
     Artifacts:
-    - name: azure_mgmt_datashare
+    - name: azure-mgmt-datashare
       safeName: azuremgmtdatashare

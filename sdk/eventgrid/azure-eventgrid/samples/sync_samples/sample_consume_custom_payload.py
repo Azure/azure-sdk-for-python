@@ -12,7 +12,7 @@ USAGE:
     python sample_consume_custom_payload.py
 """
 
-from azure.eventgrid import CloudEvent
+from azure.core.messaging import CloudEvent
 import json
 
 # all types of CloudEvents below produce same DeserializedEvent

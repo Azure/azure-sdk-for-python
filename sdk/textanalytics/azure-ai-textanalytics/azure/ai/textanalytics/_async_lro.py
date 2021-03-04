@@ -85,7 +85,7 @@ class AnalyzeHealthcareEntitiesAsyncLROPollingMethod(TextAnalyticsAsyncLROPollin
 
     @property
     def _current_body(self):
-        from ._generated.v3_1_preview_3.models import JobMetadata
+        from ._generated.v3_1_preview_4.models import JobMetadata
         return JobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -170,7 +170,7 @@ class AsyncAnalyzeBatchActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMetho
 
     @property
     def _current_body(self):
-        from ._generated.v3_1_preview_3.models import AnalyzeJobMetadata
+        from ._generated.v3_1_preview_4.models import AnalyzeJobMetadata
         return AnalyzeJobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -265,4 +265,3 @@ class AsyncAnalyzeBatchActionsLROPoller(AsyncLROPoller[PollingReturnType]):
     @property
     def id(self):
         return self._polling_method.id
-    

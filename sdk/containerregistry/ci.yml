@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: containerregistry
     Artifacts:
-    - name: azure_mgmt_containerregistry
+    - name: azure-mgmt-containerregistry
       safeName: azuremgmtcontainerregistry

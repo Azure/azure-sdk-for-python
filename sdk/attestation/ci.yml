@@ -30,7 +30,7 @@ extends:
   parameters:
     ServiceDirectory: attestation
     Artifacts:
-    - name: azure_mgmt_attestation
+    - name: azure-mgmt-attestation
       safeName: azuremgmtattestation
-    - name: azure_security_attestation
+    - name: azure-security-attestation
       safeName: azuresecurityattestation

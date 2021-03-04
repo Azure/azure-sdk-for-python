@@ -11,10 +11,10 @@ from devtools_testutils import AzureTestCase
 from msrest.serialization import TZ_UTC
 
 from azure.communication.identity import CommunicationIdentityClient
+from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
+from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.chat import (
     ChatClient,
-    CommunicationTokenCredential,
-    CommunicationTokenRefreshOptions,
     ChatThreadParticipant,
     ChatMessageType
 )
@@ -81,7 +81,8 @@ class ChatThreadClientTest(CommunicationTestCase):
             display_name='name',
             share_history_time=share_history_time
         )]
-        self.chat_thread_client = self.chat_client.create_chat_thread(topic, participants)
+        create_chat_thread_result = self.chat_client.create_chat_thread(topic, thread_participants=participants)
+        self.chat_thread_client = self.chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
         self.thread_id = self.chat_thread_client.thread_id
 
     def _create_thread_w_two_users(
@@ -104,7 +105,8 @@ class ChatThreadClientTest(CommunicationTestCase):
                 share_history_time=share_history_time
             )
         ]
-        self.chat_thread_client = self.chat_client.create_chat_thread(topic, participants)
+        create_chat_thread_result = self.chat_client.create_chat_thread(topic, thread_participants=participants)
+        self.chat_thread_client = self.chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
         self.thread_id = self.chat_thread_client.thread_id
 
     def _send_message(self):
@@ -207,8 +209,14 @@ class ChatThreadClientTest(CommunicationTestCase):
             user=self.new_user,
             display_name='name',
             share_history_time=share_history_time)
+        raised = False
 
-        self.chat_thread_client.add_participant(new_participant)
+        try:
+            self.chat_thread_client.add_participant(new_participant)
+        except RuntimeError as e:
+            raised = True
+
+        assert raised is False
 
     @pytest.mark.live_test_only
     def test_add_participants(self):
@@ -222,7 +230,11 @@ class ChatThreadClientTest(CommunicationTestCase):
                 share_history_time=share_history_time)
         participants = [new_participant]
 
-        self.chat_thread_client.add_participants(participants)
+        failed_participants = self.chat_thread_client.add_participants(participants)
+
+        # no error occured while adding participants
+        assert len(failed_participants) == 0
+
 
     @pytest.mark.live_test_only
     def test_remove_participant(self):

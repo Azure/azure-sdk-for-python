@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: managementgroups
     Artifacts:
-    - name: azure_mgmt_managementgroups
+    - name: azure-mgmt-managementgroups
       safeName: azuremgmtmanagementgroups

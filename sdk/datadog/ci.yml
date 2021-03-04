@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: datadog
     Artifacts:
-    - name: azure_mgmt_datadog
+    - name: azure-mgmt-datadog
       safeName: azuremgmtdatadog

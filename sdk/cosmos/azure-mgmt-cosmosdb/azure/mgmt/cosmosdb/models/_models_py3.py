@@ -18,7 +18,7 @@ class ApiProperties(msrest.serialization.Model):
     """ApiProperties.
 
     :param server_version: Describes the ServerVersion of an a MongoDB account. Possible values
-     include: "3.2", "3.6".
+     include: "3.2", "3.6", "4.0".
     :type server_version: str or ~azure.mgmt.cosmosdb.models.ServerVersion
     """
 
@@ -205,6 +205,39 @@ class AutoUpgradePolicyResource(msrest.serialization.Model):
         self.throughput_policy = throughput_policy
 
 
+class BackupPolicy(msrest.serialization.Model):
+    """The object representing the policy for taking backups on an account.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ContinuousModeBackupPolicy, PeriodicModeBackupPolicy.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Describes the mode of backups.Constant filled by server.  Possible
+     values include: "Periodic", "Continuous".
+    :type type: str or ~azure.mgmt.cosmosdb.models.BackupPolicyType
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'Continuous': 'ContinuousModeBackupPolicy', 'Periodic': 'PeriodicModeBackupPolicy'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BackupPolicy, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
+
+
 class Capability(msrest.serialization.Model):
     """Cosmos DB capability object.
 
@@ -251,8 +284,8 @@ class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Cassandra keyspace.
     :type resource: ~azure.mgmt.cosmosdb.models.CassandraKeyspaceResource
-    :param options: Required. A key-value pair of options to be applied for the request. This
-     corresponds to the headers sent with the request.
+    :param options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
     :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
@@ -261,7 +294,6 @@ class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource': {'required': True},
-        'options': {'required': True},
     }
 
     _attribute_map = {
@@ -278,9 +310,9 @@ class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
         self,
         *,
         resource: "CassandraKeyspaceResource",
-        options: "CreateUpdateOptions",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        options: Optional["CreateUpdateOptions"] = None,
         **kwargs
     ):
         super(CassandraKeyspaceCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
@@ -375,7 +407,7 @@ class ExtendedResourceProperties(msrest.serialization.Model):
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -389,7 +421,7 @@ class ExtendedResourceProperties(msrest.serialization.Model):
 
     _attribute_map = {
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
     }
 
@@ -415,7 +447,7 @@ class CassandraKeyspaceGetPropertiesResource(ExtendedResourceProperties, Cassand
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -431,7 +463,7 @@ class CassandraKeyspaceGetPropertiesResource(ExtendedResourceProperties, Cassand
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
     }
 
@@ -605,8 +637,8 @@ class CassandraTableCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Cassandra table.
     :type resource: ~azure.mgmt.cosmosdb.models.CassandraTableResource
-    :param options: Required. A key-value pair of options to be applied for the request. This
-     corresponds to the headers sent with the request.
+    :param options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
     :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
@@ -615,7 +647,6 @@ class CassandraTableCreateUpdateParameters(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource': {'required': True},
-        'options': {'required': True},
     }
 
     _attribute_map = {
@@ -632,9 +663,9 @@ class CassandraTableCreateUpdateParameters(ARMResourceProperties):
         self,
         *,
         resource: "CassandraTableResource",
-        options: "CreateUpdateOptions",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        options: Optional["CreateUpdateOptions"] = None,
         **kwargs
     ):
         super(CassandraTableCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
@@ -727,7 +758,7 @@ class CassandraTableGetPropertiesResource(ExtendedResourceProperties, CassandraT
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -746,7 +777,7 @@ class CassandraTableGetPropertiesResource(ExtendedResourceProperties, CassandraT
         'schema': {'key': 'schema', 'type': 'CassandraSchema'},
         'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'int'},
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
     }
 
@@ -903,14 +934,44 @@ class Column(msrest.serialization.Model):
         self.type = type
 
 
+class Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
+    """Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
 class CompositePath(msrest.serialization.Model):
     """CompositePath.
 
     :param path: The path for which the indexing behavior applies to. Index paths typically start
      with root and end with wildcard (/path/*).
     :type path: str
-    :param order: Sort order for composite paths. Possible values include: "Ascending",
-     "Descending".
+    :param order: Sort order for composite paths. Possible values include: "ascending",
+     "descending".
     :type order: str or ~azure.mgmt.cosmosdb.models.CompositePathSortOrder
     """
 
@@ -1013,23 +1074,30 @@ class ConsistencyPolicy(msrest.serialization.Model):
 class ContainerPartitionKey(msrest.serialization.Model):
     """The configuration of the partition key to be used for partitioning data into multiple partitions.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :param paths: List of paths using which data within the container can be partitioned.
     :type paths: list[str]
-    :param kind: Indicates the kind of algorithm used for partitioning. Possible values include:
-     "Hash", "Range". Default value: "Hash".
+    :param kind: Indicates the kind of algorithm used for partitioning. For MultiHash, multiple
+     partition keys (upto three maximum) are supported for container create. Possible values
+     include: "Hash", "Range", "MultiHash". Default value: "Hash".
     :type kind: str or ~azure.mgmt.cosmosdb.models.PartitionKind
     :param version: Indicates the version of the partition key definition.
     :type version: int
+    :ivar system_key: Indicates if the container is using a system generated partition key.
+    :vartype system_key: bool
     """
 
     _validation = {
         'version': {'maximum': 2, 'minimum': 1},
+        'system_key': {'readonly': True},
     }
 
     _attribute_map = {
         'paths': {'key': 'paths', 'type': '[str]'},
         'kind': {'key': 'kind', 'type': 'str'},
         'version': {'key': 'version', 'type': 'int'},
+        'system_key': {'key': 'systemKey', 'type': 'bool'},
     }
 
     def __init__(
@@ -1044,6 +1112,33 @@ class ContainerPartitionKey(msrest.serialization.Model):
         self.paths = paths
         self.kind = kind
         self.version = version
+        self.system_key = None
+
+
+class ContinuousModeBackupPolicy(BackupPolicy):
+    """The object representing continuous mode backup policy.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Describes the mode of backups.Constant filled by server.  Possible
+     values include: "Periodic", "Continuous".
+    :type type: str or ~azure.mgmt.cosmosdb.models.BackupPolicyType
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ContinuousModeBackupPolicy, self).__init__(**kwargs)
+        self.type = 'Continuous'  # type: str
 
 
 class CorsPolicy(msrest.serialization.Model):
@@ -1180,6 +1275,8 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :param kind: Indicates the type of database account. This can only be set at database account
      creation. Possible values include: "GlobalDocumentDB", "MongoDB", "Parse".
     :type kind: str or ~azure.mgmt.cosmosdb.models.DatabaseAccountKind
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     :param consistency_policy: The consistency policy for the Cosmos DB account.
     :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
     :param locations: Required. An array that contains the georeplication locations enabled for the
@@ -1215,17 +1312,25 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault.
     :type key_vault_key_uri: str
-    :ivar public_network_access: Whether requests from Public Network are allowed. Possible values
+    :param public_network_access: Whether requests from Public Network are allowed. Possible values
      include: "Enabled", "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
+    :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :param enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :type enable_free_tier: bool
     :param api_properties: API specific properties. Currently, supported only for MongoDB API.
     :type api_properties: ~azure.mgmt.cosmosdb.models.ApiProperties
     :param enable_analytical_storage: Flag to indicate whether to enable storage analytics.
     :type enable_analytical_storage: bool
+    :param backup_policy: The object representing the policy for taking backups on an account.
+    :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
     :param cors: The CORS policy for the Cosmos DB database account.
     :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
+    :param network_acl_bypass: Indicates what services are allowed to bypass firewall checks.
+     Possible values include: "None", "AzureServices".
+    :type network_acl_bypass: str or ~azure.mgmt.cosmosdb.models.NetworkAclBypass
+    :param network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
+     Bypass for the Cosmos DB account.
+    :type network_acl_bypass_resource_ids: list[str]
     """
 
     _validation = {
@@ -1234,7 +1339,6 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'type': {'readonly': True},
         'locations': {'required': True},
         'database_account_offer_type': {'required': True, 'constant': True},
-        'public_network_access': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1244,6 +1348,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
         'locations': {'key': 'properties.locations', 'type': '[Location]'},
         'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
@@ -1261,7 +1366,10 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
         'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
+        'network_acl_bypass': {'key': 'properties.networkAclBypass', 'type': 'str'},
+        'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
     }
 
     database_account_offer_type = "Standard"
@@ -1273,6 +1381,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         kind: Optional[Union[str, "DatabaseAccountKind"]] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
         consistency_policy: Optional["ConsistencyPolicy"] = None,
         ip_rules: Optional[List["IpAddressOrRange"]] = None,
         is_virtual_network_filter_enabled: Optional[bool] = None,
@@ -1284,14 +1393,19 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         connector_offer: Optional[Union[str, "ConnectorOffer"]] = None,
         disable_key_based_metadata_write_access: Optional[bool] = None,
         key_vault_key_uri: Optional[str] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         enable_free_tier: Optional[bool] = None,
         api_properties: Optional["ApiProperties"] = None,
         enable_analytical_storage: Optional[bool] = None,
+        backup_policy: Optional["BackupPolicy"] = None,
         cors: Optional[List["CorsPolicy"]] = None,
+        network_acl_bypass: Optional[Union[str, "NetworkAclBypass"]] = None,
+        network_acl_bypass_resource_ids: Optional[List[str]] = None,
         **kwargs
     ):
         super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
+        self.identity = identity
         self.consistency_policy = consistency_policy
         self.locations = locations
         self.ip_rules = ip_rules
@@ -1304,11 +1418,14 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
         self.key_vault_key_uri = key_vault_key_uri
-        self.public_network_access = None
+        self.public_network_access = public_network_access
         self.enable_free_tier = enable_free_tier
         self.api_properties = api_properties
         self.enable_analytical_storage = enable_analytical_storage
+        self.backup_policy = backup_policy
         self.cors = cors
+        self.network_acl_bypass = network_acl_bypass
+        self.network_acl_bypass_resource_ids = network_acl_bypass_resource_ids
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):
@@ -1334,6 +1451,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param kind: Indicates the type of database account. This can only be set at database account
      creation. Possible values include: "GlobalDocumentDB", "MongoDB", "Parse".
     :type kind: str or ~azure.mgmt.cosmosdb.models.DatabaseAccountKind
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     :ivar provisioning_state: The status of the Cosmos DB account at the time the operation was
      called. The status can be one of following. 'Creating' – the Cosmos DB account is being
      created. When an account is in Creating state, only properties that are specified as input for
@@ -1390,17 +1509,25 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault.
     :type key_vault_key_uri: str
-    :ivar public_network_access: Whether requests from Public Network are allowed. Possible values
+    :param public_network_access: Whether requests from Public Network are allowed. Possible values
      include: "Enabled", "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
+    :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :param enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :type enable_free_tier: bool
     :param api_properties: API specific properties.
     :type api_properties: ~azure.mgmt.cosmosdb.models.ApiProperties
     :param enable_analytical_storage: Flag to indicate whether to enable storage analytics.
     :type enable_analytical_storage: bool
+    :param backup_policy: The object representing the policy for taking backups on an account.
+    :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
     :param cors: The CORS policy for the Cosmos DB database account.
     :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
+    :param network_acl_bypass: Indicates what services are allowed to bypass firewall checks.
+     Possible values include: "None", "AzureServices".
+    :type network_acl_bypass: str or ~azure.mgmt.cosmosdb.models.NetworkAclBypass
+    :param network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
+     Bypass for the Cosmos DB account.
+    :type network_acl_bypass_resource_ids: list[str]
     """
 
     _validation = {
@@ -1415,7 +1542,6 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'locations': {'readonly': True},
         'failover_policies': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
-        'public_network_access': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1425,6 +1551,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'document_endpoint': {'key': 'properties.documentEndpoint', 'type': 'str'},
         'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
@@ -1448,7 +1575,10 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
         'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
+        'network_acl_bypass': {'key': 'properties.networkAclBypass', 'type': 'str'},
+        'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
     }
 
     database_account_offer_type = "Standard"
@@ -1459,6 +1589,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         kind: Optional[Union[str, "DatabaseAccountKind"]] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
         ip_rules: Optional[List["IpAddressOrRange"]] = None,
         is_virtual_network_filter_enabled: Optional[bool] = None,
         enable_automatic_failover: Optional[bool] = None,
@@ -1470,14 +1601,19 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         connector_offer: Optional[Union[str, "ConnectorOffer"]] = None,
         disable_key_based_metadata_write_access: Optional[bool] = None,
         key_vault_key_uri: Optional[str] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         enable_free_tier: Optional[bool] = None,
         api_properties: Optional["ApiProperties"] = None,
         enable_analytical_storage: Optional[bool] = None,
+        backup_policy: Optional["BackupPolicy"] = None,
         cors: Optional[List["CorsPolicy"]] = None,
+        network_acl_bypass: Optional[Union[str, "NetworkAclBypass"]] = None,
+        network_acl_bypass_resource_ids: Optional[List[str]] = None,
         **kwargs
     ):
         super(DatabaseAccountGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
+        self.identity = identity
         self.provisioning_state = None
         self.document_endpoint = None
         self.database_account_offer_type = None
@@ -1497,11 +1633,14 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
         self.key_vault_key_uri = key_vault_key_uri
-        self.public_network_access = None
+        self.public_network_access = public_network_access
         self.enable_free_tier = enable_free_tier
         self.api_properties = api_properties
         self.enable_analytical_storage = enable_analytical_storage
+        self.backup_policy = backup_policy
         self.cors = cors
+        self.network_acl_bypass = network_acl_bypass
+        self.network_acl_bypass_resource_ids = network_acl_bypass_resource_ids
 
 
 class DatabaseAccountListConnectionStringsResult(msrest.serialization.Model):
@@ -1650,8 +1789,6 @@ class DatabaseAccountsListResult(msrest.serialization.Model):
 class DatabaseAccountUpdateParameters(msrest.serialization.Model):
     """Parameters for patching Azure Cosmos DB database account properties.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param tags: A set of tags. Tags are a list of key-value pairs that describe the resource.
      These tags can be used in viewing and grouping this resource (across resource groups). A
      maximum of 15 tags can be provided for a resource. Each tag must have a key no greater than 128
@@ -1661,6 +1798,8 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
     :type tags: dict[str, str]
     :param location: The location of the resource group to which the resource belongs.
     :type location: str
+    :param identity: Identity for the resource.
+    :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     :param consistency_policy: The consistency policy for the Cosmos DB account.
     :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
     :param locations: An array that contains the georeplication locations enabled for the Cosmos DB
@@ -1693,26 +1832,31 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
     :type disable_key_based_metadata_write_access: bool
     :param key_vault_key_uri: The URI of the key vault.
     :type key_vault_key_uri: str
-    :ivar public_network_access: Whether requests from Public Network are allowed. Possible values
+    :param public_network_access: Whether requests from Public Network are allowed. Possible values
      include: "Enabled", "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
+    :type public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :param enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :type enable_free_tier: bool
     :param api_properties: API specific properties. Currently, supported only for MongoDB API.
     :type api_properties: ~azure.mgmt.cosmosdb.models.ApiProperties
     :param enable_analytical_storage: Flag to indicate whether to enable storage analytics.
     :type enable_analytical_storage: bool
+    :param backup_policy: The object representing the policy for taking backups on an account.
+    :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
     :param cors: The CORS policy for the Cosmos DB database account.
     :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
+    :param network_acl_bypass: Indicates what services are allowed to bypass firewall checks.
+     Possible values include: "None", "AzureServices".
+    :type network_acl_bypass: str or ~azure.mgmt.cosmosdb.models.NetworkAclBypass
+    :param network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
+     Bypass for the Cosmos DB account.
+    :type network_acl_bypass_resource_ids: list[str]
     """
-
-    _validation = {
-        'public_network_access': {'readonly': True},
-    }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
         'locations': {'key': 'properties.locations', 'type': '[Location]'},
         'ip_rules': {'key': 'properties.ipRules', 'type': '[IpAddressOrRange]'},
@@ -1729,7 +1873,10 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
         'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
+        'network_acl_bypass': {'key': 'properties.networkAclBypass', 'type': 'str'},
+        'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
     }
 
     def __init__(
@@ -1737,6 +1884,7 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
+        identity: Optional["ManagedServiceIdentity"] = None,
         consistency_policy: Optional["ConsistencyPolicy"] = None,
         locations: Optional[List["Location"]] = None,
         ip_rules: Optional[List["IpAddressOrRange"]] = None,
@@ -1749,15 +1897,20 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         connector_offer: Optional[Union[str, "ConnectorOffer"]] = None,
         disable_key_based_metadata_write_access: Optional[bool] = None,
         key_vault_key_uri: Optional[str] = None,
+        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
         enable_free_tier: Optional[bool] = None,
         api_properties: Optional["ApiProperties"] = None,
         enable_analytical_storage: Optional[bool] = None,
+        backup_policy: Optional["BackupPolicy"] = None,
         cors: Optional[List["CorsPolicy"]] = None,
+        network_acl_bypass: Optional[Union[str, "NetworkAclBypass"]] = None,
+        network_acl_bypass_resource_ids: Optional[List[str]] = None,
         **kwargs
     ):
         super(DatabaseAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
+        self.identity = identity
         self.consistency_policy = consistency_policy
         self.locations = locations
         self.ip_rules = ip_rules
@@ -1770,11 +1923,44 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         self.connector_offer = connector_offer
         self.disable_key_based_metadata_write_access = disable_key_based_metadata_write_access
         self.key_vault_key_uri = key_vault_key_uri
-        self.public_network_access = None
+        self.public_network_access = public_network_access
         self.enable_free_tier = enable_free_tier
         self.api_properties = api_properties
         self.enable_analytical_storage = enable_analytical_storage
+        self.backup_policy = backup_policy
         self.cors = cors
+        self.network_acl_bypass = network_acl_bypass
+        self.network_acl_bypass_resource_ids = network_acl_bypass_resource_ids
+
+
+class ErrorAdditionalInfo(msrest.serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -1801,6 +1987,73 @@ class ErrorResponse(msrest.serialization.Model):
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = code
         self.message = message
+
+
+class ErrorResponseAutoGenerated(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.cosmosdb.models.ErrorResponseAutoGenerated]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.cosmosdb.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorResponseAutoGenerated]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponseAutoGenerated, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponseUpdatedFormat(msrest.serialization.Model):
+    """An error response from the service.
+
+    :param error: Common error response for all Azure Resource Manager APIs to return error details
+     for failed operations. (This also follows the OData error response format.).
+    :type error: ~azure.mgmt.cosmosdb.models.ErrorResponseAutoGenerated
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponseAutoGenerated'},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: Optional["ErrorResponseAutoGenerated"] = None,
+        **kwargs
+    ):
+        super(ErrorResponseUpdatedFormat, self).__init__(**kwargs)
+        self.error = error
 
 
 class ExcludedPath(msrest.serialization.Model):
@@ -1917,8 +2170,8 @@ class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Gremlin database.
     :type resource: ~azure.mgmt.cosmosdb.models.GremlinDatabaseResource
-    :param options: Required. A key-value pair of options to be applied for the request. This
-     corresponds to the headers sent with the request.
+    :param options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
     :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
@@ -1927,7 +2180,6 @@ class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource': {'required': True},
-        'options': {'required': True},
     }
 
     _attribute_map = {
@@ -1944,9 +2196,9 @@ class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
         self,
         *,
         resource: "GremlinDatabaseResource",
-        options: "CreateUpdateOptions",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        options: Optional["CreateUpdateOptions"] = None,
         **kwargs
     ):
         super(GremlinDatabaseCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
@@ -2018,7 +2270,7 @@ class GremlinDatabaseGetPropertiesResource(ExtendedResourceProperties, GremlinDa
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -2034,7 +2286,7 @@ class GremlinDatabaseGetPropertiesResource(ExtendedResourceProperties, GremlinDa
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
     }
 
@@ -2156,8 +2408,8 @@ class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Gremlin graph.
     :type resource: ~azure.mgmt.cosmosdb.models.GremlinGraphResource
-    :param options: Required. A key-value pair of options to be applied for the request. This
-     corresponds to the headers sent with the request.
+    :param options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
     :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
@@ -2166,7 +2418,6 @@ class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource': {'required': True},
-        'options': {'required': True},
     }
 
     _attribute_map = {
@@ -2183,9 +2434,9 @@ class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
         self,
         *,
         resource: "GremlinGraphResource",
-        options: "CreateUpdateOptions",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        options: Optional["CreateUpdateOptions"] = None,
         **kwargs
     ):
         super(GremlinGraphCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
@@ -2298,7 +2549,7 @@ class GremlinGraphGetPropertiesResource(ExtendedResourceProperties, GremlinGraph
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -2319,7 +2570,7 @@ class GremlinGraphGetPropertiesResource(ExtendedResourceProperties, GremlinGraph
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
     }
 
@@ -2493,8 +2744,8 @@ class IndexingPolicy(msrest.serialization.Model):
 
     :param automatic: Indicates if the indexing policy is automatic.
     :type automatic: bool
-    :param indexing_mode: Indicates the indexing mode. Possible values include: "Consistent",
-     "Lazy", "None". Default value: "Consistent".
+    :param indexing_mode: Indicates the indexing mode. Possible values include: "consistent",
+     "lazy", "none". Default value: "consistent".
     :type indexing_mode: str or ~azure.mgmt.cosmosdb.models.IndexingMode
     :param included_paths: List of paths to include in the indexing.
     :type included_paths: list[~azure.mgmt.cosmosdb.models.IncludedPath]
@@ -2519,7 +2770,7 @@ class IndexingPolicy(msrest.serialization.Model):
         self,
         *,
         automatic: Optional[bool] = None,
-        indexing_mode: Optional[Union[str, "IndexingMode"]] = "Consistent",
+        indexing_mode: Optional[Union[str, "IndexingMode"]] = "consistent",
         included_paths: Optional[List["IncludedPath"]] = None,
         excluded_paths: Optional[List["ExcludedPath"]] = None,
         composite_indexes: Optional[List[List["CompositePath"]]] = None,
@@ -2622,6 +2873,55 @@ class Location(msrest.serialization.Model):
         self.provisioning_state = None
         self.failover_priority = failover_priority
         self.is_zone_redundant = is_zone_redundant
+
+
+class ManagedServiceIdentity(msrest.serialization.Model):
+    """Identity for the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of the system assigned identity. This property will only
+     be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :param type: The type of identity used for the resource. The type 'SystemAssigned,UserAssigned'
+     includes both an implicitly created identity and a set of user assigned identities. The type
+     'None' will remove any identities from the service. Possible values include: "SystemAssigned",
+     "UserAssigned", "SystemAssigned,UserAssigned", "None".
+    :type type: str or ~azure.mgmt.cosmosdb.models.ResourceIdentityType
+    :param user_assigned_identities: The list of user identities associated with resource. The user
+     identity dictionary key references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.cosmosdb.models.Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties]
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties"]] = None,
+        **kwargs
+    ):
+        super(ManagedServiceIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class Metric(msrest.serialization.Model):
@@ -2906,8 +3206,8 @@ class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a MongoDB collection.
     :type resource: ~azure.mgmt.cosmosdb.models.MongoDBCollectionResource
-    :param options: Required. A key-value pair of options to be applied for the request. This
-     corresponds to the headers sent with the request.
+    :param options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
     :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
@@ -2916,7 +3216,6 @@ class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource': {'required': True},
-        'options': {'required': True},
     }
 
     _attribute_map = {
@@ -2933,9 +3232,9 @@ class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
         self,
         *,
         resource: "MongoDBCollectionResource",
-        options: "CreateUpdateOptions",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        options: Optional["CreateUpdateOptions"] = None,
         **kwargs
     ):
         super(MongoDBCollectionCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
@@ -3028,7 +3327,7 @@ class MongoDBCollectionGetPropertiesResource(ExtendedResourceProperties, MongoDB
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -3047,7 +3346,7 @@ class MongoDBCollectionGetPropertiesResource(ExtendedResourceProperties, MongoDB
         'indexes': {'key': 'indexes', 'type': '[MongoIndex]'},
         'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'int'},
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
     }
 
@@ -3175,8 +3474,8 @@ class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a MongoDB database.
     :type resource: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseResource
-    :param options: Required. A key-value pair of options to be applied for the request. This
-     corresponds to the headers sent with the request.
+    :param options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
     :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
@@ -3185,7 +3484,6 @@ class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource': {'required': True},
-        'options': {'required': True},
     }
 
     _attribute_map = {
@@ -3202,9 +3500,9 @@ class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
         self,
         *,
         resource: "MongoDBDatabaseResource",
-        options: "CreateUpdateOptions",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        options: Optional["CreateUpdateOptions"] = None,
         **kwargs
     ):
         super(MongoDBDatabaseCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
@@ -3276,7 +3574,7 @@ class MongoDBDatabaseGetPropertiesResource(ExtendedResourceProperties, MongoDBDa
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -3292,7 +3590,7 @@ class MongoDBDatabaseGetPropertiesResource(ExtendedResourceProperties, MongoDBDa
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
     }
 
@@ -4037,18 +4335,83 @@ class PercentileMetricValue(MetricValue):
         self.p99 = None
 
 
+class PeriodicModeBackupPolicy(BackupPolicy):
+    """The object representing periodic mode backup policy.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Describes the mode of backups.Constant filled by server.  Possible
+     values include: "Periodic", "Continuous".
+    :type type: str or ~azure.mgmt.cosmosdb.models.BackupPolicyType
+    :param periodic_mode_properties: Configuration values for periodic mode backup.
+    :type periodic_mode_properties: ~azure.mgmt.cosmosdb.models.PeriodicModeProperties
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'periodic_mode_properties': {'key': 'periodicModeProperties', 'type': 'PeriodicModeProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        periodic_mode_properties: Optional["PeriodicModeProperties"] = None,
+        **kwargs
+    ):
+        super(PeriodicModeBackupPolicy, self).__init__(**kwargs)
+        self.type = 'Periodic'  # type: str
+        self.periodic_mode_properties = periodic_mode_properties
+
+
+class PeriodicModeProperties(msrest.serialization.Model):
+    """Configuration values for periodic mode backup.
+
+    :param backup_interval_in_minutes: An integer representing the interval in minutes between two
+     backups.
+    :type backup_interval_in_minutes: int
+    :param backup_retention_interval_in_hours: An integer representing the time (in hours) that
+     each backup is retained.
+    :type backup_retention_interval_in_hours: int
+    """
+
+    _validation = {
+        'backup_interval_in_minutes': {'minimum': 0},
+        'backup_retention_interval_in_hours': {'minimum': 0},
+    }
+
+    _attribute_map = {
+        'backup_interval_in_minutes': {'key': 'backupIntervalInMinutes', 'type': 'int'},
+        'backup_retention_interval_in_hours': {'key': 'backupRetentionIntervalInHours', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        backup_interval_in_minutes: Optional[int] = None,
+        backup_retention_interval_in_hours: Optional[int] = None,
+        **kwargs
+    ):
+        super(PeriodicModeProperties, self).__init__(**kwargs)
+        self.backup_interval_in_minutes = backup_interval_in_minutes
+        self.backup_retention_interval_in_hours = backup_retention_interval_in_hours
+
+
 class Resource(msrest.serialization.Model):
-    """Resource.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
@@ -4079,13 +4442,13 @@ class PrivateEndpointConnection(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param private_endpoint: Private endpoint which the connection belongs to.
     :type private_endpoint: ~azure.mgmt.cosmosdb.models.PrivateEndpointProperty
@@ -4093,53 +4456,6 @@ class PrivateEndpointConnection(Resource):
      Connection.
     :type private_link_service_connection_state:
      ~azure.mgmt.cosmosdb.models.PrivateLinkServiceConnectionStateProperty
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
-    }
-
-    def __init__(
-        self,
-        *,
-        private_endpoint: Optional["PrivateEndpointProperty"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionStateProperty"] = None,
-        **kwargs
-    ):
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
-        self.private_endpoint = private_endpoint
-        self.private_link_service_connection_state = private_link_service_connection_state
-
-
-class PrivateEndpointConnectionAutoGenerated(Resource):
-    """A private endpoint connection.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    :param private_endpoint: Private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.cosmosdb.models.PrivateEndpointProperty
-    :param private_link_service_connection_state: Connection State of the Private Endpoint
-     Connection.
-    :type private_link_service_connection_state:
-     ~azure.mgmt.cosmosdb.models.PrivateLinkServiceConnectionStatePropertyAutoGenerated
     :param group_id: Group id of the private endpoint.
     :type group_id: str
     :param provisioning_state: Provisioning state of the private endpoint.
@@ -4157,7 +4473,7 @@ class PrivateEndpointConnectionAutoGenerated(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStatePropertyAutoGenerated'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
         'group_id': {'key': 'properties.groupId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
@@ -4166,12 +4482,12 @@ class PrivateEndpointConnectionAutoGenerated(Resource):
         self,
         *,
         private_endpoint: Optional["PrivateEndpointProperty"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionStatePropertyAutoGenerated"] = None,
+        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionStateProperty"] = None,
         group_id: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         **kwargs
     ):
-        super(PrivateEndpointConnectionAutoGenerated, self).__init__(**kwargs)
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.group_id = group_id
@@ -4182,17 +4498,17 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """A list of private endpoint connections.
 
     :param value: Array of private endpoint connections.
-    :type value: list[~azure.mgmt.cosmosdb.models.PrivateEndpointConnectionAutoGenerated]
+    :type value: list[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnectionAutoGenerated]'},
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateEndpointConnectionAutoGenerated"]] = None,
+        value: Optional[List["PrivateEndpointConnection"]] = None,
         **kwargs
     ):
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
@@ -4295,38 +4611,6 @@ class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
 
     :param status: The private link service connection status.
     :type status: str
-    :ivar actions_required: Any action that is required beyond basic workflow (approve/ reject/
-     disconnect).
-    :vartype actions_required: str
-    """
-
-    _validation = {
-        'actions_required': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        status: Optional[str] = None,
-        **kwargs
-    ):
-        super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
-        self.status = status
-        self.actions_required = None
-
-
-class PrivateLinkServiceConnectionStatePropertyAutoGenerated(msrest.serialization.Model):
-    """Connection State of the Private Endpoint Connection.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param status: The private link service connection status.
-    :type status: str
     :param description: The private link service connection description.
     :type description: str
     :ivar actions_required: Any action that is required beyond basic workflow (approve/ reject/
@@ -4351,24 +4635,24 @@ class PrivateLinkServiceConnectionStatePropertyAutoGenerated(msrest.serializatio
         description: Optional[str] = None,
         **kwargs
     ):
-        super(PrivateLinkServiceConnectionStatePropertyAutoGenerated, self).__init__(**kwargs)
+        super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
         self.status = status
         self.description = description
         self.actions_required = None
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
@@ -4469,8 +4753,8 @@ class SqlContainerCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a container.
     :type resource: ~azure.mgmt.cosmosdb.models.SqlContainerResource
-    :param options: Required. A key-value pair of options to be applied for the request. This
-     corresponds to the headers sent with the request.
+    :param options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
     :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
@@ -4479,7 +4763,6 @@ class SqlContainerCreateUpdateParameters(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource': {'required': True},
-        'options': {'required': True},
     }
 
     _attribute_map = {
@@ -4496,9 +4779,9 @@ class SqlContainerCreateUpdateParameters(ARMResourceProperties):
         self,
         *,
         resource: "SqlContainerResource",
-        options: "CreateUpdateOptions",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        options: Optional["CreateUpdateOptions"] = None,
         **kwargs
     ):
         super(SqlContainerCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
@@ -4618,7 +4901,7 @@ class SqlContainerGetPropertiesResource(ExtendedResourceProperties, SqlContainer
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -4640,7 +4923,7 @@ class SqlContainerGetPropertiesResource(ExtendedResourceProperties, SqlContainer
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
         'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
     }
 
@@ -4774,8 +5057,8 @@ class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a SQL database.
     :type resource: ~azure.mgmt.cosmosdb.models.SqlDatabaseResource
-    :param options: Required. A key-value pair of options to be applied for the request. This
-     corresponds to the headers sent with the request.
+    :param options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
     :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
@@ -4784,7 +5067,6 @@ class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource': {'required': True},
-        'options': {'required': True},
     }
 
     _attribute_map = {
@@ -4801,9 +5083,9 @@ class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
         self,
         *,
         resource: "SqlDatabaseResource",
-        options: "CreateUpdateOptions",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        options: Optional["CreateUpdateOptions"] = None,
         **kwargs
     ):
         super(SqlDatabaseCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
@@ -4873,7 +5155,7 @@ class SqlDatabaseGetPropertiesResource(SqlDatabaseResource, ExtendedResourceProp
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -4896,7 +5178,7 @@ class SqlDatabaseGetPropertiesResource(SqlDatabaseResource, ExtendedResourceProp
 
     _attribute_map = {
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'colls': {'key': '_colls', 'type': 'str'},
@@ -5027,8 +5309,8 @@ class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a storedProcedure.
     :type resource: ~azure.mgmt.cosmosdb.models.SqlStoredProcedureResource
-    :param options: Required. A key-value pair of options to be applied for the request. This
-     corresponds to the headers sent with the request.
+    :param options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
     :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
@@ -5037,7 +5319,6 @@ class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource': {'required': True},
-        'options': {'required': True},
     }
 
     _attribute_map = {
@@ -5054,9 +5335,9 @@ class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
         self,
         *,
         resource: "SqlStoredProcedureResource",
-        options: "CreateUpdateOptions",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        options: Optional["CreateUpdateOptions"] = None,
         **kwargs
     ):
         super(SqlStoredProcedureCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
@@ -5110,7 +5391,7 @@ class SqlStoredProcedureGetPropertiesResource(ExtendedResourceProperties, SqlSto
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -5127,7 +5408,7 @@ class SqlStoredProcedureGetPropertiesResource(ExtendedResourceProperties, SqlSto
         'id': {'key': 'id', 'type': 'str'},
         'body': {'key': 'body', 'type': 'str'},
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
     }
 
@@ -5246,8 +5527,8 @@ class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a trigger.
     :type resource: ~azure.mgmt.cosmosdb.models.SqlTriggerResource
-    :param options: Required. A key-value pair of options to be applied for the request. This
-     corresponds to the headers sent with the request.
+    :param options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
     :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
@@ -5256,7 +5537,6 @@ class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource': {'required': True},
-        'options': {'required': True},
     }
 
     _attribute_map = {
@@ -5273,9 +5553,9 @@ class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
         self,
         *,
         resource: "SqlTriggerResource",
-        options: "CreateUpdateOptions",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        options: Optional["CreateUpdateOptions"] = None,
         **kwargs
     ):
         super(SqlTriggerCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
@@ -5345,7 +5625,7 @@ class SqlTriggerGetPropertiesResource(ExtendedResourceProperties, SqlTriggerReso
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -5364,7 +5644,7 @@ class SqlTriggerGetPropertiesResource(ExtendedResourceProperties, SqlTriggerReso
         'trigger_type': {'key': 'triggerType', 'type': 'str'},
         'trigger_operation': {'key': 'triggerOperation', 'type': 'str'},
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
     }
 
@@ -5487,8 +5767,8 @@ class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a userDefinedFunction.
     :type resource: ~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionResource
-    :param options: Required. A key-value pair of options to be applied for the request. This
-     corresponds to the headers sent with the request.
+    :param options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
     :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
@@ -5497,7 +5777,6 @@ class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource': {'required': True},
-        'options': {'required': True},
     }
 
     _attribute_map = {
@@ -5514,9 +5793,9 @@ class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
         self,
         *,
         resource: "SqlUserDefinedFunctionResource",
-        options: "CreateUpdateOptions",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        options: Optional["CreateUpdateOptions"] = None,
         **kwargs
     ):
         super(SqlUserDefinedFunctionCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
@@ -5570,7 +5849,7 @@ class SqlUserDefinedFunctionGetPropertiesResource(ExtendedResourceProperties, Sq
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -5587,7 +5866,7 @@ class SqlUserDefinedFunctionGetPropertiesResource(ExtendedResourceProperties, Sq
         'id': {'key': 'id', 'type': 'str'},
         'body': {'key': 'body', 'type': 'str'},
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
     }
 
@@ -5706,8 +5985,8 @@ class TableCreateUpdateParameters(ARMResourceProperties):
     :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Table.
     :type resource: ~azure.mgmt.cosmosdb.models.TableResource
-    :param options: Required. A key-value pair of options to be applied for the request. This
-     corresponds to the headers sent with the request.
+    :param options: A key-value pair of options to be applied for the request. This corresponds to
+     the headers sent with the request.
     :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
     """
 
@@ -5716,7 +5995,6 @@ class TableCreateUpdateParameters(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource': {'required': True},
-        'options': {'required': True},
     }
 
     _attribute_map = {
@@ -5733,9 +6011,9 @@ class TableCreateUpdateParameters(ARMResourceProperties):
         self,
         *,
         resource: "TableResource",
-        options: "CreateUpdateOptions",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        options: Optional["CreateUpdateOptions"] = None,
         **kwargs
     ):
         super(TableCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
@@ -5807,7 +6085,7 @@ class TableGetPropertiesResource(ExtendedResourceProperties, TableResource):
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -5823,7 +6101,7 @@ class TableGetPropertiesResource(ExtendedResourceProperties, TableResource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
     }
 
@@ -6009,7 +6287,7 @@ class ThroughputSettingsGetPropertiesResource(ExtendedResourceProperties, Throug
     :ivar rid: A system generated property. A unique identifier.
     :vartype rid: str
     :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
-    :vartype ts: object
+    :vartype ts: float
     :ivar etag: A system generated property representing the resource etag required for optimistic
      concurrency control.
     :vartype etag: str
@@ -6029,7 +6307,7 @@ class ThroughputSettingsGetPropertiesResource(ExtendedResourceProperties, Throug
         'minimum_throughput': {'key': 'minimumThroughput', 'type': 'str'},
         'offer_replace_pending': {'key': 'offerReplacePending', 'type': 'str'},
         'rid': {'key': '_rid', 'type': 'str'},
-        'ts': {'key': '_ts', 'type': 'object'},
+        'ts': {'key': '_ts', 'type': 'float'},
         'etag': {'key': '_etag', 'type': 'str'},
     }
 

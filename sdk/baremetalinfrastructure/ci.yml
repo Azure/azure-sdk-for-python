@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: baremetalinfrastructure
     Artifacts:
-    - name: azure_mgmt_baremetalinfrastructure
+    - name: azure-mgmt-baremetalinfrastructure
       safeName: azuremgmtbaremetalinfrastructure

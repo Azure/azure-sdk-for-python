@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: databox
     Artifacts:
-    - name: azure_mgmt_databox
+    - name: azure-mgmt-databox
       safeName: azuremgmtdatabox
