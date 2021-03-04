@@ -278,21 +278,21 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # pylint: disable=protected-access
 
         self._check_live()
-        messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)
+        obj_messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
         with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE) as send_span:
-            if isinstance(messages, ServiceBusMessage):
+            if isinstance(obj_messages, ServiceBusMessage):
                 request_body = self._build_schedule_request(
-                    schedule_time_utc, send_span, messages
+                    schedule_time_utc, send_span, obj_messages
                 )
             else:
-                if len(messages) == 0:
+                if len(obj_messages) == 0:
                     return []  # No-op on empty list.
                 request_body = self._build_schedule_request(
-                    schedule_time_utc, send_span, *messages
+                    schedule_time_utc, send_span, *obj_messages
                 )
             if send_span:
                 self._add_span_request_attributes(send_span)

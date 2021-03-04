@@ -9,7 +9,7 @@ import datetime
 import uuid
 import logging
 import copy
-from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any, Mapping
+from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
 
 import six
 
@@ -574,11 +574,12 @@ class ServiceBusMessageBatch(object):
 
         return self._add(message)
 
-    def _add(self, message, parent_span=None):
+    def _add(self, add_message, parent_span=None):
         # type: (Union[ServiceBusMessage, Mapping[str, Any]], AbstractSpan) -> None
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
-        message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
+        message = create_messages_from_dicts_if_needed(add_message, ServiceBusMessage)
         message = transform_messages_to_sendable_if_needed(message)
+        message = cast(ServiceBusMessage, message)
         trace_message(
             message, parent_span
         )  # parent_span is e.g. if built as part of a send operation.

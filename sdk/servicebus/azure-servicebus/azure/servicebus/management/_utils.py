@@ -333,6 +333,6 @@ def create_properties_from_dict_if_needed(properties, sb_resource_type):
     if isinstance(properties, sb_resource_type):
         return properties
     try:
-        return sb_resource_type(**properties)
+        return sb_resource_type(**cast(Mapping[str, Any], properties))
     except TypeError:
         raise TypeError("Update input must be an instance of {}, or a mapping".format(sb_resource_type.__name__))
