@@ -15,10 +15,17 @@ class CredentialUnavailableError(ClientAuthenticationError):
 
 
 class AuthenticationRequiredError(CredentialUnavailableError):
-    """Interactive authentication is required to acquire a token."""
+    """Interactive authentication is required to acquire a token.
 
-    def __init__(self, scopes, message=None, error_details=None, **kwargs):
-        # type: (Iterable[str], Optional[str], Optional[str], **Any) -> None
+    This error is raised only by interactive user credentials configured not to automatically prompt for user
+    interaction as needed. Its properties provide additional information that may be required to authenticate. The
+    control_interactive_prompts sample demonstrates handling this error by calling a credential's "authenticate"
+    method.
+    """
+
+    def __init__(self, scopes, message=None, error_details=None, claims=None, **kwargs):
+        # type: (Iterable[str], Optional[str], Optional[str], Optional[str], **Any) -> None
+        self._claims = claims
         self._scopes = scopes
         self._error_details = error_details
         if not message:
@@ -36,3 +43,9 @@ class AuthenticationRequiredError(CredentialUnavailableError):
         # type: () -> Optional[str]
         """Additional authentication error details from Azure Active Directory"""
         return self._error_details
+
+    @property
+    def claims(self):
+        # type: () -> Optional[str]
+        """Additional claims required in the next authentication"""
+        return self._claims
