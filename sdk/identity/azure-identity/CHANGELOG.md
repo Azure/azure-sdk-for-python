@@ -7,6 +7,10 @@
 - Renamed `CertificateCredential` keyword argument `certificate_bytes` to
   `certificate_data`
 
+### Added
+- The `AuthenticationRequiredError.claims` property provides any additional
+  claims required by a user credential's `authenticate()` method
+
 ## 1.6.0b1 (2021-02-09)
 ### Changed
 - Raised minimum msal version to 1.7.0
