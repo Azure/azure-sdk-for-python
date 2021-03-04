@@ -227,7 +227,7 @@ class HttpRequest(object):
     """
 
     def __init__(self, method, url, headers=None, files=None, data=None, **kwargs):
-        # type: (str, str, Mapping[str, str], Any, Any, Any) -> None
+        # type: (str, str, Mapping[str, str], Any, Any, **Any) -> None
         self.method = method
         self.url = url
         self.headers = _case_insensitive_dict(headers)
