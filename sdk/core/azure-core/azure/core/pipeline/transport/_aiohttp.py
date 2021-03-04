@@ -208,9 +208,11 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
         self.downloaded = 0
-        headers = response.headers
+        headers = response.internal_response.headers
+        self.content_length = int(headers.get('Content-Length', 0))
+        self._compressed = True if 'compress' in transfer_header \
+                                   or 'deflate' in transfer_header or 'gzip' in transfer_header else False
         if "x-ms-range" in headers:
             self.range_header = "x-ms-range"    # type: Optional[str]
             self.range = parse_range_header(headers["x-ms-range"])
@@ -238,6 +240,8 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         except _ResponseStopIteration:
             raise StopAsyncIteration()
         except (ChunkedEncodingError, ConnectionError) as ex:
+            if self._compressed:
+                raise ex
             while retry_active:
                 retry_total -= 1
                 if retry_total <= 0:
