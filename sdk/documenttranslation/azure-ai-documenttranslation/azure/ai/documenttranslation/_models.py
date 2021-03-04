@@ -6,6 +6,14 @@
 
 from typing import Any, List
 
+from ._generated.models import (
+    BatchRequest as _BatchRequest,
+    SourceInput as _SourceInput,
+    DocumentFilter as _DocumentFilter,
+    TargetInput as _TargetInput,
+    Glossary as _Glossary
+)
+
 
 class TranslationGlossary(object):
     """Glossary / translation memory for the request.
@@ -31,6 +39,27 @@ class TranslationGlossary(object):
         self.format = kwargs.get("format", None)
         self.format_version = kwargs.get("format_version", None)
         self.storage_source = kwargs.get("storage_source", None)
+
+    @classmethod
+    def _to_generated_list(cls, glossaries):
+        result = list(_Glossary)
+        for glossary in glossaries:
+            if isinstance(TranslationGlossary):
+                result.append(
+                    _Glossary(
+                        glossary_url = glossary.glossary_url,
+                        format = glossary.format,
+                        version = glossary.version,
+                        storage_source = glossary.storage_source
+                    )
+                )
+            elif isinstance(str):
+                result.append(
+                    _Glossary(
+                        glossary_url = glossary,
+                    )
+                )
+        return result
 
 
 class StorageTarget(object):
@@ -59,6 +88,19 @@ class StorageTarget(object):
         self.category_id = kwargs.get("category_id", None)
         self.glossaries = kwargs.get("glossaries", None)
         self.storage_source = kwargs.get("storage_source", None)
+
+    @classmethod
+    def _to_generated_list(cls, targets):
+        return [
+            _TargetInput(
+                target_url = target.target_url,
+                category = target.category_id,
+                language = target.language,
+                storage_source = target.storage_source,
+                glossaries = TranslationGlossary._to_generated_list(target.glossaries)
+            ) 
+            for target in targets
+        ]
 
 
 class BatchDocumentInput(object):
@@ -96,6 +138,26 @@ class BatchDocumentInput(object):
         self.storage_source = kwargs.get("storage_source", None)
         self.prefix = kwargs.get("prefix", None)
         self.suffix = kwargs.get("suffix", None)
+
+    @classmethod
+    def _to_generated_list(cls, batch_document_inputs):
+        return [
+            _BatchRequest(
+                source = _SourceInput(
+                    source_url = batch_document_input.source_url,
+                    filter = _DocumentFilter(
+                        prefix = batch_document_input.prefix,
+                        suffix = batch_document_input.suffix
+                    ),
+                    language = batch_document_input.source_language,
+                    storage_source = batch_document_input.storage_source
+                ),
+                targets = StorageTarget._to_generated_list(batch_document_input.targets),
+                storage_type = batch_document_input.storage_type
+            )
+            for batch_document_input in batch_document_inputs
+        ]
+
 
 
 class JobStatusDetail(object):
@@ -146,18 +208,18 @@ class JobStatusDetail(object):
     @classmethod
     def _from_generated(cls, batch_status_details):
         return cls(
-            id=batch_status_details.id,
-            created_on=batch_status_details.created_date_time_utc,
-            last_updated_on=batch_status_details.last_action_date_time_utc,
-            status=batch_status_details.status,
-            error=DocumentTranslationError._from_generated(batch_status_details.error),
-            documents_total_count=batch_status_details.summary.total,
-            documents_failed_count=batch_status_details.summary.failed,
-            documents_succeeded_count=batch_status_details.summary.success,
-            documents_in_progress_count=batch_status_details.summary.in_progress,
-            documents_not_yet_started_count=batch_status_details.summary.not_yet_started,
-            documents_cancelled_count=batch_status_details.summary.cancelled,
-            total_characters_charged=batch_status_details.summary.total_character_charged
+            id = batch_status_details.id,
+            created_on = batch_status_details.created_date_time_utc,
+            last_updated_on = batch_status_details.last_action_date_time_utc,
+            status = batch_status_details.status,
+            error = DocumentTranslationError._from_generated(batch_status_details.error),
+            documents_total_count = batch_status_details.summary.total,
+            documents_failed_count = batch_status_details.summary.failed,
+            documents_succeeded_count = batch_status_details.summary.success,
+            documents_in_progress_count = batch_status_details.summary.in_progress,
+            documents_not_yet_started_count = batch_status_details.summary.not_yet_started,
+            documents_cancelled_count = batch_status_details.summary.cancelled,
+            total_characters_charged = batch_status_details.summary.total_character_charged
         )
 
 

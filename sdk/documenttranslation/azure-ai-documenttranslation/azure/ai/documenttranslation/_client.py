@@ -57,8 +57,8 @@ class DocumentTranslationClient(object):
 
         # submit translation job
         response_headers = self._client.document_translation._submit_batch_request_initial(
-            inputs=batch,
-            cls=lambda x,y,z: z,
+            inputs = BatchDocumentInput._to_generated_list(batch),
+            cls = lambda x,y,z: z,
             **kwargs
         )
 
