@@ -68,9 +68,12 @@ class KeyProperties(object):
         # type: (str, Optional[_models.KeyAttributes], **Any) -> None
         self._attributes = attributes
         self._id = key_id
-        self._vault_id = parse_key_vault_id(key_id)
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
+        try:
+            self._vault_id = parse_key_vault_id(key_id)
+        except:
+            self._vault_id = None
 
     def __repr__(self):
         # type () -> str
@@ -106,7 +109,8 @@ class KeyProperties(object):
 
         :rtype: str
         """
-        return self._vault_id.name
+        if self._vault_id:
+            return self._vault_id.name
 
     @property
     def version(self):
@@ -115,7 +119,8 @@ class KeyProperties(object):
 
         :rtype: str
         """
-        return self._vault_id.version
+        if self._vault_id:
+            return self._vault_id.version
 
     @property
     def enabled(self):
@@ -169,7 +174,8 @@ class KeyProperties(object):
 
         :rtype: str
         """
-        return self._vault_id.vault_url
+        if self._vault_id:
+            return self._vault_id.vault_url
 
     @property
     def recoverable_days(self):

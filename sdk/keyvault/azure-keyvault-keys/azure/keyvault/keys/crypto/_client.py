@@ -102,7 +102,12 @@ class CryptographyClient(KeyVaultClientBase):
 
         if isinstance(key, KeyVaultKey):
             self._key = key
-            self._key_id = parse_key_vault_id(key.id)
+            try:
+                self._key_id = parse_key_vault_id(key.id)
+            except ValueError:
+                if not self._local_only:
+                    raise
+                self._key_id = None
         elif isinstance(key, six.string_types):
             self._key = None
             self._key_id = parse_key_vault_id(key)
@@ -110,13 +115,14 @@ class CryptographyClient(KeyVaultClientBase):
         else:
             raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
 
-        if not (self._key_id.version or self._local_only):
+        if not (self._local_only or self._key_id.version):
             raise ValueError("'key' must include a version")
 
         self._local_provider = NoLocalCryptography()
         self._initialized = False
 
-        super(CryptographyClient, self).__init__(vault_url=self._key_id.vault_url, credential=credential, **kwargs)
+        vault_url = "vault_url" if not self._key_id else self._key_id.vault_url
+        super(CryptographyClient, self).__init__(vault_url=vault_url, credential=credential, **kwargs)
 
     @property
     def key_id(self):
@@ -125,7 +131,8 @@ class CryptographyClient(KeyVaultClientBase):
 
         :rtype: str
         """
-        return self._key_id.source_id
+        if self._key_id:
+            return self._key_id.source_id
 
     @classmethod
     def from_jwk(cls, jwk):
@@ -138,10 +145,9 @@ class CryptographyClient(KeyVaultClientBase):
         """
         if isinstance(jwk, JsonWebKey):
             key = vars(jwk)
-            key_id = jwk.kid
         else:
             key = jwk
-            key_id = jwk.get("kid")
+        key_id = key.get("kid")
         return cls(KeyVaultKey(key_id, key), object(), _local_only=True)
 
     @distributed_trace
