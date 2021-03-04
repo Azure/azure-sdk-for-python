@@ -4,11 +4,25 @@
 
 To encourage best security practices, `azure-identity` does not support JSON- and file-based authentication in the same
 way as `azure-common`. `azure-common` provided factory methods like [`get_client_from_json_dict`][client_from_json] and
-[`get_client_from_auth_file`][client_from_auth_file] to provide credentials as plaintext JSON. Azure credentials, like
-passwords, should not be stored in plaintext whenever possible. You can find information about Azure Active Directory
-(Azure AD) and best practices for authentication in [Azure AD's documentation][azure_ad].
+[`get_client_from_auth_file`][client_from_auth_file] that are no longer available in `azure-identity`.
 
-If it's too difficult to migrate away from JSON- or file-based authentication despite the security risks, you can still
+In `azure-common` you could provide credentials in a JSON dictionary, or from a JSON file:
+```python
+from azure.common.client_factory import get_client_from_json_dict, get_client_from_auth_file
+from azure.keyvault import KeyVaultClient
+# Provide credentials in JSON:
+json_dict = {
+    "clientId": "...",
+    "clientSecret": "...",
+    "tenantId": "...",
+    "activeDirectoryEndpointUrl": "https://login.microsoftonline.com"
+}
+client = get_client_from_json_dict(KeyVaultClient, json_dict)
+# Or, provide credentials from a JSON file:
+client = get_client_from_auth_file(KeyVaultClient, "credentials.json")
+```
+
+If it's too difficult to migrate away from file-based authentication despite the security risks, you can still
 use `azure-identity` credentials. With a JSON file containing the credentials, you can use [`json.load`][json] to
 authenticate a service principal with a [`ClientSecretCredential`][client_secret_cred]:
 ```python
@@ -28,10 +42,9 @@ credential = ClientSecretCredential(
 client = CertificateClient("https://{vault-name}.vault.azure.net", credential)
 ```
 
-Again, if storing credentials in a file, be sure to protect access to this file. Make certain that it's excluded by
-version control -- for example, by adding the credential file name to your project's `.gitignore` file.
+If storing credentials in a file, be sure to protect access to this file. Make certain that it's excluded by version
+control -- for example, by adding the credential file name to your project's `.gitignore` file.
 
-[azure_ad]: https://docs.microsoft.com/azure/active-directory/
 [client_from_json]: https://docs.microsoft.com/python/api/azure-common/azure.common.client_factory?view=azure-python#get-client-from-auth-file-client-class--auth-path-none----kwargs-
 [client_from_auth_file]: https://docs.microsoft.com/python/api/azure-common/azure.common.client_factory?view=azure-python#get-client-from-auth-file-client-class--auth-path-none----kwargs-
 [client_secret_cred]: https://docs.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
