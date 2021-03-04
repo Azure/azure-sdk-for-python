@@ -26,12 +26,12 @@ class CertificateCredential(ClientCredentialBase):
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str client_id: the service principal's client ID
     :param str certificate_path: path to a PEM-encoded certificate file including the private key. If not provided,
-          `certificate_bytes` is required.
+          `certificate_data` is required.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
-    :keyword bytes certificate_bytes: the bytes of a certificate in PEM format, including the private key
+    :keyword bytes certificate_data: the bytes of a certificate in PEM format, including the private key
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
           requires a different encoding, pass appropriately encoded bytes instead.
     :paramtype password: str or bytes
@@ -68,34 +68,34 @@ def extract_cert_chain(pem_bytes):
     return b"".join(chain.splitlines())
 
 
-def get_client_credential(certificate_path, password=None, certificate_bytes=None, send_certificate_chain=False, **_):
+def get_client_credential(certificate_path, password=None, certificate_data=None, send_certificate_chain=False, **_):
     # type: (Optional[str], Optional[Union[bytes, str]], Optional[bytes], bool, **Any) -> dict
     """Load a certificate from a filesystem path or bytes, return it as a dict suitable for msal.ClientApplication"""
 
     if certificate_path:
         with open(certificate_path, "rb") as f:
-            certificate_bytes = f.read()
-    elif not certificate_bytes:
-        raise ValueError('CertificateCredential requires a value for "certificate_path" or "certificate_bytes"')
+            certificate_data = f.read()
+    elif not certificate_data:
+        raise ValueError('CertificateCredential requires a value for "certificate_path" or "certificate_data"')
 
     if isinstance(password, six.text_type):
         password = password.encode(encoding="utf-8")
 
-    private_key = serialization.load_pem_private_key(certificate_bytes, password=password, backend=default_backend())
+    private_key = serialization.load_pem_private_key(certificate_data, password=password, backend=default_backend())
     if not isinstance(private_key, RSAPrivateKey):
         raise ValueError("CertificateCredential requires an RSA private key because it uses RS256 for signing")
 
-    cert = x509.load_pem_x509_certificate(certificate_bytes, default_backend())
+    cert = x509.load_pem_x509_certificate(certificate_data, default_backend())
     fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
 
-    client_credential = {"private_key": certificate_bytes, "thumbprint": hexlify(fingerprint).decode("utf-8")}
+    client_credential = {"private_key": certificate_data, "thumbprint": hexlify(fingerprint).decode("utf-8")}
     if password:
         client_credential["passphrase"] = password
 
     if send_certificate_chain:
         try:
             # the JWT needs the whole chain but load_pem_x509_certificate deserializes only the signing cert
-            chain = extract_cert_chain(certificate_bytes)
+            chain = extract_cert_chain(certificate_data)
             client_credential["public_certificate"] = six.ensure_str(chain)
         except ValueError as ex:
             # we shouldn't land here--cryptography already loaded the cert and would have raised if it were malformed
