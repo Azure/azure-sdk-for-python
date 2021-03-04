@@ -126,6 +126,8 @@ async def test_aiohttp_response_text():
 def test_repr():
     res = _create_aiohttp_response(
         b'\xef\xbb\xbf56',
-        {'Content-Type': 'text/plain'}
+        {}
     )
+    res.content_type = "text/plain"
+
     assert repr(res) == "<AioHttpTransportResponse: 200 OK, Content-Type: text/plain>"
