@@ -131,12 +131,14 @@ def test_disable_automatic_authentication():
     )
 
     scope = "scope"
+    expected_claims = "..."
     with pytest.raises(AuthenticationRequiredError) as ex:
-        credential.get_token(scope)
+        credential.get_token(scope, claims=expected_claims)
 
-    # the exception should carry the requested scopes and any error message from AAD
+    # the exception should carry the requested scopes and claims, and any error message from AAD
     assert ex.value.scopes == (scope,)
     assert ex.value.error_details == expected_details
+    assert ex.value.claims == expected_claims
 
 
 def test_scopes_round_trip():
