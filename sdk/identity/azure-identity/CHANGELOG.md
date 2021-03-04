@@ -1,7 +1,11 @@
 # Release History
 
 ## 1.6.0b2 (Unreleased)
-
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.5.0.
+> Only code written against a beta version such as 1.6.0b1 may be affected.
+- Renamed `CertificateCredential` keyword argument `certificate_bytes` to
+  `certificate_data`
 
 ## 1.6.0b1 (2021-02-09)
 ### Changed
