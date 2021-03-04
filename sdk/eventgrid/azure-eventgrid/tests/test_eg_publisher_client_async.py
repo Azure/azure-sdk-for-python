@@ -8,6 +8,7 @@ import logging
 import asyncio
 import sys
 import os
+import json
 import pytest
 from datetime import timedelta
 from msrest.serialization import UTC
@@ -17,8 +18,11 @@ from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
 from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
-from azure.eventgrid import CloudEvent, EventGridEvent, generate_sas
+from azure.core.messaging import CloudEvent
+from azure.core.serialization import NULL
+from azure.eventgrid import EventGridEvent, generate_sas
 from azure.eventgrid.aio import EventGridPublisherClient
+from azure.eventgrid._helpers import _cloud_event_to_generated
 
 from eventgrid_preparer import (
     CachedEventGridTopicPreparer
@@ -174,15 +178,15 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 data = "cloudevent",
                 type="Sample.Cloud.Event",
                 extensions={
-                    'reason_code':204,
+                    'reasoncode':204,
                     'extension':'hello'
                     }
                 )
         await client.send([cloud_event])
-        internal = cloud_event._to_generated().serialize()
-        assert 'reason_code' in internal
+        internal = _cloud_event_to_generated(cloud_event).serialize()
+        assert 'reasoncode' in internal
         assert 'extension' in internal
-        assert internal['reason_code'] == 204
+        assert internal['reasoncode'] == 204
 
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -212,6 +216,24 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 type="Sample.Cloud.Event"
                 )
         await client.send(cloud_event)
+
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/16993")
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    @pytest.mark.asyncio
+    async def test_send_cloud_event_data_NULL(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        cloud_event = CloudEvent(
+                source = "http://samplesource.dev",
+                data = NULL,
+                type="Sample.Cloud.Event"
+                )
+        def callback(request):
+            req = json.loads(request.http_request.body)
+            assert req[0].get("data") is None
+
+        await client.send(cloud_event, raw_request_hook=callback)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
@@ -284,3 +306,10 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                     type="Sample.Cloud.Event"
                     )
             await client.send(cloud_event)
+
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    @pytest.mark.asyncio
+    def test_send_NONE_credential_async(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        with pytest.raises(ValueError, match="Parameter 'self._credential' must not be None."):
+            client = EventGridPublisherClient(eventgrid_topic_endpoint, None)

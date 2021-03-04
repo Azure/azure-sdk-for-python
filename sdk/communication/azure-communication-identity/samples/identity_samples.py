@@ -73,7 +73,7 @@ class CommunicationIdentityClientSamples(object):
         user = identity_client.create_user()
         print("User created with id:" + user.identifier)
 
-    def create_user_with_token(self):
+    def create_user_and_token(self):
         from azure.communication.identity import (
             CommunicationIdentityClient,
             CommunicationTokenScope
@@ -84,7 +84,7 @@ class CommunicationIdentityClientSamples(object):
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         print("Creating new user with token")
-        user, tokenresponse = identity_client.create_user_with_token(scopes=[CommunicationTokenScope.CHAT])
+        user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
         print("User created with id:" + user.identifier)
         print("Token issued with value: " + tokenresponse.token)
 
@@ -104,7 +104,7 @@ class CommunicationIdentityClientSamples(object):
 if __name__ == '__main__':
     sample = CommunicationIdentityClientSamples()
     sample.create_user()
-    sample.create_user_with_token()
+    sample.create_user_and_token()
     sample.get_token()
     sample.revoke_tokens()
     sample.delete_user()

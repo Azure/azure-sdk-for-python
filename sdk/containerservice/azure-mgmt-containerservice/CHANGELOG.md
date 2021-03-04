@@ -1,5 +1,36 @@
 # Release History
 
+## 15.0.0 (2021-03-03)
+
+**Features**
+
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter max_node_provision_time
+  - Model ManagedClusterPodIdentityProfile has a new parameter allow_network_plugin_kubenet
+  - Model KubeletConfig has a new parameter container_log_max_size_mb
+  - Model KubeletConfig has a new parameter pod_max_pids
+  - Model KubeletConfig has a new parameter container_log_max_files
+  - Model SysctlConfig has a new parameter net_core_rmem_default
+  - Model SysctlConfig has a new parameter net_core_wmem_default
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter azure_portal_fqdn
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter fqdn_subdomain
+  - Model ManagedCluster has a new parameter azure_portal_fqdn
+  - Model ManagedCluster has a new parameter fqdn_subdomain
+  - Model ManagedClusterAgentPoolProfile has a new parameter kubelet_disk_type
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_encryption_at_host
+  - Model ManagedClusterAgentPoolProfile has a new parameter node_public_ip_prefix_id
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter kubelet_disk_type
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_encryption_at_host
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter node_public_ip_prefix_id
+  - Model AgentPool has a new parameter kubelet_disk_type
+  - Model AgentPool has a new parameter enable_encryption_at_host
+  - Model AgentPool has a new parameter node_public_ip_prefix_id
+  - Added operation group MaintenanceConfigurationsOperations
+
+**Breaking changes**
+
+  - Model SysctlConfig no longer has parameter net_ipv4_tcp_rmem
+  - Model SysctlConfig no longer has parameter net_ipv4_tcp_wmem
+
 ## 14.0.0 (2020-11-23)
 
 **Features**

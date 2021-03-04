@@ -2,6 +2,9 @@
 
 ## 5.3.1 (Unreleased)
 
+**Bug fixes**
+
+- Sending empty `event_data_batch` will be a no-op now instead of raising error.
 
 ## 5.3.0 (2021-02-08)
 
