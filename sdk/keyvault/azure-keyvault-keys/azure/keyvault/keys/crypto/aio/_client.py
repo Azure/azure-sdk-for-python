@@ -13,7 +13,7 @@ from .._client import _validate_arguments
 from .._key_validity import raise_if_time_invalid
 from .._providers import get_local_cryptography_provider, NoLocalCryptography
 from ... import KeyOperation
-from ..._models import KeyVaultKey
+from ..._models import JsonWebKey, KeyVaultKey
 from ..._shared import AsyncKeyVaultClientBase, parse_key_vault_id
 
 if TYPE_CHECKING:
@@ -82,14 +82,20 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return self._key_id.source_id
 
     @classmethod
-    def from_jwk(cls, jwk):
-        # type: (dict) -> CryptographyClient
+    def from_jwk(cls, jwk: "Union[JsonWebKey, dict]") -> "CryptographyClient":
         """Creates a client that can only perform cryptographic operations locally.
 
-        :param dict jwk: the key's cryptographic material, as a dictionary.
+        :param jwk: the key's cryptographic material, as a JsonWebKey or dictionary.
+        :type jwk: JsonWebKey or dict
+        :rtype: CryptographyClient
         """
-        key_id = "https://key-vault.vault.azure.net/keys/local-key"
-        return cls(KeyVaultKey(key_id, jwk), object, _local_only=True)
+        if isinstance(jwk, JsonWebKey):
+            key = vars(jwk)
+            key_id = jwk.kid
+        else:
+            key = jwk
+            key_id = jwk.get("kid")
+        return cls(KeyVaultKey(key_id, key), object(), _local_only=True)
 
     @distributed_trace_async
     async def _initialize(self, **kwargs):
