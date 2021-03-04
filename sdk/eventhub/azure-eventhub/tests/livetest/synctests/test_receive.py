@@ -10,7 +10,7 @@ import pytest
 import time
 import datetime
 
-from azure.eventhub import EventData, TransportType, EventHubConsumerClient
+from azure.eventhub import EventData, EventDataBatch, TransportType, EventHubConsumerClient
 from azure.eventhub.exceptions import EventHubError
 
 
@@ -31,7 +31,7 @@ def test_receive_end_of_stream(connstr_senders):
         thread.start()
         time.sleep(10)
         assert on_event.called is False
-        senders[0].send(EventData(b"Receiving only a single event"))
+        senders[0].send(EventDataBatch._from_batch([EventData(b"Receiving only a single event")]))
         time.sleep(10)
         assert on_event.called is True
     thread.join()
@@ -61,8 +61,8 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
 
     on_event.event_position = None
     connection_str, senders = connstr_senders
-    senders[0].send(EventData(b"Inclusive"))
-    senders[1].send(EventData(b"Inclusive"))
+    senders[0].send(EventDataBatch._from_batch([EventData(b"Inclusive")]))
+    senders[1].send(EventDataBatch._from_batch([EventData(b"Inclusive")]))
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     with client:
         thread = threading.Thread(target=client.receive, args=(on_event,),
@@ -74,8 +74,8 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
         time.sleep(10)
         assert on_event.event_position is not None
     thread.join()
-    senders[0].send(EventData(expected_result))
-    senders[1].send(EventData(expected_result))
+    senders[0].send(EventDataBatch._from_batch([EventData(expected_result)]))
+    senders[1].send(EventDataBatch._from_batch([EventData(expected_result)]))
     client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     with client2:
         thread = threading.Thread(target=client2.receive, args=(on_event,),
@@ -107,14 +107,14 @@ def test_receive_owner_level(connstr_senders):
         thread1.start()
         for i in range(5):
             ed = EventData("Event Number {}".format(i))
-            senders[0].send(ed)
+            senders[0].send(EventDataBatch._from_batch([ed]))
         time.sleep(10)
         thread2 = threading.Thread(target=client2.receive, args=(on_event,),
                                    kwargs = {"partition_id": "0", "starting_position": "-1", "owner_level": 1})
         thread2.start()
         for i in range(5):
             ed = EventData("Event Number {}".format(i))
-            senders[0].send(ed)
+            senders[0].send(EventDataBatch._from_batch([ed]))
         time.sleep(20)
     thread1.join()
     thread2.join()
@@ -141,7 +141,7 @@ def test_receive_over_websocket_sync(connstr_senders):
         ed = EventData("Event Number {}".format(i))
         ed.properties = app_prop
         event_list.append(ed)
-    senders[0].send(event_list)
+    senders[0].send(EventDataBatch._from_batch(event_list))
 
     with client:
         thread = threading.Thread(target=client.receive, args=(on_event,),

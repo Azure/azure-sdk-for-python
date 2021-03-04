@@ -9,7 +9,7 @@ import asyncio
 import pytest
 import time
 
-from azure.eventhub import EventData
+from azure.eventhub import EventData, EventDataBatch
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential
 from azure.eventhub.exceptions import OperationTimeoutError
 
@@ -112,7 +112,7 @@ async def test_receive_connection_idle_timeout_and_reconnect_async(connstr_sende
             time.sleep(11)
 
             ed = EventData("Event")
-            senders[0].send(ed)
+            senders[0].send(EventDataBatch._from_batch([ed]))
 
             await consumer._handler.do_work_async()
             assert consumer._handler._connection._state == c_uamqp.ConnectionState.DISCARDING

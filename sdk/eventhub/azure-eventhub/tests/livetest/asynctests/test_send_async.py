@@ -11,9 +11,11 @@ import pytest
 import time
 import json
 
-from azure.eventhub import EventData, TransportType, EventDataBatch
+from uamqp import constants as uamqp_constants
+
+from azure.eventhub import EventData, TransportType, EventDataBatch, PartitionPublishingConfiguration
 from azure.eventhub.aio import EventHubProducerClient
-from azure.eventhub.exceptions import EventDataSendError
+from azure.eventhub.exceptions import EventDataSendError, ConnectionLostError
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
@@ -224,3 +226,189 @@ async def test_send_batch_pid_pk_async(invalid_hostname, partition_id, partition
     async with client:
         with pytest.raises(TypeError):
             await client.send_batch(batch, partition_id=partition_id, partition_key=partition_key)
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_idempotent_sender_async(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+    client = EventHubProducerClient.from_connection_string(connection_str, enable_idempotent_partitions=True)
+    payload = "A1"
+    async with client:
+
+        with pytest.raises(ValueError):
+            await client.send_batch([EventData(payload)], partition_key="key")
+
+        with pytest.raises(ValueError):
+            await client.send_batch([EventData(payload)])
+
+        with pytest.raises(ValueError):
+            await client.create_batch()
+
+        with pytest.raises(ValueError):
+            await client.create_batch(partition_key="key")
+
+        partition_publishing_properties = await client.get_partition_publishing_properties("0")
+        assert partition_publishing_properties["enable_idempotent_publishing"]
+        assert partition_publishing_properties["partition_id"] == "0"
+        assert partition_publishing_properties["last_published_sequence_number"] is None
+        assert partition_publishing_properties["producer_group_id"] is None
+        assert partition_publishing_properties["owner_level"] is None
+
+        event_data_batch = await client.create_batch(partition_id="0")
+        event_data = EventData(payload)
+        event_data_batch.add(event_data)
+        await client.send_batch(event_data_batch)
+
+        partition_publishing_properties = await client.get_partition_publishing_properties("0")
+        assert partition_publishing_properties["enable_idempotent_publishing"]
+        assert partition_publishing_properties["producer_group_id"] is not None
+        assert partition_publishing_properties["owner_level"] is not None
+        assert event_data_batch.starting_published_sequence_number == 0
+        assert event_data.published_sequence_number == 0
+
+        message = receivers[0].receive_message_batch(timeout=10000)[0]
+        received = EventData._from_message(message)
+        assert received.body_as_str() == payload
+
+        event_data_list = [EventData(payload), EventData(payload)]
+        await client.send_batch(event_data_list, partition_id="0")
+
+        partition_publishing_properties = await client.get_partition_publishing_properties("0")
+        assert partition_publishing_properties["last_published_sequence_number"] == 2
+        assert event_data_list[0].published_sequence_number == 1
+        assert event_data_list[1].published_sequence_number == 2
+        message = receivers[0].receive_message_batch(timeout=10000)
+        assert len(message) == 2
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_idempotent_sender_partition_config_async(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+
+    client = EventHubProducerClient.from_connection_string(
+        connection_str,
+        enable_idempotent_partitions=True,
+    )
+
+    payload = "A1"
+    event_data_batch = await client.create_batch(partition_id="0")
+    event_data = EventData(payload)
+    event_data_batch.add(event_data)
+    await client.send_batch(event_data_batch)
+
+    partition_publishing_properties = await client.get_partition_publishing_properties("0")
+    assert partition_publishing_properties["last_published_sequence_number"] is not None
+    assert partition_publishing_properties["producer_group_id"] is not None
+    assert partition_publishing_properties["owner_level"] is not None
+    assert event_data_batch.starting_published_sequence_number == 0
+    assert event_data.published_sequence_number == 0
+
+    partition_config_for_producer_2 = {
+        "0": PartitionPublishingConfiguration(
+            producer_group_id=partition_publishing_properties["producer_group_id"],
+            owner_level=partition_publishing_properties["owner_level"] + 1
+        )
+    }
+
+    client_2 = EventHubProducerClient.from_connection_string(
+        connection_str,
+        enable_idempotent_partitions=True,
+        partition_config=partition_config_for_producer_2
+    )
+    event_data_list = [EventData(payload), EventData(payload)]
+    await client_2.send_batch(event_data_list, partition_id="0")
+    partition_publishing_properties_2 = await client_2.get_partition_publishing_properties("0")
+    # with the new owner_level, the sequence number starts from 0 again
+    assert partition_publishing_properties_2["last_published_sequence_number"] == 1
+    assert partition_publishing_properties_2["producer_group_id"] == partition_publishing_properties["producer_group_id"]
+    assert partition_publishing_properties_2["owner_level"] == partition_publishing_properties["owner_level"] + 1
+
+    # test producer-epoch-stolen
+    with pytest.raises(EventDataSendError):
+        # the first producer will get exploded as the link is stolen by the second producer with higher owner level
+        try:
+            await client.send_batch([EventData(payload)], partition_id="0")
+        except EventDataSendError as e:
+            assert e.error == "producer-epoch-stolen"
+            raise e
+
+    await client.close()
+    await client_2.close()
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_idempotent_sender_wrong_partition_config_async(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+    payload = "A1"
+    with pytest.raises(ValueError):
+        PartitionPublishingConfiguration(owner_level=2**15)
+
+    with pytest.raises(ValueError):
+        PartitionPublishingConfiguration(producer_group_id=-1)
+
+    with pytest.raises(ValueError):
+        EventHubProducerClient.from_connection_string(
+            connection_str,
+            enable_idempotent_partitions=True,
+            partition_config={"0": {"starting_sequence_number": 2**31}}
+        )
+
+    partition_config = {
+        "0": {
+            "producer_group_id": 100,
+            "owner_level": 100,
+            "starting_sequence_number": 100
+        }
+    }
+    client = EventHubProducerClient.from_connection_string(
+        connection_str,
+        enable_idempotent_partitions=True,
+        partition_config=partition_config
+    )
+
+    # test invalid init setting
+    with pytest.raises(ConnectionLostError):
+        try:
+            # The service would return link detach with error code being "not allowed"
+            await client.send_batch([EventData(payload)], partition_id="0")
+            await client.close()
+        except ConnectionLostError as e:
+            assert e.details.condition == uamqp_constants.ErrorCodes.NotAllowed
+            raise e
+
+    client = EventHubProducerClient.from_connection_string(
+        connection_str,
+        enable_idempotent_partitions=True
+    )
+
+    event_data_list = [EventData(payload) for _ in range(10)]
+    await client.send_batch(event_data_list, partition_id="0")
+
+    partition_publishing_properties = await client.get_partition_publishing_properties("0")
+
+    # test out-of-sequence
+    partition_config_for_producer_2 = {
+        "0": {
+            "producer_group_id": partition_publishing_properties["producer_group_id"],
+            "owner_level": partition_publishing_properties["owner_level"],
+            "starting_sequence_number": partition_publishing_properties["last_published_sequence_number"] - 5
+        }
+    }
+
+    client_2 = EventHubProducerClient.from_connection_string(
+        connection_str,
+        enable_idempotent_partitions=True,
+        partition_config=partition_config_for_producer_2
+    )
+    with pytest.raises(EventDataSendError):
+        try:
+            await client_2.send_batch([EventData(payload)], partition_id="0")
+        except EventDataSendError as e:
+            assert e.error == "out-of-order-sequence"
+            raise e
+
+    await client.close()
+    await client_2.close()
