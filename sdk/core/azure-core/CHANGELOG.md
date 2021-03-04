@@ -4,8 +4,9 @@
 
 ### Features
 
+- Added `azure.core.messaging.CloudEvent` model that follows the cloud event spec.
+- Added `azure.core.serialization.NULL` sentinel value
 - Added `json()` method onto `HttpResponse`. Calling `json()` on the response will return the JSON-deserialized response body  #16692
-
 
 ## 1.11.0 (2021-02-08)
 

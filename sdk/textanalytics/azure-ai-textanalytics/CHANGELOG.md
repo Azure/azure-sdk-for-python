@@ -1,5 +1,18 @@
 # Release History
 
+## 5.1.0b6 (Unreleased)
+
+**Breaking Changes**
+
+- Removed property `related_entities` on `HealthcareEntity` and added `entity_relations` onto the document response level for healthcare
+- Renamed properties `aspect` and `opinions` to `target` and `assessments` respectively in class `MinedOpinion`.
+- Renamed classes `AspectSentiment` and `OpinionSentiment` to `TargetSentiment` and `AssessmentSentiment` respectively.
+
+**New Features**
+
+- Add property `normalized_text` to `HealthcareEntity`. This property is a normalized version of the `text` property that already
+exists on the `HealthcareEntity`
+
 ## 5.1.0b5 (2021-02-10)
 
 **Breaking Changes**

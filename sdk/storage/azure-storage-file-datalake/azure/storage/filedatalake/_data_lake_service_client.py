@@ -279,7 +279,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         renamed_file_system = self.get_file_system_client(new_name)
         return renamed_file_system
 
-    def undelete_file_system(self, name, version, **kwargs):
+    def undelete_file_system(self, name, deleted_version, **kwargs):
         # type: (str, str, **Any) -> FileSystemClient
         """Restores soft-deleted filesystem.
 
@@ -291,7 +291,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
         :param str name:
             Specifies the name of the deleted filesystem to restore.
-        :param str version:
+        :param str deleted_version:
             Specifies the version of the deleted filesystem to restore.
         :keyword str new_name:
             The new name for the deleted filesystem to be restored to.
@@ -303,7 +303,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         new_name = kwargs.pop('new_name', None)
         file_system = self.get_file_system_client(new_name or name)
         self._blob_service_client.undelete_container(
-            name, version, new_name=new_name, **kwargs)  # pylint: disable=protected-access
+            name, deleted_version, new_name=new_name, **kwargs)  # pylint: disable=protected-access
         return file_system
 
     def delete_file_system(self, file_system,  # type: Union[FileSystemProperties, str]

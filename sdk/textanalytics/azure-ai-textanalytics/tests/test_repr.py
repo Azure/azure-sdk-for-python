@@ -8,7 +8,7 @@
 import pytest
 import datetime
 from azure.ai.textanalytics import _models
-from azure.ai.textanalytics._generated.v3_1_preview_3 import models as _generated_models
+from azure.ai.textanalytics._generated.v3_1_preview_4 import models as _generated_models
 
 # All features return a tuple of the object and the repr of the obejct
 
@@ -144,7 +144,7 @@ def sentiment_confidence_scores():
     return model, model_repr
 
 @pytest.fixture
-def aspect_opinion_confidence_score():
+def target_assessment_confidence_score():
     model = _models.SentimentConfidenceScores(
         positive=0.5,
         negative=0.5
@@ -154,43 +154,43 @@ def aspect_opinion_confidence_score():
     return model, model_repr
 
 @pytest.fixture
-def aspect_sentiment(aspect_opinion_confidence_score):
-    model = _models.AspectSentiment(
+def target_sentiment(target_assessment_confidence_score):
+    model = _models.TargetSentiment(
         text="aspect",
         sentiment="positive",
-        confidence_scores=aspect_opinion_confidence_score[0],
+        confidence_scores=target_assessment_confidence_score[0],
         length=6,
         offset=10,
     )
-    model_repr = "AspectSentiment(text=aspect, sentiment=positive, confidence_scores={}, length=6, offset=10)".format(
-        aspect_opinion_confidence_score[1]
+    model_repr = "TargetSentiment(text=aspect, sentiment=positive, confidence_scores={}, length=6, offset=10)".format(
+        target_assessment_confidence_score[1]
     )
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
-def opinion_sentiment(aspect_opinion_confidence_score):
-    model = _models.OpinionSentiment(
+def assessment_sentiment(target_assessment_confidence_score):
+    model = _models.AssessmentSentiment(
         text="opinion",
         sentiment="positive",
-        confidence_scores=aspect_opinion_confidence_score[0],
+        confidence_scores=target_assessment_confidence_score[0],
         length=7,
         offset=3,
         is_negated=False
     )
-    model_repr = "OpinionSentiment(text=opinion, sentiment=positive, confidence_scores={}, length=7, offset=3, is_negated=False)".format(
-        aspect_opinion_confidence_score[1]
+    model_repr = "AssessmentSentiment(text=opinion, sentiment=positive, confidence_scores={}, length=7, offset=3, is_negated=False)".format(
+        target_assessment_confidence_score[1]
     )
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
-def mined_opinion(aspect_sentiment, opinion_sentiment):
+def mined_opinion(target_sentiment, assessment_sentiment):
     model = _models.MinedOpinion(
-        aspect=aspect_sentiment[0],
-        opinions=[opinion_sentiment[0]]
+        target=target_sentiment[0],
+        assessments=[assessment_sentiment[0]]
     )
-    model_repr = "MinedOpinion(aspect={}, opinions=[{}])".format(aspect_sentiment[1], opinion_sentiment[1])
+    model_repr = "MinedOpinion(target={}, assessments=[{}])".format(target_sentiment[1], assessment_sentiment[1])
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -259,6 +259,61 @@ def extract_key_phrases_result(text_analytics_warning, text_document_statistics)
     model_repr = "ExtractKeyPhrasesResult(id=1, key_phrases=['dog', 'cat', 'bird'], warnings=[{}], statistics={}, is_error=False)".format(
         text_analytics_warning[1], text_document_statistics[1]
     )
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def data_source():
+    model = _models.HealthcareEntityDataSource(
+        entity_id="BONJOUR",
+        name="UMLS",
+    )
+    model_repr = "HealthcareEntityDataSource(entity_id=BONJOUR, name=UMLS)"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_entity(data_source):
+    model = _models.HealthcareEntity(
+        text="Bonjour",
+        normalized_text="Bonjour",
+        category="MyCategory",
+        subcategory="MySubcategory",
+        length=7,
+        offset=12,
+        confidence_score=0.95,
+        data_sources=[data_source[0]],
+    )
+    model_repr = (
+        "HealthcareEntity(text=Bonjour, normalized_text=Bonjour, category=MyCategory, subcategory=MySubcategory, length=7, offset=12, " +
+        "confidence_score=0.95, data_sources=[{}])".format(data_source[1])
+    )
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_relation_role(healthcare_entity):
+    model = _models.HealthcareRelationRole(
+        name="ROLE",
+        entity=healthcare_entity[0]
+    )
+
+    model_repr = "HealthcareRelationRole(name=ROLE, entity={})".format(healthcare_entity[1])
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_relation(healthcare_relation_role):
+    model = _models.HealthcareRelation(
+        relation_type="DOSAGE",
+        roles=[healthcare_relation_role[0]]
+    )
+
+    model_repr = "HealthcareRelation(relation_type=DOSAGE, roles=[{}])".format(healthcare_relation_role[1])
 
     assert repr(model) == model_repr
     return model, model_repr
@@ -416,6 +471,26 @@ class TestRepr():
         model_repr = (
             "AnalyzeBatchActionsResult(document_results=[{}], is_error={}, action_type={}, completed_on={})".format(
                 extract_key_phrases_result[1], False, "extract_key_phrases", datetime.datetime(1, 1, 1)
+            )
+        )
+
+        assert repr(model) == model_repr
+
+    def test_analyze_healthcare_entities_result_item(
+        self, healthcare_entity, healthcare_relation, text_analytics_warning, text_document_statistics
+    ):
+        model = _models.AnalyzeHealthcareEntitiesResultItem(
+            id=1,
+            entities=[healthcare_entity[0]],
+            entity_relations=[healthcare_relation[0]],
+            warnings=[text_analytics_warning[0]],
+            statistics=text_document_statistics[0],
+            is_error=False
+        )
+
+        model_repr = (
+            "AnalyzeHealthcareEntitiesResultItem(id=1, entities=[{}], entity_relations=[{}], warnings=[{}], statistics={}, is_error=False)".format(
+                healthcare_entity[1], healthcare_relation[1], text_analytics_warning[1], text_document_statistics[1]
             )
         )
 

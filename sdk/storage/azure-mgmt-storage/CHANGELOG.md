@@ -1,5 +1,42 @@
 # Release History
 
+## 17.0.0 (2021-02-20)
+
+**Features**
+
+  - Model Encryption has a new parameter encryption_identity
+  - Model Identity has a new parameter user_assigned_identities
+  - Model ManagementPolicyBaseBlob has a new parameter enable_auto_tier_to_hot_from_cool
+  - Model EncryptionScope has a new parameter require_infrastructure_encryption
+  - Model StorageAccount has a new parameter extended_location
+  - Model StorageAccount has a new parameter allow_shared_key_access
+  - Model StorageAccount has a new parameter enable_nfs_v3
+  - Model EncryptionScopeKeyVaultProperties has a new parameter current_versioned_key_identifier
+  - Model EncryptionScopeKeyVaultProperties has a new parameter last_key_rotation_timestamp
+  - Model DateAfterModification has a new parameter days_after_last_access_time_greater_than
+  - Model StorageAccountUpdateParameters has a new parameter allow_shared_key_access
+  - Model BlobServiceProperties has a new parameter last_access_time_tracking_policy
+  - Model ChangeFeed has a new parameter retention_in_days
+  - Model FileShare has a new parameter snapshot_time
+  - Model ManagementPolicyAction has a new parameter version
+  - Model StorageAccountCreateParameters has a new parameter extended_location
+  - Model StorageAccountCreateParameters has a new parameter allow_shared_key_access
+  - Model StorageAccountCreateParameters has a new parameter enable_nfs_v3
+  - Model FileShareItem has a new parameter snapshot_time
+  - Model FileServiceProperties has a new parameter protocol_settings
+  - Model ManagementPolicySnapShot has a new parameter tier_to_archive
+  - Model ManagementPolicySnapShot has a new parameter tier_to_cool
+  - Model NetworkRuleSet has a new parameter resource_access_rules
+  - Added operation group BlobInventoryPoliciesOperations
+  - Added operation group DeletedAccountsOperations
+
+**Breaking changes**
+
+  - Operation FileSharesOperations.create has a new signature
+  - Operation FileSharesOperations.delete has a new signature
+  - Operation FileSharesOperations.get has a new signature
+  - Model ErrorResponse has a new signature
+
 ## 16.0.0 (2020-09-15)
 
 **Features**

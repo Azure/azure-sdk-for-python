@@ -5,8 +5,7 @@
 # --------------------------------------------------------------------------
 
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import AzureMonitorTraceExporter
-from azure.monitor.opentelemetry.exporter._options import ExporterOptions
 from ._version import VERSION
 
-__all__ = ["AzureMonitorTraceExporter", "ExporterOptions"]
+__all__ = ["AzureMonitorTraceExporter"]
 __version__ = VERSION

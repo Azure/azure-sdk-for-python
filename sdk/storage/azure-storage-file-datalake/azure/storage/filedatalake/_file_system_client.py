@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Optional
+from typing import Optional, Any
 
 try:
     from urllib.parse import urlparse, quote
@@ -246,6 +246,17 @@ class FileSystemClient(StorageAccountHostsMixin):
         return self._container_client.create_container(metadata=metadata,
                                                        public_access=public_access,
                                                        **kwargs)
+
+    def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a file system exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return self._container_client.exists(**kwargs)
 
     def _rename_file_system(self, new_name, **kwargs):
         # type: (str, **Any) -> FileSystemClient

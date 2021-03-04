@@ -131,7 +131,7 @@ def set_dev_classifier(setup_py_location, version):
 
         setup_py_file.write(replaced_setup_contents)
 
-def update_change_log(setup_py_location, version, service, package, is_unreleased, replace_version, release_date=None):
+def update_change_log(setup_py_location, version, service, package, is_unreleased, replace_latest_entry_title, release_date=None):
     script = os.path.join(root_dir, "eng", "common", "scripts", "Update-ChangeLog.ps1")
     pkg_root = os.path.abspath(os.path.join(setup_py_location, ".."))
 
@@ -144,10 +144,8 @@ def update_change_log(setup_py_location, version, service, package, is_unrelease
         service,
         "--PackageName",
         package,
-        "--Unreleased",
-        str(is_unreleased),
-        "--ReplaceLatestEntry",
-        str(replace_version)
+        "--Unreleased:${}".format(is_unreleased),
+        "--ReplaceLatestEntryTitle:${}".format(replace_latest_entry_title),
     ]
     if release_date is not None:
         commands.append("--ReleaseDate")

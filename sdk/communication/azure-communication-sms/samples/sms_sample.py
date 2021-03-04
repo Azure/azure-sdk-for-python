@@ -9,7 +9,8 @@
 """
 FILE: sms_sample.py
 DESCRIPTION:
-    These samples demonstrate sending an sms.
+    These samples demonstrate sending mutiple sms messages and resending 
+    any failed messages.
     
     ///authenticating a client via a connection string
 USAGE:
@@ -17,9 +18,7 @@ USAGE:
 """
 
 import sys
-from azure.communication.sms import (
-    SendSmsOptions, PhoneNumberIdentifier, SmsClient
-)
+from azure.communication.sms import SmsClient
 
 sys.path.append("..")
 
@@ -31,13 +30,31 @@ class SmsSamples(object):
         sms_client = SmsClient.from_connection_string(connection_string)
 
         # calling send() with sms values
-        smsresponse = sms_client.send(
-            from_phone_number=PhoneNumberIdentifier("<leased-phone-number>"),
-            to_phone_numbers=[PhoneNumberIdentifier("<to-phone-number>")],
+        sms_responses = sms_client.send(
+            from_="<leased-phone-number>",
+            to=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
             message="Hello World via SMS",
-            send_sms_options=SendSmsOptions(enable_delivery_report=True)) # optional property
-
-        print(smsresponse)
+            enable_delivery_report=True, # optional property
+            tag="custom-tag") # optional property
+        
+        failed_recipients = []
+        for sms_response in sms_responses:
+            if (sms_response.successful):
+                print("Message with message id {} was successful sent to {}"
+                .format(sms_response.message_id, sms_response.to))
+            else:
+                print("Message failed to send to {} with the status code {} and error: {}"
+                .format(sms_response.to, sms_response.http_status_code, sms_response.error_message))
+                if (sms_response.http_status_code != 400):
+                    failed_recipients.append(sms_response.to)
+        
+        # calling send() with failed recipients
+        sms_responses = sms_client.send(
+            from_="<leased-phone-number>",
+            to=failed_recipients,
+            message="Hello World via SMS",
+            enable_delivery_report=True, # optional property
+            tag="custom-tag") # optional property
 
 if __name__ == '__main__':
     sample = SmsSamples()

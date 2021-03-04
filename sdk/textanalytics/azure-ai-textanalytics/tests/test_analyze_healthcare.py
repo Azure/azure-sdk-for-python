@@ -19,6 +19,8 @@ from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,
+    HealthcareEntityRelationType,
+    HealthcareEntityRelationRoleType,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -35,53 +37,6 @@ class TestHealth(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = client.begin_analyze_healthcare_entities("hello world").result()
 
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_all_successful_passing_dict(self, client):
-        docs = [{"id": "1", "language": "en", "text": "Patient does not suffer from high blood pressure."},
-                {"id": "2", "language": "en", "text": "Prescribed 100mg ibuprofen, taken twice daily."}]
-
-        poller = client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval())
-        response = poller.result()
-        self.assertIsNotNone(response.statistics)
-        response = list(response)
-
-        for doc in response:
-            self.assertIsNotNone(doc.id)
-            self.assertIsNotNone(doc.statistics)
-            self.assertIsNotNone(doc.entities)
-
-        self.assertEqual(len(response[0].entities), 2)
-        entity1 = list(filter(lambda x: x.text == "high", response[0].entities))[0]
-        entity2 = list(filter(lambda x: x.text == "blood pressure", response[0].entities))[0]
-
-        self.assertEqual(len(entity1.related_entities), 1)
-        related_entity, relation_type = entity1.related_entities.popitem()
-        self.assertEqual(related_entity, entity2)
-        self.assertEqual(relation_type, "ValueOfExamination")
-
-        self.assertEqual(len(entity2.related_entities), 0)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_all_successful_passing_text_document_input(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="Patient does not suffer from high blood pressure."),
-            TextDocumentInput(id="2", text="Prescribed 100mg ibuprofen, taken twice daily."),
-        ]
-
-        response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
-
-        self.assertIsNone(response.statistics) # show_stats=False by default
-
-        for doc in response:
-            self.assertIsNotNone(doc.id)
-            self.assertIsNone(doc.statistics)
-            self.assertIsNotNone(doc.entities)
-
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_passing_only_string(self, client):
@@ -100,7 +55,6 @@ class TestHealth(TextAnalyticsTest):
 
         self.assertTrue(response[2].is_error)
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_input_with_some_errors(self, client):
@@ -113,20 +67,6 @@ class TestHealth(TextAnalyticsTest):
         self.assertTrue(response[1].is_error)
         self.assertFalse(response[2].is_error)
 
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_input_with_all_errors(self, client):
-        docs = [{"id": "1", "language": "en", "text": ""},
-                {"id": "2", "language": "english", "text": "Patient does not suffer from high blood pressure."},
-                {"id": "3", "language": "en", "text": ""}]
-
-        response = list(client.begin_analyze_healthcare_entities(docs).result())
-        self.assertTrue(response[0].is_error)
-        self.assertTrue(response[1].is_error)
-        self.assertTrue(response[2].is_error)
-
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_too_many_documents(self, client):
@@ -155,87 +95,16 @@ class TestHealth(TextAnalyticsTest):
             for revascularization with open heart surgery."
         docs = list(itertools.repeat(large_doc, 500))
 
+
         with pytest.raises(HttpResponseError) as excinfo:
             client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
         assert excinfo.value.status_code == 413
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_document_warnings(self, client):
-        # TODO: reproduce a warnings scenario for implementation
-        docs = [
-            {"id": "1", "text": "This won't actually create a warning :'("},
-        ]
-
-        result = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
-        response = list(result)
-        for doc in response:
-            doc_warnings = doc.warnings
-            self.assertEqual(len(doc_warnings), 0)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_output_same_order_as_input(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="one"),
-            TextDocumentInput(id="2", text="two"),
-            TextDocumentInput(id="3", text="three"),
-            TextDocumentInput(id="4", text="four"),
-            TextDocumentInput(id="5", text="five")
-        ]
-
-        response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
-
-        for idx, doc in enumerate(response):
-            self.assertEqual(str(idx + 1), doc.id)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "text_analytics_account_key": "",
-    })
-    def test_empty_credential_class(self, client):
-        with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze_healthcare_entities(
-                ["This is written in English."],
-                polling_interval=self._interval()
-            ).result()
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "text_analytics_account_key": "xxxx",
-    })
-    def test_bad_credentials(self, client):
-        with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze_healthcare_entities(
-                ["This is written in English."],
-                polling_interval=self._interval()
-            )
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_bad_document_input(self, client):
-        docs = "This is the wrong type"
-
-        with self.assertRaises(TypeError):
-            response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_mixing_inputs(self, client):
-        docs = [
-            {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-            TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
-            u"You cannot mix string input with the above inputs"
-        ]
-        with self.assertRaises(TypeError):
-            response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
     def test_out_of_order_ids(self, client):
+
+
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "22", "text": ""},
@@ -261,13 +130,11 @@ class TestHealth(TextAnalyticsTest):
         response = client.begin_analyze_healthcare_entities(
             docs,
             show_stats=True,
-            model_version="2020-09-03",
+            model_version="2021-01-11",
             polling_interval=self._interval()
         ).result()
 
-        self.assertIsNotNone(response)
-        self.assertIsNotNone(response.model_version)
-        self.assertEqual("2020-09-03", response.model_version)
+        self.assertEqual("2021-01-11", response.model_version)
         self.assertEqual(response.statistics.documents_count, 5)
         self.assertEqual(response.statistics.transactions_count, 4)
         self.assertEqual(response.statistics.valid_documents_count, 4)
@@ -276,63 +143,6 @@ class TestHealth(TextAnalyticsTest):
         for doc in response:
             if not doc.is_error:
                 self.assertIsNotNone(doc.statistics)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_whole_batch_language_hint(self, client):
-        docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
-        ]
-
-        response = list(client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval()).result())
-        self.assertFalse(response[0].is_error)
-        self.assertFalse(response[1].is_error)
-        self.assertFalse(response[2].is_error)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_whole_batch_dont_use_language_hint(self, client):
-        docs = [
-            u"This was the best day of my life.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant was not as good as I hoped."
-        ]
-
-        response = list(client.begin_analyze_healthcare_entities(docs, language="", polling_interval=self._interval()).result())
-        self.assertFalse(response[0].is_error)
-        self.assertFalse(response[1].is_error)
-        self.assertFalse(response[2].is_error)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_per_item_dont_use_language_hint(self, client):
-        docs = [{"id": "1", "language": "", "text": "I will go to the park."},
-                {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
-        response = list(client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result())
-        self.assertFalse(response[0].is_error)
-        self.assertFalse(response[1].is_error)
-        self.assertFalse(response[2].is_error)
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_whole_batch_language_hint_and_obj_input(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="I should take my cat to the veterinarian."),
-            TextDocumentInput(id="4", text="Este es un document escrito en Español."),
-            TextDocumentInput(id="3", text="猫は幸せ"),
-        ]
-
-        response = list(client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval()).result())
-        self.assertFalse(response[0].is_error)
-        self.assertFalse(response[1].is_error)
-        self.assertFalse(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -348,52 +158,12 @@ class TestHealth(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="I should take my cat to the veterinarian.", language="en"),
-            TextDocumentInput(id="2", text="猫は幸せ"),
-        ]
-
-        response = list(client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval()).result())
-        self.assertFalse(response[0].is_error)
-        self.assertFalse(response[1].is_error)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
-        docs = [{"id": "1", "language": "", "text": "I will go to the park."},
-                {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
-        response = list(client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval()).result())
-        self.assertFalse(response[0].is_error)
-        self.assertFalse(response[1].is_error)
-        self.assertFalse(response[2].is_error)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "default_language": "en"
-    })
-    def test_client_passed_default_language_hint(self, client):
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
-        result = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
-        response = list(result)
-        self.assertFalse(response[0].is_error)
-        self.assertFalse(response[1].is_error)
-        self.assertFalse(response[2].is_error)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
     def test_invalid_language_hint_method(self, client):
         response = list(client.begin_analyze_healthcare_entities(
             ["This should fail because we're passing in an invalid language hint"], language="notalanguage", polling_interval=self._interval()
         ).result())
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_invalid_language_hint_docs(self, client):
@@ -404,32 +174,9 @@ class TestHealth(TextAnalyticsTest):
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
     @GlobalTextAnalyticsAccountPreparer()
-    def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-
-        credential = AzureKeyCredential(text_analytics_account_key)
-        client = TextAnalyticsClient(text_analytics_account, credential)
-
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
-        response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
-        self.assertIsNotNone(response)
-
-        credential.update("xxx")  # Make authentication fail
-        with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
-
-        credential.update(text_analytics_account_key)  # Authenticate successfully again
-        response = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
-        self.assertIsNotNone(response)
-
-    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_user_agent(self, client):  # TODO: verify
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [{"id": "1", "text": "I will go to the park."}]
 
         poller = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
         self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
@@ -460,23 +207,6 @@ class TestHealth(TextAnalyticsTest):
                 '\'DocumentError\' object has no attribute \'entities\'. '
                 'The service was unable to process this document:\nDocument Id: 1\nError: '
                 'InvalidDocument - Document text is empty.\n'
-            )
-
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_document_attribute_error_nonexistent_attribute(self, client):
-        docs = [{"id": "1", "text": ""}]
-        result = client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval()).result()
-        response = list(result)
-
-        # Attribute not found on DocumentError or result obj, default behavior/message
-        try:
-            health = response[0].attribute_not_on_result_or_error
-        except AttributeError as default_behavior:
-            self.assertEqual(
-                default_behavior.args[0],
-                '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -510,30 +240,6 @@ class TestHealth(TextAnalyticsTest):
         self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[2].error.message)
 
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_not_passing_list_for_docs(self, client):
-        docs = {"id": "1", "text": "hello world"}
-        with pytest.raises(TypeError) as excinfo:
-            client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
-        assert "Input documents cannot be a dict" in str(excinfo.value)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_missing_input_records_error(self, client):
-        docs = []
-        with pytest.raises(ValueError) as excinfo:
-            client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
-        assert "Input documents can not be empty or None" in str(excinfo.value)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_passing_none_docs(self, client):
-        with pytest.raises(ValueError) as excinfo:
-            client.begin_analyze_healthcare_entities(None, polling_interval=self._interval())
-        assert "Input documents can not be empty or None" in str(excinfo.value)
-
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_duplicate_ids_error(self, client):
@@ -559,52 +265,53 @@ class TestHealth(TextAnalyticsTest):
         ).result()
         assert res == "cls result"
 
-    @pytest.mark.playback_test_only
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_multiple_pages_of_results_returned_successfully(self, client):
-        single_doc = "hello world"
-        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
-        # Service now only accepts 10 documents for a job, and since the current default server-side value
-        # for records per page is 20, pagination logic will never be activated.  This is intended to change
-        # in the future but for now this test actually won't hit the pagination logic now.
+    """Commenting out multi page tests until service returns multiple pages"""
 
-        result = client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval()).result()
-        response = list(result)
+    # @GlobalTextAnalyticsAccountPreparer()
+    # @TextAnalyticsClientPreparer()
+    # def test_multiple_pages_of_results_returned_successfully(self, client):
+    #     single_doc = "hello world"
+    #     docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
+    #     # Service now only accepts 10 documents for a job, and since the current default server-side value
+    #     # for records per page is 20, pagination logic will never be activated.  This is intended to change
+    #     # in the future but for now this test actually won't hit the pagination logic now.
 
-        self.assertEqual(len(docs), len(response))
-        self.assertIsNotNone(result.statistics)
+    #     result = client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval()).result()
+    #     response = list(result)
 
-        for (idx, doc) in enumerate(response):
-            self.assertEqual(docs[idx]["id"], doc.id)
-            self.assertIsNotNone(doc.statistics)
+    #     self.assertEqual(len(docs), len(response))
+    #     self.assertIsNotNone(result.statistics)
 
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_multiple_pages_of_results_with_errors_returned_successfully(self, client):
-        single_doc = "hello world"
-        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 9)))]
-        docs.append({"id": "9", "text": ""})
-        # Service now only accepts 10 documents for a job, and since the current default server-side value
-        # for records per page is 20, pagination logic will never be activated.  This is intended to change
-        # in the future but for now this test actually won't hit the pagination logic now.
+    #     for (idx, doc) in enumerate(response):
+    #         self.assertEqual(docs[idx]["id"], doc.id)
+    #         self.assertIsNotNone(doc.statistics)
+
+    # @GlobalTextAnalyticsAccountPreparer()
+    # @TextAnalyticsClientPreparer()
+    # def test_multiple_pages_of_results_with_errors_returned_successfully(self, client):
+    #     single_doc = "hello world"
+    #     docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 9)))]
+    #     docs.append({"id": "9", "text": ""})
+    #     # Service now only accepts 10 documents for a job, and since the current default server-side value
+    #     # for records per page is 20, pagination logic will never be activated.  This is intended to change
+    #     # in the future but for now this test actually won't hit the pagination logic now.
 
 
-        result = client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval()).result()
-        response = list(result)
+    #     result = client.begin_analyze_healthcare_entities(docs, show_stats=True, polling_interval=self._interval()).result()
+    #     response = list(result)
 
-        self.assertEqual(len(docs), len(response))
-        self.assertIsNotNone(result.statistics)
+    #     self.assertEqual(len(docs), len(response))
+    #     self.assertIsNotNone(result.statistics)
 
-        for (idx, doc) in enumerate(response):
-            self.assertEqual(docs[idx]["id"], doc.id)
+    #     for (idx, doc) in enumerate(response):
+    #         self.assertEqual(docs[idx]["id"], doc.id)
 
-            if doc.id == "9":
-                self.assertTrue(doc.is_error)
+    #         if doc.id == "9":
+    #             self.assertTrue(doc.is_error)
 
-            else:
-                self.assertFalse(doc.is_error)
-                self.assertIsNotNone(doc.statistics)
+    #         else:
+    #             self.assertFalse(doc.is_error)
+    #             self.assertIsNotNone(doc.statistics)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -642,19 +349,41 @@ class TestHealth(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_bidirectional_relation_type(self, client):
+    def test_relations(self, client):
         result = list(client.begin_analyze_healthcare_entities(
             documents=["The patient was diagnosed with Parkinsons Disease (PD)"]
         ).result())
 
-        self.assertEqual(len(result[0].entities), 2)
-        entity1 = list(filter(lambda x: x.text == "Parkinsons Disease", result[0].entities))[0]
-        entity2 = list(filter(lambda x: x.text == "PD", result[0].entities))[0]
+        assert len(result) == 1
+        result = result[0]
 
-        related_entity1, relation_type1 = entity1.related_entities.popitem()
-        self.assertEqual(related_entity1, entity2)
-        self.assertEqual(relation_type1, "Abbreviation")
-        related_entity2, relation_type2 = entity2.related_entities.popitem()
-        self.assertEqual(related_entity2, entity1)
-        self.assertEqual(relation_type2, "Abbreviation")
+        assert len(result.entities) == 2
+        assert len(result.entity_relations) == 1
 
+        relation = result.entity_relations[0]
+        assert relation.relation_type == HealthcareEntityRelationType.ABBREVIATION
+        assert len(relation.roles) == 2
+
+        parkinsons_entity = list(filter(lambda x: x.text == "Parkinsons Disease", result.entities))[0]
+        parkinsons_abbreviation_entity = list(filter(lambda x: x.text == "PD", result.entities))[0]
+
+        for role in relation.roles:
+            if role.name == HealthcareEntityRelationRoleType.FULL_TERM:
+                self.assert_healthcare_entities_equal(role.entity, parkinsons_entity)
+            else:
+                assert role.name == HealthcareEntityRelationRoleType.ABBREVIATED_TERM
+                self.assert_healthcare_entities_equal(role.entity, parkinsons_abbreviation_entity)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_normalized_text(self, client):
+        result = list(client.begin_analyze_healthcare_entities(
+            documents=["patients must have histologically confirmed NHL"]
+        ).result())
+
+        # currently just testing it has that attribute.
+        # have an issue to update https://github.com/Azure/azure-sdk-for-python/issues/17072
+
+        assert all([
+            e for e in result[0].entities if hasattr(e, "normalized_text")
+        ])

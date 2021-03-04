@@ -1,5 +1,14 @@
 # Release History
 
+## 2.0.0b6 (Unreleased)
+
+  **Breaking Changes**
+  - `~azure.eventgrid.CloudEvent` is now removed in favor of `~azure.core.messaging.CloudEvent`.
+  - All the `SystemEventNames` related to Azure Communication Service starting with `ACS****` are renamed to `Acs***` to honor pascal case.
+
+  **Features**
+  - Added support for two new `SystemEvents` - `ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventData` and `ServiceBusActiveMessagesAvailablePeriodicNotificationsEventData`
+
 ## 2.0.0b5 (2021-02-10)
 
   **Breaking Changes**

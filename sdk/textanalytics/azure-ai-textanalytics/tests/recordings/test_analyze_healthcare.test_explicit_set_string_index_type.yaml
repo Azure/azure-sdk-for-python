@@ -13,19 +13,19 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.7.5 (Linux-4.4.0-19041-Microsoft-x86_64-with-debian-stretch-sid)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=TextElements_v8
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs?stringIndexType=TextElements_v8
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 3a938e1c-5212-49af-be5f-5ec4d2a99f8b
+      - a28758cb-0702-49fa-ab39-23420fa9c6b2
       date:
-      - Sat, 30 Jan 2021 01:01:24 GMT
+      - Mon, 01 Mar 2021 19:49:42 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/3b6ae559-5e83-489b-a400-b5f7fe504f36
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/4bf6c182-ede8-41a7-9036-baeb0a1cdd07
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -33,7 +33,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '307'
+      - '110'
     status:
       code: 202
       message: Accepted
@@ -47,19 +47,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.7.5 (Linux-4.4.0-19041-Microsoft-x86_64-with-debian-stretch-sid)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/3b6ae559-5e83-489b-a400-b5f7fe504f36
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/4bf6c182-ede8-41a7-9036-baeb0a1cdd07
   response:
     body:
-      string: '{"jobId":"3b6ae559-5e83-489b-a400-b5f7fe504f36","lastUpdateDateTime":"2021-01-30T01:01:27Z","createdDateTime":"2021-01-30T01:01:24Z","expirationDateTime":"2021-01-31T01:01:24Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+      string: '{"jobId":"4bf6c182-ede8-41a7-9036-baeb0a1cdd07","lastUpdateDateTime":"2021-03-01T19:49:44Z","createdDateTime":"2021-03-01T19:49:42Z","expirationDateTime":"2021-03-02T19:49:42Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-11"}}'
     headers:
       apim-request-id:
-      - 456baaac-32ef-4860-9d85-29bf87c0e900
+      - 8b5f1bc3-1b9b-419c-ac4c-295b765b3556
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 30 Jan 2021 01:01:30 GMT
+      - Mon, 01 Mar 2021 19:49:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -67,7 +67,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '500'
+      - '27'
     status:
       code: 200
       message: OK

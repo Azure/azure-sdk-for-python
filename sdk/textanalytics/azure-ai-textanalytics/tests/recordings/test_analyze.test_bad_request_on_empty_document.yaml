@@ -15,20 +15,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Missing input documents.","innerError":{"code":"InvalidDocument","message":"Document
         text is empty."}}}'
     headers:
       apim-request-id:
-      - 1caef115-b887-4965-933a-4f3632786638
+      - a43cba47-5d62-4f9a-8744-04a5007b0ed7
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Feb 2021 03:17:41 GMT
+      - Tue, 23 Feb 2021 17:05:39 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class DeploymentOperationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class DeploymentOperationsOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentOperation"
+        # type: (...) -> "_models.DeploymentOperation"
         """Gets a deployments operation.
 
         :param group_id: The management group ID.
@@ -66,7 +66,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -114,7 +114,7 @@ class DeploymentOperationsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeploymentOperationsListResult"]
+        # type: (...) -> Iterable["_models.DeploymentOperationsListResult"]
         """Gets all deployments operations for a deployment.
 
         :param group_id: The management group ID.
@@ -128,7 +128,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperationsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperationsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -192,7 +192,7 @@ class DeploymentOperationsOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentOperation"
+        # type: (...) -> "_models.DeploymentOperation"
         """Gets a deployments operation.
 
         :param deployment_name: The name of the deployment.
@@ -204,7 +204,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -251,7 +251,7 @@ class DeploymentOperationsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeploymentOperationsListResult"]
+        # type: (...) -> Iterable["_models.DeploymentOperationsListResult"]
         """Gets all deployments operations for a deployment.
 
         :param deployment_name: The name of the deployment.
@@ -263,7 +263,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperationsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperationsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -328,7 +328,7 @@ class DeploymentOperationsOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentOperation"
+        # type: (...) -> "_models.DeploymentOperation"
         """Gets a deployments operation.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -342,7 +342,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -391,7 +391,7 @@ class DeploymentOperationsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeploymentOperationsListResult"]
+        # type: (...) -> Iterable["_models.DeploymentOperationsListResult"]
         """Gets all deployments operations for a deployment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -405,7 +405,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2019_05_01.models.DeploymentOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperationsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperationsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
