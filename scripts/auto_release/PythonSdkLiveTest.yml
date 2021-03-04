@@ -62,7 +62,7 @@ jobs:
 
         test_result=""
         if [ -f "$output_path/live_test_fail.txt" ]; then
-          test_result="Live test failed, detailed info is in pipeline log(search keyword FAILED)!!!\n"
+          test_result="Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!\n"
         fi
 
         # create PR
@@ -80,8 +80,8 @@ jobs:
 
         echo "\'[AutoRelease] $new_branch \' has been created!!!"
 
-        # if test failed, still push and crete PR. But pipeline would fail to remind user
+        # if test fail, still push and crete PR. But pipeline would fail to remind user
         if [ -f "$output_path/live_test_fail.txt" ]; then
-          echo "please fix failed test!!! \'[AutoRelease] $new_branch \' has been created!!!"
+          echo "please fix failure test!!! \'[AutoRelease] $new_branch \' has been created!!!"
           exit 1
         fi
