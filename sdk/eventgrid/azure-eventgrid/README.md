@@ -66,10 +66,10 @@ eg_publisher_client = EventGridPublisherClient(endpoint, credential)
 ## Key concepts
 
 ### Topic
-A [topic](https://docs.microsoft.com/azure/event-grid/concepts#topics) is a channel within the EventGrid service to send events. The event schema that a topic accepts is decided at topic creation time. If events of a schema type are sent to a topic that requires a different schema type, errors will be raised.
+A **[topic](https://docs.microsoft.com/azure/event-grid/concepts#topics)** is a channel within the EventGrid service to send events. The event schema that a topic accepts is decided at topic creation time. If events of a schema type are sent to a topic that requires a different schema type, errors will be raised.
 
 ### Domain
-An event [domain](https://docs.microsoft.com/azure/event-grid/event-domains) is a management tool for large numbers of Event Grid topics related to the same application. They allow you to publish events to thousands of topics. Domains also give you authorization and authentication control over each topic. For more information, visit [Event domain overview](https://docs.microsoft.com/azure/event-grid/event-domains).
+An event **[domain](https://docs.microsoft.com/azure/event-grid/event-domains)** is a management tool for large numbers of Event Grid topics related to the same application. They allow you to publish events to thousands of topics. Domains also give you authorization and authentication control over each topic. For more information, visit [Event domain overview](https://docs.microsoft.com/azure/event-grid/event-domains).
 
 When you create an event domain, a publishing endpoint for this domain is made available to you. This process is similar to creating an Event Grid Topic. The only difference is that, when publishing to a domain, you must specify the topic within the domain that you'd like the event to be delivered to.
 
@@ -167,9 +167,9 @@ client.send(event)
 
 ### Send Multiple events
 
-It is possible to send events as a batch when sending multiple events to a topic or a domain. This example send a list of CloudEvents using the send method.
+It is possible to send events as a batch when sending multiple events to a topic or a domain. This example sends a list of CloudEvents using the send method.
 
-**WARNING** To gain the best performance when sending multiple events at one time, it is highly recommended to send a list of events instead of iterating over and sending each event in a loop.
+**WARNING** When sending a list of multiple events at one time, iterating over and sending each event will not result in optimal performance. For best performance, it is highly recommended to send a list of events.
 
 ```Python
 import os

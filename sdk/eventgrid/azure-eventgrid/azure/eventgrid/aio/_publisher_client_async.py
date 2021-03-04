@@ -158,8 +158,9 @@ class EventGridPublisherClient:
                 :dedent: 4
                 :caption: Publishing a Custom Schema event.
 
-        **WARNING**: To gain the best performance when sending multiple events at one time,
-        it is highly recommended to send a list of events instead of iterating over and sending each event in a loop.
+        **WARNING**: When sending a list of multiple events at one time, iterating over and sending each event
+        will not result in optimal performance. For best performance, it is highly recommended to send
+        a list of events.
 
         :param events: A single instance or a list of dictionaries/CloudEvent/EventGridEvent to be sent.
         :type events: ~azure.core.messaging.CloudEvent, ~azure.eventgrid.EventGridEvent, Dict,
