@@ -1,11 +1,13 @@
 import argparse
 import json
 import logging
+import os
 from pathlib import Path
 import re
 from subprocess import check_call
 
 from .swaggertosdk.SwaggerToSdkCore import (
+    read_config,
     CONFIG_FILE,
 )
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
@@ -37,6 +39,29 @@ def init_new_service(package_name, folder_name):
             with open(str(ci), 'w') as file_out:
                 file_out.writelines(content)
 
+def update_service_metadata(sdk_folder, data, global_conf, folder_name, package_name):
+
+    # metadata
+    _metadata = {
+        "autorest": global_conf["autorest_options"]["version"],
+        "autorest.python": global_conf["autorest_options"]["use"].split("@")[2],
+        "commit": data["headSha"]
+    }
+
+    _LOGGER.info("Metadata json:\n {}".format(json.dumps(_metadata, indent=2)))
+
+    # metadata_folder = Path(sdk_folder, "sdk/metadata/mgmt").expanduser()
+    metadata_folder = Path(sdk_folder, folder_name, package_name).expanduser()
+    if not os.path.exists(metadata_folder):
+        _LOGGER.info(f"Metadata folder is not exists:{metadata_folder}")
+        _LOGGER.info("Failed to save metadata.")
+        return
+
+    service_data = os.path.join(metadata_folder, f"_meta.json")
+    with open(service_data, "w") as writer:
+        json.dump(_metadata, writer, indent=2)
+    _LOGGER.info(f"Saved metadata to {service_data}")
+
 
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
@@ -59,6 +84,8 @@ def main(generate_input, generate_output):
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f'[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]')
 
+        global_conf = read_config(Path(sdk_folder).expanduser(), CONFIG_FILE)["meta"]
+
         for folder_name, package_name in package_names:
             if package_name in package_total:
                 continue
@@ -73,6 +100,9 @@ def main(generate_input, generate_output):
             else:
                 result[package_name]["path"].append(folder_name)
                 result[package_name]["readmeMd"].append(input_readme)
+
+            # Update metadata
+            update_service_metadata(sdk_folder, data, global_conf, folder_name, package_name)
 
             # Generate some necessary file for new service
             init_new_service(package_name, folder_name)
