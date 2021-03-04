@@ -30,10 +30,7 @@ import logging
 import asyncio
 import aiohttp
 from multidict import CIMultiDict
-
-from requests.exceptions import (
-    ChunkedEncodingError,
-    StreamConsumedError)
+from requests.exceptions import StreamConsumedError
 
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
