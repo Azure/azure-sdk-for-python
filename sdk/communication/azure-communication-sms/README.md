@@ -56,7 +56,7 @@ sms_client = SmsClient(endpoint, DefaultAzureCredential())
 
 ### Send a 1:1 SMS Message
 
-Once the client is initialized, the `.send()` method can be invoked:
+Once the client is initialized, the `send` method can be invoked:
 
 ```Python
 from azure.communication.sms import SendSmsOptions
@@ -77,7 +77,7 @@ sms_responses = sms_client.send(
 
 ### Send a 1:N SMS Message
 
-Once the client is initialized, the `.send()` method can be invoked:
+Once the client is initialized, the `send` method can be invoked:
 
 ```Python
 from azure.communication.sms import SendSmsOptions
