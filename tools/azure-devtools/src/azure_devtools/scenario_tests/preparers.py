@@ -46,11 +46,6 @@ class AbstractPreparer(object):
         # In cached mode we need to avoid this because then for tests with recordings, they would not have a moniker.
         if (self.live_test or test_class_instance.in_recording) \
                 and not (not test_class_instance.is_live and test_class_instance.in_recording and self._use_cache):
-                _logger.warning("This test (%s) does not generate a recording file, you should not inherit from AzureTestCase \
-                    for these tests, please remove this dependency.", test_class_instance.qualified_test_name)
-
-        if (self.live_test or test_class_instance.in_recording) \
-                and not (not self.live_test and test_class_instance.in_recording and self._use_cache):
             resource_name = self.random_name
             if not self.live_test and isinstance(self, RecordingProcessor):
                 test_class_instance.recording_processors.append(self)

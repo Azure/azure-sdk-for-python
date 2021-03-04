@@ -29,7 +29,7 @@ endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
 credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(endpoint, credential)
 
-team_members = ["Josh", "Kerri", "Kieran", "Laurent", "Lily", "Matt", "Soren", "Srikanta", "Swathi"]    # possible values for data field
+services = ["EventGrid", "ServiceBus", "EventHubs", "Storage"]    # possible values for data field
 
 def publish_event():
     # publish events
@@ -37,7 +37,7 @@ def publish_event():
         event_list = []     # list of events to publish
         # create events and append to list
         for j in range(randint(1, 1)):
-            sample_members = sample(team_members, k=randint(1, 9)) # select random subset of team members
+            sample_members = sample(services, k=randint(1, 4)) # select random subset of team members
             data_dict = {"team": sample_members}
             event = CloudEvent(
                     type="Azure.Sdk.Sample",

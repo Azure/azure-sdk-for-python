@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -17,6 +18,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -32,13 +34,13 @@ extends:
   parameters:
     ServiceDirectory: core
     Artifacts:
-    - name: azure_core
+    - name: azure-core
       safeName: azurecore
-    - name: azure_mgmt_core
+    - name: azure-mgmt-core
       safeName: azuremgmtcore
-    - name: azure_core_tracing_opencensus
+    - name: azure-core-tracing-opencensus
       safeName: azurecorecoretracingopencensus
-    - name: azure_core_tracing_opentelemetry
+    - name: azure-core-tracing-opentelemetry
       safeName: azurecorecoretracingtelemetry
-    - name: azure_common
+    - name: azure-common
       safeName: azurecommon

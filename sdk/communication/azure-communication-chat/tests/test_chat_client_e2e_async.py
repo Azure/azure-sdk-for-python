@@ -11,10 +11,10 @@ from msrest.serialization import TZ_UTC
 from uuid import uuid4
 
 from azure.communication.identity import CommunicationIdentityClient
+from azure.communication.identity._shared.user_credential_async import CommunicationTokenCredential
+from azure.communication.chat._shared.user_token_refresh_options import CommunicationTokenRefreshOptions
 from azure.communication.chat.aio import (
-    ChatClient,
-    CommunicationTokenCredential,
-    CommunicationTokenRefreshOptions
+    ChatClient
 )
 from azure.communication.chat import (
     ChatThreadParticipant
@@ -44,7 +44,7 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
 
         # create user
         self.user = self.identity_client.create_user()
-        token_response = self.identity_client.issue_token(self.user, scopes=["chat"])
+        token_response = self.identity_client.get_token(self.user, scopes=["chat"])
         self.token = token_response.token
 
         # create ChatClient
@@ -68,8 +68,10 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
             display_name='name',
             share_history_time=share_history_time
         )]
-        chat_thread_client = await self.chat_client.create_chat_thread(topic, participants, repeatability_request_id)
-        self.thread_id = chat_thread_client.thread_id
+        create_chat_thread_result = await self.chat_client.create_chat_thread(topic,
+                                                                              thread_participants=participants,
+                                                                              repeatability_request_id=repeatability_request_id)
+        self.thread_id = create_chat_thread_result.chat_thread.id
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
@@ -81,6 +83,21 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
             # delete created users and chat threads
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(self.thread_id)
+
+    @pytest.mark.live_test_only
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_create_chat_thread_w_no_participants_async(self):
+        async with self.chat_client:
+            # create chat thread
+            topic = "test topic"
+            create_chat_thread_result = await self.chat_client.create_chat_thread(topic)
+
+            assert create_chat_thread_result.chat_thread is not None
+            assert create_chat_thread_result.errors is None
+
+            # delete created users and chat threads
+            if not self.is_playback():
+                await self.chat_client.delete_chat_thread(create_chat_thread_result.chat_thread.id)
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test

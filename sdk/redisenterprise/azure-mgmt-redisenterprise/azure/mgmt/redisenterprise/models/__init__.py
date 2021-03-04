@@ -24,6 +24,7 @@ try:
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
     from ._models_py3 import OperationStatus
+    from ._models_py3 import Persistence
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointConnectionListResult
@@ -53,6 +54,7 @@ except (SyntaxError, ImportError):
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
     from ._models import OperationStatus  # type: ignore
+    from ._models import Persistence  # type: ignore
     from ._models import PrivateEndpoint  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
     from ._models import PrivateEndpointConnectionListResult  # type: ignore
@@ -65,9 +67,10 @@ except (SyntaxError, ImportError):
     from ._models import Sku  # type: ignore
     from ._models import TrackedResource  # type: ignore
 
-from ._redis_enterprise_enums import (
+from ._redis_enterprise_management_client_enums import (
     AccessKeyType,
     ActionType,
+    AofFrequency,
     ClusteringPolicy,
     EvictionPolicy,
     Origin,
@@ -75,8 +78,10 @@ from ._redis_enterprise_enums import (
     PrivateEndpointServiceConnectionStatus,
     Protocol,
     ProvisioningState,
+    RdbFrequency,
     ResourceState,
     SkuName,
+    TlsVersion,
 )
 
 __all__ = [
@@ -97,6 +102,7 @@ __all__ = [
     'OperationDisplay',
     'OperationListResult',
     'OperationStatus',
+    'Persistence',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionListResult',
@@ -110,6 +116,7 @@ __all__ = [
     'TrackedResource',
     'AccessKeyType',
     'ActionType',
+    'AofFrequency',
     'ClusteringPolicy',
     'EvictionPolicy',
     'Origin',
@@ -117,6 +124,8 @@ __all__ = [
     'PrivateEndpointServiceConnectionStatus',
     'Protocol',
     'ProvisioningState',
+    'RdbFrequency',
     'ResourceState',
     'SkuName',
+    'TlsVersion',
 ]

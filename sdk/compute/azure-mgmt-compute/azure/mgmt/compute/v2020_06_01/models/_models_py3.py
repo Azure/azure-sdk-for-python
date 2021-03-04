@@ -2968,8 +2968,8 @@ class PatchSettings(msrest.serialization.Model):
      inside the VM. In this mode, automatic updates are disabled; the property
      WindowsConfiguration.enableAutomaticUpdates must be false:code:`<br />`:code:`<br />`
      **AutomaticByOS** - The virtual machine will automatically be updated by the OS. The property
-     WindowsConfiguration.enableAutomaticUpdates must be true. :code:`<br />`:code:`<br />` **
-     AutomaticByPlatform** - the virtual machine will automatically updated by the platform. The
+     WindowsConfiguration.enableAutomaticUpdates must be true. :code:`<br />`:code:`<br />`
+     **AutomaticByPlatform** - the virtual machine will automatically updated by the platform. The
      properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true.
      Possible values include: "Manual", "AutomaticByOS", "AutomaticByPlatform".
     :type patch_mode: str or ~azure.mgmt.compute.v2020_06_01.models.InGuestPatchMode

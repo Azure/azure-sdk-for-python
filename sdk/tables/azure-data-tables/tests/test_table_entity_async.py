@@ -1829,7 +1829,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("Header authorization is malformed")
     @pytest.mark.live_test_only
     @TablesPreparer()
     async def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -1842,7 +1841,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             access_policy = AccessPolicy()
             access_policy.start = datetime(2011, 10, 11)
-            access_policy.expiry = datetime(2020, 10, 12)
+            access_policy.expiry = datetime(2025, 10, 12)
             access_policy.permission = TableSasPermissions(read=True)
             identifiers = {'testid': access_policy}
 
@@ -1869,5 +1868,27 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Assert
             assert len(entities) ==  1
             self._assert_default_entity(entities[0])
+        finally:
+            await self._tear_down()
+
+    @TablesPreparer()
+    async def test_datetime_milliseconds(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+        url = self.account_url(tables_storage_account_name, "table")
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity = self._create_random_entity_dict()
+
+            entity['milliseconds'] = datetime(2011, 11, 4, 0, 5, 23, 283000, tzinfo=tzutc())
+
+            await self.table.create_entity(entity)
+
+            received_entity = await self.table.get_entity(
+                partition_key=entity['PartitionKey'],
+                row_key=entity['RowKey']
+            )
+
+            assert entity['milliseconds'] == received_entity['milliseconds']
+
         finally:
             await self._tear_down()

@@ -22,9 +22,13 @@ try:
     from ._models_py3 import ChatThreadsInfoCollection
     from ._models_py3 import CommunicationError
     from ._models_py3 import CommunicationErrorResponse
+    from ._models_py3 import CommunicationIdentifierModel
+    from ._models_py3 import CommunicationUserIdentifierModel
     from ._models_py3 import CreateChatThreadErrors
     from ._models_py3 import CreateChatThreadRequest
     from ._models_py3 import CreateChatThreadResult
+    from ._models_py3 import MicrosoftTeamsUserIdentifierModel
+    from ._models_py3 import PhoneNumberIdentifierModel
     from ._models_py3 import SendChatMessageRequest
     from ._models_py3 import SendChatMessageResult
     from ._models_py3 import SendReadReceiptRequest
@@ -46,9 +50,13 @@ except (SyntaxError, ImportError):
     from ._models import ChatThreadsInfoCollection  # type: ignore
     from ._models import CommunicationError  # type: ignore
     from ._models import CommunicationErrorResponse  # type: ignore
+    from ._models import CommunicationIdentifierModel  # type: ignore
+    from ._models import CommunicationUserIdentifierModel  # type: ignore
     from ._models import CreateChatThreadErrors  # type: ignore
     from ._models import CreateChatThreadRequest  # type: ignore
     from ._models import CreateChatThreadResult  # type: ignore
+    from ._models import MicrosoftTeamsUserIdentifierModel  # type: ignore
+    from ._models import PhoneNumberIdentifierModel  # type: ignore
     from ._models import SendChatMessageRequest  # type: ignore
     from ._models import SendChatMessageResult  # type: ignore
     from ._models import SendReadReceiptRequest  # type: ignore
@@ -57,6 +65,7 @@ except (SyntaxError, ImportError):
 
 from ._azure_communication_chat_service_enums import (
     ChatMessageType,
+    CommunicationCloudEnvironmentModel,
 )
 
 __all__ = [
@@ -75,13 +84,18 @@ __all__ = [
     'ChatThreadsInfoCollection',
     'CommunicationError',
     'CommunicationErrorResponse',
+    'CommunicationIdentifierModel',
+    'CommunicationUserIdentifierModel',
     'CreateChatThreadErrors',
     'CreateChatThreadRequest',
     'CreateChatThreadResult',
+    'MicrosoftTeamsUserIdentifierModel',
+    'PhoneNumberIdentifierModel',
     'SendChatMessageRequest',
     'SendChatMessageResult',
     'SendReadReceiptRequest',
     'UpdateChatMessageRequest',
     'UpdateChatThreadRequest',
     'ChatMessageType',
+    'CommunicationCloudEnvironmentModel',
 ]
