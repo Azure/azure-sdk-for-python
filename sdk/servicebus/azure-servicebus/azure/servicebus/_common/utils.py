@@ -63,20 +63,13 @@ if TYPE_CHECKING:
 
     MessageType = TypeVar(
         'MessageType',
-        ServiceBusMessage,
-        ServiceBusMessageBatch
+        ServiceBusMessage
     )
-    MessagesType = TypeVar(
-        'MessagesType',
-        ServiceBusMessage,
-        ServiceBusMessageBatch,
-        List[ServiceBusMessage]
-    )
+
     Messages = Union[
-        Mapping,
-        List[Mapping],
+        Mapping[str, Any],
         MessageType,
-        List[MessageType]
+        List[Union[Mapping[str, Any], MessageType]]
     ]
 
 _log = logging.getLogger(__name__)
@@ -229,8 +222,8 @@ def transform_messages_to_sendable_if_needed(messages):
 
 
 def _single_message_from_dict(message, message_type):
-    # type: (Union[MessageType, Mapping], Type[MessageType]) -> MessageType
-    if isinstance(message, (message_type, ServiceBusMessageBatch)):
+    # type: (Union[MessageType, Mapping[str, Any]], Type[MessageType]) -> MessageType
+    if isinstance(message, message_type):
         return message
     try:
         message_type(**message)
@@ -244,7 +237,7 @@ def _single_message_from_dict(message, message_type):
 
 
 def create_messages_from_dicts_if_needed(messages, message_type):
-    # type: (Messages, Type[MessageType]) -> MessagesType
+    # type: (Messages, Type[MessageType]) -> Union[MessageType, List[MessageType]]
     """
     This method is used to convert dict representations
     of messages to a list of ServiceBusMessage objects or ServiceBusBatchMessage.

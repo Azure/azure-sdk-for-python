@@ -399,7 +399,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return result
 
-    async def update_queue(self, queue: Union[QueueProperties, Mapping], **kwargs) -> None:
+    async def update_queue(self, queue: Union[QueueProperties, Mapping[str, Any]], **kwargs) -> None:
         """Update a queue.
 
         Before calling this method, you should use `get_queue`, `create_queue` or `list_queues` to get a
@@ -626,7 +626,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return result
 
-    async def update_topic(self, topic: Union[TopicProperties, Mapping], **kwargs) -> None:
+    async def update_topic(self, topic: Union[TopicProperties, Mapping[str, Any]], **kwargs) -> None:
         """Update a topic.
 
         Before calling this method, you should use `get_topic`, `create_topic` or `list_topics` to get a
@@ -872,7 +872,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     async def update_subscription(
-        self, topic_name: str, subscription: Union[SubscriptionProperties, Mapping], **kwargs
+        self, topic_name: str, subscription: Union[SubscriptionProperties, Mapping[str, Any]], **kwargs
     ) -> None:
         """Update a subscription.
 
@@ -1068,7 +1068,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     async def update_rule(
-        self, topic_name: str, subscription_name: str, rule: Union[RuleProperties, Mapping], **kwargs
+        self, topic_name: str, subscription_name: str, rule: Union[RuleProperties, Mapping[str, Any]], **kwargs
     ) -> None:
         """Update a rule.
 

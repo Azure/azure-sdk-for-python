@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, cast, Union, Mapping, TypeVar, Type
+from typing import TYPE_CHECKING, cast, Union, Mapping, TypeVar, Type, Any
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
 import six
@@ -320,7 +320,7 @@ def _validate_topic_subscription_and_rule_types(
         )
 
 def create_properties_from_dict_if_needed(properties, sb_resource_type):
-    # type: (Union[PropertiesType, Mapping], Type[PropertiesType]) -> PropertiesType
+    # type: (Union[PropertiesType, Mapping[str, Any]], Type[PropertiesType]) -> PropertiesType
     """
     This method is used to create a properties object given the
     resource properties type and its corresponding dict representation.

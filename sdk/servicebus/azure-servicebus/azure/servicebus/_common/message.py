@@ -559,7 +559,7 @@ class ServiceBusMessageBatch(object):
         return self._size
 
     def add_message(self, message):
-        # type: (Union[ServiceBusMessage, Mapping]) -> None
+        # type: (Union[ServiceBusMessage, Mapping[str, Any]]) -> None
         """Try to add a single Message to the batch.
 
         The total size of an added message is the sum of its body, properties, etc.
@@ -575,7 +575,7 @@ class ServiceBusMessageBatch(object):
         return self._add(message)
 
     def _add(self, message, parent_span=None):
-        # type: (Union[ServiceBusMessage, Mapping], AbstractSpan) -> None
+        # type: (Union[ServiceBusMessage, Mapping[str, Any]], AbstractSpan) -> None
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
         message = transform_messages_to_sendable_if_needed(message)

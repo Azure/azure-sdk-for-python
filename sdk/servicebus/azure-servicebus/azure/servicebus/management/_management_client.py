@@ -621,7 +621,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     def update_topic(self, topic, **kwargs):
-        # type: (Union[TopicProperties, Mapping], Any) -> None
+        # type: (Union[TopicProperties, Mapping[str, Any]], Any) -> None
         """Update a topic.
 
         Before calling this method, you should use `get_topic`, `create_topic` or `list_topics` to get a
@@ -876,7 +876,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     def update_subscription(self, topic_name, subscription, **kwargs):
-        # type: (str, Union[SubscriptionProperties, Mapping], Any) -> None
+        # type: (str, Union[SubscriptionProperties, Mapping[str, Any]], Any) -> None
         """Update a subscription.
 
         Before calling this method, you should use `get_subscription`, `update_subscription` or `list_subscription`
@@ -1065,7 +1065,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     def update_rule(self, topic_name, subscription_name, rule, **kwargs):
-        # type: (str, str, Union[RuleProperties, Mapping], Any) -> None
+        # type: (str, str, Union[RuleProperties, Mapping[str, Any]], Any) -> None
         """Update a rule.
 
         Before calling this method, you should use `get_rule`, `create_rule` or `list_rules` to get a `RuleProperties`

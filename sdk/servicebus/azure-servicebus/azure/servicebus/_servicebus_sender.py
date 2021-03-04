@@ -43,10 +43,9 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
     MessageTypes = Union[
-        Mapping,
+        Mapping[str, Any],
         ServiceBusMessage,
-        List[Mapping],
-        List[ServiceBusMessage]
+        List[Union[Mapping[str, Any], ServiceBusMessage]]
     ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -377,27 +376,27 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """
 
         self._check_live()
-        message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
         with send_trace_context_manager() as send_span:
-            # Ensure message is sendable (not a ReceivedMessage), and if needed (a list) is batched. Adds tracing.
-            message = transform_messages_to_sendable_if_needed(message)
-            try:
-                for each_message in iter(message):  # type: ignore # Ignore type (and below) as it will except if wrong.
-                    add_link_to_send(each_message, send_span)
-                batch = self.create_message_batch()
-                batch._from_list(message, send_span)  # type: ignore # pylint: disable=protected-access
-                message = batch
-            except TypeError:  # Message was not a list or generator. Do needed tracing.
-                if isinstance(message, ServiceBusMessageBatch):
-                    for (
-                        batch_message
-                    ) in message.message._body_gen:  # pylint: disable=protected-access
-                        add_link_to_send(batch_message, send_span)
-                elif isinstance(message, ServiceBusMessage):
+            if isinstance(message, ServiceBusMessageBatch):
+                for (
+                    batch_message
+                ) in message.message._body_gen:  # pylint: disable=protected-access
+                    add_link_to_send(batch_message, send_span)
+            else:
+                message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
+                # Ensure message is sendable (not a ReceivedMessage), and if needed (a list) is batched. Adds tracing.
+                message = transform_messages_to_sendable_if_needed(message)
+                try:
+                    for each_message in iter(message):  # type: ignore # Ignore type (and below) as it will except if wrong.
+                        add_link_to_send(each_message, send_span)
+                    batch = self.create_message_batch()
+                    batch._from_list(message, send_span)  # type: ignore # pylint: disable=protected-access
+                    message = batch
+                except TypeError:  # Message was not a list or generator. Do needed tracing.
                     trace_message(message, send_span)
                     add_link_to_send(message, send_span)
 
