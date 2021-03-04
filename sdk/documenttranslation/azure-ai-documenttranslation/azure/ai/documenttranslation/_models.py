@@ -143,6 +143,23 @@ class JobStatusDetail(object):
         self.documents_cancelled_count = kwargs.get('documents_cancelled_count', None)
         self.total_characters_charged = kwargs.get('total_characters_charged', None)
 
+    @classmethod
+    def _from_generated(cls, batch_status_details):
+        return cls(
+            id=batch_status_details.id,
+            created_on=batch_status_details.created_date_time_utc,
+            last_updated_on=batch_status_details.last_action_date_time_utc,
+            status=batch_status_details.status,
+            error=DocumentTranslationError._from_generated(batch_status_details.error),
+            documents_total_count=batch_status_details.summary.total,
+            documents_failed_count=batch_status_details.summary.failed,
+            documents_succeeded_count=batch_status_details.summary.success,
+            documents_in_progress_count=batch_status_details.summary.in_progress,
+            documents_not_yet_started_count=batch_status_details.summary.not_yet_started,
+            documents_cancelled_count=batch_status_details.summary.cancelled,
+            total_characters_charged=batch_status_details.summary.total_character_charged
+        )
+
 
 class DocumentStatusDetail(object):
     """DocumentStatusDetail.
@@ -209,6 +226,14 @@ class DocumentTranslationError(object):
         self.code = kwargs.get('code', None)
         self.message = None
         self.target = None
+
+    @classmethod
+    def _from_generated(cls, error):
+        return cls(
+            code=error.code,
+            message=error.message,
+            target=error.target
+        )
 
 
 class FileFormat(object):
