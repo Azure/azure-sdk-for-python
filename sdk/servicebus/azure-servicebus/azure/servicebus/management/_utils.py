@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, cast, Union, Mapping
+from typing import TYPE_CHECKING, cast, Union, Mapping, TypeVar, Type
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
 import six
@@ -15,19 +15,13 @@ if TYPE_CHECKING:
     from ._models import QueueProperties, TopicProperties, \
         SubscriptionProperties, RuleProperties, InternalQueueDescription, InternalTopicDescription, \
         InternalSubscriptionDescription, InternalRuleDescription
-    DictPropertiesType = Union[
-        QueueProperties,
-        TopicProperties,
-        SubscriptionProperties,
-        RuleProperties,
-        Mapping
-    ]
-    DictPropertiesReturnType = Union[
+    PropertiesType = TypeVar(
+        'PropertiesType',
         QueueProperties,
         TopicProperties,
         SubscriptionProperties,
         RuleProperties
-    ]
+    )
 
 # Refer to the async version of this module under ..\aio\management\_utils.py for detailed explanation.
 
@@ -326,14 +320,16 @@ def _validate_topic_subscription_and_rule_types(
         )
 
 def create_properties_from_dict_if_needed(properties, sb_resource_type):
-    # type: (DictPropertiesType, type) -> DictPropertiesReturnType
+    # type: (Union[PropertiesType, Mapping], Type[PropertiesType]) -> PropertiesType
     """
     This method is used to create a properties object given the
     resource properties type and its corresponding dict representation.
     :param properties: A properties object or its dict representation.
-    :type properties: DictPropertiesType
+    :type properties: Mapping or PropertiesType
     :param type sb_resource_type: The type of properties object.
-    :rtype: DictPropertiesReturnType
+    :rtype: PropertiesType
     """
-    return_properties = sb_resource_type(**properties) if isinstance(properties, dict) else properties
-    return return_properties
+    try:
+        return sb_resource_type(**properties)
+    except TypeError:
+        raise TypeError("Update input must be an instance of {}, or a mapping".format(sb_resource_type.__name__))

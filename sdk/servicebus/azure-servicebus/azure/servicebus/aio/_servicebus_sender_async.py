@@ -5,7 +5,7 @@
 import logging
 import asyncio
 import datetime
-from typing import Any, TYPE_CHECKING, Union, List, Optional
+from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 
 import uamqp
 from uamqp import SendClientAsync, types
@@ -31,6 +31,13 @@ from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+
+    MessageTypes = Union[
+        Mapping,
+        ServiceBusMessage,
+        List[Mapping],
+        List[ServiceBusMessage]
+    ]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -182,7 +189,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
     async def schedule_messages(
         self,
-        messages: Union[ServiceBusMessage, List[ServiceBusMessage]],
+        messages: MessageTypes,
         schedule_time_utc: datetime.datetime,
         **kwargs: Any
     ) -> List[int]:
@@ -209,7 +216,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # pylint: disable=protected-access
 
         self._check_live()
-        messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)    # type: ignore
+        messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -276,9 +283,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
     async def send_messages(
         self,
-        message: Union[
-            ServiceBusMessage, ServiceBusMessageBatch, List[ServiceBusMessage]
-        ],
+        message: Union[MessageTypes, ServiceBusMessageBatch],
         **kwargs: Any
     ) -> None:
         """Sends message and blocks until acknowledgement is received or operation times out.
@@ -338,11 +343,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 isinstance(message, ServiceBusMessageBatch) and len(message) == 0
             ):  # pylint: disable=len-as-condition
                 return  # Short circuit noop if an empty list or batch is provided.
-            if not isinstance(message, (ServiceBusMessageBatch, ServiceBusMessage)):
-                raise TypeError(
-                    "Can only send azure.servicebus.<ServiceBusMessageBatch,ServiceBusMessage> "
-                    "or lists of ServiceBusMessage."
-                )
 
             if send_span:
                 await self._add_span_request_attributes(send_span)

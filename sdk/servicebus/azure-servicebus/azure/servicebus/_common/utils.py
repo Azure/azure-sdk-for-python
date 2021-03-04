@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
+from re import M
 import sys
 import datetime
 import logging
@@ -19,7 +20,8 @@ from typing import (
     Optional,
     Type,
     TYPE_CHECKING,
-    Union
+    Union,
+    TypeVar
 )
 from contextlib import contextmanager
 from msrest.serialization import UTC
@@ -59,19 +61,22 @@ if TYPE_CHECKING:
     from .receiver_mixins import ReceiverMixin
     from .._servicebus_session import BaseSession
 
-    # pylint: disable=unused-import, ungrouped-imports
-    DictMessageType = Union[
+    MessageType = TypeVar(
+        'MessageType',
+        ServiceBusMessage,
+        ServiceBusMessageBatch
+    )
+    MessagesType = TypeVar(
+        'MessagesType',
+        ServiceBusMessage,
+        ServiceBusMessageBatch,
+        List[ServiceBusMessage]
+    )
+    Messages = Union[
         Mapping,
-        ServiceBusMessage,
-        List[Mapping[str, Any]],
-        List[ServiceBusMessage],
-        ServiceBusMessageBatch
-    ]
-
-    DictMessageReturnType = Union[
-        ServiceBusMessage,
-        List[ServiceBusMessage],
-        ServiceBusMessageBatch
+        List[Mapping],
+        MessageType,
+        List[MessageType]
     ]
 
 _log = logging.getLogger(__name__)
@@ -222,20 +227,37 @@ def transform_messages_to_sendable_if_needed(messages):
         except AttributeError:
             return messages
 
+
+def _single_message_from_dict(message, message_type):
+    # type: (Union[MessageType, Mapping], Type[MessageType]) -> MessageType
+    if isinstance(message, (message_type, ServiceBusMessageBatch)):
+        return message
+    try:
+        message_type(**message)
+    except TypeError:
+        raise TypeError(
+            "Only ServiceBusMessage instances or Mappings are supported. "
+            "Received instead: {}".format(
+                message.__class__.__name__
+            )
+        )
+
+
 def create_messages_from_dicts_if_needed(messages, message_type):
-    # type: (DictMessageType, type) -> DictMessageReturnType
+    # type: (Messages, Type[MessageType]) -> MessagesType
     """
     This method is used to convert dict representations
     of messages to a list of ServiceBusMessage objects or ServiceBusBatchMessage.
-    :param DictMessageType messages: A list or single instance of messages of type ServiceBusMessages or
+
+    :param Messages messages: A list or single instance of messages of type ServiceBusMessages or
         dict representations of type ServiceBusMessage. Also accepts ServiceBusBatchMessage.
-    :rtype: DictMessageReturnType
+    :param Type[MessageType] message_type: The class type to return the messages as.
+    :rtype: MessageType
     """
     if isinstance(messages, list):
-        return [(message_type(**message) if isinstance(message, dict) else message) for message in messages]
+        return [_single_message_from_dict(m, message_type) for m in messages]
+    return _single_message_from_dict(messages, message_type)
 
-    return_messages = message_type(**messages) if isinstance(messages, dict) else messages
-    return return_messages
 
 def strip_protocol_from_uri(uri):
     # type: (str) -> str

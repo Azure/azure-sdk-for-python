@@ -5,7 +5,7 @@
 import logging
 import time
 import uuid
-from typing import Any, TYPE_CHECKING, Union, List, Optional
+from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping
 
 import uamqp
 from uamqp import SendClient, types
@@ -41,6 +41,13 @@ from ._common.constants import (
 if TYPE_CHECKING:
     import datetime
     from azure.core.credentials import TokenCredential
+
+    MessageTypes = Union[
+        Mapping,
+        ServiceBusMessage,
+        List[Mapping],
+        List[ServiceBusMessage]
+    ]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -248,7 +255,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._set_msg_timeout(default_timeout, None)
 
     def schedule_messages(self, messages, schedule_time_utc, **kwargs):
-        # type: (Union[ServiceBusMessage, List[ServiceBusMessage]], datetime.datetime, Any) -> List[int]
+        # type: (MessageTypes, datetime.datetime, Any) -> List[int]
         """Send Message or multiple Messages to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
 
@@ -272,7 +279,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # pylint: disable=protected-access
 
         self._check_live()
-        messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)    # type: ignore
+        messages = create_messages_from_dicts_if_needed(messages, ServiceBusMessage)
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -338,7 +345,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     def send_messages(self, message, **kwargs):
-        # type: (Union[ServiceBusMessage, ServiceBusMessageBatch, List[ServiceBusMessage]], Any) -> None
+        # type: (Union[MessageTypes, ServiceBusMessageBatch], Any) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         If a list of messages was provided, attempts to send them as a single batch, throwing a
@@ -398,11 +405,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 isinstance(message, ServiceBusMessageBatch) and len(message) == 0
             ):  # pylint: disable=len-as-condition
                 return  # Short circuit noop if an empty list or batch is provided.
-            if not isinstance(message, (ServiceBusMessageBatch, ServiceBusMessage)):
-                raise TypeError(
-                    "Can only send azure.servicebus.<ServiceBusMessageBatch, ServiceBusMessage> "
-                    "or lists of ServiceBusMessage."
-                )
 
             if send_span:
                 self._add_span_request_attributes(send_span)

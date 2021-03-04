@@ -9,7 +9,7 @@ import datetime
 import uuid
 import logging
 import copy
-from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any
+from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any, Mapping
 
 import six
 
@@ -537,15 +537,8 @@ class ServiceBusMessageBatch(object):
 
     def _from_list(self, messages, parent_span=None):
         # type: (Iterable[ServiceBusMessage], AbstractSpan) -> None
-        for each in messages:
-            if not isinstance(each, (ServiceBusMessage, dict)):
-                raise TypeError(
-                    "Only ServiceBusMessage or an iterable object containing ServiceBusMessage "
-                    "objects are accepted. Received instead: {}".format(
-                        each.__class__.__name__
-                    )
-                )
-            self._add(each, parent_span)
+        for message in messages:
+            self._add(message, parent_span)
 
     @property
     def max_size_in_bytes(self):
@@ -566,7 +559,7 @@ class ServiceBusMessageBatch(object):
         return self._size
 
     def add_message(self, message):
-        # type: (ServiceBusMessage) -> None
+        # type: (Union[ServiceBusMessage, Mapping]) -> None
         """Try to add a single Message to the batch.
 
         The total size of an added message is the sum of its body, properties, etc.
@@ -582,10 +575,9 @@ class ServiceBusMessageBatch(object):
         return self._add(message)
 
     def _add(self, message, parent_span=None):
-        # type: (ServiceBusMessage, AbstractSpan) -> None
+        # type: (Union[ServiceBusMessage, Mapping], AbstractSpan) -> None
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
-
-        message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)  # type: ignore
+        message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
         message = transform_messages_to_sendable_if_needed(message)
         trace_message(
             message, parent_span
