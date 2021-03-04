@@ -11,7 +11,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 03 Mar 2021 22:46:09 GMT
+      - Thu, 04 Mar 2021 00:31:11 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -24,11 +24,11 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Wed, 03 Mar 2021 22:46:08 GMT
-      ms-cv: qrSUB4JQQk+01d6s8SAMqw.0
+      date: Thu, 04 Mar 2021 00:31:11 GMT
+      ms-cv: 6J86i+wdq0maORBgDjOj0g.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 611ms
+      x-processing-time: 719ms
     status:
       code: 202
       message: Accepted
@@ -45,7 +45,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 03 Mar 2021 22:46:09 GMT
+      - Thu, 04 Mar 2021 00:31:12 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -58,11 +58,11 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Wed, 03 Mar 2021 22:46:09 GMT
-      ms-cv: PjDdeAPC1Uigrjf/OIyS+g.0
+      date: Thu, 04 Mar 2021 00:31:11 GMT
+      ms-cv: peEjf7PIZUasAxZKFLAKIw.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 639ms
+      x-processing-time: 411ms
     status:
       code: 202
       message: Accepted

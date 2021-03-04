@@ -11,7 +11,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 03 Mar 2021 22:46:08 GMT
+      - Thu, 04 Mar 2021 00:20:43 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -24,10 +24,10 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-length: '0'
-      date: Wed, 03 Mar 2021 22:46:07 GMT
-      ms-cv: ZvWxum9DH0+e8WOL19wPHw.0
+      date: Thu, 04 Mar 2021 00:20:42 GMT
+      ms-cv: rhpXVAOIdE+vPwKup4t4CQ.0
       request-context: appId=
-      x-processing-time: 460ms
+      x-processing-time: 421ms
     status:
       code: 404
       message: Not Found

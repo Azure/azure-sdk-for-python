@@ -78,7 +78,7 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
-    async def test_send_sms_async_from_managed_identity(self):
+    async def test_send_sms_from_managed_identity_async(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         from devtools_testutils import is_live
         if not is_live():
@@ -100,7 +100,7 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
     
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
-    async def test_send_sms_fake_from_phone_number(self):
+    async def test_send_sms_fake_from_phone_number_async(self):
 
         sms_client = SmsClient.from_connection_string(self.connection_str)
         
@@ -137,7 +137,7 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
     
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
-    async def test_send_sms_unauthorized_from_phone_number(self):
+    async def test_send_sms_unauthorized_from_phone_number_async(self):
 
         sms_client = SmsClient.from_connection_string(self.connection_str)
         

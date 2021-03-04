@@ -15,7 +15,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 03 Mar 2021 22:45:46 GMT
+      - Thu, 04 Mar 2021 00:31:00 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -28,15 +28,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 22:45:46 GMT
+      - Thu, 04 Mar 2021 00:30:59 GMT
       ms-cv:
-      - zIk5gQLY/EGvLDrK8fi37g.0
+      - HX5oAtR9SUWozLkrfsT5Jg.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 27ms
+      - 13ms
     status:
       code: 400
       message: Bad Request

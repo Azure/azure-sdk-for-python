@@ -6,16 +6,12 @@ interactions:
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '274'
       Content-Type:
       - application/json
       Date:
-      - Thu, 04 Mar 2021 00:31:04 GMT
+      - Thu, 04 Mar 2021 00:31:11 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -23,24 +19,17 @@ interactions:
     method: POST
     uri: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
   response:
-    body: '{"value": [{"to": "sanitized", "messageId": "sanitized", "httpStatusCode":
-      202, "repeatabilityResult": "accepted", "successful": true}]}'
+    body:
+      string: ''
     headers:
-      api-supported-versions:
-      - 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 04 Mar 2021 00:31:03 GMT
-      ms-cv:
-      - b1GZBPRNukK3zW5qkUOyqQ.0
-      request-context:
-      - appId=
-      transfer-encoding:
-      - chunked
-      x-processing-time:
-      - 355ms
+      api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
+      content-length: '0'
+      date: Thu, 04 Mar 2021 00:31:10 GMT
+      ms-cv: lNw4HQ9+tUuT/H2rUP5xrg.0
+      request-context: appId=
+      x-processing-time: 281ms
     status:
-      code: 202
-      message: Accepted
+      code: 404
+      message: Not Found
+    url: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
 version: 1
