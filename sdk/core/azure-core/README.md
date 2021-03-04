@@ -188,6 +188,10 @@ with no data. This gets serialized to `null` on the wire.
 from azure.core.serialization import NULL
 
 assert bool(NULL) is False
+
+foo = Foo(
+    attr=NULL
+)
 ```
 
 ## Contributing
