@@ -11,8 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-advisor/4.0.0 Azure-SDK-For-Python
+      - python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-advisor/4.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -26,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 23 Mar 2020 18:34:45 GMT
+      - Thu, 04 Mar 2021 06:37:33 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/336e14c3-c6ce-450b-aa71-bd5b4585eb33?api-version=2020-01-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/51a534c8-ab90-48c8-95cd-57ea2dcf0712?api-version=2020-01-01
       pragma:
       - no-cache
       server:
@@ -40,7 +41,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
     status:
       code: 202
       message: Accepted
@@ -54,8 +55,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-advisor/4.0.0 Azure-SDK-For-Python
+      - python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0 msrest_azure/0.6.4
+        azure-mgmt-advisor/4.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -67,7 +69,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Mon, 23 Mar 2020 18:34:45 GMT
+      - Thu, 04 Mar 2021 06:37:33 GMT
       expires:
       - '-1'
       pragma:
@@ -79,7 +81,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '357'
+      - '359'
     status:
       code: 204
       message: No Content
