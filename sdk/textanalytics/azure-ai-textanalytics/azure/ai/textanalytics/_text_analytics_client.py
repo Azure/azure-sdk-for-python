@@ -335,7 +335,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         domain_filter = kwargs.pop("domain_filter", None)
-        pii_entity_categories = kwargs.pop("pii_entity_categories", None)
+        categories_filter = kwargs.pop("categories_filter", None)
 
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
@@ -351,7 +351,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 domain=domain_filter,
-                pii_categories=pii_entity_categories,
+                pii_categories=categories_filter,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )

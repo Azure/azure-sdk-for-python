@@ -299,6 +299,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
+        :keyword categories_filter: A list of specific PII entity categories to return.  If the value of `domain_filter`
+            is also set, the result will contain entities in the intersection of `domain_filter` and the items in
+            `categories_filter`.
+        :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
             For additional information see https://aka.ms/text-analytics-offsets
@@ -324,6 +328,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         domain_filter = kwargs.pop("domain_filter", None)
+        categories_filter = kwargs.pop("categories_filter", None)
 
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
@@ -339,6 +344,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 domain=domain_filter,
+                pii_categories=categories_filter,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
