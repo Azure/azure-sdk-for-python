@@ -10,7 +10,7 @@ import platform
 import datetime
 import calendar
 import logging
-from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, List
+from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable
 
 import six
 
