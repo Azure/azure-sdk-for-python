@@ -28,17 +28,17 @@ class EventGridEvent(InternalEventGridEvent):
     :param data_version: Required. The schema version of the data object.
      If not provided, will be stamped with an empty value.
     :type data_version: str
-    :keyword topic: Optional. The resource path of the event source. If not provided, Event Grid will
+    :keyword topic: The resource path of the event source. If not provided, Event Grid will
      stamp onto the event. This is required when sending event(s) to a domain.
-    :type topic: str
-    :keyword metadata_version: Optional. The schema version of the event metadata. If provided,
+    :paramtype topic: Optional[str]
+    :keyword metadata_version: The schema version of the event metadata. If provided,
      must match Event Grid Schema exactly. If not provided, EventGrid will stamp onto event.
-    :type metadata_version: str
-    :keyword id: Optional. An identifier for the event. In not provided, a random UUID will be generated and used.
-    :type id: Optional[str]
-    :keyword event_time: Optional.The time (in UTC) of the event. If not provided,
+    :paramtype metadata_version: Optional[str]
+    :keyword id: An identifier for the event. In not provided, a random UUID will be generated and used.
+    :paramtype id: Optional[str]
+    :keyword event_time: The time (in UTC) of the event. If not provided,
      it will be the time (in UTC) the event was generated.
-    :type event_time: Optional[~datetime.datetime]
+    :paramtype event_time: Optional[~datetime.datetime]
     :ivar subject: A resource path relative to the topic path.
     :vartype subject: str
     :ivar event_type: The type of the event that occurred.
