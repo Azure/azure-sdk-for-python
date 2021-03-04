@@ -677,7 +677,7 @@ class SearchIndexerSkill(msrest.serialization.Model):
     """Base type for skills.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: WebApiSkill, CustomEntityLookupSkill, EntityRecognitionSkill, KeyPhraseExtractionSkill, LanguageDetectionSkill, MergeSkill, SentimentSkill, SplitSkill, TextTranslationSkill, ConditionalSkill, ShaperSkill, ImageAnalysisSkill, OcrSkill.
+    sub-classes are: WebApiSkill, CustomEntityLookupSkill, EntityRecognitionSkill, KeyPhraseExtractionSkill, LanguageDetectionSkill, MergeSkill, SentimentSkill, SplitSkill, TextTranslationSkill, ConditionalSkill, DocumentExtractionSkill, ShaperSkill, ImageAnalysisSkill, OcrSkill.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -718,7 +718,7 @@ class SearchIndexerSkill(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Skills.Custom.WebApiSkill': 'WebApiSkill', '#Microsoft.Skills.Text.CustomEntityLookupSkill': 'CustomEntityLookupSkill', '#Microsoft.Skills.Text.EntityRecognitionSkill': 'EntityRecognitionSkill', '#Microsoft.Skills.Text.KeyPhraseExtractionSkill': 'KeyPhraseExtractionSkill', '#Microsoft.Skills.Text.LanguageDetectionSkill': 'LanguageDetectionSkill', '#Microsoft.Skills.Text.MergeSkill': 'MergeSkill', '#Microsoft.Skills.Text.SentimentSkill': 'SentimentSkill', '#Microsoft.Skills.Text.SplitSkill': 'SplitSkill', '#Microsoft.Skills.Text.TranslationSkill': 'TextTranslationSkill', '#Microsoft.Skills.Util.ConditionalSkill': 'ConditionalSkill', '#Microsoft.Skills.Util.ShaperSkill': 'ShaperSkill', '#Microsoft.Skills.Vision.ImageAnalysisSkill': 'ImageAnalysisSkill', '#Microsoft.Skills.Vision.OcrSkill': 'OcrSkill'}
+        'odata_type': {'#Microsoft.Skills.Custom.WebApiSkill': 'WebApiSkill', '#Microsoft.Skills.Text.CustomEntityLookupSkill': 'CustomEntityLookupSkill', '#Microsoft.Skills.Text.EntityRecognitionSkill': 'EntityRecognitionSkill', '#Microsoft.Skills.Text.KeyPhraseExtractionSkill': 'KeyPhraseExtractionSkill', '#Microsoft.Skills.Text.LanguageDetectionSkill': 'LanguageDetectionSkill', '#Microsoft.Skills.Text.MergeSkill': 'MergeSkill', '#Microsoft.Skills.Text.SentimentSkill': 'SentimentSkill', '#Microsoft.Skills.Text.SplitSkill': 'SplitSkill', '#Microsoft.Skills.Text.TranslationSkill': 'TextTranslationSkill', '#Microsoft.Skills.Util.ConditionalSkill': 'ConditionalSkill', '#Microsoft.Skills.Util.DocumentExtractionSkill': 'DocumentExtractionSkill', '#Microsoft.Skills.Util.ShaperSkill': 'ShaperSkill', '#Microsoft.Skills.Vision.ImageAnalysisSkill': 'ImageAnalysisSkill', '#Microsoft.Skills.Vision.OcrSkill': 'OcrSkill'}
     }
 
     def __init__(
@@ -1495,6 +1495,77 @@ class DistanceScoringParameters(msrest.serialization.Model):
         super(DistanceScoringParameters, self).__init__(**kwargs)
         self.reference_point_parameter = reference_point_parameter
         self.boosting_distance = boosting_distance
+
+
+class DocumentExtractionSkill(SearchIndexerSkill):
+    """A skill that extracts content from a file within the enrichment pipeline.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. Identifies the concrete type of the skill.Constant filled by
+     server.
+    :type odata_type: str
+    :param name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :type name: str
+    :param description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :type description: str
+    :param context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :type context: str
+    :param inputs: Required. Inputs of the skills could be a column in the source data set, or the
+     output of an upstream skill.
+    :type inputs: list[~azure.search.documents.indexes.v2020_06.models.InputFieldMappingEntry]
+    :param outputs: Required. The output of a skill is either a field in a search index, or a value
+     that can be consumed as an input by another skill.
+    :type outputs: list[~azure.search.documents.indexes.v2020_06.models.OutputFieldMappingEntry]
+    :param parsing_mode: The parsingMode for the skill. Will be set to 'default' if not defined.
+    :type parsing_mode: str
+    :param data_to_extract: The type of data to be extracted for the skill. Will be set to
+     'contentAndMetadata' if not defined.
+    :type data_to_extract: str
+    :param configuration: A dictionary of configurations for the skill.
+    :type configuration: dict[str, object]
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'inputs': {'required': True},
+        'outputs': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'context': {'key': 'context', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
+        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
+        'parsing_mode': {'key': 'parsingMode', 'type': 'str'},
+        'data_to_extract': {'key': 'dataToExtract', 'type': 'str'},
+        'configuration': {'key': 'configuration', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        inputs: List["InputFieldMappingEntry"],
+        outputs: List["OutputFieldMappingEntry"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        parsing_mode: Optional[str] = None,
+        data_to_extract: Optional[str] = None,
+        configuration: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(DocumentExtractionSkill, self).__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        self.odata_type = '#Microsoft.Skills.Util.DocumentExtractionSkill'  # type: str
+        self.parsing_mode = parsing_mode
+        self.data_to_extract = data_to_extract
+        self.configuration = configuration
 
 
 class EdgeNGramTokenFilter(TokenFilter):

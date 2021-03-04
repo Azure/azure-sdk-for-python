@@ -33,6 +33,7 @@ try:
     from ._models_py3 import DictionaryDecompounderTokenFilter
     from ._models_py3 import DistanceScoringFunction
     from ._models_py3 import DistanceScoringParameters
+    from ._models_py3 import DocumentExtractionSkill
     from ._models_py3 import EdgeNGramTokenFilter
     from ._models_py3 import EdgeNGramTokenFilterV2
     from ._models_py3 import EdgeNGramTokenizer
@@ -158,6 +159,7 @@ except (SyntaxError, ImportError):
     from ._models import DictionaryDecompounderTokenFilter  # type: ignore
     from ._models import DistanceScoringFunction  # type: ignore
     from ._models import DistanceScoringParameters  # type: ignore
+    from ._models import DocumentExtractionSkill  # type: ignore
     from ._models import EdgeNGramTokenFilter  # type: ignore
     from ._models import EdgeNGramTokenFilterV2  # type: ignore
     from ._models import EdgeNGramTokenizer  # type: ignore
@@ -324,6 +326,7 @@ __all__ = [
     'DictionaryDecompounderTokenFilter',
     'DistanceScoringFunction',
     'DistanceScoringParameters',
+    'DocumentExtractionSkill',
     'EdgeNGramTokenFilter',
     'EdgeNGramTokenFilterV2',
     'EdgeNGramTokenizer',
