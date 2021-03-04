@@ -14,79 +14,33 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/13.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet?api-version=2020-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"vnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet\"\
-        ,\r\n  \"etag\": \"W/\\\"2be576d6-5375-4be9-822e-7b7706ba7fbd\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"7744db00-9a11-466c-9ee3-62ec8744f58a\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
-        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"3164b4c0-3891-4687-9be8-0fb85e52c2d3\",\r\n    \"\
+        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
+        \    \"resourceGuid\": \"7a623f7a-959c-4ab7-84bd-7c9d2af66f04\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/8\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
         : [],\r\n    \"enableDdosProtection\": false\r\n  }\r\n}"
     headers:
-      azure-asyncnotification:
-      - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/879e0f28-9b2b-4700-b829-f688edc0f7d0?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/b5f08c88-09c1-4e05-a73d-d3b8a7b1aefb?api-version=2020-07-01
       cache-control:
       - no-cache
       content-length:
-      - '634'
+      - '635'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 03:09:02 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - b5b7ce78-4c08-4550-bb52-f90c8c0cb29b
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/879e0f28-9b2b-4700-b829-f688edc0f7d0?api-version=2019-09-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '29'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 03 Mar 2021 03:09:05 GMT
+      - Thu, 04 Mar 2021 06:33:38 GMT
       expires:
       - '-1'
       pragma:
@@ -103,7 +57,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 421d44c0-ed8c-4001-98f3-59b3baf58e35
+      - 5b6183e6-79a9-46e2-9d88-604e9865539b
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
     status:
       code: 200
       message: OK
@@ -117,31 +73,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/13.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/b5f08c88-09c1-4e05-a73d-d3b8a7b1aefb?api-version=2020-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"vnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet\"\
-        ,\r\n  \"etag\": \"W/\\\"0649ed3b-4eda-4168-a173-ca3104aac0c5\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
-        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"3164b4c0-3891-4687-9be8-0fb85e52c2d3\",\r\n    \"\
-        addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/8\"\
-        \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
-        : [],\r\n    \"enableDdosProtection\": false\r\n  }\r\n}"
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '635'
+      - '29'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 03:09:05 GMT
-      etag:
-      - W/"0649ed3b-4eda-4168-a173-ca3104aac0c5"
+      - Thu, 04 Mar 2021 06:34:09 GMT
       expires:
       - '-1'
       pragma:
@@ -158,7 +105,62 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 2ebc5184-57cf-47f2-ac0f-2e29249d73a0
+      - b8a656dc-9e8d-4fc5-8725-3950c2008ca3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/13.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet?api-version=2020-07-01
+  response:
+    body:
+      string: "{\r\n  \"name\": \"vnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet\"\
+        ,\r\n  \"etag\": \"W/\\\"7744db00-9a11-466c-9ee3-62ec8744f58a\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
+        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
+        \    \"resourceGuid\": \"7a623f7a-959c-4ab7-84bd-7c9d2af66f04\",\r\n    \"\
+        addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/8\"\
+        \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
+        : [],\r\n    \"enableDdosProtection\": false\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '635'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Mar 2021 06:34:09 GMT
+      etag:
+      - W/"7744db00-9a11-466c-9ee3-62ec8744f58a"
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - e85f8539-993a-4453-b201-a78bb2a58661
     status:
       code: 200
       message: OK
@@ -176,23 +178,23 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/13.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet?api-version=2020-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"v-subnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\r\n  \"etag\": \"W/\\\"895288c3-c5ee-4eba-9bc6-10fac221e59a\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"eb9d48e2-f0ac-45e0-8f91-fb32811fc44b\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/8\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
         \n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0e925003-b5c4-4735-98d0-5c41f393e2af?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e05b5e47-2669-4b74-96a8-797cf1e5ac4d?api-version=2020-07-01
       cache-control:
       - no-cache
       content-length:
@@ -200,7 +202,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 03:09:07 GMT
+      - Thu, 04 Mar 2021 06:34:10 GMT
       expires:
       - '-1'
       pragma:
@@ -213,7 +215,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - db5480dd-cc84-4ceb-818b-9dd598a5ed92
+      - 0275741d-5bf9-4015-bf61-ea3269b6c9b4
       x-ms-ratelimit-remaining-subscription-writes:
       - '1198'
     status:
@@ -229,10 +231,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/13.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0e925003-b5c4-4735-98d0-5c41f393e2af?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e05b5e47-2669-4b74-96a8-797cf1e5ac4d?api-version=2020-07-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -244,7 +246,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 03:09:10 GMT
+      - Thu, 04 Mar 2021 06:34:14 GMT
       expires:
       - '-1'
       pragma:
@@ -261,7 +263,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 29e6278f-7539-4886-adc1-5bc053976f07
+      - 28d68c41-ae1c-4085-887a-9218a5791f73
     status:
       code: 200
       message: OK
@@ -275,14 +277,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-network/13.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet?api-version=2020-07-01
   response:
     body:
       string: "{\r\n  \"name\": \"v-subnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\r\n  \"etag\": \"W/\\\"a8e3db82-2a54-4a32-9d1d-ea5997371d86\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"dcfeaae3-edeb-4d63-8a81-d0becf797c9a\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/8\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
@@ -295,9 +297,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 03:09:11 GMT
+      - Thu, 04 Mar 2021 06:34:14 GMT
       etag:
-      - W/"a8e3db82-2a54-4a32-9d1d-ea5997371d86"
+      - W/"dcfeaae3-edeb-4d63-8a81-d0becf797c9a"
       expires:
       - '-1'
       pragma:
@@ -314,7 +316,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 004fd81f-8b8c-47b4-b35f-5fd9225f5bac
+      - d11716c8-2b7d-47e9-a305-5be3ef59e61b
     status:
       code: 200
       message: OK
@@ -339,8 +341,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerservice/11.1.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -348,8 +350,8 @@ interactions:
   response:
     body:
       string: "{\n  \"code\": \"InternalOperationError\",\n  \"message\": \"We are\
-        \ unable to serve this request due to an internal error, Correlation ID: 59a444cb-0285-4f22-90c1-b33a382a8d3d,\
-        \ Operation ID: f5405b82-b9ca-4872-adbd-2201bf2ca173, Timestamp: 2021-03-03T03:09:18Z.\"\
+        \ unable to serve this request due to an internal error, Correlation ID: 5154d9af-510e-4458-8314-78c67de65c22,\
+        \ Operation ID: 8c82666e-8682-439f-98bc-328127bf8741, Timestamp: 2021-03-04T06:34:17Z.\"\
         \n }"
     headers:
       cache-control:
@@ -361,7 +363,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 03 Mar 2021 03:09:18 GMT
+      - Thu, 04 Mar 2021 06:34:17 GMT
       expires:
       - '-1'
       pragma:
@@ -400,8 +402,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerservice/11.1.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -409,8 +411,8 @@ interactions:
   response:
     body:
       string: "{\n  \"code\": \"InternalOperationError\",\n  \"message\": \"We are\
-        \ unable to serve this request due to an internal error, Correlation ID: efbfb156-01ba-4a6b-89f1-0693e118becc,\
-        \ Operation ID: 43372331-25d4-404d-b65d-924070da5d2a, Timestamp: 2021-03-03T03:09:22Z.\"\
+        \ unable to serve this request due to an internal error, Correlation ID: 016fbf73-5113-4b56-b249-5f26aa5d463a,\
+        \ Operation ID: 63d5674b-6986-4942-93cf-067197cb0a5f, Timestamp: 2021-03-04T06:34:20Z.\"\
         \n }"
     headers:
       cache-control:
@@ -422,7 +424,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 03 Mar 2021 03:09:21 GMT
+      - Thu, 04 Mar 2021 06:34:19 GMT
       expires:
       - '-1'
       pragma:
@@ -461,8 +463,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerservice/11.1.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -470,8 +472,8 @@ interactions:
   response:
     body:
       string: "{\n  \"code\": \"InternalOperationError\",\n  \"message\": \"We are\
-        \ unable to serve this request due to an internal error, Correlation ID: a1662d1a-a1ca-4f29-863a-d49b539da29a,\
-        \ Operation ID: da9fba10-38cb-4e49-8129-caf3328c1d25, Timestamp: 2021-03-03T03:09:26Z.\"\
+        \ unable to serve this request due to an internal error, Correlation ID: 1f3610d6-cac4-4424-84e8-62bf88e97eb9,\
+        \ Operation ID: 28bd979f-4321-4477-9d1c-c53031b73d81, Timestamp: 2021-03-04T06:34:24Z.\"\
         \n }"
     headers:
       cache-control:
@@ -483,68 +485,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 03 Mar 2021 03:09:26 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - nginx
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-failure-cause:
-      - service
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
-    status:
-      code: 500
-      message: Internal Server Error
-- request:
-    body: 'b''{"location": "eastus", "properties": {"orchestratorProfile": {"orchestratorType":
-      "Swarm"}, "masterProfile": {"count": 1, "dnsPrefix": "masterPrefixTest", "vmSize":
-      "Standard_D2_v2", "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet"},
-      "agentPoolProfiles": [{"name": "agentpool0", "count": 3, "vmSize": "Standard_A2_v2",
-      "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet"}],
-      "linuxProfile": {"adminUsername": "acslinuxadmin", "ssh": {"publicKeys": [{"keyData":
-      "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ==
-      azureuser@linuxvm"}]}}}}'''
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1167'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerservice/11.1.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-07-01
-  response:
-    body:
-      string: "{\n  \"code\": \"InternalOperationError\",\n  \"message\": \"We are\
-        \ unable to serve this request due to an internal error, Correlation ID: 1e80b98f-7fc4-469a-ba95-bdc6290413d3,\
-        \ Operation ID: 4f35799d-9548-4c5b-a905-3d3662122af6, Timestamp: 2021-03-03T03:09:33Z.\"\
-        \n }"
-    headers:
-      cache-control:
-      - no-cache
-      connection:
-      - close
-      content-length:
-      - '256'
-      content-type:
-      - application/json
-      date:
-      - Wed, 03 Mar 2021 03:09:33 GMT
+      - Thu, 04 Mar 2021 06:34:25 GMT
       expires:
       - '-1'
       pragma:
@@ -583,8 +524,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-Ubuntu-18.04-bionic)
-        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-containerservice/11.1.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -592,8 +533,8 @@ interactions:
   response:
     body:
       string: "{\n  \"code\": \"InternalOperationError\",\n  \"message\": \"We are\
-        \ unable to serve this request due to an internal error, Correlation ID: 9df082a6-e06c-4b18-b43b-ad13a20ec846,\
-        \ Operation ID: 33d0c9fb-5310-4587-8cc4-a4cc9d40dc9f, Timestamp: 2021-03-03T03:09:42Z.\"\
+        \ unable to serve this request due to an internal error, Correlation ID: 5360ec61-4bdd-49b8-b8b1-116d758626a4,\
+        \ Operation ID: 81dc4139-ea28-4069-b440-83a62747a8c5, Timestamp: 2021-03-04T06:34:31Z.\"\
         \n }"
     headers:
       cache-control:
@@ -605,7 +546,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 03 Mar 2021 03:09:41 GMT
+      - Thu, 04 Mar 2021 06:34:31 GMT
       expires:
       - '-1'
       pragma:
@@ -619,7 +560,68 @@ interactions:
       x-ms-failure-cause:
       - service
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
+    status:
+      code: 500
+      message: Internal Server Error
+- request:
+    body: 'b''{"location": "eastus", "properties": {"orchestratorProfile": {"orchestratorType":
+      "Swarm"}, "masterProfile": {"count": 1, "dnsPrefix": "masterPrefixTest", "vmSize":
+      "Standard_D2_v2", "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet"},
+      "agentPoolProfiles": [{"name": "agentpool0", "count": 3, "vmSize": "Standard_A2_v2",
+      "vnetSubnetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet"}],
+      "linuxProfile": {"adminUsername": "acslinuxadmin", "ssh": {"publicKeys": [{"keyData":
+      "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ==
+      azureuser@linuxvm"}]}}}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1167'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/8.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-07-01
+  response:
+    body:
+      string: "{\n  \"code\": \"InternalOperationError\",\n  \"message\": \"We are\
+        \ unable to serve this request due to an internal error, Correlation ID: 9afc80c7-468a-44d0-a317-cfcb50b02afe,\
+        \ Operation ID: 4840d221-8dba-4847-8825-7e70bf44f67b, Timestamp: 2021-03-04T06:34:40Z.\"\
+        \n }"
+    headers:
+      cache-control:
+      - no-cache
+      connection:
+      - close
+      content-length:
+      - '256'
+      content-type:
+      - application/json
+      date:
+      - Thu, 04 Mar 2021 06:34:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - service
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
     status:
       code: 500
       message: Internal Server Error
