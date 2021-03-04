@@ -1,6 +1,6 @@
 from azure_devtools.perfstress_tests import PerfStressTest
-from azure.identity import ClientSecretCredential
-from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
+from azure.identity import EnvironmentCredential
+from azure.identity.aio import EnvironmentCredential as AsyncEnvironmentCredential
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys.aio import KeyClient as AsyncKeyClient
 
@@ -11,11 +11,8 @@ class GetKeyTest(PerfStressTest):
         super().__init__(arguments)
 
         # Auth configuration
-        tenant_id = self.get_from_env("AZURE_TENANT_ID")
-        client_id = self.get_from_env("AZURE_CLIENT_ID")
-        client_secret = self.get_from_env("AZURE_CLIENT_SECRET")
-        self.credential = ClientSecretCredential(tenant_id, client_id, client_secret)
-        self.async_credential = AsyncClientSecretCredential(tenant_id, client_id, client_secret)
+        self.credential = EnvironmentCredential()
+        self.async_credential = AsyncEnvironmentCredential()
 
         # Create clients
         vault_url = self.get_from_env("AZURE_KEYVAULT_URL")
