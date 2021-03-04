@@ -14,11 +14,43 @@ from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
 from ._common import EventDataBatch, EventData
+from ._configuration import PartitionPublishingConfiguration
+from ._utils import validate_producer_client_partition_config
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    PartitionPublishingConfigType = Optional[Union[PartitionPublishingConfiguration, dict]]
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def validate_outgoing_event_data(
+    event_data_batch,
+    partition_id=None,
+    partition_key=None,
+    is_idempotent_publishing=False
+):
+    # type: (Union[EventDataBatch, List[EventData]], Optional[str], Optional[str], bool) -> None
+    # Validate the input of EventHubProducerClient.send_batch
+    # pylint:disable=protected-access
+    if isinstance(event_data_batch, EventDataBatch):
+        if is_idempotent_publishing:
+            if event_data_batch._partition_id is None:
+                raise ValueError("The EventDataBatch object must have the partition_id set when performing "
+                                 "idempotent publishing. Please create an EventDataBatch object with partition_id.")
+            if event_data_batch.starting_published_sequence_number is not None:
+                raise ValueError("EventDataBatch object that has already been published by idempotent producer"
+                                 "cannot be published again. Please create a new object.")
+        if partition_id or partition_key:
+            raise TypeError("partition_id and partition_key should be None when sending an EventDataBatch "
+                            "because type EventDataBatch itself may have partition_id or partition_key")
+    else:  # list of EventData
+        if is_idempotent_publishing:
+            if partition_id is None:
+                raise ValueError("The partition_id must be set when performing idempotent publishing.")
+            if [event for event in event_data_batch if event.published_sequence_number is not None]:
+                raise ValueError("EventData object that has already been published by "
+                                 "idempotent producer cannot be published again.")
 
 
 class EventHubProducerClient(ClientBase):
@@ -55,6 +87,22 @@ class EventHubProducerClient(ClientBase):
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :keyword bool enable_idempotent_partitions: Indicates whether or not the producer should enable idempotent
+     publishing to the Event Hub partitions. If enabled, the producer will only be able to publish directly
+     to partitions; it will not be able to publish to the Event Hubs gateway for automatic partition routing
+     nor will it be able to use a partition key. Default is False.
+    :keyword partition_config: The set of configurations that can be specified to influence publishing behavior
+     specific to the configured Event Hub partition. These configurations are not necessary in the majority of
+     scenarios and are intended for use with specialized scenarios, such as when recovering the state used for
+     idempotent publishing.
+     It is highly recommended that these configurations only be specified if there is a proven need to do so;
+     Incorrectly configuring these values may result in an `EventHubProducerClient` instance that is unable to
+     publish to the Event Hubs. These configurations are ignored when publishing to the Event Hubs gateway for
+     automatic routing or when using a partition key.
+     If a dict is provided as the value instead of a PartitionPublishingConfiguration object, it may contain the
+     optional keys: `'producer_group_id'` (int value), `'owner_level'` (int value) and
+     `'starting_sequence_number'` (int value).
+    :paramtype partition_config: dict[str, Union[~azure.eventhub.PartitionPublishingConfiguration, dict]]
 
     .. admonition:: Example:
 
@@ -87,7 +135,10 @@ class EventHubProducerClient(ClientBase):
         }  # type: Dict[str, Optional[EventHubProducer]]
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
+        self._partition_config = kwargs.get("partition_config") or {}
         self._lock = threading.Lock()
+        for _, each_partition_config in self._partition_config.items():
+            validate_producer_client_partition_config(each_partition_config)
 
     def __enter__(self):
         return self
@@ -135,12 +186,22 @@ class EventHubProducerClient(ClientBase):
                 not self._producers[partition_id]
                 or cast(EventHubProducer, self._producers[partition_id]).closed
             ):
+                partition_config = self._partition_config.get(partition_id)
                 self._producers[partition_id] = self._create_producer(
-                    partition_id=partition_id, send_timeout=send_timeout
+                    partition_id=partition_id,
+                    send_timeout=send_timeout,
+                    enable_idempotent_partitions=self._config.enable_idempotent_partitions,
+                    partition_config=partition_config
                 )
 
-    def _create_producer(self, partition_id=None, send_timeout=None):
-        # type: (Optional[str], Optional[Union[int, float]]) -> EventHubProducer
+    def _create_producer(
+        self,
+        partition_id=None,
+        send_timeout=None,
+        enable_idempotent_partitions=False,
+        partition_config=None
+    ):
+        # type: (Optional[str], Optional[Union[int, float]], bool, PartitionPublishingConfigType) -> EventHubProducer
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
         send_timeout = (
             self._config.send_timeout if send_timeout is None else send_timeout
@@ -152,6 +213,8 @@ class EventHubProducerClient(ClientBase):
             partition=partition_id,
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
+            enable_idempotent_partitions=enable_idempotent_partitions,
+            partition_config=partition_config
         )
         return handler
 
@@ -185,6 +248,22 @@ class EventHubProducerClient(ClientBase):
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
+        :keyword bool enable_idempotent_partitions: Indicates whether or not the producer should enable idempotent
+         publishing to the Event Hub partitions. If enabled, the producer will only be able to publish directly
+         to partitions; it will not be able to publish to the Event Hubs gateway for automatic partition routing
+         nor will it be able to use a partition key. Default is False.
+        :keyword partition_config: The set of configurations that can be specified to influence publishing behavior
+         specific to the configured Event Hub partition. These configurations are not necessary in the majority of
+         scenarios and are intended for use with specialized scenarios, such as when recovering the state used for
+         idempotent publishing.
+         It is highly recommended that these configurations only be specified if there is a proven need to do so;
+         Incorrectly configuring these values may result in an `EventHubProducerClient` instance that is unable to
+         publish to the Event Hubs. These configurations are ignored when publishing to the Event Hubs gateway for
+         automatic routing or when using a partition key.
+         If a dict is provided as the value instead of a PartitionPublishingConfiguration object, it may contain the
+         optional keys: `'producer_group_id'` (int value), `'owner_level'` (int value) and
+         `'starting_sequence_number'` (int value).
+        :paramtype partition_config: dict[str, Union[~azure.eventhub.PartitionPublishingConfiguration, dict]]
         :rtype: ~azure.eventhub.EventHubProducerClient
 
         .. admonition:: Example:
@@ -246,19 +325,24 @@ class EventHubProducerClient(ClientBase):
                 :caption: Sends event data
 
         """
+        # pylint:disable=protected-access
         partition_id = kwargs.get("partition_id")
         partition_key = kwargs.get("partition_key")
 
+        validate_outgoing_event_data(
+            event_data_batch,
+            partition_id,
+            partition_key,
+            self._config.enable_idempotent_partitions
+        )
+
         if isinstance(event_data_batch, EventDataBatch):
-            if partition_id or partition_key:
-                raise TypeError("partition_id and partition_key should be None when sending an EventDataBatch "
-                                "because type EventDataBatch itself may have partition_id or partition_key")
             to_send_batch = event_data_batch
         else:
             to_send_batch = self.create_batch(partition_id=partition_id, partition_key=partition_key)
-            to_send_batch._load_events(event_data_batch)  # pylint:disable=protected-access
+            to_send_batch._load_events(event_data_batch)
         partition_id = (
-            to_send_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
+            to_send_batch._partition_id or ALL_PARTITIONS
         )
 
         if len(to_send_batch) == 0:
@@ -304,12 +388,16 @@ class EventHubProducerClient(ClientBase):
                 :caption: Create EventDataBatch object within limited size
 
         """
-        if not self._max_message_size_on_link:
-            self._get_max_mesage_size()
-
         max_size_in_bytes = kwargs.get("max_size_in_bytes", None)
         partition_id = kwargs.get("partition_id", None)
         partition_key = kwargs.get("partition_key", None)
+
+        if self._config.enable_idempotent_partitions and partition_id is None:
+            raise ValueError("The EventDataBatch object must have the partition_id set when performing "
+                             "idempotent publishing. Please create an EventDataBatch object with partition_id.")
+
+        if not self._max_message_size_on_link:
+            self._get_max_mesage_size()
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError(
@@ -322,6 +410,7 @@ class EventHubProducerClient(ClientBase):
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
             partition_key=partition_key,
+            is_idempotent_batch=self._config.enable_idempotent_partitions
         )
 
         return event_data_batch
@@ -372,6 +461,40 @@ class EventHubProducerClient(ClientBase):
         return super(EventHubProducerClient, self)._get_partition_properties(
             partition_id
         )
+
+    def get_partition_publishing_properties(self, partition_id):
+        # type: (str) -> dict
+        """Get the information about the state of publishing for a partition as observed by
+        the `EventHubProducerClient`. This data can always be read, but will only be populated with
+        information relevant to the active features for the producer client.
+
+            - `enable_idempotent_publishing` (bool)
+            - `partition_id` (str)
+            - `last_published_sequence_number` (Optional[int])
+            - `producer_group_id` (Optional[int])
+            - `owner_level` (Optional[int]
+
+        :param partition_id: The target partition ID.
+        :type partition_id: str
+        :rtype: dict
+        """
+        # pylint:disable=protected-access
+        output = {
+            'enable_idempotent_publishing': self._config.enable_idempotent_partitions,
+            'partition_id': partition_id,
+            'last_published_sequence_number': None,
+            'producer_group_id': None,
+            'owner_level': None
+        }
+        try:
+            producer = cast(EventHubProducer, self._producers[partition_id])
+            output['last_published_sequence_number'] = producer._last_published_sequence_number
+            output['producer_group_id'] = producer._producer_group_id
+            output['owner_level'] = producer._owner_level
+        except (KeyError, AttributeError):
+            pass
+
+        return output
 
     def close(self):
         # type: () -> None

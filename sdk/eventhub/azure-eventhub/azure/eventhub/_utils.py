@@ -29,13 +29,19 @@ from ._constants import (
     PROP_LAST_ENQUEUED_TIME_UTC,
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
     PROP_LAST_ENQUEUED_OFFSET,
-    PROP_TIMESTAMP)
+    PROP_TIMESTAMP,
+    MAX_SHORT,
+    MAX_INT,
+    MAX_LONG
+)
+
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from uamqp import Message
     from azure.core.tracing import AbstractSpan
     from ._common import EventData
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -262,3 +268,17 @@ def get_last_enqueued_event_properties(event_data):
         }
         return event_data._last_enqueued_event_properties
     return None
+
+
+def validate_producer_client_partition_config(partition_config):
+    owner_level = partition_config.get("owner_level")
+    producer_group_id = partition_config.get("producer_group_id")
+    starting_sequence_number = partition_config.get("starting_sequence_number")
+    if owner_level is not None and not 0 <= int(owner_level) <= MAX_SHORT:
+        raise ValueError("owner_level must be in the range from 0 to max short(32,767).")
+
+    if producer_group_id is not None and not 0 <= int(producer_group_id) <= MAX_LONG:
+        raise ValueError("producer_group_id must be in the range from 0 to max long(9,223,372,036,854,775,808).")
+
+    if starting_sequence_number is not None and not 0 <= int(starting_sequence_number) <= MAX_INT:
+        raise ValueError("starting_sequence_number must be in the range from 0 to max int(2,147,483,647).")
