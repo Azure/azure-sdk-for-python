@@ -12,6 +12,7 @@ from azure.mgmt.containerservice.models import ContainerServiceVMSizeTypes
 
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
+@unittest.skip("skip")
 class MgmtContainerServiceTest(AzureMgmtTestCase):
 
     def setUp(self):
