@@ -151,8 +151,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         headers = response.internal_response.headers
         self.content_length = int(headers.get('Content-Length', 0))
         transfer_header = headers.get('Transfer-Encoding', '')
-        self._compressed = True if 'compress' in transfer_header \
-                                   or 'deflate' in transfer_header or 'gzip' in transfer_header else False
+        self._compressed = 'compress' in transfer_header or 'deflate' in transfer_header or 'gzip' in transfer_header
         if "x-ms-range" in headers:
             self.range_header = "x-ms-range"    # type: Optional[str]
             self.range = parse_range_header(headers["x-ms-range"])
