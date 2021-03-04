@@ -391,7 +391,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 # Ensure message is sendable (not a ReceivedMessage), and if needed (a list) is batched. Adds tracing.
                 message = transform_messages_to_sendable_if_needed(message)
                 try:
-                    for each_message in iter(message):  # type: ignore # Ignore type (and below) as it will except if wrong.
+                    # Ignore type (and below) as it will except if wrong.
+                    for each_message in iter(message):  # type: ignore
                         add_link_to_send(each_message, send_span)
                     batch = self.create_message_batch()
                     batch._from_list(message, send_span)  # type: ignore # pylint: disable=protected-access

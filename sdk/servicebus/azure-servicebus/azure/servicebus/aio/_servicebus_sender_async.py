@@ -32,12 +32,13 @@ from ._async_utils import create_authentication
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-    MessageTypes = Union[
-        Mapping[str, Any],
-        ServiceBusMessage,
-        List[Mapping[str, Any]],
-        List[ServiceBusMessage]
-    ]
+
+MessageTypes = Union[
+    Mapping[str, Any],
+    ServiceBusMessage,
+    List[Mapping[str, Any]],
+    List[ServiceBusMessage]
+]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -331,7 +332,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
                 message = transform_messages_to_sendable_if_needed(message)
                 try:
-                    for each_message in iter(message):  # type: ignore # Ignore type (and below) as it will except if wrong.
+                    # Ignore type (and below) as it will except if wrong.
+                    for each_message in iter(message):  # type: ignore
                         add_link_to_send(each_message, send_span)
                     batch = await self.create_message_batch()
                     batch._from_list(message, send_span)  # type: ignore # pylint: disable=protected-access

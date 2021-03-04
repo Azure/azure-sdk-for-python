@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from re import M
 import sys
 import datetime
 import logging
@@ -61,15 +60,10 @@ if TYPE_CHECKING:
     from .receiver_mixins import ReceiverMixin
     from .._servicebus_session import BaseSession
 
-    MessageType = TypeVar(
-        'MessageType',
-        ServiceBusMessage
-    )
-
-    Messages = Union[
+    MessagesType = Union[
         Mapping[str, Any],
-        MessageType,
-        List[Union[Mapping[str, Any], MessageType]]
+        ServiceBusMessage,
+        List[Union[Mapping[str, Any], ServiceBusMessage]]
     ]
 
 _log = logging.getLogger(__name__)
@@ -222,11 +216,11 @@ def transform_messages_to_sendable_if_needed(messages):
 
 
 def _single_message_from_dict(message, message_type):
-    # type: (Union[MessageType, Mapping[str, Any]], Type[MessageType]) -> MessageType
+    # type: (Union[ServiceBusMessage, Mapping[str, Any]], Type[ServiceBusMessage]) -> ServiceBusMessage
     if isinstance(message, message_type):
         return message
     try:
-        message_type(**message)
+        return message_type(**message)
     except TypeError:
         raise TypeError(
             "Only ServiceBusMessage instances or Mappings are supported. "
@@ -237,15 +231,15 @@ def _single_message_from_dict(message, message_type):
 
 
 def create_messages_from_dicts_if_needed(messages, message_type):
-    # type: (Messages, Type[MessageType]) -> Union[MessageType, List[MessageType]]
+    # type: (MessagesType, Type[ServiceBusMessage]) -> Union[ServiceBusMessage, List[ServiceBusMessage]]
     """
     This method is used to convert dict representations
     of messages to a list of ServiceBusMessage objects or ServiceBusBatchMessage.
 
     :param Messages messages: A list or single instance of messages of type ServiceBusMessages or
         dict representations of type ServiceBusMessage. Also accepts ServiceBusBatchMessage.
-    :param Type[MessageType] message_type: The class type to return the messages as.
-    :rtype: MessageType
+    :param Type[ServiceBusMessage] message_type: The class type to return the messages as.
+    :rtype: Union[ServiceBusMessage, List[ServiceBusMessage]]
     """
     if isinstance(messages, list):
         return [_single_message_from_dict(m, message_type) for m in messages]

@@ -329,6 +329,8 @@ def create_properties_from_dict_if_needed(properties, sb_resource_type):
     :param type sb_resource_type: The type of properties object.
     :rtype: PropertiesType
     """
+    if isinstance(properties, sb_resource_type):
+        return properties
     try:
         return sb_resource_type(**properties)
     except TypeError:
