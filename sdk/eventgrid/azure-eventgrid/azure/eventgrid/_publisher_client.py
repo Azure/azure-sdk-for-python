@@ -62,6 +62,7 @@ class EventGridPublisherClient(object):
     :param credential: The credential object used for authentication which
      implements SAS key authentication or SAS token authentication.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
+    :rtype: None
 
     .. admonition:: Example:
 
@@ -143,8 +144,8 @@ class EventGridPublisherClient(object):
                 :start-after: [START publish_eg_event_dict]
                 :end-before: [END publish_eg_event_dict]
                 :language: python
-                :dedent: 0
-                :caption: Publishing an EventGridEvent using a dict-like representation.
+                :dedent: 4
+                :caption: Publishing a list of EventGridEvents using a dict-like representation.
 
             .. literalinclude:: ../samples/sync_samples/sample_publish_cloud_event_using_dict.py
                 :start-after: [START publish_cloud_event_dict]
@@ -162,14 +163,15 @@ class EventGridPublisherClient(object):
                 :start-after: [START publish_custom_schema]
                 :end-before: [END publish_custom_schema]
                 :language: python
-                :dedent: 0
+                :dedent: 4
                 :caption: Publishing a Custom Schema event.
 
         **WARNING**: To gain the best performance when sending multiple events at one time,
         it is highly recommended to send a list of events instead of iterating over and sending each event in a loop.
 
         :param events: A single instance or a list of dictionaries/CloudEvent/EventGridEvent to be sent.
-        :type events: SendType
+        :type events: ~azure.core.messaging.CloudEvent, ~azure.eventgrid.EventGridEvent, Dict,
+         list[~azure.core.messaging.CloudEvent], list[~azure.eventgrid.EventGridEvent] or list[Dict]
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
          with "cloudevents-batch+json" for CloudEvents

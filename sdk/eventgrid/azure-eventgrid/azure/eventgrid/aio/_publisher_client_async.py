@@ -137,7 +137,7 @@ class EventGridPublisherClient:
                 :end-before: [END publish_eg_event_dict_async]
                 :language: python
                 :dedent: 4
-                :caption: Publishing an EventGridEvent using a dict-like representation.
+                :caption: Publishing a list of EventGridEvents using a dict-like representation.
 
             .. literalinclude:: ../samples/async_samples/sample_publish_cloud_event_using_dict_async.py
                 :start-after: [START publish_cloud_event_dict_async]
@@ -162,7 +162,8 @@ class EventGridPublisherClient:
         it is highly recommended to send a list of events instead of iterating over and sending each event in a loop.
 
         :param events: A single instance or a list of dictionaries/CloudEvent/EventGridEvent to be sent.
-        :type events: SendType
+        :type events: ~azure.core.messaging.CloudEvent, ~azure.eventgrid.EventGridEvent, Dict,
+         list[~azure.core.messaging.CloudEvent], list[~azure.eventgrid.EventGridEvent] or list[Dict]
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
          with "cloudevents-batch+json" for CloudEvents
