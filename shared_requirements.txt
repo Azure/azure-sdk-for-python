@@ -1,4 +1,5 @@
 azure-ai-nspkg
+azure-iot-nspkg
 azure-applicationinsights~=0.1.0
 azure-batch~=4.1
 azure-cognitiveservices-nspkg
@@ -195,3 +196,4 @@ opentelemetry-sdk==0.17b0
 #override azure-core-tracing-opentelemetry opentelemetry-api==0.17b0
 #override azure-identity six>=1.12.0
 #override azure-mixedreality-authentication azure-core<2.0.0,>=1.4.0
+#override azure-iot-deviceupdate azure-core<2.0.0,>=1.6.0
