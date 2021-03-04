@@ -234,8 +234,10 @@ class HttpRequest(object):
         self.files = files
         self.data = data
         self.multipart_mixed_info = None  # type: Optional[Tuple]
-        if "query" in kwargs:
-            self.format_parameters(kwargs.pop("query"))
+        sentinel = object()
+        query = kwargs.pop("query", sentinel) # using sentinel since None is a valid value
+        if query is not sentinel:
+            self.format_parameters(query)
 
     def __repr__(self):
         return "<HttpRequest [%s]>" % (self.method)
@@ -292,7 +294,7 @@ class HttpRequest(object):
         return (None, cast(str, data))
 
     def format_parameters(self, params):
-        # type: (Dict[str, str]) -> None
+        # type: (Dict[str, Any]) -> None
         """Format parameters into a valid query string.
 
         It's assumed all parameters have already been quoted as
@@ -305,7 +307,6 @@ class HttpRequest(object):
 
         :param dict params: A dictionary of parameters.
         """
-        params = params or {}
         query = urlparse(self.url).query
         if query:
             self.url = self.url.partition("?")[0]
@@ -314,16 +315,17 @@ class HttpRequest(object):
             }
             params.update(existing_params)
         query_params = []
-        for k, v in params.items():
-            if isinstance(v, list):
-                for w in v:
-                    if w is None:
+        if params:
+            for k, v in params.items():
+                if isinstance(v, list):
+                    for w in v:
+                        if w is None:
+                            raise ValueError("Query parameter {} cannot be None".format(k))
+                        query_params.append("{}={}".format(k, w))
+                else:
+                    if v is None:
                         raise ValueError("Query parameter {} cannot be None".format(k))
-                    query_params.append("{}={}".format(k, w))
-            else:
-                if v is None:
-                    raise ValueError("Query parameter {} cannot be None".format(k))
-                query_params.append("{}={}".format(k, v))
+                    query_params.append("{}={}".format(k, v))
         query = "?" + "&".join(query_params)
         self.url = self.url + query
 
