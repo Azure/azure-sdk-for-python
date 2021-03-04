@@ -151,7 +151,8 @@ class DocumentTranslationClient(object):
 
         :rtype: List[str]
         """
-        return self._client.document_translation.get_document_storage_source(**kwargs)
+        result = self._client.document_translation.get_document_storage_source(**kwargs)
+        return result.value
 
     @distributed_trace
     def get_supported_glossary_formats(self, **kwargs):
@@ -161,7 +162,8 @@ class DocumentTranslationClient(object):
         :rtype: List[FileFormat]
         """
 
-        return self._client.document_translation.get_glossary_formats(**kwargs)
+        glossary_formats = self._client.document_translation.get_glossary_formats(**kwargs)
+        return FileFormat._from_generated_list(glossary_formats)
 
     @distributed_trace
     def get_supported_document_formats(self, **kwargs):
@@ -171,4 +173,5 @@ class DocumentTranslationClient(object):
         :rtype: List[FileFormat]
         """
 
-        return self._client.document_translation.get_document_formats(**kwargs)
+        document_formats = self._client.document_translation.get_document_formats(**kwargs)
+        return FileFormat._from_generated_list(document_formats)
