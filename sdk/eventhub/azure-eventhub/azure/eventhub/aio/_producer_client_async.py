@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import asyncio
 import logging
+import six
 
 from typing import Any, Union, TYPE_CHECKING, List, Optional, Dict, cast
 from uamqp import constants
@@ -253,8 +254,10 @@ class EventHubProducerClient(ClientBaseAsync):
          A `TypeError` will be raised if partition_key is specified and event_data_batch is an `EventDataBatch` because
          `EventDataBatch` itself has partition_key.
          If both partition_id and partition_key are provided, the partition_id will take precedence.
-         **WARNING: Please DO NOT pass a partition_key of non-string type. The Event Hub service ignores partition_key
-         of non-string type, in which case events will be assigned to all partitions using round-robin.**
+         **WARNING: Setting partition_key of non-string value on the events to be sent is discouraged
+         as the partition_key will be ignored by the Event Hub service and events will be assigned
+         to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect
+         partition_key to only be string type, they might fail to parse the non-string value.**
         :rtype: None
         :raises: :class:`AuthenticationError<azure.eventhub.exceptions.AuthenticationError>`
          :class:`ConnectError<azure.eventhub.exceptions.ConnectError>`
@@ -277,11 +280,6 @@ class EventHubProducerClient(ClientBaseAsync):
         """
         partition_id = kwargs.get("partition_id")
         partition_key = kwargs.get("partition_key")
-
-        if partition_key and not isinstance(partition_key, str):
-            _LOGGER.info("WARNING: Please DO NOT pass a partition_key of non-string type to the send_batch method."
-                         "The Event Hub service ignores partition_key of non-string type, "
-                         "in which case events will be assigned to all partitions using round-robin.")
 
         if isinstance(event_data_batch, EventDataBatch):
             if partition_id or partition_key:
@@ -324,8 +322,10 @@ class EventHubProducerClient(ClientBaseAsync):
         :param str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
          If both partition_id and partition_key are provided, the partition_id will take precedence.
-         **WARNING: Please DO NOT pass a partition_key of non-string type. The Event Hub service ignores partition_key
-         of non-string type, in which case events will be assigned to all partitions using round-robin.**
+         **WARNING: Setting partition_key of non-string value on the events to be sent is discouraged
+         as the partition_key will be ignored by the Event Hub service and events will be assigned
+         to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect
+         partition_key to only be string type, they might fail to parse the non-string value.**
         :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
          default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch
@@ -342,11 +342,6 @@ class EventHubProducerClient(ClientBaseAsync):
         """
         if not self._max_message_size_on_link:
             await self._get_max_mesage_size()
-
-        if partition_key and not isinstance(partition_key, str):
-            _LOGGER.info("WARNING: Please DO NOT pass a partition_key of non-string type to the create_batch method."
-                         "The Event Hub service ignores partition_key of non-string type, "
-                         "in which case events will be assigned to all partitions using round-robin.")
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError(
