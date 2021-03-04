@@ -258,3 +258,16 @@ class FileFormat(object):
         self.file_extensions = kwargs.get('file_extensions', None)
         self.content_types = kwargs.get('content_types', None)
         self.versions = kwargs.get('versions', None)
+
+    @classmethod
+    def _from_generated(cls, file_format):
+        return cls(
+            format=file_format.format,
+            file_extentions=file_format.file_extentions,
+            content_types=file_format.content_types,
+            versions=file_format.versions
+        )
+
+    @classmethod
+    def _from_generated_list(cls, file_formats):
+        return list( [ FileFormat._from_generated(file_formats) for file_formats in file_formats ] ) 
