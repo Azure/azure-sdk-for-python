@@ -331,7 +331,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     batch_message
                 ) in message.message._body_gen:  # pylint: disable=protected-access
                     add_link_to_send(batch_message, send_span)
-                obj_message: MessageObjTypes = message
+                obj_message = message  # type: MessageObjTypes
             else:
                 obj_message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
                 obj_message = transform_messages_to_sendable_if_needed(obj_message)
