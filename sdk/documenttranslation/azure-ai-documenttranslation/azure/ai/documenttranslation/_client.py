@@ -65,7 +65,7 @@ class DocumentTranslationClient(object):
         # get job id from response header
         job_id = response_headers['Operation-Location']
 
-        # call 
+        # get job status
         return self.get_job_status(job_id)
 
 
@@ -79,7 +79,8 @@ class DocumentTranslationClient(object):
         :rtype: ~azure.ai.documenttranslation.JobStatusDetail
         """
 
-        return self._client.document_translation.get_operation_status(job_id, **kwargs)
+        job_status = self._client.document_translation.get_operation_status(job_id, **kwargs)
+        return JobStatusDetail._from_generated(job_status)
 
     @distributed_trace
     def cancel_job(self, job_id, **kwargs):
