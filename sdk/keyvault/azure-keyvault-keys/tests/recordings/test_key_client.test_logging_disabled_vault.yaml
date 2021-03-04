@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name83c3119d/create?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 02:37:23 GMT
+      - Thu, 18 Mar 2021 23:46:46 GMT
       expires:
       - '-1'
       pragma:
@@ -41,18 +41,18 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - northeurope
+      - eastus2
       x-ms-keyvault-service-version:
-      - 1.2.164.0
+      - 1.2.205.0
       x-powered-by:
       - ASP.NET
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: '{"kty": "RSA", "key_size": 2048}'
+    body: '{"key_size": 2048, "kty": "RSA"}'
     headers:
       Accept:
       - application/json
@@ -65,12 +65,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name83c3119d/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name20a00f12/b52739afd64f4f93bc6597f2ac8260a9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"40wJ8Q93AybsxMxUA9EgNoJIS9cJuclRlGm_2qqHBaoaXpNhk8kTGIT1BNopAmyxakt07iKWSsf8ZWSev5KIy8mAzKKG3w4sexwHPYmyjLnuJxchGNxTeen6ASAeTNi6JI65m9jjSph1qptNijm9zxRVF-Fmj3VG4jdSq-Ju9tjTk3KPGQ4CTr7IdS8flgGjNkIciarwo5YazSOlcieHVMtdvHP-wW4Gte7bg1n6eNm4hc35fsGsWNUhQIBWJ1X6qygXuMO3pkagIaGPWM99vH7ZKEKWoixT96uwFn5kxh09JEsql9O9eqSaJU9oZbAaaYYC2FSgWWNTaT8G38P6ZQ","e":"AQAB"},"attributes":{"enabled":true,"created":1612579044,"updated":1612579044,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestrsa-key-name83c3119d/193d39e698ce4cd0a452ef07a7553ddc","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uusn25cTf_kWKVmB640gL3S0zyN8D8FP8yyChH5jf7MI_kskRojoedV-20g6C-lHea8KAFteE3ERB1SEhIc0u7uVmKiQJm7q1n6OLsghbmVXqEQmfSZgn8U6bOP1TpaKc54pViS9YrVoljnxu_ZmPHSZUaey2GSnqYodLRyH3mBrVQHdubDTvdyrovsDkhSe847_JhPKQfEqLeP0M5HU06QbkS9Qs_xybLvREpZZ_jZOCM4S8yOdDHB65McPvSmD4Hf1DkAG8-G6d0stIBh60Tz9w7ImsdoxoPubS1N9gcw73Y0sNFxYS5cOJECwDWPt13IsOmcXaI4c8V7L_5AkcQ","e":"AQAB"},"attributes":{"enabled":true,"created":1616111206,"updated":1616111206,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 06 Feb 2021 02:37:24 GMT
+      - Thu, 18 Mar 2021 23:46:46 GMT
       expires:
       - '-1'
       pragma:
@@ -89,11 +89,11 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - northeurope
+      - eastus2
       x-ms-keyvault-service-version:
-      - 1.2.164.0
+      - 1.2.205.0
       x-powered-by:
       - ASP.NET
     status:
