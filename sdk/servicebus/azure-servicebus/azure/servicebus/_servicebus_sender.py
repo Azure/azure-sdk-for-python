@@ -5,7 +5,7 @@
 import logging
 import time
 import uuid
-from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping
+from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 
 import uamqp
 from uamqp import SendClient, types
@@ -47,6 +47,10 @@ if TYPE_CHECKING:
         ServiceBusMessage,
         List[Union[Mapping[str, Any], ServiceBusMessage]]
     ]
+    MessageObjTypes = Union[
+        ServiceBusMessage,
+        ServiceBusMessageBatch,
+        List[ServiceBusMessage]]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -379,14 +383,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
-        obj_message = None  # type: Union[ServiceBusMessage, List[ServiceBusMessage], ServiceBusMessageBatch]
         with send_trace_context_manager() as send_span:
             if isinstance(message, ServiceBusMessageBatch):
                 for (
                     batch_message
                 ) in message.message._body_gen:  # pylint: disable=protected-access
                     add_link_to_send(batch_message, send_span)
-                obj_message = message
+                obj_message = message  # type: MessageObjTypes
             else:
                 obj_message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
                 # Ensure message is sendable (not a ReceivedMessage), and if needed (a list) is batched. Adds tracing.
@@ -399,7 +402,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access
                     obj_message = batch
                 except TypeError:  # Message was not a list or generator. Do needed tracing.
-                    trace_message(obj_message, send_span)
+                    trace_message(cast(ServiceBusMessage, obj_message), send_span)
                     add_link_to_send(obj_message, send_span)
 
             if (
