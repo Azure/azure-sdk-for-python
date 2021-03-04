@@ -4,6 +4,8 @@ import subprocess as sp
 import time
 import re
 import argparse
+import logging
+
 
 SERVICE_NAME = 'servicename'
 SDK_FOLDER = 'servicename'
@@ -15,9 +17,10 @@ BRANCH_BASE = ''
 OUT_PATH = ''
 NEW_BRANCH = ''
 
+_LOG = logging.getLogger()
 
 def my_print(cmd):
-    print(f'({SERVICE_NAME})==' + cmd + ' ==\n')
+    _LOG.info(f'({SERVICE_NAME})==' + cmd + ' ==\n')
 
 
 def print_exec(cmd):
@@ -139,7 +142,7 @@ def edit_changelog(add_content):
 
 def print_changelog(add_content):
     for line in add_content:
-        print('[CHANGELOG] ' + line)
+        _LOG.info('[CHANGELOG] ' + line)
 
 
 def edit_file_setup():
@@ -368,6 +371,10 @@ if __name__ == '__main__':
     parser.add_argument("script_path", help="path where the script is")
     parser.add_argument("out_path", help="path where the output is")
     args = parser.parse_args()
+
+    main_logger = logging.getLogger()
+    logging.basicConfig()
+    main_logger.setLevel(logging.INFO)
 
     BRANCH_BASE = args.branch.replace('AzureSDKAutomation:', '')
     SCRIPT_PATH = args.script_path
