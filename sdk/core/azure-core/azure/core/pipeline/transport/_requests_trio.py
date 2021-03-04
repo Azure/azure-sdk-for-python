@@ -49,7 +49,7 @@ from ._base_requests_async import RequestsAsyncTransportBase
 _LOGGER = logging.getLogger(__name__)
 
 
-class TrioStreamDownloadGenerator(AsyncIterator):
+class TrioStreamDownloadGenerator(AsyncIterator):   # pylint: disable=too-many-instance-attributes
     """Generator for streaming response data.
 
     :param pipeline: The pipeline object

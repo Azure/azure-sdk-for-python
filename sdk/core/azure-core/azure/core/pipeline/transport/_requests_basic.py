@@ -95,7 +95,7 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
         return self.internal_response.text
 
 
-class StreamDownloadGenerator(object):
+class StreamDownloadGenerator(object):  # pylint: disable=too-many-instance-attributes
     """Generator for streaming response data.
 
     :param pipeline: The pipeline object

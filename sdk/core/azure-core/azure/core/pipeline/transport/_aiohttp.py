@@ -195,7 +195,7 @@ class AioHttpTransport(AsyncHttpTransport):
         return response
 
 
-class AioHttpStreamDownloadGenerator(AsyncIterator):
+class AioHttpStreamDownloadGenerator(AsyncIterator):    # pylint: disable=too-many-instance-attributes
     """Streams the response body data.
 
     :param pipeline: The pipeline object

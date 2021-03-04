@@ -133,7 +133,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         return AsyncioRequestsTransportResponse(request, response, self.connection_config.data_block_size)
 
 
-class AsyncioStreamDownloadGenerator(AsyncIterator):
+class AsyncioStreamDownloadGenerator(AsyncIterator):    # pylint: disable=too-many-instance-attributes
     """Streams the response body data.
 
     :param pipeline: The pipeline object
