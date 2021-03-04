@@ -149,9 +149,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             try:
                 return self._local_provider.encrypt(algorithm, plaintext)
             except Exception as ex:  # pylint:disable=broad-except
+                _LOGGER.warning("Local encrypt operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
                 if self._local_only:
                     raise
-                _LOGGER.warning("Local encrypt operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
         elif self._local_only:
             raise NotImplementedError(
                 'This key does not support the "encrypt" operation with algorithm "{}"'.format(algorithm)
@@ -208,9 +208,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             try:
                 return self._local_provider.decrypt(algorithm, ciphertext)
             except Exception as ex:  # pylint:disable=broad-except
+                _LOGGER.warning("Local decrypt operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
                 if self._local_only:
                     raise
-                _LOGGER.warning("Local decrypt operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
         elif self._local_only:
             raise NotImplementedError(
                 'This key does not support the "decrypt" operation with algorithm "{}"'.format(algorithm)
@@ -250,9 +250,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             try:
                 return self._local_provider.wrap_key(algorithm, key)
             except Exception as ex:  # pylint:disable=broad-except
+                _LOGGER.warning("Local wrap operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
                 if self._local_only:
                     raise
-                _LOGGER.warning("Local wrap operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
         elif self._local_only:
             raise NotImplementedError(
                 'This key does not support the "wrapKey" operation with algorithm "{}"'.format(algorithm)
@@ -289,9 +289,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             try:
                 return self._local_provider.unwrap_key(algorithm, encrypted_key)
             except Exception as ex:  # pylint:disable=broad-except
+                _LOGGER.warning("Local unwrap operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
                 if self._local_only:
                     raise
-                _LOGGER.warning("Local unwrap operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
         elif self._local_only:
             raise NotImplementedError(
                 'This key does not support the "unwrapKey" operation with algorithm "{}"'.format(algorithm)
@@ -329,9 +329,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             try:
                 return self._local_provider.sign(algorithm, digest)
             except Exception as ex:  # pylint:disable=broad-except
+                _LOGGER.warning("Local sign operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
                 if self._local_only:
                     raise
-                _LOGGER.warning("Local sign operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
         elif self._local_only:
             raise NotImplementedError(
                 'This key does not support the "sign" operation with algorithm "{}"'.format(algorithm)
@@ -372,9 +372,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             try:
                 return self._local_provider.verify(algorithm, digest, signature)
             except Exception as ex:  # pylint:disable=broad-except
+                _LOGGER.warning("Local verify operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
                 if self._local_only:
                     raise
-                _LOGGER.warning("Local verify operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
         elif self._local_only:
             raise NotImplementedError(
                 'This key does not support the "verify" operation with algorithm "{}"'.format(algorithm)
