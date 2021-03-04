@@ -56,10 +56,10 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
-    async def test_create_user_with_token(self, connection_string):
+    async def test_create_user_and_token(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
         async with identity_client:
-            user, token_response = await identity_client.create_user_with_token(scopes=[CommunicationTokenScope.CHAT])
+            user, token_response = await identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
 
         assert user.identifier is not None
         assert token_response.token is not None

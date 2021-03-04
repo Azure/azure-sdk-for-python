@@ -59,6 +59,7 @@ class MarketplaceAgreementsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-02-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -75,6 +76,7 @@ class MarketplaceAgreementsOperations:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -108,7 +110,7 @@ class MarketplaceAgreementsOperations:
         )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Datadog/agreements'}  # type: ignore
 
-    async def create(
+    async def create_or_update(
         self,
         body: Optional["_models.DatadogAgreementResource"] = None,
         **kwargs
@@ -129,11 +131,12 @@ class MarketplaceAgreementsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-02-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.create.metadata['url']  # type: ignore
+        url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
@@ -141,6 +144,7 @@ class MarketplaceAgreementsOperations:
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -168,4 +172,4 @@ class MarketplaceAgreementsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Datadog/agreements/default'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Datadog/agreements/default'}  # type: ignore

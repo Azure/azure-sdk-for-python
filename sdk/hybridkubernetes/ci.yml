@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: hybridkubernetes
     Artifacts:
-    - name: azure_mgmt_hybridkubernetes
+    - name: azure-mgmt-hybridkubernetes
       safeName: azuremgmthybridkubernetes

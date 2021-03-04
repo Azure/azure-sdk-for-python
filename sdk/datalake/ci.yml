@@ -30,7 +30,7 @@ extends:
   parameters:
     ServiceDirectory: datalake
     Artifacts:
-    - name: azure_mgmt_datalake_analytics
+    - name: azure-mgmt-datalake-analytics
       safeName: azuremgmtdatalakeanalytics
-    - name: azure_mgmt_datalake_store
+    - name: azure-mgmt-datalake-store
       safeName: azuremgmtdatalakestore

@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: authorization
     Artifacts:
-    - name: azure_mgmt_authorization
+    - name: azure-mgmt-authorization
       safeName: azuremgmtauthorization

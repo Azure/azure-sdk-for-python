@@ -41,6 +41,14 @@ azure.core.exceptions
    :members:
    :undoc-members:
 
+azure.core.messaging
+-------------------
+
+.. automodule:: azure.core.messaging
+   :members:
+   :undoc-members:
+   :inherited-members:
+
 azure.core.paging
 -----------------
 
@@ -57,3 +65,10 @@ azure.core.settings
    :undoc-members:
    :inherited-members:
 
+azure.core.serialization
+-------------------
+
+.. automodule:: azure.core.serialization
+   :members:
+   :undoc-members:
+   :inherited-members:

@@ -325,5 +325,5 @@ def analyze_paged_result(doc_id_order, task_order, analyze_status_callback, _, o
     )
 
 def _get_deserialize():
-    from ._generated.v3_1_preview_3 import TextAnalyticsClient
+    from ._generated.v3_1_preview_4 import TextAnalyticsClient
     return TextAnalyticsClient("dummy", "dummy")._deserialize  # pylint: disable=protected-access

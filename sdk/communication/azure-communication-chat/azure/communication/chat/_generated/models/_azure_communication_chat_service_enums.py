@@ -35,3 +35,11 @@ class ChatMessageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TOPIC_UPDATED = "topicUpdated"
     PARTICIPANT_ADDED = "participantAdded"
     PARTICIPANT_REMOVED = "participantRemoved"
+
+class CommunicationCloudEnvironmentModel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The cloud that the identifier belongs to.
+    """
+
+    PUBLIC = "public"
+    DOD = "dod"
+    GCCH = "gcch"

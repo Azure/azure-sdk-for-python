@@ -12,9 +12,10 @@ from azure.core.exceptions import HttpResponseError
 from azure.communication.chat import (
     ChatThreadClient,
     ChatThreadParticipant,
-    CommunicationUserIdentifier,
-    CommunicationTokenCredential,
     ChatMessageType
+)
+from azure.communication.chat._shared.models import(
+    CommunicationUserIdentifier
 )
 from unittest_helpers import mock_response
 
@@ -25,7 +26,7 @@ except ImportError:  # python < 3.3
 
 class TestChatThreadClient(unittest.TestCase):
     @classmethod
-    @patch('azure.communication.chat.CommunicationTokenCredential')
+    @patch('azure.communication.identity._shared.user_credential.CommunicationTokenCredential')
     def setUpClass(cls, credential):
         credential.get_token = Mock(return_value=AccessToken("some_token", datetime.now().replace(tzinfo=TZ_UTC)))
         TestChatThreadClient.credential = credential
@@ -168,16 +169,21 @@ class TestChatThreadClient(unittest.TestCase):
                             "topic": "Lunch Chat thread",
                             "participants": [
                                 {
-                                    "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b",
+                                    "communicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
                                     "displayName": "Bob",
                                     "shareHistoryTime": "2020-10-30T10:50:50Z"
                                 }
                             ],
-                            "initiator": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"
+                            "initiatorCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}}
                         },
                         "senderDisplayName": "Bob",
                         "createdOn": "2021-01-27T01:37:33Z",
-                        "senderId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000007-e155-1f06-1db7-3a3a0d00004b"
+                        "senderCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
+                        "deletedOn": "2021-01-27T01:37:33Z",
+                        "editedOn": "2021-01-27T01:37:33Z"
                     })
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
@@ -196,21 +202,36 @@ class TestChatThreadClient(unittest.TestCase):
     def test_list_messages(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
         message_id='1596823919339'
+        message_str = "Hi I am Bob."
         raised = False
 
         def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={"value": [{
-                "id": message_id,
-                "type": "text",
-                "sequenceId": "3",
-                "version": message_id,
-                "content": {
-                    "message": "Hi I am Bob."
-                },
-                "senderDisplayName": "Bob",
-                "createdOn": "2021-01-27T01:37:33Z",
-                "senderId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000007-e155-1f06-1db7-3a3a0d00004b"
-            }]})
+                        "id": message_id,
+                        "type": "text",
+                        "sequenceId": "3",
+                        "version": message_id,
+                        "content": {
+                            "message": message_str,
+                            "topic": "Lunch Chat thread",
+                            "participants": [
+                                {
+                                    "communicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
+                                    "displayName": "Bob",
+                                    "shareHistoryTime": "2020-10-30T10:50:50Z"
+                                }
+                            ],
+                            "initiatorCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}}
+                        },
+                        "senderDisplayName": "Bob",
+                        "createdOn": "2021-01-27T01:37:33Z",
+                        "senderCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
+                        "deletedOn": "2021-01-27T01:37:33Z",
+                        "editedOn": "2021-01-27T01:37:33Z"
+                    }]})
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         chat_messages = None
@@ -229,6 +250,7 @@ class TestChatThreadClient(unittest.TestCase):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
         raised = False
         message_id = '1596823919339'
+        message_str = "Hi I am Bob."
 
         def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
@@ -236,14 +258,28 @@ class TestChatThreadClient(unittest.TestCase):
                     {
                         "id": message_id,
                         "type": "text",
-                        "sequenceId": "3",
+                        "sequenceId": "2",
                         "version": message_id,
                         "content": {
-                            "message": "Hi I am Bob."
+                            "message": message_str,
+                            "topic": "Lunch Chat thread",
+                            "participants": [
+                                {
+                                    "communicationIdentifier": {"rawId": "string", "communicationUser": {
+                                        "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
+                                    "displayName": "Bob",
+                                    "shareHistoryTime": "2020-10-30T10:50:50Z"
+                                }
+                            ],
+                            "initiatorCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                                "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}}
                         },
                         "senderDisplayName": "Bob",
                         "createdOn": "2021-01-27T01:37:33Z",
-                        "senderId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000007-e155-1f06-1db7-3a3a0d00004b"
+                        "senderCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
+                        "deletedOn": "2021-01-27T01:37:33Z",
+                        "editedOn": "2021-01-27T01:37:33Z"
                     },
                     {
                         "id": message_id,
@@ -251,20 +287,25 @@ class TestChatThreadClient(unittest.TestCase):
                         "sequenceId": "3",
                         "version": message_id,
                         "content": {
-                            "message": "Come one guys, lets go for lunch together.",
+                            "message": message_str,
                             "topic": "Lunch Chat thread",
                             "participants": [
                                 {
-                                    "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b",
+                                    "communicationIdentifier": {"rawId": "string", "communicationUser": {
+                                        "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
                                     "displayName": "Bob",
                                     "shareHistoryTime": "2020-10-30T10:50:50Z"
                                 }
                             ],
-                            "initiator": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"
+                            "initiatorCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                                "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}}
                         },
                         "senderDisplayName": "Bob",
                         "createdOn": "2021-01-27T01:37:33Z",
-                        "senderId": "8:acs:46849534-eb08-4ab7-bde7-c36928cd1547_00000007-e155-1f06-1db7-3a3a0d00004b"
+                        "senderCommunicationIdentifier": {"rawId": "string", "communicationUser": {
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
+                        "deletedOn": "2021-01-27T01:37:33Z",
+                        "editedOn": "2021-01-27T01:37:33Z"
                     }
                 ]})
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
@@ -321,7 +362,18 @@ class TestChatThreadClient(unittest.TestCase):
         raised = False
 
         def mock_send(*_, **__):
-            return mock_response(status_code=200, json_payload={"value": [{"id": participant_id}]})
+            return mock_response(status_code=200, json_payload={"value": [
+                {
+                    "communicationIdentifier": {
+                        "rawId": participant_id,
+                        "communicationUser": {
+                            "id": participant_id
+                        }
+                    },
+                    "displayName": "Bob",
+                    "shareHistoryTime": "2020-10-30T10:50:50Z"
+                }
+            ]})
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         chat_thread_participants = None
@@ -345,8 +397,26 @@ class TestChatThreadClient(unittest.TestCase):
         def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
                 "value": [
-                    {"id": participant_id_1},
-                    {"id": participant_id_2}
+                    {
+                        "communicationIdentifier": {
+                            "rawId": participant_id_1,
+                            "communicationUser": {
+                                "id": participant_id_1
+                            }
+                        },
+                        "displayName": "Bob",
+                        "shareHistoryTime": "2020-10-30T10:50:50Z"
+                    },
+                    {
+                        "communicationIdentifier": {
+                            "rawId": participant_id_2,
+                            "communicationUser": {
+                                "id": participant_id_2
+                            }
+                        },
+                        "displayName": "Bob",
+                        "shareHistoryTime": "2020-10-30T10:50:50Z"
+                    }
                 ]})
 
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id,
@@ -384,6 +454,39 @@ class TestChatThreadClient(unittest.TestCase):
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
 
+    def test_add_participant_w_failed_participants(self):
+        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+        new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+        raised = False
+        error_message = "some error message"
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=201, json_payload={
+                "errors": {
+                    "invalidParticipants": [
+                        {
+                            "code": "string",
+                            "message": error_message,
+                            "target": new_participant_id,
+                            "details": []
+                        }
+                    ]
+                }
+            })
+        chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
+
+        new_participant = ChatThreadParticipant(
+                user=CommunicationUserIdentifier(new_participant_id),
+                display_name='name',
+                share_history_time=datetime.utcnow())
+
+        try:
+            chat_thread_client.add_participant(new_participant)
+        except:
+            raised = True
+
+        self.assertTrue(raised, 'Expected is no excpetion raised')
+
     def test_add_participants(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
         new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
@@ -400,11 +503,56 @@ class TestChatThreadClient(unittest.TestCase):
         participants = [new_participant]
 
         try:
-            chat_thread_client.add_participants(participants)
+            result = chat_thread_client.add_participants(participants)
         except:
             raised = True
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
+        self.assertTrue(len(result) == 0)
+
+    def test_add_participants_w_failed_participants_returns_nonempty_list(self):
+        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+        new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+        raised = False
+        error_message = "some error message"
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=201,json_payload={
+                "errors": {
+                    "invalidParticipants": [
+                        {
+                            "code": "string",
+                            "message": error_message,
+                            "target": new_participant_id,
+                            "details": []
+                        }
+                    ]
+                }
+            })
+        chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
+
+        new_participant = ChatThreadParticipant(
+                user=CommunicationUserIdentifier(new_participant_id),
+                display_name='name',
+                share_history_time=datetime.utcnow())
+        participants = [new_participant]
+
+        try:
+            result = chat_thread_client.add_participants(participants)
+        except:
+            raised = True
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+        self.assertTrue(len(result) == 1)
+
+        failed_participant = result[0][0]
+        communication_error = result[0][1]
+
+        self.assertEqual(new_participant.user.identifier, failed_participant.user.identifier)
+        self.assertEqual(new_participant.display_name, failed_participant.display_name)
+        self.assertEqual(new_participant.share_history_time, failed_participant.share_history_time)
+        self.assertEqual(error_message, communication_error.message)
+
 
     def test_remove_participant(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
@@ -459,7 +607,19 @@ class TestChatThreadClient(unittest.TestCase):
         raised = False
 
         def mock_send(*_, **__):
-            return mock_response(status_code=200, json_payload={"value": [{"chatMessageId": message_id}]})
+            return mock_response(status_code=200, json_payload={
+                "value": [
+                    {
+                        "chatMessageId": message_id,
+                        "senderCommunicationIdentifier": {
+                            "rawId": "string",
+                            "communicationUser": {
+                                "id": "string"
+                            }
+                        }
+                    }
+                ]
+            })
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         read_receipts = None
@@ -482,8 +642,24 @@ class TestChatThreadClient(unittest.TestCase):
         def mock_send(*_, **__):
             return mock_response(status_code=200, json_payload={
                 "value": [
-                    {"chatMessageId": message_id_1},
-                    {"chatMessageId": message_id_2}
+                    {
+                        "chatMessageId": message_id_1,
+                        "senderCommunicationIdentifier": {
+                            "rawId": "string",
+                            "communicationUser": {
+                                "id": "string"
+                            }
+                        }
+                    },
+                    {
+                        "chatMessageId": message_id_2,
+                        "senderCommunicationIdentifier": {
+                            "rawId": "string",
+                            "communicationUser": {
+                                "id": "string"
+                            }
+                        }
+                    }
                 ]})
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 

@@ -17,7 +17,7 @@ USAGE:
 """
 import os
 import asyncio
-from azure.eventgrid import CloudEvent
+from azure.core.messaging import CloudEvent
 from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 

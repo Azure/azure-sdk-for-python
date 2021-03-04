@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: notificationhubs
     Artifacts:
-    - name: azure_mgmt_notificationhubs
+    - name: azure-mgmt-notificationhubs
       safeName: azuremgmtnotificationhubs

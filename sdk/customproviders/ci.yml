@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: customproviders
     Artifacts:
-    - name: azure_mgmt_customproviders
+    - name: azure-mgmt-customproviders
       safeName: azuremgmtcustomproviders

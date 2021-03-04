@@ -9,6 +9,7 @@
 from typing import Any, Union, List, Dict, cast
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.messaging import CloudEvent
 from azure.core.pipeline.policies import (
     RequestIdPolicy,
     HeadersPolicy,
@@ -23,13 +24,14 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 from .._policies import CloudEventDistributedTracingPolicy
-from .._models import CloudEvent, EventGridEvent
+from .._models import EventGridEvent
 from .._helpers import (
     _get_endpoint_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
     _is_eventgrid_event,
     _eventgrid_data_typecheck,
+    _cloud_event_to_generated,
 )
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .._version import VERSION
@@ -134,14 +136,14 @@ class EventGridPublisherClient:
                 :start-after: [START publish_eg_event_dict_async]
                 :end-before: [END publish_eg_event_dict_async]
                 :language: python
-                :dedent: 0
+                :dedent: 4
                 :caption: Publishing an EventGridEvent using a dict-like representation.
 
             .. literalinclude:: ../samples/async_samples/sample_publish_cloud_event_using_dict_async.py
                 :start-after: [START publish_cloud_event_dict_async]
                 :end-before: [END publish_cloud_event_dict_async]
                 :language: python
-                :dedent: 0
+                :dedent: 4
                 :caption: Publishing a CloudEvent using a dict-like representation.
 
         When publishing a Custom Schema Event(s), dict-like representation is accepted.
@@ -153,7 +155,7 @@ class EventGridPublisherClient:
                 :start-after: [START publish_custom_schema_async]
                 :end-before: [END publish_custom_schema_async]
                 :language: python
-                :dedent: 0
+                :dedent: 4
                 :caption: Publishing a Custom Schema event.
 
         **WARNING**: To gain the best performance when sending multiple events at one time,
@@ -172,7 +174,7 @@ class EventGridPublisherClient:
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
                 events = [
-                    cast(CloudEvent, e)._to_generated(**kwargs) for e in events # pylint: disable=protected-access
+                    _cloud_event_to_generated(e, **kwargs) for e in events # pylint: disable=protected-access
                 ]
             except AttributeError:
                 pass  # means it's a dictionary

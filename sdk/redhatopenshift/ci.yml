@@ -30,5 +30,5 @@ extends:
   parameters:
     ServiceDirectory: redhatopenshift
     Artifacts:
-    - name: azure_mgmt_redhatopenshift
+    - name: azure-mgmt-redhatopenshift
       safeName: azuremgmtredhatopenshift

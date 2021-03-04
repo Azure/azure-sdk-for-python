@@ -30,7 +30,7 @@ extends:
   parameters:
     ServiceDirectory: eventgrid
     Artifacts:
-    - name: azure_mgmt_eventgrid
+    - name: azure-mgmt-eventgrid
       safeName: azuremgmteventgrid
-    - name: azure_eventgrid
+    - name: azure-eventgrid
       safeName: azureeventgrid
