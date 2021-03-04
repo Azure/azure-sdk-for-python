@@ -36,8 +36,7 @@ if TYPE_CHECKING:
 MessageTypes = Union[
     Mapping[str, Any],
     ServiceBusMessage,
-    List[Mapping[str, Any]],
-    List[ServiceBusMessage]
+    List[Union[Mapping[str, Any], ServiceBusMessage]]
 ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -322,27 +321,29 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
+        obj_message: Union[ServiceBusMessage, List[ServiceBusMessage, ServiceBusMessageBatch]] = None
         with send_trace_context_manager() as send_span:
             if isinstance(message, ServiceBusMessageBatch):
                 for (
                     batch_message
                 ) in message.message._body_gen:  # pylint: disable=protected-access
                     add_link_to_send(batch_message, send_span)
+                obj_message = message
             else:
-                message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
-                message = transform_messages_to_sendable_if_needed(message)
+                obj_message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
+                obj_message = transform_messages_to_sendable_if_needed(obj_message)
                 try:
                     # Ignore type (and below) as it will except if wrong.
-                    for each_message in iter(message):  # type: ignore
+                    for each_message in iter(obj_message):  # type: ignore
                         add_link_to_send(each_message, send_span)
                     batch = await self.create_message_batch()
-                    batch._from_list(message, send_span)  # type: ignore # pylint: disable=protected-access
-                    message = batch
+                    batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access
+                    obj_message = batch
                 except TypeError:  # Message was not a list or generator.
-                    trace_message(message, send_span)
-                    add_link_to_send(message, send_span)
+                    trace_message(obj_message, send_span)
+                    add_link_to_send(obj_message, send_span)
             if (
-                isinstance(message, ServiceBusMessageBatch) and len(message) == 0
+                isinstance(obj_message, ServiceBusMessageBatch) and len(obj_message) == 0
             ):  # pylint: disable=len-as-condition
                 return  # Short circuit noop if an empty list or batch is provided.
 
@@ -351,7 +352,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
             await self._do_retryable_operation(
                 self._send,
-                message=message,
+                message=obj_message,
                 timeout=timeout,
                 operation_requires_timeout=True,
                 require_last_exception=True,
