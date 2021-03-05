@@ -10,31 +10,28 @@ from phone_number_helper import PhoneNumberUriReplacer
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
 
-class NewTests(CommunicationTestCase):
+class PhoneNumbersAdministrationClientTest(CommunicationTestCase):
     def setUp(self):
-        super(NewTests, self).setUp()
+        super(PhoneNumbersAdministrationClientTest, self).setUp()
         if self.is_playback():
             self.phone_number = "sanitized"
             self.country_code = "US"
-            self.area_code = "833"
         else:
             self.phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
-            self.phone_number_to_release = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_TO_RELEASE")
-            self.country_code = os.getenv("AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE")
-            self.area_code = os.getenv("AZURE_COMMUNICATION_SERIVCE_AREA_CODE")
+            self.country_code = os.getenv("AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
         self.phone_number_client = PhoneNumbersClient.from_connection_string(self.connection_str)
         self.recording_processors.extend([
             BodyReplacerProcessor(
                 keys=["id", "token", "phoneNumber"]
             ),
-            PhoneNumberUriReplacer()])
+            PhoneNumberUriReplacer(),
+            ResponseReplacerProcessor()])
 
-    @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
-    def test_list_all_phone_numbers_from_managed_identity(self):
+    def test_list_acquired_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
         phone_number_client = PhoneNumbersClient(endpoint, credential)
-        phone_numbers = phone_number_client.list_all_phone_numbers()
+        phone_numbers = phone_number_client.list_acquired_phone_numbers()
         assert phone_numbers.next()
     
     def test_list_acquired_phone_numbers(self):
@@ -55,7 +52,6 @@ class NewTests(CommunicationTestCase):
             PhoneNumberType.TOLL_FREE,
             PhoneNumberAssignmentType.APPLICATION,
             capabilities,
-            area_code=self.area_code,
             polling = True
         )
         assert poller.result()
@@ -80,7 +76,6 @@ class NewTests(CommunicationTestCase):
             PhoneNumberType.TOLL_FREE,
             PhoneNumberAssignmentType.APPLICATION,
             capabilities,
-            area_code=self.area_code,
             polling = True
         )
         phone_number_to_buy = search_poller.result()

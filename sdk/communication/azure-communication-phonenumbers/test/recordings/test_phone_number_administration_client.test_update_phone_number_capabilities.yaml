@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       Date:
-      - Thu, 04 Mar 2021 20:10:10 GMT
+      - Fri, 05 Mar 2021 17:33:44 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -22,31 +22,32 @@ interactions:
     uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized/capabilities?api-version=2021-03-07
   response:
     body:
-      string: '{"capabilitiesUpdateId": "c753b8c0-bf2e-4f28-ad44-487b3e55c126"}'
+      string: '{"capabilitiesUpdateId": "ae9c880c-b537-4538-b260-0f818b21481e"}'
     headers:
       access-control-expose-headers:
       - Operation-Location,Location,operation-id,capabilities-id
       capabilities-id:
-      - c753b8c0-bf2e-4f28-ad44-487b3e55c126
+      - ae9c880c-b537-4538-b260-0f818b21481e
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 04 Mar 2021 20:10:11 GMT
+      - Fri, 05 Mar 2021 17:33:45 GMT
       ms-cv:
-      - nJy2pwvO2kOqoLVJr05Tlg.0
+      - GVS3fDhlAkimsjGVwfBIvg.0
       operation-id:
-      - capabilities_c753b8c0-bf2e-4f28-ad44-487b3e55c126
+      - capabilities_ae9c880c-b537-4538-b260-0f818b21481e
       operation-location:
-      - /phoneNumbers/operations/capabilities_c753b8c0-bf2e-4f28-ad44-487b3e55c126?api-version=2021-03-07
+      - /phoneNumbers/operations/capabilities_ae9c880c-b537-4538-b260-0f818b21481e?api-version=2021-03-07
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 1111ms
+      - 1149ms
     status:
       code: 202
       message: Accepted
+    url: sanitized
 - request:
     body: null
     headers:
@@ -57,17 +58,17 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Thu, 04 Mar 2021 20:10:42 GMT
+      - Fri, 05 Mar 2021 17:34:15 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_c753b8c0-bf2e-4f28-ad44-487b3e55c126?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_ae9c880c-b537-4538-b260-0f818b21481e?api-version=2021-03-07
   response:
     body:
       string: '{"status": "Succeeded", "resourceLocation": "/phoneNumbers/+18332143261?api-version=2021-03-07",
-        "createdDateTime": "2021-03-04T20:10:11.7620886+00:00", "id": "sanitized",
+        "createdDateTime": "2021-03-05T17:33:45.8891088+00:00", "id": "sanitized",
         "operationType": "UpdatePhoneNumberCapabilities", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
     headers:
       access-control-expose-headers:
@@ -75,18 +76,19 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 04 Mar 2021 20:10:43 GMT
+      - Fri, 05 Mar 2021 17:34:16 GMT
       ms-cv:
-      - bhOOUelnIEioRhByfOIYkQ.0
+      - n/+asM0FEUeGb/LSEzp4pQ.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 2355ms
+      - 306ms
     status:
       code: 200
       message: OK
+    url: sanitized
 - request:
     body: null
     headers:
@@ -97,7 +99,7 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Thu, 04 Mar 2021 20:10:44 GMT
+      - Fri, 05 Mar 2021 17:34:16 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -114,16 +116,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 04 Mar 2021 20:10:46 GMT
+      - Fri, 05 Mar 2021 17:34:18 GMT
       ms-cv:
-      - UmM4C4ozVkijkaibJMfTjQ.0
+      - uRSIpbt/jUKbaCw7kHXPlg.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 2097ms
+      - 2022ms
     status:
       code: 200
       message: OK
+    url: sanitized
 version: 1

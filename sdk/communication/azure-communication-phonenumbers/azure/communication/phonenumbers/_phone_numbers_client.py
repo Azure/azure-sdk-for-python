@@ -166,7 +166,6 @@ class PhoneNumbersClient(object):
         :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
         :param sms: Capability value for SMS.
         :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
@@ -194,7 +193,6 @@ class PhoneNumbersClient(object):
         :param phone_number: The acquired phone number whose details are to be fetched in E.164 format,
          e.g. +11234567890.
         :type phone_number: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :rtype: ~azure.communication.phonenumbers.models.AcquiredPhoneNumber
         """
         return self._phone_number_client.phone_numbers.get_by_number(

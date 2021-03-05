@@ -60,7 +60,7 @@ class PhoneNumbersClient(object):
             search_id, # type: str
             **kwargs # type: Any
     ):
-        # type: (...) -> AsyncLROPoller[PhoneNumberSearchResult]
+        # type: (...) -> AsyncLROPoller[None]
         """Purchases phone numbers.
 
         :param search_id: The search id.
@@ -89,7 +89,6 @@ class PhoneNumbersClient(object):
 
         :param phone_number: Phone number to be released, e.g. +11234567890.
         :type phone_number: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
@@ -110,7 +109,6 @@ class PhoneNumbersClient(object):
             phone_number_type, # type: str
             assignment_type, # type: str
             capabilities,
-            quantity=None, # type: int
             **kwargs
     ):
         # type: (...) -> AsyncLROPoller[PhoneNumberSearchResult]
@@ -128,10 +126,9 @@ class PhoneNumbersClient(object):
             ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
         :param capabilities: Required. Capabilities of a phone number.
         :type capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
-        :param quantity: The quantity of phone numbers in the search. Should be at least 1.
-        :type quantity: int
         :keyword str area_code: The area code of the desired phone number, e.g. 425. If not set,
             any area code could be used in the final search.
+        :keyword int quantity: The quantity of phone numbers in the search. Default is 1.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
@@ -144,7 +141,7 @@ class PhoneNumbersClient(object):
             phone_number_type=phone_number_type,
             assignment_type=assignment_type,
             capabilities=capabilities,
-            quantity=quantity,
+            quantity=kwargs.pop('quantity', None),
             area_code=kwargs.pop('area_code', None)
         )
         return await self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
@@ -171,7 +168,6 @@ class PhoneNumbersClient(object):
         :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
         :param sms: Capability value for SMS.
         :type sms: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
@@ -199,7 +195,6 @@ class PhoneNumbersClient(object):
         :param phone_number: The acquired phone number whose details are to be fetched in E.164 format,
          e.g. +11234567890.
         :type phone_number: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :rtype: ~azure.communication.phonenumbers.models.AcquiredPhoneNumber
         """
         return await self._phone_number_client.phone_numbers.get_by_number(

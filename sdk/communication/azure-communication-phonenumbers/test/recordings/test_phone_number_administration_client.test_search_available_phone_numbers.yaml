@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 04 Mar 2021 20:09:35 GMT
+      - Fri, 05 Mar 2021 17:33:09 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -30,19 +30,19 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 04 Mar 2021 20:09:38 GMT
+      - Fri, 05 Mar 2021 17:33:13 GMT
       ms-cv:
-      - xp+gSiPZFEi9TrSBlc6j9w.0
+      - xUw7Lzf1zEqW60yFP7jeCw.0
       operation-id:
-      - search_c0763b8c-895d-4bba-b312-bcf615a90b2d
+      - search_324670a6-ab6b-4379-ac4e-8a0af6f374af
       operation-location:
-      - /phoneNumbers/operations/search_c0763b8c-895d-4bba-b312-bcf615a90b2d?api-version=2021-03-07
+      - /phoneNumbers/operations/search_324670a6-ab6b-4379-ac4e-8a0af6f374af?api-version=2021-03-07
       request-context:
       - appId=
       search-id:
-      - c0763b8c-895d-4bba-b312-bcf615a90b2d
+      - 324670a6-ab6b-4379-ac4e-8a0af6f374af
       x-processing-time:
-      - 3391ms
+      - 2515ms
     status:
       code: 202
       message: Accepted
@@ -56,17 +56,17 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Thu, 04 Mar 2021 20:10:09 GMT
+      - Fri, 05 Mar 2021 17:33:42 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/search_c0763b8c-895d-4bba-b312-bcf615a90b2d?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/search_324670a6-ab6b-4379-ac4e-8a0af6f374af?api-version=2021-03-07
   response:
     body:
-      string: '{"status": "Succeeded", "resourceLocation": "/availablePhoneNumbers/searchResults/c0763b8c-895d-4bba-b312-bcf615a90b2d?api-version=2021-03-07",
-        "createdDateTime": "2021-03-04T20:09:38.6605579+00:00", "id": "sanitized",
+      string: '{"status": "Succeeded", "resourceLocation": "/availablePhoneNumbers/searchResults/324670a6-ab6b-4379-ac4e-8a0af6f374af?api-version=2021-03-07",
+        "createdDateTime": "2021-03-05T17:33:12.6372497+00:00", "id": "sanitized",
         "operationType": "Search", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
     headers:
       access-control-expose-headers:
@@ -74,18 +74,19 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 04 Mar 2021 20:10:09 GMT
+      - Fri, 05 Mar 2021 17:33:43 GMT
       ms-cv:
-      - WJ4OvgfDfE22EY3w9XwIlA.0
+      - pT0wbkG2tk6KY3RAbY7ddA.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 483ms
+      - 294ms
     status:
       code: 200
       message: OK
+    url: sanitized
 - request:
     body: null
     headers:
@@ -96,34 +97,35 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Thu, 04 Mar 2021 20:10:09 GMT
+      - Fri, 05 Mar 2021 17:33:43 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/searchResults/c0763b8c-895d-4bba-b312-bcf615a90b2d?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/searchResults/324670a6-ab6b-4379-ac4e-8a0af6f374af?api-version=2021-03-07
   response:
     body:
-      string: '{"searchId": "c0763b8c-895d-4bba-b312-bcf615a90b2d", "phoneNumbers":
+      string: '{"searchId": "324670a6-ab6b-4379-ac4e-8a0af6f374af", "phoneNumbers":
         ["sanitized"], "phoneNumberType": "TollFree", "assignmentType": "Application",
         "capabilities": {"calling": "inbound", "sms": "inbound+outbound"}, "cost":
         {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}, "searchExpiresBy":
-        "2021-03-04T20:25:44.8545724+00:00"}'
+        "2021-03-05T17:49:18.9992018+00:00"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 04 Mar 2021 20:10:10 GMT
+      - Fri, 05 Mar 2021 17:33:44 GMT
       ms-cv:
-      - yGgJPefdTUCTFErjWAngFA.0
+      - zFJciOzbiESSdFWHimD7fw.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 968ms
+      - 691ms
     status:
       code: 200
       message: OK
+    url: sanitized
 version: 1

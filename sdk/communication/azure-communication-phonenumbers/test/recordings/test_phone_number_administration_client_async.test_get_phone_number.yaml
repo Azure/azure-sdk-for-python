@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Thu, 04 Mar 2021 20:10:46 GMT
+      - Fri, 05 Mar 2021 17:34:18 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -20,13 +20,13 @@ interactions:
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Thu, 04 Mar 2021 20:10:47 GMT
-      ms-cv: g+yRryu4o02OCKglJx1kXg.0
+      date: Fri, 05 Mar 2021 17:34:21 GMT
+      ms-cv: U5bV9Vsk/UOitUB2oyKQCA.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 1282ms
+      x-processing-time: 2642ms
     status:
       code: 200
       message: OK
-    url: https://live-testing.communication.azure.com/phoneNumbers/%2B18332143261?api-version=2021-03-07
+    url: sanitized
 version: 1
