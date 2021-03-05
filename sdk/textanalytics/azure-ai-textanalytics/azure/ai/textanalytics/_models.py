@@ -1485,8 +1485,11 @@ class RecognizePiiEntitiesAction(DictMixin):
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
 
     def __repr__(self, **kwargs):
-        return "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, string_index_type={})" \
-            .format(self.model_version, self.domain_filter, self.string_index_type)[:1024]
+        return "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, string_index_type={}".format(
+            self.model_version,
+            self.domain_filter,
+            self.string_index_type
+        )[:1024]
 
     def to_generated(self):
         return _latest_preview_models.PiiTask(
