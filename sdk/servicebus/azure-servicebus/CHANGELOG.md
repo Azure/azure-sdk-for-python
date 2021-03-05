@@ -2,6 +2,8 @@
 
 ## 7.1.0 (2021-03-09)
 
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
+
 **New Features**
 
 * Updated the following methods so that lists and single instances of dict representations are accepted for corresponding strongly-typed object arguments (PR #14807, thanks @bradleydamato):
