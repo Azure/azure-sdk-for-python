@@ -59,24 +59,22 @@ endpoint = "https://<name>.<region>.eventgrid.azure.net"
 credential = AzureKeyCredential("<access_key>")
 eg_publisher_client = EventGridPublisherClient(endpoint, credential)
 ```
-> **Note:** A client may also be authenticated via SAS signature, using the `AzureSasCredential`. A sample demonstrating this, is available [here][python-eg-sample-publish-sas-signature] ([async_version][python-eg-sample-publish-sas-signature-async]).
+> **Note:** A client may also be authenticated via SAS signature, using the `AzureSasCredential`. A sample demonstrating this, is available [here][python-eg-sample-send-using-sas] ([async_version][python-eg-sample-send-using-sas-async]).
 
 > **Note:** The `generate_sas` method can be used to generate a shared access signature. A sample demonstrating this can be seen [here][python-eg-generate-sas].
 
 ## Key concepts
 
-Information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc]
-
 ### Topic
-A [topic](https://docs.microsoft.com/azure/event-grid/concepts#topics) is a channel within the EventGrid service to send events. The event schema that a topic accepts is decided at topic creation time. If events of a schema type are sent to a topic that requires a different schema type, errors will be raised.
+A **[topic](https://docs.microsoft.com/azure/event-grid/concepts#topics)** is a channel within the EventGrid service to send events. The event schema that a topic accepts is decided at topic creation time. If events of a schema type are sent to a topic that requires a different schema type, errors will be raised.
 
 ### Domain
-An event [domain](https://docs.microsoft.com/azure/event-grid/event-domains) is a management tool for large numbers of Event Grid topics related to the same application. They allow you to publish events to thousands of topics. Domains also give you authorization and authentication control over each topic. For more information, visit [Event domain overview](https://docs.microsoft.com/azure/event-grid/event-domains).
+An event **[domain](https://docs.microsoft.com/azure/event-grid/event-domains)** is a management tool for large numbers of Event Grid topics related to the same application. They allow you to publish events to thousands of topics. Domains also give you authorization and authentication control over each topic. For more information, visit [Event domain overview](https://docs.microsoft.com/azure/event-grid/event-domains).
 
 When you create an event domain, a publishing endpoint for this domain is made available to you. This process is similar to creating an Event Grid Topic. The only difference is that, when publishing to a domain, you must specify the topic within the domain that you'd like the event to be delivered to.
 
 ### Event schemas
-An [**event**](https://docs.microsoft.com/azure/event-grid/concepts#events) is the smallest amount of information that fully describes something that happened in the system. When a custom topic or domain is created, you must specify the schema that will be used when publishing events.
+An **[event](https://docs.microsoft.com/azure/event-grid/concepts#events)** is the smallest amount of information that fully describes something that happened in the system. When a custom topic or domain is created, you must specify the schema that will be used when publishing events.
 
 Event Grid supports multiple schemas for encoding events.
 
@@ -102,7 +100,9 @@ The following formats of events are allowed to be sent:
 Please have a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples) for detailed examples.
 
 
- **Note:** It is important to know if your topic supports Cloud or EventGrid events before publishing. If you send to a topic that does not support the schema of the event you are sending, send() will throw an exception.
+ **Note:** It is important to know if your topic supports CloudEvents or EventGridEvents before publishing. If you send to a topic that does not support the schema of the event you are sending, send() will throw an exception.
+
+ For more information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc].
 
 ## Examples
 
@@ -110,6 +110,8 @@ The following sections provide several code snippets covering some of the most c
 
 * [Send an Event Grid Event](#send-an-event-grid-event)
 * [Send a Cloud Event](#send-a-cloud-event)
+* [Send Multiple Events](#send-multiple-events)
+* [Send events as Dictionaries](#send-events-as-dictionaries)
 * [Consume a payload from storage queue](#consume-from-storage-queue)
 * [Consume from ServiceBus](#consume-from-servicebus)
 
@@ -162,6 +164,70 @@ client = EventGridPublisherClient(endpoint, credential)
 
 client.send(event)
 ```
+
+### Send Multiple events
+
+It is possible to send events as a batch when sending multiple events to a topic or a domain. This example sends a list of CloudEvents using the send method.
+
+**WARNING:** When sending a list of multiple events at one time, iterating over and sending each event will not result in optimal performance. For best performance, it is highly recommended to send a list of events.
+
+```Python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.core.messaging import CloudEvent
+from azure.eventgrid import EventGridPublisherClient
+
+key = os.environ["CLOUD_ACCESS_KEY"]
+endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
+
+event0 = CloudEvent(
+    type="Azure.Sdk.Sample",
+    source="https://egsample.dev/sampleevent",
+    data={"team": "azure-sdk"}
+)
+event1 = CloudEvent(
+    type="Azure.Sdk.Sample",
+    source="https://egsample.dev/sampleevent",
+    data={"team2": "azure-eventgrid"}
+)
+
+events = [event0, event1]
+
+credential = AzureKeyCredential(key)
+client = EventGridPublisherClient(endpoint, credential)
+
+client.send(events)
+```
+
+### Send events as dictionaries
+
+A dict representation of respective serialized models can also be used to publish CloudEvent(s) or EventGridEvent(s) apart from the strongly typed objects.
+
+Use a dict-like representation to send to a topic with custom schema as shown below.
+
+```Python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.eventgrid import EventGridPublisherClient
+
+key = os.environ["CUSTOM_SCHEMA_ACCESS_KEY"]
+endpoint = os.environ["CUSTOM_SCHEMA_TOPIC_HOSTNAME"]
+
+event = custom_schema_event = {
+    "customSubject": "sample",
+    "customEventType": "sample.event",
+    "customDataVersion": "2.0",
+    "customId": uuid.uuid4(),
+    "customEventTime": dt.datetime.now(UTC()).isoformat(),
+    "customData": "sample data"
+    }
+
+credential = AzureKeyCredential(key)
+client = EventGridPublisherClient(endpoint, credential)
+
+client.send(event)
+```
+
 ### Consume from storage queue
 
 This example consumes a message received from storage queue and deserializes it to a CloudEvent object.
@@ -328,6 +394,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-eg-pypi]: https://pypi.org/project/azure-eventgrid
 [python-eg-product-docs]: https://docs.microsoft.com/azure/event-grid/overview
 [python-eg-ref-docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventgrid/latest/index.html
+[publisher-service-doc]: https://docs.microsoft.com/azure/event-grid/concepts
 [python-eg-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples
 [python-eg-changelog]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/CHANGELOG.md
 [pip]: https://pypi.org/project/pip/
