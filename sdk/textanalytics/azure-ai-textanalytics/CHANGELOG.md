@@ -14,6 +14,8 @@
 - Added enum `PiiEntityCategoryType`.
 - Add property `normalized_text` to `HealthcareEntity`. This property is a normalized version of the `text` property that already
 exists on the `HealthcareEntity`
+- Add property `assertion` onto `HealthcareEntity`. This contains assertions about the entity itself, i.e. if the entity represents a diagnosis,
+is this diagnosis conditional on a symptom?
 
 ## 5.1.0b5 (2021-02-10)
 

@@ -902,22 +902,22 @@ class SparkStatement(msrest.serialization.Model):
 class SparkStatementCancellationResult(msrest.serialization.Model):
     """SparkStatementCancellationResult.
 
-    :param msg:
-    :type msg: str
+    :param message: The msg property from the Livy API. The value is always "canceled".
+    :type message: str
     """
 
     _attribute_map = {
-        'msg': {'key': 'msg', 'type': 'str'},
+        'message': {'key': 'msg', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        msg: Optional[str] = None,
+        message: Optional[str] = None,
         **kwargs
     ):
         super(SparkStatementCancellationResult, self).__init__(**kwargs)
-        self.msg = msg
+        self.message = message
 
 
 class SparkStatementCollection(msrest.serialization.Model):
