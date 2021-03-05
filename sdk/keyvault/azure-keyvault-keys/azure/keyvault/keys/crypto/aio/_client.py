@@ -95,6 +95,13 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :param jwk: the key's cryptographic material, as a JsonWebKey or dictionary.
         :type jwk: JsonWebKey or dict
         :rtype: CryptographyClient
+
+        .. literalinclude:: ../tests/test_examples_crypto.py
+            :start-after: [START from_jwk]
+            :end-before: [END from_jwk]
+            :caption: Create a CryptographyClient from a JsonWebKey
+            :language: python
+            :dedent: 8
         """
         if isinstance(jwk, JsonWebKey):
             key = vars(jwk)
