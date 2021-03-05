@@ -1,6 +1,6 @@
 # Release History
 
-## 7.1.0 (Unreleased)
+## 7.1.0 (2021-03-09)
 
 **New Features**
 
