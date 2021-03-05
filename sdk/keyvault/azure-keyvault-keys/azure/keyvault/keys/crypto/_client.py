@@ -126,13 +126,14 @@ class CryptographyClient(KeyVaultClientBase):
 
     @property
     def key_id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The full identifier of the client's key.
 
         :rtype: str
         """
         if self._key_id:
             return self._key_id.source_id
+        return None
 
     @classmethod
     def from_jwk(cls, jwk):

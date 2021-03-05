@@ -104,23 +104,25 @@ class KeyProperties(object):
 
     @property
     def name(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The key's name
 
         :rtype: str
         """
         if self._vault_id:
             return self._vault_id.name
+        return None
 
     @property
     def version(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The key's version
 
         :rtype: str
         """
         if self._vault_id:
             return self._vault_id.version
+        return None
 
     @property
     def enabled(self):
@@ -169,13 +171,14 @@ class KeyProperties(object):
 
     @property
     def vault_url(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """URL of the vault containing the key
 
         :rtype: str
         """
         if self._vault_id:
             return self._vault_id.vault_url
+        return None
 
     @property
     def recoverable_days(self):

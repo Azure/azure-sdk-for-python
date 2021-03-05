@@ -80,13 +80,14 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         super().__init__(vault_url=vault_url, credential=credential, **kwargs)
 
     @property
-    def key_id(self) -> str:
+    def key_id(self) -> "Optional[str]":
         """The full identifier of the client's key.
 
         :rtype: str
         """
         if self._key_id:
             return self._key_id.source_id
+        return None
 
     @classmethod
     def from_jwk(cls, jwk: "Union[JsonWebKey, dict]") -> "CryptographyClient":
