@@ -373,7 +373,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
-        poller = await client.begin_analyze_healthcare_entities(documents=["Hello world"])
+        poller = await client.begin_analyze_healthcare_entities(documents=["Hello world"], polling_interval=self._interval())
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
         self.assertEqual(actual_string_index_type, "UnicodeCodePoint")
         await poller.result()
@@ -383,7 +383,8 @@ class TestHealth(AsyncTextAnalyticsTest):
     async def test_explicit_set_string_index_type(self, client):
         poller = await client.begin_analyze_healthcare_entities(
             documents=["Hello world"],
-            string_index_type="TextElements_v8"
+            string_index_type="TextElements_v8",
+            polling_interval=self._interval(),
         )
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
         self.assertEqual(actual_string_index_type, "TextElements_v8")
@@ -393,7 +394,8 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_relations(self, client):
         response = await (await client.begin_analyze_healthcare_entities(
-            documents=["The patient was diagnosed with Parkinsons Disease (PD)"]
+            documents=["The patient was diagnosed with Parkinsons Disease (PD)"],
+            polling_interval=self._interval(),
         )).result()
 
         result = []
@@ -424,7 +426,8 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_normalized_text(self, client):
         response = await (await client.begin_analyze_healthcare_entities(
-            documents=["patients must have histologically confirmed NHL"]
+            documents=["patients must have histologically confirmed NHL"],
+            polling_interval=self._interval(),
         )).result()
 
         result = []
