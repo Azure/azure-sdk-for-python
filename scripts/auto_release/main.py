@@ -228,6 +228,7 @@ def build_wheel():
 def test_env_init():
     print_exec(f'pip install -r {SCRIPT_PATH}/livetest_package.txt')
     file = f'{SCRIPT_PATH}/livetest_package_{SERVICE_NAME}_track{TRACK}.txt'
+    my_print(file)
     if os.path.exists(file):
         print_exec(f'pip install -r {file}')
 
