@@ -1,5 +1,13 @@
 # Release History
 
+## 0.15.0 (2021-03-05)
+
+**Breaking changes**
+
+  - Parameter location of model SapMonitor is now required
+  - Parameter location of model TrackedResource is now required
+  - Model ErrorResponse has a new signature
+
 ## 0.14.0 (2020-05-14)
 
 **Features**
