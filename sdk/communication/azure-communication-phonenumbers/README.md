@@ -95,8 +95,8 @@ poller = phone_numbers_client.begin_search_available_phone_numbers(
     PhoneNumberType.TOLL_FREE,
     PhoneNumberAssignmentType.APPLICATION,
     capabilities,
-    "833", # Area code is optional for toll-free numbers
-    1, # Quantity is optional, default is 1
+    area_code ="833", # Area code is optional for toll-free numbers
+    quantity = 2, # Quantity is optional. If not set, default is 1
     polling = True
 )
 search_result = poller.result()

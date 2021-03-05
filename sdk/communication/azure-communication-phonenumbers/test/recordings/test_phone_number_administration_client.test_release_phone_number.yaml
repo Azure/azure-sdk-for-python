@@ -11,28 +11,36 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 09 Feb 2021 23:10:08 GMT
+      - Thu, 04 Mar 2021 17:04:48 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.communication.azure.com/phoneNumbers/%2B18332272441?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/phoneNumbers/%2B18445495681?api-version=2021-03-07
   response:
     body:
       string: ''
     headers:
+      access-control-expose-headers:
+      - Operation-Location,operation-id,release-id
+      content-length:
+      - '0'
       date:
-      - Tue, 09 Feb 2021 23:10:09 GMT
+      - Thu, 04 Mar 2021 17:04:50 GMT
       ms-cv:
-      - zTSfQ5gkkkyKQCTsCcVa7A.0
+      - 4M4iMTTkAU2EYlx+U1W1vA.0
+      operation-id:
+      - release_66dd2b9f-0b4d-454f-81b2-4bea870c8740
       operation-location:
-      - /phoneNumbers/operations/release_601597ca-7e59-4433-ae4f-da83aef7da98?api-version=2021-03-07
+      - /phoneNumbers/operations/release_66dd2b9f-0b4d-454f-81b2-4bea870c8740?api-version=2021-03-07
+      release-id:
+      - 66dd2b9f-0b4d-454f-81b2-4bea870c8740
       request-context:
       - appId=
       x-processing-time:
-      - 1236ms
+      - 1496ms
     status:
-      code: 204
-      message: No Content
+      code: 202
+      message: Accepted
 version: 1

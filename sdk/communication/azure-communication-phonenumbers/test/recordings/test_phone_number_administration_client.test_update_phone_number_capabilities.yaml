@@ -1,0 +1,129 @@
+interactions:
+- request:
+    body: '{"calling": "inbound", "sms": "inbound+outbound"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '49'
+      Content-Type:
+      - application/merge-patch+json
+      Date:
+      - Thu, 04 Mar 2021 20:10:10 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized/capabilities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"capabilitiesUpdateId": "c753b8c0-bf2e-4f28-ad44-487b3e55c126"}'
+    headers:
+      access-control-expose-headers:
+      - Operation-Location,Location,operation-id,capabilities-id
+      capabilities-id:
+      - c753b8c0-bf2e-4f28-ad44-487b3e55c126
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Mar 2021 20:10:11 GMT
+      ms-cv:
+      - nJy2pwvO2kOqoLVJr05Tlg.0
+      operation-id:
+      - capabilities_c753b8c0-bf2e-4f28-ad44-487b3e55c126
+      operation-location:
+      - /phoneNumbers/operations/capabilities_c753b8c0-bf2e-4f28-ad44-487b3e55c126?api-version=2021-03-07
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 1111ms
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 04 Mar 2021 20:10:42 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_c753b8c0-bf2e-4f28-ad44-487b3e55c126?api-version=2021-03-07
+  response:
+    body:
+      string: '{"status": "Succeeded", "resourceLocation": "/phoneNumbers/+18332143261?api-version=2021-03-07",
+        "createdDateTime": "2021-03-04T20:10:11.7620886+00:00", "id": "sanitized",
+        "operationType": "UpdatePhoneNumberCapabilities", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
+    headers:
+      access-control-expose-headers:
+      - Location
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Mar 2021 20:10:43 GMT
+      ms-cv:
+      - bhOOUelnIEioRhByfOIYkQ.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 2355ms
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 04 Mar 2021 20:10:44 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/phoneNumbers/+18332143261?api-version=2021-03-07
+  response:
+    body:
+      string: '{"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US",
+        "phoneNumberType": "TollFree", "capabilities": {"calling": "inbound", "sms":
+        "inbound+outbound"}, "assignmentType": "Application", "purchaseDate": "2020-11-30T17:51:21.2991518+00:00",
+        "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Mar 2021 20:10:46 GMT
+      ms-cv:
+      - UmM4C4ozVkijkaibJMfTjQ.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 2097ms
+    status:
+      code: 200
+      message: OK
+version: 1

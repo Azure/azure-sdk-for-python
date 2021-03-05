@@ -73,7 +73,7 @@ class CommunicationTestCase(AzureTestCase):
         super(CommunicationTestCase, self).setUp()
 
         if self.is_playback():
-            self.connection_str = "endpoint=https://sanitized/;accesskey=fake==="
+            self.connection_str = "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
         else:
             self.connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
             endpoint, _ = parse_connection_str(self.connection_str)

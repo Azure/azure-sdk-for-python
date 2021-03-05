@@ -1,0 +1,129 @@
+interactions:
+- request:
+    body: '{"phoneNumberType": "tollFree", "assignmentType": "application", "capabilities":
+      {"calling": "inbound", "sms": "inbound+outbound"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '131'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 04 Mar 2021 20:09:35 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2021-03-07
+  response:
+    body:
+      string: ''
+    headers:
+      access-control-expose-headers:
+      - Location,Operation-Location,operation-id,search-id
+      content-length:
+      - '0'
+      date:
+      - Thu, 04 Mar 2021 20:09:38 GMT
+      ms-cv:
+      - xp+gSiPZFEi9TrSBlc6j9w.0
+      operation-id:
+      - search_c0763b8c-895d-4bba-b312-bcf615a90b2d
+      operation-location:
+      - /phoneNumbers/operations/search_c0763b8c-895d-4bba-b312-bcf615a90b2d?api-version=2021-03-07
+      request-context:
+      - appId=
+      search-id:
+      - c0763b8c-895d-4bba-b312-bcf615a90b2d
+      x-processing-time:
+      - 3391ms
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 04 Mar 2021 20:10:09 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/search_c0763b8c-895d-4bba-b312-bcf615a90b2d?api-version=2021-03-07
+  response:
+    body:
+      string: '{"status": "Succeeded", "resourceLocation": "/availablePhoneNumbers/searchResults/c0763b8c-895d-4bba-b312-bcf615a90b2d?api-version=2021-03-07",
+        "createdDateTime": "2021-03-04T20:09:38.6605579+00:00", "id": "sanitized",
+        "operationType": "Search", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
+    headers:
+      access-control-expose-headers:
+      - Location
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Mar 2021 20:10:09 GMT
+      ms-cv:
+      - WJ4OvgfDfE22EY3w9XwIlA.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 483ms
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 04 Mar 2021 20:10:09 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/searchResults/c0763b8c-895d-4bba-b312-bcf615a90b2d?api-version=2021-03-07
+  response:
+    body:
+      string: '{"searchId": "c0763b8c-895d-4bba-b312-bcf615a90b2d", "phoneNumbers":
+        ["sanitized"], "phoneNumberType": "TollFree", "assignmentType": "Application",
+        "capabilities": {"calling": "inbound", "sms": "inbound+outbound"}, "cost":
+        {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}, "searchExpiresBy":
+        "2021-03-04T20:25:44.8545724+00:00"}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 04 Mar 2021 20:10:10 GMT
+      ms-cv:
+      - yGgJPefdTUCTFErjWAngFA.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 968ms
+    status:
+      code: 200
+      message: OK
+version: 1

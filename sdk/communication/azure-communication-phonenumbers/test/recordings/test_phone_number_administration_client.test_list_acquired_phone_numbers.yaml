@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Tue, 02 Mar 2021 22:15:48 GMT
+      - Thu, 04 Mar 2021 20:09:31 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -18,20 +18,20 @@ interactions:
     uri: https://sanitized.communication.azure.com/phoneNumbers?skip=0&top=100&api-version=2021-03-07
   response:
     body:
-      string: '{"phoneNumbers": "sanitized"}'
+      string: '{"phoneNumbers": ["sanitized"]}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Mar 2021 22:15:52 GMT
+      - Thu, 04 Mar 2021 20:09:34 GMT
       ms-cv:
-      - 1414CoW0X0iYJWEiELIX2A.0
+      - Aa07dXCJ1Eiv8sLy5yURtA.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 4208ms
+      - 4239ms
     status:
       code: 200
       message: OK

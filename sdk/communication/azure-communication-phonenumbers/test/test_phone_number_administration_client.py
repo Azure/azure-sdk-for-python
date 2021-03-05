@@ -5,13 +5,16 @@ from _shared.testcase import CommunicationTestCase, ResponseReplacerProcessor, B
 from _shared.utils import create_token_credential
 from azure.communication.phonenumbers import PhoneNumberAssignmentType, PhoneNumberCapabilities, PhoneNumberCapabilityValue, PhoneNumberType
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
+from phone_number_helper import PhoneNumberUriReplacer
+
+SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
+PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
 
 class NewTests(CommunicationTestCase):
     def setUp(self):
         super(NewTests, self).setUp()
         if self.is_playback():
-            self.phone_number = "+18000005555"
-            self.phone_number_to_release = "+18000005556"
+            self.phone_number = "sanitized"
             self.country_code = "US"
             self.area_code = "833"
         else:
@@ -22,11 +25,11 @@ class NewTests(CommunicationTestCase):
         self.phone_number_client = PhoneNumbersClient.from_connection_string(self.connection_str)
         self.recording_processors.extend([
             BodyReplacerProcessor(
-                keys=["id", "token", "phoneNumber", "phonenumbers", "phoneNumbers"]
+                keys=["id", "token", "phoneNumber"]
             ),
-            ResponseReplacerProcessor(keys=[self._resource_name])])
+            PhoneNumberUriReplacer()])
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_list_all_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
@@ -34,22 +37,14 @@ class NewTests(CommunicationTestCase):
         phone_numbers = phone_number_client.list_all_phone_numbers()
         assert phone_numbers.next()
     
-    @pytest.mark.live_test_only
     def test_list_acquired_phone_numbers(self):
         phone_numbers = self.phone_number_client.list_acquired_phone_numbers()
         assert phone_numbers.next()
     
-    @pytest.mark.live_test_only
     def test_get_phone_number(self):
         phone_number = self.phone_number_client.get_phone_number(self.phone_number)
         assert phone_number.phone_number == self.phone_number
-    
-    @pytest.mark.live_test_only
-    def test_release_phone_number(self):
-        poller = self.phone_number_client.begin_release_phone_number(self.phone_number_to_release)
-        assert poller.status() == 'succeeded'
 
-    @pytest.mark.live_test_only
     def test_search_available_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(
             calling = PhoneNumberCapabilityValue.INBOUND,
@@ -65,17 +60,16 @@ class NewTests(CommunicationTestCase):
         )
         assert poller.result()
 
-    @pytest.mark.live_test_only
     def test_update_phone_number_capabilities(self):
         poller = self.phone_number_client.begin_update_phone_number_capabilities(
-          self.phone_number,
-          PhoneNumberCapabilityValue.OUTBOUND,
-          PhoneNumberCapabilityValue.INBOUND_OUTBOUND,
-          polling = True
+            self.phone_number,
+            PhoneNumberCapabilityValue.INBOUND_OUTBOUND,
+            PhoneNumberCapabilityValue.INBOUND,
+            polling = True
         )
         assert poller.result()
-    
-    @pytest.mark.live_test_only
+
+    @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_purchase_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(
             calling = PhoneNumberCapabilityValue.INBOUND,
@@ -86,12 +80,11 @@ class NewTests(CommunicationTestCase):
             PhoneNumberType.TOLL_FREE,
             PhoneNumberAssignmentType.APPLICATION,
             capabilities,
-            self.area_code,
-            1,
+            area_code=self.area_code,
             polling = True
         )
         phone_number_to_buy = search_poller.result()
         purchase_poller = self.phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
         assert purchase_poller.result()
-        release_poller = self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_number)
+        release_poller = self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
         assert release_poller.status() == 'succeeded'

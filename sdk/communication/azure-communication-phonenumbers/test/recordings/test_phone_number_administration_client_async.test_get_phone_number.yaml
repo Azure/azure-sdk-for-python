@@ -5,27 +5,28 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Tue, 16 Feb 2021 19:45:38 GMT
+      - Thu, 04 Mar 2021 20:10:46 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/phoneNumbers/%2B18332272412?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized?api-version=2021-03-07
   response:
     body:
       string: '{"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US",
         "phoneNumberType": "TollFree", "capabilities": {"calling": "inbound", "sms":
-        "inbound+outbound"}, "assignmentType": "Application"}'
+        "inbound+outbound"}, "assignmentType": "Application", "purchaseDate": "2020-11-30T17:51:21.2991518+00:00",
+        "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 16 Feb 2021 19:45:39 GMT
-      ms-cv: pDmuqc/E1EGttt2gQZMupQ.0
+      date: Thu, 04 Mar 2021 20:10:47 GMT
+      ms-cv: g+yRryu4o02OCKglJx1kXg.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 960ms
+      x-processing-time: 1282ms
     status:
       code: 200
       message: OK
-    url: https://sanitized.communication.azure.com/phoneNumbers/%2B18332272412?api-version=2021-03-07
+    url: https://live-testing.communication.azure.com/phoneNumbers/%2B18332143261?api-version=2021-03-07
 version: 1
