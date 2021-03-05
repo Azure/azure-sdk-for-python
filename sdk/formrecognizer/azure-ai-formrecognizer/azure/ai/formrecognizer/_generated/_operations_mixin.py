@@ -60,7 +60,7 @@ class FormRecognizerClientOperationsMixin(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_analyze_business_card_async')
-        if api_version == '2.1-preview.2':
+        if api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_business_card_async'".format(api_version))
@@ -106,7 +106,7 @@ class FormRecognizerClientOperationsMixin(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_analyze_invoice_async')
-        if api_version == '2.1-preview.2':
+        if api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_invoice_async'".format(api_version))
@@ -160,7 +160,7 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('begin_analyze_layout_async')
         if api_version == '2.0':
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_layout_async'".format(api_version))
@@ -173,7 +173,7 @@ class FormRecognizerClientOperationsMixin(object):
         # FIXME: this is handwritten
         if api_version == '2.0':
             return mixin_instance.begin_analyze_layout_async(file_stream, **kwargs)
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             return mixin_instance.begin_analyze_layout_async(language, pages, file_stream, **kwargs)
 
     def begin_analyze_receipt_async(
@@ -212,7 +212,7 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('begin_analyze_receipt_async')
         if api_version == '2.0':
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_receipt_async'".format(api_version))
@@ -225,7 +225,7 @@ class FormRecognizerClientOperationsMixin(object):
         # FIXME: this is handwritten
         if api_version == '2.0':
             return mixin_instance.begin_analyze_receipt_async(include_text_details, file_stream, **kwargs)
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             return mixin_instance.begin_analyze_receipt_async(include_text_details, locale, file_stream, **kwargs)
 
     def begin_analyze_with_custom_model(
@@ -263,7 +263,7 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('begin_analyze_with_custom_model')
         if api_version == '2.0':
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_with_custom_model'".format(api_version))
@@ -299,7 +299,7 @@ class FormRecognizerClientOperationsMixin(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_compose_custom_models_async')
-        if api_version == '2.1-preview.2':
+        if api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_compose_custom_models_async'".format(api_version))
@@ -339,7 +339,7 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('begin_copy_custom_model')
         if api_version == '2.0':
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_copy_custom_model'".format(api_version))
@@ -381,7 +381,7 @@ class FormRecognizerClientOperationsMixin(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_train_custom_model_async')
-        if api_version == '2.1-preview.2':
+        if api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_train_custom_model_async'".format(api_version))
@@ -413,7 +413,7 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('delete_custom_model')
         if api_version == '2.0':
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'delete_custom_model'".format(api_version))
@@ -441,7 +441,7 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('generate_model_copy_authorization')
         if api_version == '2.0':
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'generate_model_copy_authorization'".format(api_version))
@@ -470,7 +470,7 @@ class FormRecognizerClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_analyze_business_card_result')
-        if api_version == '2.1-preview.2':
+        if api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_business_card_result'".format(api_version))
@@ -504,7 +504,7 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('get_analyze_form_result')
         if api_version == '2.0':
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_form_result'".format(api_version))
@@ -533,7 +533,7 @@ class FormRecognizerClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_analyze_invoice_result')
-        if api_version == '2.1-preview.2':
+        if api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_invoice_result'".format(api_version))
@@ -564,7 +564,7 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('get_analyze_layout_result')
         if api_version == '2.0':
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_layout_result'".format(api_version))
@@ -595,7 +595,7 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('get_analyze_receipt_result')
         if api_version == '2.0':
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_receipt_result'".format(api_version))
@@ -629,7 +629,7 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('get_custom_model')
         if api_version == '2.0':
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_custom_model'".format(api_version))
@@ -663,7 +663,7 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('get_custom_model_copy_result')
         if api_version == '2.0':
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_custom_model_copy_result'".format(api_version))
@@ -691,7 +691,7 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('get_custom_models')
         if api_version == '2.0':
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_custom_models'".format(api_version))
@@ -719,7 +719,7 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('list_custom_models')
         if api_version == '2.0':
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1-preview.2':
+        elif api_version == '2.1-preview.1':
             from .v2_1_preview_2.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_custom_models'".format(api_version))
