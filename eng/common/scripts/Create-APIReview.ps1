@@ -41,7 +41,8 @@ function Submit-APIReview($packagename, $filePath, $uri, $apiKey, $apiLabel)
     try
     {
         $Response = Invoke-WebRequest -Method 'POST' -Uri $uri -Body $multipartContent -Headers $headers
-        Write-Host "API Review: $($Response)"
+        $reviewUrl = $Response.Content
+        Write-Host "Link to API review :"  $reviewUrl
         $StatusCode = $Response.StatusCode
     }
     catch
