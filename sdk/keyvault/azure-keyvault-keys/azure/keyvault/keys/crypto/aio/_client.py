@@ -53,41 +53,39 @@ class CryptographyClient(AsyncKeyVaultClientBase):
     """
 
     def __init__(self, key: "Union[KeyVaultKey, str]", credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
-        self._local_only = kwargs.pop("_local_only", False)
+        self._jwk = kwargs.pop("_jwk", False)
 
         if isinstance(key, KeyVaultKey):
             self._key = key
-            try:
-                self._key_id = parse_key_vault_id(key.id)
-            except ValueError:
-                if not self._local_only:
-                    raise
-                self._key_id = None
+            self._key_id = parse_key_vault_id(key.id)
         elif isinstance(key, str):
             self._key = None
             self._key_id = parse_key_vault_id(key)
             self._keys_get_forbidden = None  # type: Optional[bool]
+        elif self._jwk:
+            self._key_id = key.get("kid", "")
+            self._key = KeyVaultKey(None, jwk=key, _local_only=True)
         else:
             raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
 
-        if not (self._local_only or self._key_id.version):
+        if not (self._jwk or self._key_id.version):
             raise ValueError("'key' must include a version")
 
         self._local_provider = NoLocalCryptography()
         self._initialized = False
 
-        vault_url = "vault_url" if not self._key_id else self._key_id.vault_url
+        vault_url = "vault_url" if self._jwk else self._key_id.vault_url
         super().__init__(vault_url=vault_url, credential=credential, **kwargs)
 
     @property
-    def key_id(self) -> "Optional[str]":
+    def key_id(self) -> str:
         """The full identifier of the client's key.
 
         :rtype: str
         """
-        if self._key_id:
+        if not self._jwk:
             return self._key_id.source_id
-        return None
+        return self._key_id
 
     @classmethod
     def from_jwk(cls, jwk: "Union[JsonWebKey, dict]") -> "CryptographyClient":
@@ -108,8 +106,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             key = vars(jwk)
         else:
             key = jwk
-        key_id = key.get("kid")
-        return cls(KeyVaultKey(key_id, key), object(), _local_only=True)
+        return cls(key, object(), _jwk=True)
 
     @distributed_trace_async
     async def _initialize(self, **kwargs):
@@ -170,9 +167,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 return self._local_provider.encrypt(algorithm, plaintext)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.warning("Local encrypt operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
-                if self._local_only:
+                if self._jwk:
                     raise
-        elif self._local_only:
+        elif self._jwk:
             raise NotImplementedError(
                 'This key does not support the "encrypt" operation with algorithm "{}"'.format(algorithm)
             )
@@ -229,9 +226,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 return self._local_provider.decrypt(algorithm, ciphertext)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.warning("Local decrypt operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
-                if self._local_only:
+                if self._jwk:
                     raise
-        elif self._local_only:
+        elif self._jwk:
             raise NotImplementedError(
                 'This key does not support the "decrypt" operation with algorithm "{}"'.format(algorithm)
             )
@@ -271,9 +268,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 return self._local_provider.wrap_key(algorithm, key)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.warning("Local wrap operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
-                if self._local_only:
+                if self._jwk:
                     raise
-        elif self._local_only:
+        elif self._jwk:
             raise NotImplementedError(
                 'This key does not support the "wrapKey" operation with algorithm "{}"'.format(algorithm)
             )
@@ -310,9 +307,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 return self._local_provider.unwrap_key(algorithm, encrypted_key)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.warning("Local unwrap operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
-                if self._local_only:
+                if self._jwk:
                     raise
-        elif self._local_only:
+        elif self._jwk:
             raise NotImplementedError(
                 'This key does not support the "unwrapKey" operation with algorithm "{}"'.format(algorithm)
             )
@@ -350,9 +347,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 return self._local_provider.sign(algorithm, digest)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.warning("Local sign operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
-                if self._local_only:
+                if self._jwk:
                     raise
-        elif self._local_only:
+        elif self._jwk:
             raise NotImplementedError(
                 'This key does not support the "sign" operation with algorithm "{}"'.format(algorithm)
             )
@@ -393,9 +390,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 return self._local_provider.verify(algorithm, digest, signature)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.warning("Local verify operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
-                if self._local_only:
+                if self._jwk:
                     raise
-        elif self._local_only:
+        elif self._jwk:
             raise NotImplementedError(
                 'This key does not support the "verify" operation with algorithm "{}"'.format(algorithm)
             )

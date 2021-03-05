@@ -68,12 +68,9 @@ class KeyProperties(object):
         # type: (str, Optional[_models.KeyAttributes], **Any) -> None
         self._attributes = attributes
         self._id = key_id
+        self._vault_id = parse_key_vault_id(key_id)
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
-        try:
-            self._vault_id = parse_key_vault_id(key_id)
-        except:
-            self._vault_id = None
 
     def __repr__(self):
         # type () -> str
@@ -104,25 +101,21 @@ class KeyProperties(object):
 
     @property
     def name(self):
-        # type: () -> Optional[str]
+        # type: () -> str
         """The key's name
 
         :rtype: str
         """
-        if self._vault_id:
-            return self._vault_id.name
-        return None
+        return self._vault_id.name
 
     @property
     def version(self):
-        # type: () -> Optional[str]
+        # type: () -> str
         """The key's version
 
         :rtype: str
         """
-        if self._vault_id:
-            return self._vault_id.version
-        return None
+        return self._vault_id.version
 
     @property
     def enabled(self):
@@ -171,14 +164,12 @@ class KeyProperties(object):
 
     @property
     def vault_url(self):
-        # type: () -> Optional[str]
+        # type: () -> str
         """URL of the vault containing the key
 
         :rtype: str
         """
-        if self._vault_id:
-            return self._vault_id.vault_url
-        return None
+        return self._vault_id.vault_url
 
     @property
     def recoverable_days(self):
@@ -254,7 +245,8 @@ class KeyVaultKey(object):
 
     def __init__(self, key_id, jwk=None, **kwargs):
         # type: (str, Optional[dict], **Any) -> None
-        self._properties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)
+        if not kwargs.pop("_local_only", False):
+            self._properties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)
         if isinstance(jwk, dict):
             if any(field in kwargs for field in JsonWebKey._FIELDS):  # pylint:disable=protected-access
                 raise ValueError(
