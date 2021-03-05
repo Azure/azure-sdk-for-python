@@ -21,7 +21,7 @@ APPLICATIONINSIGHTS_CONNECTION_STRING=<connection string for app insights>
 
 ```cmd
 (env) ~/azure-monitor-opentelemetry-exporter> cd tests
-(env) ~/azure-monitor-opentelemetry-exporter/tests> perfstress
+(env) ~/azure-monitor-opentelemetry-exporter/tests> perfstress MonitorExporterPerfTest --sync --num-spans=10
 ```
 
 ### Common perf command line options
@@ -42,6 +42,9 @@ The tests currently written for the T2 SDK:
 - `MonitorExporterPerfTest` Collects sample traces and exports to application insights.
 
 ## Example command
+
+**Note:** The `--sync` flag must be explicitly set for this package since there is no `async` support.
+
 ```cmd
 (env) ~/azure-monitor-opentelemetry-exporter/tests> perfstress MonitorExporterPerfTest --sync --num-spans=10
 ```
