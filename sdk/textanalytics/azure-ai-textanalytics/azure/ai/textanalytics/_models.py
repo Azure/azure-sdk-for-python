@@ -498,6 +498,11 @@ class HealthcareEntity(DictMixin):
     :ivar str category: Entity category, see the following link for health's named
         entity types: https://aka.ms/text-analytics-health-entities
     :ivar str subcategory: Entity subcategory.
+    :ivar assertion: Contains various assertions about this entity. For example, if
+        an entity is a diagnosis, is this diagnosis 'conditional' on a symptom?
+        Are the doctors 'certain' about this diagnosis? Is this diagnosis 'associated'
+        with another diagnosis?
+    :vartype assertion: ~azure.ai.textanalytics.HealthcareEntityAssertion
     :ivar int length: The entity text length.  This value depends on the value
         of the `string_index_type` parameter specified in the original request, which is
         UnicodeCodePoints by default.
@@ -515,6 +520,7 @@ class HealthcareEntity(DictMixin):
         self.normalized_text = kwargs.get("normalized_text", None)
         self.category = kwargs.get("category", None)
         self.subcategory = kwargs.get("subcategory", None)
+        self.assertion = kwargs.get("assertion", None)
         self.length = kwargs.get("length", None)
         self.offset = kwargs.get("offset", None)
         self.confidence_score = kwargs.get("confidence_score", None)
@@ -522,11 +528,21 @@ class HealthcareEntity(DictMixin):
 
     @classmethod
     def _from_generated(cls, healthcare_entity):
+        assertion = None
+        try:
+            if healthcare_entity.assertion:
+                assertion = HealthcareEntityAssertion._from_generated(  # pylint: disable=protected-access
+                    healthcare_entity.assertion
+                )
+        except AttributeError:
+            assertion = None
+
         return cls(
             text=healthcare_entity.text,
             normalized_text=healthcare_entity.name,
             category=healthcare_entity.category,
             subcategory=healthcare_entity.subcategory,
+            assertion=assertion,
             length=healthcare_entity.length,
             offset=healthcare_entity.offset,
             confidence_score=healthcare_entity.confidence_score,
@@ -539,17 +555,57 @@ class HealthcareEntity(DictMixin):
         return hash(repr(self))
 
     def __repr__(self):
-        return "HealthcareEntity(text={}, normalized_text={}, category={}, subcategory={}, length={}, offset={}, "\
-        "confidence_score={}, data_sources={})".format(
+        return "HealthcareEntity(text={}, normalized_text={}, category={}, subcategory={}, assertion={}, length={}, "\
+        "offset={}, confidence_score={}, data_sources={})".format(
             self.text,
             self.normalized_text,
             self.category,
             self.subcategory,
+            repr(self.assertion),
             self.length,
             self.offset,
             self.confidence_score,
             repr(self.data_sources),
         )[:1024]
+
+class HealthcareEntityAssertion(DictMixin):
+    """Contains various assertions about a `HealthcareEntity`.
+
+    For example, if an entity is a diagnosis, is this diagnosis 'conditional' on a symptom?
+    Are the doctors 'certain' about this diagnosis? Is this diagnosis 'associated'
+    with another diagnosis?
+
+    :ivar str conditionality: Describes whether the healthcare entity it's on is conditional on another entity.
+        For example, "If the patient has a fever, he has pneumonia", the diagnosis of pneumonia
+        is 'conditional' on whether the patient has a fever. Possible values are "hypothetical" and
+        "conditional".
+    :ivar str certainty: Describes how certain the healthcare entity it's on is. For example,
+        in "The patient may have a fever", the fever entity is not 100% certain, but is instead
+        "positivePossible". Possible values are "positive", "positivePossible", "neutralPossible",
+        "negativePossible", and "negative".
+    :ivar str association: Describes whether the healthcare entity it's on is the subject of the document, or
+        if this entity describes someone else in the document. For example, in "The subject's mother has
+        a fever", the "fever" entity is not associated with the subject themselves, but with the subject's
+        mother. Possible values are "subject" and "other".
+    """
+
+    def __init__(self, **kwargs):
+        self.conditionality = kwargs.get("conditionality", None)
+        self.certainty = kwargs.get("certainty", None)
+        self.association = kwargs.get("association", None)
+
+    @classmethod
+    def _from_generated(cls, healthcare_assertion):
+        return cls(
+            conditionality=healthcare_assertion.conditionality,
+            certainty=healthcare_assertion.certainty,
+            association=healthcare_assertion.association,
+        )
+
+    def __repr__(self):
+        return "HealthcareEntityAssertion(conditionality={}, certainty={}, association={})".format(
+            self.conditionality, self.certainty, self.association
+        )
 
 
 class HealthcareEntityDataSource(DictMixin):

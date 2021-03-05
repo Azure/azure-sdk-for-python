@@ -84,6 +84,11 @@ class AnalyzeHealthcareEntitiesSample(object):
                     for data_source in entity.data_sources:
                         print("......Entity ID: {}".format(data_source.entity_id))
                         print("......Name: {}".format(data_source.name))
+                if entity.assertion is not None:
+                    print("...Assertion:")
+                    print("......Conditionality: {}".format(entity.assertion.conditionality))
+                    print("......Certainty: {}".format(entity.assertion.certainty))
+                    print("......Association: {}".format(entity.assertion.association))
             for relation in doc.entity_relations:
                 print("Relation of type: {} has the following roles".format(relation.relation_type))
                 for role in relation.roles:
