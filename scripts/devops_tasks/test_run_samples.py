@@ -11,6 +11,7 @@ import sys
 import os
 import logging
 from fnmatch import fnmatch
+from subprocess import check_call, CalledProcessError, TimeoutExpired
 from common_tasks import (
     run_check_call,
     process_glob_string,
@@ -20,6 +21,22 @@ logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
+"""
+Some samples may "run forever" or need to be timed out after a period of time. Add them here in the following format:
+TIMEOUT_SAMPLES = {
+    "<package-name>": {
+        "<sample_file_name.py>": (<timeout (seconds)>, <pass if timeout? (bool)>)
+    }
+}
+"""
+TIMEOUT_SAMPLES = {
+    "azure-eventhub": {
+        "receive_batch_with_checkpoint.py": (3, True)
+    }
+}
+
+
+# Add your library + sample file if you do not want a particular sample to be run
 IGNORED_SAMPLES = {
     "azure-eventgrid": [
         "__init__.py",
@@ -29,10 +46,20 @@ IGNORED_SAMPLES = {
         "sample_publish_events_to_a_topic_using_sas_credential.py",
         "sample_publish_events_to_a_topic_using_sas_credential_async.py"],
     "azure-eventhub": [
+        "send.py",
+        "send_async.py",
+        "send_stream.py",
+        "send_stream_async.py",
+        "recv_for_period_async.py",
+        "client_creation_async.py",
+        "connection_string_authentication.py",
+        "connection_string_authentication_async.py",
+        "client_identity_authentication_async.py",
+        "client_creation.py",
+        "client_identity_authentication.py",
         "authenticate_with_sas_token.py",
         "connection_to_custom_endpoint_address.py",
         "proxy.py",
-        "receive_batch_with_checkpoint.py",
         "recv.py",
         "recv_track_last_enqueued_event_prop.py",
         "recv_with_checkpoint_by_event_count.py",
@@ -87,45 +114,104 @@ IGNORED_SAMPLES = {
 }
 
 
+def run_check_call_with_timeout(
+    command_array,
+    working_directory,
+    acceptable_return_codes=[],
+    always_exit=False,
+    timeout=None,
+    pass_if_timeout=False
+):
+    """This is copied from common_tasks.py with some additions.
+    Don't want to break anyone that's using the original code.
+    """
+    try:
+        logging.info(
+            "Command Array: {0}, Target Working Directory: {1}".format(
+                command_array, working_directory
+            )
+        )
+        check_call(command_array, cwd=working_directory, timeout=timeout)
+    except CalledProcessError as err:
+        if err.returncode not in acceptable_return_codes:
+            logging.error(err)  # , file = sys.stderr
+            if always_exit:
+                exit(1)
+            else:
+                return err
+    except TimeoutExpired as err:
+        if pass_if_timeout:
+            logging.info(
+                "Sample timed out successfully"
+            )
+        else:
+            logging.info(
+                "Fail: Sample timed out"
+            )
+            return err
+
+
+def execute_sample(sample, samples_errors, timed):
+    if isinstance(sample, tuple):
+        sample, timeout, pass_if_timeout = sample
+
+    if sys.version_info < (3, 5) and sample.endswith("_async.py"):
+        return
+
+    logging.info(
+        "Testing {}".format(sample)
+    )
+    command_array = [sys.executable, sample]
+
+    if not timed:
+        errors = run_check_call(command_array, root_dir)
+    else:
+        errors = run_check_call_with_timeout(
+            command_array, root_dir, timeout=timeout, pass_if_timeout=pass_if_timeout
+        )
+
+    sample_name = os.path.basename(sample)
+    if errors:
+        samples_errors.append(sample_name)
+        logging.info(
+            "ERROR: {}".format(sample_name)
+        )
+    else:
+        logging.info(
+            "SUCCESS: {}.".format(sample_name)
+        )
+
+
 def run_samples(targeted_package):
     logging.info("running samples for {}".format(targeted_package))
 
     samples_errors = []
     sample_paths = []
+    timed_sample_paths = []
+
     samples_dir_path = os.path.abspath(os.path.join(targeted_package, "samples"))
     package_name = os.path.basename(targeted_package)
+    samples_need_timeout = TIMEOUT_SAMPLES.get(package_name, {})
 
     for path, subdirs, files in os.walk(samples_dir_path):
         for name in files:
-            if fnmatch(name, "*.py") and name not in IGNORED_SAMPLES.get(package_name, []):
+            if fnmatch(name, "*.py") and name in samples_need_timeout:
+                timeout, pass_if_timeout = samples_need_timeout[name]
+                timed_sample_paths.append((os.path.abspath(os.path.join(path, name)), timeout, pass_if_timeout))
+            elif fnmatch(name, "*.py") and name not in IGNORED_SAMPLES.get(package_name, []):
                 sample_paths.append(os.path.abspath(os.path.join(path, name)))
 
-    if not sample_paths:
+    if not sample_paths and not timed_sample_paths:
         logging.info(
             "No samples found in {}".format(targeted_package)
         )
         exit(0)
 
     for sample in sample_paths:
-        if sys.version_info < (3, 5) and sample.endswith("_async.py"):
-            continue
+        execute_sample(sample, samples_errors, timed=False)
 
-        logging.info(
-            "Testing {}".format(sample)
-        )
-        command_array = [sys.executable, sample]
-        errors = run_check_call(command_array, root_dir, always_exit=False)
-
-        sample_name = os.path.basename(sample)
-        if errors:
-            samples_errors.append(sample_name)
-            logging.info(
-                "ERROR: {}".format(sample_name)
-            )
-        else:
-            logging.info(
-                "SUCCESS: {}.".format(sample_name)
-            )
+    for sample in timed_sample_paths:
+        execute_sample(sample, samples_errors, timed=True)
 
     if samples_errors:
         logging.error("Sample(s) that ran with errors: {}".format(samples_errors))
