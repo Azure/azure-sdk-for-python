@@ -602,6 +602,12 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     def test_categories_filter(self, client):
         result = client.recognize_pii_entities(
             ["My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333."],
+        )
+
+        self.assertEqual(len(result[0].entities), 3)
+
+        result = client.recognize_pii_entities(
+            ["My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333."],
             categories_filter=[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]
         )
 

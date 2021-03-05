@@ -23,13 +23,13 @@ interactions:
         *********** and my phone number is 333-3333.","id":"0","entities":[{"text":"243-56-0987","category":"USSocialSecurityNumber","offset":36,"length":11,"confidenceScore":0.85}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
       apim-request-id:
-      - 3d2af62e-12ca-4b23-96c5-380174ee660e
+      - 79cbaf88-6c35-4623-9afa-aa8e15dbd3a3
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 05 Mar 2021 19:54:53 GMT
+      - Fri, 05 Mar 2021 20:34:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '46'
+      - '39'
     status:
       code: 200
       message: OK
