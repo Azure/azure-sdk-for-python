@@ -69,7 +69,7 @@ def _get_blob_name(blob):
         return blob
 
 
-class ContainerClient(StorageAccountHostsMixin):
+class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-public-methods
     """A client to interact with a specific container, although that container
     may not yet exist.
 
