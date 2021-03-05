@@ -206,7 +206,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         ctx = extract(DictGetter(), headers)
         span_ctx = get_span_from_context(ctx).get_span_context()
         current_span = cls.get_current_span()
-        updated_links = current_span.links + [Link(span_ctx, attributes)]
+        updated_links = current_span.links + (Link(span_ctx, attributes),)
         current_span.set_attribute("links", updated_links)
         #current_span.links.append(Link(span_ctx, attributes))
 
