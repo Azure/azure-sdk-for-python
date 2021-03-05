@@ -46,7 +46,7 @@ phone_number_administration_client = PhoneNumbersAdministrationClient.from_conne
 
 ### Phone Number Types overview
 
-Phone numbers come in two types; Geographic and Toll-Free. Geographic phone plans are phone plans associated with a location, whose phone numbers' area codes are associated with the area code of a geographic location. Toll-Free phone plans are phone plans not associated location. For example, in the US, toll-free numbers can come with area codes such as 800 or 888.
+Phone numbers come in two types; Geographic and Toll-Free. Geographic phone numbers are phone numbers associated with a location, whose area codes are associated with the area code of a geographic location. Toll-Free phone numbers are phone numbers with no associated location. For example, in the US, toll-free numbers can come with area codes such as 800 or 888.
 
 ### Searching and Purchasing and Releasing numbers
 
@@ -71,7 +71,7 @@ print(acquired_phone_number.phone_number)
 Gets the information from the specified phone number
 
 ```python
-result = phone_numbers_client.get_phone_number("+18001234567")
+result = phone_numbers_client.get_phone_number("<phone number>")
 print(result.country_code)
 print(result.phone_number)
 ```
@@ -87,8 +87,8 @@ The result of the search can then be used to purchase the number in the correspo
 
 ```python
 capabilities = PhoneNumberCapabilities(
-        calling = PhoneNumberCapabilityValue.INBOUND,
-        sms = PhoneNumberCapabilityValue.INBOUND_OUTBOUND
+        calling = PhoneNumberCapabilityType.INBOUND,
+        sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
     )
 poller = phone_numbers_client.begin_search_available_phone_numbers(
     "US",
@@ -119,7 +119,7 @@ Releases an acquired phone number.
 
 ```python
 poller = self.phone_number_client.begin_release_phone_number(
-    "+18001234567", 
+    "<phone number>", 
     polling = True
 )
 ```
@@ -128,16 +128,16 @@ poller = self.phone_number_client.begin_release_phone_number(
 
 Updates the specified phone number capabilities for Calling and SMS to one of: 
 
-- `PhoneNumberCapabilityValue.NONE`
-- `PhoneNumberCapabilityValue.INBOUND`
-- `PhoneNumberCapabilityValue.OUTBOUND`
-- `PhoneNumberCapabilityValue.INBOUND_OUTBOUND`
+- `PhoneNumberCapabilityType.NONE`
+- `PhoneNumberCapabilityType.INBOUND`
+- `PhoneNumberCapabilityType.OUTBOUND`
+- `PhoneNumberCapabilityType.INBOUND_OUTBOUND`
 
 ```python
 poller = self.phone_number_client.begin_update_phone_number_capabilities(
-    "+18335260208",
-    PhoneNumberCapabilityValue.OUTBOUND,
-    PhoneNumberCapabilityValue.INBOUND_OUTBOUND,
+    "<phone number>",
+    PhoneNumberCapabilityType.OUTBOUND,
+    PhoneNumberCapabilityType.INBOUND_OUTBOUND,
     polling = True
 )
 ```

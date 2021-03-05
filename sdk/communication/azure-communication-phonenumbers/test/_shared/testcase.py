@@ -9,7 +9,7 @@ import os
 from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import RecordingProcessor, ReplayableTest
 from azure_devtools.scenario_tests.utilities import is_text_payload
-from azure.communication.administration._shared.utils import parse_connection_str
+from azure.communication.phonenumbers._shared.utils import parse_connection_str
 
 class ResponseReplacerProcessor(RecordingProcessor):
     def __init__(self, keys=None, replacement="sanitized"):
@@ -27,26 +27,13 @@ class ResponseReplacerProcessor(RecordingProcessor):
                         break
                     elif "phoneNumber" in item:
                         item['phoneNumber'] = self._replacement
+                    elif "id" in item:
+                        item['id'] = self._replacement
             response['body']['string'] = json.dumps(body)
             response['url'] = self._replacement
             return response
         except (KeyError, ValueError):
             return response
-            
-        '''def sanitize_dict(dictionary):
-            for key in dictionary:
-                value = dictionary[key]
-                if isinstance(value, str):
-                    dictionary[key] = re.sub(
-                        r"("+'|'.join(self._keys)+r")",
-                        self._replacement,
-                        dictionary[key])
-                elif isinstance(value, dict):
-                    sanitize_dict(value)
-
-        sanitize_dict(response)
-
-        return response'''
 
 class BodyReplacerProcessor(RecordingProcessor):
     """Sanitize the sensitive info inside request or response bodies"""

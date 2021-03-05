@@ -13,8 +13,8 @@ DESCRIPTION:
 USAGE:
     python search_available_phone_numbers_sample.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
-    2) AZURE_COMMUNICATION_SERVICE_AREA_CODE - The area code you want the number to be in
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The connection string including your endpoint and 
+        access key of your Azure Communication Service
 """
 
 import os
@@ -40,8 +40,6 @@ def search_available_phone_numbers():
         PhoneNumberType.TOLL_FREE,
         PhoneNumberAssignmentType.APPLICATION,
         capabilities,
-        area_code,
-        1,
         polling = True
     )
     print('Acquired phone numbers: ' + poller.result())

@@ -70,7 +70,7 @@ class PhoneNumbersClient(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls
             for LRO operations if no Retry-After header is present.
-        :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
+        :rtype: ~azure.core.polling.LROPoller[None]
         """
         return self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
             search_id,
@@ -86,7 +86,7 @@ class PhoneNumbersClient(object):
         # type: (...) -> LROPoller[None]
         """Releases an acquired phone number.
 
-        :param phone_number: Phone number to be released, e.g. +11234567890.
+        :param phone_number: Phone number to be released, e.g. +55534567890.
         :type phone_number: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
@@ -160,7 +160,7 @@ class PhoneNumbersClient(object):
         """Updates the capabilities of a phone number.
 
         :param phone_number: The phone number id in E.164 format. The leading plus can be either + or
-            encoded as %2B, e.g. +11234567890.
+            encoded as %2B, e.g. +55534567890.
         :type phone_number: str
         :param calling: Capability value for calling.
         :type calling: str or ~azure.communication.phonenumbers.models.PhoneNumberCapabilityType

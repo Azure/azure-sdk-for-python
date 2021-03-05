@@ -13,7 +13,8 @@ DESCRIPTION:
 USAGE:
     python release_phone_number_sample.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The connection string including your endpoint and 
+        access key of your Azure Communication Service
     2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_TO_RELEASE - The phone number you want to release
 """
 

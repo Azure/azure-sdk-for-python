@@ -71,7 +71,7 @@ class PhoneNumbersClient(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls
             for LRO operations if no Retry-After header is present.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
         return await self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
             search_id,

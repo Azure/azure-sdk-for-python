@@ -13,8 +13,8 @@ DESCRIPTION:
 USAGE:
     python list_acquired_phone_numbers_sample.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
-"""
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The connection string including your endpoint and 
+        access key of your Azure Communication Service"""
 
 import os
 from azure.communication.phonenumbers import (

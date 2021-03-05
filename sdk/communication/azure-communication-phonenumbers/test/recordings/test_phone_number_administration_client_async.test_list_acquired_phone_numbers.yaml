@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Fri, 05 Mar 2021 17:34:21 GMT
+      - Fri, 05 Mar 2021 19:20:20 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -36,11 +36,11 @@ interactions:
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}}]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Mar 2021 17:34:25 GMT
-      ms-cv: z+IYJRktqUqBrFrJry0c/w.0
+      date: Fri, 05 Mar 2021 19:20:24 GMT
+      ms-cv: 7TF1eTJPIkGVQSU8gfRPpw.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 4036ms
+      x-processing-time: 3266ms
     status:
       code: 200
       message: OK

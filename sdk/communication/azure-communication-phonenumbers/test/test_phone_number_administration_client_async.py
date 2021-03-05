@@ -4,7 +4,7 @@ from azure.communication.phonenumbers.aio import PhoneNumbersClient
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import ResponseReplacerProcessor, BodyReplacerProcessor
 from _shared.utils import create_token_credential
-from azure.communication.phonenumbers import PhoneNumberAssignmentType, PhoneNumberCapabilities, PhoneNumberCapabilityValue, PhoneNumberType
+from azure.communication.phonenumbers import PhoneNumberAssignmentType, PhoneNumberCapabilities, PhoneNumberCapabilityType, PhoneNumberType
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from phone_number_helper import PhoneNumberUriReplacer
 
@@ -23,7 +23,7 @@ class PhoneNumbersAdministrationClientTestAsync(AsyncCommunicationTestCase):
         self.phone_number_client = PhoneNumbersClient.from_connection_string(self.connection_str)
         self.recording_processors.extend([
             BodyReplacerProcessor(
-                keys=["id", "token", "phoneNumber"]
+                keys=["id", "token", "phoneNumber", "searchId"]
             ),
             PhoneNumberUriReplacer(),
             ResponseReplacerProcessor()])
@@ -58,8 +58,8 @@ class PhoneNumbersAdministrationClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_search_available_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(
-            calling = PhoneNumberCapabilityValue.INBOUND,
-            sms = PhoneNumberCapabilityValue.INBOUND_OUTBOUND
+            calling = PhoneNumberCapabilityType.INBOUND,
+            sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
         )
         async with self.phone_number_client:
             poller = await self.phone_number_client.begin_search_available_phone_numbers(
@@ -76,8 +76,8 @@ class PhoneNumbersAdministrationClientTestAsync(AsyncCommunicationTestCase):
         async with self.phone_number_client:
             poller = await self.phone_number_client.begin_update_phone_number_capabilities(
             self.phone_number,
-            PhoneNumberCapabilityValue.INBOUND_OUTBOUND,
-            PhoneNumberCapabilityValue.INBOUND,
+            PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+            PhoneNumberCapabilityType.INBOUND,
             polling = True
             )
         assert poller.result()
@@ -86,8 +86,8 @@ class PhoneNumbersAdministrationClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_purchase_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(
-            calling = PhoneNumberCapabilityValue.INBOUND,
-            sms = PhoneNumberCapabilityValue.INBOUND_OUTBOUND
+            calling = PhoneNumberCapabilityType.INBOUND,
+            sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
         )
         async with self.phone_number_client:
             search_poller = await self.phone_number_client.begin_search_available_phone_numbers(
