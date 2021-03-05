@@ -1496,8 +1496,7 @@ class RecognizePiiEntitiesAction(DictMixin):
             parameters=_latest_preview_models.PiiTaskParameters(
                 model_version=self.model_version,
                 domain=self.domain_filter,
-                string_index_type=self.string_index_type,
-                pii_entity_categories=self.categories_filter
+                string_index_type=self.string_index_type
             )
         )
 
