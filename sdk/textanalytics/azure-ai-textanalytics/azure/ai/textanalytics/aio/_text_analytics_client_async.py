@@ -794,7 +794,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 ],
                 entity_linking_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES]
+                    [
+                        a for a in actions if \
+                        _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
+                    ]
                 ]
             )
             analyze_body = self._client.models(api_version='v3.1-preview.4').AnalyzeBatchInput(
