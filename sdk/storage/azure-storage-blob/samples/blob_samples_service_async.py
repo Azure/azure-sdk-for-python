@@ -19,6 +19,7 @@ import os
 import asyncio
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 
+
 class BlobServiceSamplesAsync(object):
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
@@ -156,6 +157,7 @@ class BlobServiceSamplesAsync(object):
             finally:
                 # Delete the container
                 await blob_service_client.delete_container("containertestasync")
+
 
 async def main():
     sample = BlobServiceSamplesAsync()

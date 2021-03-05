@@ -139,6 +139,7 @@ class BlobServiceSamples(object):
             # Delete the container
             blob_service_client.delete_container("containertest")
 
+
 if __name__ == '__main__':
     sample = BlobServiceSamples()
     sample.get_storage_account_information()
