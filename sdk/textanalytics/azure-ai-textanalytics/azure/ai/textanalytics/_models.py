@@ -1333,8 +1333,8 @@ class AnalyzeBatchActionsResult(DictMixin):
         self.statistics = kwargs.get("statistics")
 
     def __repr__(self):
-        return "AnalyzeBatchActionsResult(document_results={}, is_error={}, action_type={}, completed_on={}, )" \
-            "statistics={}".format(
+        return "AnalyzeBatchActionsResult(document_results={}, is_error={}, action_type={}, completed_on={}, " \
+            "statistics={})".format(
                 repr(self.document_results),
                 self.is_error,
                 self.action_type,
@@ -1528,8 +1528,8 @@ class RequestStatistics(DictMixin):
         )
 
     def __repr__(self, **kwargs):
-        return "RequestStatistics(documents_count={}, valid_documents_count={}, erroneous_documents_count={}, \
-            transactions_count={}".format(
+        return "RequestStatistics(documents_count={}, valid_documents_count={}, erroneous_documents_count={}, " \
+            "transactions_count={})".format(
                 self.documents_count,
                 self.valid_documents_count,
                 self.erroneous_documents_count,
