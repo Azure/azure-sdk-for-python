@@ -21,13 +21,13 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Mar 2021 18:37:15 GMT
-      ms-cv: a1SwoBis1keCMxOoKRaeig.0
+      date: Fri, 05 Mar 2021 19:37:49 GMT
+      ms-cv: QyWWVYlSG0KPRPl9fcp32A.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 480ms
+      x-processing-time: 654ms
     status:
       code: 202
       message: Accepted
-    url: https://smstestapp.communication.azure.com/sms?api-version=2021-03-07
+    url: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
 version: 1

@@ -11,7 +11,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 05 Mar 2021 18:37:18 GMT
+      - Fri, 05 Mar 2021 19:37:51 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -25,13 +25,13 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Mar 2021 18:37:17 GMT
-      ms-cv: FI/lrCQD50O5DvmXExiPGA.0
+      date: Fri, 05 Mar 2021 19:37:51 GMT
+      ms-cv: y/mtKUmYwESAo3wmzBI5gg.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 952ms
+      x-processing-time: 786ms
     status:
       code: 202
       message: Accepted
-    url: https://smstestapp.communication.azure.com/sms?api-version=2021-03-07
+    url: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
 version: 1

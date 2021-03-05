@@ -32,11 +32,13 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
 
         if self.is_playback():
             self.phone_number = "+18000005555"
+            self.recording_processors.extend([
+            BodyReplacerProcessor(keys=["to", "from", "messageId", "repeatabilityRequestId", "repeatabilityFirstSent"])])
         else:
             self.phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
-
-        self.recording_processors.extend([
-            BodyReplacerProcessor(keys=["to", "from", "messageId", "repeatabilityRequestId", "repeatabilityFirstSent"])])
+            self.recording_processors.extend([
+                BodyReplacerProcessor(keys=["to", "from", "messageId", "repeatabilityRequestId", "repeatabilityFirstSent"]),
+                ResponseReplacerProcessor(keys=[self._resource_name])])
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_send_sms_single_async(self):

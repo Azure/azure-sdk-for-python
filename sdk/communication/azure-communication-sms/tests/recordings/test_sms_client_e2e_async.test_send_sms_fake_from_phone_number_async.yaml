@@ -11,7 +11,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 05 Mar 2021 18:37:14 GMT
+      - Fri, 05 Mar 2021 19:37:48 GMT
       User-Agent:
       - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -23,13 +23,13 @@ interactions:
       string: '{"From": ["Invalid From phone number format"]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Mar 2021 18:37:14 GMT
-      ms-cv: vTSN5uWIYEOmn97nt84EOw.0
+      date: Fri, 05 Mar 2021 19:37:47 GMT
+      ms-cv: X3+7Z5l3CkuQo9Appa1aAA.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 11ms
+      x-processing-time: 13ms
     status:
       code: 400
       message: Bad Request
-    url: https://smstestapp.communication.azure.com/sms?api-version=2021-03-07
+    url: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
 version: 1
