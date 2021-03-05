@@ -68,7 +68,6 @@ class TestAnalyze(TextAnalyticsTest):
             self.assertIn("Bill Gates", doc.key_phrases)
             self.assertIn("Microsoft", doc.key_phrases)
             self.assertIsNotNone(doc.id)
-            #self.assertIsNotNone(doc.statistics)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -97,7 +96,6 @@ class TestAnalyze(TextAnalyticsTest):
         for doc in action_result.document_results:
             self.assertEqual(len(doc.entities), 4)
             self.assertIsNotNone(doc.id)
-            # self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
@@ -138,7 +136,6 @@ class TestAnalyze(TextAnalyticsTest):
         # self.assertEqual(action_result.document_results[2].entities[0].category, "Brazil CPF Number")
         for doc in action_result.document_results:
             self.assertIsNotNone(doc.id)
-            # self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
@@ -192,7 +189,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         action_results = list(response)
 
-        assert len(action_results) == 3
+        assert len(action_results) == 4
         action_result = action_results[0]
 
         assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
@@ -335,10 +332,8 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = poller.result()
 
-        assert response.statistics
-
         action_results = list(response)
-        assert len(action_results) == 3
+        assert len(action_results) == 4
         assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
         assert action_results[1].action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
         assert action_results[2].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
@@ -346,9 +341,10 @@ class TestAnalyze(TextAnalyticsTest):
 
         assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
 
-        # for action_result in action_results:
-        #     for doc in action_result.document_results:
-        #         assert doc.statistics
+        for action_result in action_results:
+            assert action_result.statistics
+            for doc in action_result.document_results:
+                assert doc.statistics
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

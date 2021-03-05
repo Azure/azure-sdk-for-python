@@ -54,6 +54,7 @@ if TYPE_CHECKING:
         RecognizePiiEntitiesResult,
         RecognizeEntitiesAction,
         RecognizePiiEntitiesAction,
+        RecognizeLinkedEntitiesAction,
         ExtractKeyPhrasesAction,
         AnalyzeHealthcareEntitiesResultItem,
         AnalyzeBatchActionsResult,

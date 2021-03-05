@@ -16,5 +16,4 @@ class AnalyzeHealthcareEntitiesResult(ItemPaged):
 
 class AnalyzeResult(ItemPaged):
     def __init__(self, *args, **kwargs):
-        self.statistics = kwargs.pop('statistics')
         super(AnalyzeResult, self).__init__(*args, **kwargs)

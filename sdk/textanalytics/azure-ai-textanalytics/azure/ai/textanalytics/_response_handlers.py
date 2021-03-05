@@ -256,6 +256,9 @@ def _get_good_result(current_task_type, index_of_task_result, doc_id_order, resp
     )
     return AnalyzeBatchActionsResult(
         document_results=document_results,
+        statistics=RequestStatistics._from_generated( # pylint: disable=protected-access
+            response_task_to_deserialize.results.statistics
+        ) if response_task_to_deserialize.results.statistics else None,
         action_type=current_task_type,
         completed_on=response_task_to_deserialize.last_update_date_time,
     )
@@ -319,9 +322,7 @@ def healthcare_paged_result(doc_id_order, health_status_callback, _, obj, respon
 def analyze_paged_result(doc_id_order, task_order, analyze_status_callback, _, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
     return AnalyzeResult(
         functools.partial(lro_get_next_page, analyze_status_callback, obj, show_stats=show_stats),
-        functools.partial(analyze_extract_page_data, doc_id_order, task_order, response_headers),
-        statistics=TextDocumentBatchStatistics._from_generated(obj.statistics) \
-            if (show_stats and obj.statistics) else None # pylint: disable=protected-access
+        functools.partial(analyze_extract_page_data, doc_id_order, task_order, response_headers)
     )
 
 def _get_deserialize():

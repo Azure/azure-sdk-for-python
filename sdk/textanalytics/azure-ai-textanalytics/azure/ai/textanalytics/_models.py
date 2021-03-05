@@ -1322,20 +1322,24 @@ class AnalyzeBatchActionsResult(DictMixin):
     :vartype action_type: str or ~azure.ai.textanalytics.AnalyzeBatchActionsType
     :ivar ~datetime.datetime completed_on: Date and time (UTC) when the result completed
         on the service.
+    :ivar statistics: Overall statistics for the action result.
+    :vartype statistics: ~azure.ai.RequestStatistics
     """
     def __init__(self, **kwargs):
         self.document_results = kwargs.get("document_results")
         self.is_error = False
         self.action_type = kwargs.get("action_type")
         self.completed_on = kwargs.get("completed_on")
+        self.statistics = kwargs.get("statistics")
 
     def __repr__(self):
-        return "AnalyzeBatchActionsResult(document_results={}, is_error={}, action_type={}, completed_on={})" \
-            .format(
+        return "AnalyzeBatchActionsResult(document_results={}, is_error={}, action_type={}, completed_on={}, )" \
+            "statistics={}".format(
                 repr(self.document_results),
                 self.is_error,
                 self.action_type,
-                self.completed_on
+                self.completed_on,
+                repr(self.statistics)
             )[:1024]
 
 class AnalyzeBatchActionsError(DictMixin):
