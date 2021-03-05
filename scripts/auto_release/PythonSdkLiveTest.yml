@@ -1,6 +1,6 @@
 # Live Test For Python SDK
 
-name: PYTHON SDK AUTO RELEASE RUN  $(BASE_BRANCH) $(Date:yyyyMMdd)$(Rev:.r)
+name: PYTHON SDK AUTO RELEASE
 
 trigger:
   branches:
