@@ -22,7 +22,7 @@ from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,
-    HealthcareEntityRelationType
+    HealthcareEntityRelationType,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -434,12 +434,25 @@ class TestHealth(AsyncTextAnalyticsTest):
         async for r in response:
             result.append(r)
 
-        # currently just testing it has that attribute.
-        # have an issue to update https://github.com/Azure/azure-sdk-for-python/issues/17072
-
         assert all([
             e for e in result[0].entities if hasattr(e, "normalized_text")
         ])
 
         histologically_entity = list(filter(lambda x: x.text == "histologically", result[0].entities))[0]
         assert histologically_entity.normalized_text == "Histology Procedure"
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_healthcare_assertion(self, client):
+        response = await (await client.begin_analyze_healthcare_entities(
+            documents=["Baby not likely to have Meningitis."]
+        )).result()
+
+        result = []
+        async for r in response:
+            result.append(r)
+
+        # currently can only test certainty
+        # have an issue to update https://github.com/Azure/azure-sdk-for-python/issues/17088
+        meningitis_entity = next(e for e in result[0].entities if e.text == "Meningitis")
+        assert meningitis_entity.assertion.certainty == "negative"
