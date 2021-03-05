@@ -443,6 +443,43 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         except HttpResponseError as error:
             process_storage_error(error)
 
+    @distributed_trace
+    def get_blob_service_client(self, **kwargs):
+        # type: (...) -> BlobServiceClient
+        """Get a client to interact with the container's parent service account.
+
+        Defaults to current container's credentials.
+
+        :keyword credential:
+            This enables you to change credentials when its necessary. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+        :returns: A BlobServiceClient.
+        :rtype: ~azure.storage.blob.BlobServiceClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_service_async.py
+                :start-after: [START get_blob_service_client_from_container_client]
+                :end-before: [END get_blob_service_client_from_container_client]
+                :language: python
+                :dedent: 8
+                :caption: Get blob service client from container object.
+        """
+        from ._blob_service_client_async import BlobServiceClient
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+
+        return BlobServiceClient(
+            "{}://{}".format(self.scheme, self.primary_hostname),
+            credential=kwargs.pop("credential", self.client_credential), api_version=self.api_version,
+            _configuration=self._config, _pipeline=_pipeline, _location_mode=self._location_mode,
+            _hosts=self._hosts, require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function)
+
+
     @distributed_trace_async
     async def get_container_access_policy(self, **kwargs):
         # type: (Any) -> Dict[str, Any]

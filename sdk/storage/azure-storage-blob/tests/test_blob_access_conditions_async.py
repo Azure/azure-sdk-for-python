@@ -26,6 +26,7 @@ from azure.storage.blob import (
     BlobProperties,
     ContainerSasPermissions,
     AccessPolicy, generate_account_sas, ResourceTypes, AccountSasPermissions, generate_blob_sas, BlobSasPermissions,
+    generate_container_sas,
 )
 from _shared.testcase import GlobalStorageAccountPreparer
 from _shared.asynctestcase import AsyncStorageTestCase
@@ -83,6 +84,72 @@ class StorageBlobAccessConditionsAsyncTest(AsyncStorageTestCase):
         return container, blob
 
     # --Test cases for blob service --------------------------------------------
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_blob_service_client_from_container(
+            self, resource_group, location, storage_account, storage_account_key):
+        bsc1 = BlobServiceClient(
+            self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        self._setup()
+        container_client1 = await self._create_container(self.container_name, bsc1)
+        await container_client1.get_container_properties()
+        test_datetime = (datetime.utcnow() - timedelta(minutes=15))
+
+        # Act
+        metadata = {'hello': 'world', 'number': '43'}
+        # Set metadata to check against later
+        await container_client1.set_container_metadata(metadata, if_modified_since=test_datetime)
+
+        # Assert metadata is set
+        cc1_props = await container_client1.get_container_properties()
+        cc1_md1 = cc1_props.metadata
+        self.assertDictEqual(metadata, cc1_md1)
+
+        # Get blob service client from container client
+        bsc_props1 = await bsc1.get_service_properties()
+        bsc2 = container_client1.get_blob_service_client()
+        bsc_props2 = await bsc2.get_service_properties()
+        self.assertDictEqual(bsc_props1, bsc_props2)
+
+        # Return to container and assert its properties
+        container_client2 = bsc2.get_container_client(self.container_name)
+        cc2_props = await container_client2.get_container_properties()
+        cc2_md1 = cc2_props.metadata
+        self.assertDictEqual(cc2_md1, cc1_md1)
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_blob_service_client_from_container_with_sas(
+            self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        self._setup()
+        container_client1 = await self._create_container(self.container_name, bsc)
+        account_sas_token = generate_account_sas(
+            container_client1.account_name,
+            account_key=container_client1.credential.account_key,
+            resource_types=ResourceTypes(container=True, object=True),
+            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        container_sas_token = generate_container_sas(
+            container_client1.account_name,
+            container_client1.container_name,
+            account_key=storage_account_key,
+            permission=ContainerSasPermissions(read=True, write=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        container_client_with_container_sas = ContainerClient.from_container_url(
+            container_client1.url, credential=container_sas_token)
+        await container_client_with_container_sas.upload_blob("blob", "hello")
+        bsc_with_bad_credential = container_client_with_container_sas.get_blob_service_client()
+        with self.assertRaises(HttpResponseError):
+            await bsc_with_bad_credential.get_account_information()
+        bsc_with_good_credential = container_client_with_container_sas.get_blob_service_client(
+            credential=account_sas_token)
+        await bsc_with_good_credential.get_account_information()
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
