@@ -334,5 +334,7 @@ def create_properties_from_dict_if_needed(properties, sb_resource_type):
         return properties
     try:
         return sb_resource_type(**cast(Mapping[str, Any], properties))
-    except TypeError:
+    except TypeError as e:
+        if "required keyword arguments" in str(e):
+            raise e
         raise TypeError("Update input must be an instance of {}, or a mapping representing one.".format(sb_resource_type.__name__))

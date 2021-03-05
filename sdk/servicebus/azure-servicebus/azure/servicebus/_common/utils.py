@@ -221,9 +221,7 @@ def _single_message_from_dict(message, message_type):
         return message
     try:
         return message_type(**cast(Mapping[str, Any], message))
-    except TypeError as e:
-        if "required keyword arguments" in str(e):
-            raise e
+    except TypeError:
         raise TypeError(
             "Only ServiceBusMessage instances or Mappings representing messages are supported. "
             "Received instead: {}".format(
