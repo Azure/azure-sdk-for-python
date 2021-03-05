@@ -10,6 +10,8 @@
 
 **New Features**
 
+- Added parameter `categories_filter` to the `recognize_pii_entities` client method.
+- Added enum `PiiEntityCategoryType`.
 - Add property `normalized_text` to `HealthcareEntity`. This property is a normalized version of the `text` property that already
 exists on the `HealthcareEntity`
 - Add property `assertion` onto `HealthcareEntity`. This contains assertions about the entity itself, i.e. if the entity represents a diagnosis,

@@ -46,7 +46,8 @@ from ._models import (
 )
 from ._paging import AnalyzeHealthcareEntitiesResult
 from ._generated.v3_1_preview_4.models import (
-    RelationType as HealthcareEntityRelationType,
+    PiiCategory as PiiEntityCategoryType,
+    RelationType as HealthcareEntityRelationType
 )
 
 __all__ = [
@@ -87,6 +88,7 @@ __all__ = [
     'RequestStatistics',
     'AnalyzeBatchActionsType',
     "AnalyzeBatchActionsError",
+    "PiiEntityCategoryType",
     "HealthcareEntityRelationType",
     "HealthcareEntityRelationRoleType",
 ]
