@@ -11,9 +11,9 @@ from phone_number_helper import PhoneNumberUriReplacer
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
 
-class PhoneNumbersAdministrationClientTestAsync(AsyncCommunicationTestCase):
+class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     def setUp(self):
-        super(PhoneNumbersAdministrationClientTestAsync, self).setUp()
+        super(PhoneNumbersClientTestAsync, self).setUp()
         if self.is_playback():
             self.phone_number = "sanitized"
             self.country_code = "US"
@@ -81,7 +81,7 @@ class PhoneNumbersAdministrationClientTestAsync(AsyncCommunicationTestCase):
             polling = True
             )
         assert poller.result()
-
+        
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_purchase_phone_numbers(self):
@@ -99,6 +99,6 @@ class PhoneNumbersAdministrationClientTestAsync(AsyncCommunicationTestCase):
             )
             phone_number_to_buy = await search_poller.result()
             purchase_poller = await self.phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
-            assert await purchase_poller.result()
+            await purchase_poller.result()
             release_poller = await self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
         assert release_poller.status() == 'succeeded'

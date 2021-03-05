@@ -19,4 +19,6 @@ class PhoneNumberUriReplacer(RecordingProcessor):
             response['url'] = re.sub('capabilities/([^/?&]+)', 'capabilities/sanitized', response['url'])
             response['url'] = re.sub('releases/([^/?&]+)', 'releases/sanitized', response['url'])
             response['url'] = re.sub('searches/([^/?&]+)', 'searches/sanitized', response['url'])
+            response['url'] = re.sub('phoneNumbers/[%2B\d]+', 'phoneNumbers/sanitized', response['url'])
+            response['url'] = re.sub('^(.*?)\.communication.azure.com', 'https://sanitized.communication.azure.com', response['url'])
         return response 

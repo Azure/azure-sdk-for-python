@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Fri, 05 Mar 2021 19:20:20 GMT
+      - Fri, 05 Mar 2021 22:21:18 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -27,7 +27,7 @@ interactions:
         "Application", "purchaseDate": "2020-11-30T17:51:21.2991518+00:00", "cost":
         {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}}, {"id":
         "18443281555", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
-        "TollFree", "capabilities": {"calling": "none", "sms": "inbound+outbound"},
+        "TollFree", "capabilities": {"calling": "inbound", "sms": "inbound+outbound"},
         "assignmentType": "Application", "purchaseDate": "2020-11-12T21:53:12.2088187+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}},
         {"id": "18445492606", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
@@ -36,11 +36,11 @@ interactions:
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "Monthly"}}]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Mar 2021 19:20:24 GMT
-      ms-cv: 7TF1eTJPIkGVQSU8gfRPpw.0
+      date: Fri, 05 Mar 2021 22:21:22 GMT
+      ms-cv: US5P4qB/KEOB9kd4FEf70w.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 3266ms
+      x-processing-time: 4347ms
     status:
       code: 200
       message: OK
