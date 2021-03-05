@@ -2,6 +2,10 @@
 
 ## 3.1.0b4 (Unreleased)
 
+**New features**
+
+- Content-type `image/bmp` now supported by custom forms and training methods.
+
 **Dependency Updates**
 
 - Bumped `msrest` requirement from `0.6.12` to `0.6.21`.

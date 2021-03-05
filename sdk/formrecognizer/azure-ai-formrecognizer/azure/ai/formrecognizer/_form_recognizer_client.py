@@ -597,10 +597,10 @@ class FormRecognizerClient(FormRecognizerClientBase):
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be of one of the supported content types - 'application/pdf',
-        'image/jpeg', 'image/png', or 'image/tiff'.
+        'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'.
 
         :param str model_id: Custom model identifier.
-        :param form: JPEG, PNG, PDF, or TIFF type file stream or bytes.
+        :param form: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type form: bytes or IO[bytes]
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
@@ -687,7 +687,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         :param str model_id: Custom model identifier.
         :param str form_url: The URL of the form to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF, or TIFF.
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
