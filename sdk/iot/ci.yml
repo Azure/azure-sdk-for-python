@@ -10,7 +10,7 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/iothub/
+    - sdk/iot/
 
 pr:
   branches:
@@ -23,16 +23,12 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/iothub/
+    - sdk/iot/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: iothub
+    ServiceDirectory: iot
     Artifacts:
-    - name: azure-mgmt-iothub
-      safeName: azuremgmtiothub
-    - name: azure-mgmt-iothubprovisioningservices
-      safeName: azuremgmtiothubprovisioningservices
-    - name: azure-mgmt-iotcentral
-      safeName: azuremgmtiotcentral
+    - name: azure_iot_nspkg
+      safeName: azureiotnspkg
