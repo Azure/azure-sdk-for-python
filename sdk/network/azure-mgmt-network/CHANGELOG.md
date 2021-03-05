@@ -1,5 +1,32 @@
 # Release History
 
+## 18.0.0 (2021-03-05)
+
+**Features**
+
+  - Model PublicIPAddress has a new parameter service_public_ip_address
+  - Model PublicIPAddress has a new parameter linked_public_ip_address
+  - Model PublicIPAddress has a new parameter migration_phase
+  - Model PublicIPAddress has a new parameter nat_gateway
+  - Model VirtualNetworkPeering has a new parameter type
+  - Model VirtualNetworkPeering has a new parameter resource_guid
+  - Model VirtualNetworkPeering has a new parameter do_not_verify_remote_gateways
+  - Model Delegation has a new parameter type
+  - Model NetworkInterface has a new parameter private_link_service
+  - Model NetworkInterface has a new parameter migration_phase
+  - Model NetworkInterface has a new parameter nic_type
+  - Model VirtualNetworkGateway has a new parameter virtual_network_extended_location
+  - Model VirtualNetworkGateway has a new parameter v_net_extended_location_resource_id
+  - Model NetworkInterfaceIPConfiguration has a new parameter type
+  - Model PublicIPPrefix has a new parameter nat_gateway
+  - Model Subnet has a new parameter application_gateway_ip_configurations
+  - Model Subnet has a new parameter type
+
+**Breaking changes**
+
+  - Model VirtualNetworkGateway no longer has parameter extended_location
+  - Model VirtualNetworkGateway no longer has parameter virtual_network_extended_location_resource_id
+
 ## 17.1.0 (2021-01-26)
 
 **Features**
