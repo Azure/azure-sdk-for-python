@@ -9,7 +9,7 @@ import functools
 from urllib.parse import urlparse, parse_qsl
 
 from azure.core.async_paging import AsyncList
-from ._models import RequestStatistics, TextDocumentBatchStatistics
+from ._models import RequestStatistics
 from ._async_paging import (
     AnalyzeHealthcareEntitiesResultAsync,
     AnalyzeResultAsync
