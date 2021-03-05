@@ -1,11 +1,12 @@
 # Release History
 
-## 1.12.0 (Unreleased)
+## 1.12.0 (2021-03-08)
 
 ### Features
 
 - Added `azure.core.messaging.CloudEvent` model that follows the cloud event spec.
 - Added `azure.core.serialization.NULL` sentinel value
+- Improve `repr`s for `HttpRequest` and `HttpResponse`s  #16972
 
 ### Bug Fixes
 

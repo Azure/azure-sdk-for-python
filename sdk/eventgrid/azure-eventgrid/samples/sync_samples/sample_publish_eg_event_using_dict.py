@@ -26,10 +26,10 @@ topic_key = os.environ["EG_ACCESS_KEY"]
 endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 
 def publish():
+    # [START publish_eg_event_dict]
     credential = AzureKeyCredential(topic_key)
     client = EventGridPublisherClient(endpoint, credential)
 
-    # [START publish_eg_event_dict]
     event0 = {	
         "eventType": "Contoso.Items.ItemReceived",	
         "data": {	
