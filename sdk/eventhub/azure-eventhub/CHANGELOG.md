@@ -1,6 +1,8 @@
 # Release History
 
-## 5.4.0b1 (Unreleased)
+## 5.4.0b1 (2021-03-09)
+
+This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
 
 **New Features**
 
@@ -19,13 +21,17 @@
   - Introduced a new class `azure.eventhub.PartitionPublishingConfiguration` which is a set of configurations that can be
     specified to influence the behavior when publishing directly to an Event Hub partition.
 
-**Bug fixes**
-
-- Sending empty `event_data_batch` will be a no-op now instead of raising error.
-
 **Notes**
 
 - Updated uAMQP dependency to 1.2.15.
+
+## 5.3.1 (2021-03-09)
+
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
+
+**Bug fixes**
+
+- Sending empty `event_data_batch` will be a no-op now instead of raising error.
 
 ## 5.3.0 (2021-02-08)
 
