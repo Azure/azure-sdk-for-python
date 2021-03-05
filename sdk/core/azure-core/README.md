@@ -179,6 +179,21 @@ class MyCustomEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     BAR = 'bar'
 ```
 
+#### Null Sentinel Value
+
+A falsy sentinel object which is supposed to be used to specify attributes
+with no data. This gets serialized to `null` on the wire.
+
+```python
+from azure.core.serialization import NULL
+
+assert bool(NULL) is False
+
+foo = Foo(
+    attr=NULL
+)
+```
+
 ## Contributing
 This project welcomes contributions and suggestions. Most contributions require
 you to agree to a Contributor License Agreement (CLA) declaring that you have
