@@ -34,6 +34,7 @@ class AnalyzeSampleAsync(object):
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         from azure.ai.textanalytics import (
             RecognizeEntitiesAction,
+            RecognizeLinkedEntitiesAction,
             RecognizePiiEntitiesAction,
             ExtractKeyPhrasesAction,
             AnalyzeBatchActionsType
@@ -63,7 +64,8 @@ class AnalyzeSampleAsync(object):
                 actions=[
                     RecognizeEntitiesAction(),
                     RecognizePiiEntitiesAction(),
-                    ExtractKeyPhrasesAction()
+                    ExtractKeyPhrasesAction(),
+                    RecognizeLinkedEntitiesAction()
                 ]
             )
 
@@ -102,6 +104,24 @@ class AnalyzeSampleAsync(object):
                     for idx, doc in enumerate(action_result.document_results):
                         print("Document text: {}\n".format(documents[idx]))
                         print("Key Phrases: {}\n".format(doc.key_phrases))
+                        print("------------------------------------------")
+
+                if action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES:
+                    print("Results of Linked Entities Recognition action:")
+                    for idx, doc in enumerate(action_result.document_results):
+                        print("Document text: {}\n".format(documents[idx]))
+                        for linked_entity in doc.entities:
+                            print("Entity name: {}".format(linked_entity.name))
+                            print("...Data source: {}".format(linked_entity.data_source))
+                            print("...Data source language: {}".format(linked_entity.language))
+                            print("...Data source entity ID: {}".format(linked_entity.data_source_entity_id))
+                            print("...Data source URL: {}".format(linked_entity.url))
+                            print("...Document matches:")
+                            for match in linked_entity.matches:
+                                print("......Match text: {}".format(match.text))
+                                print(".........Confidence Score: {}".format(match.confidence_score))
+                                print(".........Offset: {}".format(match.offset))
+                                print(".........Length: {}".format(match.length))
                         print("------------------------------------------")
 
         # [END analyze_async]

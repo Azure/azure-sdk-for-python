@@ -1362,6 +1362,7 @@ class AnalyzeBatchActionsType(str, Enum):
     RECOGNIZE_ENTITIES = "recognize_entities"  #: Entities Recognition action.
     RECOGNIZE_PII_ENTITIES = "recognize_pii_entities"  #: PII Entities Recognition action.
     EXTRACT_KEY_PHRASES = "extract_key_phrases"  #: Key Phrase Extraction action.
+    RECOGNIZE_LINKED_ENTITIES = "recognize_linked_entities" #: Linked Entities Recognition action.
 
 
 class AnalyzeBatchActionsResult(DictMixin):
@@ -1377,20 +1378,24 @@ class AnalyzeBatchActionsResult(DictMixin):
     :vartype action_type: str or ~azure.ai.textanalytics.AnalyzeBatchActionsType
     :ivar ~datetime.datetime completed_on: Date and time (UTC) when the result completed
         on the service.
+    :ivar statistics: Overall statistics for the action result.
+    :vartype statistics: ~azure.ai.RequestStatistics
     """
     def __init__(self, **kwargs):
         self.document_results = kwargs.get("document_results")
         self.is_error = False
         self.action_type = kwargs.get("action_type")
         self.completed_on = kwargs.get("completed_on")
+        self.statistics = kwargs.get("statistics")
 
     def __repr__(self):
-        return "AnalyzeBatchActionsResult(document_results={}, is_error={}, action_type={}, completed_on={})" \
-            .format(
+        return "AnalyzeBatchActionsResult(document_results={}, is_error={}, action_type={}, completed_on={}, " \
+            "statistics={})".format(
                 repr(self.document_results),
                 self.is_error,
                 self.action_type,
-                self.completed_on
+                self.completed_on,
+                repr(self.statistics)
             )[:1024]
 
 class AnalyzeBatchActionsError(DictMixin):
@@ -1527,6 +1532,44 @@ class ExtractKeyPhrasesAction(DictMixin):
             )
         )
 
+
+class RecognizeLinkedEntitiesAction(DictMixin):
+    """RecognizeEntitiesAction encapsulates the parameters for starting a long-running Linked Entities
+    Recognition operation.
+
+    If you just want to recognize linked entities in a list of documents, and not perform a batch
+    of long running actions on the input of documents, call method `recognize_linked_entities` instead
+    of interfacing with this model.
+
+    :keyword str model_version: The model version to use for the analysis.
+    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    """
+
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", "latest")
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+
+    def __repr__(self, **kwargs):
+        return "RecognizeLinkedEntitiesAction(model_version={}, string_index_type={})" \
+            .format(self.model_version, self.string_index_type)[:1024]
+
+    def to_generated(self):
+        return _latest_preview_models.EntityLinkingTask(
+            parameters=_latest_preview_models.EntityLinkingTaskParameters(
+                model_version=self.model_version,
+                string_index_type=self.string_index_type
+            )
+        )
+
+
 class RequestStatistics(DictMixin):
     def __init__(self, **kwargs):
         self.documents_count = kwargs.get("documents_count")
@@ -1544,8 +1587,8 @@ class RequestStatistics(DictMixin):
         )
 
     def __repr__(self, **kwargs):
-        return "RequestStatistics(documents_count={}, valid_documents_count={}, erroneous_documents_count={}, \
-            transactions_count={}".format(
+        return "RequestStatistics(documents_count={}, valid_documents_count={}, erroneous_documents_count={}, " \
+            "transactions_count={})".format(
                 self.documents_count,
                 self.valid_documents_count,
                 self.erroneous_documents_count,

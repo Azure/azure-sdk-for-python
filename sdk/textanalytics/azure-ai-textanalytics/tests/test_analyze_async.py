@@ -23,6 +23,7 @@ from azure.ai.textanalytics import (
     VERSION,
     TextAnalyticsApiVersion,
     RecognizeEntitiesAction,
+    RecognizeLinkedEntitiesAction,
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
     AnalyzeBatchActionsType
@@ -83,7 +84,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 self.assertIn("Bill Gates", doc.key_phrases)
                 self.assertIn("Microsoft", doc.key_phrases)
                 self.assertIsNotNone(doc.id)
-                #self.assertIsNotNone(doc.statistics)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -115,7 +115,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             for doc in action_result.document_results:
                 self.assertEqual(len(doc.entities), 4)
                 self.assertIsNotNone(doc.id)
-                # self.assertIsNotNone(doc.statistics)
                 for entity in doc.entities:
                     self.assertIsNotNone(entity.text)
                     self.assertIsNotNone(entity.category)
@@ -158,7 +157,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             # self.assertEqual(action_result.document_results[2].entities[0].category, "Brazil CPF Number")
             for doc in action_result.document_results:
                 self.assertIsNotNone(doc.id)
-                # self.assertIsNotNone(doc.statistics)
                 for entity in doc.entities:
                     self.assertIsNotNone(entity.text)
                     self.assertIsNotNone(entity.category)
@@ -196,6 +194,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     RecognizePiiEntitiesAction(),
                     ExtractKeyPhrasesAction(),
                     RecognizePiiEntitiesAction(model_version="bad"),
+                    RecognizeLinkedEntitiesAction()
                 ],
                 polling_interval=self._interval()
             )).result()
@@ -204,12 +203,13 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async for p in response:
                 action_results.append(p)
 
-            assert len(action_results) == 3
+            assert len(action_results) == 4
             action_result = action_results[0]
 
             assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
             assert action_results[1].action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
             assert action_results[2].is_error
+            assert action_results[3].action_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
             assert all([action_result for action_result in action_results if not action_result.is_error and len(action_result.document_results) == len(docs)])
 
             for action_result in action_results:
@@ -340,7 +340,8 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 actions=[
                     RecognizeEntitiesAction(model_version="latest"),
                     ExtractKeyPhrasesAction(model_version="latest"),
-                    RecognizePiiEntitiesAction(model_version="latest")
+                    RecognizePiiEntitiesAction(model_version="latest"),
+                    RecognizeLinkedEntitiesAction(model_version="latest")
                 ],
                 show_stats=True,
                 polling_interval=self._interval()
@@ -349,17 +350,18 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             action_results = []
             async for p in response:
                 action_results.append(p)
-            assert len(action_results) == 3
+            assert len(action_results) == 4
             assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
             assert action_results[1].action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
             assert action_results[2].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+            assert action_results[3].action_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
 
             assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
 
-            # self.assertEqual(results.statistics.document_count, 5)
-            # self.assertEqual(results.statistics.transaction_count, 4)
-            # self.assertEqual(results.statistics.valid_document_count, 4)
-            # self.assertEqual(results.statistics.erroneous_document_count, 1)
+            for action_result in action_results:
+                assert action_result.statistics
+                for doc in action_result.document_results:
+                    assert doc.statistics
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -573,7 +575,8 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 actions=[
                     RecognizeEntitiesAction(model_version="latest"),
                     ExtractKeyPhrasesAction(model_version="bad"),
-                    RecognizePiiEntitiesAction(model_version="bad")
+                    RecognizePiiEntitiesAction(model_version="bad"),
+                    RecognizeLinkedEntitiesAction(model_version="bad")
                 ],
                 polling_interval=self._interval()
             )).result()
@@ -588,6 +591,8 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert action_results[1].error.code == "InvalidRequest"
             assert action_results[2].is_error == True
             assert action_results[2].error.code == "InvalidRequest"
+            assert action_results[3].is_error == True
+            assert action_results[3].error.code == "InvalidRequest"
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
