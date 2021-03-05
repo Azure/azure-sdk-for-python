@@ -344,7 +344,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def begin_recognize_id_documents(
-        self, id_document, **kwargs: Any
+        self, id_document: Union[bytes, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given ID document.
         The input document must be of one of the supported content types - 'application/pdf',
