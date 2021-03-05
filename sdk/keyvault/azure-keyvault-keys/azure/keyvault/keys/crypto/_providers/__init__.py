@@ -8,22 +8,28 @@ from .ec import EllipticCurveCryptographyProvider
 from .local_provider import LocalCryptographyProvider
 from .rsa import RsaCryptographyProvider
 from .symmetric import SymmetricCryptographyProvider
-from ... import KeyType
+from ... import JsonWebKey, KeyType
 
 if TYPE_CHECKING:
+    from typing import Union
     from ... import KeyVaultKey
 
 
 def get_local_cryptography_provider(key):
-    # type: (KeyVaultKey) -> LocalCryptographyProvider
-    if key.key_type in (KeyType.ec, KeyType.ec_hsm):
+    # type: (Union[JsonWebKey, KeyVaultKey]) -> LocalCryptographyProvider
+    if isinstance(key, JsonWebKey):
+        key_type = key.kty
+    else:
+        key_type = key.key_type
+
+    if key_type in (KeyType.ec, KeyType.ec_hsm):
         return EllipticCurveCryptographyProvider(key)
-    if key.key_type in (KeyType.rsa, KeyType.rsa_hsm):
+    if key_type in (KeyType.rsa, KeyType.rsa_hsm):
         return RsaCryptographyProvider(key)
-    if key.key_type in (KeyType.oct, KeyType.oct_hsm):
+    if key_type in (KeyType.oct, KeyType.oct_hsm):
         return SymmetricCryptographyProvider(key)
 
-    raise ValueError('Unsupported key type "{}"'.format(key.key_type))
+    raise ValueError('Unsupported key type "{}"'.format(key_type))
 
 
 class NoLocalCryptography(LocalCryptographyProvider):

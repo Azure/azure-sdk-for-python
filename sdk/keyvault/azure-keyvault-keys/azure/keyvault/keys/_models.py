@@ -245,8 +245,7 @@ class KeyVaultKey(object):
 
     def __init__(self, key_id, jwk=None, **kwargs):
         # type: (str, Optional[dict], **Any) -> None
-        if not kwargs.pop("_local_only", False):
-            self._properties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)
+        self._properties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)
         if isinstance(jwk, dict):
             if any(field in kwargs for field in JsonWebKey._FIELDS):  # pylint:disable=protected-access
                 raise ValueError(

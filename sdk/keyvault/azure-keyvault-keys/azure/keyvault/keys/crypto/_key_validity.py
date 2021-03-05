@@ -7,7 +7,8 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from .. import KeyVaultKey
+    from typing import Union
+    from .. import JsonWebKey, KeyVaultKey
 
 
 class _UTC_TZ(tzinfo):
@@ -29,7 +30,7 @@ _UTC = _UTC_TZ()
 
 
 def raise_if_time_invalid(key):
-    # type: (KeyVaultKey) -> None
+    # type: (Union[JsonWebKey, KeyVaultKey]) -> None
     try:
         nbf = key.properties.not_before
         exp = key.properties.expires_on

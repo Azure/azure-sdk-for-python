@@ -63,8 +63,8 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             self._key_id = parse_key_vault_id(key)
             self._keys_get_forbidden = None  # type: Optional[bool]
         elif self._jwk:
-            self._key_id = key.get("kid", "")
-            self._key = KeyVaultKey(None, jwk=key, _local_only=True)
+            self._key = key
+            self._key_id = key.kid
         else:
             raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
 
@@ -78,8 +78,10 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         super().__init__(vault_url=vault_url, credential=credential, **kwargs)
 
     @property
-    def key_id(self) -> str:
+    def key_id(self) -> "Optional[str]":
         """The full identifier of the client's key.
+
+        This property may be None when a client is constructed with `CryptographyClient.from_jwk`.
 
         :rtype: str
         """
@@ -103,9 +105,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             :dedent: 8
         """
         if isinstance(jwk, JsonWebKey):
-            key = vars(jwk)
-        else:
             key = jwk
+        else:
+            key = JsonWebKey(**jwk)
         return cls(key, object(), _jwk=True)
 
     @distributed_trace_async
