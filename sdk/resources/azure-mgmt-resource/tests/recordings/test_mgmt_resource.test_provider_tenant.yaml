@@ -9,7 +9,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/16.1.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/providers/Microsoft.Web?api-version=2020-10-01
   response:
@@ -329,7 +330,7 @@ interactions:
         Southeast","Korea South","Canada Central","West Europe","South India","West
         Central US","East Asia (Stage)","North Central US (Stage)","East US 2 EUAP","Central
         US EUAP"],"apiVersions":["2020-10-01","2020-09-01","2020-06-01","2019-08-01","2019-02-01","2018-11-01","2018-08-01","2018-02-01","2017-08-01","2016-09-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-09-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"kubeEnvironments","locations":["North
-        Central US (Stage)"],"apiVersions":["2020-10-01","2020-09-01","2020-06-01","2019-08-01","2019-02-01","2019-01-01","2018-11-01","2018-08-01","2018-05-01-preview","2018-02-01","2017-08-01","2016-09-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-09-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}],"capabilities":"SupportsTags,
+        Central US (Stage)","Central US EUAP"],"apiVersions":["2020-06-01","2019-08-01","2019-02-01","2019-01-01","2018-11-01","2018-08-01","2018-05-01-preview","2018-02-01","2017-08-01","2016-09-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-09-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}],"capabilities":"SupportsTags,
         SupportsLocation"},{"resourceType":"deploymentLocations","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
@@ -445,66 +446,66 @@ interactions:
         (Stage)","Central US (Stage)","North Central US (Stage)","France Central"],"apiVersions":["2017-12-01","2017-04-01","2015-11-01-rc","2015-11-01-preview"],"capabilities":"None"},{"resourceType":"connections","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Brazil Southeast","Central US EUAP","East US 2 EUAP","Australia
-        East","Australia Southeast","South India","Central India","West India","West
+        East","Brazil South","Central US EUAP","East US 2 EUAP","Australia East","Brazil
+        Southeast","Australia Southeast","South India","Central India","West India","West
         US 2","West Central US","Canada Central","Canada East","UK South","UK West","France
         Central","France South","Korea Central","Korea South","South Africa West","South
         Africa North","UAE Central","UAE North","Switzerland North","Switzerland West","Norway
         East","Germany North","Germany West Central"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"SupportsTags,
         SupportsLocation"},{"resourceType":"customApis","locations":["North Central
         US","Central US","South Central US","North Europe","West Europe","East Asia","Southeast
-        Asia","West US","East US","East US 2","Japan West","Japan East","Brazil South","Brazil
-        Southeast","Central US EUAP","East US 2 EUAP","Australia East","Australia
-        Southeast","South India","Central India","West India","West US 2","West Central
-        US","Canada Central","Canada East","UK South","UK West","France Central","France
-        South","Korea Central","Korea South","South Africa West","South Africa North","UAE
-        Central","UAE North","Switzerland North","Switzerland West","Norway East","Germany
-        North","Germany West Central"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"SupportsTags,
+        Asia","West US","East US","East US 2","Japan West","Japan East","Brazil South","Central
+        US EUAP","East US 2 EUAP","Australia East","Brazil Southeast","Australia Southeast","South
+        India","Central India","West India","West US 2","West Central US","Canada
+        Central","Canada East","UK South","UK West","France Central","France South","Korea
+        Central","Korea South","South Africa West","South Africa North","UAE Central","UAE
+        North","Switzerland North","Switzerland West","Norway East","Germany North","Germany
+        West Central"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"SupportsTags,
         SupportsLocation"},{"resourceType":"locations","locations":[],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/listWsdlInterfaces","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Brazil Southeast","Central US EUAP","East US 2 EUAP","Australia
-        East","Australia Southeast","South India","Central India","West India","West
+        East","Brazil South","Central US EUAP","East US 2 EUAP","Australia East","Australia
+        Southeast","Brazil Southeast","South India","Central India","West India","West
         US 2","West Central US","Canada Central","Canada East","UK South","UK West","France
         Central","France South","Korea Central","Korea South","South Africa West","South
         Africa North","UAE Central","UAE North","Switzerland North","Switzerland West","Norway
         East","Germany North","Germany West Central"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/extractApiDefinitionFromWsdl","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Brazil Southeast","Central US EUAP","East US 2 EUAP","Australia
-        East","Australia Southeast","South India","Central India","West India","West
+        East","Brazil South","Central US EUAP","East US 2 EUAP","Australia East","Australia
+        Southeast","Brazil Southeast","South India","Central India","West India","West
         US 2","West Central US","Canada Central","Canada East","UK South","UK West","France
         Central","France South","Korea Central","Korea South","South Africa West","South
         Africa North","UAE Central","UAE North","Switzerland North","Switzerland West","Norway
         East","Germany North","Germany West Central"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/managedApis","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Brazil Southeast","Central US EUAP","East US 2 EUAP","Australia
-        East","Australia Southeast","South India","Central India","West India","West
+        East","Brazil South","Central US EUAP","East US 2 EUAP","Australia East","Brazil
+        Southeast","Australia Southeast","South India","Central India","West India","West
         US 2","West Central US","Canada Central","Canada East","UK South","UK West","France
         Central","France South","Korea Central","Korea South","South Africa West","South
         Africa North","UAE Central","UAE North","Switzerland North","Switzerland West","Norway
         East","Germany North","Germany West Central"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/runtimes","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Brazil Southeast","Central US EUAP","East US 2 EUAP","Australia
-        East","Australia Southeast","South India","Central India","West India","West
+        East","Brazil South","Central US EUAP","East US 2 EUAP","Australia East","Australia
+        Southeast","Brazil Southeast","South India","Central India","West India","West
         US 2","West Central US","Canada Central","Canada East","UK South","UK West","France
         Central","France South","Korea Central","Korea South","South Africa West","South
         Africa North","UAE Central","UAE North","Switzerland North","Switzerland West","Norway
         East","Germany North","Germany West Central"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/apiOperations","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Brazil Southeast","Central US EUAP","East US 2 EUAP","Australia
-        East","Australia Southeast","South India","Central India","West India","West
+        East","Brazil South","Central US EUAP","East US 2 EUAP","Australia East","Brazil
+        Southeast","Australia Southeast","South India","Central India","West India","West
         US 2","West Central US","Canada Central","Canada East","UK South","UK West","France
         Central","France South","Korea Central","Korea South","South Africa West","South
         Africa North","UAE Central","UAE North","Switzerland North","Switzerland West","Norway
         East","Germany North","Germany West Central"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"connectionGateways","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Brazil Southeast","Central US EUAP","East US 2 EUAP","Australia
-        East","Australia Southeast","South India","Central India","West India","West
+        East","Brazil South","Central US EUAP","East US 2 EUAP","Australia East","Australia
+        Southeast","Brazil Southeast","South India","Central India","West India","West
         US 2","West Central US","Canada Central","Canada East","UK South","UK West","France
         Central","France South","Korea Central","Korea South","South Africa West","South
         Africa North","UAE Central","UAE North","Switzerland North","Switzerland West","Norway
@@ -512,8 +513,8 @@ interactions:
         SupportsLocation"},{"resourceType":"locations/connectionGatewayInstallations","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Brazil Southeast","Central US EUAP","East US 2 EUAP","Australia
-        East","Australia Southeast","South India","Central India","West India","West
+        East","Brazil South","Central US EUAP","East US 2 EUAP","Australia East","Australia
+        Southeast","Brazil Southeast","South India","Central India","West India","West
         US 2","West Central US","Canada Central","Canada East","UK South","UK West","France
         Central","France South","Korea Central","Korea South","South Africa West","South
         Africa North","UAE Central","UAE North","Switzerland North","Switzerland West","Norway
@@ -621,11 +622,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '75514'
+      - '75506'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Feb 2021 06:44:37 GMT
+      - Fri, 05 Mar 2021 06:49:36 GMT
       expires:
       - '-1'
       pragma:
