@@ -133,7 +133,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 raise ValueError(
                     "'locale' is only available for API version V2_1_PREVIEW and up"
                 )
-        
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
@@ -142,8 +141,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             else:
                 raise ValueError(
                     "'pages' is only available for API version V2_1_PREVIEW and up"
-                )    
-
+                )
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream=receipt,
             content_type=content_type,
@@ -206,7 +204,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 raise ValueError(
                     "'locale' is only available for API version V2_1_PREVIEW and up"
                 )
-
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
@@ -215,8 +212,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             else:
                 raise ValueError(
                     "'pages' is only available for API version V2_1_PREVIEW and up"
-                )    
-
+                )
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
             include_text_details=include_field_elements,
@@ -636,9 +632,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
-        
-        pages = kwargs.pop("pages", None)
 
+        pages = kwargs.pop("pages", None)
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
@@ -648,7 +643,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 raise ValueError(
                     "'pages' is only available for API version V2_1_PREVIEW and up"
                 )
-        
         polling_interval = kwargs.pop(
             "polling_interval", self._client._config.polling_interval
         )
@@ -711,9 +705,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
-        
-        pages = kwargs.pop("pages", None)
 
+        pages = kwargs.pop("pages", None)
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if pages:
@@ -723,7 +716,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 raise ValueError(
                     "'pages' is only available for API version V2_1_PREVIEW and up"
                 )
-        
         polling_interval = kwargs.pop(
             "polling_interval", self._client._config.polling_interval
         )
