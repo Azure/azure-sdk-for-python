@@ -1,5 +1,12 @@
 # Release History
 
+## 12.1.0 (2021-03-05)
+
+**Features**
+
+  - Model ManagedServiceIdentity has a new parameter tenant_id
+  - Added operation group PolicyExemptionsOperations
+
 ## 12.0.0 (2020-12-08)
 
 **Breaking changes**
