@@ -1410,10 +1410,6 @@ class RecognizePiiEntitiesAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
-    :keyword categories_filter: A list of specific PII entity categories to return.  If the value of `domain_filter`
-        is also set, the result will contain entities in the intersection of `domain_filter` and the items in
-        `categories_filter`.
-    :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
@@ -1421,10 +1417,6 @@ class RecognizePiiEntitiesAction(DictMixin):
     :ivar str model_version: The model version to use for the analysis.
     :ivar str domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
-    :ivar categories_filter: A list of specific PII entity categories to return.  If the value of `domain_filter`
-        is also set, the result will contain entities in the intersection of `domain_filter` and the list
-        `categories_filter`.
-    :vartype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
@@ -1435,15 +1427,12 @@ class RecognizePiiEntitiesAction(DictMixin):
         self.model_version = kwargs.get("model_version", "latest")
         self.domain_filter = kwargs.get("domain_filter", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.categories_filter = kwargs.get("categories_filter", None)
 
     def __repr__(self, **kwargs):
-        return "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, string_index_type={}, " \
-        "categories_filter={})".format(
+        return "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, string_index_type={}".format(
             self.model_version,
             self.domain_filter,
-            self.string_index_type,
-            self.categories_filter
+            self.string_index_type
         )[:1024]
 
     def to_generated(self):

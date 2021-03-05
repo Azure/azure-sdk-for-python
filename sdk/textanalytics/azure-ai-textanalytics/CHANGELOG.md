@@ -11,7 +11,6 @@
 **New Features**
 
 - Added parameter `categories_filter` to the `recognize_pii_entities` client method.
-- Added `categries_filter` property to class `RecognizePiiEntitiesAction`.
 - Added enum `PiiEntityCategoryType`.
 - Add property `normalized_text` to `HealthcareEntity`. This property is a normalized version of the `text` property that already
 exists on the `HealthcareEntity`
