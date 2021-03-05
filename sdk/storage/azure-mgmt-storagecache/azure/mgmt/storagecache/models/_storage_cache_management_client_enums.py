@@ -102,6 +102,14 @@ class UsernameDownloadedType(str, Enum):
     error = "Error"
 
 
+class StorageTargetType(str, Enum):
+
+    nfs3 = "nfs3"
+    clfs = "clfs"
+    unknown = "unknown"
+    blob_nfs = "blobNfs"
+
+
 class ReasonCode(str, Enum):
 
     quota_id = "QuotaId"
