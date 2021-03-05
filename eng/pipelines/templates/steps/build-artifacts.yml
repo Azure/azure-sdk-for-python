@@ -23,8 +23,8 @@ steps:
       inputs:
         pwsh: true
         workingDirectory: $(Build.SourcesDirectory)
-        filePath: eng/scripts/SetTestPipelineVersion.ps1
-        arguments: '-BuildID $(Build.BuildId)'
+        filePath: eng/common/scripts/SetTestPipelineVersion.ps1
+        arguments: '-BuildID $(Build.BuildId) -PackageName "azure-template" -ServiceDirectory "template"'
 
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
