@@ -23,7 +23,6 @@ from azure.ai.textanalytics import (
     VERSION,
     TextAnalyticsApiVersion,
     HealthcareEntityRelationType,
-    EntityCertainty,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below

@@ -21,7 +21,6 @@ from azure.ai.textanalytics import (
     TextAnalyticsApiVersion,
     HealthcareEntityRelationType,
     HealthcareEntityRelationRoleType,
-    EntityCertainty,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below

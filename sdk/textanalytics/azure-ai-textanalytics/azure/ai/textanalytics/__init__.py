@@ -47,9 +47,6 @@ from ._models import (
 from ._paging import AnalyzeHealthcareEntitiesResult
 from ._generated.v3_1_preview_4.models import (
     RelationType as HealthcareEntityRelationType,
-    Association as EntityAssociation,
-    Certainty as EntityCertainty,
-    Conditionality as EntityConditionality,
 )
 
 __all__ = [
@@ -92,9 +89,6 @@ __all__ = [
     "AnalyzeBatchActionsError",
     "HealthcareEntityRelationType",
     "HealthcareEntityRelationRoleType",
-    "EntityAssociation",
-    "EntityCertainty",
-    "EntityConditionality",
 ]
 
 __version__ = VERSION

@@ -575,19 +575,18 @@ class HealthcareEntityAssertion(DictMixin):
     Are the doctors 'certain' about this diagnosis? Is this diagnosis 'associated'
     with another diagnosis?
 
-    :ivar conditionality: Describes whether the healthcare entity it's on is conditional on another entity.
+    :ivar str conditionality: Describes whether the healthcare entity it's on is conditional on another entity.
         For example, "If the patient has a fever, he has pneumonia", the diagnosis of pneumonia
-        is 'conditional' on whether the patient has a fever.
-    :vartype conditionality: str or ~azure.ai.textanalytics.EntityConditionality
-    :ivar certainty: Describes how certain the healthcare entity it's on is. For example,
+        is 'conditional' on whether the patient has a fever. Possible values are "hypothetical" and
+        "conditional".
+    :ivar str certainty: Describes how certain the healthcare entity it's on is. For example,
         in "The patient may have a fever", the fever entity is not 100% certain, but is instead
-        "PositivePossible".
-    :vartype certainty: str or ~azure.ai.textanalytics.EntityCertainty
-    :ivar association: Describes whether the healthcare entity it's on is the subject of the document, or
+        "positivePossible". Possible values are "positive", "positivePossible", "neutralPossible",
+        "negativePossible", and "negative".
+    :ivar str association: Describes whether the healthcare entity it's on is the subject of the document, or
         if this entity describes someone else in the document. For example, in "The subject's mother has
         a fever", the "fever" entity is not associated with the subject themselves, but with the subject's
-        mother.
-    :vartype association: str or ~azure.ai.textanalytics.EntityAssociation
+        mother. Possible values are "subject" and "other".
     """
 
     def __init__(self, **kwargs):
