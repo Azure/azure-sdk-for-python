@@ -8,9 +8,9 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling, OperationFailed, BadStatus
 
-_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallysucceeded"])
+_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted"])
 _FAILED = frozenset(["failed"])
-_SUCCEEDED = frozenset(["succeeded", "partiallysucceeded"])
+_SUCCEEDED = frozenset(["succeeded", "partiallycompleted"])
 
 
 class TextAnalyticsOperationResourcePolling(OperationResourcePolling):

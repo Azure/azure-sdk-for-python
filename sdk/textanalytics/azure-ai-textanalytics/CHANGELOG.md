@@ -9,7 +9,7 @@
 - Renamed classes `AspectSentiment` and `OpinionSentiment` to `TargetSentiment` and `AssessmentSentiment` respectively.
 
 **New Features**
-
+- Added `RecognizeLinkedEntitiesAction` as a supported action type for `begin_analyze_batch_actions`.
 - Added parameter `categories_filter` to the `recognize_pii_entities` client method.
 - Added enum `PiiEntityCategoryType`.
 - Add property `normalized_text` to `HealthcareEntity`. This property is a normalized version of the `text` property that already
