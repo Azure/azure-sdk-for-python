@@ -288,7 +288,7 @@ class StorageAccountHostsMixin(object):
             *reqs, policies=policies, boundary="changeset_{}".format(uuid4())
         )
         request = self._client._client.post(  # pylint: disable=protected-access
-            url="https://{}/$batch".format(self._primary_hostname),
+            url=self._format_batch_url(),
             headers={
                 "x-ms-version": self.api_version,
                 "DataServiceVersion": "3.0",
@@ -337,6 +337,16 @@ class StorageAccountHostsMixin(object):
                     parts=parts,
                 )
         return transaction_result
+
+    def _format_batch_url(self):
+        # type: (...) -> str
+        base = "https://{}/$batch".format(self._primary_hostname)
+        if isinstance(self._credential_policy, AzureSasCredentialPolicy):
+            base = "https://{}/{}$batch".format(
+                self._primary_hostname,
+                self.credential
+            )
+        return base
 
     def _parameter_filter_substitution(  # pylint: disable=no-self-use
             self,
