@@ -1,3 +1,8 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
 from azure_devtools.perfstress_tests import PerfStressTest
 from azure.identity import EnvironmentCredential
 from azure.identity.aio import EnvironmentCredential as AsyncEnvironmentCredential
