@@ -17,7 +17,7 @@ json_dict = {
     "subscriptionId": "...",
     "tenantId": "...",
     "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
-    "resourceManagerEndpointUrl": "https://management.azure.com/"
+    "resourceManagerEndpointUrl": "https://management.azure.com"
 }
 client = get_client_from_json_dict(KeyVaultManagementClient, json_dict)
 # Or, provide credentials from a JSON file:
@@ -41,13 +41,18 @@ credential = ClientSecretCredential(
     client_secret=json_dict["clientSecret"],
     authority=json_dict["activeDirectoryEndpointUrl"]
 )
-client = KeyVaultManagementClient(credential, json_dict["subscriptionId"])
+client = KeyVaultManagementClient(
+    credential,
+    json_dict["subscriptionId"],
+    base_url=json_dict["resourceManagerEndpointUrl"],
+    credential_scopes=["{}/.default".format(json_dict["resourceManagerEndpointUrl"])]
+)
 ```
 
 If storing credentials in a file, be sure to protect access to this file. Make certain that it's excluded by version
 control -- for example, by adding the credential file name to your project's `.gitignore` file.
 
-[client_from_json]: https://docs.microsoft.com/python/api/azure-common/azure.common.client_factory?view=azure-python#get-client-from-auth-file-client-class--auth-path-none----kwargs-
+[client_from_json]: https://docs.microsoft.com/python/api/azure-common/azure.common.client_factory?view=azure-python#get-client-from-json-dict-client-class--config-dict----kwargs-
 [client_from_auth_file]: https://docs.microsoft.com/python/api/azure-common/azure.common.client_factory?view=azure-python#get-client-from-auth-file-client-class--auth-path-none----kwargs-
 [client_secret_cred]: https://docs.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
 [json]: https://docs.python.org/3/library/json.html#json.load
