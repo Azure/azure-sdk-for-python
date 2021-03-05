@@ -1,0 +1,156 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "baseName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The base resource name."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "metadata": {
+                    "description": "The location of the resource. By default, this is the same as the resource group."
+                }
+            }
+        },
+        "testApplicationOid": {
+            "type": "string",
+            "metadata": {
+                "description": "The principal to assign the role to. This is application object id."
+            }
+        },
+        "tenantId": {
+            "type": "String",
+            "metadata": {
+                "description": "The tenant id to which the application and resources belong."
+            }
+        },
+        "testApplicationId": {
+            "type": "String",
+            "metadata": {
+                "description": "The application client id used to run tests."
+            }
+        },
+        "testApplicationSecret": {
+            "type": "String",
+            "metadata": {
+                "description": "The application client secret used to run tests."
+            }
+        },
+        "docTranslationEndpointSuffix": {
+            "defaultValue": ".cognitiveservices.azure.com/",
+            "type": "String"
+        },
+        "blobStorageAccount": {
+            "type": "string",
+            "defaultValue": "azuresdktrainingdata"
+        },
+        "trainingDataContainer": {
+            "type": "string",
+            "defaultValue": "trainingdata"
+        },
+        "trainingDataSasProperties": {
+            "type": "object",
+            "defaultValue": {
+                "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('trainingDataContainer'))]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
+                "signedPermission": "rl",
+                "signedResource": "c"
+            }
+        }
+    },
+    "variables": {
+        "authorizationApiVersion": "2018-09-01-preview",
+        "docTranslationBaseName": "[concat('documenttranslation', parameters('baseName'))]",
+        "docTranslationApiVersion": "2017-04-18",
+        "storageMgmtApiVersion": "2019-04-01",
+        "storageAccountName": "[concat(parameters('baseName'), 'docs')]",
+        "containerName": "[concat(parameters('baseName'), 'mycontainer')]",
+        "location": "[resourceGroup().location]",
+        "azureDocTranslationUrl": "[concat('https://', variables('docTranslationBaseName'), parameters('docTranslationEndpointSuffix'))]",
+        "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "[variables('authorizationApiVersion')]",
+            "name": "[guid(concat(variables('cognitiveServiceUserRoleId'), variables('docTranslationBaseName')))]",
+            "dependsOn": [
+                "[variables('docTranslationBaseName')]"
+            ],
+            "properties": {
+                "principalId": "[parameters('testApplicationOid')]",
+                "roleDefinitionId": "[variables('cognitiveServiceUserRoleId')]"
+            }
+        },
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "name": "[variables('docTranslationBaseName')]",
+            "apiVersion": "[variables('docTranslationApiVersion')]",
+            "sku": {
+                "name": "S0"
+            },
+            "kind": "TextTranslation",
+            "location": "[parameters('location')]",
+            "properties": {
+                "customSubDomainName": "[variables('docTranslationBaseName')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "[variables('storageMgmtApiVersion')]",
+            "name": "[variables('storageAccountName')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard_RAGRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "networkAcls": "[variables('networkAcls')]",
+                "supportsHttpsTrafficOnly": true,
+                "encryption": "[variables('encryption')]",
+                "accessTier": "Cool"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "[variables('storageMgmtApiVersion')]",
+            "name": "[concat(variables('storageAccountName'), '/default/', variables('containerName'))]",
+            "dependsOn": [
+                "[variables('storageAccountName')]"
+            ]
+        }
+    ],
+    "outputs": {
+        "AZURE_TENANT_ID": {
+            "type": "String",
+            "value": "[parameters('tenantId')]"
+        },
+        "AZURE_CLIENT_ID": {
+            "type": "String",
+            "value": "[parameters('testApplicationId')]"
+        },
+        "AZURE_CLIENT_SECRET": {
+            "type": "String",
+            "value": "[parameters('testApplicationSecret')]"
+        },
+        "DOCTRANSLATION_NAME": {
+            "type": "string",
+            "value": "[variables('docTranslationBaseName')]"
+        },
+        "DOCTRANSLATION_TEST_API_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('docTranslationBaseName')), variables('docTranslationApiVersion')).key1]"
+        },
+        "DOCTRANSLATION_TEST_ENDPOINT": {
+            "type": "string",
+            "value": "[variables('azureDocTranslationUrl')]"
+        }
+    }
+}
