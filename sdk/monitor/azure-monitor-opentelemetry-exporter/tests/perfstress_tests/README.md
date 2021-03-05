@@ -35,7 +35,7 @@ These options are available for all perf tests:
 
 ### MonitorExporter Test options
 These options are available for all monitor exporter perf tests:
-- `--num-traces` Number of traces to be collected. Defaults to 1.
+- `--num-spans` Number ofspans to be exported. Defaults to 10.
 
 ### T2 Tests
 The tests currently written for the T2 SDK:
@@ -43,5 +43,5 @@ The tests currently written for the T2 SDK:
 
 ## Example command
 ```cmd
-(env) ~/azure-monitor-opentelemetry-exporter/tests> perfstress MonitorExporterPerfTest --sync --num-traces=10
+(env) ~/azure-monitor-opentelemetry-exporter/tests> perfstress MonitorExporterPerfTest --sync --num-spans=10
 ```
