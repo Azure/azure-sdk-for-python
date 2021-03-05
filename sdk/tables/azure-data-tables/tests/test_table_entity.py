@@ -29,6 +29,7 @@ from azure.data.tables import (
 )
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -1637,7 +1638,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
@@ -1669,7 +1670,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
 
@@ -1704,7 +1705,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             entity = self._create_random_entity_dict(u'test', u'test1')
@@ -1737,7 +1738,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             with pytest.raises(HttpResponseError):
@@ -1768,7 +1769,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             updated_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
@@ -1801,7 +1802,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             table.delete_entity(entity.PartitionKey, entity.RowKey)
@@ -1835,7 +1836,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
@@ -1875,7 +1876,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
-                credential=token,
+                credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(

@@ -16,6 +16,7 @@ import uuid
 from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
@@ -34,6 +35,7 @@ from azure.data.tables import (
     UpdateMode,
     generate_table_sas,
     TableSasPermissions,
+    TableClient
 )
 
 from _shared.testcase import TableTestCase
@@ -854,6 +856,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @pytest.mark.live_test_only
     @TablesPreparer()
     def test_batch_sas_auth(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -864,10 +867,11 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
                 tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
-                permission=TableSasPermissions(add=True),
+                permission=TableSasPermissions(add=True, read=True, update=True, delete=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
                 start=datetime.utcnow() - timedelta(minutes=1),
             )
+            token = AzureSasCredential(token)
 
             # Act
             service = TableServiceClient(
@@ -900,8 +904,6 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             assert total_entities == transaction_count
         finally:
             self._tear_down()
-
-
 
 
 
