@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/groups/fakeDeviceId/updateCompliance
+  response:
+    body:
+      string: "{\r\n  \"totalDeviceCount\": 1,\r\n  \"onLatestUpdateDeviceCount\":
+        0,\r\n  \"newUpdatesAvailableDeviceCount\": 1,\r\n  \"updatesInProgressDeviceCount\":
+        0\r\n}"
+    headers:
+      content-length:
+      - '142'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 18:10:25 GMT
+      traceparent:
+      - 00-df106ff640b0fd47877397812082e927-3ba9bb43a702bc49-00
+    status:
+      code: 200
+      message: OK
+version: 1

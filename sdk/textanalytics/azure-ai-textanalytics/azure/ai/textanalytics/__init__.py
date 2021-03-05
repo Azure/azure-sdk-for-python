@@ -46,7 +46,10 @@ from ._models import (
     HealthcareEntityRelationRoleType,
 )
 from ._paging import AnalyzeHealthcareEntitiesResult
-from ._generated.v3_1_preview_4.models import RelationType as HealthcareEntityRelationType
+from ._generated.v3_1_preview_4.models import (
+    PiiCategory as PiiEntityCategoryType,
+    RelationType as HealthcareEntityRelationType
+)
 
 __all__ = [
     'TextAnalyticsApiVersion',
@@ -87,6 +90,7 @@ __all__ = [
     'RequestStatistics',
     'AnalyzeBatchActionsType',
     "AnalyzeBatchActionsError",
+    "PiiEntityCategoryType",
     "HealthcareEntityRelationType",
     "HealthcareEntityRelationRoleType",
 ]

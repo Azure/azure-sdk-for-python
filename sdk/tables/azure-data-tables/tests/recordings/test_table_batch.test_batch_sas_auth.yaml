@@ -1,0 +1,242 @@
+interactions:
+- request:
+    body: '{"TableName": "uttabled4f0e8f"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '31'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 05 Mar 2021 16:54:43 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 05 Mar 2021 16:54:43 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.error":{"code":"TableAlreadyExists","message":{"lang":"en-US","value":"The
+        table specified already exists.\nRequestId:7fd90d5f-e002-003b-41e0-119f80000000\nTime:2021-03-05T16:54:43.1645315Z"}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Fri, 05 Mar 2021 16:54:42 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 409
+      message: Conflict
+- request:
+    body: "--batch_8e6535d9-ecdb-4f9f-8547-dfe348188540\r\nContent-Type: multipart/mixed;\
+      \ boundary=changeset_070b7ea2-9157-4ee4-8ce1-38b81ab0d4f6\r\n\r\n--changeset_070b7ea2-9157-4ee4-8ce1-38b81ab0d4f6\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 0\r\n\r\nPOST https://seankaneprim.table.core.windows.net/uttabled4f0e8f?st=2021-03-05T16%3A53%3A44Z&se=2021-03-05T17%3A54%3A44Z&sp=a&sv=2019-02-02&tn=uttabled4f0e8f&sig=TStgoQP%2FZDFaSw7JFX8lYcHHSbNXkWMaIejc8v7EGso%3D\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Fri, 05 Mar 2021 16:54:44 GMT\r\nDate: Fri, 05 Mar 2021 16:54:44 GMT\r\nx-ms-client-request-id:\
+      \ 7c64afbf-7dd3-11eb-ab63-002b67128e4c\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"0\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_070b7ea2-9157-4ee4-8ce1-38b81ab0d4f6\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 1\r\n\r\nPOST https://seankaneprim.table.core.windows.net/uttabled4f0e8f?st=2021-03-05T16%3A53%3A44Z&se=2021-03-05T17%3A54%3A44Z&sp=a&sv=2019-02-02&tn=uttabled4f0e8f&sig=TStgoQP%2FZDFaSw7JFX8lYcHHSbNXkWMaIejc8v7EGso%3D\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Fri, 05 Mar 2021 16:54:44 GMT\r\nDate: Fri, 05 Mar 2021 16:54:44 GMT\r\nx-ms-client-request-id:\
+      \ 7c64afc0-7dd3-11eb-8299-002b67128e4c\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"1\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_070b7ea2-9157-4ee4-8ce1-38b81ab0d4f6\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 2\r\n\r\nPOST https://seankaneprim.table.core.windows.net/uttabled4f0e8f?st=2021-03-05T16%3A53%3A44Z&se=2021-03-05T17%3A54%3A44Z&sp=a&sv=2019-02-02&tn=uttabled4f0e8f&sig=TStgoQP%2FZDFaSw7JFX8lYcHHSbNXkWMaIejc8v7EGso%3D\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Fri, 05 Mar 2021 16:54:44 GMT\r\nDate: Fri, 05 Mar 2021 16:54:44 GMT\r\nx-ms-client-request-id:\
+      \ 7c64d743-7dd3-11eb-a56b-002b67128e4c\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"2\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_070b7ea2-9157-4ee4-8ce1-38b81ab0d4f6\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 3\r\n\r\nPOST https://seankaneprim.table.core.windows.net/uttabled4f0e8f?st=2021-03-05T16%3A53%3A44Z&se=2021-03-05T17%3A54%3A44Z&sp=a&sv=2019-02-02&tn=uttabled4f0e8f&sig=TStgoQP%2FZDFaSw7JFX8lYcHHSbNXkWMaIejc8v7EGso%3D\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Fri, 05 Mar 2021 16:54:44 GMT\r\nDate: Fri, 05 Mar 2021 16:54:44 GMT\r\nx-ms-client-request-id:\
+      \ 7c65083f-7dd3-11eb-88e4-002b67128e4c\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"3\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_070b7ea2-9157-4ee4-8ce1-38b81ab0d4f6\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 4\r\n\r\nPOST https://seankaneprim.table.core.windows.net/uttabled4f0e8f?st=2021-03-05T16%3A53%3A44Z&se=2021-03-05T17%3A54%3A44Z&sp=a&sv=2019-02-02&tn=uttabled4f0e8f&sig=TStgoQP%2FZDFaSw7JFX8lYcHHSbNXkWMaIejc8v7EGso%3D\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Fri, 05 Mar 2021 16:54:44 GMT\r\nDate: Fri, 05 Mar 2021 16:54:44 GMT\r\nx-ms-client-request-id:\
+      \ 7c650840-7dd3-11eb-8f93-002b67128e4c\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"4\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_070b7ea2-9157-4ee4-8ce1-38b81ab0d4f6\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 5\r\n\r\nPOST https://seankaneprim.table.core.windows.net/uttabled4f0e8f?st=2021-03-05T16%3A53%3A44Z&se=2021-03-05T17%3A54%3A44Z&sp=a&sv=2019-02-02&tn=uttabled4f0e8f&sig=TStgoQP%2FZDFaSw7JFX8lYcHHSbNXkWMaIejc8v7EGso%3D\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Fri, 05 Mar 2021 16:54:44 GMT\r\nDate: Fri, 05 Mar 2021 16:54:44 GMT\r\nx-ms-client-request-id:\
+      \ 7c650841-7dd3-11eb-a3d0-002b67128e4c\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"5\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_070b7ea2-9157-4ee4-8ce1-38b81ab0d4f6\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 6\r\n\r\nPOST https://seankaneprim.table.core.windows.net/uttabled4f0e8f?st=2021-03-05T16%3A53%3A44Z&se=2021-03-05T17%3A54%3A44Z&sp=a&sv=2019-02-02&tn=uttabled4f0e8f&sig=TStgoQP%2FZDFaSw7JFX8lYcHHSbNXkWMaIejc8v7EGso%3D\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Fri, 05 Mar 2021 16:54:44 GMT\r\nDate: Fri, 05 Mar 2021 16:54:44 GMT\r\nx-ms-client-request-id:\
+      \ 7c653e76-7dd3-11eb-9358-002b67128e4c\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"6\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_070b7ea2-9157-4ee4-8ce1-38b81ab0d4f6\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 7\r\n\r\nPOST https://seankaneprim.table.core.windows.net/uttabled4f0e8f?st=2021-03-05T16%3A53%3A44Z&se=2021-03-05T17%3A54%3A44Z&sp=a&sv=2019-02-02&tn=uttabled4f0e8f&sig=TStgoQP%2FZDFaSw7JFX8lYcHHSbNXkWMaIejc8v7EGso%3D\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Fri, 05 Mar 2021 16:54:44 GMT\r\nDate: Fri, 05 Mar 2021 16:54:44 GMT\r\nx-ms-client-request-id:\
+      \ 7c653e77-7dd3-11eb-a991-002b67128e4c\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"7\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_070b7ea2-9157-4ee4-8ce1-38b81ab0d4f6\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 8\r\n\r\nPOST https://seankaneprim.table.core.windows.net/uttabled4f0e8f?st=2021-03-05T16%3A53%3A44Z&se=2021-03-05T17%3A54%3A44Z&sp=a&sv=2019-02-02&tn=uttabled4f0e8f&sig=TStgoQP%2FZDFaSw7JFX8lYcHHSbNXkWMaIejc8v7EGso%3D\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Fri, 05 Mar 2021 16:54:44 GMT\r\nDate: Fri, 05 Mar 2021 16:54:44 GMT\r\nx-ms-client-request-id:\
+      \ 7c653e78-7dd3-11eb-9906-002b67128e4c\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"8\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_070b7ea2-9157-4ee4-8ce1-38b81ab0d4f6\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 9\r\n\r\nPOST https://seankaneprim.table.core.windows.net/uttabled4f0e8f?st=2021-03-05T16%3A53%3A44Z&se=2021-03-05T17%3A54%3A44Z&sp=a&sv=2019-02-02&tn=uttabled4f0e8f&sig=TStgoQP%2FZDFaSw7JFX8lYcHHSbNXkWMaIejc8v7EGso%3D\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 223\r\nx-ms-date:\
+      \ Fri, 05 Mar 2021 16:54:44 GMT\r\nDate: Fri, 05 Mar 2021 16:54:44 GMT\r\nx-ms-client-request-id:\
+      \ 7c653e79-7dd3-11eb-81dd-002b67128e4c\r\n\r\n{\"PartitionKey\": \"batch_inserts\"\
+      , \"PartitionKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"\
+      value\", \"test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890,\
+      \ \"RowKey\": \"9\", \"RowKey@odata.type\": \"Edm.String\"}\r\n--changeset_070b7ea2-9157-4ee4-8ce1-38b81ab0d4f6--\r\
+      \n\r\n--batch_8e6535d9-ecdb-4f9f-8547-dfe348188540--\r\n"
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '9418'
+      Content-Type:
+      - multipart/mixed; boundary=batch_8e6535d9-ecdb-4f9f-8547-dfe348188540
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 05 Mar 2021 16:54:44 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 05 Mar 2021 16:54:44 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_table_account.table.core.windows.net/$batch
+  response:
+    body:
+      string: '<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code>ResourceNotFound</m:code><m:message
+        xml:lang="en-US">The specified resource does not exist.
+
+        RequestId:b6ba23cc-3002-005a-7ce0-11bcc3000000
+
+        Time:2021-03-05T16:54:44.0091854Z</m:message></m:error>'
+    headers:
+      content-length:
+      - '322'
+      content-type:
+      - application/xml
+      date:
+      - Fri, 05 Mar 2021 16:54:43 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ResourceNotFound
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 404
+      message: The specified resource does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 05 Mar 2021 16:54:45 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b5 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 05 Mar 2021 16:54:45 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttabled4f0e8f')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Fri, 05 Mar 2021 16:54:43 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+version: 1

@@ -289,20 +289,33 @@ def data_source():
     return model, model_repr
 
 @pytest.fixture
-def healthcare_entity(data_source):
+def healthcare_entity_assertion():
+    model = _models.HealthcareEntityAssertion(
+        conditionality="conditionality",
+        certainty="certainty",
+        association="association",
+    )
+    model_repr = "HealthcareEntityAssertion(conditionality=conditionality, certainty=certainty, association=association)"
+
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def healthcare_entity(data_source, healthcare_entity_assertion):
     model = _models.HealthcareEntity(
         text="Bonjour",
         normalized_text="Bonjour",
         category="MyCategory",
         subcategory="MySubcategory",
+        assertion=healthcare_entity_assertion[0],
         length=7,
         offset=12,
         confidence_score=0.95,
         data_sources=[data_source[0]],
     )
     model_repr = (
-        "HealthcareEntity(text=Bonjour, normalized_text=Bonjour, category=MyCategory, subcategory=MySubcategory, length=7, offset=12, " +
-        "confidence_score=0.95, data_sources=[{}])".format(data_source[1])
+        "HealthcareEntity(text=Bonjour, normalized_text=Bonjour, category=MyCategory, subcategory=MySubcategory, assertion={}, length=7, offset=12, "\
+        "confidence_score=0.95, data_sources=[{}])".format(healthcare_entity_assertion[1], data_source[1])
     )
 
     assert repr(model) == model_repr
@@ -511,4 +524,4 @@ class TestRepr():
             )
         )
 
-        assert repr(model) == model_repr
+        assert repr(model) == model_repr[:1024]

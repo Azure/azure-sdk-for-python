@@ -36,13 +36,13 @@ def test_certificate_credential(live_certificate):
     )
     get_token(credential)
 
-    credential = CertificateCredential(tenant_id, client_id, certificate_bytes=live_certificate["cert_bytes"])
+    credential = CertificateCredential(tenant_id, client_id, certificate_data=live_certificate["cert_bytes"])
     get_token(credential)
 
     credential = CertificateCredential(
         tenant_id,
         client_id,
-        certificate_bytes=live_certificate["cert_with_password_bytes"],
+        certificate_data=live_certificate["cert_with_password_bytes"],
         password=live_certificate["password"],
     )
     get_token(credential)

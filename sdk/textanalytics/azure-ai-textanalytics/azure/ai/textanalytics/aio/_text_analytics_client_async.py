@@ -299,6 +299,11 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
+        :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
+            the specific PII entity categories you want to filter out. For example, if you only want to filter out
+            U.S. social security numbers in a document, you can pass in
+            `[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
+        :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElements_v8'.
             For additional information see https://aka.ms/text-analytics-offsets
@@ -324,6 +329,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         domain_filter = kwargs.pop("domain_filter", None)
+        categories_filter = kwargs.pop("categories_filter", None)
 
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
@@ -339,6 +345,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 domain=domain_filter,
+                pii_categories=categories_filter,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
