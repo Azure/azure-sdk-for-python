@@ -234,7 +234,9 @@ class HttpRequest(object):
         self.multipart_mixed_info = None  # type: Optional[Tuple]
 
     def __repr__(self):
-        return "<HttpRequest [%s]>" % (self.method)
+        return "<HttpRequest [{}], url: '{}'>".format(
+            self.method, self.url
+        )
 
     def __deepcopy__(self, memo=None):
         try:
@@ -591,6 +593,15 @@ class _HttpResponseBase(object):
         """
         if self.status_code >= 400:
             raise HttpResponseError(response=self)
+
+    def __repr__(self):
+        # there doesn't have to be a content type
+        content_type_str = (
+            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        )
+        return "<{}: {} {}{}>".format(
+            type(self).__name__, self.status_code, self.reason, content_type_str
+        )
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method

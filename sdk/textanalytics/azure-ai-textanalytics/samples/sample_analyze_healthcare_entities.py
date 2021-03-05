@@ -45,7 +45,7 @@ class AnalyzeHealthcareEntitiesSample(object):
         # [START analyze_healthcare_entities]
         import os
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import TextAnalyticsClient, HealthcareEntityRelationType
+        from azure.ai.textanalytics import TextAnalyticsClient, HealthcareEntityRelationType, HealthcareEntityRelationRoleType
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
@@ -116,8 +116,8 @@ class AnalyzeHealthcareEntitiesSample(object):
         for relation in dosage_of_medication_relations:
             # The DosageOfMedication relation should only contain the dosage and medication roles
 
-            dosage_role = next(filter(lambda x: x.name == "Attribute", relation.roles))
-            medication_role = next(filter(lambda x: x.name == "Entity", relation.roles))
+            dosage_role = next(filter(lambda x: x.name == HealthcareEntityRelationRoleType.DOSAGE, relation.roles))
+            medication_role = next(filter(lambda x: x.name == HealthcareEntityRelationRoleType.MEDICATION, relation.roles))
 
             try:
                 dosage_value = int(re.findall(r"\d+", dosage_role.entity.text)[0]) # we find the numbers in the dosage
