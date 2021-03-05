@@ -5,7 +5,11 @@
 ### Features
 
 - Added `azure.core.messaging.CloudEvent` model that follows the cloud event spec.
-- Added `azure.core.serialization.NULL` sentinel value 
+- Added `azure.core.serialization.NULL` sentinel value
+
+### Bug Fixes
+
+- Disable retry in stream downloading. (thanks to @jochen-ott-by @hoffmann for the contribution)  #16723
 
 ## 1.11.0 (2021-02-08)
 
