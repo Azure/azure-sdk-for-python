@@ -520,7 +520,7 @@ async def test_local_only_mode_no_service_calls():
     """A local-only CryptographyClient shouldn't call the service if an operation can't be performed locally"""
 
     mock_client = mock.Mock()
-    jwk = mock.Mock(spec=JsonWebKey)
+    jwk = JsonWebKey()
     client = CryptographyClient.from_jwk(jwk=jwk)
     client._client = mock_client
 
