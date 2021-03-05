@@ -8,10 +8,10 @@ $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=con
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
   $allPackageProps = @()
-  $searchPath = "sdk/*/*/setup.py"
+  $searchPath = Join-Path sdk * * setup.py
   if ($serviceDirectory)
   {
-    $searchPath = "sdk/${serviceDirectory}/*/setup.py"
+    $searchPath = Join-Path sdk ${serviceDirectory} * setup.py
   }
 
   $allPkgPropLines = $null
@@ -19,7 +19,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   {
     Push-Location $RepoRoot
     pip install packaging==20.4 -q -I
-    $allPkgPropLines = python "eng\scripts\get_package_properties.py" -s $searchPath
+    $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
   }
   catch
   {

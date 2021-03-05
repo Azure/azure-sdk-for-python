@@ -1,6 +1,8 @@
 # Release History
 
-## 1.1.3 (Unreleased)
+## 1.1.3 (2021-03-09)
+
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
 
 **Bug fixes**
 - Updated vendor azure-storage-blob dependency to v12.7.1.

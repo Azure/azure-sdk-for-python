@@ -9,13 +9,14 @@
 import pytest
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 import sys
 
 from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
@@ -29,7 +30,9 @@ from azure.data.tables import (
     EntityProperty,
     EdmType,
     BatchTransactionResult,
-    BatchErrorException
+    BatchErrorException,
+    generate_table_sas,
+    TableSasPermissions
 )
 
 from _shared.asynctestcase import AsyncTableTestCase
@@ -760,5 +763,55 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             with pytest.raises(ResourceNotFoundError):
                 resp = await self.table.send_batch(batch)
 
+        finally:
+            await self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @pytest.mark.live_test_only
+    @TablesPreparer()
+    async def test_batch_sas_auth(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+
+            token = generate_table_sas(
+                tables_storage_account_name,
+                tables_primary_storage_account_key,
+                self.table_name,
+                permission=TableSasPermissions(add=True, read=True, update=True, delete=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start=datetime.utcnow() - timedelta(minutes=1),
+            )
+            token = AzureSasCredential(token)
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_storage_account_name, "table"),
+                credential=token,
+            )
+            table = service.get_table_client(self.table_name)
+
+            entity = TableEntity()
+            entity.PartitionKey = 'batch_inserts'
+            entity.test = EntityProperty(True)
+            entity.test2 = 'value'
+            entity.test3 = 3
+            entity.test4 = EntityProperty(1234567890)
+
+            batch = table.create_batch()
+            transaction_count = 0
+            for i in range(10):
+                entity.RowKey = str(i)
+                batch.create_entity(entity)
+                transaction_count += 1
+            transaction_result = await table.send_batch(batch)
+
+            assert transaction_result is not None
+
+            total_entities = 0
+            async for e in table.list_entities():
+                total_entities += 1
+
+            assert total_entities == transaction_count
         finally:
             await self._tear_down()
