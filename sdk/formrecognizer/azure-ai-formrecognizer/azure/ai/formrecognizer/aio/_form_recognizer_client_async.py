@@ -341,14 +341,14 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                     "API version V2_1_PREVIEW and up"
                 )
             raise e
-    
+
     @distributed_trace_async
     async def begin_recognize_id_documents(
         self, id_document, **kwargs: Any
     ) -> AsyncLROPoller[List[RecognizedForm]]:
-        """Extract field text and semantic values from a given ID document. 
-        The input document must be of one of the supported content types - 'application/pdf', 
-        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'. 
+        """Extract field text and semantic values from a given ID document.
+        The input document must be of one of the supported content types - 'application/pdf',
+        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
         Alternatively, use 'application/json' type to specify the location (Uri) of the
         document to be analyzed.
 
@@ -418,7 +418,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
     async def begin_recognize_id_documents_from_url(
         self, id_document_url: str, **kwargs: Any
     ) -> AsyncLROPoller[List[RecognizedForm]]:
-        """Extract field text and semantic values from a given ID document. 
+        """Extract field text and semantic values from a given ID document.
         The input document must be the location (URL) of the ID document to be analyzed.
 
         See fields found on an ID document here:

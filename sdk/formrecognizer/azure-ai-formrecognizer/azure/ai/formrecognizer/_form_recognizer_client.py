@@ -335,13 +335,13 @@ class FormRecognizerClient(FormRecognizerClientBase):
                     "only available for API version V2_1_PREVIEW and up"
                 )
             raise e
-    
+
     @distributed_trace
     def begin_recognize_id_documents(self, id_document, **kwargs):
         # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
-        """Extract field text and semantic values from a given ID document. 
-        The input document must be of one of the supported content types - 'application/pdf', 
-        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'. 
+        """Extract field text and semantic values from a given ID document.
+        The input document must be of one of the supported content types - 'application/pdf',
+        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
         Alternatively, use 'application/json' type to specify the location (Uri) of the
         document to be analyzed.
 
@@ -370,7 +370,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         .. versionadded:: v2.1-preview
             The *begin_recognize_id_documents* client method
-        
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_recognize_id_documents.py
@@ -406,11 +406,10 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 )
             raise e
 
-
     @distributed_trace
     def begin_recognize_id_documents_from_url(self, id_document_url, **kwargs):
         # type: (str, Any) -> LROPoller[List[RecognizedForm]]
-        """Extract field text and semantic values from a given ID document. 
+        """Extract field text and semantic values from a given ID document.
         The input document must be the location (URL) of the ID document to be analyzed.
 
         See fields found on an ID document here:
