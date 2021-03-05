@@ -80,7 +80,7 @@ setup(
     ]),
     install_requires=[
         "azure-core<2.0.0,>=1.8.2",
-        "msrest>=0.6.12",
+        "msrest>=0.6.21",
         'six>=1.11.0',
         'azure-common~=1.1',
     ],

@@ -2,6 +2,9 @@
 
 ## 3.1.0b4 (Unreleased)
 
+**Dependency Updates**
+
+- Bumped `msrest` requirement from `0.6.12` to `0.6.21`.
 
 ## 3.1.0b3 (2021-02-09)
 

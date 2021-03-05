@@ -92,13 +92,16 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword str locale: Locale of the receipt. Supported locales include: en-US, en-AU, en-CA, en-GB,
             and en-IN.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *locale* keyword argument and support for image/bmp content
+            The *locale* and *pages* keyword arguments and support for image/bmp content
 
         .. admonition:: Example:
 
@@ -110,6 +113,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 :caption: Recognize sales receipt fields.
         """
         locale = kwargs.pop("locale", None)
+        pages = kwargs.pop("pages", None)
         content_type = kwargs.pop("content_type", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
         if content_type == "application/json":
@@ -129,7 +133,15 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 raise ValueError(
                     "'locale' is only available for API version V2_1_PREVIEW and up"
                 )
-
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if pages:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"pages": pages})
+            else:
+                raise ValueError(
+                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream=receipt,
             content_type=content_type,
@@ -158,13 +170,16 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword str locale: Locale of the receipt. Supported locales include: en-US, en-AU, en-CA, en-GB,
             and en-IN.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *locale* keyword argument and support for image/bmp content
+            The *locale* and *pages* keyword arguments and support for image/bmp content
 
         .. admonition:: Example:
 
@@ -176,6 +191,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 :caption: Recognize sales receipt fields from a URL.
         """
         locale = kwargs.pop("locale", None)
+        pages = kwargs.pop("pages", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
         cls = kwargs.pop("cls", self._prebuilt_callback)
 
@@ -187,6 +203,15 @@ class FormRecognizerClient(FormRecognizerClientBase):
             else:
                 raise ValueError(
                     "'locale' is only available for API version V2_1_PREVIEW and up"
+                )
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if pages:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"pages": pages})
+            else:
+                raise ValueError(
+                    "'pages' is only available for API version V2_1_PREVIEW and up"
                 )
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
@@ -584,6 +609,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -605,6 +633,16 @@ class FormRecognizerClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
+        pages = kwargs.pop("pages", None)
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if pages:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"pages": pages})
+            else:
+                raise ValueError(
+                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
         polling_interval = kwargs.pop(
             "polling_interval", self._client._config.polling_interval
         )
@@ -653,6 +691,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -665,6 +706,16 @@ class FormRecognizerClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
+        pages = kwargs.pop("pages", None)
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if pages:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"pages": pages})
+            else:
+                raise ValueError(
+                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
         polling_interval = kwargs.pop(
             "polling_interval", self._client._config.polling_interval
         )

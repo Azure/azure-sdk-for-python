@@ -59,9 +59,16 @@ class OperationLocationReplacer(RecordingProcessor):
             if 'location' in headers:
                 location_header = "location"
             if location_header:
-                if len(headers[location_header]) > 0:
+                if isinstance(headers[location_header], list):
                     suffix = headers[location_header][0].split("/formrecognizer/")[1]
                     response['headers'][location_header] = [self._replacement + suffix]
+                else:
+                    suffix = headers[location_header].split("/formrecognizer/")[1]
+                    response['headers'][location_header] = self._replacement + suffix
+            url = response["url"]
+            if url is not None:
+                suffix = url.split("/formrecognizer/")[1]
+                response['url'] = self._replacement + suffix
             return response
         except (KeyError, ValueError):
             return response
@@ -174,15 +181,15 @@ class FormRecognizerTest(AzureTestCase):
         return blob_sas_url
 
     def get_oauth_endpoint(self):
-        return self.get_settings_value("FORM_RECOGNIZER_AAD_ENDPOINT")
+        return os.getenv("FORM_RECOGNIZER_AAD_ENDPOINT")
 
     def generate_oauth_token(self):
         if self.is_live:
             from azure.identity import ClientSecretCredential
             return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
+                os.getenv("FORMRECOGNIZER_TENANT_ID"),
+                os.getenv("FORMRECOGNIZER_CLIENT_ID"),
+                os.getenv("FORMRECOGNIZER_CLIENT_SECRET"),
             )
         return self.generate_fake_token()
 
