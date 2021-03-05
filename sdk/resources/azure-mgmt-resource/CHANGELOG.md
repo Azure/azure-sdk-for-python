@@ -1,5 +1,11 @@
 # Release History
 
+## 16.1.0 (2021-03-05)
+
+**Features**
+
+  - Model ManagedServiceIdentity has a new parameter tenant_id
+
 ## 16.0.0 (2021-02-26)
 
 **Features**
