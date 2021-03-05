@@ -15,20 +15,34 @@ class ResponseReplacerProcessor(RecordingProcessor):
         self._replacement = replacement
 
     def process_response(self, response):
-        def sanitize_dict(dictionary):
-            for key in dictionary:
-                value = dictionary[key]
-                if isinstance(value, str):
-                    dictionary[key] = re.sub(
-                        r"("+'|'.join(self._keys)+r")",
-                        self._replacement,
-                        dictionary[key])
-                elif isinstance(value, dict):
-                    sanitize_dict(value)
+        import json
+        try:
+            body = json.loads(response['body']['string'])
+            if 'phoneNumbers' in body:
+                for item in body["phoneNumbers"]:
+                    if isinstance(item, str):
+                        body["phoneNumbers"] = [self._replacement]
+                        break
+                    elif "phoneNumber" in item:
+                        item['phoneNumber'] = self._replacement
+            response['body']['string'] = json.dumps(body)
+            return response
+        except (KeyError, ValueError):
+            return response
+        # def sanitize_dict(dictionary):
+        #     for key in dictionary:
+        #         value = dictionary[key]
+        #         if isinstance(value, str):
+        #             dictionary[key] = re.sub(
+        #                 r"("+'|'.join(self._keys)+r")",
+        #                 self._replacement,
+        #                 dictionary[key])
+        #         elif isinstance(value, dict):
+        #             sanitize_dict(value)
+        #
+        # sanitize_dict(response)
 
-        sanitize_dict(response)
-
-        return response
+        # return response
 
 class BodyReplacerProcessor(RecordingProcessor):
     """Sanitize the sensitive info inside request or response bodies"""

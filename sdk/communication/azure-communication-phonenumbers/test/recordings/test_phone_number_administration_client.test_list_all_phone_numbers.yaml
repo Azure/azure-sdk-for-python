@@ -9,26 +9,55 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 23 Nov 2020 22:11:21 GMT
+      - Fri, 05 Mar 2021 00:35:17 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-communication-administration/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
     uri: https://sanitized.communication.azure.com/administration/phonenumbers/phonenumbers?locale=en-US&skip=0&take=100&api-version=2020-07-20-preview1
   response:
-    body: '{"phoneNumbers": "sanitized", "nextLink": null}'
+    body:
+      string: '{"phoneNumbers": [{"phoneNumber": "sanitized", "acquiredCapabilities":
+        ["Azure", "OutboundCalling", "UserAssignment", "Geographic"], "availableCapabilities":
+        ["UserAssignment", "InboundCalling", "OutboundCalling", "Geographic", "Office365",
+        "Azure"], "assignmentStatus": "ThirdPartyAppAssigned", "placeName": "San Diego,
+        United States", "activationState": "Activated"}, {"phoneNumber": "sanitized",
+        "acquiredCapabilities": ["Azure", "OutboundCalling", "UserAssignment", "Geographic"],
+        "availableCapabilities": ["UserAssignment", "InboundCalling", "OutboundCalling",
+        "Geographic", "Office365", "Azure"], "assignmentStatus": "Unassigned", "placeName":
+        "San Diego, United States", "activationState": "Activated"}, {"phoneNumber":
+        "sanitized", "acquiredCapabilities": ["Azure", "ThirdPartyAppAssignment",
+        "TollFree", "InboundCalling", "InboundA2PSms", "OutboundA2PSms"], "availableCapabilities":
+        ["Azure", "Office365", "InboundCalling", "OutboundCalling", "ThirdPartyAppAssignment",
+        "ConferenceAssignment", "FirstPartyAppAssignment", "TollFree", "InboundA2PSms",
+        "OutboundA2PSms"], "assignmentStatus": "Unassigned", "placeName": "Toll-Free,
+        United States", "activationState": "Activated"}, {"phoneNumber": "sanitized",
+        "acquiredCapabilities": ["Azure", "ThirdPartyAppAssignment", "TollFree", "OutboundA2PSms",
+        "InboundA2PSms"], "availableCapabilities": ["Azure", "Office365", "InboundCalling",
+        "OutboundCalling", "ThirdPartyAppAssignment", "ConferenceAssignment", "FirstPartyAppAssignment",
+        "TollFree", "InboundA2PSms", "OutboundA2PSms"], "assignmentStatus": "ThirdPartyAppAssigned",
+        "placeName": "Toll-Free, United States", "activationState": "Activated"},
+        {"phoneNumber": "sanitized", "acquiredCapabilities": ["Azure", "InboundCalling",
+        "ThirdPartyAppAssignment", "InboundA2PSms", "OutboundA2PSms", "TollFree"],
+        "availableCapabilities": ["Azure", "Office365", "InboundCalling", "OutboundCalling",
+        "ThirdPartyAppAssignment", "ConferenceAssignment", "FirstPartyAppAssignment",
+        "TollFree", "InboundA2PSms", "OutboundA2PSms"], "assignmentStatus": "Unassigned",
+        "placeName": "Toll-Free, United States", "activationState": "Activated"}],
+        "nextLink": null}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 23 Nov 2020 22:11:21 GMT
+      - Fri, 05 Mar 2021 00:35:33 GMT
       ms-cv:
-      - GdjTF54N3EGXupN74+JPoA.0
+      - 49TvQsJOYk6bsR9I26Hjsw.0
+      request-context:
+      - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 381ms
+      - 1055ms
     status:
       code: 200
       message: OK

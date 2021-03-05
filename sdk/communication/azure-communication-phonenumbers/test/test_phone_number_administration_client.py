@@ -15,7 +15,7 @@ from azure.communication.phonenumbers import (
 from azure.core.credentials import AccessToken
 from phone_number_helper import PhoneNumberUriReplacer
 from phone_number_testcase import PhoneNumberCommunicationTestCase
-from _shared.testcase import BodyReplacerProcessor
+from _shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor
 from _shared.utils import create_token_credential
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 
@@ -27,31 +27,32 @@ class PhoneNumbersAdministrationClientTest(PhoneNumberCommunicationTestCase):
         super(PhoneNumbersAdministrationClientTest, self).setUp()
         self.recording_processors.extend([
             BodyReplacerProcessor(
-                keys=["id", "token", "capabilitiesUpdateId", "phoneNumber", "phonePlanIds",
+                keys=["id", "token", "capabilitiesUpdateId", "phonePlanIds",
                       "phoneNumberCapabilitiesUpdates",	"releaseId",
-                      "phoneNumberReleaseStatusDetails", "searchId", "phoneNumbers",
+                      "phoneNumberReleaseStatusDetails", "searchId",
                       "entities", "phonePlanGroups", "phonePlans", "phoneNumberCapabilitiesUpdate"]
             ),
-            PhoneNumberUriReplacer()])
+            PhoneNumberUriReplacer(),
+            ResponseReplacerProcessor()])
         self._phone_number_administration_client = PhoneNumbersAdministrationClient.from_connection_string(
             self.connection_str)
         if self.is_live:
-            self.country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE')
-            self.locale = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_LOCALE')
-            self.phone_plan_group_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_GROUP_ID')
-            self.phone_plan_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_ID')
-            self.phone_plan_id_area_codes = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_ID_AREA_CODES')
-            self.area_code_for_reservation = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_AREA_CODE_FOR_RESERVATION')
-            self.reservation_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RESERVATION_ID')
-            self.reservation_id_to_purchase = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RESERVATION_ID_TO_PURCHASE')
-            self.reservation_id_to_cancel = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RESERVATION_ID_TO_CANCEL')
-            self.phonenumber_to_configure = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_CONFIGURE')
-            self.phonenumber_to_get_config = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_GET_CONFIG')
-            self.phonenumber_to_unconfigure = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_UNCONFIGURE')
-            self.phonenumber_for_capabilities = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_FOR_CAPABILITIES')
-            self.phonenumber_to_release = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_RELEASE')
-            self.capabilities_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_CAPABILITIES_ID')
-            self.release_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RELEASE_ID')
+            self.country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE', "dummy")
+            self.locale = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_LOCALE', "dummy")
+            self.phone_plan_group_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_GROUP_ID', "dummy")
+            self.phone_plan_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_ID', "dummy")
+            self.phone_plan_id_area_codes = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_ID_AREA_CODES', "dummy")
+            self.area_code_for_reservation = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_AREA_CODE_FOR_RESERVATION', "dummy")
+            self.reservation_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RESERVATION_ID', "dummy")
+            self.reservation_id_to_purchase = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RESERVATION_ID_TO_PURCHASE', "dummy")
+            self.reservation_id_to_cancel = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RESERVATION_ID_TO_CANCEL', "dummy")
+            self.phonenumber_to_configure = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_CONFIGURE', "dummy")
+            self.phonenumber_to_get_config = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_GET_CONFIG', "dummy")
+            self.phonenumber_to_unconfigure = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_UNCONFIGURE', "dummy")
+            self.phonenumber_for_capabilities = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_FOR_CAPABILITIES', "dummy")
+            self.phonenumber_to_release = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_RELEASE', "dummy")
+            self.capabilities_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_CAPABILITIES_ID', "dummy")
+            self.release_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RELEASE_ID', "dummy")
             self.scrubber.register_name_pair(
                 self.phone_plan_group_id,
                 "phone_plan_group_id"
@@ -136,8 +137,8 @@ class PhoneNumbersAdministrationClientTest(PhoneNumberCommunicationTestCase):
         pages = phone_number_client.list_all_phone_numbers()
         assert pages.next()
 
-    @pytest.mark.live_test_only
-    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
+    # @pytest.mark.live_test_only
+    # @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_list_all_phone_numbers(self):
         pages = self._phone_number_administration_client.list_all_phone_numbers()
         assert pages.next()
