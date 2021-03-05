@@ -14,21 +14,22 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/17.2.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups?api-version=2020-08-01
   response:
     body:
-      string: "{\r\n  \"properties\": {\r\n    \"firewalls\": [],\r\n    \"firewallPolicies\"\
-        : [],\r\n    \"ipAddresses\": [\r\n      \"13.64.39.16/32\",\r\n      \"40.74.146.80/31\"\
-        ,\r\n      \"40.74.147.32/28\"\r\n    ],\r\n    \"provisioningState\": \"\
-        Updating\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups\"\
-        ,\r\n  \"name\": \"myIpGroups\",\r\n  \"type\": \"Microsoft.Network/IpGroups\"\
-        ,\r\n  \"etag\": \"5e791bd4-70f7-4de9-9eb0-4bd07fc52914\",\r\n  \"location\"\
-        : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
+      string: "{\r\n  \"properties\": {\r\n    \"firewalls\": [],\r\n    \"firewallPolicies\":
+        [],\r\n    \"ipAddresses\": [\r\n      \"13.64.39.16/32\",\r\n      \"40.74.146.80/31\",\r\n
+        \     \"40.74.147.32/28\"\r\n    ],\r\n    \"provisioningState\": \"Updating\"\r\n
+        \ },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups\",\r\n
+        \ \"name\": \"myIpGroups\",\r\n  \"type\": \"Microsoft.Network/IpGroups\",\r\n
+        \ \"etag\": \"8c5cf89c-c3b8-4990-ace7-35181cce9874\",\r\n  \"location\": \"westus\",\r\n
+        \ \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/c7f8bc20-9e37-45e4-99aa-13accc9fe3f3?api-version=2020-08-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/87f578d1-d150-4af5-97db-5a1b17c1fb49?api-version=2020-08-01
       cache-control:
       - no-cache
       content-length:
@@ -36,7 +37,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 08:48:11 GMT
+      - Fri, 05 Mar 2021 04:42:00 GMT
       expires:
       - '-1'
       pragma:
@@ -48,7 +49,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
     status:
       code: 201
       message: Created
@@ -62,9 +63,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/17.2.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/c7f8bc20-9e37-45e4-99aa-13accc9fe3f3?api-version=2020-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/87f578d1-d150-4af5-97db-5a1b17c1fb49?api-version=2020-08-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -76,7 +78,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 08:48:22 GMT
+      - Fri, 05 Mar 2021 04:42:10 GMT
       expires:
       - '-1'
       pragma:
@@ -104,18 +106,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/17.2.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups?api-version=2020-08-01
   response:
     body:
-      string: "{\r\n  \"properties\": {\r\n    \"firewalls\": [],\r\n    \"firewallPolicies\"\
-        : [],\r\n    \"ipAddresses\": [\r\n      \"13.64.39.16/32\",\r\n      \"40.74.146.80/31\"\
-        ,\r\n      \"40.74.147.32/28\"\r\n    ],\r\n    \"provisioningState\": \"\
-        Succeeded\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups\"\
-        ,\r\n  \"name\": \"myIpGroups\",\r\n  \"type\": \"Microsoft.Network/IpGroups\"\
-        ,\r\n  \"etag\": \"5e791bd4-70f7-4de9-9eb0-4bd07fc52914\",\r\n  \"location\"\
-        : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
+      string: "{\r\n  \"properties\": {\r\n    \"firewalls\": [],\r\n    \"firewallPolicies\":
+        [],\r\n    \"ipAddresses\": [\r\n      \"13.64.39.16/32\",\r\n      \"40.74.146.80/31\",\r\n
+        \     \"40.74.147.32/28\"\r\n    ],\r\n    \"provisioningState\": \"Succeeded\"\r\n
+        \ },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups\",\r\n
+        \ \"name\": \"myIpGroups\",\r\n  \"type\": \"Microsoft.Network/IpGroups\",\r\n
+        \ \"etag\": \"8c5cf89c-c3b8-4990-ace7-35181cce9874\",\r\n  \"location\": \"westus\",\r\n
+        \ \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -124,7 +127,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 08:48:22 GMT
+      - Fri, 05 Mar 2021 04:42:11 GMT
       expires:
       - '-1'
       pragma:
@@ -152,18 +155,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/17.2.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups?api-version=2020-08-01
   response:
     body:
-      string: "{\r\n  \"properties\": {\r\n    \"firewalls\": [],\r\n    \"firewallPolicies\"\
-        : [],\r\n    \"ipAddresses\": [\r\n      \"13.64.39.16/32\",\r\n      \"40.74.146.80/31\"\
-        ,\r\n      \"40.74.147.32/28\"\r\n    ],\r\n    \"provisioningState\": \"\
-        Succeeded\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups\"\
-        ,\r\n  \"name\": \"myIpGroups\",\r\n  \"type\": \"Microsoft.Network/IpGroups\"\
-        ,\r\n  \"etag\": \"5e791bd4-70f7-4de9-9eb0-4bd07fc52914\",\r\n  \"location\"\
-        : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
+      string: "{\r\n  \"properties\": {\r\n    \"firewalls\": [],\r\n    \"firewallPolicies\":
+        [],\r\n    \"ipAddresses\": [\r\n      \"13.64.39.16/32\",\r\n      \"40.74.146.80/31\",\r\n
+        \     \"40.74.147.32/28\"\r\n    ],\r\n    \"provisioningState\": \"Succeeded\"\r\n
+        \ },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups\",\r\n
+        \ \"name\": \"myIpGroups\",\r\n  \"type\": \"Microsoft.Network/IpGroups\",\r\n
+        \ \"etag\": \"8c5cf89c-c3b8-4990-ace7-35181cce9874\",\r\n  \"location\": \"westus\",\r\n
+        \ \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -172,7 +176,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 08:48:22 GMT
+      - Fri, 05 Mar 2021 04:42:11 GMT
       expires:
       - '-1'
       pragma:
@@ -202,7 +206,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-network/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/17.2.0 Python/3.8.8 (Linux-5.4.0-1040-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/ipGroups/myIpGroups?api-version=2020-08-01
   response:
@@ -214,7 +219,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 26 Jan 2021 08:48:25 GMT
+      - Fri, 05 Mar 2021 04:42:12 GMT
       expires:
       - '-1'
       pragma:
